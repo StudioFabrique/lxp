@@ -23,6 +23,7 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
   beforeEach(() => {
     vi.mocked(profileApi.queries.getInstanceSettings).mockResolvedValue({
       name: "STEP",
+      website: "",
       setupCompleted: true,
       hasLogo: true,
       enabledThemes: ["classic", "classic-dark"],

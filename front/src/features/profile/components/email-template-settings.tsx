@@ -20,6 +20,7 @@ type Props = {
   selectedTemplate: EmailTemplateId;
   draftTemplate: EmailTemplateId;
   instanceName: string;
+  website: string;
   hasInstanceLogo: boolean;
   instanceColor: string;
   isOpen: boolean;
@@ -38,11 +39,13 @@ const templateName = (id: EmailTemplateId) =>
 function EmailPreview({
   template,
   instanceName,
+  website,
   hasInstanceLogo,
   instanceColor,
 }: {
   template: (typeof emailTemplates)[number];
   instanceName: string;
+  website: string;
   hasInstanceLogo: boolean;
   instanceColor: string;
 }) {
@@ -67,6 +70,9 @@ function EmailPreview({
   const cornerLogo = colorLuminance(cornerColor) < 0.45
     ? andriaLogoLight
     : andriaLogo;
+  const accentTextColor = colorLuminance(accent) > 0.45
+    ? "#17202a"
+    : "#ffffff";
   const mutedColor = "#9ca3af";
   const isEditorial = template.id === "editorial";
   const isInvitation = template.id === "soft";
@@ -110,21 +116,27 @@ function EmailPreview({
           </div>
           <span
             className="mt-3 inline-block w-fit rounded px-3 py-1 text-[6px] font-bold text-white"
-            style={{ backgroundColor: accent, alignSelf: isEditorial || isInvitation || isBanner ? "center" : undefined, color: "#ffffff" }}
+            style={{ backgroundColor: accent, alignSelf: isEditorial || isInvitation || isBanner ? "center" : undefined, color: accentTextColor }}
           >
             Découvrir mon espace
           </span>
           <div
-            className={`mt-auto flex items-center justify-between ${isBanner ? "-mb-3 -mr-4" : "border-t pt-2"}`}
+            className={`mt-auto flex items-start justify-between ${isBanner ? "-mb-3 -mr-4" : "border-t pt-2"}`}
             style={{ borderColor: mutedColor }}
           >
             {isBanner ? (
-              <span aria-hidden="true" />
+              <span className="max-w-24 truncate text-[6px] underline" style={{ color: mutedColor }}>
+                {website}
+              </span>
             ) : hasInstanceLogo ? (
-              <img src={INSTANCE_LOGO} alt="" className="h-auto max-h-5 w-10 object-contain" />
+              <span className="flex flex-col items-start gap-1">
+                <img src={INSTANCE_LOGO} alt="" className="h-auto max-h-5 w-10 object-contain" />
+                {website && <span className="max-w-24 truncate text-[6px] underline" style={{ color: mutedColor }}>{website}</span>}
+              </span>
             ) : (
-              <span className="max-w-24 truncate text-[6px]" style={{ color: mutedColor }}>
-                {instanceName || "Votre organisme"}
+              <span className="flex max-w-24 flex-col text-[6px]" style={{ color: mutedColor }}>
+                <span className="truncate">{instanceName || "Votre organisme"}</span>
+                {website && <span className="truncate underline">{website}</span>}
               </span>
             )}
             <span
@@ -198,6 +210,7 @@ export default function EmailTemplateSettings(props: Props) {
                   <EmailPreview
                     template={template}
                     instanceName={props.instanceName}
+                    website={props.website}
                     hasInstanceLogo={props.hasInstanceLogo}
                     instanceColor={props.instanceColor}
                   />

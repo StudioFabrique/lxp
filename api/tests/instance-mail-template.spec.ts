@@ -25,6 +25,35 @@ describe("identité de l’instance dans les e-mails", () => {
     );
   });
 
+  test("affiche le site sous le logo sans décaler le logo ANDRIA", () => {
+    const html = getTemplate("activation", "token", undefined, {
+      organizationName: "STEP",
+      website: "https://step.eco/?a=1&b=2",
+      logoCid: "instance-logo",
+    });
+
+    expect(html).toContain('href="https://step.eco/?a=1&amp;b=2"');
+    expect(html).toContain('valign="top"');
+    expect((html ?? "").indexOf("cid:instance-logo")).toBeLessThan(
+      (html ?? "").indexOf("https://step.eco"),
+    );
+  });
+
+  test("affiche le site tout en bas à gauche du template Bannière", () => {
+    const html = getTemplate("activation", "token", undefined, {
+      organizationName: "STEP",
+      website: "https://step.eco",
+      logoCid: "instance-logo",
+      emailTemplate: "contrast",
+    });
+
+    expect(html).toContain('padding:18px 0 18px 32px');
+    expect(html).toContain('href="https://step.eco"');
+    expect((html ?? "").indexOf("Bienvenue parmi nous !")).toBeLessThan(
+      (html ?? "").indexOf("https://step.eco"),
+    );
+  });
+
   test("supprime entièrement le bandeau lorsqu’aucun logo n’existe", () => {
     const html = getTemplate("activation", "token", "user@test.fr", {
       organizationName: "STEP",
@@ -79,6 +108,18 @@ describe("identité de l’instance dans les e-mails", () => {
     expect(banner).toContain('src="cid:andria-footer-dark"');
     expect(banner).not.toContain("<strong>STEP</strong>");
     expect(editorial).toContain("border-top:4px solid #123456");
+  });
+
+  test("utilise aussi une couleur d’instance claire pour le bouton", () => {
+    const html = getTemplate("activation", "token", undefined, {
+      organizationName: "STEP",
+      logoBackgroundColor: "#92bbea",
+      emailTemplate: "contrast",
+    });
+
+    expect(html).toContain('bgcolor="#92bbea"');
+    expect(html).toContain('background-color:#92bbea');
+    expect(html).toContain('color:#17202a');
   });
 
   test("n'ajoute pas un second logo ANDRIA sous le mail d'initialisation root", () => {

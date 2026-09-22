@@ -39,6 +39,7 @@ async function mailContext() {
     : "#ffffff";
   return {
     organizationName: settings.name,
+    website: settings.website,
     logoCid: hasLogo ? INSTANCE_LOGO_CID : undefined,
     logoBackgroundColor: color.trim(),
     emailTemplate: settings.emailTemplate,

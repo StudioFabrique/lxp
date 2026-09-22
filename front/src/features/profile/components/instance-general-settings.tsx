@@ -19,6 +19,7 @@ import EmailTemplateSettings, {
 
 const emptySettings: InstanceSettings = {
   name: "",
+  website: "",
   setupCompleted: true,
   hasLogo: false,
   enabledThemes: [...defaultEnabledThemes],
@@ -35,6 +36,7 @@ export default function InstanceGeneralSettings() {
   const [isSaving, setIsSaving] = useState(false);
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
   const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] = useState(false);
+  const [websiteError, setWebsiteError] = useState("");
   const [draftEmailTemplate, setDraftEmailTemplate] = useState<EmailTemplateId>("minimal");
   const [themeDrawerMode, setThemeDrawerMode] = useState<
     "light" | "dark" | null
@@ -87,12 +89,31 @@ export default function InstanceGeneralSettings() {
   }, []);
 
   const save = async (scope: "identity" | "interface" | "email") => {
+    if (scope === "identity") {
+      const website = settings.website.trim();
+      if (website) {
+        try {
+          const parsedWebsite = new URL(website);
+          if (!['http:', 'https:'].includes(parsedWebsite.protocol)) throw new Error();
+        } catch {
+          setWebsiteError(
+            "Saisissez une adresse complète commençant par http:// ou https://.",
+          );
+          return;
+        }
+      }
+      setWebsiteError("");
+    }
     setIsSaving(true);
     try {
       const payload = new FormData();
       payload.append(
         "name",
         scope === "identity" ? settings.name : initialSettings.name,
+      );
+      payload.append(
+        "website",
+        scope === "identity" ? settings.website : initialSettings.website,
       );
       payload.append(
         "enabledThemes",
@@ -197,6 +218,7 @@ export default function InstanceGeneralSettings() {
         >
           <form
             className="flex h-full flex-col gap-6"
+            noValidate
             onSubmit={(event) => {
               event.preventDefault();
               void save("identity");
@@ -226,6 +248,33 @@ export default function InstanceGeneralSettings() {
                     }))
                   }
                 />
+              </label>
+
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">Site internet <span className="font-normal text-base-content/60">(optionnel)</span></span>
+                <input
+                  type="text"
+                  inputMode="url"
+                  autoComplete="url"
+                  aria-invalid={Boolean(websiteError)}
+                  aria-describedby={websiteError ? "instance-website-error" : undefined}
+                  className={`input input-bordered w-full max-w-xl focus:outline-none ${websiteError ? "input-error" : ""}`}
+                  value={settings.website}
+                  maxLength={2048}
+                  placeholder="https://www.exemple.fr"
+                  onChange={(event) => {
+                    if (websiteError) setWebsiteError("");
+                    setSettings((current) => ({
+                      ...current,
+                      website: event.target.value,
+                    }));
+                  }}
+                />
+                {websiteError && (
+                  <span id="instance-website-error" className="text-sm text-error">
+                    {websiteError}
+                  </span>
+                )}
               </label>
 
               <div className="w-full max-w-sm self-center">
@@ -461,6 +510,7 @@ export default function InstanceGeneralSettings() {
         selectedTemplate={settings.emailTemplate}
         draftTemplate={draftEmailTemplate}
         instanceName={settings.name}
+        website={settings.website}
         hasInstanceLogo={hasLogo || settings.hasLogo}
         instanceColor={backgroundColor}
         isOpen={isEmailTemplateModalOpen}

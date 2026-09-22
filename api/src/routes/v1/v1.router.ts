@@ -31,8 +31,8 @@ import indicatorsRouter from "./indicators/indicators.router.ts";
 import evaluationRouter from "./evaluation/evaluation.router.ts";
 import mediaRouter from "./mediatheque/mediatheque.router.ts";
 import { uploadInstanceLogo } from "../../middleware/upload-instance-image.ts";
-import httpPostInstanceLogo from "../../controllers/http-post-instance-logo.ts";
-import httpDeleteInstanceLogo from "../../controllers/http-delete-instance-logo.ts";
+import httpPostInstanceLogo from "../../controllers/instance/http-post-instance-logo.ts";
+import httpDeleteInstanceLogo from "../../controllers/instance/http-delete-instance-logo.ts";
 import resourcesRouter from "./resources/resources.router.ts";
 import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
@@ -43,7 +43,7 @@ import {
   httpGetInstanceSettings,
   httpPostInstanceTemplateTestEmail,
   httpPutInstanceSettings,
-} from "../../controllers/http-instance-settings.ts";
+} from "../../controllers/instance/http-instance-settings.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();

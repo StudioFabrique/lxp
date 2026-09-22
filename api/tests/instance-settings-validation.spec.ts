@@ -4,6 +4,7 @@ import type CustomRequest from "../src/utils/interfaces/express/custom-request.t
 
 const defaultInstanceSettings = {
   name: "ANDRIA",
+  website: "",
   setupCompleted: true,
   enabledThemes: ["classic", "classic-dark"],
   emailTemplate: "minimal",
@@ -24,7 +25,7 @@ jest.unstable_mockModule("../src/utils/interfaces/db/user.ts", () => ({
 }));
 
 const { httpPutInstanceSettings } =
-  await import("../src/controllers/http-instance-settings.ts");
+  await import("../src/controllers/instance/http-instance-settings.ts");
 
 function response() {
   const result: { status?: number; body?: { message?: string } } = {};

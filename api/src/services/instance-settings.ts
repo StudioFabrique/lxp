@@ -3,6 +3,7 @@ import path from "path";
 
 export type InstanceSettings = {
   name: string;
+  website: string;
   setupCompleted: boolean;
   enabledThemes: string[];
   emailTemplate: EmailTemplateId;
@@ -20,6 +21,7 @@ export type EmailTemplateId = (typeof emailTemplateIds)[number];
 
 export const defaultInstanceSettings: InstanceSettings = {
   name: "ANDRIA",
+  website: "",
   setupCompleted: false,
   enabledThemes: [
     "classic", "ocean", "linen", "sage",
@@ -73,6 +75,10 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
         typeof saved.name === "string"
           ? saved.name
           : defaultInstanceSettings.name,
+      website:
+        typeof saved.website === "string"
+          ? saved.website
+          : defaultInstanceSettings.website,
       setupCompleted:
         typeof saved.setupCompleted === "boolean"
           ? saved.setupCompleted

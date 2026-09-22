@@ -27,7 +27,7 @@ export default function QuickActions({
   return (
     <details className="dropdown dropdown-end shrink-0 ml-auto">
       <summary className="btn flex gap-2 items-center">
-        <span className="pb-0.5">Actions rapides</span>
+        <span>Actions rapides</span>
         <EllipsisVertical className="w-4 h-4" />
       </summary>
       <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">

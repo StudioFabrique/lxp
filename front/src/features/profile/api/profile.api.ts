@@ -4,6 +4,7 @@ import type Skill from "../../../utils/interfaces/skill";
 export type InstanceLogoResponse = { message: string };
 export type InstanceSettings = {
   name: string;
+  website: string;
   setupCompleted: boolean;
   hasLogo: boolean;
   enabledThemes: string[];

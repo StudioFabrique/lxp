@@ -30,6 +30,7 @@ describe("Personnalisez votre espace", () => {
   beforeEach(async () => {
     vi.mocked(profileApi.queries.getInstanceSettings).mockResolvedValue({
       name: "ANDRIA",
+      website: "",
       setupCompleted: false,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
@@ -37,6 +38,7 @@ describe("Personnalisez votre espace", () => {
     });
     vi.mocked(profileApi.mutations.updateInstanceSettings).mockResolvedValue({
       name: "ANDRIA",
+      website: "",
       setupCompleted: true,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],

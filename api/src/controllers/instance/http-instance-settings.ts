@@ -1,15 +1,15 @@
 import type { Response } from "express";
-import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import fs from "fs";
-import User from "../utils/interfaces/db/user.ts";
-import { sendInstanceTemplateTestEmail } from "../services/mailer.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { sendInstanceTemplateTestEmail } from "../../services/mailer.ts";
 import {
   hasInstanceLogo,
   emailTemplateIds,
   instanceLogoPath,
   readInstanceSettings,
   writeInstanceSettings,
-} from "../services/instance-settings.ts";
+} from "../../services/instance-settings.ts";
 
 const allowedThemes = new Set([
   "classic",
@@ -66,6 +66,22 @@ export async function httpPutInstanceSettings(
     });
   }
 
+  const website = req.body?.website ?? currentSettings.website;
+  if (typeof website !== "string" || website.length > 2048) {
+    return res.status(400).json({ message: "L’adresse du site internet est invalide." });
+  }
+  const trimmedWebsite = website.trim();
+  if (trimmedWebsite) {
+    try {
+      const parsedWebsite = new URL(trimmedWebsite);
+      if (!['http:', 'https:'].includes(parsedWebsite.protocol)) throw new Error();
+    } catch {
+      return res.status(400).json({
+        message: "Saisissez une adresse de site complète commençant par http:// ou https://.",
+      });
+    }
+  }
+
   const emailTemplate = req.body?.emailTemplate ?? currentSettings.emailTemplate;
   if (!emailTemplateIds.includes(emailTemplate)) {
     return res.status(400).json({ message: "Le template d’e-mail sélectionné est invalide." });
@@ -90,6 +106,7 @@ export async function httpPutInstanceSettings(
 
   const settings = {
     name: name.trim(),
+    website: trimmedWebsite,
     setupCompleted:
       req.body?.setupCompleted === "true"
         ? true
