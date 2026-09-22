@@ -7,6 +7,7 @@ import {
   RefreshCcw,
   ShieldCheck,
   Trash2,
+  UsersRound,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -27,6 +28,7 @@ type RoleCardProps = {
   onReset: (role: RoleCounts) => void;
   onDuplicate: (role: RoleCounts) => void;
   onDelete: (role: RoleCounts) => void;
+  onViewUsers: (role: RoleCounts) => void;
   onOpenPermissions: (
     role: RoleCounts,
     type: PermissionTypes,
@@ -40,6 +42,7 @@ export default function RoleCard({
   onReset,
   onDuplicate,
   onDelete,
+  onViewUsers,
   onOpenPermissions,
 }: RoleCardProps) {
   const summaries: PermissionSummary[] = [
@@ -87,6 +90,18 @@ export default function RoleCard({
       description={<span className="capitalize">Modèle {role.model}</span>}
       action={
         <div className="flex items-center gap-0.5">
+          <PermissionGuard action="read" object="user">
+            <button
+              type="button"
+              className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+              data-tip="Voir les utilisateurs associés"
+              aria-label={`Voir les utilisateurs associés au rôle ${role.label}`}
+              onClick={() => onViewUsers(role)}
+            >
+              <UsersRound className="size-[1.15em]" />
+            </button>
+          </PermissionGuard>
+
           <PermissionGuard action="update" object="role">
             <button
               type="button"

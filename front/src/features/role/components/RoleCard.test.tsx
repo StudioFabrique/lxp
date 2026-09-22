@@ -35,6 +35,7 @@ const renderCard = (overrides: Partial<RoleCounts> = {}) =>
       onReset={vi.fn()}
       onDuplicate={vi.fn()}
       onDelete={vi.fn()}
+      onViewUsers={vi.fn()}
       onOpenPermissions={vi.fn()}
     />,
   );
@@ -68,5 +69,14 @@ describe("RoleCard", () => {
     expect(markup).toContain("Dupliquer le rôle Éditeur");
     expect(markup).not.toContain("Supprimer le rôle Éditeur");
     expect(markup).toContain('data-tip="Rôle protégé"');
+  });
+
+  it("propose d'afficher les utilisateurs associés au rôle", () => {
+    const markup = renderCard();
+
+    expect(markup).toContain('data-tip="Voir les utilisateurs associés"');
+    expect(markup).toContain(
+      "Voir les utilisateurs associés au rôle Éditeur",
+    );
   });
 });

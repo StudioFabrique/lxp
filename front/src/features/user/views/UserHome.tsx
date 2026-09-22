@@ -1,5 +1,5 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useCallback, useContext, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import {
   RowSelectionState,
   SortingState,
@@ -31,6 +31,8 @@ import { usersPageTourSteps } from "../../../components/headers/page-tour-steps"
 const UserHome = () => {
   const { roles, user: currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedRoleId = searchParams.get("role");
   const currentUserRank = useMemo(
     () =>
       currentUser
@@ -39,7 +41,14 @@ const UserHome = () => {
     [currentUser],
   );
 
-  const [currentRole, setCurrentRole] = useState<Role | null>(null);
+  const currentRole = useMemo<Role | null>(() => {
+    if (roles.length === 0) return null;
+    return (
+      (requestedRoleId
+        ? roles.find((role) => role._id === requestedRoleId)
+        : undefined) ?? roles[0]
+    );
+  }, [requestedRoleId, roles]);
 
   const {
     data,
@@ -193,14 +202,13 @@ const UserHome = () => {
 
   const handleRoleSwitch = (role: Role) => {
     setRowSelection({});
-    setCurrentRole(role);
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      if (role.role === "everything") nextParams.delete("role");
+      else nextParams.set("role", role._id);
+      return nextParams;
+    });
   };
-
-  useEffect(() => {
-    if (roles.length > 0 && !currentRole) {
-      setCurrentRole(roles[0]);
-    }
-  }, [roles, currentRole]);
 
   return (
     <div>
