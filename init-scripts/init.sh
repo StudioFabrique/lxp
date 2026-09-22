@@ -112,7 +112,9 @@ configure_development_mailer() {
     read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [y/N] : " enable_mailer
     case "$enable_mailer" in
       o|O|oui|Oui|OUI|y|Y|yes|YES)
-        write_env_value "MAILER_DISABLED" "false" "$file"
+        # Conserver le mailer désactivé tant que sa configuration est incomplète.
+        # Ainsi, une interruption relancera l'assistant au prochain `npm run init`.
+        write_env_value "MAILER_DISABLED" "true" "$file"
         break
         ;;
       ""|n|N|non|Non|NON|no|NO)
@@ -131,8 +133,23 @@ configure_development_mailer() {
   prompt_env_value "MAILER_DEV_RECIPIENT" "Destinataire des emails en développement" false "$file"
   prompt_env_value "MAILER_SMTP_PORT" "Port SMTP" false "$file"
   prompt_env_value "MAILER_FROM" "Expéditeur (nom et adresse)" false "$file"
+  write_env_value "MAILER_DISABLED" "false" "$file"
   echo "Configuration enregistrée dans api/.env."
   echo
+}
+
+development_mailer_needs_configuration() {
+  file="$1"
+  if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "false" ]; then
+    return 0
+  fi
+
+  for key in MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_DEV_RECIPIENT MAILER_SMTP_PORT MAILER_FROM; do
+    if [ -z "$(read_env_value "$key" "$file")" ]; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 configure_development_env() {
@@ -176,7 +193,7 @@ if [ ! -f "./api/.env" ]; then
 fi
 if [ "$api_env_created" = false ] \
   && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
-  && [ "$(read_env_value "MAILER_DISABLED" "./api/.env")" = "true" ]; then
+  && development_mailer_needs_configuration "./api/.env"; then
   echo
   echo "Configuration du mailer de développement"
   echo
