@@ -80,9 +80,9 @@ prompt_env_value() {
 
   while true; do
     if [ -n "$current_value" ]; then
-      prompt="$label [$current_value] : "
+      prompt="$key — $label [$current_value] : "
     else
-      prompt="$label : "
+      prompt="$key — $label : "
     fi
 
     if [ "$secret" = true ]; then
@@ -101,21 +101,13 @@ prompt_env_value() {
   done
 }
 
-configure_development_env() {
+configure_development_mailer() {
   file="$1"
-  environment=$(read_env_value "ENVIRONMENT" "$file")
-  if [ "$environment" != "development" ]; then
-    return
-  fi
   if [ ! -t 0 ]; then
-    echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
+    echo -e "\033[1;31mÉchec: la configuration du mailer en développement nécessite un terminal interactif.\033[0m"
     exit 1
   fi
 
-  echo
-  echo "Configuration des services de développement"
-  echo
-  prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
   while true; do
     read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [y/N] : " enable_mailer
     case "$enable_mailer" in
@@ -143,6 +135,24 @@ configure_development_env() {
   echo
 }
 
+configure_development_env() {
+  file="$1"
+  environment=$(read_env_value "ENVIRONMENT" "$file")
+  if [ "$environment" != "development" ]; then
+    return
+  fi
+  if [ ! -t 0 ]; then
+    echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
+    exit 1
+  fi
+
+  echo
+  echo "Configuration des services de développement"
+  echo
+  prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
+  configure_development_mailer "$file"
+}
+
 if [ "$restore_data" = false ]; then
   echo "Nettoyage des données existantes..."
   ./init-scripts/clean-project-data.sh || { echo -e "\033[1;31m Échec: Nettoyage des données"; exit 1; }
@@ -154,13 +164,23 @@ install_dependencies "frontend" "front" --prefix front
 
 echo "Copie des fichiers .env..."
 # If .env in api does not exist, copy .env.example to .env
+api_env_created=false
 if [ ! -f "./api/.env" ]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
     echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
     exit 1
   fi
   cp ./api/env.example ./api/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
+  api_env_created=true
   configure_development_env "./api/.env"
+fi
+if [ "$api_env_created" = false ] \
+  && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
+  && [ "$(read_env_value "MAILER_DISABLED" "./api/.env")" = "true" ]; then
+  echo
+  echo "Configuration du mailer de développement"
+  echo
+  configure_development_mailer "./api/.env"
 fi
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 
