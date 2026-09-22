@@ -21,7 +21,7 @@ it("affiche les modules uniquement sous les badges restant à obtenir", () => {
       <MemoryRouter initialEntries={["/student/parcours/module/1"]}>
         <AuthContext.Provider value={{ user: { roles: [{ rank: 3 }] } } as ContextType<typeof AuthContext>}>
           <CurrentPath />
-          <ModuleCompletionModal moduleTitle="Introduction" parcoursId={42} onClose={onClose} badges={[
+          <ModuleCompletionModal parcoursId={42} onClose={onClose} badges={[
             { id: 1, description: "Acquis", isEarned: true, completedModules: 1, totalModules: 1, modules: [module] },
             { id: 2, description: "À obtenir", isEarned: false, completedModules: 1, totalModules: 2, modules: [module, { id: 2, title: "Approfondissement", progress: 0, isCompleted: false }] },
           ]} />
