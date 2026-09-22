@@ -4,9 +4,11 @@ import type Skill from "../../../utils/interfaces/skill";
 export type InstanceLogoResponse = { message: string };
 export type InstanceSettings = {
   name: string;
+  website: string;
   setupCompleted: boolean;
   hasLogo: boolean;
   enabledThemes: string[];
+  emailTemplate: "minimal" | "gradient" | "editorial" | "soft" | "contrast" | "compact";
 };
 
 const queries = {
@@ -65,6 +67,12 @@ const mutations = {
     const res = await apiClient.put<InstanceSettings>(
       "/instance-settings",
       payload,
+    );
+    return res.data;
+  },
+  sendInstanceTemplateTestEmail: async (): Promise<{ message: string }> => {
+    const res = await apiClient.post<{ message: string }>(
+      "/instance-settings/test-email",
     );
     return res.data;
   },

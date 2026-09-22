@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
 import PageHeader from "../../../components/headers/PageHeader";
@@ -37,6 +38,7 @@ type PermissionDrawer = {
 const asRole = (role: RoleCounts): Role => role;
 
 const RoleList = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState("");
   const [formModal, setFormModal] = useState<RoleFormModal | null>(null);
@@ -149,17 +151,19 @@ const RoleList = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <div data-page-tour="role-filters">
-        <MultiCriteriaSearch
-          value={searchValue}
-          onChange={(value) => {
-            setSearchValue(value);
-            setPage(1);
-          }}
-          placeholder="Rechercher un rôle..."
-          criteria={["nom", "libellé", "modèle"]}
-        />
-      </div>
+      {(rawData?.length ?? 0) > 0 ? (
+        <div data-page-tour="role-filters">
+          <MultiCriteriaSearch
+            value={searchValue}
+            onChange={(value) => {
+              setSearchValue(value);
+              setPage(1);
+            }}
+            placeholder="Rechercher un rôle..."
+            criteria={["nom", "libellé", "modèle"]}
+          />
+        </div>
+      ) : null}
 
       {isLoading ? (
         <div className="min-h-72">
@@ -194,6 +198,11 @@ const RoleList = () => {
                 setFormModal({ mode: "duplicate", role: selectedRole })
               }
               onDelete={openRoleDeletion}
+              onViewUsers={(selectedRole) =>
+                navigate(
+                  `/admin/user?role=${encodeURIComponent(selectedRole._id)}`,
+                )
+              }
               onOpenPermissions={(selectedRole, type, label) =>
                 setPermissionDrawer({ role: selectedRole, type, label })
               }

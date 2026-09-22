@@ -13,7 +13,11 @@ jest.unstable_mockModule("../src/utils/logs/logger.ts", () => ({
   logger: { error: jest.fn() },
 }));
 
-const { sendRootEmailVerification, sendEmailChangeConfirmation } =
+const {
+  sendRootEmailVerification,
+  sendEmailChangeConfirmation,
+  sendInstanceTemplateTestEmail,
+} =
   await import("../src/services/mailer.ts");
 
 describe("Activation SMTP du compte root", () => {
@@ -46,6 +50,8 @@ describe("Activation SMTP du compte root", () => {
     expect(message.html).toContain('role="presentation"');
     expect(message.html).toContain('align="center"');
     expect(message.html).toContain("margin:28px auto");
+    expect(message.html).toContain('bgcolor="#17202a"');
+    expect(message.html).toContain('bgcolor="#1769aa"');
     expect(message.html).not.toContain("andria-footer-light");
   });
 
@@ -69,16 +75,31 @@ describe("Activation SMTP du compte root", () => {
     expect(message.html).toContain("border-radius:18px 18px 0 0");
   });
 
-  test("joint le logo ANDRIA adapté au pied des autres mails", async () => {
+  test("joint les variantes du logo ANDRIA et utilise celle adaptée au fond", async () => {
     await sendEmailChangeConfirmation("root@test.fr", "token");
 
     expect(sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
-        html: expect.stringContaining('src="cid:andria-footer-light"'),
+        html: expect.stringContaining('src="cid:andria-footer-dark"'),
         attachments: expect.arrayContaining([
           expect.objectContaining({ cid: "andria-footer-light" }),
+          expect.objectContaining({ cid: "andria-footer-dark" }),
         ]),
       }),
     );
+  });
+
+  test("ajoute au mail de test un bouton vers le site", async () => {
+    await sendInstanceTemplateTestEmail("root@test.fr");
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining("Accéder au site"),
+      }),
+    );
+
+    const message = sendMail.mock.calls[0]?.[0] as { html?: string };
+    expect(message.html).toContain('href="http://localhost:5173/"');
+    expect(message.html).toMatch(/bgcolor="#[0-9a-f]{6}"/i);
   });
 });

@@ -84,12 +84,14 @@ export default function StudentAssignments() {
         </button>
       </div>
 
-      <MultiCriteriaSearch
-        value={search}
-        onChange={setSearch}
-        criteria={["cours", "module", "parcours", "statut"]}
-        placeholder="Rechercher une évaluation..."
-      />
+      {query.isPending || (query.data?.length ?? 0) > 0 || search ? (
+        <MultiCriteriaSearch
+          value={search}
+          onChange={setSearch}
+          criteria={["cours", "module", "parcours", "statut"]}
+          placeholder="Rechercher une évaluation..."
+        />
+      ) : null}
 
       {query.isPending ? (
         <Loader />

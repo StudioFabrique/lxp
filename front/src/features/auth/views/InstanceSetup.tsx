@@ -18,6 +18,8 @@ export default function InstanceSetup() {
   const navigate = useNavigate();
   const [settings, setSettings] = useState<InstanceSettings | null>(null);
   const [name, setName] = useState(DEFAULT_NAME);
+  const [website, setWebsite] = useState("");
+  const [websiteError, setWebsiteError] = useState("");
   const [logo, setLogo] = useState<TemporaryImage>({ file: null, url: null });
   const [logoBackgroundColor, setLogoBackgroundColor] = useState(
     DEFAULT_LOGO_BACKGROUND,
@@ -34,6 +36,7 @@ export default function InstanceSetup() {
         }
         setSettings(current);
         setName(current.name.trim() || DEFAULT_NAME);
+        setWebsite(current.website);
       })
       .catch(() =>
         toast.error("La configuration de l’instance est indisponible."),
@@ -48,11 +51,25 @@ export default function InstanceSetup() {
       toast.error("Le nom de l’organisme doit contenir au moins 2 caractères.");
       return;
     }
+    const organizationWebsite = useDefaults ? "" : website.trim();
+    if (organizationWebsite) {
+      try {
+        const parsedWebsite = new URL(organizationWebsite);
+        if (!["http:", "https:"].includes(parsedWebsite.protocol)) throw new Error();
+      } catch {
+        setWebsiteError(
+          "Saisissez une adresse complète commençant par http:// ou https://.",
+        );
+        return;
+      }
+    }
+    setWebsiteError("");
 
     setIsSaving(true);
     try {
       const payload = new FormData();
       payload.append("name", organizationName);
+      payload.append("website", organizationWebsite);
       payload.append("setupCompleted", "true");
       payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
       payload.append(
@@ -78,6 +95,7 @@ export default function InstanceSetup() {
     >
       <form
         className="mx-auto flex w-full max-w-sm flex-col items-center gap-5"
+        noValidate
         onSubmit={(event) => {
           event.preventDefault();
           void completeSetup();
@@ -95,6 +113,33 @@ export default function InstanceSetup() {
             onChange={(event) => setName(event.target.value)}
             className="input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
           />
+        </label>
+
+        <label className="flex w-full flex-col gap-2 text-center">
+          <span className="text-sm font-semibold text-base-content">
+            Site internet <span className="font-normal text-base-content/60">(optionnel)</span>
+          </span>
+          <input
+            type="text"
+            inputMode="url"
+            autoComplete="url"
+            value={website}
+            maxLength={2048}
+            placeholder="https://www.exemple.fr"
+            disabled={!settings || isSaving}
+            aria-invalid={Boolean(websiteError)}
+            aria-describedby={websiteError ? "setup-website-error" : undefined}
+            onChange={(event) => {
+              if (websiteError) setWebsiteError("");
+              setWebsite(event.target.value);
+            }}
+            className={`input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary ${websiteError ? "input-error" : ""}`}
+          />
+          {websiteError && (
+            <span id="setup-website-error" className="text-left text-sm text-error">
+              {websiteError}
+            </span>
+          )}
         </label>
 
         <InstanceLogoControls

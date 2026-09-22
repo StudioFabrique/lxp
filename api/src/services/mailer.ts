@@ -22,6 +22,7 @@ import {
   escapeHtml,
   formatDisplayTitle,
   instanceBrand,
+  instanceHomeUrl,
   layout,
   organizationName,
 } from "../helpers/mail-template/shared.ts";
@@ -38,8 +39,10 @@ async function mailContext() {
     : "#ffffff";
   return {
     organizationName: settings.name,
+    website: settings.website,
     logoCid: hasLogo ? INSTANCE_LOGO_CID : undefined,
     logoBackgroundColor: color.trim(),
+    emailTemplate: settings.emailTemplate,
   } satisfies MailContext;
 }
 
@@ -104,43 +107,23 @@ const andriaLogoAttachment = () => {
     : undefined;
 };
 
-const andriaFooterLogoAttachment = (themeMode?: "light" | "dark") => {
-  const isDark = themeMode === "dark";
-  const logoPath = isDark
-    ? andriaLogoPath()
-    : [
-        path.join(
-          import.meta.dirname,
-          "..",
-          "..",
-          "mail-assets",
-          "andria-logo-light.png",
-        ),
-        path.join(
-          import.meta.dirname,
-          "..",
-          "..",
-          "..",
-          "front",
-          "src",
-          "assets",
-          "andria-logo",
-          "logo-lightmode-email.png",
-        ),
-      ].find((candidate) => fs.existsSync(candidate));
+const andriaFooterLogoAttachment = (_themeMode?: "light" | "dark") => {
+  const logoPaths = [
+    {
+      path: [
+        path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo-light.png"),
+        path.join(import.meta.dirname, "..", "..", "..", "front", "src", "assets", "andria-logo", "logo-lightmode-email.png"),
+      ].find((candidate) => fs.existsSync(candidate)),
+      cid: ANDRIA_FOOTER_LOGO_LIGHT_CID,
+    },
+    { path: andriaLogoPath(), cid: ANDRIA_FOOTER_LOGO_DARK_CID },
+  ];
 
-  return logoPath
-    ? [
-        {
-          filename: "andria-footer-logo.png",
-          path: logoPath,
-          contentType: "image/png",
-          cid: isDark
-            ? ANDRIA_FOOTER_LOGO_DARK_CID
-            : ANDRIA_FOOTER_LOGO_LIGHT_CID,
-        },
-      ]
-    : [];
+  return logoPaths.flatMap(({ path: logoPath, cid }) =>
+    logoPath
+      ? [{ filename: `${cid}.png`, path: logoPath, contentType: "image/png", cid }]
+      : [],
+  );
 };
 
 /**
@@ -265,6 +248,34 @@ export async function sendUpdatedUserEmail(email: string) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function sendInstanceTemplateTestEmail(email: string) {
+  if (mailerDisabled) return;
+  if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
+
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
+  const context = await mailContext();
+  const name = organizationName(context);
+  const message = layout(
+    `<h1 style="margin:0 0 16px;font-size:26px;line-height:34px">Votre template est prêt</h1>
+    <p style="margin:0">Voici un aperçu réel des e-mails envoyés par <strong>${escapeHtml(name)}</strong>.</p>
+    ${button(instanceHomeUrl(), "Accéder au site")}`,
+    name,
+    instanceBrand(context),
+  );
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: `[Test] Template e-mail ${name}`,
+    html: message,
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
 }
 
 async function sendAccountEmail(

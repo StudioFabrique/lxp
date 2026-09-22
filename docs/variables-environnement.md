@@ -14,7 +14,8 @@ secret.
 ## Développement local
 
 La commande `npm run init` copie les deux fichiers d'exemple. Vous pouvez
-démarrer le projet sans modifier leurs valeurs.
+démarrer le projet sans modifier leurs valeurs. En développement, elle propose
+à chaque exécution de configurer le mailer tant que `MAILER_DISABLED=true`.
 
 ### API : variables nécessaires
 

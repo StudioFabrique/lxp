@@ -16,14 +16,12 @@ function easeOutElastic(value: number) {
 }
 
 type Props = {
-  moduleTitle: string;
   parcoursId?: number;
   badges: Skill[];
   onClose: () => void;
 };
 
 export default function ModuleCompletionModal({
-  moduleTitle,
   parcoursId,
   badges,
   onClose,

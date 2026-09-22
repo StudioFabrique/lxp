@@ -71,7 +71,8 @@ Le projet utilise deux fichiers en développement :
 `npm run init` crée ces fichiers à partir des fichiers `env.example`. Les
 valeurs fournies permettent de démarrer le LXP en local. Lors de la première
 création de `api/.env` en développement, un questionnaire interactif demande
-les accès Unsplash et SMTP ; les saisies sensibles ne sont pas affichées.
+les accès Unsplash et SMTP ; les saisies sensibles ne sont pas affichées. Tant
+que le mailer est désactivé, chaque `npm run init` propose de le configurer.
 
 La page [Variables d'environnement](docs/variables-environnement.md) indique :
 

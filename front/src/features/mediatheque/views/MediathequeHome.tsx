@@ -121,7 +121,8 @@ function MediathequeHomePage() {
         ))}
       </div>
 
-      <MultiCriteriaSearch
+      {isLoading || total > 0 || searchInput.trim() ? (
+        <MultiCriteriaSearch
         value={searchInput}
         onChange={setSearchInput}
         criteria={["nom du fichier"]}
@@ -146,7 +147,8 @@ function MediathequeHomePage() {
             </select>
           </label>
         }
-      />
+        />
+      ) : null}
 
       {isLoading ? (
         <div role="status" className="skeleton h-64">

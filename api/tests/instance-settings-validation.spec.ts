@@ -4,8 +4,10 @@ import type CustomRequest from "../src/utils/interfaces/express/custom-request.t
 
 const defaultInstanceSettings = {
   name: "ANDRIA",
+  website: "",
   setupCompleted: true,
   enabledThemes: ["classic", "classic-dark"],
+  emailTemplate: "minimal",
 };
 
 jest.unstable_mockModule("../src/services/instance-settings.ts", () => ({
@@ -13,10 +15,17 @@ jest.unstable_mockModule("../src/services/instance-settings.ts", () => ({
   writeInstanceSettings: jest.fn(),
   hasInstanceLogo: jest.fn(async () => false),
   instanceLogoPath: "/tmp/instance-logo-test.jpeg",
+  emailTemplateIds: ["minimal", "gradient", "editorial", "soft", "contrast", "compact"],
+}));
+jest.unstable_mockModule("../src/services/mailer.ts", () => ({
+  sendInstanceTemplateTestEmail: jest.fn(),
+}));
+jest.unstable_mockModule("../src/utils/interfaces/db/user.ts", () => ({
+  default: { findById: jest.fn() },
 }));
 
 const { httpPutInstanceSettings } =
-  await import("../src/controllers/http-instance-settings.ts");
+  await import("../src/controllers/instance/http-instance-settings.ts");
 
 function response() {
   const result: { status?: number; body?: { message?: string } } = {};

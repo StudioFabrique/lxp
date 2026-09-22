@@ -2,8 +2,32 @@ import { type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs"; // Import File System module
+import sharp from "sharp";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import { logger } from "../utils/logs/logger.ts";
+
+const logoMaxWidth = 512;
+const logoMaxHeight = 256;
+
+async function optimizeLogo(file: Express.Multer.File) {
+  const optimizedPath = `${file.path}.optimized`;
+  const image = sharp(file.path)
+    .rotate()
+    .resize(logoMaxWidth, logoMaxHeight, {
+      fit: "inside",
+      withoutEnlargement: true,
+    });
+
+  if (file.mimetype === "image/png") {
+    await image
+      .png({ compressionLevel: 9, effort: 10, palette: true, quality: 80 })
+      .toFile(optimizedPath);
+  } else {
+    await image.jpeg({ quality: 75, mozjpeg: true }).toFile(optimizedPath);
+  }
+
+  await fs.promises.rename(optimizedPath, file.path);
+}
 
 export const uploadInstanceLogo = () => {
   const destinationPath = path.join(
@@ -74,6 +98,21 @@ export const uploadInstanceLogo = () => {
         return res.status(400).json({
           message: "Aucun logo ou couleur n'a été envoyé.",
         });
+      }
+
+      if (req.file) {
+        try {
+          await optimizeLogo(req.file);
+        } catch (optimizationError) {
+          await Promise.all([
+            fs.promises.rm(req.file.path, { force: true }),
+            fs.promises.rm(`${req.file.path}.optimized`, { force: true }),
+          ]);
+          logger.error("Error optimizing instance logo:", optimizationError);
+          return res.status(400).json({
+            message: "Le logo n'a pas pu être traité.",
+          });
+        }
       }
 
       if (hasValidColor) {

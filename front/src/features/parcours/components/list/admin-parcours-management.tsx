@@ -76,6 +76,9 @@ const AdminParcoursManagement = ({
       ),
     [filteredFormations],
   );
+  const hasParcours = formations.some(
+    (formation) => formation.parcours.length > 0,
+  );
   const {
     list: paginatedFormations,
     limit,
@@ -234,15 +237,17 @@ const AdminParcoursManagement = ({
         ) : null}
       </Header>
 
-      <MultiCriteriaSearch
-        value={searchQuery}
-        onChange={(value) => {
-          setSearchQuery(value);
-          setPage(1);
-        }}
-        criteria={["titre du parcours", "formation", "niveau"]}
-        placeholder="Rechercher un parcours ou une formation..."
-      />
+      {hasParcours ? (
+        <MultiCriteriaSearch
+          value={searchQuery}
+          onChange={(value) => {
+            setSearchQuery(value);
+            setPage(1);
+          }}
+          criteria={["titre du parcours", "formation", "niveau"]}
+          placeholder="Rechercher un parcours ou une formation..."
+        />
+      ) : null}
 
       <section
         className={`grid items-start gap-5 ${

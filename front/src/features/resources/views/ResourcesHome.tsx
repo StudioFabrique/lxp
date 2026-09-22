@@ -87,12 +87,14 @@ export default function ResourcesHome() {
       {showCreateModal && (
         <CreateResourceModal onClose={() => setShowCreateModal(false)} />
       )}
-      <MultiCriteriaSearch
-        value={search}
-        onChange={setSearch}
-        criteria={["titre", "description", "auteur", "tags"]}
-        placeholder="Rechercher une ressource..."
-      />
+      {query.isPending || total > 0 || search.trim() ? (
+        <MultiCriteriaSearch
+          value={search}
+          onChange={setSearch}
+          criteria={["titre", "description", "auteur", "tags"]}
+          placeholder="Rechercher une ressource..."
+        />
+      ) : null}
       {query.isPending ? (
         <div role="status" className="skeleton h-64">
           Chargement des ressources…

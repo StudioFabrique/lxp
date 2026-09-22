@@ -80,9 +80,9 @@ prompt_env_value() {
 
   while true; do
     if [ -n "$current_value" ]; then
-      prompt="$label [$current_value] : "
+      prompt="$key — $label [$current_value] : "
     else
-      prompt="$label : "
+      prompt="$key — $label : "
     fi
 
     if [ "$secret" = true ]; then
@@ -101,6 +101,57 @@ prompt_env_value() {
   done
 }
 
+configure_development_mailer() {
+  file="$1"
+  if [ ! -t 0 ]; then
+    echo -e "\033[1;31mÉchec: la configuration du mailer en développement nécessite un terminal interactif.\033[0m"
+    exit 1
+  fi
+
+  while true; do
+    read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [y/N] : " enable_mailer
+    case "$enable_mailer" in
+      o|O|oui|Oui|OUI|y|Y|yes|YES)
+        # Conserver le mailer désactivé tant que sa configuration est incomplète.
+        # Ainsi, une interruption relancera l'assistant au prochain `npm run init`.
+        write_env_value "MAILER_DISABLED" "true" "$file"
+        break
+        ;;
+      ""|n|N|non|Non|NON|no|NO)
+        write_env_value "MAILER_DISABLED" "true" "$file"
+        echo "Mailer désactivé : les comptes sont activés sans vérification par email."
+        echo "Configuration enregistrée dans api/.env."
+        echo
+        return
+        ;;
+      *) echo "Répondez par y ou n." ;;
+    esac
+  done
+  prompt_env_value "MAILER_EMAIL" "Compte email SMTP" false "$file"
+  prompt_env_value "MAILER_PASSWORD" "Mot de passe SMTP" true "$file"
+  prompt_env_value "MAILER_SMTP" "Serveur SMTP" false "$file"
+  prompt_env_value "MAILER_DEV_RECIPIENT" "Destinataire des emails en développement" false "$file"
+  prompt_env_value "MAILER_SMTP_PORT" "Port SMTP" false "$file"
+  prompt_env_value "MAILER_FROM" "Expéditeur (nom et adresse)" false "$file"
+  write_env_value "MAILER_DISABLED" "false" "$file"
+  echo "Configuration enregistrée dans api/.env."
+  echo
+}
+
+development_mailer_needs_configuration() {
+  file="$1"
+  if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "false" ]; then
+    return 0
+  fi
+
+  for key in MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_DEV_RECIPIENT MAILER_SMTP_PORT MAILER_FROM; do
+    if [ -z "$(read_env_value "$key" "$file")" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 configure_development_env() {
   file="$1"
   environment=$(read_env_value "ENVIRONMENT" "$file")
@@ -116,31 +167,7 @@ configure_development_env() {
   echo "Configuration des services de développement"
   echo
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
-  while true; do
-    read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [o/N] : " enable_mailer
-    case "$enable_mailer" in
-      o|O|oui|Oui|OUI|y|Y|yes|YES)
-        write_env_value "MAILER_DISABLED" "false" "$file"
-        break
-        ;;
-      ""|n|N|non|Non|NON|no|NO)
-        write_env_value "MAILER_DISABLED" "true" "$file"
-        echo "Mailer désactivé : les comptes sont activés sans vérification par email."
-        echo "Configuration enregistrée dans api/.env."
-        echo
-        return
-        ;;
-      *) echo "Répondez par oui ou non." ;;
-    esac
-  done
-  prompt_env_value "MAILER_EMAIL" "Compte email SMTP" false "$file"
-  prompt_env_value "MAILER_PASSWORD" "Mot de passe SMTP" true "$file"
-  prompt_env_value "MAILER_SMTP" "Serveur SMTP" false "$file"
-  prompt_env_value "MAILER_DEV_RECIPIENT" "Destinataire des emails en développement" false "$file"
-  prompt_env_value "MAILER_SMTP_PORT" "Port SMTP" false "$file"
-  prompt_env_value "MAILER_FROM" "Expéditeur (nom et adresse)" false "$file"
-  echo "Configuration enregistrée dans api/.env."
-  echo
+  configure_development_mailer "$file"
 }
 
 if [ "$restore_data" = false ]; then
@@ -154,13 +181,23 @@ install_dependencies "frontend" "front" --prefix front
 
 echo "Copie des fichiers .env..."
 # If .env in api does not exist, copy .env.example to .env
+api_env_created=false
 if [ ! -f "./api/.env" ]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
     echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
     exit 1
   fi
   cp ./api/env.example ./api/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
+  api_env_created=true
   configure_development_env "./api/.env"
+fi
+if [ "$api_env_created" = false ] \
+  && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
+  && development_mailer_needs_configuration "./api/.env"; then
+  echo
+  echo "Configuration du mailer de développement"
+  echo
+  configure_development_mailer "./api/.env"
 fi
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 
@@ -271,4 +308,22 @@ elif [ "$restore_data" = true ]; then
 else
   echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
 fi
-echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
+cd ..
+if [ ! -t 0 ]; then
+  echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
+  exit 0
+fi
+
+while true; do
+  read -r -p "Lancer npm run dev maintenant ? [y/N] : " start_dev
+  case "$start_dev" in
+    o|O|oui|Oui|OUI|y|Y|yes|YES)
+      exec npm run dev
+      ;;
+    ""|n|N|non|Non|NON|no|NO)
+      echo -e "Vous pouvez lancer \033[30;47m npm run dev \033[0m plus tard à la racine du projet."
+      break
+      ;;
+    *) echo "Répondez par y ou n." ;;
+  esac
+done

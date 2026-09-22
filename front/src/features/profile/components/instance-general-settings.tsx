@@ -13,12 +13,17 @@ import {
 } from "../../../config/themes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { profileApi, type InstanceSettings } from "../api/profile.api";
+import EmailTemplateSettings, {
+  type EmailTemplateId,
+} from "./email-template-settings";
 
 const emptySettings: InstanceSettings = {
   name: "",
+  website: "",
   setupCompleted: true,
   hasLogo: false,
   enabledThemes: [...defaultEnabledThemes],
+  emailTemplate: "minimal",
 };
 
 const defaultBackgroundColor = "#ffffff";
@@ -29,6 +34,10 @@ export default function InstanceGeneralSettings() {
   const [initialSettings, setInitialSettings] = useState(emptySettings);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
+  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] = useState(false);
+  const [websiteError, setWebsiteError] = useState("");
+  const [draftEmailTemplate, setDraftEmailTemplate] = useState<EmailTemplateId>("minimal");
   const [themeDrawerMode, setThemeDrawerMode] = useState<
     "light" | "dark" | null
   >(null);
@@ -79,13 +88,32 @@ export default function InstanceGeneralSettings() {
     return () => abortController.abort();
   }, []);
 
-  const save = async (scope: "identity" | "interface") => {
+  const save = async (scope: "identity" | "interface" | "email") => {
+    if (scope === "identity") {
+      const website = settings.website.trim();
+      if (website) {
+        try {
+          const parsedWebsite = new URL(website);
+          if (!['http:', 'https:'].includes(parsedWebsite.protocol)) throw new Error();
+        } catch {
+          setWebsiteError(
+            "Saisissez une adresse complète commençant par http:// ou https://.",
+          );
+          return;
+        }
+      }
+      setWebsiteError("");
+    }
     setIsSaving(true);
     try {
       const payload = new FormData();
       payload.append(
         "name",
         scope === "identity" ? settings.name : initialSettings.name,
+      );
+      payload.append(
+        "website",
+        scope === "identity" ? settings.website : initialSettings.website,
       );
       payload.append(
         "enabledThemes",
@@ -100,10 +128,22 @@ export default function InstanceGeneralSettings() {
         scope === "identity" ? backgroundColor : initialBackgroundColor,
       );
       payload.append("deleteLogo", String(scope === "identity" && deleteLogo));
+      payload.append(
+        "emailTemplate",
+        scope === "email" ? draftEmailTemplate : initialSettings.emailTemplate,
+      );
       if (scope === "identity" && logo.file) payload.append("image", logo.file);
 
-      await profileApi.mutations.updateInstanceSettings(payload);
-      window.location.reload();
+      const updatedSettings = await profileApi.mutations.updateInstanceSettings(payload);
+      if (scope === "email") {
+        setSettings(updatedSettings);
+        setInitialSettings(updatedSettings);
+        setDraftEmailTemplate(updatedSettings.emailTemplate);
+        setIsEmailTemplateModalOpen(false);
+        toast.success("Le template d’e-mail a été mis à jour.");
+      } else {
+        window.location.reload();
+      }
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, "L’enregistrement a échoué."));
     } finally {
@@ -157,6 +197,18 @@ export default function InstanceGeneralSettings() {
     setPreviewedTheme(theme);
   };
 
+  const sendTestEmail = async () => {
+    setIsSendingTestEmail(true);
+    try {
+      const { message } = await profileApi.mutations.sendInstanceTemplateTestEmail();
+      toast.success(message);
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, "L’e-mail de test n’a pas pu être envoyé."));
+    } finally {
+      setIsSendingTestEmail(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid items-stretch gap-4 xl:grid-cols-2">
@@ -166,6 +218,7 @@ export default function InstanceGeneralSettings() {
         >
           <form
             className="flex h-full flex-col gap-6"
+            noValidate
             onSubmit={(event) => {
               event.preventDefault();
               void save("identity");
@@ -197,6 +250,33 @@ export default function InstanceGeneralSettings() {
                 />
               </label>
 
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">Site internet <span className="font-normal text-base-content/60">(optionnel)</span></span>
+                <input
+                  type="text"
+                  inputMode="url"
+                  autoComplete="url"
+                  aria-invalid={Boolean(websiteError)}
+                  aria-describedby={websiteError ? "instance-website-error" : undefined}
+                  className={`input input-bordered w-full max-w-xl focus:outline-none ${websiteError ? "input-error" : ""}`}
+                  value={settings.website}
+                  maxLength={2048}
+                  placeholder="https://www.exemple.fr"
+                  onChange={(event) => {
+                    if (websiteError) setWebsiteError("");
+                    setSettings((current) => ({
+                      ...current,
+                      website: event.target.value,
+                    }));
+                  }}
+                />
+                {websiteError && (
+                  <span id="instance-website-error" className="text-sm text-error">
+                    {websiteError}
+                  </span>
+                )}
+              </label>
+
               <div className="w-full max-w-sm self-center">
                 <InstanceLogoControls
                   temporaryImage={logo}
@@ -216,7 +296,7 @@ export default function InstanceGeneralSettings() {
                         }
                       : undefined
                   }
-                  helpText="JPG ou PNG · appliqué à la sauvegarde."
+                  helpText="JPG ou PNG"
                 />
               </div>
             </fieldset>
@@ -426,7 +506,25 @@ export default function InstanceGeneralSettings() {
           </form>
         </BoxWrapper>
       </div>
-
+      <EmailTemplateSettings
+        selectedTemplate={settings.emailTemplate}
+        draftTemplate={draftEmailTemplate}
+        instanceName={settings.name}
+        website={settings.website}
+        hasInstanceLogo={hasLogo || settings.hasLogo}
+        instanceColor={backgroundColor}
+        isOpen={isEmailTemplateModalOpen}
+        isSaving={isSaving}
+        isSendingTest={isSendingTestEmail}
+        onOpen={() => {
+          setDraftEmailTemplate(settings.emailTemplate);
+          setIsEmailTemplateModalOpen(true);
+        }}
+        onClose={() => setIsEmailTemplateModalOpen(false)}
+        onSelect={setDraftEmailTemplate}
+        onSave={() => void save("email")}
+        onSendTest={() => void sendTestEmail()}
+      />
     </div>
   );
 }
