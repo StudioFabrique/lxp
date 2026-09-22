@@ -187,15 +187,17 @@ export default function CourseList({
         }}
       />
 
-      <MultiCriteriaSearch
-        value={searchQuery}
-        onChange={(value) => {
-          setSearchQuery(value);
-          setPage(1);
-        }}
-        criteria={["titre du cours", "module", "parcours", "auteur"]}
-        placeholder="Rechercher un cours..."
-      />
+      {coursesList.length > 0 ? (
+        <MultiCriteriaSearch
+          value={searchQuery}
+          onChange={(value) => {
+            setSearchQuery(value);
+            setPage(1);
+          }}
+          criteria={["titre du cours", "module", "parcours", "auteur"]}
+          placeholder="Rechercher un cours..."
+        />
+      ) : null}
 
       {list && list.length > 0 ? (
         <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">

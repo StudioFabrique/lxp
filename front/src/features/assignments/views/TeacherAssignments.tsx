@@ -67,12 +67,14 @@ export default function TeacherAssignments() {
         onSelect={setSelectedParcours}
       />
 
-      <MultiCriteriaSearch
-        value={search}
-        onChange={setSearch}
-        criteria={["cours", "module", "parcours", "étudiant", "statut"]}
-        placeholder="Rechercher une évaluation ou un étudiant..."
-      />
+      {query.isPending || (query.data?.length ?? 0) > 0 || search ? (
+        <MultiCriteriaSearch
+          value={search}
+          onChange={setSearch}
+          criteria={["cours", "module", "parcours", "étudiant", "statut"]}
+          placeholder="Rechercher une évaluation ou un étudiant..."
+        />
+      ) : null}
 
       <div
         className="flex flex-wrap gap-2"

@@ -149,17 +149,19 @@ const RoleList = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <div data-page-tour="role-filters">
-        <MultiCriteriaSearch
-          value={searchValue}
-          onChange={(value) => {
-            setSearchValue(value);
-            setPage(1);
-          }}
-          placeholder="Rechercher un rôle..."
-          criteria={["nom", "libellé", "modèle"]}
-        />
-      </div>
+      {(rawData?.length ?? 0) > 0 ? (
+        <div data-page-tour="role-filters">
+          <MultiCriteriaSearch
+            value={searchValue}
+            onChange={(value) => {
+              setSearchValue(value);
+              setPage(1);
+            }}
+            placeholder="Rechercher un rôle..."
+            criteria={["nom", "libellé", "modèle"]}
+          />
+        </div>
+      ) : null}
 
       {isLoading ? (
         <div className="min-h-72">

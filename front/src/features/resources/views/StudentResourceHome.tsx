@@ -25,12 +25,14 @@ export default function StudentResourceHome() {
         description="Accédez à plus de ressources supplémentaires"
       />
 
-      <MultiCriteriaSearch
-        value={searchTerm}
-        onChange={handleOnChangeValue}
-        criteria={["titre"]}
-        placeholder="Rechercher une ressource..."
-      />
+      {(dataList?.length ?? 0) > 0 || searchTerm ? (
+        <MultiCriteriaSearch
+          value={searchTerm}
+          onChange={handleOnChangeValue}
+          criteria={["titre"]}
+          placeholder="Rechercher une ressource..."
+        />
+      ) : null}
 
       {dataList && dataList.length > 0 ? (
         <>

@@ -84,15 +84,17 @@ const ModuleHomeList = ({
         }}
       />
 
-      <MultiCriteriaSearch
-        value={searchQuery}
-        onChange={(value) => {
-          setSearchQuery(value);
-          setPage(1);
-        }}
-        criteria={["titre du module", "parcours", "formation"]}
-        placeholder="Rechercher un module..."
-      />
+      {modulesList.length > 0 ? (
+        <MultiCriteriaSearch
+          value={searchQuery}
+          onChange={(value) => {
+            setSearchQuery(value);
+            setPage(1);
+          }}
+          criteria={["titre du module", "parcours", "formation"]}
+          placeholder="Rechercher un module..."
+        />
+      ) : null}
 
       {list && list.length > 0 ? (
         <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
