@@ -106,43 +106,23 @@ const andriaLogoAttachment = () => {
     : undefined;
 };
 
-const andriaFooterLogoAttachment = (themeMode?: "light" | "dark") => {
-  const isDark = themeMode === "dark";
-  const logoPath = isDark
-    ? andriaLogoPath()
-    : [
-        path.join(
-          import.meta.dirname,
-          "..",
-          "..",
-          "mail-assets",
-          "andria-logo-light.png",
-        ),
-        path.join(
-          import.meta.dirname,
-          "..",
-          "..",
-          "..",
-          "front",
-          "src",
-          "assets",
-          "andria-logo",
-          "logo-lightmode-email.png",
-        ),
-      ].find((candidate) => fs.existsSync(candidate));
+const andriaFooterLogoAttachment = (_themeMode?: "light" | "dark") => {
+  const logoPaths = [
+    {
+      path: [
+        path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo-light.png"),
+        path.join(import.meta.dirname, "..", "..", "..", "front", "src", "assets", "andria-logo", "logo-lightmode-email.png"),
+      ].find((candidate) => fs.existsSync(candidate)),
+      cid: ANDRIA_FOOTER_LOGO_LIGHT_CID,
+    },
+    { path: andriaLogoPath(), cid: ANDRIA_FOOTER_LOGO_DARK_CID },
+  ];
 
-  return logoPath
-    ? [
-        {
-          filename: "andria-footer-logo.png",
-          path: logoPath,
-          contentType: "image/png",
-          cid: isDark
-            ? ANDRIA_FOOTER_LOGO_DARK_CID
-            : ANDRIA_FOOTER_LOGO_LIGHT_CID,
-        },
-      ]
-    : [];
+  return logoPaths.flatMap(({ path: logoPath, cid }) =>
+    logoPath
+      ? [{ filename: `${cid}.png`, path: logoPath, contentType: "image/png", cid }]
+      : [],
+  );
 };
 
 /**
@@ -278,8 +258,7 @@ export async function sendInstanceTemplateTestEmail(email: string) {
   const context = await mailContext();
   const name = organizationName(context);
   const message = layout(
-    `<p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.65">E-mail de test</p>
-    <h1 style="margin:0 0 16px;font-size:26px;line-height:34px">Votre template est prêt</h1>
+    `<h1 style="margin:0 0 16px;font-size:26px;line-height:34px">Votre template est prêt</h1>
     <p style="margin:0">Voici un aperçu réel des e-mails envoyés par <strong>${escapeHtml(name)}</strong>.</p>
     ${button(instanceHomeUrl(), "Accéder au site")}`,
     name,

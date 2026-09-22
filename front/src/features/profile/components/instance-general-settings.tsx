@@ -247,7 +247,7 @@ export default function InstanceGeneralSettings() {
                         }
                       : undefined
                   }
-                  helpText="JPG ou PNG · appliqué à la sauvegarde."
+                  helpText="JPG ou PNG"
                 />
               </div>
             </fieldset>

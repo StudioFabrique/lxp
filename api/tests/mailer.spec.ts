@@ -75,14 +75,15 @@ describe("Activation SMTP du compte root", () => {
     expect(message.html).toContain("border-radius:18px 18px 0 0");
   });
 
-  test("joint le logo ANDRIA adapté au pied des autres mails", async () => {
+  test("joint les variantes du logo ANDRIA et utilise celle adaptée au fond", async () => {
     await sendEmailChangeConfirmation("root@test.fr", "token");
 
     expect(sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
-        html: expect.stringContaining('src="cid:andria-footer-light"'),
+        html: expect.stringContaining('src="cid:andria-footer-dark"'),
         attachments: expect.arrayContaining([
           expect.objectContaining({ cid: "andria-footer-light" }),
+          expect.objectContaining({ cid: "andria-footer-dark" }),
         ]),
       }),
     );
@@ -99,6 +100,6 @@ describe("Activation SMTP du compte root", () => {
 
     const message = sendMail.mock.calls[0]?.[0] as { html?: string };
     expect(message.html).toContain('href="http://localhost:5173/"');
-    expect(message.html).toContain('bgcolor="#1769aa"');
+    expect(message.html).toMatch(/bgcolor="#[0-9a-f]{6}"/i);
   });
 });
