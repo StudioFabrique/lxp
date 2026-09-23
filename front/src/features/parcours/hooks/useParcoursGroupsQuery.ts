@@ -18,10 +18,16 @@ export function useParcoursGroupsQuery(parcoursId: number) {
     })
     .filter(Boolean) as string[];
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [...parcoursKeys.detail(parcoursId), "groups", groupIds],
     queryFn: () =>
       parcoursApi.queries.getStudentsByGroupIds(groupIds) as Promise<Group[]>,
     enabled: parcoursQuery.isSuccess && groupIds.length > 0,
   });
+
+  return {
+    ...query,
+    isPending: parcoursQuery.isPending || (groupIds.length > 0 && query.isPending),
+    isError: parcoursQuery.isError || query.isError,
+  };
 }

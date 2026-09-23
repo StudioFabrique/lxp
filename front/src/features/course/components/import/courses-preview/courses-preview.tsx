@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { useState } from "react";
 import Header from "../../../../../components/headers/Header";
 import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
@@ -195,7 +196,7 @@ const CoursesPreview = ({
                     ) : (
                       <div className="flex items-center gap-2 w-full group">
                         <span className="truncate text-sm font-bold capitalize">
-                          {selectedCourse.title}
+                          {formatTitle(selectedCourse.title)}
                         </span>
                         <button
                           onClick={() => {

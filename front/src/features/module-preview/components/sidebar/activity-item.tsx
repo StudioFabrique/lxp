@@ -53,7 +53,8 @@ export default function ActivityItem({
   return (
     <button
       ref={ref}
-      onClick={onSelect}
+      onClick={disabled ? undefined : onSelect}
+      disabled={disabled}
       className={cn(
         "btn btn-ghost justify-start text-start btn-sm w-full h-6 transition-all opacity-100 border-t-2 border-transparent",
         {
@@ -65,7 +66,7 @@ export default function ActivityItem({
     >
       {activityIconType(activity.type, 4)}
       <span
-        className={`truncate w-[90%] first-letter:uppercase ${isSelected && "underline"}`}
+        className={cn("truncate w-[90%] first-letter:uppercase", isSelected && "underline")}
       >
         {formatTitle(activity.title)}
       </span>

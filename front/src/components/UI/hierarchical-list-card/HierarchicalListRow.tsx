@@ -5,6 +5,7 @@ import { type Key, type ReactNode, useState } from "react";
 import { Link, type LinkProps } from "react-router";
 
 import PermissionGuard from "../../guards/PermissionGuard";
+import { cn } from "../../../utils/cn";
 
 export type HierarchicalListCardItem = {
   id: Key;
@@ -57,7 +58,7 @@ type HierarchicalListItemActionsProps = {
 export const HierarchicalListItemActions = ({
   title,
   actions,
-  dismissOverflow = () => {},
+  dismissOverflow,
   menuControl,
 }: HierarchicalListItemActionsProps) => (
   <DropdownMenu.Root
@@ -82,15 +83,13 @@ export const HierarchicalListItemActions = ({
         className="menu z-100 w-max rounded-box border border-base-300 bg-base-100 p-2 shadow-lg"
       >
         {actions.map((action) => {
-          const className = `flex w-full cursor-pointer items-center gap-2 rounded-field px-3 py-2 text-sm outline-none hover:bg-base-200 focus:bg-base-200 data-[highlighted]:bg-base-200 [&>svg]:size-4 ${
-            action.destructive ? "text-error" : ""
-          }`;
+          const className = cn("flex w-full cursor-pointer items-center gap-2 rounded-field px-3 py-2 text-sm outline-none hover:bg-base-200 focus:bg-base-200 data-[highlighted]:bg-base-200 [&>svg]:size-4", action.destructive && "text-error");
           const menuItem = (
             <DropdownMenu.Item
               key={action.label}
               asChild
               onSelect={() => {
-                dismissOverflow();
+                dismissOverflow?.();
                 action.onSelect?.();
               }}
             >
@@ -131,7 +130,7 @@ export const HierarchicalListRow = ({
   hideDivider = false,
 }: {
   item: HierarchicalListCardItem;
-  dismissOverflow: () => void;
+  dismissOverflow?: () => void;
   hideDivider?: boolean;
 }) => {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
@@ -139,14 +138,18 @@ export const HierarchicalListRow = ({
     open: isActionMenuOpen,
     onOpenChange: setIsActionMenuOpen,
   };
+  const handleDismissOverflow = () => {
+    setIsActionMenuOpen(false);
+    dismissOverflow?.();
+  };
   const itemAction =
     typeof item.action === "function"
-      ? item.action(dismissOverflow, menuControl)
+      ? item.action(handleDismissOverflow, menuControl)
       : item.action;
 
   return (
     <li
-      className={`group/row list-row relative mx-2 hover:bg-accent/2 ${item.to || item.onClick ? "cursor-pointer" : ""} ${hideDivider ? "after:hidden" : ""}`}
+      className={cn("group/row list-row relative mx-2 hover:bg-accent/2", (item.to || item.onClick) && "cursor-pointer", hideDivider && "after:hidden")}
       onContextMenu={(event) => {
         if (!itemAction) return;
 
@@ -170,7 +173,7 @@ export const HierarchicalListRow = ({
 
       <div className="pointer-events-none relative z-10 list-col-grow min-w-0 self-center">
         {item.description ? (
-          <div className="truncate text-xs font-light opacity-60">
+          <div className="truncate text-xs text-base-content/80">
             {item.description}
           </div>
         ) : null}
@@ -184,7 +187,7 @@ export const HierarchicalListRow = ({
         </div>
 
         {item.subDescription ? (
-          <div className="truncate text-xs font-light opacity-60">
+          <div className="truncate text-xs text-base-content/80">
             {item.subDescription}
           </div>
         ) : null}
@@ -192,7 +195,7 @@ export const HierarchicalListRow = ({
 
       {itemAction || item.to ? (
         <div
-          className={`relative z-10 ml-auto self-center justify-self-end ${item.onClick ? "pointer-events-none" : ""}`}
+          className={cn("relative z-10 ml-auto self-center justify-self-end", item.onClick && "pointer-events-none")}
         >
           {itemAction ??
             (item.to ? (

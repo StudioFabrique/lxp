@@ -4,6 +4,7 @@ import { onboardingApi } from "../api/onboarding.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 import { clearPendingRootActivation } from "../pending-root-activation";
+import { cn } from "../../../utils/cn";
 
 const ConfirmEmail = () => {
   const [searchParams] = useSearchParams();
@@ -44,10 +45,14 @@ const ConfirmEmail = () => {
     <AuthPageWrapper title="Validation de l'adresse email">
       <div className="flex min-h-40 flex-col justify-center gap-4 text-center">
         {state === "loading" && (
-          <span className="loading loading-spinner loading-md mx-auto" />
+          <div role="status" aria-label="Validation de l'adresse email" className="space-y-3">
+            <span className="sr-only">Validation de l'adresse email…</span>
+            <div className="skeleton mx-auto h-5 w-2/3" />
+            <div className="skeleton mx-auto h-4 w-1/2" />
+          </div>
         )}
         <p
-          className={state === "error" ? "text-error" : "text-base-content/70"}
+          className={cn(state === "error" ? "text-error" : "text-base-content/70")}
         >
           {message}
         </p>

@@ -10,7 +10,7 @@ import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutati
 import { addIdToObject } from "../../../../../utils/helpers/add-id-to-objects";
 
 type Props = {
-  onCloseDrawer: (id: string) => void;
+  onCloseDrawer?: (id: string) => void;
   importedSkills: ImportedSkill[];
   onImport: (skills: ImportedSkill[]) => void;
 };
@@ -27,7 +27,7 @@ const ImportSkills: FC<Props> = ({
   const { importSkills } = useParcoursSkillMutations(parcoursId);
 
   const handleCloseDrawer = () => {
-    onCloseDrawer("import-data");
+    onCloseDrawer?.("import-data");
   };
 
   const postSelectedSkills = (skills: ImportedSkill[]) => {

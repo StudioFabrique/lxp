@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 // ModuleDetailsModal.tsx
 
 import { useEffect, useRef } from "react";
@@ -6,6 +7,7 @@ import { normalizeImageSource } from "../../../../../../src/utils/images/image-s
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import { X } from "lucide-react";
 import type Module from "../../../../../utils/interfaces/module";
+import { cn } from "../../../../../utils/cn";
 
 export interface TimelineDetailsPosition {
   anchor: DOMRect;
@@ -89,13 +91,11 @@ const ModuleTimelineDetailsPopover = ({
     <div
       ref={cardRef}
       style={style}
-      className={`absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-gray-200 animate-in fade-in zoom-in-95 duration-200 ${
-        isBottomHalf ? "origin-bottom-left" : "origin-top-left"
-      }`}
+      className={cn("absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-base-300 animate-in fade-in zoom-in-95 duration-200", isBottomHalf ? "origin-bottom-left" : "origin-top-left")}
     >
       {/* --- BANNER IMAGE --- */}
       {currentModule.thumb && (
-        <figure className="h-32 w-full relative bg-gray-100">
+        <figure className="h-32 w-full relative bg-base-200">
           <button
             onClick={onClose}
             className="z-50 absolute top-2 right-2 btn btn-xs btn-circle"
@@ -104,7 +104,7 @@ const ModuleTimelineDetailsPopover = ({
           </button>
           <img
             src={normalizeImageSource(currentModule.thumb)}
-            alt={currentModule.title}
+            alt={formatTitle(currentModule.title)}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-base-100 via-transparent to-transparent"></div>
@@ -115,7 +115,7 @@ const ModuleTimelineDetailsPopover = ({
         {/* Header with Close Button */}
         <div className="flex justify-between items-start">
           <h2 className="card-title text-lg leading-tight">
-            {currentModule.title}
+            {formatTitle(currentModule.title)}
           </h2>
           {!currentModule.thumb && (
             <button
@@ -132,7 +132,7 @@ const ModuleTimelineDetailsPopover = ({
         </div>
 
         {currentModule.description && (
-          <p className="text-sm py-2 text-gray-600 line-clamp-4">
+          <p className="text-sm py-2 text-base-content/80 line-clamp-4">
             {currentModule.description}
           </p>
         )}
@@ -141,7 +141,7 @@ const ModuleTimelineDetailsPopover = ({
         {currentModule.minDate && currentModule.maxDate && (
           <div className="grid grid-cols-2 gap-2 bg-base-200/50 p-3 rounded-lg border border-base-200 text-xs">
             <div>
-              <span className="uppercase font-bold text-gray-400 block mb-1">
+              <span className="uppercase font-bold text-base-content/70 block mb-1">
                 Début
               </span>
               <span className="font-semibold">
@@ -149,7 +149,7 @@ const ModuleTimelineDetailsPopover = ({
               </span>
             </div>
             <div>
-              <span className="uppercase font-bold text-gray-400 block mb-1">
+              <span className="uppercase font-bold text-base-content/70 block mb-1">
                 Fin
               </span>
               <span className="font-semibold">

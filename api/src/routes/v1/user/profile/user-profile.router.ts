@@ -14,13 +14,14 @@ import { checkValidatorResult } from "../../../../middleware/validators.ts";
 import {
   httpGetLearningProfile,
   httpPatchLearningProfile,
-  httpPutFormationAssessment,
+  httpPutModuleAssessment,
 } from "../../../../controllers/user/profile/http-learning-profile.ts";
 import {
   FORMATION_LEVELS,
   LEARNING_PACES,
   LEARNING_PREFERENCES,
 } from "../../../../config/learning-profile.ts";
+import { newPasswordValidate } from "../../../../helpers/custom-validators.ts";
 
 const userProfileRouter = Router();
 
@@ -56,14 +57,14 @@ userProfileRouter.patch(
 );
 
 userProfileRouter.put(
-  "/learning/formations/:formationId",
+  "/learning/modules/:moduleId",
   checkPermissions("cursus", "update"),
   [
-    param("formationId").isInt({ min: 1 }),
+    param("moduleId").isInt({ min: 1 }),
     body("level").isIn(FORMATION_LEVELS),
     checkValidatorResult,
   ],
-  httpPutFormationAssessment,
+  httpPutModuleAssessment,
 );
 
 userProfileRouter.get(
@@ -84,6 +85,9 @@ userProfileRouter.put(
 userProfileRouter.put(
   "/password",
   checkPermissions("cursus", "update"),
+  body("oldPass").isString().notEmpty(),
+  body("newPass").isString().custom(newPasswordValidate),
+  checkValidatorResult,
   httpUpdateUserPassword,
 );
 

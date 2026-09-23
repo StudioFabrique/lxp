@@ -44,7 +44,7 @@ jest.unstable_mockModule("../../../utils/db.ts", () => ({
 jest.unstable_mockModule("../../../utils/require-database-row.ts", () => ({
   requireDatabaseRow,
 }));
-const { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates } =
+const { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates, httpReplaceCourseCalendarColor } =
   await import("../../../controllers/course/http-course-calendar.ts");
 
 function response() {
@@ -116,6 +116,15 @@ describe("persistance du calendrier", () => {
       dates: [],
       calendarInitialized: true,
     });
+    expect(rootCourseModel.where).toHaveBeenCalledWith({ id: 1 });
+  });
+  it("enregistre la couleur du cours indépendamment de ses dates", async () => {
+    await httpReplaceCourseCalendarColor(
+      { params: { courseId: "1" }, body: { calendarColor: "accent" } } as unknown as Request,
+      response(),
+      jest.fn(),
+    );
+    expect(update).toHaveBeenCalledWith({ calendarColor: "accent" });
     expect(rootCourseModel.where).toHaveBeenCalledWith({ id: 1 });
   });
 });

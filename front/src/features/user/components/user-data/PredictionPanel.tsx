@@ -20,6 +20,7 @@ import type {
   FiredAlertRule,
   IndicatorsPrediction,
 } from "../../interfaces/indicators";
+import { cn } from "../../../../utils/cn";
 
 interface PredictionPanelProps {
   prediction: IndicatorsPrediction;
@@ -42,7 +43,7 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
     <section className="flex flex-col gap-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-xl font-bold">Risque de décrochage</h2>
-        <span className={`badge badge-soft ${severityBadgeClass(level)}`}>
+        <span className={cn("badge badge-soft", severityBadgeClass(level))}>
           {formatRiskLevel(level)}
         </span>
       </div>
@@ -133,7 +134,7 @@ function FiredRule({ rule }: { rule: FiredAlertRule }) {
   return (
     <li className="flex flex-col gap-y-1">
       <div className="flex items-center gap-x-2">
-        <span className={`badge badge-xs ${severityBadgeClass(rule.level)}`} />
+        <span className={cn("badge badge-xs", severityBadgeClass(rule.level))} />
         <p className="text-sm font-bold">{formatAlertRuleName(rule.name)}</p>
       </div>
 

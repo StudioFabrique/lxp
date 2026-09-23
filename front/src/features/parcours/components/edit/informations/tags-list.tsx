@@ -14,8 +14,8 @@ function TagsList(props: Props) {
       <BoxWrapper>
         <ul className="w-[34rem] flex flex-wrap gap-2">
           {sortArray(props.list, "name").map((tag) => (
-            <div key={tag.id} onClick={() => props.onAddTag(tag.id)}>
-              <TagItem tag={tag} noIcon={true} />
+            <div key={tag.id}>
+              <TagItem tag={tag} noIcon onClick={() => props.onAddTag(tag.id)} />
             </div>
           ))}
         </ul>

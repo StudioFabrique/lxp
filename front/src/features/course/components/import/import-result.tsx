@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import {
   AlertCircle,
   Check,
@@ -198,7 +199,7 @@ const ImportResult = ({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <p className="truncate text-sm font-semibold">
-                      {item.title}
+                      {formatTitle(item.title)}
                     </p>
                     {item.kind === "course" && (
                       <span className="badge badge-xs badge-outline">

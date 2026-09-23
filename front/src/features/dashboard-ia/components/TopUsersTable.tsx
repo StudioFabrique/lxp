@@ -5,6 +5,7 @@ import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
 import TablePagination from "../../../components/table/TablePagination";
 import type { TopUser } from "../types";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   dataList: TopUser[];
@@ -103,7 +104,7 @@ const TopUsersTable = ({
                     ? "Apprenant"
                     : "Équipe pédagogique"}
                 </td>
-                <td className={user.groupName ? "" : "text-center"}>
+                <td className={cn(user.groupName ? "" : "text-center")}>
                   {user.groupName ?? " - "}
                 </td>
                 <td>{user.totalTokens}</td>

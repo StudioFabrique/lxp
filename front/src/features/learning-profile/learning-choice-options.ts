@@ -11,8 +11,7 @@ export const preferenceOptions: Array<{ value: LearningPreference; label: string
   { value: "concrete_examples", label: "Exemples concrets" },
   { value: "step_by_step", label: "Pas-à-pas" },
   { value: "summary", label: "Synthèse" },
-  { value: "practical_exercises", label: "Exercices pratiques" },
-  { value: "visual_aids", label: "Supports visuels" },
+  { value: "practical_exercises", label: "Questions d’entraînement" },
 ];
 
 export const levelOptions: Array<{ value: FormationLevel; label: string; description: string }> = [

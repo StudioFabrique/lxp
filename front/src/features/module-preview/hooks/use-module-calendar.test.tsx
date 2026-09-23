@@ -53,6 +53,13 @@ afterEach(() => {
 });
 
 describe("planification des cours du module", () => {
+  it("enregistre la couleur du cours et recolore toutes ses plages", async () => {
+    await render();
+    vi.mocked(apiClient.put).mockResolvedValueOnce({ data: { id: 1, dates: initialDates, calendarColor: "accent" } });
+    await act(async () => { expect(await store.saveColor(1, "accent")).toBe(true); });
+    expect(apiClient.put).toHaveBeenCalledWith("/course/calendar/1/color", { calendarColor: "accent" });
+    expect(store.events.filter(event => event.id.startsWith("1:")).every(event => event.color === "accent")).toBe(true);
+  });
   it("revient au mois du cours, surligne son item et réserve le popover au clic sur le calendrier", async () => {
     const scrollIntoView = vi.fn();
     Object.defineProperty(HTMLElement.prototype, "scrollIntoView", { configurable: true, value: scrollIntoView });

@@ -1,21 +1,26 @@
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { useContext, useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, LogOut } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
+import { AuthContext } from "../../../store/AuthProvider";
 import { useAuthBackground } from "../hooks/useAuthBackground";
 import LoginRightColumn from "./LoginRightColumn";
 import LoginGuard from "../../../components/guards/LoginGuard";
 import { useLocation, useNavigate } from "react-router";
 import { profileApi } from "../../profile/api/profile.api";
 import { INSTANCE_LOGO } from "../../../config/urls";
+import { cn } from "../../../utils/cn";
 
 const AuthLayout = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { logout } = useContext(AuthContext);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isStudentOnboarding = pathname === "/student/onboarding";
+  const isInstanceSetup = pathname === "/instance-setup";
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
   const shouldLoadBranding = showOrganizationName || isStudentOnboarding;
@@ -41,25 +46,46 @@ const AuthLayout = () => {
   }, [shouldLoadBranding]);
 
   return (
-    <div className={`relative min-h-screen w-full font-inter bg-base-100 flex ${isStudentOnboarding ? "py-4" : "py-12"}`}>
+    <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isStudentOnboarding ? "py-4" : "py-12")}>
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
-        <div className={`relative flex flex-col items-center px-8 w-full h-full ${isStudentOnboarding ? "min-h-[calc(100vh-2rem)]" : "min-h-[calc(100vh-6rem)]"}`}>
-          <button
-            onClick={toggleTheme}
-            className={`absolute right-4 z-10 btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content lg:right-8 ${isStudentOnboarding ? "top-8" : "top-0"}`}
-            aria-label="Changer le thème"
-          >
-            {theme === "light" ? (
-              <Moon className="w-5 h-5" />
-            ) : (
-              <Sun className="w-5 h-5" />
+        <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isStudentOnboarding ? "min-h-[calc(100vh-2rem)]" : "min-h-[calc(100vh-6rem)]")}>
+          <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-8" : "top-0")}>
+            {isStudentOnboarding && (
+              <button
+                type="button"
+                className="btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content"
+                aria-label="Se déconnecter"
+                title="Se déconnecter"
+                disabled={isLoggingOut}
+                onClick={async () => {
+                  setIsLoggingOut(true);
+                  await logout();
+                  navigate("/login", { replace: true });
+                }}
+              >
+                <LogOut className="size-5" />
+              </button>
             )}
-          </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content"
+              aria-label="Changer le thème"
+            >
+              {theme === "light" ? (
+                <Moon className="size-5" />
+              ) : (
+                <Sun className="size-5" />
+              )}
+            </button>
+          </div>
 
           <div
-            className={`mx-auto flex h-full flex-col ${
-              isStudentOnboarding ? "w-full max-w-2xl" : "w-100"
-            }`}
+            className={cn("mx-auto flex h-full flex-col", isStudentOnboarding
+                ? "w-full max-w-2xl"
+                : isInstanceSetup
+                  ? "w-full max-w-xl"
+                  : "w-100")}
           >
             {!isStudentOnboarding && (
               <div
@@ -83,11 +109,12 @@ const AuthLayout = () => {
             </div>
 
             {isStudentOnboarding && (
-              <div className="mt-3 flex min-h-8 items-center justify-center gap-4" aria-label="Partenaires de la plateforme">
+              <div className="mt-3 flex min-h-8 select-none items-center justify-center gap-4" aria-label="Partenaires de la plateforme">
                 <img
                   className="h-6 w-auto"
                   src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
                   alt="ANDRiA"
+                  draggable={false}
                 />
                 {hasOrganizationLogo && (
                   <>
@@ -96,6 +123,7 @@ const AuthLayout = () => {
                       className="max-h-8 max-w-28 object-contain"
                       src={INSTANCE_LOGO}
                       alt={organizationName ? `Logo ${organizationName}` : "Logo de l’organisme"}
+                      draggable={false}
                     />
                   </>
                 )}

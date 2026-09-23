@@ -5,6 +5,7 @@ import type Lesson from "../../../../utils/interfaces/lesson";
 import type { Activity } from "../../../../utils/interfaces/activity";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
+import { cn } from "../../../../utils/cn";
 
 type MobileModuleNavigationProps = {
   module: Module;
@@ -64,11 +65,9 @@ export default function MobileModuleNavigation({
         return (
           <div className="w-full" key={course.id}>
             <div
-              className={`relative z-10 overflow-hidden rounded-lg ${
-                isSelectedCourse
+              className={cn("relative z-10 overflow-hidden rounded-lg", isSelectedCourse
                   ? "bg-secondary/60"
-                  : "bg-secondary/50 hover:bg-secondary/75"
-              }`}
+                  : "bg-secondary/50 hover:bg-secondary/75")}
             >
               <button
                 type="button"
@@ -113,11 +112,9 @@ export default function MobileModuleNavigation({
                         aria-label={`Leçon ${lessonIndex + 1} : ${formatTitle(lesson.title)}`}
                         aria-current={isSelectedLesson ? "step" : undefined}
                         onClick={() => lesson.id && onSelectLesson(lesson.id)}
-                        className={`h-8 w-full truncate rounded-lg px-2 text-left text-[0.65rem] font-medium text-primary-content transition-colors ${
-                          isSelectedLesson
+                        className={cn("h-8 w-full truncate rounded-lg px-2 text-left text-[0.65rem] font-medium text-primary-content transition-colors", isSelectedLesson
                             ? "bg-primary"
-                            : "bg-primary/50 hover:bg-primary/80"
-                        }`}
+                            : "bg-primary/50 hover:bg-primary/80")}
                       >
                         Leçon {lessonIndex + 1}
                       </button>
@@ -136,11 +133,9 @@ export default function MobileModuleNavigation({
                                   : undefined
                               }
                               onClick={() => onSelectActivity(activity)}
-                              className={`flex h-7 w-full items-center gap-1 rounded-md px-1 text-left text-[0.58rem] transition-colors ${
-                                activity.id === selectedActivity?.id
+                              className={cn("flex h-7 w-full items-center gap-1 rounded-md px-1 text-left text-[0.58rem] transition-colors", activity.id === selectedActivity?.id
                                   ? "bg-base-300 font-semibold text-base-content"
-                                  : "hover:bg-base-300/70"
-                              }`}
+                                  : "hover:bg-base-300/70")}
                             >
                               <span className="shrink-0">
                                 {activityIconType(activity.type, 3)}
@@ -165,11 +160,9 @@ export default function MobileModuleNavigation({
                         : undefined
                     }
                     onClick={() => onSelectAssignment(course.id)}
-                    className={`flex h-8 w-full items-center justify-between gap-1 rounded-lg px-2 text-left text-[0.65rem] font-medium transition-colors ${
-                      selectedAssignmentCourseId === course.id
+                    className={cn("flex h-8 w-full items-center justify-between gap-1 rounded-lg px-2 text-left text-[0.65rem] font-medium transition-colors", selectedAssignmentCourseId === course.id
                         ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
-                        : "bg-warning/25 text-warning-content hover:bg-warning/40"
-                    }`}
+                        : "bg-warning/25 text-warning-content hover:bg-warning/40")}
                   >
                     <span className="flex min-w-0 items-center gap-1">
                       <ClipboardCheck className="size-3.5 shrink-0" />

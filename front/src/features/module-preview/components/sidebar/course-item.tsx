@@ -387,9 +387,7 @@ const CourseItem = ({
               <span className="flex-1 min-w-0">
                 <p
                   ref={descriptionRef}
-                  className={`text-sm wrap-break-word overflow-hidden min-w-0 first-letter:uppercase ${
-                    !isDescriptionExpanded ? "line-clamp-1" : ""
-                  }`}
+                  className={cn("text-sm wrap-break-word overflow-hidden min-w-0 first-letter:uppercase", !isDescriptionExpanded && "line-clamp-1")}
                 >
                   {course.description}
                 </p>

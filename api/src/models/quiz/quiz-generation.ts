@@ -79,13 +79,14 @@ export async function prepareEndingQuizGeneration(
     return { kind: "cached" as const, questions: cachedQuiz.questions };
   }
 
+  const profile = await buildStudentProfile(userId, courseId, course.courseSlug ?? undefined);
   const stream = await aiApiClient.postStream("/quiz/generate/stream", {
     subject: userId,
     accept: "application/json",
     body: {
       course_slug: course.courseSlug,
       num_questions: 10,
-      profile: { user_id: userId, course_id: String(courseId) },
+      profile,
     },
   });
   let quizId: number | undefined;

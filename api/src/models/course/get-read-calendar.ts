@@ -37,7 +37,7 @@ export function getParcoursCalendar(parcoursId: number, scope: AccessScope) {
                 ? and(row.isPublished.eq(true), row.visibility.eq(true))
                 : all(),
             )
-            .select("id", "title", "description", "dates")
+            .select("id", "title", "description", "dates", "calendarColor")
             .include("assignment", (related59) =>
               related59.select("id", "dueAt"),
             )

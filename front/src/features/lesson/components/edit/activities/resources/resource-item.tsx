@@ -4,6 +4,7 @@ import SubWrapper from "../../../../../../../src/components/wrappers/SubBoxWrapp
 import { displaySize } from "../../../../../../utils/helpers/size-unit-conversion";
 import { UploadProgressValues } from "./resources-list";
 import FileUploadStatus from "./file-upload-status";
+import { cn } from "../../../../../../utils/cn";
 
 type Props = {
   resource: { name: string; file: File; hasError: boolean };
@@ -30,7 +31,7 @@ function ResourceItem({
         <span className="w-full flex items-center">
           <div className="w-1/6 flex gap-x-2 items-center">
             <GripVertical
-              className={`${isLoading ? "text-primary/50" : "20"}`}
+              className={cn(isLoading ? "text-primary/50" : "20")}
             />
             {isLoading ? (
               <FileUploadStatus

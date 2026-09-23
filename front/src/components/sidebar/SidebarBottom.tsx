@@ -18,6 +18,7 @@ import {
   sidebarControlClassName,
   sidebarListClassName,
 } from "./sidebar-styles";
+import { cn } from "../../utils/cn";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -71,7 +72,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         <li className="flex w-full justify-center 2xl:block">
           <button
             type="button"
-            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
+            className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
             onClick={handleClickTutorial}
             data-tip="Relancer le tutoriel"
             aria-label="Relancer le tutoriel"
@@ -88,7 +89,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         <li className="flex w-full justify-center 2xl:block">
           <button
             type="button"
-            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
+            className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
             data-tip="Quitter la démonstration"
             data-demo-tour="demo-exit"
             onClick={() => setIsExitOpen(true)}
@@ -102,7 +103,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         <li className="flex w-full justify-center 2xl:block">
           <button
             type="button"
-            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
+            className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
             data-tip="Déconnexion"
             onClick={handleClickLogout}
             aria-label="Déconnexion"

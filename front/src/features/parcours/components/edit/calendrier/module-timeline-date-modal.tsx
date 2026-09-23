@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -102,15 +103,15 @@ const ModuleTimelineDateModal = ({
         <div className="card bg-base-100 shadow-xl w-full">
           {/* --- CARD IMAGE --- */}
           {currentModule.thumb && (
-            <figure className="h-48 w-full relative overflow-hidden bg-gray-100">
+            <figure className="h-48 w-full relative overflow-hidden bg-base-200">
               <img
                 src={normalizeImageSource(currentModule.thumb)}
-                alt={currentModule.title}
+                alt={formatTitle(currentModule.title)}
                 className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
               <h2 className="absolute bottom-4 left-4 text-white text-2xl font-bold drop-shadow-md">
-                {currentModule.title}
+                {formatTitle(currentModule.title)}
               </h2>
             </figure>
           )}
@@ -118,10 +119,10 @@ const ModuleTimelineDateModal = ({
           {/* --- CARD BODY (FORM) --- */}
           <div className="card-body gap-4">
             {!currentModule.thumb && (
-              <h2 className="card-title text-2xl">{currentModule.title}</h2>
+              <h2 className="card-title text-2xl">{formatTitle(currentModule.title)}</h2>
             )}
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-base-content/70">
               Modifiez les dates de disponibilité pour ce module.
             </p>
 

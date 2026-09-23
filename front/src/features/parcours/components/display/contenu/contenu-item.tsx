@@ -70,15 +70,13 @@ const ContenuItem = ({
       </div>
 
       <div
-        className={`flex min-h-20 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg p-4 shadow-sm transition-colors select-none ${
-          isSelected
+        className={cn("flex min-h-20 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg p-4 shadow-sm transition-colors select-none", isSelected
             ? "bg-primary text-primary-content shadow-md"
-            : "bg-base-100 text-base-content group-hover:bg-base-200"
-        }`}
+            : "bg-base-100 text-base-content group-hover:bg-base-200")}
       >
         <div className="min-w-0 flex-1">
           <p
-            className={`text-sm opacity-80 ${isSelected ? "text-primary-content" : ""}`}
+            className={cn("text-sm opacity-80", isSelected && "text-primary-content")}
           >{`Module ${iterationCount}`}</p>
           <p className="wrap-break-word text-base font-semibold">
             {formatTitle(module.title)}

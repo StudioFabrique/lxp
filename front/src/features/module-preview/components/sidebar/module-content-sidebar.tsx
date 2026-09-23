@@ -9,6 +9,7 @@ import { useLocation, useSearchParams } from "react-router";
 import MobileModuleNavigation from "./mobile-module-navigation";
 
 import type { ModuleCalendarStore } from "../../hooks/use-module-calendar";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   calendar?: ModuleCalendarStore;
@@ -68,7 +69,7 @@ const ModuleContentSidebar = ({
         onLessonScrolled={acknowledgeLessonScroll}
       />
 
-      <div className={calendar ? "block" : "hidden md:block"}>
+      <div className={cn(calendar ? "block" : "hidden md:block")}>
         <SidebarCoursesList
           calendarMode={Boolean(calendar)}
           calendarSelectedCourseId={calendar?.selection?.courseId}

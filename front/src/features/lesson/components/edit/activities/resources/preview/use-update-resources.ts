@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { lessonApi } from "../../../../../api/lesson.api";
 import type {
   Activity,
@@ -25,6 +25,7 @@ const useUpdateResources = (
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const uploadControllerRef = useRef<AbortController | null>(null);
   const { handleDragEnd, submit, setSubmit } = useDragAndDrop({
     items: resources,
     onReorder: setResources,
@@ -115,6 +116,8 @@ const useUpdateResources = (
   };
 
   const handleAddResource = () => {
+    const controller = new AbortController();
+    uploadControllerRef.current = controller;
     const formData = new FormData();
 
     uploadList?.forEach((file) => {
@@ -144,8 +147,9 @@ const useUpdateResources = (
           (progressEvent.loaded * 100) / progressEvent.total,
         );
         setUploadProgress(progress);
-      })
+      }, controller.signal)
       .then((data: { success: boolean; message: string }) => {
+        if (controller.signal.aborted) return;
         if (data.success) toast.success(data.message);
         setUploadList([]);
         toast.success(data.message);
@@ -154,13 +158,24 @@ const useUpdateResources = (
         onSubmit?.();
       })
       .catch((err: any) => {
+        if (controller.signal.aborted) return;
         setError(
           err.response?.data?.message ||
             err.message ||
             "Une erreur est survenue",
         );
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (uploadControllerRef.current === controller) uploadControllerRef.current = null;
+        setIsLoading(false);
+      });
+  };
+
+  const cancelUpload = () => {
+    uploadControllerRef.current?.abort();
+    setUploadList([]);
+    setIsAdding(false);
+    onCancel();
   };
 
   const handleCancel = () => {
@@ -230,6 +245,7 @@ const useUpdateResources = (
     resourceName,
     setResourceName,
     handleAddResource,
+    cancelUpload,
     handleCancel,
     handleCancelDelete,
     handleDeleteResource,

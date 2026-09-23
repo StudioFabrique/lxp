@@ -61,6 +61,7 @@ const mutations = {
     parent: string,
     formData: FormData,
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
+    signal?: AbortSignal,
   ): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient.put(
       `/activity/add-resource/${activityId}/${parent}`,
@@ -68,6 +69,7 @@ const mutations = {
       {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress,
+        signal,
       },
     );
     return res.data;

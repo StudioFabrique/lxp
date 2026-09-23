@@ -1,7 +1,7 @@
 import { Save } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Loader from "../../loaders/Loader";
+import { cn } from "../../../utils/cn";
 
 const FLOATING_SIZE = 32;
 const BUTTON_TRANSITION = {
@@ -78,7 +78,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
 
   const icon = pending ? (
     <span className="flex justify-center items-center w-5 h-5">
-      <Loader />
+      <span className="loading loading-spinner loading-xs" />
     </span>
   ) : (
     <Save className="size-5 shrink-0" />
@@ -102,9 +102,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   return (
     <>
       <div
-        className={`relative z-30 mt-4 h-8 w-full ${
-          isAtNaturalPosition ? "" : "sticky bottom-4"
-        }`}
+        className={cn("relative z-30 mt-4 h-8 w-full", isAtNaturalPosition ? "" : "sticky bottom-4")}
         data-floating={isAtNaturalPosition ? "false" : "true"}
       >
         <motion.div
@@ -116,9 +114,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
           className="absolute top-0 -translate-x-1/2"
         >
           <div
-            className={`relative inline-flex ${
-              isFloating ? "tooltip tooltip-left" : ""
-            }`}
+            className={cn("relative inline-flex", isFloating && "tooltip tooltip-left")}
             data-tip={isFloating ? "Sauvegarder l'activité" : undefined}
           >
             <motion.button
@@ -131,9 +127,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
                 paddingRight: isFloating ? 6 : 16,
               }}
               transition={transition}
-              className={`btn btn-sm btn-info justify-start overflow-hidden px-0 text-info-content ${
-                isFloating ? "btn-circle shadow-lg" : ""
-              }`}
+              className={cn("btn btn-sm btn-info justify-start overflow-hidden px-0 text-info-content", isFloating && "btn-circle shadow-lg")}
               type="button"
               onClick={onSave}
               disabled={pending}

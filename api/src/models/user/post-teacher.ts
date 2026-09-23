@@ -77,7 +77,7 @@ async function postTeacher(teacher: IUser) {
         return createdContact;
       });
 
-      if (!mailerDisabled) {
+      if (!mailerDisabled && teacher.invitationSent === true) {
         await User.updateOne(
           { _id: newTeacher._id },
           { $set: { invitationPendingSince: new Date() } },

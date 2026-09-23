@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { PropsWithChildren } from "react";
 import { sidebarControlClassName } from "./sidebar-styles";
+import { cn } from "../../utils/cn";
 
 type Props = {
   linkTo: string;
@@ -32,11 +33,7 @@ const SidebarItem = ({
         to={linkTo}
         aria-label={tooltipText}
         data-tip={tooltipText}
-        className={`${sidebarControlClassName} ${textSize} max-2xl:tooltip max-2xl:tooltip-right ${
-          isActive
-            ? "bg-(--sidebar-active) text-(--sidebar-active-content) font-medium ring-1 ring-inset ring-(--sidebar-border)"
-            : ""
-        }`}
+        className={cn(sidebarControlClassName, textSize, "max-2xl:tooltip max-2xl:tooltip-right", isActive && "bg-(--sidebar-active) text-(--sidebar-active-content) font-medium ring-1 ring-inset ring-(--sidebar-border)")}
       >
         <span className="flex size-4 shrink-0 items-center justify-center [&>svg]:size-4">
           {icon}

@@ -1,3 +1,4 @@
+import { cn } from "../../../utils/cn";
 type Props = {
   email: string;
   onChange: (value: string) => void;
@@ -14,9 +15,7 @@ const ResetPasswordFormEmail = ({
   return (
     <div className="flex flex-col gap-y-2 w-full">
       <input
-        className={`w-full input input-bordered focus:outline-none ${
-          error ? "input-error" : ""
-        }`}
+        className={cn("w-full input input-bordered focus:outline-none", error && "input-error")}
         type="email"
         id="email"
         name="email"

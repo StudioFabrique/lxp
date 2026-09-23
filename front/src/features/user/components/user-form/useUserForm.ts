@@ -7,7 +7,7 @@ import { regexGeneric, regexMail, regexNumber } from "../../../../config/constan
 
 export function useUserForm(user: User | null, initialSendEmail = false) {
   const [email, setEmail] = useState(user?.email ?? "");
-  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailValidationRequested, setEmailValidationRequested] = useState(false);
   const [firstname, setFirstname] = useState(user?.firstname ?? "");
   const [lastname, setLastname] = useState(user?.lastname ?? "");
   const [nickname, setNickname] = useState(user?.nickname ?? "");
@@ -27,7 +27,7 @@ export function useUserForm(user: User | null, initialSendEmail = false) {
   useEffect(() => {
     if (user) {
       setEmail(user.email ?? "");
-      setEmailTouched(false);
+      setEmailValidationRequested(false);
       setFirstname(user.firstname ?? "");
       setLastname(user.lastname ?? "");
       setNickname(user.nickname ?? "");
@@ -44,9 +44,13 @@ export function useUserForm(user: User | null, initialSendEmail = false) {
     }
   }, [user]);
 
-  const emailIsInvalid = email.length > 0 && !regexMail.test(email);
-  const emailError = emailTouched && emailIsInvalid;
-  const touchEmail = () => setEmailTouched(true);
+  const emailIsInvalid = email.trim().length > 0 && !regexMail.test(email.trim());
+  const emailError = emailValidationRequested && emailIsInvalid;
+  const setEmailValue = (value: string) => {
+    setEmail(value);
+    setEmailValidationRequested(false);
+  };
+  const validateEmail = () => setEmailValidationRequested(true);
   const firstnameError = firstname.length > 0 && !regexGeneric.test(firstname);
   const lastnameError = lastname.length > 0 && !regexGeneric.test(lastname);
   const nicknameError = nickname.length > 0 && !regexGeneric.test(nickname);
@@ -56,7 +60,7 @@ export function useUserForm(user: User | null, initialSendEmail = false) {
   const phoneError = phoneNumber.length > 0 && !regexNumber.test(phoneNumber);
 
   const formIsValid =
-    email.length > 0 &&
+    email.trim().length > 0 &&
     firstname.length > 0 &&
     lastname.length > 0 &&
     !emailIsInvalid &&
@@ -82,7 +86,7 @@ export function useUserForm(user: User | null, initialSendEmail = false) {
   });
 
   return {
-    email, setEmail, emailError, touchEmail,
+    email, setEmail: setEmailValue, emailError, validateEmail,
     firstname, setFirstname, firstnameError,
     lastname, setLastname, lastnameError,
     nickname, setNickname, nicknameError,

@@ -3,6 +3,7 @@ import { BookOpen, ChevronRight, CircleCheckBig, Sparkles } from "lucide-react";
 import Parcours from "../../../../utils/interfaces/parcours";
 import JournalTimeline from "./journal-timeline";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   parcoursList: Parcours[];
@@ -57,17 +58,15 @@ const JournalTree = ({ parcoursList }: Props) => {
               <li key={course.id}>
                 <button
                   type="button"
-                  className={`group w-full rounded-xl p-3 text-left transition-colors ${
-                    isSelected
+                  className={cn("group w-full rounded-xl p-3 text-left transition-colors", isSelected
                       ? "bg-primary text-primary-content shadow-sm"
-                      : "hover:bg-base-100"
-                  }`}
+                      : "hover:bg-base-100")}
                   onClick={() => setSelectedCourseId(course.id)}
                   aria-current={isSelected ? "true" : undefined}
                 >
                   <span className="flex items-center gap-3">
                     <span
-                      className={`grid size-9 shrink-0 place-items-center rounded-lg ${isSelected ? "bg-primary-content/15" : "bg-primary/10 text-primary"}`}
+                      className={cn("grid size-9 shrink-0 place-items-center rounded-lg", isSelected ? "bg-primary-content/15" : "bg-primary/10 text-primary")}
                     >
                       <BookOpen className="h-4 w-4" aria-hidden="true" />
                     </span>
@@ -76,7 +75,7 @@ const JournalTree = ({ parcoursList }: Props) => {
                         {formatTitle(course.title)}
                       </span>
                       <span
-                        className={`block truncate text-xs ${isSelected ? "text-primary-content/75" : "text-base-content/55"}`}
+                        className={cn("block truncate text-xs", isSelected ? "text-primary-content/75" : "text-base-content/55")}
                       >
                         {formatTitle(parcours.title)} ·{" "}
                         {formatTitle(module.title)}

@@ -47,7 +47,12 @@ export const adminRoutes: RouteObject[] = [
           guard("mediatheque", adminMediathequeRoutes),
           guard("resource", adminResourcesRoutes),
           guard("cursus", adminProfileRoutes),
-          { path: "*", element: <p>La page n'existe pas</p> },
+          {
+            path: "*",
+            lazy: lazyRoute(
+              () => import("../features/dashboard-admin/views/AdminNotFound"),
+            ),
+          },
         ],
       },
     ],

@@ -1,4 +1,5 @@
 import WarningIcon from "../svg/warning-icon";
+import { cn } from "../../../utils/cn";
 
 interface TooltipWarningProps {
   message: string;
@@ -16,7 +17,7 @@ const ToolTipWarning = ({
 }: TooltipWarningProps) => {
   return (
     <div
-      className={`tooltip ${tooltipPos} cursor-pointer w-4 h-4 ${props.absolutePos ? "absolute top-2 right-2" : "relative"} text-error`}
+      className={cn("tooltip", tooltipPos, "cursor-pointer w-4 h-4", props.absolutePos ? "absolute top-2 right-2" : "relative", "text-error")}
       data-tip={props.message}
     >
       <WarningIcon />

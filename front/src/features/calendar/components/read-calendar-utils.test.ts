@@ -7,6 +7,27 @@ const data: ReadCalendar = { id: 1, title: "Parcours", modules: [{ id: 2, title:
 }] }] };
 
 describe("cours en lecture", () => {
+  it("utilise la couleur enregistrée pour les vues admin et étudiant", () => {
+    const copy = structuredClone(data);
+    copy.modules[0].courses[0].calendarColor = "success";
+    expect(calendarCourseEvents(copy, new Date(2026, 9, 24), "day", "admin")[0].type).toBe("success");
+    expect(calendarCourseEvents(copy, new Date(2026, 9, 24), "day", "student")[0].type).toBe("success");
+  });
+  it("affiche une initiale majuscule pour les cours, modules et devoirs", () => {
+    const copy = structuredClone(data);
+    copy.modules[0].title = "module pratique";
+    copy.modules[0].courses[0].title = "cours d’introduction";
+    copy.modules[0].courses[0].assignment = {
+      id: 8,
+      dueAt: new Date(2026, 9, 24, 18, 30).toISOString(),
+    };
+
+    const events = calendarCourseEvents(copy, new Date(2026, 9, 24), "day", "student");
+    expect(events.map(({ title, subtitle }) => [title, subtitle])).toEqual([
+      ["Cours d’introduction", "Module pratique"],
+      ["Devoir · Cours d’introduction", "Module pratique"],
+    ]);
+  });
   it("répète les heures chaque jour, bornes incluses, sans décalage au changement d'heure", () => {
     const events = calendarCourseEvents(data, new Date(2026, 9, 24), "month", "student");
     expect(events.map(event => dateKey(event.date!))).toEqual(["2026-10-24", "2026-10-25", "2026-10-26"]);

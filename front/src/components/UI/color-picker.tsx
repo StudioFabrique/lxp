@@ -1,3 +1,4 @@
+import { cn } from "../../utils/cn";
 type Props = {
   onColorChange: (color: string) => void;
   defaultColor?: string;
@@ -54,9 +55,9 @@ const ColorPicker = ({
         aria-label="Couleur de fond du logo"
         title="Couleur de fond du logo"
         className={
-          compact
+          cn(compact
             ? "btn btn-square btn-sm border p-1 shadow-sm"
-            : "btn btn-dash btn-sm gap-2"
+            : "btn btn-dash btn-sm gap-2")
         }
         style={
           compact
@@ -66,9 +67,9 @@ const ColorPicker = ({
       >
         <div
           className={
-            compact
+            cn(compact
               ? "h-5 w-5 rounded border"
-              : "h-4 w-4 border border-base-300"
+              : "h-4 w-4 border border-base-300")
           }
           style={{
             backgroundColor: selectedColor,
@@ -82,27 +83,25 @@ const ColorPicker = ({
 
       <div
         tabIndex={0}
-        className={`dropdown-content z-20 card card-compact rounded-box bg-base-100 shadow ${compact ? "right-0 top-10 w-56 p-4 sm:left-full sm:right-auto sm:top-0 sm:ml-2" : "bottom-10 left-0 w-64 p-4"}`}
+        className={cn("dropdown-content z-20 card card-compact rounded-box bg-base-100 shadow", compact ? "right-0 top-10 w-56 p-4 sm:left-full sm:right-auto sm:top-0 sm:ml-2" : "bottom-10 left-0 w-64 p-4")}
       >
-        <div className={compact ? "card-body gap-3 p-0" : "card-body"}>
-          <h3 className={compact ? "text-xs font-bold" : "card-title text-sm"}>
+        <div className={cn(compact ? "card-body gap-3 p-0" : "card-body")}>
+          <h3 className={cn(compact ? "text-xs font-bold" : "card-title text-sm")}>
             Choisir une couleur de fond
           </h3>
 
           <div
             className={
-              compact ? "grid grid-cols-4 gap-3" : "mb-3 flex flex-wrap gap-5"
+              cn(compact ? "grid grid-cols-4 gap-3" : "mb-3 flex flex-wrap gap-5")
             }
           >
             {visibleColors.map((color) => (
               <button
                 key={color.hex}
                 type="button"
-                className={`cursor-pointer rounded-lg border-2 transition-transform hover:scale-110 ${compact ? "h-9 w-9" : "h-10 w-10"} ${
-                  selectedColor === color.hex
+                className={cn("cursor-pointer rounded-lg border-2 transition-transform hover:scale-110", compact ? "h-9 w-9" : "h-10 w-10", selectedColor === color.hex
                     ? "border-primary"
-                    : "border-base-300"
-                }`}
+                    : "border-base-300")}
                 style={{ backgroundColor: color.hex }}
                 onClick={() => handlePredefinedColorSelect(color.hex)}
                 title={color.name}
@@ -112,13 +111,13 @@ const ColorPicker = ({
 
           <div
             className={
-              compact
+              cn(compact
                 ? "flex items-center justify-between gap-2"
-                : "form-control flex gap-2"
+                : "form-control flex gap-2")
             }
           >
-            <label className={compact ? "text-xs" : "label"}>
-              <span className={compact ? "" : "label-text text-xs"}>
+            <label className={cn(compact ? "text-xs" : "label")}>
+              <span className={cn(compact ? "" : "label-text text-xs")}>
                 Couleur personnalisée
               </span>
             </label>
@@ -126,7 +125,7 @@ const ColorPicker = ({
               type="color"
               value={selectedColor}
               onChange={(e) => onColorChange(e.target.value)}
-              className={`input input-sm cursor-pointer border-0 p-0 ${compact ? "h-9 w-9 shrink-0" : "h-10 w-10"}`}
+              className={cn("input input-sm cursor-pointer border-0 p-0", compact ? "h-9 w-9 shrink-0" : "h-10 w-10")}
             />
           </div>
 

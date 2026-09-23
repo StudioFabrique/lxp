@@ -10,6 +10,7 @@ import { DemoProvider } from "../store/DemoProvider";
 import ErrorBoundary from "../components/wrappers/layouts/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 import { AbilityProvider } from "../rbac/AbilityProvider";
+import { VisualPreferencesProvider } from "../store/VisualPreferences";
 
 function App() {
   return (
@@ -17,15 +18,17 @@ function App() {
       <Toaster />
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <DemoProvider>
-            <AuthProvider>
-              <AbilityProvider>
-                <ErrorBoundary>
-                  <RouterProvider router={router} />
-                </ErrorBoundary>
-              </AbilityProvider>
-            </AuthProvider>
-          </DemoProvider>
+          <VisualPreferencesProvider>
+            <DemoProvider>
+              <AuthProvider>
+                <AbilityProvider>
+                  <ErrorBoundary>
+                    <RouterProvider router={router} />
+                  </ErrorBoundary>
+                </AbilityProvider>
+              </AuthProvider>
+            </DemoProvider>
+          </VisualPreferencesProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </>

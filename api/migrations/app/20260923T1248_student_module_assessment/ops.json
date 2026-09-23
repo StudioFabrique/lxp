@@ -1,0 +1,245 @@
+[
+  {
+    "id": "table.StudentModuleAssessment",
+    "label": "Create table \"StudentModuleAssessment\"",
+    "summary": "Creates table \"StudentModuleAssessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "StudentModuleAssessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"StudentModuleAssessment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"StudentModuleAssessment\"",
+        "sql": "CREATE TABLE \"public\".\"StudentModuleAssessment\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"level\" text NOT NULL,\n  \"moduleId\" int4 NOT NULL,\n  \"studentId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"StudentModuleAssessment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.StudentModuleAssessment.StudentModuleAssessment_studentId_moduleId_key",
+    "label": "Add unique constraint on \"StudentModuleAssessment\" (studentId, moduleId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentModuleAssessment_studentId_moduleId_key",
+        "table": "StudentModuleAssessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentModuleAssessment_studentId_moduleId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentModuleAssessment_studentId_moduleId_key",
+          "public",
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"StudentModuleAssessment_studentId_moduleId_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentModuleAssessment\" ADD CONSTRAINT \"StudentModuleAssessment_studentId_moduleId_key\" UNIQUE (\"studentId\", \"moduleId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"StudentModuleAssessment_studentId_moduleId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentModuleAssessment_studentId_moduleId_key",
+          "public",
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentModuleAssessment.StudentModuleAssessment_moduleId_idx_04fe188b",
+    "label": "Create index \"StudentModuleAssessment_moduleId_idx_04fe188b\" on \"StudentModuleAssessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentModuleAssessment_moduleId_idx_04fe188b",
+        "table": "StudentModuleAssessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentModuleAssessment_moduleId_idx_04fe188b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentModuleAssessment_moduleId_idx_04fe188b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentModuleAssessment_moduleId_idx_04fe188b\"",
+        "sql": "CREATE INDEX \"StudentModuleAssessment_moduleId_idx_04fe188b\" ON \"public\".\"StudentModuleAssessment\" (\"moduleId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentModuleAssessment_moduleId_idx_04fe188b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentModuleAssessment_moduleId_idx_04fe188b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentModuleAssessment.StudentModuleAssessment_studentId_idx_bf255322",
+    "label": "Create index \"StudentModuleAssessment_studentId_idx_bf255322\" on \"StudentModuleAssessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentModuleAssessment_studentId_idx_bf255322",
+        "table": "StudentModuleAssessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentModuleAssessment_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentModuleAssessment_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentModuleAssessment_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"StudentModuleAssessment_studentId_idx_bf255322\" ON \"public\".\"StudentModuleAssessment\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentModuleAssessment_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentModuleAssessment_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentModuleAssessment.StudentModuleAssessment_studentId_fkey",
+    "label": "Add foreign key \"StudentModuleAssessment_studentId_fkey\" on \"StudentModuleAssessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentModuleAssessment_studentId_fkey",
+        "table": "StudentModuleAssessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentModuleAssessment_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentModuleAssessment_studentId_fkey",
+          "public",
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentModuleAssessment_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentModuleAssessment\"\nADD CONSTRAINT \"StudentModuleAssessment_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentModuleAssessment_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentModuleAssessment_studentId_fkey",
+          "public",
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentModuleAssessment.StudentModuleAssessment_moduleId_fkey",
+    "label": "Add foreign key \"StudentModuleAssessment_moduleId_fkey\" on \"StudentModuleAssessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentModuleAssessment_moduleId_fkey",
+        "table": "StudentModuleAssessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentModuleAssessment_moduleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentModuleAssessment_moduleId_fkey",
+          "public",
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentModuleAssessment_moduleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentModuleAssessment\"\nADD CONSTRAINT \"StudentModuleAssessment_moduleId_fkey\"\nFOREIGN KEY (\"moduleId\")\nREFERENCES \"public\".\"Module\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentModuleAssessment_moduleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentModuleAssessment_moduleId_fkey",
+          "public",
+          "\"public\".\"StudentModuleAssessment\""
+        ]
+      }
+    ]
+  }
+]

@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { Loader2 } from "lucide-react";
 import { Quiz, QuizAttempt, UserAnswer } from "../interfaces/quiz";
 import QuizMatching from "./modals/quiz-matching";
@@ -54,10 +55,10 @@ const DiagnosticQuiz = ({
         <div className="card w-full max-w-2xl text-center">
           <div className="card-body gap-6">
             <h3 className="card-title justify-center text-3xl text-primary font-bold">
-              Test de connaissances sur {moduleTitle || "ce module"}
+              Test de connaissances sur {formatTitle(moduleTitle) || "ce module"}
             </h3>
             <p className="py-4 text-lg text-base-content/80">
-              Avant de te lancer dans le module <strong>{moduleTitle}</strong>,
+              Avant de te lancer dans le module <strong>{formatTitle(moduleTitle)}</strong>,
               prenons un court instant pour évaluer tes connaissances initiales.
               <br />
               <br />

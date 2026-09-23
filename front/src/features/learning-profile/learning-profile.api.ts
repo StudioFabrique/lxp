@@ -25,12 +25,12 @@ export const learningProfileApi = {
     );
     return response.data;
   },
-  updateFormation: async (
-    formationId: number,
+  updateModule: async (
+    moduleId: number,
     level: FormationLevel,
   ): Promise<LearningContext> => {
     const response = await apiClient.put<LearningContext>(
-      `/user/profile/learning/formations/${formationId}`,
+      `/user/profile/learning/modules/${moduleId}`,
       { level },
     );
     return response.data;
@@ -38,4 +38,3 @@ export const learningProfileApi = {
 };
 
 export const learningProfileKey = ["learning-profile"] as const;
-

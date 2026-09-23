@@ -12,6 +12,7 @@ import { formatDateToYYYYMMDD } from "../../../../../utils/helpers/convert-date"
 
 import CourseTimeFields from "./course-time-fields";
 import { validCourseTimes } from "../../../helpers/course-times";
+import { cn } from "../../../../../utils/cn";
 
 interface DatesFormProps {
   isLoading: boolean;
@@ -38,9 +39,7 @@ const DatesForm = (props: DatesFormProps) => {
   const { value: endDate } = useInput((value) => regexGeneric.test(value), "");
 
   const setInputStyle = (hasError: boolean) => {
-    return hasError
-      ? "flex-1 input input-error text-error input-sm input-bordered focus:outline-none w-full"
-      : "flex-1 input input-sm input-bordered focus:outline-none w-full";
+    return cn("flex-1 input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -229,7 +228,7 @@ const DatesForm = (props: DatesFormProps) => {
           label="Ajouter une plage"
           loading={props.isLoading}
           isDisabled={props.isLoading}
-          onClickEvent={() => {}}
+          type="submit"
         />
       </div>
     </form>

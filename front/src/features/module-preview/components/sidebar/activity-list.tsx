@@ -23,8 +23,8 @@ type ActivityListProps = {
   newActivityButtonDisabled?: boolean;
   canEdit?: boolean;
   isLoading: boolean;
-  onActivityReorder: (args: BaseEventPayload<ElementDragType>) => void;
-  onSelectActivity: (activity: Activity) => void;
+  onActivityReorder?: (args: BaseEventPayload<ElementDragType>) => void;
+  onSelectActivity?: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
 };
 
@@ -51,7 +51,7 @@ export default function ActivityList({
       onDrop({ source, location }) {
         const destination = location.current.dropTargets[0];
         if (!destination) return;
-        onActivityReorder({ source, location });
+        onActivityReorder?.({ source, location });
       },
     });
   }, [onActivityReorder, readOnly]);
@@ -103,13 +103,14 @@ export default function ActivityList({
               index={index}
               isSelected={selectedActivity?.id === activity.id}
               canEdit={canUserEdit}
-              onSelect={() => onSelectActivity(activity)}
+              onSelect={() => onSelectActivity?.(activity)}
             />
           ))
         ) : isLoading ? (
-          <span className="animate-pulse text-info text-sm w-[90%]">
-            Chargement des activités en cours...
-          </span>
+          <div role="status" aria-label="Chargement des activités" className="w-full space-y-2">
+            <span className="sr-only">Chargement des activités…</span>
+            {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
+          </div>
         ) : null}
         {!readOnly && onClickCreateActivity && canEdit && !isDraggingOver && (
           <PermissionGuard action="update" object="lesson">

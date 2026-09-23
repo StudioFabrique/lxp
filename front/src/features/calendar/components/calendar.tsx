@@ -12,6 +12,7 @@ import YearTimelineView from "./views/year-timeline-view";
 import PlanningView from "./views/planning-view";
 
 import CalendarOverflowModal from "./calendar-overflow-modal";
+import { cn } from "../../../utils/cn";
 
 interface Props {
   onSelectDay?: (date: Date) => void;
@@ -109,9 +110,7 @@ const Calendar = ({
 
   return (
     <div
-      className={`flex flex-col pb-1 rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300 ${
-        theme.bg
-      } ${theme.text} ${theme.border}`}
+      className={cn("flex flex-col pb-1 rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300", theme.bg, theme.text, theme.border)}
     >
       {/* --- HEADER --- */}
       {header}

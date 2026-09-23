@@ -7,6 +7,7 @@ import { regexGeneric } from "../../../../../config/constantes";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import BadgeList from "./badge/badge-list.component";
+import { cn } from "../../../../../utils/cn";
 
 type Props = {
   skill?: Skill;
@@ -40,7 +41,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
 
   // définit le style du champ du formulaire en fonction de sa validité
   const style = "textarea focus:outline-none bg-secondary/20";
-  const textareaStyle = error ? style + " textarea-error" : style;
+  const textareaStyle = cn(style, error && "textarea-error");
 
   /**
    * ajoute le badge sélectionné lors d'une importation d'image ou d'un click sur un badge dans la liste des badges

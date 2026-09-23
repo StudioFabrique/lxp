@@ -46,7 +46,7 @@ export default function AnalysisHistory({
           Évolution des estimations au fil des analyses.
         </p>
       </div>
-      {history.isPending ? <p>Chargement de l'historique…</p> : null}
+      {history.isPending ? <div role="status" aria-label="Chargement de l'historique" className="space-y-3"><span className="sr-only">Chargement de l'historique…</span><div className="skeleton h-12 w-full" /><div className="skeleton h-12 w-full" /></div> : null}
       {history.isError ? (
         <p role="alert">
           Impossible de charger l'historique.{" "}

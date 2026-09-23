@@ -1,5 +1,6 @@
 import { HTMLAttributes, PropsWithChildren } from "react";
 import { useReward } from "react-rewards";
+import { useVisualPreferences } from "../../store/VisualPreferences";
 
 const thumbsRewardProperties = {
   id: "thumb-up",
@@ -89,6 +90,7 @@ const FeedbacksButton = <TFunc extends () => void>({
   onClick,
   children,
 }: PropsWithChildren<FeedbackButtonProps<TFunc>>) => {
+  const { confetti } = useVisualPreferences();
   const rewardProperties = getRewardProperties(feedbackType, elementCount);
 
   const { reward, isAnimating } = useReward(
@@ -98,7 +100,7 @@ const FeedbacksButton = <TFunc extends () => void>({
   );
 
   const handleClick = () => {
-    if (showFeedback) reward();
+    if (showFeedback && confetti) reward();
     onClick();
   };
 

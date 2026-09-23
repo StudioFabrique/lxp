@@ -22,14 +22,18 @@ const CurrentTags = (props: CurrentTagsProps) => {
             return (
               <li
                 key={item.id}
-                onClick={() => !isLocked && props.onRemoveItem?.(item)}
                 title={
                   isLocked
                     ? "Ce tag a été ajouté par un administrateur ou une autre équipe pédagogique"
                     : undefined
                 }
               >
-                <TagItem tag={item} noIcon={isLocked} disabled={isLocked} />
+                <TagItem
+                  tag={item}
+                  noIcon={isLocked}
+                  disabled={isLocked}
+                  onClick={props.onRemoveItem ? () => props.onRemoveItem?.(item) : undefined}
+                />
               </li>
             );
           })}

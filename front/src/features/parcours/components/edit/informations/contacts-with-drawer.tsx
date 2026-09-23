@@ -59,7 +59,12 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
         >
           <InheritedTextList
             renderAction={(contact: Contact) =>
-              props.readOnly || !parcours?.modules.length ? null : (
+              props.readOnly ||
+              !parcours?.modules.length ||
+              (typeof contact.id === "number" &&
+                parcours.modules.every((module) =>
+                  module.contacts.some(({ id }) => id === contact.id),
+                )) ? null : (
                 <button
                   type="button"
                   className="btn btn-sm btn-ghost text-primary"

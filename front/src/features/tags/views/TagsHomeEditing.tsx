@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from "react";
 import Tag from "../../../../src/utils/interfaces/tag";
+import { cn } from "../../../utils/cn";
 
 type TagsHomeEditingProps = {
   tag: Tag;
@@ -23,7 +24,7 @@ const TagsHomeEditing = ({ tag, onSubmitTag }: TagsHomeEditingProps) => {
   return (
     <form onSubmit={handleSubmitTag} className="flex flex-col items-center gap-4 py-5 px-1">
       <input
-        className={`input ${tagError && "input-error"}`}
+        className={cn("input", tagError && "input-error")}
         value={tagName}
         onChange={handleChangeValue}
       />

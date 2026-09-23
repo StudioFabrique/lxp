@@ -29,14 +29,19 @@ describe("useUserForm", () => {
     container.remove();
   });
 
-  it("attend la sortie du champ avant d'afficher l'erreur de format d'email", () => {
+  it("affiche l'erreur de format seulement après une tentative de sauvegarde", () => {
     act(() => form.setEmail("adresse-incomplete"));
 
     expect(form.emailError).toBe(false);
 
-    act(() => form.touchEmail());
+    act(() => form.validateEmail());
 
     expect(form.emailError).toBe(true);
+
+    act(() => form.setEmail("marie@example.com"));
+
+    expect(form.emailError).toBe(false);
+    expect(form.formIsValid).toBe(false);
   });
 
   it("garde le formulaire invalide avant que l'erreur d'email soit affichée", () => {
@@ -48,5 +53,16 @@ describe("useUserForm", () => {
 
     expect(form.emailError).toBe(false);
     expect(form.formIsValid).toBe(false);
+  });
+
+  it("accepte une adresse valide avec des espaces autour, comme à l'envoi", () => {
+    act(() => {
+      form.setFirstname("Marie");
+      form.setLastname("Dupont");
+      form.setEmail(" marie@example.com ");
+    });
+
+    expect(form.formIsValid).toBe(true);
+    expect(form.buildUserData().email).toBe("marie@example.com");
   });
 });

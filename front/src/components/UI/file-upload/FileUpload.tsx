@@ -117,7 +117,7 @@ export default function FileUpload({
   };
 
   return (
-    <div className={`${compact ? "w-auto" : "w-full"} ${className}`}>
+    <div className={cn(compact ? "w-auto" : "w-full", className)}>
       {label && (
         <label htmlFor={id} className="mb-2 block text-sm font-semibold">
           {label}
@@ -168,9 +168,7 @@ export default function FileUpload({
       </div>
       {(error || helperText) && (
         <p
-          className={`mt-2 text-xs ${
-            error ? "text-error" : "text-base-content/60"
-          }`}
+          className={cn("mt-2 text-xs", error ? "text-error" : "text-base-content/60")}
         >
           {error ?? helperText}
         </p>

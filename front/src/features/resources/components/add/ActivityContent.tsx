@@ -68,7 +68,7 @@ export default function ActivityContent({ parentId, activity, activityType, mode
     }
   };
 
-  if (loading) return <div role="status" className="skeleton h-64">Chargement de l'activité…</div>;
+  if (loading) return <div role="status" aria-label="Chargement de l'activité" className="space-y-4"><span className="sr-only">Chargement de l'activité…</span><div className="skeleton h-10 w-2/3" /><div className="skeleton h-64 w-full" /></div>;
   if (loadError) return <div role="alert" className="alert alert-error">{loadError}</div>;
 
   return <LessonReaderAndEditor
@@ -88,11 +88,9 @@ export default function ActivityContent({ parentId, activity, activityType, mode
     onEditTitle={setTitle}
     onEditContent={setContent}
     onEditIframeSrc={setSrc}
-    onRateActivity={() => {}}
     onEditActivity={onEdit}
     onOpenDeleteModal={onDelete}
     onDeleteActivity={onDelete}
-    onCloseDeleteModal={() => {}}
     onClose={() => { void onRefresh(mode === "write"); }}
     onBack={onClose}
     onRefreshActivity={onRefresh}

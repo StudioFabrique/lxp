@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   label: string;
@@ -6,7 +7,8 @@ type Props = {
   isDisabled?: boolean;
   outline?: boolean;
   loading?: boolean;
-  onClickEvent: () => void;
+  onClickEvent?: () => void;
+  type?: "button" | "submit";
 };
 
 const ButtonAdd: FC<Props> = ({
@@ -16,22 +18,14 @@ const ButtonAdd: FC<Props> = ({
   loading = false,
   outline = false,
   onClickEvent,
+  type = "button",
 }) => {
-  let style = "btn btn-primary flex gap-x-2";
-
-  const setStyle = () => {
-    if (small) {
-      style += " btn-sm";
-    }
-    return outline ? style + " btn-outline" : style;
-  };
-
   return (
     <button
-      className={setStyle()}
+      className={cn("btn btn-primary flex gap-x-2", small && "btn-sm", outline && "btn-outline")}
       disabled={isDisabled}
       onClick={onClickEvent}
-      type="button"
+      type={type}
     >
       {loading ? <div className="loading loading-spinner loading-sm" /> : null}
       {label}

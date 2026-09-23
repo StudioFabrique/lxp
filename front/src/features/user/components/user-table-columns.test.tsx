@@ -59,6 +59,21 @@ const renderCell = (
 };
 
 describe("getUsersColumns", () => {
+  it("met une majuscule aux titres de formation et de promotion affichés", () => {
+    const columns = getUsersColumns(() => undefined, () => undefined, () => undefined);
+    for (const [field, title] of [
+      ["formation", "réceptionniste en hôtellerie"],
+      ["parcours", "promo réceptionniste 2026 - 2027"],
+    ]) {
+      const cell = columns.find((column) => "accessorKey" in column && column.accessorKey === field)?.cell;
+      expect(typeof cell).toBe("function");
+      if (typeof cell !== "function") continue;
+      expect(renderToStaticMarkup(cell({ getValue: () => title } as never))).toContain(
+        title.charAt(0).toLocaleUpperCase("fr-FR") + title.slice(1),
+      );
+    }
+  });
+
   it("n'affiche pas de lien d'édition pour le compte connecté", () => {
     const user = createUser("admin");
     const markup = renderCell(user, "actions", user._id, 1);

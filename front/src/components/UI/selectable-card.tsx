@@ -2,6 +2,7 @@ import { formatTitle } from "../../utils/helpers/text-helpers";
 import { ReactNode, MouseEvent, useState, useEffect } from "react";
 import { Eye, Trash2, PenLine, Check } from "lucide-react";
 import ToolTipWarning from "./tooltip-warning/tooltip-warning";
+import { cn } from "../../utils/cn";
 
 type SelectableCardProps = {
   // Données
@@ -77,13 +78,7 @@ const SelectableCard = ({
 
   return (
     <div
-      className={`
-        card shadow-sm border transition-all duration-200 hover:shadow-md
-        ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200"}
-        ${error ? "bg-error/10" : "bg-base-300"}
-        ${className}
-        w-full overflow-hidden
-      `}
+      className={cn("card shadow-sm border transition-all duration-200 hover:shadow-md", isSelected ? "border-primary ring-1 ring-primary" : "border-base-200", error ? "bg-error/10" : "bg-base-300", className, "w-full overflow-hidden")}
     >
       <div className="card-body p-4">
         <div className="flex justify-between items-center w-full gap-4">
@@ -153,7 +148,7 @@ const SelectableCard = ({
 
           {/* PARTIE DROITE : Actions */}
           <div
-            className={`flex gap-2 flex-none items-center ${error ? "mr-5" : ""}`}
+            className={cn("flex gap-2 flex-none items-center", error && "mr-5")}
           >
             {onDelete && (
               <button
@@ -168,11 +163,9 @@ const SelectableCard = ({
             {onAction && (
               <button
                 onClick={onAction}
-                className={`btn btn-sm ${
-                  isSelected
+                className={cn("btn btn-sm", isSelected
                     ? "btn-outline btn-primary"
-                    : "btn-ghost btn-secondary"
-                }`}
+                    : "btn-ghost btn-secondary")}
               >
                 {actionIcon}
                 <span className="hidden 2xl:inline whitespace-nowrap">

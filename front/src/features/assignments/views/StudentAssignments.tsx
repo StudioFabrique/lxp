@@ -94,7 +94,7 @@ export default function StudentAssignments() {
       ) : null}
 
       {query.isPending ? (
-        <Loader />
+        <Loader variant="rows" label="Chargement des évaluations" />
       ) : query.isError ? (
         <div className="alert alert-error" role="alert">
           Impossible de charger les remises et évaluations.
@@ -131,7 +131,7 @@ export default function StudentAssignments() {
               title: assignment.course.title,
               titleAccessory: (
                 <span
-                  className={`badge mb-0.5 badge-xs ${statusClassName[status]}`}
+                  className={cn("badge mb-0.5 badge-xs", statusClassName[status])}
                 >
                   {status}
                 </span>

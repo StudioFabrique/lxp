@@ -10,6 +10,7 @@ import Header from "../../../../src/components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import ElementNotFound from "../../../components/UI/element-not-found";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 const DashboardIAHome = () => {
   const {
@@ -20,6 +21,7 @@ const DashboardIAHome = () => {
     sortProperty,
     sortDirection,
     isLoading,
+    isError: areTopUsersError,
     setPage,
     setPerPage,
     handleSort,
@@ -31,7 +33,7 @@ const DashboardIAHome = () => {
     queryFn: dashboardIAApi.queries.getTotalTokens,
   });
 
-  const { data: groupsStats } = useQuery({
+  const { data: groupsStats, isPending: areGroupsStatsPending, isError: areGroupsStatsError } = useQuery({
     queryKey: ["dashboard-ia-groups-stats"],
     queryFn: dashboardIAApi.queries.getGroupsStats,
   });
@@ -82,7 +84,11 @@ const DashboardIAHome = () => {
               <p className="text-xs font-semibold col-span-2">Quantité</p>
               <p className="text-xs font-semibold ml-0">%</p>
             </div>
-            {groupsStats && groupsStats.length > 0 ? (
+            {areGroupsStatsPending ? (
+              <LoadingSkeleton variant="rows" label="Chargement des promotions" />
+            ) : areGroupsStatsError ? (
+              <p role="alert">Impossible de charger les promotions.</p>
+            ) : groupsStats && groupsStats.length > 0 ? (
               <GroupsStats
                 stats={groupsStats}
                 groupsTotalTokens={groupsTotalTokens}
@@ -108,7 +114,11 @@ const DashboardIAHome = () => {
               <p>Apprenant</p>
               <p>Quantité</p>
             </div>
-            {top5Users.length > 0 ? (
+            {isLoading ? (
+              <LoadingSkeleton variant="rows" label="Chargement des utilisateurs" />
+            ) : areTopUsersError ? (
+              <p role="alert">Impossible de charger les utilisateurs.</p>
+            ) : top5Users.length > 0 ? (
               <TopFiveUsers topUsers={top5Users} />
             ) : (
               <ElementNotFound message="Aucune donnée de disponible." />
@@ -120,7 +130,11 @@ const DashboardIAHome = () => {
         <h2 className="font-semibold pl-1 mb-4">
           Consommation tous utilisateurs
         </h2>
-        {totalPages > 0 || isLoading ? (
+        {isLoading ? (
+          <LoadingSkeleton variant="rows" label="Chargement des consommations" />
+        ) : areTopUsersError ? (
+          <p role="alert">Impossible de charger les consommations.</p>
+        ) : totalPages > 0 ? (
           <TopUsersTable
             dataList={dataList}
             setPerPage={setPerPage}

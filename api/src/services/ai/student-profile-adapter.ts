@@ -20,8 +20,7 @@ const PREFERENCE_LABELS: Record<string, string> = {
   concrete_examples: "exemples concrets",
   step_by_step: "pas-à-pas",
   summary: "synthèse",
-  practical_exercises: "exercices pratiques",
-  visual_aids: "supports visuels",
+  practical_exercises: "questions d'entraînement",
 };
 
 export type AiStudentProfile = {
@@ -53,29 +52,29 @@ export async function buildStudentProfile(
   const [student, course] = await Promise.all([
     prisma.orm.public.Student.where({ idMdb: userIdMdb }).select("id").first(),
     prisma.orm.public.Course.where({ id: courseId })
-      .select("id")
-      .include("module", (module) =>
-        module.include("parcours", (parcours) => parcours.select("formationId")),
-      )
+      .select("moduleId")
       .first(),
   ]);
-  const formationId = course?.module?.parcours?.formationId;
-  if (!student || !formationId) return neutral;
+  const moduleId = course?.moduleId;
+  if (!student || !moduleId) return neutral;
 
   const [profile, assessment] = await Promise.all([
     prisma.orm.public.StudentLearningProfile.where({ studentId: student.id })
       .select("pace", "preferences", "initialCompletedAt")
       .first(),
-    prisma.orm.public.StudentFormationAssessment.where((row) =>
-      and(row.studentId.eq(student.id), row.formationId.eq(formationId)),
+    prisma.orm.public.StudentModuleAssessment.where((row) =>
+      and(row.studentId.eq(student.id), row.moduleId.eq(moduleId)),
     )
       .select("level")
       .first(),
   ]);
+  const supportedPreferences = profile?.preferences
+    .map((preference) => PREFERENCE_LABELS[preference])
+    .filter((preference): preference is string => Boolean(preference)) ?? [];
   if (
     !profile?.initialCompletedAt ||
     !profile.pace ||
-    profile.preferences.length === 0 ||
+    supportedPreferences.length === 0 ||
     !assessment
   ) {
     return neutral;
@@ -94,10 +93,7 @@ export async function buildStudentProfile(
     ...neutral,
     tempo_label: PACE_LABELS[profile.pace] ?? null,
     experience_label: EXPERIENCE_LABELS[assessment.level] ?? null,
-    preferences: profile.preferences
-      .map((preference) => PREFERENCE_LABELS[preference])
-      .filter((preference): preference is string => Boolean(preference)),
+    preferences: supportedPreferences,
     metrics,
   };
 }
-

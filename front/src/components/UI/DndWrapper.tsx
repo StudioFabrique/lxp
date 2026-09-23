@@ -7,6 +7,7 @@ import {
   monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { DndHandlers } from "../../utils/interfaces/dnd";
+import { cn } from "../../utils/cn";
 
 /**
  * Interface définissant les props du composant DndWrapper
@@ -62,9 +63,7 @@ function SortableItem({
   return (
     <div
       ref={ref}
-      className={`${isDragging ? "opacity-30" : "opacity-100"} ${
-        isDraggedOver ? "border-t-2 border-primary" : "border-t-2 border-transparent"
-      }`}
+      className={cn(isDragging ? "opacity-30" : "opacity-100", isDraggedOver ? "border-t-2 border-primary" : "border-t-2 border-transparent")}
     >
       {children}
     </div>

@@ -2,7 +2,7 @@ import type { Response } from "express";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 import {
   getLearningContext,
-  updateFormationAssessment,
+  updateModuleAssessment,
   updateLearningProfile,
 } from "../../../models/learning-profile/learning-profile.ts";
 
@@ -31,15 +31,15 @@ export async function httpPatchLearningProfile(req: CustomRequest, res: Response
   }
 }
 
-export async function httpPutFormationAssessment(
-  req: CustomRequest<{ formationId: string }>,
+export async function httpPutModuleAssessment(
+  req: CustomRequest<{ moduleId: string }>,
   res: Response,
 ) {
   try {
     return res.status(200).json(
-      await updateFormationAssessment(
+      await updateModuleAssessment(
         req.auth!.userId,
-        Number(req.params.formationId),
+        Number(req.params.moduleId),
         req.body.level,
       ),
     );

@@ -15,7 +15,7 @@ const Awards = ({ parcours }: { parcours?: Parcours }) => {
     queryFn: profileApi.queries.getSkills,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader variant="cards" label="Chargement des badges" />;
 
   const moduleIds = new Set(parcours?.modules?.map((module) => module.id) ?? []);
   const parcoursSkills = skills.flatMap((skill) => {

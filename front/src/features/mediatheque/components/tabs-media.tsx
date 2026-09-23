@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import ListVideos from "./list-videos";
 import ListResources from "./list-resources";
 import ElementNotFound from "../../../components/UI/element-not-found";
+import { cn } from "../../../utils/cn";
 
 // Props du composant TabsMedia
 type Props = {
@@ -76,7 +77,7 @@ function TabsMedia({ children, list, type, setType, setSort }: Props) {
           <a
             key={media.label}
             role="tab"
-            className={`tab ${type === media.type ? "tab-active" : ""}`}
+            className={cn("tab", type === media.type && "tab-active")}
             onClick={() =>
               setType(media.type as "image" | "video" | "audio" | "resource")
             }

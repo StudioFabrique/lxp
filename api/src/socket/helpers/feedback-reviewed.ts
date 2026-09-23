@@ -7,18 +7,18 @@ export async function feedbackReviewed(
   io: any,
   socket: Socket,
   studentId: string,
-  feedbackId: any
+  feedbackId: string,
+  message?: string,
 ) {
-  {
-    const result = await updateFeedback(feedbackId, socket.id);
-    if (!result) return;
-    const socketId = await getConnectedStudent(studentId);
-    if (socketId) {
-      const sock = io.sockets.sockets.get(socketId);
-      if (sock) {
-        sock.emit("feedback-reviewed");
-      }
+  const reviewMessage = typeof message === "string" ? message.trim().slice(0, 1000) : "";
+  const result = await updateFeedback(feedbackId, studentId, socket.id, reviewMessage || undefined);
+  if (!result) return;
+  const socketId = await getConnectedStudent(studentId);
+  if (socketId) {
+    const sock = io.sockets.sockets.get(socketId);
+    if (sock) {
+      sock.emit("feedback-reviewed");
     }
-    socket.emit("response-feedback-reviewed", feedbackId);
   }
+  socket.emit("response-feedback-reviewed", feedbackId);
 }

@@ -62,7 +62,7 @@ import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-r
 import { httpEnableCourse } from "../../../controllers/course/http-enable-course.ts";
 import httpPostImportCourseMbz from "../../../controllers/course/http-post-import-course-mbz.ts";
 
-import { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates } from "../../../controllers/course/http-course-calendar.ts";
+import { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates, httpReplaceCourseCalendarColor } from "../../../controllers/course/http-course-calendar.ts";
 import { isValidCalendarDates } from "../../../helpers/course-calendar-dates.ts";
 
 import { httpGetCalendarParcours, httpGetParcoursCalendar } from "../../../controllers/course/http-read-calendar.ts";
@@ -92,6 +92,16 @@ courseRouter.put(
   checkValidatorResult,
   checkContentAccess("course", "courseId"),
   httpReplaceCourseCalendarDates,
+);
+
+courseRouter.put(
+  "/calendar/:courseId/color",
+  checkPermissions("course", "read"),
+  param("courseId").isInt({ min: 1 }),
+  body("calendarColor").isIn(["primary", "secondary", "accent", "neutral", "info", "success", "warning", "error"]),
+  checkValidatorResult,
+  checkContentAccess("course", "courseId"),
+  httpReplaceCourseCalendarColor,
 );
 
 /**

@@ -5,8 +5,9 @@ import apiClient from "../../../lib/axios";
 import type Module from "../../../utils/interfaces/module";
 import type CourseDates from "../../course/interfaces/course-dates";
 import { calendarDay, shiftCalendarDate } from "../../calendar/components/planning-utils";
+import { calendarColor, type CalendarColor } from "../../calendar/components/calendar-configuration";
 
-export type CalendarCourse = { id: number; dates: CourseDates[]; };
+export type CalendarCourse = { id: number; dates: CourseDates[]; calendarColor?: CalendarColor; };
 const EMPTY_COURSES: CalendarCourse[] = [];
 
 export type CalendarSelection = { courseId: number; eventId: string; rect?: DOMRect; showDetails?: boolean; };
@@ -40,6 +41,7 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
     return course.dates.map((date, index) => ({
       id: `${course.id}:${index}`,
       title: source?.title ?? "Cours",
+      color: calendarColor(course.calendarColor),
       startDate: localCalendarDate(date.minDate),
       endDate: localCalendarDate(date.maxDate),
     }));
@@ -84,6 +86,30 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
     }
   };
 
+  const saveColor = async (courseId: number, color: CalendarColor) => {
+    if (saving.current) return false;
+    saving.current = true;
+    setIsSaving(true);
+    await client.cancelQueries({ queryKey: key });
+    const previous = client.getQueryData<CalendarCourse[]>(key);
+    client.setQueryData<CalendarCourse[]>(key, previous?.map(course =>
+      course.id === courseId ? { ...course, calendarColor: color } : course,
+    ));
+    try {
+      const response = await apiClient.put<CalendarCourse>(`/course/calendar/${courseId}/color`, { calendarColor: color });
+      client.setQueryData<CalendarCourse[]>(key, current => current?.map(course => course.id === courseId ? response.data : course));
+      void client.invalidateQueries({ queryKey: ["read-calendar"] });
+      return true;
+    } catch {
+      client.setQueryData(key, previous);
+      toast.error("Impossible d'enregistrer la couleur du cours. Réessayez.");
+      return false;
+    } finally {
+      saving.current = false;
+      setIsSaving(false);
+    }
+  };
+
   const addCourse = async (courseId: number) => {
     if (!isAdding || isSaving || !datesByCourse.has(courseId) || datesByCourse.get(courseId)?.length) return;
     setIsAdding(false);
@@ -111,7 +137,7 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
 
   return {
     ...query, events, datesByCourse, selection, setSelection, isAdding, setIsAdding,
-    currentDate, setCurrentDate, isSaving, saveDates, addCourse, changeDates, selectCourse,
+    currentDate, setCurrentDate, isSaving, saveDates, saveColor, addCourse, changeDates, selectCourse,
     orphanIds: courses.filter(course => course.dates.length === 0).map(course => course.id),
   };
 }

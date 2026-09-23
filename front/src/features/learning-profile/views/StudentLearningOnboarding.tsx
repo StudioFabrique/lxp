@@ -1,10 +1,9 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Check, Gauge, GraduationCap, Shapes } from "lucide-react";
-import Loader from "../../../components/loaders/Loader";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -19,10 +18,7 @@ import {
   paceOptions,
   preferenceOptions,
 } from "../learning-choice-options";
-import {
-  PreferenceCards,
-  SingleChoiceCards,
-} from "../LearningChoiceCards";
+import { LevelChoiceButtons, PreferenceCards, SingleChoiceCards } from "../LearningChoiceCards";
 import {
   learningProfileApi,
   learningProfileKey,
@@ -32,18 +28,26 @@ import type {
   LearningPace,
   LearningPreference,
 } from "../types";
+import { cn } from "../../../utils/cn";
 
 type OnboardingStep = {
   key: string;
   label: string;
-  kind: "pace" | "preferences" | "formation" | "profile" | "theme" | "summary";
-  formationId?: number;
+  kind: "learning" | "module" | "profile" | "theme" | "summary";
+  moduleId?: number;
 };
+
+const capitalizeTitle = (title: string) =>
+  title.charAt(0).toLocaleUpperCase("fr-FR") + title.slice(1);
+
+const availablePreferenceValues = new Set(
+  preferenceOptions.map(({ value }) => value),
+);
 
 export default function StudentLearningOnboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { chooseTheme, availableLightThemes, availableDarkThemes } =
+  const { theme, chooseTheme, availableLightThemes, availableDarkThemes } =
     useContext(ThemeContext);
   const query = useQuery({
     queryKey: learningProfileKey,
@@ -68,29 +72,42 @@ export default function StudentLearningOnboarding() {
     dark: localStorage.getItem("darkTheme") ?? "classic-dark",
   }));
   const reduceMotion = useReducedMotion();
+  const contentScrollRef = useRef<HTMLDivElement>(null);
 
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
-    const formation =
-      context.formationsToAssess[0] ?? context.availableFormations[0];
-    if (!formation) return [];
+    if (!context.availableFormations.length) return [];
     const onboardingSteps: OnboardingStep[] = [];
 
     if (context.onboardingMode === "initial") {
       onboardingSteps.push({ key: "theme", label: "Apparence", kind: "theme" });
     }
 
-    onboardingSteps.push(
-      { key: "pace", label: "Rythme", kind: "pace" },
-      { key: "preferences", label: "Préférences", kind: "preferences" },
-      {
-        key: `formation:${formation.id}`,
-        label: "Votre niveau",
-        kind: "formation",
-        formationId: formation.id,
-      },
-      { key: "profile", label: "À propos de vous", kind: "profile" },
-    );
+    onboardingSteps.push({
+      key: "learning",
+      label: "Votre façon d’apprendre",
+      kind: "learning",
+    });
+
+    for (const formation of context.availableFormations) {
+      for (const parcours of formation.parcours) {
+        for (const module of parcours.modules.filter(
+          (item) => context.onboardingMode === "initial" || !item.assessment,
+        )) {
+          onboardingSteps.push({
+            key: `module:${module.id}`,
+            label: module.title,
+            kind: "module",
+            moduleId: module.id,
+          });
+        }
+      }
+    }
+    onboardingSteps.push({
+      key: "profile",
+      label: "À propos de vous",
+      kind: "profile",
+    });
 
     onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
     return onboardingSteps;
@@ -110,17 +127,30 @@ export default function StudentLearningOnboarding() {
   useEffect(() => {
     if (!context || started) return;
     setPace(context.profile.pace);
-    setPreferences(context.profile.preferences);
-    setLevels(
-      Object.fromEntries(
-        context.availableFormations
-          .filter((formation) => formation.assessment)
-          .map((formation) => [formation.id, formation.assessment!.level]),
+    setPreferences(
+      context.profile.preferences.filter((preference) =>
+        availablePreferenceValues.has(preference),
       ),
     );
+    setLevels(
+      Object.fromEntries(
+        context.availableFormations.flatMap((formation) =>
+          formation.parcours.flatMap((parcours) =>
+            parcours.modules
+              .filter((module) => module.assessment)
+              .map((module) => [module.id, module.assessment!.level]),
+          ),
+        ),
+      ),
+    );
+    const savedStep = context.profile.currentStep;
+    const resumeKey =
+      savedStep === "pace" || savedStep === "preferences"
+        ? "learning"
+        : savedStep;
     const resumeIndex = Math.max(
       0,
-      steps.findIndex((step) => step.key === context.profile.currentStep),
+      steps.findIndex((step) => step.key === resumeKey),
     );
     setIndex(resumeIndex);
     setStarted(true);
@@ -129,6 +159,10 @@ export default function StudentLearningOnboarding() {
       currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
     });
   }, [context, started, steps]);
+
+  useEffect(() => {
+    if (contentScrollRef.current) contentScrollRef.current.scrollTop = 0;
+  }, [index]);
 
   if (query.isLoading) return <LearningChoiceCardsPlaceholder />;
   if (query.isError) {
@@ -153,37 +187,49 @@ export default function StudentLearningOnboarding() {
   }
 
   const step = steps[index]!;
+  const progress = Math.round(((index + 1) / steps.length) * 100);
+  const moduleCount = steps.filter((item) => item.kind === "module").length;
+  const moduleNumber = steps
+    .slice(0, index + 1)
+    .filter((item) => item.kind === "module").length;
+  const cannotContinue =
+    saving ||
+    (step.kind === "learning" && (!pace || preferences.length === 0)) ||
+    (step.kind === "module" && (!step.moduleId || !levels[step.moduleId]));
   const formation =
-    context.formationsToAssess[0] ?? context.availableFormations[0];
+    context.availableFormations.find((item) =>
+      item.parcours.some((parcours) =>
+        parcours.modules.some((module) => module.id === step.moduleId),
+      ),
+    ) ?? context.availableFormations[0];
+  const parcours =
+    formation?.parcours.find((item) =>
+      item.modules.some((module) => module.id === step.moduleId),
+    ) ?? formation?.parcours[0];
+  const module = parcours?.modules.find((item) => item.id === step.moduleId);
 
   const continueToNext = async () => {
-    if (step.kind === "pace" && !pace) {
+    if (step.kind === "learning" && !pace) {
       toast.error("Choisissez un rythme pour continuer.");
       return;
     }
-    if (step.kind === "preferences" && preferences.length === 0) {
+    if (step.kind === "learning" && preferences.length === 0) {
       toast.error("Choisissez au moins une préférence.");
       return;
     }
-    if (
-      step.kind === "formation" &&
-      step.formationId &&
-      !levels[step.formationId]
-    ) {
+    if (step.kind === "module" && step.moduleId && !levels[step.moduleId]) {
       toast.error("Choisissez un niveau pour continuer.");
       return;
     }
 
     setSaving(true);
     try {
-      if (step.kind === "pace" && pace)
-        await learningProfileApi.update({ pace });
-      if (step.kind === "preferences")
-        await learningProfileApi.update({ preferences });
-      if (step.kind === "formation" && step.formationId) {
-        await learningProfileApi.updateFormation(
-          step.formationId,
-          levels[step.formationId]!,
+      if (step.kind === "learning" && pace)
+        await learningProfileApi.update({ pace, preferences });
+      if (step.kind === "module" && step.moduleId) {
+        await learningProfileApi.updateModule(
+          step.moduleId,
+          levels[step.moduleId]!,
         );
       }
       const next = steps[index + 1];
@@ -228,299 +274,369 @@ export default function StudentLearningOnboarding() {
   };
 
   return (
-    <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-8 pb-[9px]">
-      {formation?.parcours[0] ? (
-        <header className="px-5 py-3 sm:px-6">
-          <h2 className="mt-1 text-2xl font-extrabold leading-tight text-secondary first-letter:uppercase sm:text-3xl">
-            {formation.parcours[0].title}
+    <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-4 pb-[9px]">
+      {parcours ? (
+        <header className="px-5 py-3 pr-24 sm:px-6 sm:pr-28">
+          <h2 className="mt-1 text-2xl font-extrabold leading-tight text-base-content first-letter:uppercase sm:text-3xl">
+            {capitalizeTitle(parcours.title)}
           </h2>
           <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
-            {formation.title}
+            {capitalizeTitle(formation.title)}
           </p>
         </header>
       ) : null}
 
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.section
-          key={step.key}
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }}
-          transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }}
-          className={`flex min-h-0 w-full flex-1 flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm ${step.kind === "formation" ? "sm:p-5" : "sm:p-7"}`}
+      <section
+        className={cn(
+          "relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl border p-5 sm:p-7",
+          theme === "dark"
+            ? "border-primary/40 bg-base-300 shadow-xl"
+            : "border-base-300 bg-base-100 shadow-sm",
+        )}
+      >
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[3px]"
+          role="progressbar"
+          aria-label="Progression du questionnaire"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={progress}
+          aria-valuetext={`Étape ${index + 1} sur ${steps.length}`}
         >
-          {step.kind === "pace" ? (
-            <div className="space-y-5">
-              <h1 className="text-2xl font-bold">
-                Quel rythme préférez-vous ?
-              </h1>
-              <p className="text-sm text-base-content/65">
-                Choisissez la proposition qui vous convient. Vous pourrez la
-                modifier plus tard.
-              </p>
-              <SingleChoiceCards
-                name="pace"
-                options={paceOptions}
-                value={pace}
-                onChange={setPace}
-              />
-            </div>
-          ) : null}
-
-          {step.kind === "preferences" ? (
-            <div className="space-y-5">
-              <h1 className="text-2xl font-bold">
-                Comment aimez-vous apprendre ?
-              </h1>
-              <p className="text-sm text-base-content/70">
-                Sélectionnez au moins une préférence. Les mots clés ci-dessous
-                vous aident à choisir comment aborder les contenus.
-              </p>
-              <PreferenceCards value={preferences} onChange={setPreferences} />
-            </div>
-          ) : null}
-
-          {step.kind === "formation" && formation ? (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-2xl font-bold">
-                  Quel est votre niveau actuel ?
-                </h1>
-                <p className="mt-1 text-sm text-base-content/65">
-                  Appuyez-vous sur ces exemples tirés du parcours pour vous
-                  situer.
-                </p>
-              </div>
-              {formation.parcours[0]?.tags.length ? (
-                <div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {formation.parcours[0].tags.slice(0, 4).map((tag) => (
-                      <TagItem key={tag.id} tag={tag} noIcon />
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              {formation.parcours[0]?.contentSamples.length ? (
-                <div>
-                  <p className="mb-1 text-sm font-semibold">
-                    Exemples de contenus
-                  </p>
-                  <ul className="space-y-1 text-sm leading-5">
-                    {formation.parcours[0].contentSamples.map((sample) => (
-                      <li
-                        key={`${sample.type}-${sample.title}`}
-                        className="flex gap-2"
-                      >
-                        <span className="text-primary">•</span>
-                        <span>
-                          <span>
-                            {sample.title.charAt(0).toLocaleUpperCase("fr-FR") +
-                              sample.title.slice(1)}
-                          </span>{" "}
-                          <span className="text-base-content/50">
-                            ({sample.type === "module" ? "module" : "cours"})
-                          </span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-              <SingleChoiceCards
-                name={`level-${formation.id}`}
-                options={levelOptions}
-                value={levels[formation.id] ?? null}
-                onChange={(level) =>
-                  setLevels((current) => ({
-                    ...current,
-                    [formation.id]: level,
-                  }))
-                }
-                compact
-              />
-            </div>
-          ) : null}
-
-          {step.kind === "profile" ? (
-            <div className="space-y-2">
-              <h1 className="text-2xl font-bold">
-                Souhaitez-vous en dire un peu plus ?
-              </h1>
-              <p className="text-sm text-base-content/65">
-                Cette étape est entièrement facultative. Vous pouvez la passer
-                sans rien renseigner.
-              </p>
-              <ProfileItemsEditor
-                hobbies={hobbies}
-                links={links}
-                onHobbiesChange={(items) => {
-                  setHobbies(items);
-                  setProfileItemsChanged(true);
-                }}
-                onLinksChange={(items) => {
-                  setLinks(items);
-                  setProfileItemsChanged(true);
-                }}
-              />
-            </div>
-          ) : null}
-
-          {step.kind === "theme" ? (
-            <div className="space-y-4">
-              <div>
-                <h1 className="text-2xl font-bold">Choisissez votre thème</h1>
-                <p className="mt-2 text-sm text-base-content/65">
-                  Personnalisez les modes clair et sombre. Vous pourrez toujours
-                  les modifier depuis votre profil.
-                </p>
-              </div>
-              {(
-                [
-                  ["light", "Thèmes clairs", availableLightThemes],
-                  ["dark", "Thèmes sombres", availableDarkThemes],
-                ] as const
-              ).map(([mode, label, themeList]) => (
-                <section key={mode}>
-                  <h2 className="mb-2 text-sm font-bold">{label}</h2>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {themeList.map((themeName) => {
-                      const selected = selectedThemes[mode] === themeName;
-                      return (
-                        <button
-                          key={themeName}
-                          type="button"
-                          data-theme={themeName}
-                          aria-pressed={selected}
-                          onClick={() => {
-                            chooseTheme(themeName, mode);
-                            setSelectedThemes((current) => ({
-                              ...current,
-                              [mode]: themeName,
-                            }));
-                          }}
-                          className={`group flex min-w-0 items-center gap-2 rounded-xl border bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5 ${selected ? "border-primary ring-2 ring-primary/25" : "border-base-300"}`}
-                        >
-                          <span className="flex size-8 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
-                            <span className="h-full w-1/2 bg-primary" />
-                            <span className="h-full w-1/2 bg-secondary" />
-                          </span>
-                          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-base-content">
-                            {themeLabels[themeName] ?? themeName}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </section>
-              ))}
-            </div>
-          ) : null}
-
-          {step.kind === "summary" ? (
-            <div className="space-y-5">
-              <div>
-                <h1 className="text-2xl font-bold">Votre profil</h1>
-                <p className="mt-2 text-sm text-base-content/65">
-                  Vérifiez vos réponses avant de commencer. Vous pourrez les
-                  modifier plus tard depuis votre profil.
-                </p>
-              </div>
-              <dl className="grid gap-3 sm:grid-cols-2">
-                <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                    <Gauge className="size-5" aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <dt className="text-sm text-base-content/65">Rythme</dt>
-                    <dd className="mt-1 font-semibold">
-                      {paceOptions.find((option) => option.value === pace)
-                        ?.label ?? "Non renseigné"}
-                    </dd>
-                  </div>
-                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                    <Check className="size-4" aria-hidden="true" />
-                  </span>
-                </div>
-                {formation ? (
-                  <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                      <GraduationCap className="size-5" aria-hidden="true" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <dt className="text-sm text-base-content/65">Niveau</dt>
-                      <dd className="mt-1 font-semibold">
-                        {levelOptions.find(
-                          (option) => option.value === levels[formation.id],
-                        )?.label ?? "Non renseigné"}
-                      </dd>
+          <motion.div
+            className="h-full rounded-full bg-primary"
+            initial={false}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: reduceMotion ? 0 : 0.35, ease: "easeOut" }}
+          />
+        </div>
+        <div
+          ref={contentScrollRef}
+          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={step.key}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }}
+              transition={{
+                duration: reduceMotion ? 0.01 : 0.28,
+                ease: "easeOut",
+              }}
+            >
+              {step.kind === "learning" ? (
+                <div className="space-y-7">
+                  <section className="space-y-4" aria-labelledby="learning-pace-title">
+                    <div>
+                      <h1 id="learning-pace-title" className="text-2xl font-bold">
+                        Quel rythme préférez-vous ?
+                      </h1>
+                      <p className="mt-2 text-sm leading-5 text-base-content/65">
+                        Choisissez la proposition qui vous convient. Vous pourrez la modifier plus tard.
+                      </p>
                     </div>
-                    <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                      <Check className="size-4" aria-hidden="true" />
-                    </span>
-                  </div>
-                ) : null}
-                <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                    <Shapes className="size-5" aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <dt className="text-sm text-base-content/65">
-                      Préférences d’apprentissage
-                    </dt>
-                    <dd className="mt-3 flex flex-wrap gap-2">
-                      {preferenceOptions
-                        .filter((option) => preferences.includes(option.value))
-                        .map((option) => (
-                          <span
-                            key={option.value}
-                            className="rounded-lg border border-primary/25 bg-base-100 px-3 py-2 text-sm font-semibold"
-                          >
-                            {option.label}
-                          </span>
-                        ))}
-                    </dd>
-                  </div>
-                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                    <Check className="size-4" aria-hidden="true" />
-                  </span>
-                </div>
-              </dl>
-            </div>
-          ) : null}
+                    <SingleChoiceCards
+                      name="pace"
+                      options={paceOptions}
+                      value={pace}
+                      onChange={setPace}
+                      compact
+                    />
+                  </section>
 
-          <div
-            className={`mt-auto flex justify-between gap-3 border-t border-base-300 ${step.kind === "formation" ? "pt-4" : "pt-5"}`}
+                  <section className="space-y-4" aria-labelledby="learning-preferences-title">
+                    <div>
+                      <h2 id="learning-preferences-title" className="text-2xl font-bold">
+                        Comment aimez-vous apprendre ?
+                      </h2>
+                      <p className="mt-2 text-sm leading-5 text-base-content/70">
+                        Sélectionnez au moins une préférence.
+                      </p>
+                    </div>
+                    <PreferenceCards
+                      value={preferences}
+                      onChange={setPreferences}
+                    />
+                  </section>
+                </div>
+              ) : null}
+
+              {step.kind === "module" && module ? (
+                <div className="space-y-5">
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <span
+                        className="shrink-0 text-lg font-bold text-accent"
+                        aria-label={`Module ${moduleNumber} sur ${moduleCount}`}
+                      >
+                        {moduleNumber}/{moduleCount}
+                      </span>
+                      <h1 className="min-w-0 text-2xl font-bold">
+                        Quel est votre niveau dans{" "}
+                        <span className="font-extrabold text-primary">
+                          {capitalizeTitle(module.title)}
+                        </span>{" "}
+                        ?
+                      </h1>
+                    </div>
+                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
+                      <span>
+                        Appuyez-vous sur les cours et leurs tags pour vous
+                        situer.
+                      </span>
+                    </p>
+                  </div>
+                  {module.courses.length ? (
+                    <ul className="divide-y divide-base-300 text-sm leading-5">
+                      {module.courses.map((course) => (
+                        <li
+                          key={course.title}
+                          className="space-y-1.5 py-3 first:pt-0 last:pb-0"
+                        >
+                          <span className="block font-semibold">
+                            {capitalizeTitle(course.title)}
+                          </span>
+                          {course.tags.length ? (
+                            <div className="flex flex-wrap gap-1">
+                              {course.tags.map((tag) => (
+                                <TagItem key={tag.id} tag={tag} noIcon compact />
+                              ))}
+                            </div>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <div className="pt-2">
+                    <LevelChoiceButtons
+                      name={`level-${module.id}`}
+                      value={levels[module.id] ?? null}
+                      onChange={(level) =>
+                        setLevels((current) => ({
+                          ...current,
+                          [module.id]: level,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              {step.kind === "profile" ? (
+                <div className="space-y-2">
+                  <h1 className="text-2xl font-bold">
+                    Souhaitez-vous en dire un peu plus ?
+                  </h1>
+                  <p className="flex min-h-10 items-end text-sm leading-5 text-base-content/65">
+                    <span>
+                      Cette étape est entièrement facultative. Vous pouvez la
+                      passer sans rien renseigner.
+                    </span>
+                  </p>
+                  <ProfileItemsEditor
+                    hobbies={hobbies}
+                    links={links}
+                    onHobbiesChange={(items) => {
+                      setHobbies(items);
+                      setProfileItemsChanged(true);
+                    }}
+                    onLinksChange={(items) => {
+                      setLinks(items);
+                      setProfileItemsChanged(true);
+                    }}
+                  />
+                </div>
+              ) : null}
+
+              {step.kind === "theme" ? (
+                <div className="space-y-4">
+                  <div>
+                    <h1 className="text-2xl font-bold">
+                      Choisissez votre thème
+                    </h1>
+                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
+                      <span>
+                        Personnalisez les modes clair et sombre. Vous pourrez
+                        toujours les modifier depuis votre profil.
+                      </span>
+                    </p>
+                  </div>
+                  {(
+                    [
+                      ["light", "Thèmes clairs", availableLightThemes],
+                      ["dark", "Thèmes sombres", availableDarkThemes],
+                    ] as const
+                  ).map(([mode, label, themeList]) => (
+                    <section key={mode}>
+                      <h2 className="mb-2 text-sm font-bold">{label}</h2>
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        {themeList.map((themeName) => {
+                          const selected = selectedThemes[mode] === themeName;
+                          return (
+                            <button
+                              key={themeName}
+                              type="button"
+                              data-theme={themeName}
+                              aria-pressed={selected}
+                              onClick={() => {
+                                chooseTheme(themeName, mode);
+                                setSelectedThemes((current) => ({
+                                  ...current,
+                                  [mode]: themeName,
+                                }));
+                              }}
+                              className={cn(
+                                "group flex min-h-16 min-w-0 items-center gap-2 rounded-xl border bg-base-200 p-3 text-left shadow-sm transition hover:-translate-y-0.5",
+                                selected
+                                  ? "border-primary ring-2 ring-primary/50"
+                                  : "border-base-300 hover:border-primary/70",
+                              )}
+                            >
+                              <span className="flex size-8 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
+                                <span className="h-full w-1/2 bg-primary" />
+                                <span className="h-full w-1/2 bg-secondary" />
+                              </span>
+                              <span className="min-w-0 flex-1 text-sm font-semibold leading-tight text-base-content">
+                                {themeLabels[themeName] ?? themeName}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              ) : null}
+
+              {step.kind === "summary" ? (
+                <div className="space-y-5">
+                  <div>
+                    <h1 className="text-2xl font-bold">Votre profil</h1>
+                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
+                      <span>
+                        Vérifiez vos réponses avant de commencer. Vous pourrez
+                        les modifier plus tard depuis votre profil.
+                      </span>
+                    </p>
+                  </div>
+                  <dl className="grid gap-3 sm:grid-cols-2">
+                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                        <Gauge className="size-5" aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <dt className="text-sm text-base-content/65">Rythme</dt>
+                        <dd className="mt-1 font-semibold">
+                          {paceOptions.find((option) => option.value === pace)
+                            ?.label ?? "Non renseigné"}
+                        </dd>
+                      </div>
+                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                        <Check className="size-4" aria-hidden="true" />
+                      </span>
+                    </div>
+                    {context.availableFormations
+                      .flatMap((item) =>
+                        item.parcours.flatMap((parcours) => parcours.modules),
+                      )
+                      .map((module) => (
+                        <div
+                          key={module.id}
+                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4"
+                        >
+                          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                            <GraduationCap
+                              className="size-5"
+                              aria-hidden="true"
+                            />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <dt className="text-sm text-base-content/65">
+                              {capitalizeTitle(module.title)}
+                            </dt>
+                            <dd className="mt-1 font-semibold">
+                              {levelOptions.find(
+                                (option) => option.value === levels[module.id],
+                              )?.label ?? "Non renseigné"}
+                            </dd>
+                          </div>
+                          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                            <Check className="size-4" aria-hidden="true" />
+                          </span>
+                        </div>
+                      ))}
+                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                        <Shapes className="size-5" aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <dt className="text-sm text-base-content/65">
+                          Préférences d’apprentissage
+                        </dt>
+                        <dd className="mt-3 flex flex-wrap gap-2">
+                          {preferenceOptions
+                            .filter((option) =>
+                              preferences.includes(option.value),
+                            )
+                            .map((option) => (
+                              <span
+                                key={option.value}
+                                className="rounded-lg border border-primary/25 bg-base-100 px-3 py-2 text-sm font-semibold"
+                              >
+                                {option.label}
+                              </span>
+                            ))}
+                        </dd>
+                      </div>
+                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                        <Check className="size-4" aria-hidden="true" />
+                      </span>
+                    </div>
+                  </dl>
+                </div>
+              ) : null}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-4 flex shrink-0 justify-between gap-3 border-t border-base-300 pt-5">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={index === 0 || saving}
+            onClick={() => setIndex((current) => Math.max(0, current - 1))}
           >
+            Précédent
+          </button>
+          {step.kind === "summary" ? (
             <button
               type="button"
-              className="btn btn-ghost"
-              disabled={index === 0 || saving}
-              onClick={() => setIndex((current) => Math.max(0, current - 1))}
+              className="btn btn-primary"
+              disabled={saving}
+              onClick={() => void confirm()}
             >
-              Précédent
+              {saving ? (
+                <span
+                  className="loading loading-spinner loading-sm"
+                  aria-label="Confirmation en cours"
+                />
+              ) : (
+                "Confirmer"
+              )}
             </button>
-            {step.kind === "summary" ? (
-              <button
-                type="button"
-                className="btn btn-primary"
-                disabled={saving}
-                onClick={() => void confirm()}
-              >
-                {saving ? <Loader /> : "Confirmer"}
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-primary"
-                disabled={saving}
-                onClick={() => void continueToNext()}
-              >
-                Continuer
-              </button>
-            )}
-          </div>
-        </motion.section>
-      </AnimatePresence>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-primary disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
+              disabled={cannotContinue}
+              onClick={() => void continueToNext()}
+            >
+              Continuer
+            </button>
+          )}
+        </div>
+      </section>
     </section>
   );
 }

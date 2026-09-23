@@ -25,6 +25,7 @@ import TableActionsModal from "../../../components/table/TableActionsModal";
 import { groupsPageTourSteps } from "../../../components/headers/page-tour-steps";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
 import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
+import { cn } from "../../../utils/cn";
 
 const GroupList = () => {
   const { state } = useLocation();
@@ -147,7 +148,7 @@ const GroupList = () => {
       </div>
 
       <BoxWrapper
-        className={`${filteredData.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        className={cn((filteredData.length > 0 || isLoading || searchValue) && "px-10", "items-center")}
         unstyled={!isLoading && filteredData.length === 0 && !searchValue}
       >
         {isLoading || filteredData.length > 0 || searchValue ? (
@@ -216,7 +217,7 @@ const GroupList = () => {
         descList={groupToDelete ? [groupToDelete.name] : undefined}
       >
         <button
-          className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
+          className={cn("btn btn-error btn-md", isDeleting && "loading")}
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >

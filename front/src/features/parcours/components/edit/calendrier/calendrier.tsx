@@ -95,9 +95,10 @@ const Calendrier = () => {
 
   if (!modules || !parcours) {
     return (
-      <div className="flex flex-col gap-y-5 p-10 items-center justify-center h-full">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-        <p>Chargement du calendrier...</p>
+      <div role="status" aria-label="Chargement du calendrier" className="space-y-5 p-5">
+        <span className="sr-only">Chargement du calendrier…</span>
+        <div className="skeleton h-10 w-64" />
+        <div className="skeleton h-[50vh] w-full rounded-box" />
       </div>
     );
   }

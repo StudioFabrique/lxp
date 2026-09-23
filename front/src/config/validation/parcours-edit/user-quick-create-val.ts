@@ -45,4 +45,5 @@ export const userQuickCreateSchema = z.object({
       message: "Le numéro de téléphone contient des caractères invalides",
     })
     .optional(),
+  invitationSent: z.boolean(),
 });

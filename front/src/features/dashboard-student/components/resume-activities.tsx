@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
 import SkillBadgeSummary from "./skill-badge-summary";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type ResumeActivitiesProps = {
   lastLessons: LessonRead[];
@@ -27,8 +28,8 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
               <CursorGlowCard key={item.id}>
                 <div className="relative flex cursor-pointer flex-col gap-2 bg-secondary/10 p-3 backdrop-blur-2xl hover:bg-secondary/20">
                   <div className="w-full text-left">
-                    <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
-                    <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
+                    <p className="font-bold truncate overflow-clip text-primary">{`Module: ${formatTitle(item.lesson.course.module.title)}`}</p>
+                    <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${formatTitle(item.lesson.course.title)}`}</p>
 
                     <SkillBadgeSummary
                       skills={item.lesson.course.bonusSkills}
@@ -44,12 +45,12 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                     className="before:absolute before:inset-0 before:rounded-xl focus-visible:before:outline-2 focus-visible:before:outline-primary"
                   >
                     <span className="flex justify-between w-full">
-                      <span className="flex gap-x-4 capitalize items-center text-sm min-w-0">
+                      <span className="flex gap-x-4 items-center text-sm min-w-0">
                         <p>{`${(item.lesson.order ?? 0) + 1}/${
                           item.lesson.course.lessons?.length ?? 0
                         }`}</p>
                         <p className="truncate overflow-clip min-w-0">
-                          {item.lesson.title}
+                          {formatTitle(item.lesson.title)}
                         </p>
                       </span>
 

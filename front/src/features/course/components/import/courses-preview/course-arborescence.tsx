@@ -13,6 +13,7 @@ import Lesson from "../../../../../utils/interfaces/lesson";
 import ToolTipWarning from "../../../../../components/UI/tooltip-warning/tooltip-warning";
 import type { CourseImport } from "../../../hooks/useImportCourses";
 import type { ActivityImport } from "../../../../../utils/interfaces/import-types";
+import { cn } from "../../../../../utils/cn";
 
 type Props = {
   activeCourse: CourseImport | null;
@@ -93,13 +94,11 @@ const CourseArborescence = ({
           <details
             key={lIdx}
             open
-            className={`group bg-base-100 rounded-lg border shadow-sm overflow-hidden transition-all ${!lesson.isSelected ? "opacity-60 border-base-200" : "border-base-200"}`}
+            className={cn("group bg-base-100 rounded-lg border shadow-sm overflow-hidden transition-all", !lesson.isSelected ? "opacity-60 border-base-200" : "border-base-200")}
           >
             {/* Niveau 1 : La Leçon */}
             <summary
-              className={`cursor-pointer list-none p-3 font-semibold transition-colors flex justify-between items-center select-none
-                ${lesson.hasError ? "bg-error/10 text-error" : "bg-base-100 hover:bg-base-200 text-base-content"}
-              `}
+              className={cn("cursor-pointer list-none p-3 font-semibold transition-colors flex justify-between items-center select-none", lesson.hasError ? "bg-error/10 text-error" : "bg-base-100 hover:bg-base-200 text-base-content")}
             >
               <div className="flex items-center gap-3 w-full mr-2">
                 <input
@@ -146,7 +145,7 @@ const CourseArborescence = ({
                   ) : (
                     <div className="flex items-center gap-2 group/edit w-full">
                       <span
-                        className={`line-clamp-1 first-letter:uppercase ${!lesson.isSelected && "line-through text-base-content/50"}`}
+                        className={cn("line-clamp-1 first-letter:uppercase", !lesson.isSelected && "line-through text-base-content/50")}
                       >
                         {lesson.title}
                       </span>
@@ -190,13 +189,9 @@ const CourseArborescence = ({
                     return (
                       <div
                         key={aIdx}
-                        className={`flex items-center w-full border-l-4 transition-all
-                            ${
-                              isSelected
+                        className={cn("flex items-center w-full border-l-4 transition-all", isSelected
                                 ? `${activity.hasError ? "border-error bg-error/10" : "border-primary bg-primary/10"}`
-                                : `border-transparent hover:bg-base-200`
-                            }
-                          `}
+                                : `border-transparent hover:bg-base-200`)}
                       >
                         {isEditing ? (
                           <div className="px-4 py-1 flex items-center gap-2 w-full">
@@ -227,10 +222,7 @@ const CourseArborescence = ({
                         ) : (
                           <button
                             onClick={() => onSelectActivity(activity)}
-                            className={`text-left px-4 py-2 text-xs flex items-center gap-3 w-full group/act
-                                ${isSelected ? "font-semibold" : ""}
-                                ${activity.hasError ? "text-error" : "text-base-content/70 hover:text-base-content"}
-                              `}
+                            className={cn("text-left px-4 py-2 text-xs flex items-center gap-3 w-full group/act", isSelected && "font-semibold", activity.hasError ? "text-error" : "text-base-content/70 hover:text-base-content")}
                           >
                             <span className="shrink-0">
                               {activity.hasError ? (

@@ -85,8 +85,8 @@ export function useUserActions(onSuccessCallback: () => void) {
 
   const sendInvitationMutation = useMutation({
     mutationFn: (userId: string) => userApi.mutations.sendInvitation(userId),
-    onSuccess: () => {
-      toast.success("Invitation envoyée");
+    onSuccess: (data) => {
+      toast.success(data.message ?? "Invitation envoyée");
       onSuccessCallback();
     },
   });

@@ -34,7 +34,7 @@ export default function AvatarCard({
 
   return (
     <>
-      <span className="text-xs flex items-start gap-x-4" onClick={handleReview}>
+      <span className="text-xs flex items-start gap-x-4">
         <div className="avatar">
           <div className="w-12 mask mask-squircle">
             <AppImage src={avatarSrc} alt={`Avatar de ${username}`} />
@@ -57,6 +57,7 @@ export default function AvatarCard({
       </span>{" "}
       <div className="w-full flex justify-end gap-x-2">
         <button
+          type="button"
           className="btn btn-xs btn-primary"
           disabled={hasBeenReviewed}
           onClick={handleReview}
@@ -70,7 +71,6 @@ export default function AvatarCard({
             <p>Review</p>
           )}
         </button>
-        <button className="btn btn-xs btn-primary">Chat</button>
       </div>
     </>
   );

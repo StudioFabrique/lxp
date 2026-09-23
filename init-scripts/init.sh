@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . ./deployment/database-urls.sh
 
 restore_data=false
@@ -138,6 +138,22 @@ configure_development_mailer() {
   echo
 }
 
+configure_development_password() {
+  file="$1"
+  configured_password=$(read_env_value "DEV_TEMPORARY_USER_PASSWORD" "$file")
+  if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "true" ] \
+    || { [ -n "$configured_password" ] && [ "$configured_password" != "false" ]; }; then
+    return
+  fi
+
+  if (( BASH_VERSINFO[0] >= 4 )); then
+    read -r -e -i "Abcdef@123456" -p "DEV_TEMPORARY_USER_PASSWORD — Mot de passe temporaire des utilisateurs : " entered_password
+  else
+    read -r -e -p "DEV_TEMPORARY_USER_PASSWORD — Mot de passe temporaire des utilisateurs [Abcdef@123456] : " entered_password
+  fi
+  write_env_value "DEV_TEMPORARY_USER_PASSWORD" "${entered_password:-Abcdef@123456}" "$file"
+}
+
 development_mailer_needs_configuration() {
   file="$1"
   if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "false" ]; then
@@ -168,6 +184,7 @@ configure_development_env() {
   echo
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
   configure_development_mailer "$file"
+  configure_development_password "$file"
 }
 
 if [ "$restore_data" = false ]; then
@@ -198,6 +215,7 @@ if [ "$api_env_created" = false ] \
   echo "Configuration du mailer de développement"
   echo
   configure_development_mailer "./api/.env"
+  configure_development_password "./api/.env"
 fi
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 

@@ -8,6 +8,7 @@ import TagsList from "../../../../components/tags/TagsList";
 import useImageUpload from "../../../../hooks/use-image-upload";
 import FormUploadImage from "../../../../components/UI/form-upload-image";
 import Tag from "../../../../utils/interfaces/tag";
+import { cn } from "../../../../utils/cn";
 import {
   partitionTagInput,
   splitTagNames,
@@ -57,9 +58,7 @@ export default function ResourceForm({
     return `rgb(${r}, ${g}, ${b})`;
   };
 
-  const style = tagError
-    ? "input input-sm input-error focus:outline-none w-full"
-    : "input input-sm focus:outline-none w-full";
+  const style = cn("input input-sm focus:outline-none w-full", tagError && "input-error");
 
   const addTags = (value: string) => {
     const updatedTags = splitTagNames(value).reduce((currentTags, name) => {

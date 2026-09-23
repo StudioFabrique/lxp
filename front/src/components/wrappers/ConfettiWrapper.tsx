@@ -6,11 +6,13 @@ import { PartyPopperIcon } from "lucide-react";
 
 import { AuthContext } from "../../store/AuthProvider";
 import { toTitleCase } from "../../utils/helpers/text-helpers";
+import { useVisualPreferences } from "../../store/VisualPreferences";
 
 const ConfettiWrapper = ({ children }: PropsWithChildren) => {
   const { user, socket } = useContext(AuthContext);
   const [showConfetti, setShowConfetti] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { confetti } = useVisualPreferences();
 
   // Initialisation pour le portail
   useEffect(() => {
@@ -49,7 +51,7 @@ const ConfettiWrapper = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      {showConfetti &&
+      {confetti && showConfetti &&
         mounted &&
         portalContainer &&
         createPortal(

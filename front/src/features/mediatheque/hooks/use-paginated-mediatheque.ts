@@ -4,7 +4,7 @@
  * Permet de gérer le chargement, le tri et le filtrage des médias par type
  */
 
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { mediathequeApi } from "../api/mediatheque.api";
 import toast from "react-hot-toast";
 import {
@@ -87,7 +87,9 @@ const paginationReducer = <T>(
  */
 const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadedRequest, setLoadedRequest] = useState<string | null>(null);
+  const requestId = useRef(0);
   const [total, setTotal] = useState(0);
   const [state, dispatch] = useReducer(
     paginationReducer,
@@ -100,6 +102,7 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
       ),
     }),
   );
+  const currentRequest = JSON.stringify([state.page, state.perPage, state.type, state.sort, state.search]);
 
   const setPage = useCallback((page: number) => {
     dispatch({ type: "SET_PAGE", payload: page });
@@ -143,11 +146,13 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
   }, []);
 
   const getPaginatedList = useCallback(() => {
+    const activeRequestId = ++requestId.current;
     const applyData = (data: {
       medias: T[];
       total: number;
       totalPages: number;
     }) => {
+      if (activeRequestId !== requestId.current) return;
       setList(data.medias, data.totalPages);
       setTotal(data.total);
     };
@@ -163,12 +168,18 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
       })
       .then(applyData)
       .catch((err) => {
+        if (activeRequestId !== requestId.current) return;
         const errorMessage =
           err?.response?.data?.message ?? "Erreur inconnue";
         setError(errorMessage);
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (activeRequestId !== requestId.current) return;
+        setLoadedRequest(currentRequest);
+        setIsLoading(false);
+      });
   }, [
+    currentRequest,
     setList,
     state.page,
     state.perPage,
@@ -188,7 +199,7 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
   }, [error]);
 
   return {
-    isLoading,
+    isLoading: isLoading || loadedRequest !== currentRequest,
     error,
     list: state.list,
     page: state.page,

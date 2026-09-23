@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import { sidebarControlClassName } from "./sidebar-styles";
+import { cn } from "../../utils/cn";
 
 type Props = { textSize?: "text-sm" | "text-lg" };
 
@@ -34,16 +35,12 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Ouvrir le questionnaire des bêta-testeurs"
-          className={`${sidebarControlClassName} ${
-            showTooltip
-              ? "ring-2 ring-primary ring-offset-1 animate-pulse"
-              : ""
-          }`}
+          className={cn(sidebarControlClassName, showTooltip && "ring-2 ring-primary ring-offset-1 animate-pulse")}
         >
           <span>
             <ClipboardList className="size-4 shrink-0" />
           </span>
-          <span className={`2xl:block hidden ${textSize}`}>
+          <span className={cn("2xl:block hidden", textSize)}>
             Questionnaire (Bêta Testeurs)
           </span>
         </Link>

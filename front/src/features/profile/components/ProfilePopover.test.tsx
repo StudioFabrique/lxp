@@ -6,12 +6,14 @@ import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { profileApi } from "../api/profile.api";
 import ProfilePopover from "./ProfilePopover";
+import { VisualPreferencesProvider } from "../../../store/VisualPreferences";
 
 describe("Menu du profil", () => {
   let root: Root;
   let container: HTMLDivElement;
 
   beforeEach(() => {
+    localStorage.removeItem("visualPreferences");
     container = document.createElement("div");
     document.body.appendChild(container);
   });
@@ -66,7 +68,9 @@ describe("Menu du profil", () => {
                 availableDarkThemes: ["classic-dark"],
               }}
             >
-              <ProfilePopover interfaceType={interfaceType} />
+              <VisualPreferencesProvider>
+                <ProfilePopover interfaceType={interfaceType} />
+              </VisualPreferencesProvider>
             </ThemeContext>
           </AuthContext>
         </MemoryRouter>,
@@ -107,6 +111,17 @@ describe("Menu du profil", () => {
     expect(
       document.querySelector('a[href="/admin/parametres-instance"]'),
     ).toBeNull();
+  });
+
+  it("mémorise les réglages visuels depuis le popover", () => {
+    showMenu(3, "student");
+    act(() => {
+      document.querySelector<HTMLButtonElement>('button[aria-controls="render-settings"]')?.click();
+    });
+    const glow = document.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    expect(glow).not.toBeNull();
+    act(() => glow?.click());
+    expect(JSON.parse(localStorage.getItem("visualPreferences") ?? "null").glow).toBe(false);
   });
 
   it("permet de supprimer une photo et actualise l’avatar", async () => {

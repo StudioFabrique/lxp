@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   initializeCourseCalendar,
   replaceCourseCalendarDates,
+  replaceCourseCalendarColor,
 } from "../../models/course/course-calendar.ts";
 
 export async function httpInitializeCourseCalendar(
@@ -18,6 +19,12 @@ export async function httpInitializeCourseCalendar(
   } catch (error) {
     next(error);
   }
+}
+
+export async function httpReplaceCourseCalendarColor(req: Request, res: Response, next: NextFunction) {
+  try {
+    return res.json(await replaceCourseCalendarColor(Number(req.params.courseId), req.body.calendarColor));
+  } catch (error) { next(error); }
 }
 
 export async function httpReplaceCourseCalendarDates(

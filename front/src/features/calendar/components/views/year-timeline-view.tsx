@@ -1,6 +1,8 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useMemo } from "react";
 import { theme, TimelineEvent } from "../calendar-configuration";
 import { formatDate } from "../calendar-utils";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   events: TimelineEvent[];
@@ -65,9 +67,7 @@ const YearTimelineView = ({
   if (events.length === 0) {
     return (
       <div
-        className={`flex items-center justify-center h-full my-10 ${
-          theme.subText
-        }`}
+        className={cn("flex items-center justify-center h-full my-10", theme.subText)}
       >
         Aucun événements à afficher
       </div>
@@ -79,9 +79,7 @@ const YearTimelineView = ({
       {/* --- HEADER --- */}
       {range.min + range.max > 0 && (
         <div
-          className={`flex justify-between items-center px-4 h-10 border-b flex-shrink-0 text-xs font-bold uppercase tracking-wider z-20 relative ${
-            theme.headerBg
-          } ${theme.border} ${theme.subText}`}
+          className={cn("flex justify-between items-center px-4 h-10 border-b flex-shrink-0 text-xs font-bold uppercase tracking-wider z-20 relative", theme.headerBg, theme.border, theme.subText)}
         >
           <span>du {formatDate(new Date(range.min))}</span>
           <span>au {formatDate(new Date(range.max))}</span>
@@ -144,14 +142,12 @@ const YearTimelineView = ({
                   className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0 ${
-                      theme.border
-                    } bg-base-300`}
+                    className={cn("w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0", theme.border, "bg-base-300")}
                   >
                     {event.image ? (
                       <img
                         src={event.image}
-                        alt={event.title}
+                        alt={formatTitle(event.title)}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -162,23 +158,19 @@ const YearTimelineView = ({
                   </div>
                   <div
                     className={
-                      event.startDate && event.endDate
+                      cn(event.startDate && event.endDate
                         ? "min-w-0"
-                        : "max-w-[15vw]"
+                        : "max-w-[15vw]")
                     }
                   >
                     <div
-                      className={`text-sm font-semibold truncate ${
-                        theme.text
-                      }`}
+                      className={cn("text-sm font-semibold truncate", theme.text)}
                     >
-                      {event.title}
+                      {formatTitle(event.title)}
                     </div>
                     {event.startDate && event.endDate && (
                       <div
-                        className={`text-[10px] truncate group-hover:text-secondary ${
-                          theme.subText
-                        }`}
+                        className={cn("text-[10px] truncate group-hover:text-secondary", theme.subText)}
                       >
                         {`${formatDate(event.startDate)} - ${formatDate(
                           event.endDate
@@ -201,25 +193,25 @@ const YearTimelineView = ({
                     {/* Event Bar */}
                     <button
                       type="button"
-                      aria-label={`Détails de ${event.title}`}
+                      aria-label={`Détails de ${formatTitle(event.title)}`}
                       onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect(), e.currentTarget)}
                       className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
                       style={{
                         left: `${leftPercent}%`,
                         width: `${widthPercent}%`,
                       }}
-                      title={`${event.title}`}
+                      title={`${formatTitle(event.title)}`}
                     >
                       {widthPercent > 3 && (
                         <span className="text-[10px] text-primary-content font-medium px-2 truncate drop-shadow-md">
-                          {event.title}
+                          {formatTitle(event.title)}
                         </span>
                       )}
                     </button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-end gap-5 w-full mr-10 opacity-60">
-                    <span className={`text-xs ${theme.subText}`}>
+                    <span className={cn("text-xs", theme.subText)}>
                       Date manquante
                     </span>
                     {onClickEdit && (

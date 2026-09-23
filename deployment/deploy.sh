@@ -414,12 +414,19 @@ fi
 
 if [ "$DEMO_ENABLED" = "true" ]; then
     # Le jeu de démonstration est un dump de données seules : il ne se rejoue
-    # que sur un schéma vide, et la démonstration doit revenir à l'état
-    # versionné à chaque déploiement. L'instance étant en lecture seule, rien
-    # d'utile n'y est perdu.
-    echo "Remise à zéro de la base de démonstration..."
-    compose exec -T db-pg sh -c \
-        'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
+    # que sur une base vide. Prisma 8 conserve son marqueur de migration hors
+    # du schema public : effacer ce schema seul laisse le marqueur en place et
+    # `db migrate` croit que les tables existent encore.
+    echo "Arrêt de l'application de démonstration avant la remise à zéro..."
+    compose stop app
+    echo "Recréation de la base de démonstration..."
+    compose exec -T db-pg sh -eu -c '
+        case "$POSTGRES_DB" in
+            postgres | template0 | template1) echo "POSTGRES_DB désigne une base système." >&2; exit 1 ;;
+        esac
+        dropdb --force -U "$POSTGRES_USER" --maintenance-db=postgres "$POSTGRES_DB"
+        createdb -U "$POSTGRES_USER" --maintenance-db=postgres -T template0 "$POSTGRES_DB"
+    '
 fi
 
 echo "Migration Prisma..."

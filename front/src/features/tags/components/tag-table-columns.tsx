@@ -3,6 +3,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type { TagRow } from "../api/tag.api";
 import TagItem from "../../../components/UI/tag-item/tag-item";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 export const getTagColumns = (
   onDelete: (id: number) => void,
@@ -67,7 +68,7 @@ export const getTagColumns = (
                 href={`/admin/parcours/view/${p.id}`}
                 className="badge badge-primary badge-outline p-3 hover:badge-primary transition-colors"
               >
-                {p.title}
+                {formatTitle(p.title)}
               </a>
             ))
           ) : (

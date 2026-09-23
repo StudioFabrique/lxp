@@ -6,6 +6,7 @@ import { HierarchicalListRow } from "../../../components/UI/hierarchical-list-ca
 import Modal from "../../../components/UI/modal/modal";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import Header from "../../../components/headers/Header";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import TablePagination from "../../../components/table/TablePagination";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import activityIconType from "../../../utils/helpers/activity-icon-type";
@@ -14,6 +15,7 @@ import MediaList, { MediaPreview } from "../components/media-list";
 import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import type Media from "../interfaces/media";
 import type { MediaAssociatedActivity, MediaType } from "../interfaces/media";
+import { cn } from "../../../utils/cn";
 
 const mediaTypes: {
   type: MediaType;
@@ -106,11 +108,9 @@ function MediathequeHomePage() {
             key={mediaType.type}
             type="button"
             aria-pressed={type === mediaType.type}
-            className={`btn btn-sm cursor-pointer gap-2 ${
-              type === mediaType.type
+            className={cn("btn btn-sm cursor-pointer gap-2", type === mediaType.type
                 ? "btn-primary"
-                : "btn-outline"
-            }`}
+                : "btn-outline")}
             onClick={() => setType(mediaType.type)}
           >
             <span className="size-4 shrink-0 [&>svg]:size-4" aria-hidden="true">
@@ -151,9 +151,7 @@ function MediathequeHomePage() {
       ) : null}
 
       {isLoading ? (
-        <div role="status" className="skeleton h-64">
-          Chargement des médias…
-        </div>
+        <LoadingSkeleton variant="cards" label="Chargement des médias" />
       ) : error ? (
         <div role="alert" className="alert alert-error">
           {error}

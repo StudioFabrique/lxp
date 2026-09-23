@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { ThemeContext } from "../../store/ThemeProvider";
+import { cn } from "../../utils/cn";
 
 type ThemeToggleProps = {
   className?: string;
@@ -11,7 +12,7 @@ const ThemeToggle = ({ className = "size-6" }: ThemeToggleProps) => {
   return (
     <div className="w-fit flex gap-x-2 justify-center items-center">
       <label
-        className={`swap swap-rotate place-items-center ${className}`}
+        className={cn("swap swap-rotate place-items-center", className)}
         htmlFor="mode-toggle"
       >
         {/* this hidden checkbox controls the state */}

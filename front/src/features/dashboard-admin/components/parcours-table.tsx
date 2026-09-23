@@ -6,6 +6,7 @@ import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { localeDate } from "../../../utils/helpers/locale-date";
 import { truncateText } from "../../../utils/helpers/truncate-text";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];
@@ -136,8 +137,8 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 onClick={() => handleViewParcours(item.id)}
               >
                 <td className="rounded-l-lg font-semibold">
-                  <p className="tooltip tooltip-bottom" data-tip={item.title}>
-                    {truncateText(item.title, 30)}
+                  <p className="tooltip tooltip-bottom" data-tip={formatTitle(item.title)}>
+                    {truncateText(formatTitle(item.title), 30)}
                   </p>
                 </td>
                 <td className="truncate">{item.level}</td>

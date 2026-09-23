@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { PropsWithChildren, useRef } from "react";
 import { normalizeImageSource } from "../../../utils/images/image-source";
 
@@ -37,12 +38,12 @@ const EventDetailsModal = ({
             <figure className="h-48 w-full relative overflow-hidden bg-base-200">
               <img
                 src={normalizeImageSource(item.img)}
-                alt={item.title}
+                alt={formatTitle(item.title)}
                 className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 to-transparent"></div>
               <h2 className="absolute bottom-4 left-4 text-neutral-content text-2xl font-bold drop-shadow-md">
-                {item.title}
+                {formatTitle(item.title)}
               </h2>
             </figure>
           )}
@@ -50,7 +51,7 @@ const EventDetailsModal = ({
           {/* --- CARD BODY (FORM) --- */}
           <div className="card-body gap-4">
             {!item?.img && (
-              <h2 className="card-title text-2xl">{item?.title}</h2>
+              <h2 className="card-title text-2xl">{formatTitle(item?.title)}</h2>
             )}
 
             <p className="text-sm text-base-content/60">{item?.description}</p>

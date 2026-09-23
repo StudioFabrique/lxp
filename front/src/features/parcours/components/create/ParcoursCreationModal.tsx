@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
@@ -22,6 +23,7 @@ import {
   readParcoursArchiveFormationTitle,
   selectImportFormationId,
 } from "../../helpers/read-parcours-archive-formation";
+import { cn } from "../../../../utils/cn";
 
 type Item = { id: number; title: string };
 type Mode = "create" | "template" | "import";
@@ -51,7 +53,7 @@ export default function ParcoursCreationModal({
   });
   const formationList: Item[] = Array.isArray(formations) ? formations : [];
 
-  const { data: parcoursList = [], isError: isParcoursListError } = useQuery({
+  const { data: parcoursList = [], isPending: isParcoursListPending, isError: isParcoursListError } = useQuery({
     queryKey: ["parcours", "formation", formationId],
     queryFn: async () => (await parcoursApi.queries.getByFormation(formationId!)).data,
     enabled: mode === "template" && formationId !== undefined,
@@ -148,7 +150,7 @@ export default function ParcoursCreationModal({
       modalBoxStyle="w-11/12 max-w-3xl"
     >
       {mode === "create" ? (
-        isCreating ? <Loader /> : (
+        isCreating ? <Loader variant="panel" label="Création du parcours" /> : (
           <div className="mt-6 flex flex-col gap-6">
             <p>Pour commencer, veuillez saisir les informations nécessaires pour créer le parcours</p>
             <div data-onboarding="parcours-create">
@@ -210,6 +212,8 @@ export default function ParcoursCreationModal({
                 <p className="p-6 text-center text-sm text-base-content/60">Sélectionnez une formation pour afficher ses parcours.</p>
               ) : isParcoursListError ? (
                 <p className="p-6 text-center text-sm text-error">Erreur lors du chargement des parcours.</p>
+              ) : isParcoursListPending ? (
+                <Loader variant="rows" label="Chargement des parcours disponibles" />
               ) : parcoursList.length === 0 ? (
                 <p className="rounded-xl p-6 text-center text-sm text-base-content/60">Aucun parcours ne peut être utilisé comme modèle.</p>
               ) : (
@@ -219,10 +223,10 @@ export default function ParcoursCreationModal({
                       key={item.id}
                       type="button"
                       onClick={() => setParcoursId(item.id)}
-                      className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors ${parcoursId === item.id ? "border-primary bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer"}`}
+                      className={cn("flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors", parcoursId === item.id ? "border-primary bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer")}
                     >
                       <Copy className="h-4 w-4 shrink-0 text-primary" />
-                      <span className="font-medium">{item.title}</span>
+                      <span className="font-medium">{formatTitle(item.title)}</span>
                     </button>
                   ))}
                 </div>

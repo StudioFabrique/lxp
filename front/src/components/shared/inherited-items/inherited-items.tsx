@@ -110,9 +110,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
       <div className="flex items-center justify-between">
         {props.title ? (
           <h2
-            className={`${
-              props.titleSize !== "large" ? sizeClass : sizeClass + " font-bold"
-            } p-2`}
+            className={cn(props.titleSize !== "large" ? sizeClass : sizeClass + " font-bold", "p-2")}
           >
             {props.title}
           </h2>

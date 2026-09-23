@@ -1,6 +1,7 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { Fragment, useContext, useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -22,6 +23,7 @@ import {
   Edit,
   GraduationCap,
   LoaderCircle,
+  Play,
   RocketIcon,
 } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
@@ -31,6 +33,11 @@ import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import { parcoursApi } from "../api/parcours.api";
+import { cn } from "../../../utils/cn";
+import {
+  learningProfileApi,
+  learningProfileKey,
+} from "../../learning-profile/learning-profile.api";
 
 const ParcoursView = () => {
   const {
@@ -47,6 +54,11 @@ const ParcoursView = () => {
   const { id } = useParams();
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
+  const learningContext = useQuery({
+    queryKey: learningProfileKey,
+    queryFn: learningProfileApi.get,
+    enabled: currentRoute[0] === "student",
+  });
   const ability = useContext(AbilityContext);
   const canEditParcours =
     ability.can("update", "parcours") && parcours.canManage !== false;
@@ -164,13 +176,30 @@ const ParcoursView = () => {
               </PermissionGuard>
             </RoleRankGuard>
           </div>
-        ) : currentRoute[0] === "student" ? (
+        ) : currentRoute[0] === "student" && learningContext.data ? (
           <Link
-            to={`/student/mon-avancement?parcoursId=${id}`}
-            className="btn btn-outline btn-primary"
+            to={
+              learningContext.data.onboardingRequired
+                ? "/student/onboarding"
+                : `/student/mon-avancement?parcoursId=${id}`
+            }
+            className={
+              learningContext.data.onboardingRequired
+                ? "btn btn-primary"
+                : "btn btn-outline btn-primary"
+            }
           >
-            <ChartNoAxesCombined className="size-4" aria-hidden="true" />
-            Mon avancement
+            {learningContext.data.onboardingRequired ? (
+              <>
+                <Play className="size-4 fill-current" aria-hidden="true" />
+                Reprendre mon onboarding
+              </>
+            ) : (
+              <>
+                <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+                Mon avancement
+              </>
+            )}
           </Link>
         ) : null}
       </Header>
@@ -183,7 +212,7 @@ const ParcoursView = () => {
               imageUrl={image ?? "/images/parcours-default.webp"}
               title={parcoursInfos?.title ?? ""}
               titleIcon={<RocketIcon className="stroke-white w-5" />}
-              subTitle={parcours.formation?.title}
+              subTitle={formatTitle(parcours.formation?.title)}
               subTitleIcon={<GraduationCap className="stroke-white w-5" />}
               children={[
                 <Fragment key="fragment" />,
@@ -212,7 +241,7 @@ const ParcoursView = () => {
             <div className="grid items-stretch gap-4 lg:grid-cols-3">
               <div
                 className={
-                  hasSupplementaryContent ? "h-full" : "h-full lg:col-span-3"
+                  cn(hasSupplementaryContent ? "h-full" : "h-full lg:col-span-3")
                 }
               >
                 <Informations />

@@ -57,7 +57,7 @@ export default function IndicatorsGrid({
   isLoading,
   isError,
 }: IndicatorsGridProps) {
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader variant="cards" label="Chargement des indicateurs" />;
 
   if (isError || !indicators) {
     return (

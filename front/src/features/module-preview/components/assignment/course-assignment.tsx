@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import LoadingSkeleton from "../../../../components/loaders/LoadingSkeleton";
 import {
   CheckCircle2,
   ClipboardCheck,
@@ -23,6 +24,7 @@ import {
   assignmentScoreTone,
 } from "./assignment-score-color";
 import AssignmentLinkPreviews from "./assignment-link-previews";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   course: Course;
@@ -212,12 +214,11 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
               const awarded = submission?.criterionScores.find(
                 (score) => score.criterionId === criterion.id,
               )?.score;
-              const scoreClass =
-                awarded === undefined
-                  ? ""
-                  : assignmentScoreTextClass[
-                      assignmentScoreTone(awarded, criterion.weight)
-                    ];
+              const scoreClass = cn(
+                awarded !== undefined && assignmentScoreTextClass[
+                  assignmentScoreTone(awarded, criterion.weight)
+                ],
+              );
               return (
                 <li
                   key={criterion.id}
@@ -338,11 +339,9 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
           <div className="mt-6 p-4 flex flex-col items-end">
             <p className="text-sm text-base-content/70">Note attribuée</p>
             <p
-              className={`text-3xl font-bold ${
-                assignmentScoreTextClass[
+              className={cn("text-3xl font-bold", assignmentScoreTextClass[
                   assignmentScoreTone(submission.grade, assignment.maxScore)
-                ]
-              }`}
+                ])}
             >
               {submission.grade}/{assignment.maxScore}
             </p>
@@ -370,9 +369,9 @@ function MissingStudents({
   return (
     <section
       className={
-        compact
+        cn(compact
           ? "mt-4 border-t border-base-300 px-2 pt-4"
-          : "mx-auto mt-5 max-w-md text-left"
+          : "mx-auto mt-5 max-w-md text-left")
       }
     >
       <h4 className="text-sm font-semibold">
@@ -526,11 +525,9 @@ function StaffAssignment({
               <button
                 key={submission.id}
                 type="button"
-                className={`rounded-xl bg-base-200 p-3 text-left text-sm ${
-                  selected?.id === submission.id
+                className={cn("rounded-xl bg-base-200 p-3 text-left text-sm", selected?.id === submission.id
                     ? "ring-1 ring-base-content"
-                    : "hover:bg-base-300"
-                }`}
+                    : "hover:bg-base-300")}
                 onClick={() => selectSubmission(submission)}
               >
                 <span className="block font-semibold capitalize">{name}</span>
@@ -668,7 +665,7 @@ export default function CourseAssignmentView({
   });
 
   if (isLoading || !data) {
-    return <span className="loading loading-spinner loading-lg mx-auto" />;
+    return <LoadingSkeleton variant="panel" label="Chargement du devoir" />;
   }
   const hydratedCourse = { ...course, assignment: data };
   const handleChanged = async () => {

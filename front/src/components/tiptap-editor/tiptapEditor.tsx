@@ -11,6 +11,7 @@ import useTiptapEditor from "./useTiptapEditor";
 import { useRef, useState } from "react";
 import { AiAskBubbleMenu } from "./components/AiAskBubbleMenu";
 import LinkMenu from "./components/LinkMenu/LinkMenu";
+import { cn } from "../../utils/cn";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
@@ -89,9 +90,7 @@ export default function TiptapEditor({
         ) : null}
 
         <EditorContent
-          className={`editor__content mt-5 ${
-            mode === "read" ? "" : "cursor-text"
-          }`}
+          className={cn("editor__content mt-5", mode === "read" ? "" : "cursor-text")}
           onClick={() => editor?.commands.focus()}
           editor={editor}
         />

@@ -2,6 +2,7 @@ import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 export const getGroupColumns = (
   onDelete: (id: string) => void,
@@ -43,7 +44,7 @@ export const getGroupColumns = (
           to={`/admin/parcours/view/${group.parcoursId}`}
           className="link link-primary no-underline hover:underline"
         >
-          {group.formation}
+          {group.formation?.split(" - ").map(formatTitle).join(" - ")}
         </Link>
       );
     },

@@ -14,6 +14,7 @@ import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
 import { useStudentGroupsQuery } from "../../../hooks/useStudentGroupsQuery";
 import { useUpdateParcoursGroups } from "../../../hooks/useUpdateParcoursGroups";
 import { useParcoursStudentsQuery } from "../../../hooks/useParcoursStudentsQuery";
+import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
 export type GroupList = {
   _id: string;
@@ -30,8 +31,8 @@ export type GroupList = {
 const ParcoursStudents = () => {
   const { id } = useParams();
   const parcoursId = Number(id);
-  const { data: persistedGroups = [] } = useParcoursGroupsQuery(parcoursId);
-  const { data: fetchedGroups = [], refetch: fetchGroups } =
+  const { data: persistedGroups = [], isPending: areGroupsPending, isError: areGroupsError } = useParcoursGroupsQuery(parcoursId);
+  const { data: fetchedGroups = [], refetch: fetchGroups, isPending: areAvailableGroupsPending, isError: areAvailableGroupsError } =
     useStudentGroupsQuery();
   const [draftGroups, setDraftGroups] = useState<Group[] | null>(null);
   const groups = draftGroups ?? persistedGroups;
@@ -47,7 +48,7 @@ const ParcoursStudents = () => {
     () => groups.map((group) => group._id).filter(Boolean) as string[],
     [groups],
   );
-  const { data: students = [] } = useParcoursStudentsQuery(groupIds);
+  const { data: students = [], isPending: areStudentsPending, isError: areStudentsError } = useParcoursStudentsQuery(groupIds);
   const { mutate: updateGroups } = useUpdateParcoursGroups(parcoursId);
 
   const handleDrawer = (id: string) => {
@@ -84,7 +85,11 @@ const ParcoursStudents = () => {
           onCloseDrawer={handleDrawer}
         >
           <div className="flex flex-col gap-y-12">
-            <GroupsList
+            {areAvailableGroupsError ? (
+              <p role="alert">Impossible de charger les groupes disponibles.</p>
+            ) : areAvailableGroupsPending ? (
+              <LoadingSkeleton variant="rows" label="Chargement des groupes disponibles" />
+            ) : <GroupsList
               onCancel={handleDrawer}
               groups={availableGroups}
               createGroupHref={`/admin/group/add?parcours=${id}`}
@@ -97,12 +102,16 @@ const ParcoursStudents = () => {
                   ),
                 ])
               }
-            />
+            />}
           </div>
         </RightSideDrawer>
       </section>
       {/* Affichage conditionnel selon la présence ou non de groupes */}
-      {!groups || groups.length === 0 ? (
+      {areGroupsError ? (
+        <p role="alert">Impossible de charger les groupes du parcours.</p>
+      ) : areGroupsPending ? (
+        <LoadingSkeleton variant="rows" label="Chargement des groupes du parcours" />
+      ) : !groups || groups.length === 0 ? (
         // Si aucun groupe n'est présent, affiche un bouton pour en ajouter
         <section>
           <BoxWrapper>
@@ -123,7 +132,11 @@ const ParcoursStudents = () => {
         <>
           <section>
             <BoxWrapper>
-              <StudentsList
+              {groupIds.length > 0 && areStudentsError ? (
+                <p role="alert">Impossible de charger les apprenants.</p>
+              ) : groupIds.length > 0 && areStudentsPending ? (
+                <LoadingSkeleton variant="rows" label="Chargement des apprenants" />
+              ) : <StudentsList
                 initalList={students}
                 groups={groups}
                 parcoursId={parcoursId}
@@ -132,7 +145,7 @@ const ParcoursStudents = () => {
                     groups.filter((group) => group._id !== groupId),
                   )
                 }
-              />
+              />}
               <div className="mt-2 self-end">
                 <ButtonAdd
                   label="Ajouter un groupe d'apprenants"

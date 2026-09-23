@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import {
   GraduationCap,
   ArrowRight,
@@ -102,7 +103,7 @@ const ParcoursSelection = ({
               to={`/admin/parcours/module/${selectedModule.id}`}
               target="_blank"
             >
-              {selectedModule.title}
+              {formatTitle(selectedModule.title)}
             </Link>
           </div>
         )}
@@ -128,7 +129,11 @@ const ParcoursSelection = ({
           </h3>
 
           {isFormationsLoading ? (
-            <div className="alert">Chargement des formations...</div>
+            <div role="status" aria-label="Chargement des formations" className="space-y-3">
+              <span className="sr-only">Chargement des formations…</span>
+              <div className="skeleton h-10 w-full" />
+              <div className="skeleton h-10 w-full" />
+            </div>
           ) : formationsError ? (
             <div className="alert alert-error text-sm">{formationsError}</div>
           ) : formationsList.length === 0 ? (
@@ -173,7 +178,7 @@ const ParcoursSelection = ({
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un parcours pour :
               <span className="text-primary underline decoration-dotted capitalize">
-                {selectedFormation.title}
+                {formatTitle(selectedFormation.title)}
               </span>
               {showReloadParcoursButton && (
                 <button
@@ -238,7 +243,7 @@ const ParcoursSelection = ({
                 className="text-primary underline decoration-dotted tooltip capitalize"
                 onClick={onClickLink}
               >
-                {selectedParcours.title}
+                {formatTitle(selectedParcours.title)}
               </Link>
               {showReloadModulesButton && (
                 <button

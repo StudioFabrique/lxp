@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 type ParcoursFilterBadgesProps = {
   parcours: string[];
@@ -47,11 +48,9 @@ const ParcoursFilterBadges = ({
       >
         {allowAll && <button
           type="button"
-          className={`btn btn-sm cursor-pointer ${
-            selectedParcours === null
+          className={cn("btn btn-sm cursor-pointer", selectedParcours === null
               ? "btn-primary"
-              : "btn-outline"
-          }`}
+              : "btn-outline")}
           aria-pressed={selectedParcours === null}
           onClick={() => onSelect(null)}
         >
@@ -65,11 +64,9 @@ const ParcoursFilterBadges = ({
             <button
               key={parcoursTitle}
               type="button"
-              className={`btn btn-sm cursor-pointer ${
-                isSelected
+              className={cn("btn btn-sm cursor-pointer", isSelected
                   ? "btn-primary"
-                  : "btn-outline"
-              }`}
+                  : "btn-outline")}
               aria-pressed={isSelected}
               onClick={() => onSelect(isSelected && allowAll ? null : parcoursTitle)}
             >

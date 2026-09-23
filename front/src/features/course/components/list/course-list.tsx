@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useMemo, useState } from "react";
 import {
   BookOpen,
@@ -408,7 +409,7 @@ export default function CourseList({
 
       {showModal ? (
         <Modal
-          title={`Supprimer le cours « ${showModal.title} »`}
+          title={`Supprimer le cours « ${formatTitle(showModal.title)} »`}
           onLeftClick={handleCloseModal}
           onRightClick={handleDeleteCourse}
           leftLabel="Annuler"
@@ -423,7 +424,7 @@ export default function CourseList({
 
       {lessonToDelete ? (
         <Modal
-          title={`Supprimer la leçon « ${lessonToDelete.title} »`}
+          title={`Supprimer la leçon « ${formatTitle(lessonToDelete.title)} »`}
           onLeftClick={() => setLessonToDelete(null)}
           onRightClick={handleDeleteLesson}
           leftLabel="Annuler"

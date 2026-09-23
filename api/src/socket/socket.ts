@@ -115,12 +115,14 @@ export function socket(io: Server): void {
         async ({
           studentId,
           feedbackId,
+          message,
         }: {
           studentId: string;
           feedbackId: string;
+          message?: string;
         }) => {
           if (!(await authorizeSocket(socket, "update", "user"))) return;
-          return feedbackReviewed(io, socket, studentId, feedbackId);
+          return feedbackReviewed(io, socket, studentId, feedbackId, message);
         },
       );
 

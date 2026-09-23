@@ -64,9 +64,7 @@ export default function ResourceIFrameForm(props: Props) {
               <div className="skeleton w-3/4 h-6 rounded"></div>
               <div className="skeleton w-5/6 h-6 rounded"></div>
               <div className="skeleton w-2/3 h-6 rounded"></div>
-              <p className="text-sm text-base-content/60 mt-4">
-                Chargement de la ressource...
-              </p>
+              <span className="sr-only">Chargement de la ressource…</span>
             </div>
           ) : null}
 

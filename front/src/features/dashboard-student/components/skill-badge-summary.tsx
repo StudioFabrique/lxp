@@ -1,5 +1,6 @@
 import SkillBadge from "../../../components/skills/skill-badge";
 import type Skill from "../../../utils/interfaces/skill";
+import { cn } from "../../../utils/cn";
 
 type SkillBadgeSummaryProps = {
   skills?: Skill[];
@@ -22,7 +23,7 @@ const SkillBadgeSummary = ({
 
   return (
     <div
-      className={`flex shrink-0 items-start gap-2 ${className}`}
+      className={cn("flex shrink-0 items-start gap-2", className)}
     >
       {skills.slice(0, MAX_VISIBLE_BADGES).map((skill) => (
         <SkillBadge key={skill.id} skill={skill} size={size} showProgress={showProgress} />

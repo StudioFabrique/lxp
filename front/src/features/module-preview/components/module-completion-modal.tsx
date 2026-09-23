@@ -5,6 +5,7 @@ import Modal from "../../../components/UI/modal/modal";
 import type Skill from "../../../utils/interfaces/skill";
 import SkillBadge from "../../../components/skills/skill-badge";
 import SkillModules from "../../../components/skills/skill-modules";
+import { useVisualPreferences } from "../../../store/VisualPreferences";
 
 function easeOutElastic(value: number) {
   if (value === 0 || value === 1) return value;
@@ -27,6 +28,7 @@ export default function ModuleCompletionModal({
   onClose,
 }: Props) {
   const reduceMotion = useReducedMotion();
+  const { confetti, animations } = useVisualPreferences();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const area = pathname.split("/")[1];
@@ -47,7 +49,7 @@ export default function ModuleCompletionModal({
       onMinimizeClick={onClose}
       modalBoxStyle="relative isolate w-11/12 max-w-3xl max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-h-[calc(100dvh-4rem)]"
     >
-      {!reduceMotion && (
+      {confetti && !reduceMotion && (
         <div
           className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           aria-hidden="true"
@@ -84,10 +86,10 @@ export default function ModuleCompletionModal({
                   <motion.li
                     key={badge.id}
                     className="flex min-w-0 flex-col items-center gap-3"
-                    initial={reduceMotion ? false : { scale: 0 }}
+                    initial={reduceMotion || !animations ? false : { scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={
-                      reduceMotion
+                      reduceMotion || !animations
                         ? { duration: 0 }
                         : {
                             duration: 0.9,

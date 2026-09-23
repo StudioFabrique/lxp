@@ -10,7 +10,6 @@ export const LEARNING_PREFERENCES = [
   "step_by_step",
   "summary",
   "practical_exercises",
-  "visual_aids",
 ] as const;
 
 export const FORMATION_LEVELS = [

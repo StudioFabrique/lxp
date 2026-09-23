@@ -1,3 +1,4 @@
+import { formatTitle } from "../../utils/helpers/text-helpers";
 import { CornerDownRight } from "lucide-react";
 import { ReactNode } from "react";
 import { Link } from "react-router";
@@ -59,11 +60,11 @@ const ImageHeader = (props: ImageHeaderProps) => {
                       className="min-w-0 max-w-full truncate first-letter:uppercase text-white hover:underline"
                       to={props.subTitleLinkTo}
                     >
-                      {props.subTitle}
+                      {typeof props.subTitle === "string" ? formatTitle(props.subTitle) : props.subTitle}
                     </Link>
                   ) : (
                     <h3 className="min-w-0 max-w-full truncate first-letter:uppercase text-white">
-                      {props.subTitle}
+                      {typeof props.subTitle === "string" ? formatTitle(props.subTitle) : props.subTitle}
                     </h3>
                   )}
                 </div>
@@ -74,7 +75,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
                   <CornerDownRight className="shrink-0 stroke-white" />
                   <span className="shrink-0">{props.titleIcon}</span>
                   <h1 className="min-w-0 max-w-full flex-1 truncate text-xl text-white first-letter:uppercase">
-                    {props.title}
+                    {typeof props.title === "string" ? formatTitle(props.title) : props.title}
                     {!props.hidePublished &&
                       (props.isPublished ? "-(Publié)" : "-(Brouillon)")}
                   </h1>

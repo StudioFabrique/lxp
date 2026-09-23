@@ -2,6 +2,7 @@ import { type Response } from "express";
 import { validationResult } from "express-validator";
 
 import postTeacher from "../../models/user/post-teacher.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 import { serverIssue } from "../../utils/constantes.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
@@ -26,7 +27,9 @@ async function httpPostTeacher(req: CustomRequest, res: Response) {
     return res.status(201).json({
       success: true,
       message:
-        "Ressource pédagogique créée. Le mail d'activation est en cours d'envoi.",
+        teacher.invitationSent === true && !mailerDisabled
+          ? "Ressource pédagogique créée. Le mail d'activation est en cours d'envoi."
+          : "Ressource pédagogique créée.",
       contact: response,
     });
   } catch (error: any) {

@@ -24,6 +24,7 @@ import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import { tagsPageTourSteps } from "../../../components/headers/page-tour-steps";
+import { cn } from "../../../utils/cn";
 
 const TagsHome = () => {
   const navigate = useNavigate();
@@ -166,7 +167,7 @@ const TagsHome = () => {
       </PageHeader>
 
       <BoxWrapper
-        className={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        className={cn((data.length > 0 || isLoading || searchValue) && "px-10", "items-center")}
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
@@ -233,7 +234,7 @@ const TagsHome = () => {
         descList={tagToDelete ? [tagToDelete.name] : undefined}
       >
         <button
-          className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
+          className={cn("btn btn-error btn-md", isDeleting && "loading")}
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >

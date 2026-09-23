@@ -7,7 +7,7 @@ import { profileApi } from "../../profile/api/profile.api";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { buildRecommendedActions } from "../components/build-recommended-actions";
 
-const defaultTitle = "Bonjour, {firstname} {lastname} !";
+const defaultTitle = "Bonjour, {firstname} !";
 const adminDescription =
   "Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants";
 const teacherDescription =
@@ -22,10 +22,11 @@ export function useAdminDashboard() {
   const isRoot = userRank === 0;
   const isTeacher = userRank === 2;
 
-  const { data: instanceSettings, isLoading: isInstanceSettingsLoading } = useQuery({
-    queryKey: ["instance-settings"],
-    queryFn: profileApi.queries.getInstanceSettings,
-  });
+  const { data: instanceSettings, isLoading: isInstanceSettingsLoading } =
+    useQuery({
+      queryKey: ["instance-settings"],
+      queryFn: profileApi.queries.getInstanceSettings,
+    });
 
   const { data: parcours = [], isLoading: isParcoursLoading } = useQuery({
     queryKey: ["root-parcours"],
@@ -79,8 +80,7 @@ export function useAdminDashboard() {
       (studentsCount.isLoading || groupsCount.isLoading || isParcoursLoading));
   return {
     user,
-    showOnboardingWelcome:
-      onboardingStatus === "pending" && canStartOnboarding,
+    showOnboardingWelcome: onboardingStatus === "pending" && canStartOnboarding,
     welcomeTitle: formatWelcomeTitle(defaultTitle, user),
     welcomeMessage: isTeacher ? teacherDescription : adminDescription,
     parcours,

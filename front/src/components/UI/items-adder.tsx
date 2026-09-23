@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import { getRandomLightColor } from "../../utils/random-tailwind-color";
 import { Trash2 } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 type Props<Item extends { id?: number; _id?: string }> = {
   items: Item[];
@@ -80,7 +81,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
           onKeyDown={handleClickAdd}
           onChange={handleChange}
           type="text"
-          className={`input input-sm ${error && "input-error"}`}
+          className={cn("input input-sm", error && "input-error")}
           value={value}
           disabled={disabled || isLoading}
           name="hobby"
@@ -93,9 +94,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
           <button
             key={getValue(item)}
             type="button"
-            className={`btn group text-base-content pl-6 pr-1 rounded-xl cursor-pointer ${
-              styleOptions.itemsHasColor && getColor(getValue(item))
-            }`}
+            className={cn("btn group text-base-content pl-6 pr-1 rounded-xl cursor-pointer", styleOptions.itemsHasColor && getColor(getValue(item)))}
             onClick={() => handleClickDelete(item)}
             disabled={disabled || isLoading}
           >

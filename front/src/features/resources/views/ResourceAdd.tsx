@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useState } from "react";
 import {
   ArrowLeft,
@@ -19,6 +20,7 @@ import ActivityContent from "../components/add/ActivityContent";
 import useResource from "../hooks/useResource";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import activityIconType from "../../../utils/helpers/activity-icon-type";
+import { cn } from "../../../utils/cn";
 
 export default function ResourceAdd({
   readOnly = false,
@@ -80,8 +82,13 @@ export default function ResourceAdd({
         </div>
       </Header>
       {state.isLoading ? (
-        <div role="status" className="skeleton h-96">
-          Chargement de la ressource…
+        <div role="status" aria-label="Chargement de la ressource" className="space-y-5">
+          <span className="sr-only">Chargement de la ressource…</span>
+          <div className="skeleton h-44 w-full rounded-box" />
+          <div className="grid gap-5 lg:grid-cols-3">
+            <div className="skeleton h-72 rounded-box" />
+            <div className="skeleton h-72 rounded-box lg:col-span-2" />
+          </div>
         </div>
       ) : state.error ? (
         <div role="alert" className="alert alert-error">
@@ -109,7 +116,7 @@ export default function ResourceAdd({
             </div>
           </div>
           <div
-            className={`grid items-start gap-5 ${panelClosed ? "" : "lg:grid-cols-3"}`}
+            className={cn("grid items-start gap-5", panelClosed ? "" : "lg:grid-cols-3")}
           >
             {!panelClosed && (
               <aside className="min-w-0 rounded-lg border border-base-300 bg-base-200 p-3">
@@ -119,7 +126,7 @@ export default function ResourceAdd({
                     {activities.map((activity) => (
                       <li
                         key={activity.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded-lg p-2 ${state.previewActivity?.id === activity.id ? "bg-primary/10" : "hover:bg-base-300"}`}
+                        className={cn("flex cursor-pointer items-center gap-2 rounded-lg p-2", state.previewActivity?.id === activity.id ? "bg-primary/10" : "hover:bg-base-300")}
                       >
                         <button
                           type="button"
@@ -158,7 +165,7 @@ export default function ResourceAdd({
               </aside>
             )}
             <section
-              className={`relative min-w-0 min-h-[60vh] pb-28 ${panelClosed ? "" : "lg:col-span-2"}`}
+              className={cn("relative min-w-0 min-h-[60vh] pb-28", panelClosed ? "" : "lg:col-span-2")}
             >
               {state.activityType ? (
                 <ActivityContent
@@ -250,7 +257,7 @@ export default function ResourceAdd({
           onLeftClick={() => state.setActivityToDelete(null)}
           onRightClick={state.handleDeleteActivity}
         >
-          L'activité « {state.activityToDelete.title} » et ses fichiers seront
+          L'activité « {formatTitle(state.activityToDelete.title)} » et ses fichiers seront
           supprimés définitivement.
         </Modal>
       )}

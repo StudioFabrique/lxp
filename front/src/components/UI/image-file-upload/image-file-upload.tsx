@@ -10,6 +10,7 @@ import {
 import { EditIcon, Upload } from "lucide-react";
 import { AvatarSmall } from "../../avatar/AvatarSmall";
 import AppImage from "../image/app-image";
+import { cn } from "../../../utils/cn";
 
 export type TemporaryImage = { file: File | null; url: string | null };
 
@@ -87,9 +88,9 @@ const ImageFileUpload = ({
       type="button"
       onClick={onClickChangeImage}
       className={
-        isPreviewVariant
+        cn(isPreviewVariant
           ? `group relative flex ${compact ? "h-24" : "h-32"} w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-content/30 border-dashed bg-base-200 p-3 text-base-content shadow-sm transition hover:border-primary hover:shadow-md`
-          : "btn btn-ghost group relative h-fit w-fit rounded-full bg-white p-0 text-white"
+          : "btn btn-ghost group relative h-fit w-fit rounded-full bg-white p-0 text-white")
       }
       style={
         isPreviewVariant && hasPreview && previewBackgroundColor
@@ -130,14 +131,10 @@ const ImageFileUpload = ({
       )}
       {(!isPreviewVariant || hasPreview) && (
         <span
-          className={`pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${
-            isPreviewVariant ? "bg-black/15" : "rounded-full bg-white/20"
-          }`}
+          className={cn("pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100", isPreviewVariant ? "bg-black/15" : "rounded-full bg-white/20")}
         >
           <EditIcon
-            className={`h-7 w-7 rounded-full bg-base-100/90 p-1.5 stroke-2 ${
-              isPreviewVariant ? "text-base-content" : "text-black"
-            }`}
+            className={cn("h-7 w-7 rounded-full bg-base-100/90 p-1.5 stroke-2", isPreviewVariant ? "text-base-content" : "text-black")}
           />
         </span>
       )}

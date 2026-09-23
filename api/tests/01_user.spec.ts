@@ -75,7 +75,7 @@ describe("HTTP /user", () => {
 
     // With authentication, successful writing
     test("it should responde 201 success", async () => {
-      await request(app)
+      const response = await request(app)
         .post("/v1/user/new-teacher")
         .send({
           email: "toto@toto.fr",
@@ -89,6 +89,10 @@ describe("HTTP /user", () => {
         })
         .set("Cookie", [`${authToken}`])
         .expect(201);
+      expect(response.body.message).toBe("Ressource pédagogique créée.");
+      const createdTeacher = await User.findOne({ email: "toto@toto.fr" });
+      expect(createdTeacher?.invitationSent).toBe(false);
+      expect(createdTeacher?.invitationPendingSince).toBeUndefined();
     });
 
     // Missing fields

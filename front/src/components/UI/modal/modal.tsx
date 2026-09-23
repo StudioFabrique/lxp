@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { Loader2, Minimize2, X } from "lucide-react";
 import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
+import { cn } from "../../../utils/cn";
 
 type ModalProps = {
   title?: string;
@@ -27,11 +28,11 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
   return (
     <dialog
       id="my_modal_4"
-      className={`modal modal-open ${props.dialogAdditionalClass}`}
+      className={cn("modal modal-open", props.dialogAdditionalClass)}
     >
-      <div className={`modal-box ${props.modalBoxStyle}`}>
+      <div className={cn("modal-box", props.modalBoxStyle)}>
         {props.buttonsBothTopBottom && !props.closeButtonAtTop && (
-          <div className={`modal-action mb-4 ${props.actionsClassName ?? ""}`}>
+          <div className={cn("modal-action mb-4", props.actionsClassName ?? "")}>
             {props.leftLabel && (
               <button
                 className="btn btn-outline btn-primary"
@@ -42,7 +43,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
             {props.onRightClick && (
               <button
-                className={`btn flex items-center gap-x-2 ${props.rightClassName ?? "btn-warning"}`}
+                className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-warning")}
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >
@@ -82,7 +83,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
         {props.children}
         {((props.onLeftClick && !props.closeButtonAtTop) ||
           props.onRightClick) && (
-          <div className={`modal-action ${props.actionsClassName ?? ""}`}>
+          <div className={cn("modal-action", props.actionsClassName ?? "")}>
             {props.onLeftClick && !props.closeButtonAtTop && (
               <button
                 className="btn btn-outline btn-primary"
@@ -93,7 +94,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
             {props.onRightClick && (
               <button
-                className={`btn flex items-center gap-x-2 ${props.rightClassName ?? "btn-warning"}`}
+                className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-warning")}
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >

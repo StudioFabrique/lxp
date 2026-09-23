@@ -9,5 +9,8 @@ describe("politique de sécurité des images", () => {
     expect(response.headers["content-security-policy"]).toMatch(
       /img-src[^;]*\bblob:/,
     );
+    expect(response.headers["content-security-policy"]).toMatch(
+      /img-src[^;]*https:/,
+    );
   });
 });

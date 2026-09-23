@@ -166,9 +166,7 @@ const RoleList = () => {
       ) : null}
 
       {isLoading ? (
-        <div className="min-h-72">
-          <Loader />
-        </div>
+        <Loader variant="cards" label="Chargement des rôles" />
       ) : (
         <section
           className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"

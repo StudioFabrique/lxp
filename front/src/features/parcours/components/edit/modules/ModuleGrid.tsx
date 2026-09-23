@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
+import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import type Contact from "../../../../../utils/interfaces/contact";
 import type Skill from "../../../../../utils/interfaces/skill";
@@ -12,6 +13,7 @@ import ModuleCard from "./ModuleCard";
 
 type ModuleGridProps = {
   modules: ModuleData[];
+  isLoading?: boolean;
   parcoursContacts: Contact[];
   parcoursSkills: Skill[];
   isAssigningContacts: boolean;
@@ -34,6 +36,7 @@ type ModuleGridProps = {
 
 export default function ModuleGrid({
   modules,
+  isLoading = false,
   parcoursContacts,
   parcoursSkills,
   isAssigningContacts,
@@ -66,7 +69,11 @@ export default function ModuleGrid({
   }, [highlightedModuleId, modules]);
 
   if (modules.length === 0) {
-    return <EmptyStatePlaceholder title={emptyMessage} />;
+    return isLoading ? (
+      <LoadingSkeleton variant="cards" label="Chargement des modules associés" />
+    ) : (
+      <EmptyStatePlaceholder title={emptyMessage} />
+    );
   }
 
   return (

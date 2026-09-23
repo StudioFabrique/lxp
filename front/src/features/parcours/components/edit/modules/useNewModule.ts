@@ -62,7 +62,7 @@ const useNewModule = () => {
   const assignSkillsMutation = useAssignModuleSkills(Number(id));
   const removeContactMutation = useRemoveModuleContact(Number(id));
   const removeSkillMutation = useRemoveModuleSkill(Number(id));
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingModule, setIsSubmittingModule] = useState(false);
   const [moduleImageFile, setModuleImageFile] = useState<File | null>(null);
   const isModuleSubmissionRunning = useRef(false);

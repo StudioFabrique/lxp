@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useRef,
 } from "react";
+import { cn } from "../../../utils/cn";
 
 export type SearchBarProps = {
   placeholder?: string;
@@ -38,7 +39,7 @@ const SearchBar = ({
 
   return (
     <div
-      className={`flex flex-col lg:flex-row justify-between gap-5 items-center w-full ${additionalClassname}`}
+      className={cn("flex flex-col lg:flex-row justify-between gap-5 items-center w-full", additionalClassname)}
     >
       <div className="flex items-center justify-end gap-5 w-full">
         <form

@@ -3,6 +3,7 @@ import Course from "../../../../../src/utils/interfaces/course";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import TableActionsModal from "../../../../components/table/TableActionsModal";
 import { ModalCourseType } from "./course-item";
+import { cn } from "../../../../utils/cn";
 
 type CourseActionsModalProps = {
   modalType?: ModalCourseType;
@@ -62,7 +63,7 @@ const CourseActionsModal = ({
       descList={lesson ? [lesson.title] : [course.title]}
     >
       <button
-        className={`btn btn-primary btn-md ${isModalLoading && "loading"}`}
+        className={cn("btn btn-primary btn-md", isModalLoading && "loading")}
         onClick={onConfirm}
       >
         Confirmer

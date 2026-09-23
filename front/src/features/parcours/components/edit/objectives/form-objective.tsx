@@ -5,6 +5,7 @@ import { regexGeneric } from "../../../../../config/constantes";
 import Objective from "../../../../../../src/utils/interfaces/objective";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
+import { cn } from "../../../../../utils/cn";
 
 type Props = {
   objective?: Objective;
@@ -57,7 +58,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
 
   // définit le style du champ du formulaire en fonction de sa validité
   const style = "textarea focus:outline-none bg-secondary/20";
-  const textareaStyle = error ? style + " textarea-error" : style;
+  const textareaStyle = cn(style, error && "textarea-error");
 
   return (
     <div className="flex flex-col gap-y-4">

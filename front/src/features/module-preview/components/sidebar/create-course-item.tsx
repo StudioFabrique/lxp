@@ -6,6 +6,7 @@ import type { CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
 import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 import type Tag from "../../../../utils/interfaces/tag";
+import { cn } from "../../../../utils/cn";
 
 type CreateCourseItemProps = {
   parcoursId?: number;
@@ -68,9 +69,7 @@ const CreateCourseItem = ({
       )}
       <motion.div
         data-onboarding="course-create"
-        className={`flex w-full flex-col gap-4 rounded-xl ${
-          showTitleInput ? "bg-success" : ""
-        }`}
+        className={cn("flex w-full flex-col gap-4 rounded-xl", showTitleInput && "bg-success")}
         initial={{ scale: 0.95, padding: 0 }}
         animate={{
           scale: 1,

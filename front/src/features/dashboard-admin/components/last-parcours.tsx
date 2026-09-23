@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
@@ -16,6 +17,7 @@ import ParcoursCreationModal from "../../parcours/components/create/ParcoursCrea
 import Modal from "../../../components/UI/modal/modal";
 import { parcoursApi } from "../../parcours/api/parcours.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import { cn } from "../../../utils/cn";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -141,7 +143,7 @@ export default function LastParcours({
 
       <div className="w-full mt-4">
         {isLoading ? (
-          <div className={`grid gap-5 ${gridClassName}`}>
+          <div className={cn("grid gap-5", gridClassName)}>
             {[0, 1, 2].map((item) => (
               <div
                 className="h-72 skeleton rounded-box"
@@ -151,7 +153,7 @@ export default function LastParcours({
             ))}
           </div>
         ) : (
-          <div className={`grid items-start gap-5 ${gridClassName}`}>
+          <div className={cn("grid items-start gap-5", gridClassName)}>
             {displayedFormations.map((formation) => (
               <LastParcoursItem
                 key={formation.id}
@@ -195,7 +197,7 @@ export default function LastParcours({
       ) : null}
       {parcoursToDelete ? (
         <Modal
-          title={`Supprimer le parcours « ${parcoursToDelete.title} »`}
+          title={`Supprimer le parcours « ${formatTitle(parcoursToDelete.title)} »`}
           leftLabel="Annuler"
           rightLabel="Supprimer"
           rightDisabled={deleteConfirmation.trim() !== parcoursToDelete.title}

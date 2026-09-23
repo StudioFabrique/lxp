@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Check, Plus, Search, Trash2, X } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
@@ -345,7 +346,11 @@ export default function CreateCourseDetailsModal({
                 </div>
 
                 {isLoadingLessons ? (
-                  <span className="loading loading-spinner loading-sm mx-auto" />
+                  <div role="status" aria-label="Chargement des contenus" className="w-full space-y-2">
+                    <span className="sr-only">Chargement des contenus…</span>
+                    <div className="skeleton h-9 w-full" />
+                    <div className="skeleton h-9 w-full" />
+                  </div>
                 ) : contentTagId > 0 && availableContents.length === 0 ? (
                   <p className="text-xs text-center text-base-content/55 pt-2">
                     {includeCourseContents
@@ -373,7 +378,7 @@ export default function CreateCourseDetailsModal({
                                 onChange={() => toggleExistingLesson(content)}
                               />
                               <span className="flex-1">
-                                <span className="block">{content.title}</span>
+                                <span className="block">{formatTitle(content.title)}</span>
                                 <span className="text-xs text-base-content/50">
                                   {content.source === "resource"
                                     ? "Ressource supplémentaire"
@@ -413,7 +418,7 @@ export default function CreateCourseDetailsModal({
                                 onChange={() => toggleExistingLesson(content)}
                               />
                               <span className="flex-1">
-                                <span className="block">{content.title}</span>
+                                <span className="block">{formatTitle(content.title)}</span>
                                 <span className="text-xs text-base-content/50">
                                   {content.source === "resource"
                                     ? "Ressource supplémentaire"

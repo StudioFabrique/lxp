@@ -1,15 +1,17 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { serverIssue } from "../../../utils/constantes.ts";
 import DeleteHobby from "../../../models/user/hobby/delete-hobby.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpDeleteHobby(
-  req: Request<{ id: string }>,
+  req: CustomRequest<{ id: string }>,
   res: Response,
 ) {
   try {
     const id: string = req.params.id;
 
-    await DeleteHobby(id);
+    const deleted = await DeleteHobby(id, req.auth!.userId);
+    if (!deleted) return res.status(404).json({ message: "Centre d'intérêt introuvable" });
 
     return res
       .status(200)

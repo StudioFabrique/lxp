@@ -25,6 +25,7 @@ function ResourcePreview({
     resourceName,
     setResourceName,
     handleAddResource,
+    cancelUpload,
     handleCancel,
     handleCancelDelete,
     handleDeleteResource,
@@ -76,6 +77,7 @@ function ResourcePreview({
           handleFileChange={handleFileChange}
           handleCancel={handleCancel}
           handleAddResource={handleAddResource}
+          cancelUpload={cancelUpload}
           handleRemoveFromUploadList={handleRemoveFromUploadList}
           onReorder={handleReorder}
           uploadList={uploadList}

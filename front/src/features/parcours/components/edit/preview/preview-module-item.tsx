@@ -7,6 +7,7 @@ import { bgImageGradient } from "../../../../../utils/helpers/color-helpers";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
 import { Edit } from "lucide-react";
 import { Link } from "react-router";
+import { cn } from "../../../../../utils/cn";
 
 interface PreviewModuleItemProps {
   module: Module;
@@ -43,9 +44,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
       ? module.title?.slice(0, 70) + "..."
       : (module.title ?? "");
 
-  const style = notValid
-    ? "flex flex-col bg-secondary/10 rounded-xl border border-error"
-    : "flex flex-col bg-secondary/10 rounded-xl";
+  const style = cn("flex flex-col bg-secondary/10 rounded-xl", notValid && "border border-error");
 
   return (
     <div className={style}>

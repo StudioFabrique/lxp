@@ -59,14 +59,16 @@ docker container inspect "$mongo_container" >/dev/null 2>&1 && mongo_exists=true
 
 if [[ "$postgres_exists" == false && "$mongo_exists" == false ]]; then
     if [[ "${BACKUP_ALLOW_UNINITIALIZED:-false}" == true ]]; then
-        persisted_data=false
-        docker volume inspect "${LXP_DEPLOYMENT_NAME}_pg" >/dev/null 2>&1 && persisted_data=true
-        docker volume inspect "${LXP_DEPLOYMENT_NAME}_mongo" >/dev/null 2>&1 && persisted_data=true
+        persisted_data=''
+        docker volume inspect "${LXP_DEPLOYMENT_NAME}_pg" >/dev/null 2>&1 \
+            && persisted_data="${persisted_data} ${LXP_DEPLOYMENT_NAME}_pg"
+        docker volume inspect "${LXP_DEPLOYMENT_NAME}_mongo" >/dev/null 2>&1 \
+            && persisted_data="${persisted_data} ${LXP_DEPLOYMENT_NAME}_mongo"
         if backup_target_sh "test -d '$DEPLOY_PATH/uploads' && find '$DEPLOY_PATH/uploads' -mindepth 1 -print -quit | grep -q ."; then
-            persisted_data=true
+            persisted_data="${persisted_data} $DEPLOY_PATH/uploads"
         fi
-        [[ "$persisted_data" == false ]] \
-            || backup_die "Les conteneurs sont absents, mais la cible contient encore des volumes ou des fichiers persistants."
+        [[ -z "$persisted_data" ]] \
+            || backup_die "Les conteneurs sont absents, mais la cible contient encore ces volumes ou fichiers persistants :$persisted_data"
         printf 'Cible non initialisee : aucune donnee active a sauvegarder avant le premier deploiement.\n'
         exit 0
     fi

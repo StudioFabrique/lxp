@@ -10,6 +10,7 @@ import {
   type InstanceSettings,
 } from "../../profile/api/profile.api";
 import AuthPageWrapper from "../components/AuthPageWrapper";
+import { cn } from "../../../utils/cn";
 
 const DEFAULT_NAME = "ANDRIA";
 const DEFAULT_LOGO_BACKGROUND = "#ffffff";
@@ -43,19 +44,20 @@ export default function InstanceSetup() {
       );
   }, [navigate]);
 
-  const completeSetup = async (useDefaults = false) => {
+  const completeSetup = async () => {
     if (!settings || isSaving) return;
 
-    const organizationName = useDefaults ? DEFAULT_NAME : name.trim();
+    const organizationName = name.trim();
     if (organizationName.length < 2) {
       toast.error("Le nom de l’organisme doit contenir au moins 2 caractères.");
       return;
     }
-    const organizationWebsite = useDefaults ? "" : website.trim();
+    const organizationWebsite = website.trim();
     if (organizationWebsite) {
       try {
         const parsedWebsite = new URL(organizationWebsite);
-        if (!["http:", "https:"].includes(parsedWebsite.protocol)) throw new Error();
+        if (!["http:", "https:"].includes(parsedWebsite.protocol))
+          throw new Error();
       } catch {
         setWebsiteError(
           "Saisissez une adresse complète commençant par http:// ou https://.",
@@ -72,11 +74,8 @@ export default function InstanceSetup() {
       payload.append("website", organizationWebsite);
       payload.append("setupCompleted", "true");
       payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
-      payload.append(
-        "color",
-        useDefaults ? DEFAULT_LOGO_BACKGROUND : logoBackgroundColor,
-      );
-      if (!useDefaults && logo.file) payload.append("image", logo.file);
+      payload.append("color", logoBackgroundColor);
+      if (logo.file) payload.append("image", logo.file);
 
       await profileApi.mutations.updateInstanceSettings(payload);
       navigate("/admin", { replace: true });
@@ -94,7 +93,7 @@ export default function InstanceSetup() {
       description="Configurez l’identité de votre organisme. Vous pourrez modifier ces informations plus tard dans les paramètres."
     >
       <form
-        className="mx-auto flex w-full max-w-sm flex-col items-center gap-5"
+        className="mx-auto flex w-full max-w-xl flex-col items-center gap-5"
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
@@ -115,41 +114,51 @@ export default function InstanceSetup() {
           />
         </label>
 
-        <label className="flex w-full flex-col gap-2 text-center">
-          <span className="text-sm font-semibold text-base-content">
-            Site internet <span className="font-normal text-base-content/60">(optionnel)</span>
-          </span>
-          <input
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            value={website}
-            maxLength={2048}
-            placeholder="https://www.exemple.fr"
-            disabled={!settings || isSaving}
-            aria-invalid={Boolean(websiteError)}
-            aria-describedby={websiteError ? "setup-website-error" : undefined}
-            onChange={(event) => {
-              if (websiteError) setWebsiteError("");
-              setWebsite(event.target.value);
-            }}
-            className={`input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary ${websiteError ? "input-error" : ""}`}
-          />
-          {websiteError && (
-            <span id="setup-website-error" className="text-left text-sm text-error">
-              {websiteError}
+        <div className="grid w-full gap-5 sm:grid-cols-2 sm:items-start">
+          <label className="flex min-w-0 flex-col gap-2 text-center">
+            <span className="text-sm font-semibold text-base-content">
+              Site internet{" "}
+              <span className="font-normal text-base-content/60">
+                (optionnel)
+              </span>
             </span>
-          )}
-        </label>
+            <input
+              type="text"
+              inputMode="url"
+              autoComplete="url"
+              value={website}
+              maxLength={2048}
+              placeholder="https://www.exemple.fr"
+              disabled={!settings || isSaving}
+              aria-invalid={Boolean(websiteError)}
+              aria-describedby={
+                websiteError ? "setup-website-error" : undefined
+              }
+              onChange={(event) => {
+                if (websiteError) setWebsiteError("");
+                setWebsite(event.target.value);
+              }}
+              className={cn("input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary", websiteError && "input-error")}
+            />
+            {websiteError && (
+              <span
+                id="setup-website-error"
+                className="text-left text-sm text-error"
+              >
+                {websiteError}
+              </span>
+            )}
+          </label>
 
-        <InstanceLogoControls
-          temporaryImage={logo}
-          onSetTemporaryImage={setLogo}
-          backgroundColor={logoBackgroundColor}
-          onBackgroundColorChange={setLogoBackgroundColor}
-          optional
-          helpText="JPG ou PNG · 500 Ko maximum."
-        />
+          <InstanceLogoControls
+            temporaryImage={logo}
+            onSetTemporaryImage={setLogo}
+            backgroundColor={logoBackgroundColor}
+            onBackgroundColorChange={setLogoBackgroundColor}
+            optional
+            helpText="JPG ou PNG, 500 Ko maximum."
+          />
+        </div>
 
         <button
           type="submit"
@@ -158,15 +167,6 @@ export default function InstanceSetup() {
         >
           {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
           {isSaving ? "Configuration…" : "Configurer mon espace"}
-        </button>
-
-        <button
-          type="button"
-          disabled={!settings || isSaving}
-          onClick={() => void completeSetup(true)}
-          className="btn btn-ghost btn-sm w-full normal-case text-base-content/70"
-        >
-          Continuer avec ANDRIA
         </button>
       </form>
     </AuthPageWrapper>

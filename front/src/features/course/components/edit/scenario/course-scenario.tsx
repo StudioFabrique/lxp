@@ -3,7 +3,7 @@ import { useCourseSelector, useCourseDispatch } from "../../../store/CourseConte
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 
 import LinearScenarioLessons from "./linear-scenario-lessons";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import courseScenarioFromHttp from "../../../helpers/course-scenario-from-http";
@@ -13,6 +13,7 @@ import LessonsInDrawer from "./lessons-in-drawer";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import { courseApi } from "../../../api/course.api";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
+import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
 const CourseScenario = () => {
   const { courseId } = useParams();
@@ -28,18 +29,20 @@ const CourseScenario = () => {
   ) as boolean;
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [initializedScenario, setInitializedScenario] = useState<unknown>(null);
 
-  const { data: scenarioData, error } = useQuery({
+  const { data: scenarioData, error, isPending } = useQuery({
     ...courseApi.queries.scenario(courseId!),
     enabled: !!courseId,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (scenarioData) {
       dispatch({
         type: "INIT_COURSE_DATA",
         payload: courseScenarioFromHttp(scenarioData),
       });
+      setInitializedScenario(scenarioData);
     }
   }, [scenarioData, dispatch]);
 
@@ -104,6 +107,13 @@ const CourseScenario = () => {
       setLoading(false);
     }
   }, [error]);
+
+  if (isPending || (scenarioData && initializedScenario !== scenarioData)) {
+    return <LoadingSkeleton variant="rows" label="Chargement du contenu du cours" />;
+  }
+  if (error) {
+    return <p role="alert">Impossible de charger le contenu du cours.</p>;
+  }
 
   return (
     <main className="w-full flex flex-col gap-y-8">

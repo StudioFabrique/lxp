@@ -13,6 +13,7 @@ import {
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 type Props = {
   modules: ModuleSummary[];
@@ -24,7 +25,7 @@ export default function LastModules({ modules, isLoading }: Props) {
   const isTeacher = isTeacherUser(user);
 
   return isLoading ? (
-    <span className="loading loading-spinner loading-sm my-5" />
+    <LoadingSkeleton variant="rows" label="Chargement des modules" />
   ) : modules?.length ? (
     <div className="p-2">
       <h3 className="text-xl font-bold text-primary select-none">
@@ -43,10 +44,10 @@ export default function LastModules({ modules, isLoading }: Props) {
 
             <div className="list-col-grow min-w-0 self-center">
               <div className="font-semibold truncate">{formatTitle(module.title)}</div>
-              <div className="text-xs font-light opacity-50 truncate">
+              <div className="truncate text-xs text-base-content/80">
                 {module.parcours ?? "Non rattaché"}
               </div>
-              <div className="text-xs font-light opacity-50">
+              <div className="text-xs text-base-content/80">
                 {module.coursesCount} cours · Créé le{" "}
                 {localeDate(module.createdAt)}
               </div>
@@ -76,7 +77,7 @@ export default function LastModules({ modules, isLoading }: Props) {
                   </PermissionGuard>
                 </>
               ) : (
-                <span className="text-xs text-base-content/50">
+                <span className="text-xs text-base-content/80">
                   Non rattaché
                 </span>
               )}

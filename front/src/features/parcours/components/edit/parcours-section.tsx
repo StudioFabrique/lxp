@@ -6,7 +6,7 @@ import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 type Props = {
   title: string;
-  children: [ReactNode, ReactElement<{ onCloseDrawer: (id: string) => void }>];
+  children: [ReactNode, ReactElement<{ onCloseDrawer?: (id: string) => void }>];
   onResetList: () => void;
   readOnly?: boolean;
 };

@@ -48,7 +48,7 @@ export default function MessageChatbot({
 
   return (
     <>
-      <div className={`chat ${isUser ? "chat-end" : "chat-start"}`}>
+      <div className={cn("chat", isUser ? "chat-end" : "chat-start")}>
         <div className="chat-image avatar">
           <AvatarChatbot message={message} user={user} />
         </div>

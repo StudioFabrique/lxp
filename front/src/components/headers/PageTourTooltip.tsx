@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import type { TooltipRenderProps } from "react-joyride";
+import { cn } from "../../utils/cn";
 
 const PageTourTooltip = ({
   backProps,
@@ -39,7 +40,7 @@ const PageTourTooltip = ({
     <div className="mt-5 flex items-center justify-between gap-3">
       <button
         type="button"
-        className={`btn btn-ghost btn-sm ${index === 0 ? "invisible" : ""}`}
+        className={cn("btn btn-ghost btn-sm", index === 0 && "invisible")}
         disabled={index === 0}
         {...backProps}
       >

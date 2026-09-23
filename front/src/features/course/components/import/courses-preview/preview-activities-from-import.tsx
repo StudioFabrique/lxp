@@ -49,9 +49,9 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
 
     if (activity.type === "text" && activity.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center h-64 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg gap-4">
+        <div className="flex flex-col items-center justify-center h-64 bg-base-200 border-2 border-dashed border-base-300 rounded-lg gap-4">
           <p className="font-semibold text-secondary">Activité de type texte</p>
-          <div className="flex flex-col items-center gap-4 text-xs text-red-400">
+          <div className="flex flex-col items-center gap-4 text-xs text-error">
             <span>Le fichier est manquant</span>
             <span>({activity.url})</span>
           </div>
@@ -64,7 +64,7 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
       return (
         <div
           key={`file-wrapper-${activity.id}`}
-          className="flex flex-col items-center justify-center h-64 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg gap-4"
+          className="flex flex-col items-center justify-center h-64 bg-base-200 border-2 border-dashed border-base-300 rounded-lg gap-4"
         >
           <div className="text-center flex flex-col gap-4 items-center">
             <p className="font-semibold text-secondary">
@@ -81,7 +81,7 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
                 Ouvrir le document <ArrowUpRight className="w-4" />
               </a>
             ) : (
-              <div className="flex flex-col items-center gap-4 text-xs text-red-400">
+              <div className="flex flex-col items-center gap-4 text-xs text-error">
                 <span>Le fichier est manquant</span>
                 <span>({activity.url})</span>
               </div>
@@ -93,7 +93,7 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
 
     // CAS 3 : NON SUPPORTÉ
     return (
-      <div className="p-10 text-center text-gray-500 bg-gray-50 rounded border border-dashed">
+      <div className="p-10 text-center text-base-content/70 bg-base-200 rounded border border-dashed border-base-300">
         Type de contenu non supporté par la prévisualisation.
       </div>
     );
@@ -101,7 +101,7 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
 
   if (!activity) {
     return (
-      <div className="select-none h-full flex flex-col items-center justify-center text-gray-400 p-10">
+      <div className="select-none h-full flex flex-col items-center justify-center text-base-content/70 p-10">
         <EyeIcon className="w-12 h-12" />
         <p>
           Sélectionner une activité dans la menu de navigation pour

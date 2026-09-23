@@ -2,6 +2,7 @@ import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
 import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 import { useEffect, useState } from "react";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   lastname: string;
@@ -18,15 +19,12 @@ type Props = {
   /** Motif du refus affiché sous le champ : format invalide ou adresse prise. */
   emailMessage?: string | null;
   onEmail: (v: string) => void;
-  onEmailBlur: () => void;
   onSetFile: (file: File) => void;
   disabled?: boolean;
 };
 
 const inputStyle = (hasError: boolean) =>
-  hasError
-    ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-    : "input input-sm input-bordered focus:outline-none w-full";
+  cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
 
 const UserFormInformations = ({
   lastname,
@@ -42,7 +40,6 @@ const UserFormInformations = ({
   emailError,
   emailMessage,
   onEmail,
-  onEmailBlur,
   onSetFile,
   disabled,
 }: Props) => {
@@ -58,17 +55,6 @@ const UserFormInformations = ({
   return (
     <BoxWrapper>
       <h2 className="font-bold text-xl">Informations</h2>
-      <div className="flex flex-col items-center gap-2">
-        <label className="font-medium">Avatar</label>
-        <ImageFileUpload
-          temporaryImage={temporaryAvatar}
-          onSetTemporaryImage={setTemporaryAvatar}
-          maxSize={avatarImageMaxSize}
-        />
-        <p className="text-xs text-base-content/60">
-          Cliquez sur l'avatar pour ajouter une image
-        </p>
-      </div>
       <span className="flex flex-col gap-y-2">
         <label>Prénom *</label>
         <input
@@ -109,7 +95,6 @@ const UserFormInformations = ({
           type="text"
           value={email}
           onChange={(e) => onEmail(e.target.value)}
-          onBlur={onEmailBlur}
           autoComplete="off"
           disabled={disabled}
           aria-invalid={emailError}
@@ -121,6 +106,19 @@ const UserFormInformations = ({
           </span>
         ) : null}
       </span>
+      <div className="flex items-center justify-between gap-4 border-t border-base-300 pt-4">
+        <div>
+          <p className="font-medium">Avatar</p>
+          <p className="text-xs text-base-content/60">
+            Cliquez sur l'avatar pour ajouter une image
+          </p>
+        </div>
+        <ImageFileUpload
+          temporaryImage={temporaryAvatar}
+          onSetTemporaryImage={setTemporaryAvatar}
+          maxSize={avatarImageMaxSize}
+        />
+      </div>
     </BoxWrapper>
   );
 };

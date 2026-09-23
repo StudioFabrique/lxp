@@ -1,6 +1,7 @@
 import * as Popover from "@radix-ui/react-popover";
 import { ChevronLeft, ChevronRight, Plus, Trash2, X } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Calendar from "../../../calendar/components/calendar";
 import type Module from "../../../../utils/interfaces/module";
 import type CourseDates from "../../../course/interfaces/course-dates";
@@ -10,6 +11,41 @@ import DatePicker from "../../../../components/UI/date-picker/date-picker";
 import CourseTimeFields from "../../../course/components/edit/calendar/course-time-fields";
 import { validCourseTimes } from "../../../course/helpers/course-times";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
+import { calendarColor, calendarColors, colorDots, type CalendarColor } from "../../../calendar/components/calendar-configuration";
+import { cn } from "../../../../utils/cn";
+
+export function ColorPicker({ color, disabled, onChange }: { color: CalendarColor; disabled: boolean; onChange: (color: CalendarColor) => void }) {
+  const [open, setOpen] = useState(false);
+  const reducedMotion = useReducedMotion();
+  return <div className="relative mt-1 size-4 shrink-0">
+    <div className="absolute left-0 top-0 z-10 flex items-center gap-1.5">
+      <AnimatePresence>
+        {open && <motion.span
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-1 rounded-full bg-base-100/20 backdrop-blur-[2px]"
+          initial={reducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reducedMotion ? undefined : { opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.16 }}
+        />}
+      </AnimatePresence>
+      <button type="button" disabled={disabled} aria-label="Changer la couleur du cours" aria-expanded={open}
+        className={cn("relative z-10 size-4 shrink-0 cursor-pointer rounded-full border border-base-content/20 ring-offset-2 ring-offset-base-100 hover:border-base-content/70 hover:ring-2 hover:ring-base-content/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed", colorDots[color])}
+        onClick={() => setOpen(value => !value)} />
+      <AnimatePresence>
+        {open && calendarColors.filter(option => option !== color).map((option, index) => <motion.button
+          key={option} type="button" disabled={disabled} aria-label={`Choisir la couleur ${option}`}
+          className={cn("relative z-10 size-4 shrink-0 cursor-pointer rounded-full border border-base-content/20 hover:border-base-content/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed", colorDots[option])}
+          initial={reducedMotion ? false : { opacity: 0, scale: 0.3, x: -8 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          exit={reducedMotion ? undefined : { opacity: 0, scale: 0.3, x: -8 }}
+          transition={{ duration: reducedMotion ? 0 : 0.16, delay: reducedMotion ? 0 : index * 0.035 }}
+          onClick={() => { setOpen(false); onChange(option); }}
+        />)}
+      </AnimatePresence>
+    </div>
+  </div>;
+}
 
 export function DatesEditor({ dates, isSaving, onSave, onDelete }: {
   dates: CourseDates[];
@@ -66,6 +102,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
   });
   const selectedCourse = module.courses.find(course => course.id === selection?.courseId);
   const selectedDates = selection ? store.datesByCourse.get(selection.courseId) : undefined;
+  const selectedColor = selection ? calendarColor(store.events.find(event => event.id === selection.eventId)?.color) : "primary";
   const firstDate = store.events[0]?.startDate;
   const positioned = useRef(false);
 
@@ -103,7 +140,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1));
   };
 
-  if (store.isPending) return <div role="status" className="p-10 text-center">Chargement du calendrier…</div>;
+  if (store.isPending) return <div role="status" aria-label="Chargement du calendrier" className="space-y-4 p-5"><span className="sr-only">Chargement du calendrier…</span><div className="skeleton h-10 w-56" /><div className="skeleton h-[50vh] w-full rounded-box" /></div>;
   if (store.isError) return <div role="alert" className="rounded-lg border border-error p-6">Impossible de charger le calendrier. <button className="btn btn-sm" onClick={() => void store.refetch()}>Réessayer</button></div>;
 
   return <div ref={container} className="min-w-0" aria-label="Planification des cours">
@@ -134,7 +171,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
             className="btn btn-sm btn-ghost"
             onClick={() => { setSelection(null); setCurrentDate(new Date()); }}
           >Aujourd’hui</button>
-          {store.orphanIds.length > 0 && <button className={`btn btn-sm ${store.isAdding ? "btn-outline" : "btn-primary"}`} disabled={store.isSaving} aria-pressed={store.isAdding}
+          {store.orphanIds.length > 0 && <button className={cn("btn btn-sm", store.isAdding ? "btn-outline" : "btn-primary")} disabled={store.isSaving} aria-pressed={store.isAdding}
             onClick={() => { setSelection(null); store.setIsAdding(!store.isAdding); }}>
             {store.isAdding ? <X className="size-4" /> : <Plus className="size-4" />}
             {store.isAdding ? "Annuler l’ajout" : "Ajouter un cours au calendrier"}
@@ -159,11 +196,15 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
           sideOffset={8}
           collisionPadding={16}
           className="z-50 data-[detached]:invisible w-96 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
-          aria-label={`Dates du cours ${selectedCourse?.title}`}
+          aria-label={`Dates du cours ${formatTitle(selectedCourse?.title)}`}
           onCloseAutoFocus={e => e.preventDefault()}
         >
           <div className="mb-4 flex items-start justify-between gap-2">
-            <h3 className="font-semibold">{formatTitle(selectedCourse?.title)}</h3>
+            <div className="flex min-w-0 items-start gap-2">
+              {selection && <ColorPicker key={selection.courseId} color={selectedColor} disabled={store.isSaving}
+                onChange={color => { void store.saveColor(selection.courseId, color); }} />}
+              <h3 className="font-semibold">{formatTitle(selectedCourse?.title)}</h3>
+            </div>
             <Popover.Close
               className="btn btn-xs btn-ghost"
               aria-label="Fermer les dates"

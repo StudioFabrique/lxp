@@ -1,5 +1,6 @@
 import { PropsWithChildren, type SyntheticEvent } from "react";
 import { useDemoMode } from "../../../store/DemoContext";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   /** Message du tooltip. Adaptable pour une action au libellé particulier. */
@@ -31,7 +32,7 @@ const DemoLock = ({ children, tip = DEFAULT_TIP, block }: PropsWithChildren<Prop
 
   return (
     <span
-      className={`tooltip tooltip-bottom ${block ? "block" : "inline-flex"}`}
+      className={cn("tooltip tooltip-bottom", block ? "block" : "inline-flex")}
       data-tip={tip}
       onClickCapture={block_}
       onSubmitCapture={block_}

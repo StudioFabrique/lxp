@@ -2,6 +2,7 @@ import { cloneElement, ReactElement, useEffect, useState } from "react";
 import { displaySize } from "../../../utils/helpers/size-unit-conversion";
 import Media from "../interfaces/media";
 import { ClipboardCheck, Copy, Trash2 } from "lucide-react";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   media: Media;
@@ -64,9 +65,7 @@ function CardMedia({ children, media }: Props) {
             >
               <button disabled={media.used > 0}>
                 <Trash2
-                  className={`w-5 h-5 ${
-                    media.used > 0 ? "text-gray-500" : "text-error"
-                  }`}
+                  className={cn("w-5 h-5", media.used > 0 ? "text-base-content/60" : "text-error")}
                 />
               </button>
             </div>

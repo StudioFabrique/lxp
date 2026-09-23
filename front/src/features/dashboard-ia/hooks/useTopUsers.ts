@@ -24,7 +24,7 @@ const useTopUsers = () => {
     searchTerm,
   ];
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching, isError } = useQuery({
     queryKey,
     queryFn: () =>
       dashboardIAApi.queries.getTopUsers({
@@ -62,12 +62,13 @@ const useTopUsers = () => {
   return {
     dataList: data?.list ?? [],
     totalItems: data?.total ?? 0,
-    totalPages: Math.ceil((data?.total ?? 0) / perPage) || 1,
+    totalPages: Math.ceil((data?.total ?? 0) / perPage),
     page,
     perPage,
     sortProperty,
     sortDirection,
     isLoading: isLoading || isFetching,
+    isError,
     setPage,
     setPerPage,
     handleSort,

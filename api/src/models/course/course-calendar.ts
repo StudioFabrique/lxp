@@ -34,7 +34,7 @@ export async function initializeCourseCalendar(moduleId: number) {
         .then((count) => ({ count }));
     }
     return tx.orm.public.Course.where({ moduleId: module.id })
-      .select("id", "dates")
+      .select("id", "dates", "calendarColor")
       .orderBy([(row) => row.order.asc(), (row) => row.id.asc()])
       .all();
   });
@@ -45,7 +45,14 @@ export async function replaceCourseCalendarDates(
   dates: any[],
 ) {
   return prisma.orm.public.Course.where({ id: courseId })
-    .select("id", "dates")
+    .select("id", "dates", "calendarColor")
     .update({ dates, calendarInitialized: true })
+    .then(requireDatabaseRow);
+}
+
+export function replaceCourseCalendarColor(courseId: number, calendarColor: string) {
+  return prisma.orm.public.Course.where({ id: courseId })
+    .select("id", "dates", "calendarColor")
+    .update({ calendarColor })
     .then(requireDatabaseRow);
 }

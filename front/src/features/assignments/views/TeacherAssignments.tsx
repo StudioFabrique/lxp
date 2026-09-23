@@ -15,6 +15,7 @@ import {
   teacherAssignmentStudentStatus,
   type TeacherAssignmentEvaluationFilter,
 } from "../teacher-assignments.utils";
+import { cn } from "../../../utils/cn";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "medium",
@@ -83,7 +84,7 @@ export default function TeacherAssignments() {
       >
         <button
           type="button"
-          className={`btn btn-sm ${evaluationFilter === "ungraded" ? "btn-primary" : "btn-outline"}`}
+          className={cn("btn btn-sm", evaluationFilter === "ungraded" ? "btn-primary" : "btn-outline")}
           aria-pressed={evaluationFilter === "ungraded"}
           onClick={() => setEvaluationFilter("ungraded")}
         >
@@ -91,7 +92,7 @@ export default function TeacherAssignments() {
         </button>
         <button
           type="button"
-          className={`btn btn-sm ${evaluationFilter === "graded" ? "btn-primary" : "btn-outline"}`}
+          className={cn("btn btn-sm", evaluationFilter === "graded" ? "btn-primary" : "btn-outline")}
           aria-pressed={evaluationFilter === "graded"}
           onClick={() => setEvaluationFilter("graded")}
         >
@@ -100,7 +101,7 @@ export default function TeacherAssignments() {
       </div>
 
       {query.isPending ? (
-        <Loader />
+        <Loader variant="cards" label="Chargement des devoirs" />
       ) : query.isError ? (
         <div className="alert alert-error" role="alert">
           Impossible de charger les évaluations.
@@ -186,7 +187,7 @@ export default function TeacherAssignments() {
                     title: fullName,
                     titleAccessory: (
                       <span
-                        className={`badge badge-xs ${statusClassName[status]}`}
+                        className={cn("badge badge-xs", statusClassName[status])}
                       >
                         {status}
                       </span>

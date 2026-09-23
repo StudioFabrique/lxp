@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Quiz, UserAnswer } from "../../interfaces/quiz";
 import QuizModalButtons from "./quiz-modal-buttons";
+import { cn } from "../../../../utils/cn";
 
 interface Props {
   quiz: Extract<Quiz, { type: "mcq" }>;
@@ -30,9 +31,7 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         {quiz.data.options.map((option: string, index: number) => (
           <button
             key={index}
-            className={`btn justify-start h-auto min-h-12 normal-case text-left ${
-              selected === index ? "btn-primary" : "btn-outline btn-secondary"
-            }`}
+            className={cn("btn justify-start h-auto min-h-12 normal-case text-left", selected === index ? "btn-primary" : "btn-outline btn-secondary")}
             onClick={() => setSelected(index)}
             disabled={isAnswered}
           >

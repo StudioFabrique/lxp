@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
  
 import { useCourseSelector } from "../../../store/CourseContext";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
@@ -32,9 +33,9 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
           <article className="flex flex-col gap-y-4">
             <BoxWrapper>
               <h2 className="text-xl font-bold">Module</h2>
-              <SubWrapper><span className="inline-block first-letter:uppercase">{course?.module?.title}</span></SubWrapper>
+              <SubWrapper><span className="inline-block first-letter:uppercase">{formatTitle(course?.module?.title)}</span></SubWrapper>
               <h2 className="text-xl font-bold">Titre du cours</h2>
-              <SubWrapper><span className="inline-block first-letter:uppercase">{course?.title}</span></SubWrapper>
+              <SubWrapper><span className="inline-block first-letter:uppercase">{formatTitle(course?.title)}</span></SubWrapper>
               <h2 className="text-xl font-bold">Description du cours</h2>
               <div className="text-xs max-h-[35vh] overflow-auto scrollbar scrollbar-thumb-secondary scrollbar-track-primary">
                 <SubWrapper>

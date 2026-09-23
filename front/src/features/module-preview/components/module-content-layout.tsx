@@ -1,5 +1,6 @@
 import type React from "react";
 import { motion } from "motion/react";
+import { cn } from "../../../utils/cn";
 
 type ModuleContentLayoutProps = {
   header: React.ReactNode;
@@ -39,11 +40,9 @@ const ModuleContentLayout = ({
           </motion.div>
         )}
         <div
-          className={`flex flex-col gap-2 min-w-0 min-h-[80vh] ${
-            isSidebarCollapsed
+          className={cn("flex flex-col gap-2 min-w-0 min-h-[80vh]", isSidebarCollapsed
               ? "col-span-2 lg:col-span-3"
-              : "col-span-1 lg:col-span-2"
-          }`}
+              : "col-span-1 lg:col-span-2")}
         >
           {children}
         </div>

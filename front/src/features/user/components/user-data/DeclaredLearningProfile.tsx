@@ -46,18 +46,18 @@ export default function DeclaredLearningProfile({ data }: { data: DeclaredProfil
           </div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-sm font-bold">Niveaux par formation</h3>
-          {data?.formations.length ? data.formations.map((formation) => (
-            <div key={formation.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-base-200 p-3">
+          <h3 className="text-sm font-bold">Niveaux par module</h3>
+          {data?.formations.length ? data.formations.flatMap((formation) => formation.parcours.flatMap((parcours) => parcours.modules.map((module) => ({ module, parcours, formation })))).map(({ module, parcours, formation }) => (
+            <div key={module.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-base-200 p-3">
               <div>
-                <p className="font-semibold">{formatTitle(formation.title)}</p>
-                <p className="text-xs text-base-content/60">{formation.parcours.map((item) => formatTitle(item.title)).join(" · ")}</p>
+                <p className="font-semibold">{formatTitle(module.title)}</p>
+                <p className="text-xs text-base-content/60">{formatTitle(formation.title)} · {formatTitle(parcours.title)}</p>
               </div>
               <div className="text-right">
-                <p>{labelFor(levelOptions, formation.assessment?.level)}</p>
+                <p>{labelFor(levelOptions, module.assessment?.level)}</p>
                 <p className="text-xs text-base-content/60">
-                  {formation.assessment?.updatedAt
-                    ? `Mis à jour le ${new Date(formation.assessment.updatedAt).toLocaleDateString("fr-FR")}`
+                  {module.assessment?.updatedAt
+                    ? `Mis à jour le ${new Date(module.assessment.updatedAt).toLocaleDateString("fr-FR")}`
                     : "Non renseigné"}
                 </p>
               </div>
