@@ -385,8 +385,8 @@ const UserHome = () => {
         }
         description={
           userToResendInvitation?.invitationSent
-            ? "L'invitation a déjà été envoyée. Voulez-vous la renvoyer ?"
-            : "Êtes-vous sûr de vouloir envoyer une invitation d'activation à cet utilisateur ?"
+            ? "L'invitation a déjà été envoyée. Voulez-vous la renvoyer ? Si l'envoi d'emails est désactivé, le compte sera activé directement."
+            : "Voulez-vous envoyer une invitation d'activation à cet utilisateur ? Si l'envoi d'emails est désactivé, le compte sera activé directement."
         }
         descList={
           userToResendInvitation

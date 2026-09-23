@@ -16,6 +16,12 @@ secret.
 La commande `npm run init` copie les deux fichiers d'exemple. Vous pouvez
 démarrer le projet sans modifier leurs valeurs. En développement, elle propose
 à chaque exécution de configurer le mailer tant que `MAILER_DISABLED=true`.
+Dans ce mode, l'action « Envoyer une invitation » active directement les comptes
+inactifs avec le mot de passe de développement, sans envoyer d'email.
+`DEV_TEMPORARY_USER_PASSWORD` est facultative. Si sa valeur est `false`,
+`npm run init` demande le mot de passe en affichant `Abcdef@123456` comme valeur
+proposée, sans masquer la saisie. Sans valeur personnalisée, ce mot de passe
+reste la valeur utilisée pour les comptes locaux.
 
 ### API : variables nécessaires
 
@@ -86,6 +92,7 @@ associée.
 | `FRONT_URL`              | Adresse utilisée dans les liens envoyés par courriel.                        |
 | `MAILER_EMAIL`           | Compte de connexion au serveur SMTP.                                         |
 | `MAILER_PASSWORD`        | Mot de passe du compte SMTP.                                                 |
+| `DEV_TEMPORARY_USER_PASSWORD` | Mot de passe des comptes locaux lorsque le mailer est désactivé.       |
 | `MAILER_SMTP`            | Nom du serveur SMTP.                                                         |
 | `MAILER_DEV_RECIPIENT`   | Destinataire de redirection des messages en développement.                   |
 | `MAILER_SMTP_PORT`       | Port du serveur SMTP.                                                        |

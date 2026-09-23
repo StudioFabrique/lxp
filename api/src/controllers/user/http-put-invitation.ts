@@ -15,6 +15,7 @@
 
 import { type Request, type Response, type NextFunction } from "express";
 import putInvitation from "../../models/user/put-invitation.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpPutInvitation(
@@ -39,7 +40,9 @@ export default async function httpPutInvitation(
       statusCode: 200,
       data: {
         success: true,
-        message: "Invitation email was sent successfully.",
+        message: mailerDisabled
+          ? "L'utilisateur a été activé."
+          : "Invitation email was sent successfully.",
       },
     };
     next(result);

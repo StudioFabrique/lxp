@@ -1,12 +1,12 @@
 /**
- * Sends an activation email to a user and updates the "invitationSent" property if the email was sent successfully.
+ * Sends an activation email, or activates the user directly when the mailer is disabled.
  *
  * This function performs the following steps:
  * 1. Checks if the user exists in the database.
  * 2. Retrieves the user's role.
  * 3. Generates an activation token containing the user's ID and role.
- * 4. Sends an activation email (unless running in test environment).
- * 5. Updates the "invitationSent" property in the database if the email was sent.
+ * 4. With the mailer disabled, activates the account with the development password.
+ * 5. Otherwise sends the email and updates "invitationSent" when it succeeds.
  *
  * @param userId - The ID of the user to send the invitation to.
  * @returns The result of the update operation on the user document.
@@ -19,6 +19,7 @@ import type { IRole } from "../../utils/interfaces/db/role.ts";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { mailerDisabled } from "../../config/mailer-disabled.ts";
+import { devAccountPasswordHash } from "../../config/dev-account-password.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { env } from "../../config/env.ts";
 
@@ -30,15 +31,27 @@ export default async function putInvitation(userId: string) {
 
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
-  if (mailerDisabled) {
-    throw { statusCode: 400, message: "Le mailer est désactivé en développement." };
-  }
-
   if (existingUser.isActive) {
     throw {
       statusCode: 400,
       message: "Cannot send invitation to an already active user.",
     };
+  }
+
+  if (mailerDisabled) {
+    // Sans email d'activation, donner au compte le même mot de passe local
+    // que les utilisateurs créés avec le mailer désactivé.
+    return User.updateOne(
+      { _id: existingUser._id, isActive: false },
+      {
+        $set: {
+          isActive: true,
+          emailVerified: true,
+          password: await devAccountPasswordHash(),
+        },
+        $unset: { invitationPendingSince: 1 },
+      },
+    );
   }
 
   // Retrieve the user's role (assumes the first role is the main one)
