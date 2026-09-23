@@ -13,7 +13,6 @@ type CursorGlowCardProps = {
     | "neutral"
     | "info"
     | "success"
-    | "success-content"
     | "warning"
     | "error";
   className?: string;
@@ -88,15 +87,12 @@ const CursorGlowCard = ({
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
         <motion.span
           className={cn(
-            "absolute rounded-full",
-            glowColor === "success-content"
-              ? "h-20 w-20 bg-success-content/70 blur-md"
-              : "h-14 w-36 blur-xl",
+            "absolute h-14 w-36 rounded-full blur-xl",
             glowColor === "primary" && "bg-primary/40",
             glowColor === "secondary" && "bg-secondary/40",
             glowColor === "accent" && "bg-accent/70",
             glowColor === "neutral" && "bg-neutral/40",
-            glowColor === "info" && "bg-info/40",
+            glowColor === "info" && "bg-info/70",
             glowColor === "success" && "bg-success/40",
             glowColor === "warning" && "bg-warning/40",
             glowColor === "error" && "bg-error/40",
