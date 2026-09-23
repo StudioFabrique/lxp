@@ -140,8 +140,9 @@ configure_development_mailer() {
 
 configure_development_password() {
   file="$1"
+  configured_password=$(read_env_value "DEV_TEMPORARY_USER_PASSWORD" "$file")
   if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "true" ] \
-    || [ "$(read_env_value "DEV_TEMPORARY_USER_PASSWORD" "$file")" != "false" ]; then
+    || { [ -n "$configured_password" ] && [ "$configured_password" != "false" ]; }; then
     return
   fi
 

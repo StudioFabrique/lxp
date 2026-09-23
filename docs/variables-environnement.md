@@ -18,7 +18,7 @@ démarrer le projet sans modifier leurs valeurs. En développement, elle propose
 à chaque exécution de configurer le mailer tant que `MAILER_DISABLED=true`.
 Dans ce mode, l'action « Envoyer une invitation » active directement les comptes
 inactifs avec le mot de passe de développement, sans envoyer d'email.
-`DEV_TEMPORARY_USER_PASSWORD` est facultative. Si sa valeur est `false`,
+`DEV_TEMPORARY_USER_PASSWORD` est facultative. Si elle est absente, vide ou vaut `false`,
 `npm run init` demande le mot de passe en affichant `Abcdef@123456` comme valeur
 proposée, sans masquer la saisie. Sans valeur personnalisée, ce mot de passe
 reste la valeur utilisée pour les comptes locaux.
