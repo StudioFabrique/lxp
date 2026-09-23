@@ -9,7 +9,7 @@ import {
   learningProfileKey,
 } from "../../learning-profile/learning-profile.api";
 
-const defaultTitle = "Bonjour, {firstname} {lastname} !";
+const defaultTitle = "Bonjour, {firstname} !";
 const defaultMessage =
   "Bienvenue dans votre espace, commencez votre apprentissage ou reprenez là où vous vous êtes arrêté";
 

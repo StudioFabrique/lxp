@@ -118,7 +118,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
         <Popover.Trigger asChild>
           <button
             type="button"
-            className={`${sidebarControlClassName} capitalize ${open ? "bg-[var(--sidebar-hover)] ring-1 ring-[var(--sidebar-border)]" : ""}`}
+            className={`${sidebarControlClassName} capitalize ${open ? "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)" : ""}`}
             data-tip={fullName}
             aria-label={`Ouvrir le menu de ${fullName}`}
           >
