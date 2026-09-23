@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import type Skill from "../../utils/interfaces/skill";
+import { cn } from "../../utils/cn";
 
 export default function SkillModules({ skill, onNavigate }: { skill: Skill; onNavigate?: () => void }) {
   if (!skill.modules?.length) {
@@ -13,7 +14,7 @@ export default function SkillModules({ skill, onNavigate }: { skill: Skill; onNa
           <Link className="link link-hover font-medium" to={`/student/parcours/module/${module.id}`} onClick={onNavigate}>
             <span className="inline-block first-letter:uppercase">{module.title}</span>
           </Link>
-          <p className={module.isCompleted ? "text-success" : "text-base-content/70"}>
+          <p className={cn(module.isCompleted ? "text-success" : "text-base-content/70")}>
             {module.isCompleted ? "Terminé" : `À terminer · ${module.progress} %`}
           </p>
         </li>

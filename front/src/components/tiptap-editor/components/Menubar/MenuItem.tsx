@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import "./MenuItem.scss";
+import { cn } from "../../../../utils/cn";
 
 const menuIcons: Partial<Record<string, LucideIcon>> = {
   "arrow-go-back-line": Undo2,
@@ -44,7 +45,7 @@ export default function MenuItem({
   return (
     <button
       type="button"
-      className={`menu-item tooltip ${itemIsActive ? "is-active" : ""}`}
+      className={cn("menu-item tooltip", itemIsActive && "is-active")}
       aria-label={title || icon || "Editor action"}
       data-tip={title}
       onClick={action}

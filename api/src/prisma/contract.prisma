@@ -151,6 +151,7 @@ model Course {
   scenario            Boolean            @default(true)
   dates               Json[]
   calendarInitialized Boolean            @default(false)
+  calendarColor       String             @default(dbgenerated("(ARRAY['primary'::text, 'secondary'::text, 'accent'::text, 'neutral'::text, 'info'::text, 'success'::text, 'warning'::text, 'error'::text])[((floor((random() * (8)::double precision)) + (1)::double precision))::integer]"))
   order               Int
   isPublished         Boolean            @default(false)
   createdAt           TimestamptzString           @default(now())

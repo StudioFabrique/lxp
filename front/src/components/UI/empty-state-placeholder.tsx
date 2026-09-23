@@ -27,6 +27,7 @@ import { type PropsWithChildren, useEffect, useState } from "react";
 import FadeWrapper from "../wrappers/FadeWrapper";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import CursorGlowCard from "./cursor-glow-card";
+import { cn } from "../../utils/cn";
 
 const EMPTY_STATE_ICONS = [
   Coffee,
@@ -79,7 +80,7 @@ const EmptyStatePlaceholder = ({
   const placeholder = (
     <BoxWrapper
       unstyled={!withBorder}
-      className={withBorder ? "border border-base-300 bg-transparent select-none" : ""}
+      className={cn(withBorder ? "border border-base-300 bg-transparent select-none" : "")}
     >
       <FadeWrapper>
         <div className="flex flex-col items-center gap-10 min-h-[50vh] justify-center">

@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, MousePointerClick, X } from "lucide-react";
 import type { TooltipRenderProps } from "react-joyride";
+import { cn } from "../../utils/cn";
 
 export type OnboardingTooltipData = {
   current: number;
@@ -71,7 +72,7 @@ const OnboardingTooltip = ({ step, tooltipProps }: TooltipRenderProps) => {
       <div className="mt-5 flex items-center justify-between gap-3">
         <button
           type="button"
-          className={`btn btn-ghost btn-sm ${data.onBack ? "" : "invisible"}`}
+          className={cn("btn btn-ghost btn-sm", data.onBack ? "" : "invisible")}
           onClick={data.onBack}
           disabled={!data.onBack}
         >

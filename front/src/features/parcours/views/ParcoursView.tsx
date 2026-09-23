@@ -32,6 +32,7 @@ import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import { parcoursApi } from "../api/parcours.api";
+import { cn } from "../../../utils/cn";
 
 const ParcoursView = () => {
   const {
@@ -213,7 +214,7 @@ const ParcoursView = () => {
             <div className="grid items-stretch gap-4 lg:grid-cols-3">
               <div
                 className={
-                  hasSupplementaryContent ? "h-full" : "h-full lg:col-span-3"
+                  cn(hasSupplementaryContent ? "h-full" : "h-full lg:col-span-3")
                 }
               >
                 <Informations />

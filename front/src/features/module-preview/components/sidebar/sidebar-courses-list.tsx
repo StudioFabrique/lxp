@@ -233,7 +233,7 @@ const SidebarCoursesList = ({
             })}>
             <div
               inert={(calendarMode && calendarAdding) || isReorderingCourses}
-              className={(calendarMode && calendarAdding) || isReorderingCourses ? "pointer-events-none" : undefined}
+              className={cn((calendarMode && calendarAdding) || isReorderingCourses ? "pointer-events-none" : undefined)}
             >
             <CourseItem
               calendarMode={calendarMode}

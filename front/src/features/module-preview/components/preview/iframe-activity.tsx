@@ -3,6 +3,7 @@ import { ActivitySelectMode } from "../../store/module-content-reducer";
 import cleanIframeLink from "../../../../utils/helpers/clean-iframe-link";
 import SaveButton from "../../../../components/tiptap-editor/components/SaveButton";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -79,9 +80,7 @@ const IframeActivity = ({
           <input
             type="text"
             placeholder='https://example.com ou <iframe src="" /> '
-            className={`input input-bordered w-full ${
-              urlError ? "input-error" : ""
-            }`}
+            className={cn("input input-bordered w-full", urlError && "input-error")}
             value={iframeUrl}
             onChange={handleChangeUrl}
           />

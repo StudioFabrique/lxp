@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { cn } from "../../utils/cn";
 
 // Interface définissant les props du composant SubWrapper
 interface Props {
@@ -19,7 +20,7 @@ const SubBoxWrapper = (props: Props) => {
   const errorStyle = "border-2 border-red-500";
 
   return (
-    <div className={`${baseStyle} ${props.hasError ? errorStyle : ""}`}>
+    <div className={cn(baseStyle, props.hasError && errorStyle)}>
       {children}
     </div>
   );

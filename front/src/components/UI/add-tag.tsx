@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import QuestionMarkTooltip from "./question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 interface AddTagProps {
   tag: string;
@@ -16,10 +17,6 @@ export default function AddTag(props: AddTagProps) {
     props.onSubmit(event);
   };
 
-  const style = `input input-sm focus:outline-none w-full ${
-    props.error ? "input-error" : ""
-  }`;
-
   return (
     <form
       className="flex flex-col items-start w-full gap-y-2"
@@ -28,7 +25,7 @@ export default function AddTag(props: AddTagProps) {
       <label>Tags</label>
       <span className="flex items-center gap-x-2 w-full">
         <input
-          className={style}
+          className={cn("input input-sm focus:outline-none w-full", props.error && "input-error")}
           type="text"
           placeholder={props.placeholder ?? ""}
           value={props.tag}

@@ -1,5 +1,5 @@
 import type CourseDates from "../../course/interfaces/course-dates";
-import type { CalendarEvent, CalendarView } from "./calendar-configuration";
+import { calendarColor, type CalendarEvent, type CalendarView } from "./calendar-configuration";
 import { getMonthDays, getWeekBounds } from "./calendar-utils";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 
@@ -10,6 +10,7 @@ export type ReadCalendarModule = {
     title: string;
     description?: string | null;
     dates: CourseDates[];
+    calendarColor?: string;
     lessons: { id: number }[];
     assignment?: { id: number; dueAt: string } | null;
   }[];
@@ -32,7 +33,7 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
   if (!data || view === "year-timeline") return [];
   const { firstDay, lastDay } = visibleDateBounds(date, view);
   const first = dateKey(firstDay), last = dateKey(lastDay);
-  return data.modules.flatMap((module, moduleIndex) => module.courses.flatMap(course => {
+  return data.modules.flatMap(module => module.courses.flatMap(course => {
     const events: CalendarEvent[] = [];
     course.dates.forEach((range, index) => {
       if (!range?.minDate || !range.maxDate) return;
@@ -46,7 +47,7 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
           description: course.description ?? undefined, date: new Date(day),
           start: range.startTime ?? "", end: range.endTime ?? "", allDay: !range.startTime || !range.endTime,
           rangeStart: range.minDate, rangeEnd: range.maxDate,
-          type: (["primary", "secondary", "accent", "neutral"] as const)[moduleIndex % 4],
+          type: calendarColor(course.calendarColor),
           category: "course",
           to: `/${area}/parcours/module/${module.id}`,
           navigationState: { lessonId: course.lessons[0]?.id, courseId: course.id },

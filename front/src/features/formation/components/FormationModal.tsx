@@ -10,9 +10,7 @@ import Modal from "../../../components/UI/modal/modal";
 import FormationForm from "./FormationForm";
 import { useFormationForm } from "../hooks/useFormationForm";
 import { parcoursApi } from "../../parcours/api/parcours.api";
-import {
-  readParcoursArchiveFormationTitle,
-} from "../../parcours/helpers/read-parcours-archive-formation";
+import { readParcoursArchiveFormationTitle } from "../../parcours/helpers/read-parcours-archive-formation";
 import ParcoursImportModal from "../../parcours/components/import/ParcoursImportModal";
 import {
   emitOnboardingEvent,
@@ -164,8 +162,8 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
         onRightClick={confirmDelete}
       >
         <p className="py-5">
-          La suppression de la formation « {formatTitle(formationToEdit.title)} » est
-          définitive.
+          La suppression de la formation « {formatTitle(formationToEdit.title)}{" "}
+          » est définitive.
         </p>
       </Modal>
     );
@@ -199,7 +197,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
         onDelete={() => setShowDeleteConfirmation(true)}
         alternativeCreation={
           <div className="flex flex-col gap-3">
-            <div className="divider my-0">ou</div>
+            <div className="divider">ou</div>
             <input
               ref={archiveInputRef}
               type="file"

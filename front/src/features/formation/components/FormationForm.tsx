@@ -1,6 +1,7 @@
 import { Loader2, Trash2 } from "lucide-react";
 import AddTag from "../../../components/UI/add-tag";
 import TagsList from "../../../components/tags/TagsList";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   title: string;
@@ -127,7 +128,7 @@ const FormationForm = ({
       <div>
         {isEditing && onDelete ? (
           <span
-            className={deleteDisabled ? "tooltip tooltip-right" : undefined}
+            className={cn(deleteDisabled ? "tooltip tooltip-right" : undefined)}
             data-tip="Suppression impossible : des parcours sont rattachés"
           >
             <button

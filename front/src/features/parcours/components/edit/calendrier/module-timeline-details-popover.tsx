@@ -7,6 +7,7 @@ import { normalizeImageSource } from "../../../../../../src/utils/images/image-s
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import { X } from "lucide-react";
 import type Module from "../../../../../utils/interfaces/module";
+import { cn } from "../../../../../utils/cn";
 
 export interface TimelineDetailsPosition {
   anchor: DOMRect;
@@ -90,9 +91,7 @@ const ModuleTimelineDetailsPopover = ({
     <div
       ref={cardRef}
       style={style}
-      className={`absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-gray-200 animate-in fade-in zoom-in-95 duration-200 ${
-        isBottomHalf ? "origin-bottom-left" : "origin-top-left"
-      }`}
+      className={cn("absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-gray-200 animate-in fade-in zoom-in-95 duration-200", isBottomHalf ? "origin-bottom-left" : "origin-top-left")}
     >
       {/* --- BANNER IMAGE --- */}
       {currentModule.thumb && (

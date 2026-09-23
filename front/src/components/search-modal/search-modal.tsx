@@ -14,6 +14,7 @@ import SearchResults from "./search-results";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
 import type { SearchResultsData } from "./search-result.types";
+import { cn } from "../../utils/cn";
 
 const SearchModal: FC<{
   isModalOpen: boolean;
@@ -50,9 +51,7 @@ const SearchModal: FC<{
   return (
     <div
       id="modal_1"
-      className={`modal modal-top ${
-        isModalOpen && "modal-open"
-      } flex justify-center`}
+      className={cn("modal modal-top", isModalOpen && "modal-open", "flex justify-center")}
     >
       <div className="modal-box w-[80%] flex flex-col gap-5">
         <div className="flex flex-col gap-4 justify-between">

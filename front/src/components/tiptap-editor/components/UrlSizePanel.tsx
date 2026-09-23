@@ -3,6 +3,7 @@ import { Button } from "./ui/Button";
 import { Icon, type IconProps } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { useUrlEditorState, type UrlEditorSize } from "./useUrlEditorState";
+import { cn } from "../../../utils/cn";
 
 export type UrlSizePanelProps = {
   initialUrl?: string;
@@ -29,7 +30,7 @@ export const UrlSizePanel = ({
 
   return (
     <Surface
-      className={`flex flex-col p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text}`}
+      className={cn("flex flex-col p-2", TIPTAP_MENU_BAR_COLORS.background, TIPTAP_MENU_BAR_COLORS.text)}
     >
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
         <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/80 cursor-text">

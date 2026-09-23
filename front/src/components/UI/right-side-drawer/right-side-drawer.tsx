@@ -31,11 +31,10 @@ const RightSideDrawer: FC<Props> = ({
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 
-  const btnStyle = buttonClassname
-    ? buttonClassname
-    : buttonTitle !== undefined
-      ? "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
-      : "drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none";
+  const btnStyle = buttonClassname ?? cn(
+    "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none",
+    buttonTitle === undefined && "btn-square",
+  );
 
   const handleCloseDrawer = () => {
     if (onCloseDrawer) {

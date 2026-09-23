@@ -2139,6 +2139,13 @@
                   "kind": "scalar"
                 }
               },
+              "calendarColor": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "calendarInitialized": {
                 "nullable": false,
                 "type": {
@@ -2400,6 +2407,9 @@
                 },
                 "author": {
                   "column": "author"
+                },
+                "calendarColor": {
+                  "column": "calendarColor"
                 },
                 "calendarInitialized": {
                   "column": "calendarInitialized"
@@ -8243,6 +8253,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "calendarColor": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "expression": "(ARRAY['primary'::text, 'secondary'::text, 'accent'::text, 'neutral'::text, 'info'::text, 'success'::text, 'warning'::text, 'error'::text])[((floor((random() * (8)::double precision)) + (1)::double precision))::integer]",
+                    "kind": "function"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "calendarInitialized": {
                   "codecId": "pg/bool@1",
                   "default": {
@@ -11673,7 +11692,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "435269178a774bff213921631a2f3982db5c1a5dccb686f6e050fe36a0c5754e"
+    "storageHash": "3474c5a734db7b5feae0022201ed74c3633c7160741d06fecdec9d80b71223f5"
   },
   "execution": {
     "executionHash": "f6ebe31908f861b0176236677bacf9442eb3a1775a543a8fb0638dea106928c8",

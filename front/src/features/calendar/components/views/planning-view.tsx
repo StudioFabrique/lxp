@@ -2,6 +2,7 @@ import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useRef, useState, type PointerEvent } from "react";
 import {
   daysOfWeek,
+  eventConfig,
   theme,
   type TimelineEvent,
 } from "../calendar-configuration";
@@ -11,6 +12,7 @@ import {
   changePlanningDates,
   type PlanningGesture,
 } from "../planning-utils";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   events: TimelineEvent[];
@@ -149,12 +151,12 @@ export default function PlanningView({
     >
       <div className="min-w-140 select-none">
         <div
-          className={`grid grid-cols-7 border-b ${theme.border} ${theme.headerBg}`}
+          className={cn("grid grid-cols-7 border-b", theme.border, theme.headerBg)}
         >
           {daysOfWeek.map((day) => (
             <div
               key={day}
-              className={`py-2 text-center text-xs font-semibold ${theme.subText}`}
+              className={cn("py-2 text-center text-xs font-semibold", theme.subText)}
             >
               {day}
             </div>
@@ -177,14 +179,14 @@ export default function PlanningView({
               ref={(element) => {
                 rows.current[weekIndex] = element;
               }}
-              className={`relative border-b ${theme.border}`}
+              className={cn("relative border-b", theme.border)}
               style={{ minHeight: 110 }}
             >
               <div className="absolute inset-0 grid grid-cols-7 pointer-events-none">
                 {week.map((cell) => (
                   <div
                     key={cell.date.toISOString()}
-                    className={`border-r ${theme.border} ${!cell.currentMonth ? theme.headerBg : ""} ${isSameDate(cell.date, new Date()) ? theme.todayBg : ""}`}
+                    className={cn("border-r", theme.border, !cell.currentMonth && theme.headerBg, isSameDate(cell.date, new Date()) && theme.todayBg)}
                   />
                 ))}
               </div>
@@ -192,7 +194,7 @@ export default function PlanningView({
                 {week.map((cell) => (
                   <div
                     key={cell.date.toISOString()}
-                    className={`px-2 py-1 text-xs ${!cell.currentMonth ? "opacity-40" : ""} ${isSameDate(cell.date, new Date()) ? `${theme.todayText} font-bold` : theme.subText}`}
+                    className={cn("px-2 py-1 text-xs", !cell.currentMonth && "opacity-40", isSameDate(cell.date, new Date()) ? cn(theme.todayText, "font-bold") : theme.subText)}
                   >
                     {cell.date.getDate()}
                   </div>
@@ -212,7 +214,7 @@ export default function PlanningView({
                       aria-pressed={selectedEventId === event.id}
                       aria-label={`${formatTitle(event.title)}, du ${formatDate(event.startDate)} au ${formatDate(event.endDate)}`}
                       title={`${formatTitle(event.title)} · ${formatDate(event.startDate)} – ${formatDate(event.endDate)}`}
-                      className={`relative mx-0.5 flex h-8 min-w-0 items-center rounded-md border border-primary/60 bg-primary/15 text-base-content shadow-sm touch-none ${disabled ? "opacity-60" : "cursor-grab active:cursor-grabbing"} ${selectedEventId === event.id ? "ring-2 ring-primary ring-offset-1 ring-offset-base-100" : "hover:bg-primary/25"}`}
+                      className={cn("relative mx-0.5 flex h-8 min-w-0 items-center rounded-md border text-base-content shadow-sm touch-none", eventConfig[event.color ?? "primary"], disabled ? "opacity-60" : "cursor-grab active:cursor-grabbing", selectedEventId === event.id ? "ring-2 ring-primary ring-offset-1 ring-offset-base-100" : "hover:brightness-95")}
                       style={{
                         gridColumn: `${Math.max(start - first, 0) + 1} / ${Math.min(end - first, 6) + 2}`,
                         gridRow: index + 1,

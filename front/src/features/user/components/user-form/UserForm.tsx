@@ -14,6 +14,7 @@ import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
 import { transformLink, urlIsValid } from "../../helpers/link-transform";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   user?: User | null;
@@ -253,7 +254,7 @@ const UserForm = ({
           </div>
         )}
         <div className="grid grid-cols-3 gap-x-5">
-          <div className={editMode ? "col-span-2" : "col-span-3"}>
+          <div className={cn(editMode ? "col-span-2" : "col-span-3")}>
             <UserFormCertifications
               graduations={graduations}
               setGraduations={setGraduations}

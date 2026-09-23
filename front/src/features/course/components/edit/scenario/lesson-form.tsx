@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import LessonTags from "./lesson-tag";
 import TagItem from "../../../../../components/UI/tag-item/tag-item";
+import { cn } from "../../../../../utils/cn";
 
 interface LessonFormProps {
   children: ReactNode;
@@ -28,15 +29,11 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
     }, [title, description]);
 
     const setInputStyle = (hasError: boolean) => {
-      return hasError
-        ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-        : "input input-sm input-bordered focus:outline-none w-full";
+      return cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
     };
 
     const setAreaStyle = (hasError: boolean) => {
-      return hasError
-        ? "textarea textarea-error text-error textarea-sm textarea-bordered focus:outline-none w-full"
-        : "textarea textarea-sm textarea-bordered focus:outline-none w-full";
+      return cn("textarea textarea-sm textarea-bordered focus:outline-none w-full", hasError && "textarea-error text-error");
     };
 
     const formIsValid = title.isValid && description.isValid && props.tag;

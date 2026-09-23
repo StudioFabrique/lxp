@@ -20,6 +20,7 @@ import ActivityContent from "../components/add/ActivityContent";
 import useResource from "../hooks/useResource";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import activityIconType from "../../../utils/helpers/activity-icon-type";
+import { cn } from "../../../utils/cn";
 
 export default function ResourceAdd({
   readOnly = false,
@@ -110,7 +111,7 @@ export default function ResourceAdd({
             </div>
           </div>
           <div
-            className={`grid items-start gap-5 ${panelClosed ? "" : "lg:grid-cols-3"}`}
+            className={cn("grid items-start gap-5", panelClosed ? "" : "lg:grid-cols-3")}
           >
             {!panelClosed && (
               <aside className="min-w-0 rounded-lg border border-base-300 bg-base-200 p-3">
@@ -120,7 +121,7 @@ export default function ResourceAdd({
                     {activities.map((activity) => (
                       <li
                         key={activity.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded-lg p-2 ${state.previewActivity?.id === activity.id ? "bg-primary/10" : "hover:bg-base-300"}`}
+                        className={cn("flex cursor-pointer items-center gap-2 rounded-lg p-2", state.previewActivity?.id === activity.id ? "bg-primary/10" : "hover:bg-base-300")}
                       >
                         <button
                           type="button"
@@ -159,7 +160,7 @@ export default function ResourceAdd({
               </aside>
             )}
             <section
-              className={`relative min-w-0 min-h-[60vh] pb-28 ${panelClosed ? "" : "lg:col-span-2"}`}
+              className={cn("relative min-w-0 min-h-[60vh] pb-28", panelClosed ? "" : "lg:col-span-2")}
             >
               {state.activityType ? (
                 <ActivityContent

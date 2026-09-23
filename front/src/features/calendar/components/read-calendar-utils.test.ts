@@ -7,6 +7,12 @@ const data: ReadCalendar = { id: 1, title: "Parcours", modules: [{ id: 2, title:
 }] }] };
 
 describe("cours en lecture", () => {
+  it("utilise la couleur enregistrée pour les vues admin et étudiant", () => {
+    const copy = structuredClone(data);
+    copy.modules[0].courses[0].calendarColor = "success";
+    expect(calendarCourseEvents(copy, new Date(2026, 9, 24), "day", "admin")[0].type).toBe("success");
+    expect(calendarCourseEvents(copy, new Date(2026, 9, 24), "day", "student")[0].type).toBe("success");
+  });
   it("affiche une initiale majuscule pour les cours, modules et devoirs", () => {
     const copy = structuredClone(data);
     copy.modules[0].title = "module pratique";

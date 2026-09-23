@@ -14,6 +14,7 @@ import {
   getStoredItemsPerPage,
   storeItemsPerPage,
 } from "../../../../../components/table/pagination-storage";
+import { cn } from "../../../../../utils/cn";
 
 const compareValues = (left: unknown, right: unknown) =>
   String(left ?? "").localeCompare(String(right ?? ""), "fr", {
@@ -110,7 +111,7 @@ const GroupUserList = ({
   return (
     <BoxWrapper
       className={
-        displayedUsers.length > 0 || isSearching ? "px-10" : ""
+        cn(displayedUsers.length > 0 || isSearching ? "px-10" : "")
       }
       unstyled={displayedUsers.length === 0 && !isSearching}
     >

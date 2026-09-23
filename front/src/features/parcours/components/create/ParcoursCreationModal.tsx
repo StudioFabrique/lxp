@@ -23,6 +23,7 @@ import {
   readParcoursArchiveFormationTitle,
   selectImportFormationId,
 } from "../../helpers/read-parcours-archive-formation";
+import { cn } from "../../../../utils/cn";
 
 type Item = { id: number; title: string };
 type Mode = "create" | "template" | "import";
@@ -220,7 +221,7 @@ export default function ParcoursCreationModal({
                       key={item.id}
                       type="button"
                       onClick={() => setParcoursId(item.id)}
-                      className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors ${parcoursId === item.id ? "border-primary bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer"}`}
+                      className={cn("flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors", parcoursId === item.id ? "border-primary bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer")}
                     >
                       <Copy className="h-4 w-4 shrink-0 text-primary" />
                       <span className="font-medium">{formatTitle(item.title)}</span>

@@ -9,6 +9,7 @@ import StudentsListTable from "./students-list-table";
 import type { StudentWithGroup } from "../../../hooks/useParcoursStudentsQuery";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router";
+import { cn } from "../../../../../utils/cn";
 
 interface StudentsListProps {
   initalList: StudentWithGroup[];
@@ -77,9 +78,7 @@ const StudentsList = (props: StudentsListProps) => {
               >
                 <button
                   type="button"
-                  className={`btn btn-sm h-8 min-h-8 min-w-0 justify-start px-2.5 normal-case ${
-                    group._id === filter ? "btn-accent" : "btn-ghost"
-                  }`}
+                  className={cn("btn btn-sm h-8 min-h-8 min-w-0 justify-start px-2.5 normal-case", group._id === filter ? "btn-accent" : "btn-ghost")}
                   aria-pressed={group._id === filter}
                   title="Filtrer les apprenants de ce groupe"
                   onClick={() => handleFilterGroups(group._id!)}

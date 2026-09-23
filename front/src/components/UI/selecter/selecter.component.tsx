@@ -1,5 +1,6 @@
 import { FC, useState, ChangeEvent } from "react";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import { cn } from "../../../utils/cn";
 
 type Item = {
   id: number;
@@ -38,10 +39,7 @@ const Selecter: FC<Props> = ({
     <>
       {list ? (
         <select
-          className={
-            "w-full select select-primary border border-neutral/50 focus:outline-none " +
-            selectSize
-          }
+          className={cn("w-full select select-primary border border-neutral/50 focus:outline-none", selectSize)}
           name="menu"
           id="menu"
           value={listItem}

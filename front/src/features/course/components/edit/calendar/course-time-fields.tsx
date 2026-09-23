@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { validCourseTimes } from "../../../helpers/course-times";
+import { cn } from "../../../../../utils/cn";
 
 function timeAfter(start: string, minutes: number) {
   const [hours, mins] = start.split(":").map(Number);
@@ -22,7 +23,7 @@ export default function CourseTimeFields({ startTime, endTime, onChange }: {
         { label: "Toute la journée", startTime: "08:00", endTime: "17:00" },
       ] as const).map(preset => (
         <button key={preset.label} type="button"
-          className={`btn btn-xs ${startTime === preset.startTime && endTime === preset.endTime ? "btn-primary" : "btn-outline"}`}
+          className={cn("btn btn-xs", startTime === preset.startTime && endTime === preset.endTime ? "btn-primary" : "btn-outline")}
           aria-pressed={startTime === preset.startTime && endTime === preset.endTime}
           onClick={() => { setShowError(false); onChange({ startTime: preset.startTime, endTime: preset.endTime }); }}>
           {preset.label}

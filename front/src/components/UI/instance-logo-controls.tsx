@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 import { avatarImageMaxSize } from "../../config/images-sizes";
 import ColorPicker from "./color-picker";
 import ImageFileUpload, {
@@ -26,6 +27,8 @@ export default function InstanceLogoControls({
   optional = false,
   helpText,
 }: Props) {
+  const [hasPreview, setHasPreview] = useState(false);
+
   return (
     <div className="w-full min-w-0 max-w-sm text-center">
       <div className="mb-2 text-center">
@@ -43,16 +46,22 @@ export default function InstanceLogoControls({
         <div className="relative w-full min-w-0 max-w-72">
           <ImageFileUpload
             temporaryImage={temporaryImage}
-            onSetTemporaryImage={onSetTemporaryImage}
+            onSetTemporaryImage={(image) => {
+              setHasPreview(false);
+              onSetTemporaryImage(image);
+            }}
             maxSize={avatarImageMaxSize}
             variant="logo"
             compact
             previewBackgroundColor={backgroundColor}
-            onPreviewAvailabilityChange={onPreviewAvailabilityChange}
+            onPreviewAvailabilityChange={(available) => {
+              setHasPreview(available);
+              onPreviewAvailabilityChange?.(available);
+            }}
           >
             Ajouter un logo
           </ImageFileUpload>
-          {Object.values(temporaryImage).some(v => v) && <div className="absolute right-2 top-2 z-10">
+          {hasPreview && <div className="absolute right-2 top-2 z-10">
             <ColorPicker
               compact
               defaultColor={backgroundColor}
@@ -64,7 +73,10 @@ export default function InstanceLogoControls({
           <button
             type="button"
             className="btn btn-ghost btn-sm btn-square shrink-0 text-error"
-            onClick={onRemove}
+            onClick={() => {
+              setHasPreview(false);
+              onRemove();
+            }}
             aria-label="Supprimer le logo"
             title="Supprimer le logo"
           >

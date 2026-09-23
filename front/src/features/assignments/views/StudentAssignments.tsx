@@ -131,7 +131,7 @@ export default function StudentAssignments() {
               title: assignment.course.title,
               titleAccessory: (
                 <span
-                  className={`badge mb-0.5 badge-xs ${statusClassName[status]}`}
+                  className={cn("badge mb-0.5 badge-xs", statusClassName[status])}
                 >
                   {status}
                 </span>

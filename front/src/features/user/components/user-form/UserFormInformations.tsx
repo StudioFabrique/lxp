@@ -2,6 +2,7 @@ import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
 import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 import { useEffect, useState } from "react";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   lastname: string;
@@ -24,9 +25,7 @@ type Props = {
 };
 
 const inputStyle = (hasError: boolean) =>
-  hasError
-    ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-    : "input input-sm input-bordered focus:outline-none w-full";
+  cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
 
 const UserFormInformations = ({
   lastname,

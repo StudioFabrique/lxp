@@ -4,6 +4,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { ToolbarButton } from "./ui/Toolbar";
+import { cn } from "../../../utils/cn";
 
 interface TableInsertPopoverProps {
   editor: Editor;
@@ -59,7 +60,7 @@ export const TableInsertPopover = ({
         cells.push(
           <div
             key={`${row}-${col}`}
-            className={`table-cell${isHighlighted ? " highlighted" : ""}`}
+            className={cn("table-cell", isHighlighted && "highlighted")}
             data-highlighted={isHighlighted}
             onMouseEnter={() => handleCellHover(row, col)}
             onClick={() => handleCellClick(row, col)}

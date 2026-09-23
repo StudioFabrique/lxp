@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   label: string;
@@ -17,18 +18,9 @@ const ButtonAdd: FC<Props> = ({
   outline = false,
   onClickEvent,
 }) => {
-  let style = "btn btn-primary flex gap-x-2";
-
-  const setStyle = () => {
-    if (small) {
-      style += " btn-sm";
-    }
-    return outline ? style + " btn-outline" : style;
-  };
-
   return (
     <button
-      className={setStyle()}
+      className={cn("btn btn-primary flex gap-x-2", small && "btn-sm", outline && "btn-outline")}
       disabled={isDisabled}
       onClick={onClickEvent}
       type="button"

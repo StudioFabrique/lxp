@@ -13,6 +13,7 @@ import { SortAsc, SortDesc } from "lucide-react";
 import EmptyStatePlaceholder from "../UI/empty-state-placeholder";
 import TableOverflowContainer from "./TableOverflowContainer";
 import "./DataTable.css";
+import { cn } from "../../utils/cn";
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<StockFeatures, TData>[];
@@ -86,19 +87,11 @@ export function DataTable<TData extends RowData>({
                 return (
                   <th
                     key={header.id}
-                    className={`text-base-content pl-6 ${
-                      isActionsColumn ? "text-center" : ""
-                    }`}
+                    className={cn("text-base-content pl-6", isActionsColumn && "text-center")}
                   >
                     {header.isPlaceholder ? null : (
                       <div
-                        className={`flex items-center gap-1 ${
-                          isActionsColumn ? "w-full justify-center" : ""
-                        } ${
-                          header.column.getCanSort()
-                            ? "cursor-pointer select-none"
-                            : ""
-                        }`}
+                        className={cn("flex items-center gap-1", isActionsColumn && "w-full justify-center", header.column.getCanSort() && "cursor-pointer select-none")}
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(
@@ -125,9 +118,7 @@ export function DataTable<TData extends RowData>({
             return (
               <tr
                 key={row.id}
-                className={`text-base-content group ${
-                  isClickable ? "cursor-pointer" : ""
-                }`}
+                className={cn("text-base-content group", isClickable && "cursor-pointer")}
                 // La ligne entière sert de lien
                 role={isClickable ? "link" : undefined}
                 tabIndex={isClickable ? 0 : undefined}
@@ -147,11 +138,7 @@ export function DataTable<TData extends RowData>({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className={`border-y border-base-300/50 pl-6 bg-base-100 text-base-content first:rounded-l-xl first:border-l last:rounded-r-xl last:border-r group-hover:bg-base-100/60 transition-colors ${
-                      cell.column.id === "actions"
-                        ? "data-table-actions text-center"
-                        : ""
-                    }`}
+                    className={cn("border-y border-base-300/50 pl-6 bg-base-100 text-base-content first:rounded-l-xl first:border-l last:rounded-r-xl last:border-r group-hover:bg-base-100/60 transition-colors", cell.column.id === "actions" && "data-table-actions text-center")}
                     // Sélection et actions sont des commandes propres à la
                     // cellule : leur clic ne doit pas déclencher la navigation
                     // portée par la ligne.

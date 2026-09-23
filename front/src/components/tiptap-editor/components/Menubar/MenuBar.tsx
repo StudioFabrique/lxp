@@ -16,6 +16,7 @@ import { EditYoutubeLinkPopover } from "../EditYoutubeLinkPopover.js";
 import { InsertImagePopover } from "../InsertImagePopover.js";
 import { TableInsertPopover } from "../TableInsertPopover.js";
 import { items } from "./MenuBarItems.js";
+import { cn } from "../../../../utils/cn";
 
 type MenuBarProps = {
   editor: Editor;
@@ -61,13 +62,11 @@ export default function MenuBar({
     <ToolbarWrapper
       ref={toolbarRef}
       hidden={shouldHide}
-      className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out flex-wrap min-w-max ${
-        isSticky
+      className={cn("self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out flex-wrap min-w-max", isSticky
           ? `sticky ${
               headerSticky ? "top-20" : "top-4"
             } z-50 shadow-xl shadow-base-content/10 rounded-2xl border border-base-300 h-fit bg-base-100/95 backdrop-blur-md`
-          : "border-b border-base-300"
-      }`}
+          : "border-b border-base-300")}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
         <InsertImagePopover

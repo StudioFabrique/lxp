@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { regexGeneric } from "../../../../config/constantes";
 import Selecter from "../../../../components/UI/selecter/selecter.component";
 import toast from "react-hot-toast";
+import { cn } from "../../../../utils/cn";
 
 type Item = {
   id: number;
@@ -54,9 +55,7 @@ const NewParcoursForm: FC<Props> = ({
    * @returns string
    */
   const setInputStyle = (hasError: boolean) => {
-    return hasError
-      ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-      : "input input-sm input-bordered focus:outline-none w-full";
+    return cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
   };
 
   /**

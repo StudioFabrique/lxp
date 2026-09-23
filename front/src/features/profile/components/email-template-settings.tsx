@@ -4,6 +4,7 @@ import andriaLogoLight from "../../../assets/andria-logo/logo-darkmode-email.png
 import { INSTANCE_LOGO } from "../../../config/urls";
 import Modal from "../../../components/UI/modal/modal";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
+import { cn } from "../../../utils/cn";
 
 const emailTemplates = [
   { id: "minimal", name: "Classique" },
@@ -86,7 +87,7 @@ function EmailPreview({
       aria-hidden="true"
     >
       <div
-        className={`relative mx-auto flex h-full flex-col bg-white text-[#17202a] ${isEditorial ? "max-w-64 rounded-none border-y-4" : isBare ? "max-w-64 rounded-none shadow-none" : isInvitation ? "my-1 max-w-52 rounded-2xl shadow-lg" : "max-w-64 rounded-xl shadow-sm"}`}
+        className={cn("relative mx-auto flex h-full flex-col bg-white text-[#17202a]", isEditorial ? "max-w-64 rounded-none border-y-4" : isBare ? "max-w-64 rounded-none shadow-none" : isInvitation ? "my-1 max-w-52 rounded-2xl shadow-lg" : "max-w-64 rounded-xl shadow-sm")}
         style={{
           borderColor: isEditorial ? accent : undefined,
         }}
@@ -108,7 +109,7 @@ function EmailPreview({
             )}
           </div>
         )}
-        <div className={`flex flex-1 flex-col px-4 py-3 ${isEditorial || isInvitation || isBanner ? "text-center" : ""}`}>
+        <div className={cn("flex flex-1 flex-col px-4 py-3", (isEditorial || isInvitation || isBanner) && "text-center")}>
           <div className="mb-2 text-[9px] font-bold">Bienvenue parmi nous !</div>
           <div className="space-y-1.5">
             <div className="h-1 w-full rounded bg-current opacity-15" />
@@ -121,7 +122,7 @@ function EmailPreview({
             Découvrir mon espace
           </span>
           <div
-            className={`mt-auto flex justify-between ${website ? "items-start" : "items-center"} ${isBanner ? "-mb-3 -mr-4" : "border-t pt-2"}`}
+            className={cn("mt-auto flex justify-between", website ? "items-start" : "items-center", isBanner ? "-mb-3 -mr-4" : "border-t pt-2")}
             style={{ borderColor: mutedColor }}
           >
             {isBanner ? (
@@ -140,7 +141,7 @@ function EmailPreview({
               </span>
             )}
             <span
-              className={isBanner ? "rounded-tl-lg px-3 py-2" : undefined}
+              className={cn(isBanner ? "rounded-tl-lg px-3 py-2" : undefined)}
               style={{ backgroundColor: isBanner ? cornerColor : undefined }}
             >
               <img src={isBanner ? cornerLogo : andriaLogo} alt="" className="h-auto w-10 object-contain" />
@@ -170,7 +171,7 @@ export default function EmailTemplateSettings(props: Props) {
           </div>
           <div className="flex flex-wrap gap-2">
             <button type="button" className="btn btn-outline btn-primary normal-case" onClick={props.onSendTest} disabled={props.isSendingTest}>
-              <Mail className={`size-4 ${props.isSendingTest ? "animate-pulse" : ""}`} aria-hidden="true" />
+              <Mail className={cn("size-4", props.isSendingTest && "animate-pulse")} aria-hidden="true" />
               {props.isSendingTest ? "Envoi…" : "Envoyer un e-mail de test"}
             </button>
             <button type="button" className="btn btn-primary normal-case" onClick={props.onOpen}>
@@ -205,7 +206,7 @@ export default function EmailTemplateSettings(props: Props) {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => props.onSelect(template.id)}
-                  className={`group overflow-hidden rounded-2xl border-2 bg-base-100 text-left transition hover:-translate-y-0.5 hover:shadow-lg ${selected ? "border-primary ring-2 ring-primary/20" : "border-base-300"}`}
+                  className={cn("group overflow-hidden rounded-2xl border-2 bg-base-100 text-left transition hover:-translate-y-0.5 hover:shadow-lg", selected ? "border-primary ring-2 ring-primary/20" : "border-base-300")}
                 >
                   <EmailPreview
                     template={template}
@@ -216,7 +217,7 @@ export default function EmailTemplateSettings(props: Props) {
                   />
                   <span className="flex items-center justify-between px-4 py-3 text-sm font-bold">
                     {template.name}
-                    <span className={`flex size-6 items-center justify-center rounded-full ${selected ? "bg-primary text-primary-content" : "bg-base-200 text-transparent"}`}>
+                    <span className={cn("flex size-6 items-center justify-center rounded-full", selected ? "bg-primary text-primary-content" : "bg-base-200 text-transparent")}>
                       <Check className="size-4" aria-hidden="true" />
                     </span>
                   </span>

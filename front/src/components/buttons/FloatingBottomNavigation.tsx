@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { cn } from "../../utils/cn";
 
 type Props = {
   startActions?: ReactNode;
@@ -66,11 +67,9 @@ const FloatingBottomNavigation = ({
   return (
     <>
       <div
-        className={`${isSticky ? "sticky bottom-4  w-[60vw]" : "w-full"} z-30 mt-12 p-4 rounded-2xl flex justify-between mx-auto items-center border transition-all duration-500 ease-in-out ${
-          isDocked
+        className={cn(isSticky ? "sticky bottom-4  w-[60vw]" : "w-full", "z-30 mt-12 p-4 rounded-2xl flex justify-between mx-auto items-center border transition-all duration-500 ease-in-out", isDocked
             ? "bg-transparent backdrop-blur-none border-transparent shadow-none w-full"
-            : "bg-base-200/90 backdrop-blur border-base-300 shadow-xl"
-        }`}
+            : "bg-base-200/90 backdrop-blur border-base-300 shadow-xl")}
       >
         <div className="flex items-center gap-4">{startActions}</div>
         <div className="flex items-center gap-4">{endActions}</div>

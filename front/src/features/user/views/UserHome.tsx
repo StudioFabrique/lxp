@@ -27,6 +27,7 @@ import TableActionsModal from "../../../components/table/TableActionsModal";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
+import { cn } from "../../../utils/cn";
 
 const UserHome = () => {
   const { roles, user: currentUser } = useContext(AuthContext);
@@ -239,11 +240,9 @@ const UserHome = () => {
               key={role._id}
               type="button"
               onClick={() => handleRoleSwitch(role)}
-              className={`btn btn-sm cursor-pointer ${
-                currentRole._id === role._id
+              className={cn("btn btn-sm cursor-pointer", currentRole._id === role._id
                   ? "btn-primary"
-                  : "btn-outline"
-              }`}
+                  : "btn-outline")}
             >
               {role.label}
             </button>
@@ -252,7 +251,7 @@ const UserHome = () => {
       ) : null}
 
       <BoxWrapper
-        className={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        className={cn((data.length > 0 || isLoading || searchValue) && "px-10", "items-center")}
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
@@ -271,7 +270,7 @@ const UserHome = () => {
                 className="btn btn-sm btn-ghost disabled:bg-transparent"
                 aria-label="Rafraîchir la liste des utilisateurs"
               >
-                <RefreshCw className={isLoading ? "animate-spin" : ""} />
+                <RefreshCw className={cn(isLoading ? "animate-spin" : "")} />
               </button>
               <PermissionGuard object="user" action="delete">
                 <TableActionsButtons<User>
@@ -346,7 +345,7 @@ const UserHome = () => {
         error={deleteError}
       >
         <button
-          className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
+          className={cn("btn btn-error btn-md", isDeleting && "loading")}
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >

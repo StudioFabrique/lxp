@@ -17,6 +17,7 @@ import ParcoursCreationModal from "../../parcours/components/create/ParcoursCrea
 import Modal from "../../../components/UI/modal/modal";
 import { parcoursApi } from "../../parcours/api/parcours.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import { cn } from "../../../utils/cn";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -142,7 +143,7 @@ export default function LastParcours({
 
       <div className="w-full mt-4">
         {isLoading ? (
-          <div className={`grid gap-5 ${gridClassName}`}>
+          <div className={cn("grid gap-5", gridClassName)}>
             {[0, 1, 2].map((item) => (
               <div
                 className="h-72 skeleton rounded-box"
@@ -152,7 +153,7 @@ export default function LastParcours({
             ))}
           </div>
         ) : (
-          <div className={`grid items-start gap-5 ${gridClassName}`}>
+          <div className={cn("grid items-start gap-5", gridClassName)}>
             {displayedFormations.map((formation) => (
               <LastParcoursItem
                 key={formation.id}

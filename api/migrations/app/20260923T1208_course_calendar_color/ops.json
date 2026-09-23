@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.Course.calendarColor",
+    "label": "Add column \"calendarColor\" to \"Course\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "calendarColor",
+        "table": "Course"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"calendarColor\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Course",
+          "calendarColor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"calendarColor\"",
+        "sql": "ALTER TABLE \"public\".\"Course\" ADD COLUMN \"calendarColor\" text DEFAULT ((ARRAY['primary'::text, 'secondary'::text, 'accent'::text, 'neutral'::text, 'info'::text, 'success'::text, 'warning'::text, 'error'::text])[((floor((random() * (8)::double precision)) + (1)::double precision))::integer]) NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"calendarColor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Course",
+          "calendarColor"
+        ]
+      }
+    ]
+  }
+]

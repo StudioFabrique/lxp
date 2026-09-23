@@ -14,6 +14,7 @@ import MediaList, { MediaPreview } from "../components/media-list";
 import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import type Media from "../interfaces/media";
 import type { MediaAssociatedActivity, MediaType } from "../interfaces/media";
+import { cn } from "../../../utils/cn";
 
 const mediaTypes: {
   type: MediaType;
@@ -106,11 +107,9 @@ function MediathequeHomePage() {
             key={mediaType.type}
             type="button"
             aria-pressed={type === mediaType.type}
-            className={`btn btn-sm cursor-pointer gap-2 ${
-              type === mediaType.type
+            className={cn("btn btn-sm cursor-pointer gap-2", type === mediaType.type
                 ? "btn-primary"
-                : "btn-outline"
-            }`}
+                : "btn-outline")}
             onClick={() => setType(mediaType.type)}
           >
             <span className="size-4 shrink-0 [&>svg]:size-4" aria-hidden="true">

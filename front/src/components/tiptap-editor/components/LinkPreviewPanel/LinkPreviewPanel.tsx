@@ -3,6 +3,7 @@ import { Icon } from "../ui/Icon";
 import { Surface } from "../ui/Surface";
 import { ToolbarButton, ToolbarDivider } from "../ui/Toolbar";
 import Tooltip from "../ui/Tooltip";
+import { cn } from "../../../../utils/cn";
 
 export type LinkPreviewPanelProps = {
   url: string;
@@ -18,7 +19,7 @@ export const LinkPreviewPanel = ({
   const sanitizedLink = url?.startsWith("javascript:") ? "" : url;
   return (
     <Surface
-      className={`flex items-center gap-2 p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text} select-none`}
+      className={cn("flex items-center gap-2 p-2", TIPTAP_MENU_BAR_COLORS.background, TIPTAP_MENU_BAR_COLORS.text, "select-none")}
     >
       <a
         href={sanitizedLink}

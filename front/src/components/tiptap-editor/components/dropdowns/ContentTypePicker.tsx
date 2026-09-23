@@ -20,6 +20,7 @@ import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { ToolbarButton } from "../ui/Toolbar";
 import { Surface } from "../ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "../ui/Dropdown";
+import { cn } from "../../../../utils/cn";
 
 const pickerIcons = {
   Heading1,
@@ -50,7 +51,7 @@ const PickerIcon = ({
   return (
     <IconComponent
       aria-hidden="true"
-      className={`h-4 w-4 antialiased ${className ?? ""}`}
+      className={cn("h-4 w-4 antialiased", className ?? "")}
       strokeWidth={2}
     />
   );

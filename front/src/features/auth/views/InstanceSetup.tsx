@@ -10,6 +10,7 @@ import {
   type InstanceSettings,
 } from "../../profile/api/profile.api";
 import AuthPageWrapper from "../components/AuthPageWrapper";
+import { cn } from "../../../utils/cn";
 
 const DEFAULT_NAME = "ANDRIA";
 const DEFAULT_LOGO_BACKGROUND = "#ffffff";
@@ -137,7 +138,7 @@ export default function InstanceSetup() {
                 if (websiteError) setWebsiteError("");
                 setWebsite(event.target.value);
               }}
-              className={`input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary ${websiteError ? "input-error" : ""}`}
+              className={cn("input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary", websiteError && "input-error")}
             />
             {websiteError && (
               <span

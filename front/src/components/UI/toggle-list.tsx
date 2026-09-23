@@ -1,5 +1,6 @@
 import CardsIcon from "../../../src/components/UI/svg/cards-icon";
 import ListIcon from "../../../src/components/UI/svg/list-icon";
+import { cn } from "../../utils/cn";
 
 interface ToggleListProps {
   showList: boolean;
@@ -19,7 +20,7 @@ const ToggleList = ({ showList, onToggle }: ToggleListProps) => {
           aria-label="affiche la liste des parcours sous forme de liste"
           onClick={() => onToggle(true)}
         >
-          <div className={showList ? selectedStyle : baseStyle}>
+          <div className={cn(showList ? selectedStyle : baseStyle)}>
             <ListIcon />
           </div>
         </div>
@@ -31,7 +32,7 @@ const ToggleList = ({ showList, onToggle }: ToggleListProps) => {
           aria-label="affiche la liste des parcours sous forme de cartes"
           onClick={() => onToggle(false)}
         >
-          <div className={showList ? baseStyle : selectedStyle}>
+          <div className={cn(showList ? baseStyle : selectedStyle)}>
             <CardsIcon />
           </div>
         </div>

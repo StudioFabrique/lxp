@@ -1,6 +1,7 @@
 import { useState } from "react";
 import bgPhoto from "../assets/bg-photo.jpeg";
 import { AuthBackground } from "../api/backgrounds.api";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   background: AuthBackground | null;
@@ -81,7 +82,7 @@ const LoginRightColumn = ({ background, isFailed }: Props) => {
           alt={displayedBackground.alt}
           onLoad={() => setLoadedUnsplashId(displayedBackground.id)}
           onError={() => setFailedBackgroundId(background?.id ?? null)}
-          className={`absolute h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl transition-opacity duration-700 ${isUnsplashReady ? "opacity-100" : "opacity-0"}`}
+          className={cn("absolute h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl transition-opacity duration-700", isUnsplashReady ? "opacity-100" : "opacity-0")}
           style={{ clipPath: "url(#image-grid-mask)" }}
         />
       )}

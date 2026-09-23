@@ -1,5 +1,6 @@
 import { PlaneLandingIcon, PlaneTakeoffIcon } from "lucide-react";
 import Course from "../../../../src/utils/interfaces/course";
+import { cn } from "../../../utils/cn";
 
 type ProgressBarProps = {
   courses: Course[];
@@ -22,11 +23,9 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
             {course.lessons.map((lesson) => (
               <span
                 key={lesson.id}
-                className={`h-[70%] w-full rounded-lg ${
-                  lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
+                className={cn("h-[70%] w-full rounded-lg", lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
                     ? "bg-primary"
-                    : "bg-primary/20"
-                }`}
+                    : "bg-primary/20")}
               />
             ))}
           </div>

@@ -32,6 +32,7 @@ import type {
   LearningPace,
   LearningPreference,
 } from "../types";
+import { cn } from "../../../utils/cn";
 
 type OnboardingStep = {
   key: string;
@@ -247,7 +248,7 @@ export default function StudentLearningOnboarding() {
           animate={{ opacity: 1, x: 0 }}
           exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }}
           transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }}
-          className={`flex min-h-0 w-full flex-1 flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm ${step.kind === "formation" ? "sm:p-5" : "sm:p-7"}`}
+          className={cn("flex min-h-0 w-full flex-1 flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm", step.kind === "formation" ? "sm:p-5" : "sm:p-7")}
         >
           {step.kind === "pace" ? (
             <div className="space-y-5">
@@ -398,7 +399,7 @@ export default function StudentLearningOnboarding() {
                               [mode]: themeName,
                             }));
                           }}
-                          className={`group flex min-w-0 items-center gap-2 rounded-xl border bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5 ${selected ? "border-primary ring-2 ring-primary/25" : "border-base-300"}`}
+                          className={cn("group flex min-w-0 items-center gap-2 rounded-xl border bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5", selected ? "border-primary ring-2 ring-primary/25" : "border-base-300")}
                         >
                           <span className="flex size-8 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
                             <span className="h-full w-1/2 bg-primary" />
@@ -489,7 +490,7 @@ export default function StudentLearningOnboarding() {
           ) : null}
 
           <div
-            className={`mt-auto flex justify-between gap-3 border-t border-base-300 ${step.kind === "formation" ? "pt-4" : "pt-5"}`}
+            className={cn("mt-auto flex justify-between gap-3 border-t border-base-300", step.kind === "formation" ? "pt-4" : "pt-5")}
           >
             <button
               type="button"

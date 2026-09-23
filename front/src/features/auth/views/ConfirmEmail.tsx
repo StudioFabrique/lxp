@@ -4,6 +4,7 @@ import { onboardingApi } from "../api/onboarding.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 import { clearPendingRootActivation } from "../pending-root-activation";
+import { cn } from "../../../utils/cn";
 
 const ConfirmEmail = () => {
   const [searchParams] = useSearchParams();
@@ -47,7 +48,7 @@ const ConfirmEmail = () => {
           <span className="loading loading-spinner loading-md mx-auto" />
         )}
         <p
-          className={state === "error" ? "text-error" : "text-base-content/70"}
+          className={cn(state === "error" ? "text-error" : "text-base-content/70")}
         >
           {message}
         </p>

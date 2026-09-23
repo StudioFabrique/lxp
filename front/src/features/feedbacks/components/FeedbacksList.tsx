@@ -12,6 +12,7 @@ import type StudentFeedback from "../../../utils/interfaces/student-feedback";
 import FeelingLevel from "../../../components/UI/feeling-level";
 import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
 import { localeDate, localeTime } from "../../../utils/helpers/locale-date";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   feedbacks: StudentFeedback[];
@@ -95,9 +96,9 @@ const FeedbacksList = ({ feedbacks }: Props) => {
                   <th
                     key={header.id}
                     className={
-                      header.column.getCanSort()
+                      cn(header.column.getCanSort()
                         ? "cursor-pointer select-none"
-                        : ""
+                        : "")
                     }
                     onClick={header.column.getToggleSortingHandler()}
                   >

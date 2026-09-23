@@ -4,6 +4,7 @@ import {
   FieldValues,
   UseFormRegister,
 } from "react-hook-form";
+import { cn } from "../../utils/cn";
 
 interface FormTextareaProps<TFieldValues extends FieldValues> {
   label: string;
@@ -31,7 +32,7 @@ const FormTextarea = <TFieldValues extends FieldValues,>({
       </label>
       <textarea
         {...register(name)}
-        className={`textarea textarea-bordered w-full focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "textarea-error" : ""}`}
+        className={cn("textarea textarea-bordered w-full focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60", error && "textarea-error")}
         id={name}
         placeholder={placeholder}
         disabled={disabled}

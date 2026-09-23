@@ -1,5 +1,6 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import { themeLabels } from "../../../config/themes";
+import { cn } from "../../../utils/cn";
 
 interface ThemeSelectProps {
   label: "Thème clair" | "Thème sombre";
@@ -47,15 +48,15 @@ export default function ThemeSelect({
   return (
     <span
       className={
-        compact
+        cn(compact
           ? "min-w-0 shrink-0"
-          : "w-full flex justify-between items-center"
+          : "w-full flex justify-between items-center")
       }
     >
       {!compact && <label htmlFor={`${mode}ThemeDropdown`}>{label}</label>}
 
       <div
-        className={`dropdown ${dropdownClassName}`}
+        className={cn("dropdown", dropdownClassName)}
         id={`${mode}ThemeDropdown`}
       >
         <div
@@ -63,9 +64,9 @@ export default function ThemeSelect({
           role="button"
           aria-label={`Choisir le ${label.toLowerCase()}`}
           className={
-            compact
+            cn(compact
               ? "btn btn-sm h-8 min-h-8 max-w-32 min-w-0 gap-1 px-2"
-              : "btn m-1 gap-2"
+              : "btn m-1 gap-2")
           }
         >
           <ThemeSwatch theme={selectedTheme} />

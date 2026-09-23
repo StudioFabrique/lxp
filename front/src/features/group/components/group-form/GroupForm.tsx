@@ -9,6 +9,7 @@ import FromParcoursWarning from "./GroupFormParcoursWarning";
 import Header from "../../../../../src/components/headers/Header";
 import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import type { GroupFormValues } from "../../group.schema";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   form: UseFormReturn<GroupFormValues>;
@@ -63,9 +64,7 @@ const GroupForm = ({
         </Header>
 
         <div
-          className={`grid ${
-            gridType === "rows" ? "grid-rows-2" : "grid-cols-2"
-          } max-lg:grid-cols-1 gap-5`}
+          className={cn("grid", gridType === "rows" ? "grid-rows-2" : "grid-cols-2", "max-lg:grid-cols-1 gap-5")}
         >
           <div data-recommended-tour="group-informations">
             <Informations isLoading={isLoading} />

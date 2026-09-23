@@ -24,6 +24,7 @@ import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search
 import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-text";
 import { parcoursApi } from "../../api/parcours.api";
 import ParcoursCreationModal from "../create/ParcoursCreationModal";
+import { cn } from "../../../../utils/cn";
 
 type AdminParcoursManagementProps = {
   formations: FormationParcoursSummary[];
@@ -251,9 +252,7 @@ const AdminParcoursManagement = ({
       ) : null}
 
       <section
-        className={`grid items-start gap-5 ${
-          usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
-        }`}
+        className={cn("grid items-start gap-5", usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3")}
         data-page-tour="parcours-cards"
       >
         {paginatedFormations?.length === 0 ? (

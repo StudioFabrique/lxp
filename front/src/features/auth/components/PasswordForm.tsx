@@ -7,6 +7,7 @@ import {
   type FieldValues,
   type Path,
 } from "react-hook-form";
+import { cn } from "../../../utils/cn";
 
 /**
  * Générique sur le type du formulaire appelant : `UseFormRegister<T>` est
@@ -95,9 +96,7 @@ const PasswordForm = <T extends FieldValues>({
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
-              className={`h-1.5 flex-1 transition-colors ${
-                i < strength.score ? strength.color : "bg-base-300"
-              }`}
+              className={cn("h-1.5 flex-1 transition-colors", i < strength.score ? strength.color : "bg-base-300")}
             />
           ))}
         </div>
@@ -113,11 +112,9 @@ const PasswordForm = <T extends FieldValues>({
           {passwordRules.map((rule) => (
             <span
               key={rule.label}
-              className={`text-xs ${
-                rule.test(passwordValue)
+              className={cn("text-xs", rule.test(passwordValue)
                   ? "text-success"
-                  : "text-base-content/40"
-              }`}
+                  : "text-base-content/40")}
             >
               {rule.test(passwordValue) ? "✓" : "○"} {rule.label}
             </span>

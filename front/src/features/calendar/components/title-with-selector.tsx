@@ -7,6 +7,7 @@ import {
   theme,
 } from "../components/calendar-configuration";
 import { getWeekBounds } from "../components/calendar-utils";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   currentTitle?: string;
@@ -85,7 +86,7 @@ const TitleWithSelector = ({
         </span>
       )}
 
-      <span className={`text-sm font-normal ml-2 ${theme.subText}`}>
+      <span className={cn("text-sm font-normal ml-2", theme.subText)}>
         | {dynamicDate}
       </span>
     </div>

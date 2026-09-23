@@ -6,6 +6,7 @@ import {
   ChartNoAxesCombined,
   EditIcon,
   Settings,
+  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { Link } from "react-router";
@@ -21,6 +22,7 @@ import ProfileEditorModal from "./ProfileEditorModal";
 import ThemeSelect from "./theme-select";
 import { sidebarControlClassName } from "../../../components/sidebar/sidebar-styles";
 import { useVisualPreferences } from "../../../store/VisualPreferences";
+import { cn } from "../../../utils/cn";
 
 type Props = { interfaceType: string };
 
@@ -121,7 +123,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
         <Popover.Trigger asChild>
           <button
             type="button"
-            className={`${sidebarControlClassName} capitalize ${open ? "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)" : ""}`}
+            className={cn(sidebarControlClassName, "capitalize", open && "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)")}
             data-tip={fullName}
             aria-label={`Ouvrir le menu de ${fullName}`}
           >
@@ -224,16 +226,48 @@ export default function ProfilePopover({ interfaceType }: Props) {
                       )}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
-                    onClick={() => {
-                      setOpen(false);
-                      setEditing(true);
-                    }}
-                  >
-                    Modifier mon profil
-                  </button>
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm h-8 min-h-8 min-w-0 flex-1 gap-2 text-xs"
+                      onClick={() => {
+                        setOpen(false);
+                        setEditing(true);
+                      }}
+                    >
+                      Modifier mon profil
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm btn-square h-8 min-h-8 shrink-0"
+                      aria-label="Paramètres d’affichage"
+                      title="Paramètres d’affichage"
+                      aria-expanded={showRenderSettings}
+                      aria-controls="render-settings"
+                      onClick={() => setShowRenderSettings((visible) => !visible)}
+                    >
+                      <SlidersHorizontal className="size-4" aria-hidden="true" />
+                    </button>
+                  </div>
+                  {showRenderSettings && (
+                    <div id="render-settings" className="mt-2 space-y-2 rounded-lg bg-base-200 p-3 text-sm">
+                      {([
+                        ["glow", "Effet lumineux", glow],
+                        ["confetti", "Confettis et récompenses", confetti],
+                        ["animations", "Animations décoratives", animations],
+                      ] as const).map(([key, label, enabled]) => (
+                        <label key={key} className="flex cursor-pointer items-center justify-between gap-3">
+                          <span>{label}</span>
+                          <input
+                            type="checkbox"
+                            className="toggle toggle-primary toggle-sm"
+                            checked={enabled}
+                            onChange={(event) => setPreference(key, event.target.checked)}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  )}
                   <div className="mt-3 border-t border-base-300 pt-3">
                     {canSeeProgress && (
                       <Link
@@ -280,35 +314,6 @@ export default function ProfilePopover({ interfaceType }: Props) {
                         </button>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="btn btn-ghost btn-sm mt-2 w-full justify-start gap-2"
-                      aria-expanded={showRenderSettings}
-                      aria-controls="render-settings"
-                      onClick={() => setShowRenderSettings((visible) => !visible)}
-                    >
-                      <Settings className="size-4" aria-hidden="true" />
-                      Paramètres d’affichage
-                    </button>
-                    {showRenderSettings && (
-                      <div id="render-settings" className="mt-1 space-y-2 rounded-lg bg-base-200 p-3 text-sm">
-                        {([
-                          ["glow", "Effet lumineux", glow],
-                          ["confetti", "Confettis et récompenses", confetti],
-                          ["animations", "Animations décoratives", animations],
-                        ] as const).map(([key, label, enabled]) => (
-                          <label key={key} className="flex cursor-pointer items-center justify-between gap-3">
-                            <span>{label}</span>
-                            <input
-                              type="checkbox"
-                              className="toggle toggle-primary toggle-sm"
-                              checked={enabled}
-                              onChange={(event) => setPreference(key, event.target.checked)}
-                            />
-                          </label>
-                        ))}
-                      </div>
-                    )}
                   </div>
                   {canManageInstance && (
                     <div className="mt-6">

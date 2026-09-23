@@ -2,6 +2,7 @@ import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useMemo } from "react";
 import { theme, TimelineEvent } from "../calendar-configuration";
 import { formatDate } from "../calendar-utils";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   events: TimelineEvent[];
@@ -66,9 +67,7 @@ const YearTimelineView = ({
   if (events.length === 0) {
     return (
       <div
-        className={`flex items-center justify-center h-full my-10 ${
-          theme.subText
-        }`}
+        className={cn("flex items-center justify-center h-full my-10", theme.subText)}
       >
         Aucun événements à afficher
       </div>
@@ -80,9 +79,7 @@ const YearTimelineView = ({
       {/* --- HEADER --- */}
       {range.min + range.max > 0 && (
         <div
-          className={`flex justify-between items-center px-4 h-10 border-b flex-shrink-0 text-xs font-bold uppercase tracking-wider z-20 relative ${
-            theme.headerBg
-          } ${theme.border} ${theme.subText}`}
+          className={cn("flex justify-between items-center px-4 h-10 border-b flex-shrink-0 text-xs font-bold uppercase tracking-wider z-20 relative", theme.headerBg, theme.border, theme.subText)}
         >
           <span>du {formatDate(new Date(range.min))}</span>
           <span>au {formatDate(new Date(range.max))}</span>
@@ -145,9 +142,7 @@ const YearTimelineView = ({
                   className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0 ${
-                      theme.border
-                    } bg-base-300`}
+                    className={cn("w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0", theme.border, "bg-base-300")}
                   >
                     {event.image ? (
                       <img
@@ -163,23 +158,19 @@ const YearTimelineView = ({
                   </div>
                   <div
                     className={
-                      event.startDate && event.endDate
+                      cn(event.startDate && event.endDate
                         ? "min-w-0"
-                        : "max-w-[15vw]"
+                        : "max-w-[15vw]")
                     }
                   >
                     <div
-                      className={`text-sm font-semibold truncate ${
-                        theme.text
-                      }`}
+                      className={cn("text-sm font-semibold truncate", theme.text)}
                     >
                       {formatTitle(event.title)}
                     </div>
                     {event.startDate && event.endDate && (
                       <div
-                        className={`text-[10px] truncate group-hover:text-secondary ${
-                          theme.subText
-                        }`}
+                        className={cn("text-[10px] truncate group-hover:text-secondary", theme.subText)}
                       >
                         {`${formatDate(event.startDate)} - ${formatDate(
                           event.endDate
@@ -220,7 +211,7 @@ const YearTimelineView = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-end gap-5 w-full mr-10 opacity-60">
-                    <span className={`text-xs ${theme.subText}`}>
+                    <span className={cn("text-xs", theme.subText)}>
                       Date manquante
                     </span>
                     {onClickEdit && (

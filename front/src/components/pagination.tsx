@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cloneElement, ReactElement, useMemo } from "react";
+import { cn } from "../utils/cn";
 
 // Props du composant de pagination
 type Props = {
@@ -49,9 +50,7 @@ function Pagination({
     </p>
   );
   const isButtonVisible = useMemo(() => {
-    return `btn btn-sm btn-circle btn-primary ${
-      totalPages > 1 ? "visible" : "invisible"
-    }`;
+    return cn("btn btn-sm btn-circle btn-primary", totalPages > 1 ? "visible" : "invisible");
   }, [totalPages]);
 
   // Contenu conditionnel : affiche les contrôles complets si plusieurs pages, sinon juste les infos

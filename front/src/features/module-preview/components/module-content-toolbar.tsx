@@ -60,7 +60,7 @@ export default function ModuleContentToolbar({
     <div className="mt-5 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-5">
       <button
         type="button"
-        className={`${actionClassName} btn-primary tooltip tooltip-right`}
+        className={cn(actionClassName, "btn-primary tooltip tooltip-right")}
         aria-label={
           isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
         }
@@ -126,7 +126,7 @@ export default function ModuleContentToolbar({
           <PermissionGuard object="course" action="update">
             <button
               type="button"
-              className={`${actionClassName} tooltip tooltip-left`}
+              className={cn(actionClassName, "tooltip tooltip-left")}
               aria-label="Tout publier"
               data-tip="Tout publier"
               disabled={isPublishingAll}
@@ -145,7 +145,7 @@ export default function ModuleContentToolbar({
       {showCompletionBadge && (
         <button
           type="button"
-          className={`${actionClassName} tooltip tooltip-left`}
+          className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Mes réussites"
           data-tip="Mes réussites"
           onClick={onOpenCompletionBadge}
@@ -158,7 +158,7 @@ export default function ModuleContentToolbar({
       {isContentSelected && (
         <button
           type="button"
-          className={`${actionClassName} tooltip tooltip-left`}
+          className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Tout réduire"
           data-tip="Tout réduire"
           onClick={onCloseContent}

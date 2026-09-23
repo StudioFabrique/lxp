@@ -4,6 +4,7 @@ import {
   FieldValues,
   UseFormRegister,
 } from "react-hook-form";
+import { cn } from "../../utils/cn";
 
 interface FormInputProps<TFieldValues extends FieldValues> {
   label: string;
@@ -31,7 +32,7 @@ const FormInput = <TFieldValues extends FieldValues,>({
       </label>
       <input
         {...register(name)}
-        className={`w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "input-error" : ""}`}
+        className={cn("w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60", error && "input-error")}
         type={type}
         id={name}
         placeholder={placeholder}

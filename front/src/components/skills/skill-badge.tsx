@@ -6,6 +6,7 @@ import type Skill from "../../utils/interfaces/skill";
 import TrophyIcon from "../UI/svg/trophy-icon.component";
 import Modal from "../UI/modal/modal";
 import SkillModules from "./skill-modules";
+import { cn } from "../../utils/cn";
 
 type Props = {
   skill: Skill;
@@ -73,12 +74,12 @@ export default function SkillBadge({
     <img
       src={skill.badge}
       alt={skill.description}
-      className={`${sizeClass} object-contain transition-opacity ${isStudent && !skill.isEarned ? "opacity-30" : "opacity-100"}`}
+      className={cn(sizeClass, "object-contain transition-opacity", isStudent && !skill.isEarned ? "opacity-30" : "opacity-100")}
     />
   ) : (
     <span
       aria-hidden="true"
-      className={`${sizeClass} block text-primary transition-opacity ${isStudent && !skill.isEarned ? "opacity-30" : "opacity-100"}`}
+      className={cn(sizeClass, "block text-primary transition-opacity", isStudent && !skill.isEarned ? "opacity-30" : "opacity-100")}
     >
       <TrophyIcon />
     </span>
@@ -117,13 +118,13 @@ export default function SkillBadge({
 
   return (
     <div
-      className={card ? "w-full" : "flex shrink-0 flex-col items-center gap-1"}
+      className={cn(card ? "w-full" : "flex shrink-0 flex-col items-center gap-1")}
     >
       {isStudent && !inModal ? (
         <button
           ref={trigger}
           type="button"
-          className={`cursor-pointer ${card ? `${cardClass} transition-colors hover:bg-base-300 focus-visible:bg-base-300` : "tooltip tooltip-bottom rounded-lg"} focus-visible:outline-2 focus-visible:outline-primary`}
+          className={cn("cursor-pointer", card ? cn(cardClass, "transition-colors hover:bg-base-300 focus-visible:bg-base-300") : "tooltip tooltip-bottom rounded-lg", "focus-visible:outline-2 focus-visible:outline-primary")}
           data-tip={card ? undefined : skill.description}
           aria-label={`Voir les modules pour ${skill.description}`}
           aria-haspopup="dialog"
@@ -133,7 +134,7 @@ export default function SkillBadge({
         </button>
       ) : (
         <div
-          className={card ? cardClass : "tooltip tooltip-bottom"}
+          className={cn(card ? cardClass : "tooltip tooltip-bottom")}
           data-tip={card ? undefined : skill.description}
           aria-label={skill.description}
           tabIndex={inModal || card ? undefined : 0}

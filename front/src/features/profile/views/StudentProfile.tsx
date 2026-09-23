@@ -7,6 +7,7 @@ import { levelOptions, paceOptions } from "../../learning-profile/learning-choic
 import { PreferenceCards, SingleChoiceCards } from "../../learning-profile/LearningChoiceCards";
 import { learningProfileApi, learningProfileKey } from "../../learning-profile/learning-profile.api";
 import type { FormationLevel, LearningPace, LearningPreference } from "../../learning-profile/types";
+import { cn } from "../../../utils/cn";
 
 type Props = { onClose?: () => void };
 
@@ -54,8 +55,8 @@ export default function StudentProfile({ onClose }: Props) {
       {onClose && <button type="button" className="btn btn-ghost btn-square btn-sm" onClick={onClose} aria-label="Fermer"><X className="size-5" /></button>}
     </div>
     <div role="tablist" aria-label="Réglages d’apprentissage" className="flex flex-wrap gap-2">
-      <button type="button" role="tab" aria-selected={tab === "preferences"} className={`btn btn-sm cursor-pointer ${tab === "preferences" ? "btn-primary" : "btn-outline"}`} onClick={() => setTab("preferences")}>Préférences</button>
-      <button type="button" role="tab" aria-selected={tab === "niveaux"} className={`btn btn-sm cursor-pointer ${tab === "niveaux" ? "btn-primary" : "btn-outline"}`} onClick={() => setTab("niveaux")}>Niveaux par formation</button>
+      <button type="button" role="tab" aria-selected={tab === "preferences"} className={cn("btn btn-sm cursor-pointer", tab === "preferences" ? "btn-primary" : "btn-outline")} onClick={() => setTab("preferences")}>Préférences</button>
+      <button type="button" role="tab" aria-selected={tab === "niveaux"} className={cn("btn btn-sm cursor-pointer", tab === "niveaux" ? "btn-primary" : "btn-outline")} onClick={() => setTab("niveaux")}>Niveaux par formation</button>
     </div>
     {query.isLoading ? <p>Chargement…</p> : query.isError ? <p role="alert">Impossible de charger vos choix.</p> : tab === "preferences" ? <div className="space-y-5">
       <h3 className="font-semibold">Quel rythme préférez-vous ?</h3>

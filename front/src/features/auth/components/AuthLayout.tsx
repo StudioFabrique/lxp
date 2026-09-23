@@ -9,6 +9,7 @@ import LoginGuard from "../../../components/guards/LoginGuard";
 import { useLocation, useNavigate } from "react-router";
 import { profileApi } from "../../profile/api/profile.api";
 import { INSTANCE_LOGO } from "../../../config/urls";
+import { cn } from "../../../utils/cn";
 
 const AuthLayout = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -42,12 +43,12 @@ const AuthLayout = () => {
   }, [shouldLoadBranding]);
 
   return (
-    <div className={`relative min-h-screen w-full font-inter bg-base-100 flex ${isStudentOnboarding ? "py-4" : "py-12"}`}>
+    <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isStudentOnboarding ? "py-4" : "py-12")}>
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
-        <div className={`relative flex flex-col items-center px-8 w-full h-full ${isStudentOnboarding ? "min-h-[calc(100vh-2rem)]" : "min-h-[calc(100vh-6rem)]"}`}>
+        <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isStudentOnboarding ? "min-h-[calc(100vh-2rem)]" : "min-h-[calc(100vh-6rem)]")}>
           <button
             onClick={toggleTheme}
-            className={`absolute right-4 z-10 btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content lg:right-8 ${isStudentOnboarding ? "top-8" : "top-0"}`}
+            className={cn("absolute right-4 z-10 btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content lg:right-8", isStudentOnboarding ? "top-8" : "top-0")}
             aria-label="Changer le thème"
           >
             {theme === "light" ? (
@@ -58,13 +59,11 @@ const AuthLayout = () => {
           </button>
 
           <div
-            className={`mx-auto flex h-full flex-col ${
-              isStudentOnboarding
+            className={cn("mx-auto flex h-full flex-col", isStudentOnboarding
                 ? "w-full max-w-2xl"
                 : isInstanceSetup
                   ? "w-full max-w-xl"
-                  : "w-100"
-            }`}
+                  : "w-100")}
           >
             {!isStudentOnboarding && (
               <div

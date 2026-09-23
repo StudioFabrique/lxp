@@ -2,6 +2,7 @@ import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { type ReactNode, useRef, useEffect, useState } from "react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import type { Activity } from "../../../../../utils/interfaces/activity";
+import { cn } from "../../../../../utils/cn";
 
 type Props = {
   title: string;
@@ -85,9 +86,9 @@ const ActivityHeader = ({
       )}
       <article
         className={
-          isSticky
+          cn(isSticky
             ? `sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 bg-base-200 transition-all duration-300`
-            : className
+            : className)
         }
       >
         <div className="flex gap-3 items-center min-w-0 flex-1">
@@ -102,9 +103,7 @@ const ActivityHeader = ({
               type="text"
               value={title}
               onChange={(e) => onEditTitle?.(e.target.value)}
-              className={`input input-bordered ${titleClassName} flex-1 min-w-0 ${
-                titleError && "input-error text-error"
-              } ${inputClassName ?? ""}`}
+              className={cn("input input-bordered", titleClassName, "flex-1 min-w-0", titleError && "input-error text-error", inputClassName ?? "")}
               placeholder={titlePlaceholder}
               autoFocus={autoFocusTitle}
             />
@@ -116,7 +115,7 @@ const ActivityHeader = ({
           <button
             onClick={handleCancel}
             disabled={cancelDisabled}
-            className={`${cancelClassName} shrink-0 ml-3`}
+            className={cn(cancelClassName, "shrink-0 ml-3")}
           >
             {cancelLabel}
           </button>

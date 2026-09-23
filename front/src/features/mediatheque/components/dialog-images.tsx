@@ -4,6 +4,7 @@ import { displaySize } from "../../../utils/helpers/size-unit-conversion";
 import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import Media from "../interfaces/media";
 import Pagination from "../../../components/pagination";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   onClose: () => void;
@@ -29,10 +30,7 @@ function DialogImages({ onClose }: Props) {
    * Détermine le style CSS en fonction de la sélection de l'image
    */
   const getStyle = (item: Media) => {
-    if (selectedImage && item.id === selectedImage.id) {
-      return baseStyle + " bg-primary text-white";
-    }
-    return baseStyle + " hover:bg-secondary hover:text-white";
+    return cn(baseStyle, selectedImage?.id === item.id ? "bg-primary text-white" : "hover:bg-secondary hover:text-white");
   };
 
   /**

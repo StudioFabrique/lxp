@@ -17,6 +17,7 @@ import { profileApi, type InstanceSettings } from "../api/profile.api";
 import EmailTemplateSettings, {
   type EmailTemplateId,
 } from "./email-template-settings";
+import { cn } from "../../../utils/cn";
 
 const emptySettings: InstanceSettings = {
   name: "",
@@ -274,7 +275,7 @@ export default function InstanceGeneralSettings() {
                   aria-describedby={
                     websiteError ? "instance-website-error" : undefined
                   }
-                  className={`input input-bordered w-full max-w-xl focus:outline-none ${websiteError ? "input-error" : ""}`}
+                  className={cn("input input-bordered w-full max-w-xl focus:outline-none", websiteError && "input-error")}
                   value={settings.website}
                   maxLength={2048}
                   placeholder="https://www.exemple.fr"
@@ -479,7 +480,7 @@ export default function InstanceGeneralSettings() {
                             <article
                               key={theme}
                               data-theme={theme}
-                              className={`min-w-0 rounded-xl border bg-base-100 p-3 text-left transition ${previewedTheme === theme ? "border-primary ring-2 ring-primary/25" : "border-base-300"}`}
+                              className={cn("min-w-0 rounded-xl border bg-base-100 p-3 text-left transition", previewedTheme === theme ? "border-primary ring-2 ring-primary/25" : "border-base-300")}
                             >
                               <div className="flex min-w-0 items-center gap-3">
                                 <span className="flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
@@ -503,7 +504,7 @@ export default function InstanceGeneralSettings() {
                                 )}
                                 <button
                                   type="button"
-                                  className={`btn btn-primary btn-xs normal-case ${previewedTheme === theme ? "col-span-2" : ""}`}
+                                  className={cn("btn btn-primary btn-xs normal-case", previewedTheme === theme && "col-span-2")}
                                   onClick={() =>
                                     toggleAvailableTheme(theme, themeList)
                                   }

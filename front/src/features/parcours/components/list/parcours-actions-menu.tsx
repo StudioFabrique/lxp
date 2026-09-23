@@ -14,6 +14,7 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import type { HierarchicalListMenuControl } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import type ParcoursSummary from "../../../dashboard-admin/interfaces/parcours-summary";
+import { cn } from "../../../../utils/cn";
 
 type ParcoursActionsMenuProps = {
   parcours: ParcoursSummary;
@@ -25,7 +26,7 @@ type ParcoursActionsMenuProps = {
 
 const itemBaseClassName =
   "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm outline-none transition-colors";
-const itemClassName = `${itemBaseClassName} hover:bg-primary/10 focus:bg-primary/10`;
+const itemClassName = cn(itemBaseClassName, "hover:bg-primary/10 focus:bg-primary/10");
 
 const ParcoursActionsMenu = ({
   parcours,
@@ -119,7 +120,7 @@ const ParcoursActionsMenu = ({
             <PermissionGuard action="delete" object="parcours">
               <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
               <DropdownMenu.Item
-                className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
+                className={cn(itemBaseClassName, "text-error hover:bg-error/10 focus:bg-error/10")}
                 onSelect={() => onDelete(parcours)}
               >
                 <Trash2 className="size-4" />

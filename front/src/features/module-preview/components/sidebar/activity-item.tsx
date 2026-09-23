@@ -65,7 +65,7 @@ export default function ActivityItem({
     >
       {activityIconType(activity.type, 4)}
       <span
-        className={`truncate w-[90%] first-letter:uppercase ${isSelected && "underline"}`}
+        className={cn("truncate w-[90%] first-letter:uppercase", isSelected && "underline")}
       >
         {formatTitle(activity.title)}
       </span>

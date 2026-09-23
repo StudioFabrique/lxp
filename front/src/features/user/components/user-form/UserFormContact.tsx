@@ -2,6 +2,7 @@ import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
 import DatePicker from "../../../../../src/components/UI/date-picker/date-picker";
 import { parseDateValue } from "../../../../../src/components/UI/date-picker/date-picker.utils";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   address: string;
@@ -22,9 +23,7 @@ type Props = {
 };
 
 const inputStyle = (hasError: boolean) =>
-  hasError
-    ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-    : "input input-sm input-bordered focus:outline-none w-full";
+  cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
 
 const UserFormContact = ({
   address, addressError, onAddress,

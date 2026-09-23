@@ -8,6 +8,7 @@ import "react-day-picker/style.css";
 import { formatDateToYYYYMMDD } from "../../../utils/helpers/convert-date";
 import "./date-picker.css";
 import { parseDateValue } from "./date-picker.utils";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   value?: string;
@@ -93,7 +94,7 @@ const DatePicker = ({
   };
 
   return (
-    <div className={`app-date-picker ${className}`}>
+    <div className={cn("app-date-picker", className)}>
       {label && (
         <label htmlFor={triggerId} className="text-sm font-medium">
           {label}
@@ -111,7 +112,7 @@ const DatePicker = ({
             aria-label={ariaLabel || label || placeholder}
           >
             <CalendarDays aria-hidden="true" />
-            <span className={selected ? "" : "app-date-picker__placeholder"}>
+            <span className={cn(selected ? "" : "app-date-picker__placeholder")}>
               {selected ? formatVisibleDate(selected, display) : placeholder}
             </span>
             <ChevronDown className="app-date-picker__chevron" aria-hidden="true" />

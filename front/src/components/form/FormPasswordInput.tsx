@@ -6,6 +6,7 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 interface FormPasswordInputProps<TFieldValues extends FieldValues> {
   label: string;
@@ -34,7 +35,7 @@ const FormPasswordInput = <TFieldValues extends FieldValues,>({
       <div className="relative">
         <input
           {...register(name)}
-          className={`w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "input-error" : ""}`}
+          className={cn("w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60", error && "input-error")}
           type={visible ? "text" : "password"}
           id={name}
           placeholder={placeholder}
