@@ -18,7 +18,8 @@ sélectionnée. Le style de la fenêtre est défini dans
    divergence avec `beta` et la
    tête de la branche. Il donne leurs titres, descriptions et noms de fichiers
    modifiés au modèle, sans lui donner le code. Il écrit une à quatre cartes en
-   français, puis le workflow crée un commit sur la même branche si les notes
+   français avec des titres de 28 caractères et des descriptions de 78 caractères
+   au maximum, puis le workflow crée un commit sur la même branche si les notes
    ont changé. Le nom réel de cette branche est conservé avec la note.
 3. Relire et corriger si besoin `release-notes.json` avant de fusionner la
    branche. La fenêtre affichera la nouvelle première entrée après la fusion et

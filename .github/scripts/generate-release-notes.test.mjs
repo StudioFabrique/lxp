@@ -116,8 +116,9 @@ test("raccourcit le texte du modèle pour conserver quatre cartes lisibles", () 
     })),
   });
   assert.equal(result.changes.length, 4);
-  assert.ok(result.summary.length <= 180);
-  assert.ok(result.changes.every(({ title, description }) => title.length <= 50 && description.length <= 180));
+  assert.ok(result.summary.length <= 85);
+  assert.ok(result.changes.every(({ title, description }) => title.length <= 28 && description.length <= 78));
+  assert.ok(result.changes.every(({ title }) => !title.endsWith("…")));
   assert.ok(!/[<>\r\n]/.test(JSON.stringify(result)));
   assert.equal(
     validateContent({

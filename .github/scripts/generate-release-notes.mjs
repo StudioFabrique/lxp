@@ -41,7 +41,7 @@ export function readerFriendlySubject(subject) {
 }
 
 export function validateContent(content) {
-  const compactText = (value, max) => {
+  const compactText = (value, max, isTitle = false) => {
     if (typeof value !== "string") return null;
     const clean = value
       .replace(/^(?:feat|fix|style|perf|chore)(?:\([^)]*\))?!?:\s*/i, "")
@@ -51,16 +51,18 @@ export function validateContent(content) {
       .trim();
     if (!clean) return null;
     if (clean.length <= max) return clean;
-    const prefix = clean.slice(0, max - 1);
+    const prefix = clean.slice(0, isTitle ? max : max - 1);
     const wordEnd = prefix.lastIndexOf(" ");
-    return `${prefix.slice(0, wordEnd > max / 2 ? wordEnd : max - 1).trimEnd()}…`;
+    const shortened = prefix.slice(0, wordEnd > max / 2 ? wordEnd : prefix.length).trimEnd();
+    if (isTitle) return shortened.replace(/\s+(?:et|de|du|des|la|le|les|pour)$/i, "");
+    return `${shortened}…`;
   };
 
-  const summary = compactText(content?.summary, 180);
+  const summary = compactText(content?.summary, 85);
   const changes = Array.isArray(content?.changes)
     ? content.changes.slice(0, 4).map((change) => ({
-        title: compactText(change?.title, 50),
-        description: compactText(change?.description, 180),
+        title: compactText(change?.title, 28, true),
+        description: compactText(change?.description, 78),
       }))
     : [];
   if (!summary || !changes.length || changes.some(({ title, description }) => !title || !description)) {
@@ -134,8 +136,11 @@ export async function generateContent(commits) {
             "Résume uniquement les changements attestés par ces commits. N'invente rien. " +
             "Privilégie les effets visibles pour les apprenants et les administrateurs; " +
             "ignore le jargon technique et les changements purement internes. " +
-            "Le résumé général doit tenir en 110 caractères. Rédige une à quatre cartes, " +
-            "avec un titre de 35 caractères maximum et une description de 120 caractères maximum pour chacune. " +
+            "Sois très concis, comme dans une fenêtre de notes de version. " +
+            "Le résumé général tient en 85 caractères maximum. Rédige une à quatre cartes, " +
+            "avec un titre nominal de 28 caractères maximum et une description de 78 caractères maximum pour chacune. " +
+            "Chaque titre et chaque description doivent être complets, sans points de suspension. " +
+            "Évite les formules vagues comme 'meilleure expérience utilisateur'. " +
             "Ne mentionne pas les numéros de commit ni les noms de fichiers. " +
             `Réponds uniquement avec un objet JSON conforme à ce schéma : ${JSON.stringify(schema)}`,
         },
