@@ -13,6 +13,7 @@ type CursorGlowCardProps = {
     | "neutral"
     | "info"
     | "success"
+    | "success-content"
     | "warning"
     | "error";
   className?: string;
@@ -94,6 +95,7 @@ const CursorGlowCard = ({
             glowColor === "neutral" && "bg-neutral/40",
             glowColor === "info" && "bg-info/40",
             glowColor === "success" && "bg-success/40",
+            glowColor === "success-content" && "bg-success-content/50",
             glowColor === "warning" && "bg-warning/40",
             glowColor === "error" && "bg-error/40",
           )}

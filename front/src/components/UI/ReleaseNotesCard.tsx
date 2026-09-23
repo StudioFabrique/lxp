@@ -16,8 +16,8 @@ export default function ReleaseNotesCard({ className }: Props) {
     <>
       <CursorGlowCard
         autoGlow
-        glowColor="success"
-        glowSize={3.2}
+        glowColor="success-content"
+        glowSize={1.6}
         className={cn("h-full bg-success shadow-sm", className)}
       >
         <button
