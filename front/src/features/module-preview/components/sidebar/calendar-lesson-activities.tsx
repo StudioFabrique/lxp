@@ -3,8 +3,6 @@ import type Lesson from "../../../../utils/interfaces/lesson";
 import { modulePreviewApi } from "../../api/module-preview.api";
 import ActivityList from "./activity-list";
 
-const noop = () => {};
-
 /** Déplier une leçon ici ne sélectionne aucun contenu dans l'explorateur. */
 export default function CalendarLessonActivities({ lesson }: { lesson: Lesson }) {
   const { data, isPending, isError, refetch } = useQuery({
@@ -29,8 +27,6 @@ export default function CalendarLessonActivities({ lesson }: { lesson: Lesson })
       readOnly
       activities={lesson.activities ?? data?.activities}
       isLoading={!lesson.activities && isPending}
-      onActivityReorder={noop}
-      onSelectActivity={noop}
     />
   );
 }

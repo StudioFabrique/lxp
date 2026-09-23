@@ -58,7 +58,7 @@ export default function StudentProfile({ onClose }: Props) {
       <button type="button" role="tab" aria-selected={tab === "preferences"} className={cn("btn btn-sm cursor-pointer", tab === "preferences" ? "btn-primary" : "btn-outline")} onClick={() => setTab("preferences")}>Préférences</button>
       <button type="button" role="tab" aria-selected={tab === "niveaux"} className={cn("btn btn-sm cursor-pointer", tab === "niveaux" ? "btn-primary" : "btn-outline")} onClick={() => setTab("niveaux")}>Niveaux par formation</button>
     </div>
-    {query.isLoading ? <p>Chargement…</p> : query.isError ? <p role="alert">Impossible de charger vos choix.</p> : tab === "preferences" ? <div className="space-y-5">
+    {query.isLoading ? <div role="status" aria-label="Chargement du profil" className="space-y-4"><span className="sr-only">Chargement du profil…</span><div className="skeleton h-8 w-1/2" /><div className="skeleton h-40 w-full" /></div> : query.isError ? <p role="alert">Impossible de charger vos choix.</p> : tab === "preferences" ? <div className="space-y-5">
       <h3 className="font-semibold">Quel rythme préférez-vous ?</h3>
       <SingleChoiceCards name="profile-pace" options={paceOptions} value={pace} onChange={setPace} />
       <h3 className="font-semibold">Comment aimez-vous apprendre ?</h3>

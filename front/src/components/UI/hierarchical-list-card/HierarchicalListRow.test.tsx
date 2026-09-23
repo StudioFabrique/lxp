@@ -28,7 +28,6 @@ describe("HierarchicalListRow", () => {
               <span data-menu-open={menuControl.open}>Actions</span>
             ),
           }}
-          dismissOverflow={() => {}}
         />,
       );
     });

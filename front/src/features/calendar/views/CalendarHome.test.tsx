@@ -8,13 +8,14 @@ import CalendarHome from "./CalendarHome";
 import StudentTimeline from "../../dashboard-student/components/timeline/student-timeline";
 import { dateKey } from "../components/read-calendar-utils";
 
-vi.mock("../../../lib/axios", () => ({ default: { get: vi.fn() } }));
+vi.mock("../../../lib/axios", () => ({ default: { get: vi.fn(), put: vi.fn() } }));
 beforeEach(() => {
   vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} });
 });
 let root: Root;
 let client: QueryClient;
 let container: HTMLDivElement;
+let storedColor = "primary";
 const flush = () => act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
 const click = async (text: string) => {
   const button = Array.from(document.querySelectorAll("button")).find(button => button.textContent?.trim() === text);
@@ -23,10 +24,15 @@ const click = async (text: string) => {
 };
 afterEach(() => { act(() => root?.unmount()); container?.remove(); client?.clear(); vi.clearAllMocks(); vi.unstubAllGlobals(); });
 async function render(dashboard = false, singleParcours = false) {
+  storedColor = "primary";
   const today = `${dateKey(new Date())}T00:00:00.000Z`;
+  vi.mocked(apiClient.put).mockImplementation(async (_url, body) => {
+    storedColor = (body as { calendarColor: string }).calendarColor;
+    return { data: {} };
+  });
   vi.mocked(apiClient.get).mockImplementation(async url => ({ data: url === "/course/calendar/parcours" ? (singleParcours ? [{ id: 1, title: "Web" }] : [{ id: 1, title: "Web" }, { id: 2, title: "Design" }]) : {
     id: url?.endsWith("/1") ? 1 : 2, title: "Parcours", modules: [{ id: 42, title: url?.endsWith("/1") ? "Module Web" : "Module Design", minDate: today, maxDate: today,
-      courses: [1, 2, 3].map(id => ({ id, title: `Cours ${id}`, lessons: [{ id: id + 10 }], dates: [{ id: 1, minDate: today, maxDate: today, startTime: "09:00", endTime: "12:00" }] })) }],
+      courses: [1, 2, 3].map(id => ({ id, title: `Cours ${id}`, calendarColor: storedColor, lessons: [{ id: id + 10 }], dates: [{ id: 1, minDate: today, maxDate: today, startTime: "09:00", endTime: "12:00" }] })) }],
   } }));
   client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   container = document.createElement("div"); document.body.append(container); root = createRoot(container);
@@ -66,6 +72,17 @@ it("ouvre le popover et le lien exact du cours, puis la liste des cours masqués
   await click("Mois");
   await click("Afficher plus (1)");
   expect(document.querySelector("dialog")?.textContent).toContain("Cours 3");
+});
+it("permet à l’étudiant de changer la couleur depuis la fiche du cours", async () => {
+  await render();
+  act(() => container.querySelector<HTMLButtonElement>('[data-calendar-event^="1:"]')!.click());
+  await flush();
+  act(() => document.querySelector<HTMLButtonElement>('[aria-label="Changer la couleur du cours"]')!.click());
+  await flush();
+  act(() => document.querySelector<HTMLButtonElement>('[aria-label="Choisir la couleur accent"]')!.click());
+  await flush();
+  expect(apiClient.put).toHaveBeenCalledWith("/course/calendar/1/color", { calendarColor: "accent" });
+  expect(container.querySelector('[data-calendar-event^="1:"]')?.className).toContain("border-accent");
 });
 
 it("garde Mon emploi du temps sur le dashboard, Jour par défaut et seulement Jour/Semaine", async () => {

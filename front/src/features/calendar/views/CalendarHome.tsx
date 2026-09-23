@@ -1,10 +1,12 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useMemo, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { Link, useLocation } from "react-router";
 import { ArrowRight, X } from "lucide-react";
 import Header from "../../../components/headers/Header";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
@@ -15,6 +17,8 @@ import type {
   CalendarEvent,
   CalendarView,
 } from "../components/calendar-configuration";
+import { calendarColor, type CalendarColor } from "../components/calendar-configuration";
+import { ColorPicker } from "../../module-preview/components/calendar/module-course-calendar";
 import ViewSelector from "../components/view-selector";
 import TimeSelector from "../components/time-selector";
 import {
@@ -64,7 +68,7 @@ export function ReadCalendarBrowser({
   return (
     <>
       {parcoursQuery.isPending ? (
-        <p role="status">Chargement des parcours…</p>
+        <LoadingSkeleton variant="rows" label="Chargement des parcours" />
       ) : parcoursQuery.isError ? (
         <p role="alert">
           Impossible de charger les parcours.{" "}
@@ -125,6 +129,8 @@ function ParcoursCalendar({
   date: Date;
   setDate: (date: Date) => void;
 }) {
+  const queryClient = useQueryClient();
+  const [colorSaving, setColorSaving] = useState(false);
   const { pathname } = useLocation();
   const area = pathname.startsWith("/student/") ? "student" : "admin";
   const [selection, setSelection] = useState<{
@@ -142,6 +148,29 @@ function ParcoursCalendar({
         )
       ).data,
   });
+  const saveColor = async (courseId: number, color: CalendarColor) => {
+    if (colorSaving) return;
+    setColorSaving(true);
+    const key = ["read-calendar", scopeKey, parcours.id];
+    const previous = queryClient.getQueryData<ReadCalendar>(key);
+    queryClient.setQueryData<ReadCalendar>(key, data => data && ({
+      ...data,
+      modules: data.modules.map(module => ({ ...module, courses: module.courses.map(course =>
+        course.id === courseId ? { ...course, calendarColor: color } : course,
+      ) })),
+    }));
+    setSelection(value => value ? { event: { ...value.event, type: color } } : value);
+    try {
+      await apiClient.put(`/course/calendar/${courseId}/color`, { calendarColor: color });
+      void queryClient.invalidateQueries({ queryKey: ["read-calendar"] });
+    } catch {
+      queryClient.setQueryData(key, previous);
+      setSelection(value => value ? { event: { ...value.event, type: calendarColor(previous?.modules.flatMap(module => module.courses).find(course => course.id === courseId)?.calendarColor) } } : value);
+      toast.error("Impossible d'enregistrer la couleur du cours. Réessayez.");
+    } finally {
+      setColorSaving(false);
+    }
+  };
   const events = useMemo(
     () => calendarCourseEvents(query.data, date, view, area),
     [query.data, date, view, area],
@@ -173,7 +202,11 @@ function ParcoursCalendar({
   return (
     <div className="mt-4 space-y-3">
       {query.isPending ? (
-        <p role="status">Chargement du calendrier…</p>
+        <div role="status" aria-label="Chargement du calendrier" className="space-y-3">
+          <span className="sr-only">Chargement du calendrier…</span>
+          <div className="skeleton h-10 w-56" />
+          <div className="skeleton h-[50vh] w-full rounded-box" />
+        </div>
       ) : query.isError ? (
         <p role="alert">
           Impossible de charger le calendrier.{" "}
@@ -264,7 +297,12 @@ function ParcoursCalendar({
             onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold">{formatTitle(selection?.event.title)}</h3>
+              <div className="flex min-w-0 items-start gap-2">
+                {selection?.event.category === "course" && selection.event.navigationState?.courseId &&
+                  <ColorPicker key={selection.event.navigationState.courseId} color={calendarColor(selection.event.type)} disabled={colorSaving}
+                    onChange={color => { void saveColor(selection.event.navigationState!.courseId!, color); }} />}
+                <h3 className="font-semibold">{formatTitle(selection?.event.title)}</h3>
+              </div>
               <Popover.Close
                 className="btn btn-xs btn-ghost"
                 aria-label="Fermer les détails"

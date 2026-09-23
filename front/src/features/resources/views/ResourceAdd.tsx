@@ -82,8 +82,13 @@ export default function ResourceAdd({
         </div>
       </Header>
       {state.isLoading ? (
-        <div role="status" className="skeleton h-96">
-          Chargement de la ressource…
+        <div role="status" aria-label="Chargement de la ressource" className="space-y-5">
+          <span className="sr-only">Chargement de la ressource…</span>
+          <div className="skeleton h-44 w-full rounded-box" />
+          <div className="grid gap-5 lg:grid-cols-3">
+            <div className="skeleton h-72 rounded-box" />
+            <div className="skeleton h-72 rounded-box lg:col-span-2" />
+          </div>
         </div>
       ) : state.error ? (
         <div role="alert" className="alert alert-error">

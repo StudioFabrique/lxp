@@ -79,7 +79,10 @@ const UserFormTypeUser = ({
       </div>
       <div className="flex flex-col gap-y-5">
         {isLoading ? (
-          <p>Chargement des roles...</p>
+          <div role="status" aria-label="Chargement des rôles" className="space-y-3">
+            <span className="sr-only">Chargement des rôles…</span>
+            {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
+          </div>
         ) : (
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-y-4 overflow-y-auto">

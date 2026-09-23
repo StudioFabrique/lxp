@@ -14,6 +14,7 @@ import EmptyStatePlaceholder from "../UI/empty-state-placeholder";
 import TableOverflowContainer from "./TableOverflowContainer";
 import "./DataTable.css";
 import { cn } from "../../utils/cn";
+import LoadingSkeleton from "../loaders/LoadingSkeleton";
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<StockFeatures, TData>[];
@@ -68,7 +69,7 @@ export function DataTable<TData extends RowData>({
   });
 
   if (data.length === 0) {
-    return isLoading ? null : (
+    return isLoading ? <LoadingSkeleton variant="rows" label="Chargement du tableau" /> : (
       <EmptyStatePlaceholder
         title={emptyMessage}
         withBorder={emptyPlaceholderWithBorder ?? !isSearching}

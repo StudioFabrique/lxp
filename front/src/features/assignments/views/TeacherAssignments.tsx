@@ -101,7 +101,7 @@ export default function TeacherAssignments() {
       </div>
 
       {query.isPending ? (
-        <Loader />
+        <Loader variant="cards" label="Chargement des devoirs" />
       ) : query.isError ? (
         <div className="alert alert-error" role="alert">
           Impossible de charger les évaluations.

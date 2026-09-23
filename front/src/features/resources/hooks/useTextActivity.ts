@@ -65,8 +65,6 @@ const useTextActivity = () => {
     // Implementation for deleting an activity
   };
 
-  const updateActivity = () => {};
-
   const resetStorage = (id: number) => {
     console.log("ID", id);
 
@@ -117,7 +115,6 @@ const useTextActivity = () => {
     deleteActivity,
     editActivityContent,
     setActivityTitle,
-    updateActivity,
     resetActivityDatas,
     resetStorage,
     getActivityContent,

@@ -58,7 +58,7 @@ type HierarchicalListItemActionsProps = {
 export const HierarchicalListItemActions = ({
   title,
   actions,
-  dismissOverflow = () => {},
+  dismissOverflow,
   menuControl,
 }: HierarchicalListItemActionsProps) => (
   <DropdownMenu.Root
@@ -89,7 +89,7 @@ export const HierarchicalListItemActions = ({
               key={action.label}
               asChild
               onSelect={() => {
-                dismissOverflow();
+                dismissOverflow?.();
                 action.onSelect?.();
               }}
             >
@@ -130,7 +130,7 @@ export const HierarchicalListRow = ({
   hideDivider = false,
 }: {
   item: HierarchicalListCardItem;
-  dismissOverflow: () => void;
+  dismissOverflow?: () => void;
   hideDivider?: boolean;
 }) => {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
@@ -138,9 +138,13 @@ export const HierarchicalListRow = ({
     open: isActionMenuOpen,
     onOpenChange: setIsActionMenuOpen,
   };
+  const handleDismissOverflow = () => {
+    setIsActionMenuOpen(false);
+    dismissOverflow?.();
+  };
   const itemAction =
     typeof item.action === "function"
-      ? item.action(dismissOverflow, menuControl)
+      ? item.action(handleDismissOverflow, menuControl)
       : item.action;
 
   return (

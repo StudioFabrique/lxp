@@ -9,4 +9,5 @@ export default interface StudentFeedback {
   studentId: string;
   isSelected?: boolean;
   teacher?: string;
+  reviewMessage?: string;
 }

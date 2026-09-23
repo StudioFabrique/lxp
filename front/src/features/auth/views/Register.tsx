@@ -92,7 +92,11 @@ export default function RegisterHome() {
   return (
     <AuthPageWrapper title="Activation du compte">
       {isChecking ? (
-        <span className="loading loading-spinner" aria-label="Vérification du lien" />
+        <div role="status" aria-label="Vérification du lien" className="space-y-3">
+          <span className="sr-only">Vérification du lien…</span>
+          <div className="skeleton h-8 w-2/3" />
+          <div className="skeleton h-4 w-full" />
+        </div>
       ) : error.length > 0 ? (
         <div className="flex flex-col gap-4">
           <PasswordUpdateError error={error} url="/login" />

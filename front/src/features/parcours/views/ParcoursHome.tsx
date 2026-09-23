@@ -64,7 +64,7 @@ const ParcoursHome = () => {
   if (!asStudent) {
     return isAdminParcoursLoading ? (
       <div className="flex items-center">
-        <Loader />
+        <Loader variant="cards" label="Chargement des parcours" />
       </div>
     ) : (
       <AdminParcoursManagement formations={formations} layout="admin" />
@@ -79,7 +79,7 @@ const ParcoursHome = () => {
     <div>
       {isStudentParcoursLoading ? (
         <div className="flex items-center">
-          <Loader />
+          <Loader variant="cards" label="Chargement des parcours" />
         </div>
       ) : (
         <AdminParcoursManagement

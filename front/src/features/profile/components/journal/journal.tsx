@@ -63,7 +63,7 @@ const Journal = ({ parcoursId }: { parcoursId?: number }) => {
       </div>
 
       {isLoading ? (
-        <Loader />
+        <Loader variant="rows" label="Chargement de l'historique" />
       ) : visibleParcours.length > 0 ? (
         <JournalTree parcoursList={visibleParcours} />
       ) : (

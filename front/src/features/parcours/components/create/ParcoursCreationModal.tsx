@@ -150,7 +150,7 @@ export default function ParcoursCreationModal({
       modalBoxStyle="w-11/12 max-w-3xl"
     >
       {mode === "create" ? (
-        isCreating ? <Loader /> : (
+        isCreating ? <Loader variant="panel" label="Création du parcours" /> : (
           <div className="mt-6 flex flex-col gap-6">
             <p>Pour commencer, veuillez saisir les informations nécessaires pour créer le parcours</p>
             <div data-onboarding="parcours-create">

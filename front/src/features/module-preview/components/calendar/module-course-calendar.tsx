@@ -14,7 +14,7 @@ import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { calendarColor, calendarColors, colorDots, type CalendarColor } from "../../../calendar/components/calendar-configuration";
 import { cn } from "../../../../utils/cn";
 
-function ColorPicker({ color, disabled, onChange }: { color: CalendarColor; disabled: boolean; onChange: (color: CalendarColor) => void }) {
+export function ColorPicker({ color, disabled, onChange }: { color: CalendarColor; disabled: boolean; onChange: (color: CalendarColor) => void }) {
   const [open, setOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   return <div className="flex shrink-0 items-center gap-1.5">
@@ -128,7 +128,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1));
   };
 
-  if (store.isPending) return <div role="status" className="p-10 text-center">Chargement du calendrier…</div>;
+  if (store.isPending) return <div role="status" aria-label="Chargement du calendrier" className="space-y-4 p-5"><span className="sr-only">Chargement du calendrier…</span><div className="skeleton h-10 w-56" /><div className="skeleton h-[50vh] w-full rounded-box" /></div>;
   if (store.isError) return <div role="alert" className="rounded-lg border border-error p-6">Impossible de charger le calendrier. <button className="btn btn-sm" onClick={() => void store.refetch()}>Réessayer</button></div>;
 
   return <div ref={container} className="min-w-0" aria-label="Planification des cours">

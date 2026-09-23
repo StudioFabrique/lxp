@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import LoadingSkeleton from "../../../../components/loaders/LoadingSkeleton";
 import {
   CheckCircle2,
   ClipboardCheck,
@@ -664,7 +665,7 @@ export default function CourseAssignmentView({
   });
 
   if (isLoading || !data) {
-    return <span className="loading loading-spinner loading-lg mx-auto" />;
+    return <LoadingSkeleton variant="panel" label="Chargement du devoir" />;
   }
   const hydratedCourse = { ...course, assignment: data };
   const handleChanged = async () => {

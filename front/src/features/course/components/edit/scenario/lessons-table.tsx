@@ -8,7 +8,6 @@ import { LessonWithActivitiesCount } from "../../../../../../src/utils/interface
 interface LessonsTableProps {
   list?: LessonWithActivitiesCount[];
   onAddItems?: (ids: number[]) => void;
-  onCloseDrawer?: (id: string) => void;
 }
 
 const LessonsTable = (props: LessonsTableProps) => {
@@ -110,8 +109,7 @@ const LessonsTable = (props: LessonsTableProps) => {
       const items = list
         .filter((item) => item.isSelected)
         .map((item) => item.id);
-      props.onAddItems!(items);
-      props.onCloseDrawer!("add-skills");
+      props.onAddItems?.(items);
     }
   };
 

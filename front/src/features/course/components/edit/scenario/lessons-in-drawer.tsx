@@ -118,7 +118,6 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
           <LessonsTable
             list={lessonsList}
             onAddItems={handleAddLessons}
-            onCloseDrawer={() => {}}
           />
         ) : (
           <p>Aucun contenu trouvé</p>

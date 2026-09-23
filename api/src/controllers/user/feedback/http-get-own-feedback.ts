@@ -16,7 +16,11 @@ export default async function httpGetLastFeedback(
 
     const response = await getLastFeedback(userId);
 
-    return res.status(200).json({ data: response });
+    return res.status(200).json({
+      data: response
+        ? { feedbackAt: response.feedbackAt, feelingLevel: response.feelingLevel }
+        : null,
+    });
   } catch (error) {
     return res.status(500).json({ message: serverIssue });
   }

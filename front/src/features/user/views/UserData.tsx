@@ -70,7 +70,7 @@ export default function UserData() {
       <section style={classImage} />
 
       {isLoading ? (
-        <Loader />
+        <Loader variant="detail" label="Chargement des informations de l'apprenant" />
       ) : isError ? (
         <ElementNotFound message="Impossible de charger les informations de cet apprenant." />
       ) : student ? (

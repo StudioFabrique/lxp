@@ -107,7 +107,7 @@ const ModuleHome = () => {
     <main className="w-full">
       {isLoading ? (
         <div className="flex items-center justify-center">
-          <Loader />
+          <Loader variant="cards" label="Chargement des modules" />
         </div>
       ) : (
         <ModuleHomeList

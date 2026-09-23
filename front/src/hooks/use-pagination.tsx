@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import apiClient from "../lib/axios";
 import { rowsPerPage } from "../config/pagination";
@@ -31,6 +31,9 @@ const usePagination = (
     initialState.totalPages,
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const requestIdRef = useRef(0);
   const [path, setPath] = useState(defaultUrlPath);
   const [allChecked, setAllChecked] = useState(false);
   const [urlComplement, setUrlComplement] = useState<string | null>(null);
@@ -83,6 +86,9 @@ const usePagination = (
   }, []);
 
   const getList = useCallback(() => {
+    const requestId = ++requestIdRef.current;
+    setIsLoading(true);
+    setIsError(false);
     const applyData = (data: { list: Array<any>; total: number }) => {
       data.list.forEach((item: any) => {
         item.createdAt =
@@ -104,8 +110,15 @@ const usePagination = (
           sdir ? "desc" : "asc"
         }?page=${page}&limit=${perPage}${urlComplement ? urlComplement : ""}`,
       )
-      .then((response) => applyData(response.data))
-      .catch(() => {});
+      .then((response) => {
+        if (requestId === requestIdRef.current) applyData(response.data);
+      })
+      .catch(() => {
+        if (requestId === requestIdRef.current) setIsError(true);
+      })
+      .finally(() => {
+        if (requestId === requestIdRef.current) setIsLoading(false);
+      });
   }, [
     page,
     perPage,
@@ -175,6 +188,8 @@ const usePagination = (
   return {
     allChecked,
     dataList,
+    isLoading,
+    isError,
     getList,
     getSelectedIds,
     handlePageNumber,

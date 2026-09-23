@@ -36,11 +36,11 @@ type Props = {
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
   onEditIframeSrc: (src: string) => void;
-  onRateActivity: (rating: number) => void;
+  onRateActivity?: (rating: number) => void;
   onEditActivity: () => void;
   onOpenDeleteModal: () => void;
   onDeleteActivity: () => void;
-  onCloseDeleteModal: () => void;
+  onCloseDeleteModal?: () => void;
   onClose: () => void;
   onBack: () => void;
   onRefreshActivity: (selectLastActivity?: boolean) => Promise<boolean>;
@@ -119,7 +119,7 @@ const LessonReaderAndEditor = ({
 
   return (
     <>
-      {showDeleteModal && selectedActivity && textActivityTitle && (
+      {showDeleteModal && selectedActivity && textActivityTitle && onCloseDeleteModal && (
         <Modal title="Supprimer l'activité" leftLabel="Annuler">
           <ActivityDeleteModal
             onCloseDeleteModal={onCloseDeleteModal}
@@ -131,7 +131,7 @@ const LessonReaderAndEditor = ({
       )}
 
       <div className="flex flex-col gap-5">
-        {isLessonCompleted && selectedLesson?.lessonRating[0]?.rating && (
+        {isLessonCompleted && selectedLesson?.lessonRating[0]?.rating && onRateActivity && (
           <div className="w-full flex justify-end items-center">
             <RatingPanelButton
               note={selectedLesson.lessonRating[0].rating}

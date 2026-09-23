@@ -15,7 +15,7 @@ const CourseHome = () => {
     <main className="w-full min-h-screen flex justify-center">
       {isLoading ? (
         <div className="flex items-center">
-          <Loader />
+          <Loader variant="cards" label="Chargement des cours" />
         </div>
       ) : (
         <div className="w-full">

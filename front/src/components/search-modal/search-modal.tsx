@@ -91,7 +91,7 @@ const SearchModal: FC<{
           </span>
         </div>
         {isLoading ? (
-          <Loader />
+          <Loader variant="rows" label="Chargement des résultats" />
         ) : (
           searchResultsData && <SearchResults data={searchResultsData} />
         )}

@@ -74,6 +74,7 @@ export default async function getLastFeedbacks(
     avatar: imageToDataUrl(item.user.avatar),
     name: `${item.user.firstname} ${item.user.lastname}`,
     hasBeenReviewed: item.hasBeenReviewed,
+    reviewMessage: item.reviewMessage,
     studentId: item.user._id,
     // associe à chaque feedback le nom et le prénom du formateur ayant vu le feedback de l'apprenant
     teacher:

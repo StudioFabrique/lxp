@@ -59,7 +59,7 @@ const FeelingFeedback = () => {
         <FeelingLevel value={currentProgressValue} />
       </span>
       {isLoading ? (
-        <Loader />
+        <Loader variant="panel" label="Chargement du feedback" />
       ) : (
         !feedbackAlreadySent && (
           <>

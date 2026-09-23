@@ -228,7 +228,7 @@ const DatesForm = (props: DatesFormProps) => {
           label="Ajouter une plage"
           loading={props.isLoading}
           isDisabled={props.isLoading}
-          onClickEvent={() => {}}
+          type="submit"
         />
       </div>
     </form>

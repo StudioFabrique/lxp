@@ -150,8 +150,9 @@ function MediathequeHomePage() {
       ) : null}
 
       {isLoading ? (
-        <div role="status" className="skeleton h-64">
-          Chargement des médias…
+        <div role="status" aria-label="Chargement des médias" className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <span className="sr-only">Chargement des médias…</span>
+          {[0, 1, 2].map((item) => <div key={item} className="skeleton h-48 rounded-box" aria-hidden="true" />)}
         </div>
       ) : error ? (
         <div role="alert" className="alert alert-error">

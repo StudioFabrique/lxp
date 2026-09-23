@@ -126,7 +126,6 @@ const EditParcours = () => {
               <ImportObjectives
                 importedObjectives={importedObjectives}
                 onImport={setImportedObjectives}
-                onCloseDrawer={() => {}}
               />,
             ]}
           />
@@ -141,7 +140,6 @@ const EditParcours = () => {
               <ImportSkills
                 importedSkills={importedSkills}
                 onImport={setImportedSkills}
-                onCloseDrawer={() => {}}
               />,
             ]}
           />

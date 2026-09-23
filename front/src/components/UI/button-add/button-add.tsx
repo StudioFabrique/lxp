@@ -7,7 +7,8 @@ type Props = {
   isDisabled?: boolean;
   outline?: boolean;
   loading?: boolean;
-  onClickEvent: () => void;
+  onClickEvent?: () => void;
+  type?: "button" | "submit";
 };
 
 const ButtonAdd: FC<Props> = ({
@@ -17,13 +18,14 @@ const ButtonAdd: FC<Props> = ({
   loading = false,
   outline = false,
   onClickEvent,
+  type = "button",
 }) => {
   return (
     <button
       className={cn("btn btn-primary flex gap-x-2", small && "btn-sm", outline && "btn-outline")}
       disabled={isDisabled}
       onClick={onClickEvent}
-      type="button"
+      type={type}
     >
       {loading ? <div className="loading loading-spinner loading-sm" /> : null}
       {label}

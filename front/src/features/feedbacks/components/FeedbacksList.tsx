@@ -45,6 +45,12 @@ const columns = columnHelper.columns([
       );
     },
   }),
+  columnHelper.accessor("reviewMessage", {
+    header: "Note de review",
+    cell: (info) => (
+      <span className="whitespace-pre-wrap">{info.getValue() || "-"}</span>
+    ),
+  }),
   columnHelper.accessor("feelingLevel", {
     header: "Humeur",
     cell: (info) => <FeelingLevel value={info.getValue()} size={6} />,

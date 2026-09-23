@@ -5,12 +5,16 @@ import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import TablePagination from "../../../components/table/TablePagination";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import useStudentResources from "../hooks/useStudentResources";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 export default function StudentResourceHome() {
   const {
     page,
     totalPages,
     dataList,
+    isLoading,
+    isError,
+    refetch,
     setPage,
     perPage,
     setPerPage,
@@ -34,7 +38,14 @@ export default function StudentResourceHome() {
         />
       ) : null}
 
-      {dataList && dataList.length > 0 ? (
+      {isLoading ? (
+        <LoadingSkeleton variant="cards" label="Chargement des ressources supplémentaires" />
+      ) : isError ? (
+        <div role="alert" className="alert alert-error">
+          Impossible de charger les ressources supplémentaires.
+          <button type="button" className="btn btn-sm" onClick={refetch}>Réessayer</button>
+        </div>
+      ) : dataList && dataList.length > 0 ? (
         <>
           <ResourcesListCard resourcesList={dataList} />
 

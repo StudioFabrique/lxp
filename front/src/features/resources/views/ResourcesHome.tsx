@@ -18,6 +18,7 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { resourcesApi } from "../api/resources.api";
 import { resourcesKeys } from "../api/resources.keys";
 import { Activity } from "../../../utils/interfaces/activity";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 export type ResourceListItem = {
   id: number;
@@ -97,9 +98,7 @@ export default function ResourcesHome() {
         />
       ) : null}
       {query.isPending ? (
-        <div role="status" className="skeleton h-64">
-          Chargement des ressources…
-        </div>
+        <LoadingSkeleton variant="cards" label="Chargement des ressources" />
       ) : query.isError ? (
         <div role="alert" className="alert alert-error">
           {getApiErrorMessage(

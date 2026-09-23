@@ -4,7 +4,6 @@ import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Check, Gauge, GraduationCap, Shapes } from "lucide-react";
-import Loader from "../../../components/loaders/Loader";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -507,7 +506,7 @@ export default function StudentLearningOnboarding() {
                 disabled={saving}
                 onClick={() => void confirm()}
               >
-                {saving ? <Loader /> : "Confirmer"}
+                {saving ? <span className="loading loading-spinner loading-sm" aria-label="Confirmation en cours" /> : "Confirmer"}
               </button>
             ) : (
               <button

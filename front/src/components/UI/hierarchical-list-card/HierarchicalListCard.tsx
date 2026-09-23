@@ -138,7 +138,6 @@ const HierarchicalListCard = ({
                 <HierarchicalListRow
                   key={item.id}
                   item={item}
-                  dismissOverflow={() => {}}
                   hideDivider={
                     hideLastItemDivider && index === visibleItems.length - 1
                   }

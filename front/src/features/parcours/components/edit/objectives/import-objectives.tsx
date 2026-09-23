@@ -12,7 +12,7 @@ import type Objective from "../../../../../utils/interfaces/objective";
 import { addIdToObject } from "../../../../../utils/helpers/add-id-to-objects";
 
 type Props = {
-  onCloseDrawer: (id: string) => void;
+  onCloseDrawer?: (id: string) => void;
   importedObjectives: Objective[];
   onImport: (objectives: Objective[]) => void;
 };
@@ -42,7 +42,7 @@ const ImportObjectives: FC<Props> = ({
   };
 
   const handleCloseDrawer = () => {
-    onCloseDrawer("import-data");
+    onCloseDrawer?.("import-data");
   };
 
   const postSelectedObjectives = (objectives: Objective[]) => {

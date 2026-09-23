@@ -332,7 +332,7 @@ userRouter.get(
 // retourne la liste des derniers feedbacks enregistrés
 userRouter.get(
   "/last-feedbacks/:notReviewed",
-  checkPermissions("cursus"),
+  checkPermissions("feedback", "read"),
   param("notReviewed")
     .isBoolean()
     .withMessage("Le paramètre 'notReviewed' doit être un booléen."),

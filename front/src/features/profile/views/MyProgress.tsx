@@ -75,7 +75,7 @@ export default function MyProgress() {
           Progression des modules
         </h2>
         {isLoading ? (
-          <Loader />
+          <Loader variant="rows" label="Chargement de la progression" />
         ) : isError ? (
           <p role="alert" className="alert alert-error">
             Impossible de charger les progressions.

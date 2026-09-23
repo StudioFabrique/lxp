@@ -10,6 +10,7 @@ type Props = {
   handleFileChange: (file: File) => void;
   handleCancel: () => void;
   handleAddResource: () => void;
+  cancelUpload: () => void;
   handleRemoveFromUploadList: (id: number) => void;
   isLoading: boolean;
   onReorder: (newList: Resource[]) => void;
@@ -24,6 +25,7 @@ function CreateResource({
   handleFileChange,
   handleCancel,
   handleAddResource,
+  cancelUpload,
   handleRemoveFromUploadList,
   isLoading,
   onReorder,
@@ -46,7 +48,7 @@ function CreateResource({
           filesNumber={uploadList.length}
           isLoading={isLoading}
           hasError={false}
-          cancelUpload={() => {}}
+          cancelUpload={cancelUpload}
         />
       </span>
       {uploadList.length > 0 ? (

@@ -13,6 +13,7 @@ import {
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 type Props = {
   modules: ModuleSummary[];
@@ -24,7 +25,7 @@ export default function LastModules({ modules, isLoading }: Props) {
   const isTeacher = isTeacherUser(user);
 
   return isLoading ? (
-    <span className="loading loading-spinner loading-sm my-5" />
+    <LoadingSkeleton variant="rows" label="Chargement des modules" />
   ) : modules?.length ? (
     <div className="p-2">
       <h3 className="text-xl font-bold text-primary select-none">

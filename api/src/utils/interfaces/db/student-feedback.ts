@@ -11,6 +11,7 @@ export interface IStudentFeedback extends MongoRecord {
   hasBeenReviewed: boolean;
   // formateur qui a pris en charge le feedback de l'apprenant
   teacher?: IUser["_id"];
+  reviewMessage?: string;
 }
 
 const studentFeedbackSchema: Schema = new Schema({
@@ -45,6 +46,10 @@ const studentFeedbackSchema: Schema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: false,
     unique: false,
+  },
+  reviewMessage: {
+    type: Schema.Types.String,
+    required: false,
   },
 });
 

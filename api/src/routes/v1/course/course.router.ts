@@ -96,7 +96,7 @@ courseRouter.put(
 
 courseRouter.put(
   "/calendar/:courseId/color",
-  checkPermissions("course", "update"),
+  checkPermissions("course", "read"),
   param("courseId").isInt({ min: 1 }),
   body("calendarColor").isIn(["primary", "secondary", "accent", "neutral", "info", "success", "warning", "error"]),
   checkValidatorResult,

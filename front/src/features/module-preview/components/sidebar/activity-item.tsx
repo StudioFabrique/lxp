@@ -53,7 +53,8 @@ export default function ActivityItem({
   return (
     <button
       ref={ref}
-      onClick={onSelect}
+      onClick={disabled ? undefined : onSelect}
+      disabled={disabled}
       className={cn(
         "btn btn-ghost justify-start text-start btn-sm w-full h-6 transition-all opacity-100 border-t-2 border-transparent",
         {

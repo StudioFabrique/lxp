@@ -129,7 +129,11 @@ const ParcoursSelection = ({
           </h3>
 
           {isFormationsLoading ? (
-            <div className="alert">Chargement des formations...</div>
+            <div role="status" aria-label="Chargement des formations" className="space-y-3">
+              <span className="sr-only">Chargement des formations…</span>
+              <div className="skeleton h-10 w-full" />
+              <div className="skeleton h-10 w-full" />
+            </div>
           ) : formationsError ? (
             <div className="alert alert-error text-sm">{formationsError}</div>
           ) : formationsList.length === 0 ? (

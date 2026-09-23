@@ -1,7 +1,6 @@
 import { Save } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Loader from "../../loaders/Loader";
 import { cn } from "../../../utils/cn";
 
 const FLOATING_SIZE = 32;
@@ -79,7 +78,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
 
   const icon = pending ? (
     <span className="flex justify-center items-center w-5 h-5">
-      <Loader />
+      <span className="loading loading-spinner loading-xs" />
     </span>
   ) : (
     <Save className="size-5 shrink-0" />

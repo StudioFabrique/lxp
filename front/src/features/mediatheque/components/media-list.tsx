@@ -48,7 +48,6 @@ export default function MediaList({
       {medias.map((media, index) => (
         <HierarchicalListRow
           key={media.id}
-          dismissOverflow={() => {}}
           hideDivider={index === medias.length - 1}
           item={{
             id: media.id,
