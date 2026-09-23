@@ -15,7 +15,7 @@ export const eventConfig: Record<CalendarEventType, string> = {
   accent: "bg-accent/15 text-base-content border-accent",
   neutral: "bg-base-200 text-base-content border-base-content/40",
   danger: "bg-error/15 text-base-content border-error",
-  warning: "bg-warning/20 text-warning-content border-warning",
+  warning: "bg-warning/20 text-base-content border-warning",
   info: "bg-info/20 text-base-content border-info",
   success: "bg-success/20 text-base-content border-success",
   error: "bg-error/20 text-base-content border-error",

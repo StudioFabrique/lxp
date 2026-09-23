@@ -346,7 +346,11 @@ export default function CreateCourseDetailsModal({
                 </div>
 
                 {isLoadingLessons ? (
-                  <span className="loading loading-spinner loading-sm mx-auto" />
+                  <div role="status" aria-label="Chargement des contenus" className="w-full space-y-2">
+                    <span className="sr-only">Chargement des contenus…</span>
+                    <div className="skeleton h-9 w-full" />
+                    <div className="skeleton h-9 w-full" />
+                  </div>
                 ) : contentTagId > 0 && availableContents.length === 0 ? (
                   <p className="text-xs text-center text-base-content/55 pt-2">
                     {includeCourseContents

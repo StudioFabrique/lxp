@@ -57,7 +57,6 @@ import httpPutResetPassword from "../../../controllers/user/http-put-reset-passw
 import httpPutResetPasswordEmail from "../../../controllers/user/http-put-reset-password-email.ts";
 import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments.ts";
 import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations.ts";
-import checkValidation from "../../../middleware/check-validation.ts";
 import rateLimiter from "../../../middleware/rate-limiter.ts";
 import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby.ts";
 import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby.ts";
@@ -205,7 +204,7 @@ userRouter.post(
 //  vérification de l'existence d'un compte utilisateur et envoi du mail de réinitialisation (public)
 userRouter.put(
   "/reset-password",
-  checkValidation(postCheckEmailValidator),
+  postCheckEmailValidator,
   httpPutResetPasswordEmail,
 );
 
@@ -292,12 +291,23 @@ mountRouter(
 );
 
 // Centres d'intérêts d'un étudiant (création, suppression)
-userRouter.post("/hobby", checkPermissions("cursus"), httpPostHobby);
+userRouter.post(
+  "/hobby",
+  checkPermissions("cursus"),
+  body("title").isString().trim().notEmpty().isLength({ max: 200 }),
+  checkValidatorResult,
+  httpPostHobby,
+);
 
 // Réseaux sociaux d'un étudiant (création, suppression)
 userRouter.post(
   "/social-network",
   checkPermissions("cursus"),
+  body("url")
+    .isString()
+    .isLength({ max: 2048 })
+    .isURL({ require_protocol: true, protocols: ["http", "https"] }),
+  checkValidatorResult,
   httpPostSocialNetwork,
 );
 
@@ -387,11 +397,19 @@ userRouter.post(
   httpPostManyInvitations,
 );
 
-userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
+userRouter.delete(
+  "/hobby/:id",
+  checkPermissions("cursus"),
+  param("id").isMongoId(),
+  checkValidatorResult,
+  httpDeleteHobby,
+);
 
 userRouter.delete(
   "/social-network/:id",
   checkPermissions("cursus"),
+  param("id").isMongoId(),
+  checkValidatorResult,
   httpDeleteSocialNetwork,
 );
 

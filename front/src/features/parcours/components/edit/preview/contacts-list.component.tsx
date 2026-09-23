@@ -7,6 +7,10 @@ interface ContactListProps {
 }
 
 const ContactsList = (props: ContactListProps) => {
+  if (props.contactsList.length === 0) {
+    return <SubWrapper>Aucune ressource pédagogique renseignée</SubWrapper>;
+  }
+
   return (
     <ul className="flex flex-col gap-y-2">
       {props.contactsList?.map((contact) => (

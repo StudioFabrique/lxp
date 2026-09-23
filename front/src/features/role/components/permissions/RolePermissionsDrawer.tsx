@@ -15,6 +15,7 @@ import type {
   RoleCounts,
 } from "../../api/role.api";
 import useRoleEdit from "../../hooks/useRoleEdit";
+import LoadingSkeleton from "../../../../components/loaders/LoadingSkeleton";
 
 type RolePermissionsDrawerProps = {
   role: RoleCounts;
@@ -84,9 +85,7 @@ export default function RolePermissionsDrawer({
         ) : null}
 
         {isLoading ? (
-          <div className="flex flex-1 items-center justify-center py-16">
-            <LoaderCircle className="size-8 animate-spin text-primary" />
-          </div>
+          <LoadingSkeleton variant="rows" label="Chargement des permissions" />
         ) : isError ? (
           <div className="alert alert-error">
             Impossible de charger les permissions de ce rôle.

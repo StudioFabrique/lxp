@@ -5,7 +5,7 @@ import QuizOrdering from "./quiz-ordering";
 import QuizTrueFalse from "./quiz-true-false";
 import QuizResults from "../results/quiz-results";
 import QuizMarkdown from "../quiz-markdown";
-import { Loader2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 
 interface QuizModalProps {
@@ -124,13 +124,16 @@ const QuizModal = ({
         ) : (
           <>
             {isReplacing || (isStreaming && !quiz) ? (
-              <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-                <Loader2 className="animate-spin text-primary" size={48} />
+              <div role="status" className="flex flex-col gap-4 py-10">
                 <p className="text-lg font-medium text-secondary">
                   {isReplacing
                     ? "Génération d'une nouvelle question de remplacement..."
                     : "L'IA prépare vos questions sur mesure..."}
                 </p>
+                <div className="skeleton h-6 w-3/4" aria-hidden="true" />
+                <div className="space-y-3" aria-hidden="true">
+                  {[0, 1, 2].map((item) => <div key={item} className="skeleton h-12 w-full" />)}
+                </div>
               </div>
             ) : (
               <>

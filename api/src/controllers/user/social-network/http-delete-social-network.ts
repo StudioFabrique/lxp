@@ -1,15 +1,17 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { serverIssue } from "../../../utils/constantes.ts";
 import deleteSocialNetwork from "../../../models/user/social-network/delete-social-network.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpDeleteSocialNetwork(
-  req: Request<{ id: string }>,
+  req: CustomRequest<{ id: string }>,
   res: Response,
 ) {
   try {
     const id: string = req.params.id;
 
-    await deleteSocialNetwork(id);
+    const deleted = await deleteSocialNetwork(id, req.auth!.userId);
+    if (!deleted) return res.status(404).json({ message: "Réseau social introuvable" });
 
     return res
       .status(200)

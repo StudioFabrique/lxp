@@ -21,6 +21,7 @@ import {
   LEARNING_PACES,
   LEARNING_PREFERENCES,
 } from "../../../../config/learning-profile.ts";
+import { newPasswordValidate } from "../../../../helpers/custom-validators.ts";
 
 const userProfileRouter = Router();
 
@@ -84,6 +85,9 @@ userProfileRouter.put(
 userProfileRouter.put(
   "/password",
   checkPermissions("cursus", "update"),
+  body("oldPass").isString().notEmpty(),
+  body("newPass").isString().custom(newPasswordValidate),
+  checkValidatorResult,
   httpUpdateUserPassword,
 );
 
