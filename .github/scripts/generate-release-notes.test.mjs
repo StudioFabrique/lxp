@@ -4,6 +4,7 @@ import {
   generateContent,
   isTextOnlyCorrection,
   parseCommits,
+  readerFriendlySubject,
   updateNotes,
   validateContent,
   versionFromBranch,
@@ -21,7 +22,9 @@ test("exclut les commits générés des résumés suivants", () => {
   const generated = "b".repeat(40);
   const log =
     `${first}\x1ffix(front): clarifier les erreurs\x1fUn texte utile.\x1e\n` +
-    `${generated}\x1fchore(release): actualiser les notes de version\x1f\x1e`;
+    `${generated}\x1fchore(release): actualiser les notes de version\x1f\x1e\n` +
+    `${"c".repeat(40)}\x1ffeat(ci): générer les notes\x1f\x1e\n` +
+    `${"d".repeat(40)}\x1fchore(version): increment\x1f\x1e`;
   assert.deepEqual(parseCommits(log), [
     {
       sha: first,
@@ -29,6 +32,7 @@ test("exclut les commits générés des résumés suivants", () => {
       body: "Un texte utile.",
     },
   ]);
+  assert.equal(readerFriendlySubject("fix(front): clarifier les erreurs"), "clarifier les erreurs");
 });
 
 test("remplace la version courante tout en conservant l'historique", () => {
@@ -101,4 +105,11 @@ test("raccourcit le texte du modèle pour conserver quatre cartes lisibles", () 
   assert.ok(result.summary.length <= 180);
   assert.ok(result.changes.every(({ title, description }) => title.length <= 50 && description.length <= 180));
   assert.ok(!/[<>\r\n]/.test(JSON.stringify(result)));
+  assert.equal(
+    validateContent({
+      summary: "Une correction utile.",
+      changes: [{ title: "fix(front): Navigation", description: "Un lien fonctionne." }],
+    }).changes[0].title,
+    "Navigation",
+  );
 });

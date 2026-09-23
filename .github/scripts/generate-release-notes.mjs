@@ -30,13 +30,25 @@ export function parseCommits(log) {
       }
       return { sha, subject, body: (body ?? "").slice(0, 1200) };
     })
-    .filter(({ subject }) => !subject.startsWith("chore(release): actualiser les notes de version"));
+    .filter(({ subject }) =>
+      !/^(?:chore|ci|build|docs|test|refactor)(?:\([^)]*\))?!?:/i.test(subject) &&
+      !/^(?:feat|fix|style|perf)\((?:ci|release|version|docs|test)\)!?:/i.test(subject),
+    );
+}
+
+export function readerFriendlySubject(subject) {
+  return subject.replace(/^(?:feat|fix|style|perf)(?:\([^)]*\))?!?:\s*/i, "");
 }
 
 export function validateContent(content) {
   const compactText = (value, max) => {
     if (typeof value !== "string") return null;
-    const clean = value.replace(/<[^>]*>/g, "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim();
+    const clean = value
+      .replace(/^(?:feat|fix|style|perf|chore)(?:\([^)]*\))?!?:\s*/i, "")
+      .replace(/<[^>]*>/g, "")
+      .replace(/[<>]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
     if (!clean) return null;
     if (clean.length <= max) return clean;
     const prefix = clean.slice(0, max - 1);
@@ -179,6 +191,7 @@ async function main() {
 
   const commitDetails = commits.map((commit) => ({
     ...commit,
+    subject: readerFriendlySubject(commit.subject),
     body: commit.body.slice(0, 400),
     files: git("diff-tree", "--no-commit-id", "--name-only", "-r", commit.sha)
       .split("\n")
