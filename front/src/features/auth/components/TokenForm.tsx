@@ -94,6 +94,7 @@ const TokenForm = ({ onNext }: Props) => {
 
   return (
     <AuthPageWrapper
+      variant="setup"
       title="Création du premier administrateur"
       description="Veuillez renseigner la clé d'activation pour créer votre premier utilisateur."
     >

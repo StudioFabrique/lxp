@@ -102,7 +102,10 @@ const AdminSignInForm = ({
     };
 
     return (
-      <AuthPageWrapper title="Vérifiez votre boîte mail">
+      <AuthPageWrapper
+        title="Vérifiez votre boîte mail"
+        variant={mode === "first" ? "setup" : "default"}
+      >
         <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
           <MailCheck className="h-8 w-8" aria-hidden="true" />
 
@@ -131,6 +134,7 @@ const AdminSignInForm = ({
 
   return (
     <AuthPageWrapper
+      variant={mode === "first" ? "setup" : "default"}
       title={
         mode === "additional"
           ? "Créer votre compte root"

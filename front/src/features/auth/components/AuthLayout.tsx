@@ -21,6 +21,7 @@ const AuthLayout = () => {
   const { pathname } = useLocation();
   const isStudentOnboarding = pathname === "/student/onboarding";
   const isInstanceSetup = pathname === "/instance-setup";
+  const isAdminInit = pathname === "/init";
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
   const shouldLoadBranding = showOrganizationName || isStudentOnboarding;
@@ -83,17 +84,17 @@ const AuthLayout = () => {
           <div
             className={cn("mx-auto flex h-full flex-col", isStudentOnboarding
                 ? "w-full max-w-2xl"
-                : isInstanceSetup
+                : isInstanceSetup || isAdminInit
                   ? "w-full max-w-xl"
                   : "w-100")}
           >
             {!isStudentOnboarding && (
               <div
-                className="mb-8 flex cursor-pointer select-none flex-col items-center gap-2"
+                className={cn("flex cursor-pointer select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
                 onClick={() => navigate("/")}
               >
                 <img
-                  className="mt-20 h-auto w-56"
+                  className={cn("h-auto w-56", isAdminInit ? "mt-8" : "mt-20")}
                   src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
                   alt="logo ANDRiA"
                 />

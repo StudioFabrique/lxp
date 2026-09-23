@@ -2,7 +2,6 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Check, Gauge, GraduationCap, Shapes } from "lucide-react";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
@@ -29,6 +28,7 @@ import type {
   LearningPreference,
 } from "../types";
 import { cn } from "../../../utils/cn";
+import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
 type OnboardingStep = {
   key: string;
@@ -47,7 +47,7 @@ const availablePreferenceValues = new Set(
 export default function StudentLearningOnboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { theme, chooseTheme, availableLightThemes, availableDarkThemes } =
+  const { chooseTheme, availableLightThemes, availableDarkThemes } =
     useContext(ThemeContext);
   const query = useQuery({
     queryKey: learningProfileKey,
@@ -71,7 +71,6 @@ export default function StudentLearningOnboarding() {
     light: localStorage.getItem("lightTheme") ?? "classic",
     dark: localStorage.getItem("darkTheme") ?? "classic-dark",
   }));
-  const reduceMotion = useReducedMotion();
   const contentScrollRef = useRef<HTMLDivElement>(null);
 
   const steps = useMemo<OnboardingStep[]>(() => {
@@ -187,7 +186,6 @@ export default function StudentLearningOnboarding() {
   }
 
   const step = steps[index]!;
-  const progress = Math.round(((index + 1) / steps.length) * 100);
   const moduleCount = steps.filter((item) => item.kind === "module").length;
   const moduleNumber = steps
     .slice(0, index + 1)
@@ -286,45 +284,48 @@ export default function StudentLearningOnboarding() {
         </header>
       ) : null}
 
-      <section
-        className={cn(
-          "relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl border p-5 sm:p-7",
-          theme === "dark"
-            ? "border-primary/40 bg-base-300 shadow-xl"
-            : "border-base-300 bg-base-100 shadow-sm",
-        )}
-      >
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-[3px]"
-          role="progressbar"
-          aria-label="Progression du questionnaire"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={progress}
-          aria-valuetext={`Étape ${index + 1} sur ${steps.length}`}
-        >
-          <motion.div
-            className="h-full rounded-full bg-primary"
-            initial={false}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: reduceMotion ? 0 : 0.35, ease: "easeOut" }}
-          />
-        </div>
-        <div
-          ref={contentScrollRef}
-          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={step.key}
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }}
-              transition={{
-                duration: reduceMotion ? 0.01 : 0.28,
-                ease: "easeOut",
-              }}
+      <OnboardingProgressPanel
+        contentKey={step.key}
+        currentStep={index + 1}
+        stepCount={steps.length}
+        progressLabel="Progression du questionnaire"
+        contentRef={contentScrollRef}
+        footer={
+          <div className="mt-4 flex shrink-0 justify-between gap-3 border-t border-base-300 pt-5">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={index === 0 || saving}
+              onClick={() => setIndex((current) => Math.max(0, current - 1))}
             >
+              Précédent
+            </button>
+            {step.kind === "summary" ? (
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={saving}
+                onClick={() => void confirm()}
+              >
+                {saving ? (
+                  <span className="loading loading-spinner loading-sm" aria-label="Confirmation en cours" />
+                ) : (
+                  "Confirmer"
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-primary disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
+                disabled={cannotContinue}
+                onClick={() => void continueToNext()}
+              >
+                Continuer
+              </button>
+            )}
+          </div>
+        }
+      >
               {step.kind === "learning" ? (
                 <div className="space-y-7">
                   <section className="space-y-4" aria-labelledby="learning-pace-title">
@@ -596,47 +597,7 @@ export default function StudentLearningOnboarding() {
                   </dl>
                 </div>
               ) : null}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <div className="mt-4 flex shrink-0 justify-between gap-3 border-t border-base-300 pt-5">
-          <button
-            type="button"
-            className="btn btn-ghost"
-            disabled={index === 0 || saving}
-            onClick={() => setIndex((current) => Math.max(0, current - 1))}
-          >
-            Précédent
-          </button>
-          {step.kind === "summary" ? (
-            <button
-              type="button"
-              className="btn btn-primary"
-              disabled={saving}
-              onClick={() => void confirm()}
-            >
-              {saving ? (
-                <span
-                  className="loading loading-spinner loading-sm"
-                  aria-label="Confirmation en cours"
-                />
-              ) : (
-                "Confirmer"
-              )}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-primary disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
-              disabled={cannotContinue}
-              onClick={() => void continueToNext()}
-            >
-              Continuer
-            </button>
-          )}
-        </div>
-      </section>
+      </OnboardingProgressPanel>
     </section>
   );
 }

@@ -48,8 +48,17 @@ const LoginGuard = () => {
     };
   }, [isLoggedIn]);
 
-  if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked))
-    return <Loader />;
+  if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked)) {
+    return location.pathname === "/init" ? (
+      <Loader
+        variant="rows"
+        label="Vérification de l'instance"
+        className="my-10"
+      />
+    ) : (
+      <Loader />
+    );
+  }
 
   if (isLoggedIn && user && isInstanceSetupRoute) {
     if (user.roles?.[0]?.rank === 0) return <Outlet />;

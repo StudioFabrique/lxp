@@ -115,6 +115,16 @@ describe("LoginGuard", () => {
     expect(await renderAt("/login", false)).toBe("page-premier-admin");
   });
 
+  it("affiche un chargement discret sur /init pendant la vérification", async () => {
+    getSetupStatus.mockReturnValue(new Promise(() => {}));
+
+    await renderAt("/init", false);
+
+    expect(container.querySelector('[role="status"]')?.getAttribute("aria-label"))
+      .toBe("Vérification de l'instance");
+    expect(container.querySelector(".skeleton")).toBeNull();
+  });
+
   it.each([
     ["/createRoot", "page-nouveau-root"],
     ["/confirm-email", "page-email"],

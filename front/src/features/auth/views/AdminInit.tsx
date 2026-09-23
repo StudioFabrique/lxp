@@ -3,7 +3,8 @@ import Welcome from "../components/Welcome";
 import TokenForm from "../components/TokenForm";
 import AdminSignInForm from "../components/AdminSignInForm";
 import useAdminInit, { InitStep } from "../hooks/useAdminInit";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 import {
   clearPendingRootActivation,
   getPendingRootActivationEmail,
@@ -26,19 +27,33 @@ const AdminInit = () => {
     restart();
   };
 
+  const renderSetupPanel = (content: ReactNode, step: 1 | 2 | 3) => (
+    <OnboardingProgressPanel
+      contentKey={String(step)}
+      currentStep={step}
+      stepCount={3}
+      progressLabel="Progression de la configuration"
+      className="flex-none"
+      contentClassName="overflow-visible"
+    >
+      {content}
+    </OnboardingProgressPanel>
+  );
+
   if (pendingActivationEmail) {
-    return (
+    return renderSetupPanel(
       <AdminSignInForm
         token=""
         initialActivationEmail={pendingActivationEmail}
         onSuccess={() => navigate("/")}
         onRestart={restartCreation}
-      />
+      />,
+      3,
     );
   }
 
   if (invitedToken && invitedEmail) {
-    return (
+    return renderSetupPanel(
       <AdminSignInForm
         token={invitedToken}
         email={invitedEmail}
@@ -47,7 +62,8 @@ const AdminInit = () => {
           clearPendingRootActivation();
           navigate("/init", { replace: true });
         }}
-      />
+      />,
+      3,
     );
   }
 
@@ -70,7 +86,7 @@ const AdminInit = () => {
     }
   };
 
-  return renderStep();
+  return renderSetupPanel(renderStep(), (initStep + 1) as 1 | 2 | 3);
 };
 
 export default AdminInit;
