@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
@@ -334,7 +335,7 @@ const AdminParcoursManagement = ({
 
       {isAdmin && parcoursToDelete ? (
         <Modal
-          title={`Supprimer le parcours « ${parcoursToDelete.title} »`}
+          title={`Supprimer le parcours « ${formatTitle(parcoursToDelete.title)} »`}
           leftLabel="Annuler"
           rightLabel="Supprimer"
           rightDisabled={deleteConfirmation.trim() !== parcoursToDelete.title}

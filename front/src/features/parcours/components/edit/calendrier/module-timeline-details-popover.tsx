@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 // ModuleDetailsModal.tsx
 
 import { useEffect, useRef } from "react";
@@ -104,7 +105,7 @@ const ModuleTimelineDetailsPopover = ({
           </button>
           <img
             src={normalizeImageSource(currentModule.thumb)}
-            alt={currentModule.title}
+            alt={formatTitle(currentModule.title)}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-base-100 via-transparent to-transparent"></div>
@@ -115,7 +116,7 @@ const ModuleTimelineDetailsPopover = ({
         {/* Header with Close Button */}
         <div className="flex justify-between items-start">
           <h2 className="card-title text-lg leading-tight">
-            {currentModule.title}
+            {formatTitle(currentModule.title)}
           </h2>
           {!currentModule.thumb && (
             <button

@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -183,7 +184,7 @@ const ParcoursView = () => {
               imageUrl={image ?? "/images/parcours-default.webp"}
               title={parcoursInfos?.title ?? ""}
               titleIcon={<RocketIcon className="stroke-white w-5" />}
-              subTitle={parcours.formation?.title}
+              subTitle={formatTitle(parcours.formation?.title)}
               subTitleIcon={<GraduationCap className="stroke-white w-5" />}
               children={[
                 <Fragment key="fragment" />,

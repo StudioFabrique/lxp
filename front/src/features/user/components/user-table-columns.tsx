@@ -1,4 +1,4 @@
-import { toTitleCase } from "../../../utils/helpers/text-helpers";
+import { formatTitle, toTitleCase } from "../../../utils/helpers/text-helpers";
 import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import {
   LoaderCircle,
@@ -56,7 +56,7 @@ export const getUsersColumns = (
     header: "Formation",
     cell: (info) => {
       const value = info.getValue() as string | undefined;
-      return <span>{value ?? "ND"}</span>;
+      return <span>{value ? formatTitle(value) : "ND"}</span>;
     },
   },
   {
@@ -64,7 +64,7 @@ export const getUsersColumns = (
     header: "Promotion",
     cell: (info) => {
       const value = info.getValue() as string | undefined;
-      return <span>{value ?? "ND"}</span>;
+      return <span>{value ? formatTitle(value) : "ND"}</span>;
     },
   },
   {

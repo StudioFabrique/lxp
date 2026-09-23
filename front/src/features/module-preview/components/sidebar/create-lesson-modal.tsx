@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -75,7 +76,7 @@ export default function CreateLessonModal({
       >
         <div className="flex items-start justify-between gap-4 border-b border-base-300 pb-4">
           <h3 className="font-bold text-lg">
-            Ajouter une leçon dans le cours « {courseTitle} »
+            Ajouter une leçon dans le cours « {formatTitle(courseTitle)} »
           </h3>
           <button
             type="button"

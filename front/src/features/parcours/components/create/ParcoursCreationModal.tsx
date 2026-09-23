@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
@@ -222,7 +223,7 @@ export default function ParcoursCreationModal({
                       className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors ${parcoursId === item.id ? "border-primary bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer"}`}
                     >
                       <Copy className="h-4 w-4 shrink-0 text-primary" />
-                      <span className="font-medium">{item.title}</span>
+                      <span className="font-medium">{formatTitle(item.title)}</span>
                     </button>
                   ))}
                 </div>

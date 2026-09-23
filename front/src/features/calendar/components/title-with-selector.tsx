@@ -1,4 +1,5 @@
 import { MouseEvent, useMemo } from "react";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import {
   CalendarView,
   daysOfWeek,
@@ -66,13 +67,13 @@ const TitleWithSelector = ({
       {availableTitles?.length ? (
         <details className="dropdown">
           <summary className="btn btn-ghost h-fit px-1 py-0 font-bold text-lg text-base-content">
-            {currentTitle}
+            {formatTitle(currentTitle)}
           </summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow-sm">
             {availableTitles.map((title) => (
               <li key={title}>
                 <a onClick={handleSelectTitle} data-title={title}>
-                  {title}
+                  {formatTitle(title)}
                 </a>
               </li>
             ))}
@@ -80,7 +81,7 @@ const TitleWithSelector = ({
         </details>
       ) : (
         <span className="px-1 py-0 font-bold text-lg text-base-content">
-          {currentTitle}
+          {formatTitle(currentTitle)}
         </span>
       )}
 

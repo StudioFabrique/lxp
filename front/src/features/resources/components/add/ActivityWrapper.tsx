@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { ReactNode } from "react";
 import { Activity } from "../../../../utils/interfaces/activity";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
@@ -31,7 +32,7 @@ export default function ActivityWrapper(props: Props) {
                 props.activity.type,
                 6,
               )}
-              <h2>{props.activity?.title}</h2>
+              <h2>{formatTitle(props.activity?.title)}</h2>
             </div>
             <p className="italic text-xs text-base-content/50">
               &nbsp;ajouté le {localeDate(props.activity.createdAt)}

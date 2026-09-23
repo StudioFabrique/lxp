@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
@@ -195,7 +196,7 @@ export default function LastParcours({
       ) : null}
       {parcoursToDelete ? (
         <Modal
-          title={`Supprimer le parcours « ${parcoursToDelete.title} »`}
+          title={`Supprimer le parcours « ${formatTitle(parcoursToDelete.title)} »`}
           leftLabel="Annuler"
           rightLabel="Supprimer"
           rightDisabled={deleteConfirmation.trim() !== parcoursToDelete.title}

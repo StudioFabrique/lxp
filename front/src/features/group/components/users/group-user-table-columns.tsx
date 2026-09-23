@@ -1,4 +1,4 @@
-import { toTitleCase } from "../../../../utils/helpers/text-helpers";
+import { formatTitle, toTitleCase } from "../../../../utils/helpers/text-helpers";
 import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
@@ -53,7 +53,7 @@ export const getGroupStudentColumns = ({
   {
     accessorKey: "formation",
     header: "Formation",
-    cell: ({ getValue }) => (getValue() as string | undefined) ?? "ND",
+    cell: ({ getValue }) => formatTitle(getValue() as string | undefined) || "ND",
   },
   {
     id: "status",

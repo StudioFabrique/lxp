@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useState } from "react";
 import {
   ArrowLeft,
@@ -250,7 +251,7 @@ export default function ResourceAdd({
           onLeftClick={() => state.setActivityToDelete(null)}
           onRightClick={state.handleDeleteActivity}
         >
-          L'activité « {state.activityToDelete.title} » et ses fichiers seront
+          L'activité « {formatTitle(state.activityToDelete.title)} » et ses fichiers seront
           supprimés définitivement.
         </Modal>
       )}

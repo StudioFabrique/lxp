@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Check, Plus, Search, Trash2, X } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
@@ -373,7 +374,7 @@ export default function CreateCourseDetailsModal({
                                 onChange={() => toggleExistingLesson(content)}
                               />
                               <span className="flex-1">
-                                <span className="block">{content.title}</span>
+                                <span className="block">{formatTitle(content.title)}</span>
                                 <span className="text-xs text-base-content/50">
                                   {content.source === "resource"
                                     ? "Ressource supplémentaire"
@@ -413,7 +414,7 @@ export default function CreateCourseDetailsModal({
                                 onChange={() => toggleExistingLesson(content)}
                               />
                               <span className="flex-1">
-                                <span className="block">{content.title}</span>
+                                <span className="block">{formatTitle(content.title)}</span>
                                 <span className="text-xs text-base-content/50">
                                   {content.source === "resource"
                                     ? "Ressource supplémentaire"

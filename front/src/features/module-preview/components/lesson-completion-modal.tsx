@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useState } from "react";
 import RatingWithStars from "../../../../src/components/UI/lesson-rating/rating-with-stars";
 import PortalConfetti from "../../../../src/components/wrappers/ConfettiWrapper";
@@ -62,7 +63,7 @@ const LessonCompletionModal = ({
     <>
       <PortalConfetti />
       <Modal
-        title={`La leçon "${lesson.title}" a été terminée !`}
+        title={`La leçon "${formatTitle(lesson.title)}" a été terminée !`}
         rightLabel={
           canGoToNextLesson
             ? nextContentLabel ?? "Leçon suivante"

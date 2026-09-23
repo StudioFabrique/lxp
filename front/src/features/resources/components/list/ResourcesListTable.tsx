@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Link } from "react-router";
 import { truncateText } from "../../../../utils/helpers/truncate-text";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
@@ -54,8 +55,8 @@ Props) {
           {resourcesList.map((item: ResourceListItem) => (
             <TableRowWrapper key={item.id}>
               <td className="bg-transparent rounded-l-lg">
-                <p className="tooltip tooltip-bottom" data-tip={item.title}>
-                  {truncateText(item.title, 30)}
+                <p className="tooltip tooltip-bottom" data-tip={formatTitle(item.title)}>
+                  {truncateText(formatTitle(item.title), 30)}
                 </p>
               </td>
 

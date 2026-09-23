@@ -1,6 +1,7 @@
 import type CourseDates from "../../course/interfaces/course-dates";
 import type { CalendarEvent, CalendarView } from "./calendar-configuration";
 import { getMonthDays, getWeekBounds } from "./calendar-utils";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 export type ReadCalendarModule = {
   id: number; title: string; description?: string | null; minDate: string | null; maxDate: string | null;
@@ -41,7 +42,7 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
       const final = end < last ? end : last;
       while (Number.isFinite(day.getTime()) && dateKey(day) <= final) {
         events.push({
-          id: `${course.id}:${index}:${dateKey(day)}`, title: course.title, subtitle: module.title,
+          id: `${course.id}:${index}:${dateKey(day)}`, title: formatTitle(course.title), subtitle: formatTitle(module.title),
           description: course.description ?? undefined, date: new Date(day),
           start: range.startTime ?? "", end: range.endTime ?? "", allDay: !range.startTime || !range.endTime,
           rangeStart: range.minDate, rangeEnd: range.maxDate,
@@ -62,8 +63,8 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
           const deadlineTime = `${String(deadline.getHours()).padStart(2, "0")}:${String(deadline.getMinutes()).padStart(2, "0")}`;
           events.push({
             id: `assignment:${course.assignment.id}`,
-            title: `Devoir · ${course.title}`,
-            subtitle: module.title,
+            title: `Devoir · ${formatTitle(course.title)}`,
+            subtitle: formatTitle(module.title),
             description: course.description ?? undefined,
             date: new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate()),
             start: `${String(deadline.getHours()).padStart(2, "0")}:00`,

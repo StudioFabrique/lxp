@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import {
   GraduationCap,
   ArrowRight,
@@ -102,7 +103,7 @@ const ParcoursSelection = ({
               to={`/admin/parcours/module/${selectedModule.id}`}
               target="_blank"
             >
-              {selectedModule.title}
+              {formatTitle(selectedModule.title)}
             </Link>
           </div>
         )}
@@ -173,7 +174,7 @@ const ParcoursSelection = ({
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un parcours pour :
               <span className="text-primary underline decoration-dotted capitalize">
-                {selectedFormation.title}
+                {formatTitle(selectedFormation.title)}
               </span>
               {showReloadParcoursButton && (
                 <button
@@ -238,7 +239,7 @@ const ParcoursSelection = ({
                 className="text-primary underline decoration-dotted tooltip capitalize"
                 onClick={onClickLink}
               >
-                {selectedParcours.title}
+                {formatTitle(selectedParcours.title)}
               </Link>
               {showReloadModulesButton && (
                 <button

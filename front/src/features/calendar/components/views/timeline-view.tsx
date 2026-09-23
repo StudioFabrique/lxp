@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useEffect, useMemo, useState } from "react";
 import { CalendarEvent, CalendarView, eventConfig, theme } from "../calendar-configuration";
 import { getCurrentTimeIndicator, getEventStyle, getWeekBounds, isSameDate } from "../calendar-utils";
@@ -50,7 +51,7 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
       {hasUntimed && <div className="flex border-b border-base-300 bg-base-100">
         <div className="w-16 shrink-0 p-2 text-xs text-base-content/60">Sans horaire</div>
         {days.map(day => <div key={day.date.toDateString()} className="min-w-0 flex-1 space-y-1 border-r border-base-300 p-1">
-          {day.allDay.slice(0, 2).map(event => <button key={event.id} type="button" className={`block w-full truncate rounded border-l-2 p-1 text-left text-xs ${eventClass(event)}`} onClick={e => clickEvent(event, e.currentTarget)}>{event.title}</button>)}
+          {day.allDay.slice(0, 2).map(event => <button key={event.id} type="button" className={`block w-full truncate rounded border-l-2 p-1 text-left text-xs ${eventClass(event)}`} onClick={e => clickEvent(event, e.currentTarget)}>{formatTitle(event.title)}</button>)}
           {day.allDay.length > 2 && <button type="button" className="block text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.allDay.slice(2))}>Afficher plus ({day.allDay.length - 2})</button>}
           {day.hidden.length > 0 && <button type="button" className="block text-left text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.hidden)}>Afficher plus ({day.hidden.length}) · cours superposés</button>}
         </div>)}
@@ -68,9 +69,9 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
             return <button key={event.id} type="button" data-calendar-event={event.id}
               className={`absolute z-10 flex flex-col items-stretch justify-start overflow-hidden rounded-md border-l-4 px-1.5 py-1 text-left shadow-sm hover:z-20 hover:shadow-md focus:z-20 ${eventClass(event)}`}
               style={{ ...getEventStyle(start, end, startHour, style), left: `calc(${lane * 100 / columns}% + 2px)`, width: `calc(${100 / columns}% - 4px)` }}
-              title={event.category === "assignment" ? `${event.title} · À rendre avant ${event.deadlineTime}` : `${event.title} · ${event.start} – ${event.end}`}
+              title={event.category === "assignment" ? `${formatTitle(event.title)} · À rendre avant ${event.deadlineTime}` : `${formatTitle(event.title)} · ${event.start} – ${event.end}`}
               onClick={e => clickEvent(event, e.currentTarget)}>
-              <div className="line-clamp-3 break-words text-xs font-bold leading-tight">{event.title}</div>
+              <div className="line-clamp-3 break-words text-xs font-bold leading-tight">{formatTitle(event.title)}</div>
               <div className="truncate text-[10px]">{event.category === "assignment" ? `À rendre avant ${event.deadlineTime}` : `${event.start} – ${event.end}`}</div>
               {event.subtitle && <div className="truncate text-[10px] opacity-80">{event.subtitle}</div>}
             </button>;

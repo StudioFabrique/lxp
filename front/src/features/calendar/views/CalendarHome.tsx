@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useMemo, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { useQuery } from "@tanstack/react-query";
@@ -219,7 +220,7 @@ function ParcoursCalendar({
             }}
             header={
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 bg-base-200 p-4">
-                <h2 className="font-semibold first-letter:uppercase">{parcours.title}</h2>
+                <h2 className="font-semibold first-letter:uppercase">{formatTitle(parcours.title)}</h2>
                 <div className="flex flex-wrap items-center gap-2">
                   {view !== "year-timeline" && (
                     <TimeSelector
@@ -263,7 +264,7 @@ function ParcoursCalendar({
             onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold">{selection?.event.title}</h3>
+              <h3 className="font-semibold">{formatTitle(selection?.event.title)}</h3>
               <Popover.Close
                 className="btn btn-xs btn-ghost"
                 aria-label="Fermer les détails"

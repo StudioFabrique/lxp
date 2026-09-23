@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useMemo } from "react";
 import { theme, TimelineEvent } from "../calendar-configuration";
 import { formatDate } from "../calendar-utils";
@@ -151,7 +152,7 @@ const YearTimelineView = ({
                     {event.image ? (
                       <img
                         src={event.image}
-                        alt={event.title}
+                        alt={formatTitle(event.title)}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -172,7 +173,7 @@ const YearTimelineView = ({
                         theme.text
                       }`}
                     >
-                      {event.title}
+                      {formatTitle(event.title)}
                     </div>
                     {event.startDate && event.endDate && (
                       <div
@@ -201,18 +202,18 @@ const YearTimelineView = ({
                     {/* Event Bar */}
                     <button
                       type="button"
-                      aria-label={`Détails de ${event.title}`}
+                      aria-label={`Détails de ${formatTitle(event.title)}`}
                       onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect(), e.currentTarget)}
                       className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
                       style={{
                         left: `${leftPercent}%`,
                         width: `${widthPercent}%`,
                       }}
-                      title={`${event.title}`}
+                      title={`${formatTitle(event.title)}`}
                     >
                       {widthPercent > 3 && (
                         <span className="text-[10px] text-primary-content font-medium px-2 truncate drop-shadow-md">
-                          {event.title}
+                          {formatTitle(event.title)}
                         </span>
                       )}
                     </button>

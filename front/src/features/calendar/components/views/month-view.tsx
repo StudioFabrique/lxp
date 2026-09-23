@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useMemo } from "react";
 import {
   CalendarEvent,
@@ -119,7 +120,7 @@ const MonthView = ({
                         )
                       }
                       className={`text-left text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
-                      title={event.title}
+                      title={formatTitle(event.title)}
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
                         {event.category === "assignment"
@@ -128,7 +129,7 @@ const MonthView = ({
                             ? "Sans horaire - "
                             : event.start}
                       </span>
-                      {event.title}
+                      {formatTitle(event.title)}
                     </button>
                   );
                 })}

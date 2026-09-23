@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
@@ -148,7 +149,7 @@ const CourseInfos = () => {
             <span className="flex flex-col gap-y-4">
               <h2 className="font-bold">Titre du module</h2>
               <SubWrapper>
-                <p>{moduleTitle}</p>
+                <p>{formatTitle(moduleTitle)}</p>
               </SubWrapper>
             </span>
             <CourseInfosForm

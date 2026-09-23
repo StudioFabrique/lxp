@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -122,7 +123,7 @@ const ModuleHome = () => {
 
       {moduleToDelete ? (
         <Modal
-          title={`Supprimer le module « ${moduleToDelete.title} »`}
+          title={`Supprimer le module « ${formatTitle(moduleToDelete.title)} »`}
           leftLabel="Annuler"
           rightLabel="Confirmer"
           isSubmitting={deleteModuleMutation.isPending}
@@ -138,7 +139,7 @@ const ModuleHome = () => {
 
       {courseToDelete ? (
         <Modal
-          title={`Supprimer le cours « ${courseToDelete.title} »`}
+          title={`Supprimer le cours « ${formatTitle(courseToDelete.title)} »`}
           leftLabel="Annuler"
           rightLabel="Confirmer"
           isSubmitting={deleteCourseMutation.isPending}

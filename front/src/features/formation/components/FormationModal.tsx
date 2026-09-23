@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Upload } from "lucide-react";
@@ -163,7 +164,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
         onRightClick={confirmDelete}
       >
         <p className="py-5">
-          La suppression de la formation « {formationToEdit.title} » est
+          La suppression de la formation « {formatTitle(formationToEdit.title)} » est
           définitive.
         </p>
       </Modal>

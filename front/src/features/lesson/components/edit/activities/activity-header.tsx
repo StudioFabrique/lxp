@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { type ReactNode, useRef, useEffect, useState } from "react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import type { Activity } from "../../../../../utils/interfaces/activity";
@@ -108,7 +109,7 @@ const ActivityHeader = ({
               autoFocus={autoFocusTitle}
             />
           ) : (
-            <h1 className={titleClassName}>{title}</h1>
+            <h1 className={titleClassName}>{formatTitle(title)}</h1>
           )}
         </div>
         {children ?? (

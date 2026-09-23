@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useRef, useState, type PointerEvent } from "react";
 import {
   daysOfWeek,
@@ -209,8 +210,8 @@ export default function PlanningView({
                       tabIndex={disabled ? -1 : 0}
                       aria-disabled={disabled}
                       aria-pressed={selectedEventId === event.id}
-                      aria-label={`${event.title}, du ${formatDate(event.startDate)} au ${formatDate(event.endDate)}`}
-                      title={`${event.title} · ${formatDate(event.startDate)} – ${formatDate(event.endDate)}`}
+                      aria-label={`${formatTitle(event.title)}, du ${formatDate(event.startDate)} au ${formatDate(event.endDate)}`}
+                      title={`${formatTitle(event.title)} · ${formatDate(event.startDate)} – ${formatDate(event.endDate)}`}
                       className={`relative mx-0.5 flex h-8 min-w-0 items-center rounded-md border border-primary/60 bg-primary/15 text-base-content shadow-sm touch-none ${disabled ? "opacity-60" : "cursor-grab active:cursor-grabbing"} ${selectedEventId === event.id ? "ring-2 ring-primary ring-offset-1 ring-offset-base-100" : "hover:bg-primary/25"}`}
                       style={{
                         gridColumn: `${Math.max(start - first, 0) + 1} / ${Math.min(end - first, 6) + 2}`,
@@ -247,7 +248,7 @@ export default function PlanningView({
                         />
                       )}
                       <span className="truncate px-3 text-xs font-medium">
-                        {event.title}
+                        {formatTitle(event.title)}
                       </span>
                       {end <= last && onChangeDates && (
                         <span

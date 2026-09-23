@@ -159,7 +159,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
           sideOffset={8}
           collisionPadding={16}
           className="z-50 data-[detached]:invisible w-96 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
-          aria-label={`Dates du cours ${selectedCourse?.title}`}
+          aria-label={`Dates du cours ${formatTitle(selectedCourse?.title)}`}
           onCloseAutoFocus={e => e.preventDefault()}
         >
           <div className="mb-4 flex items-start justify-between gap-2">

@@ -13,15 +13,11 @@ import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import SkillBadgeSummary from "./skill-badge-summary";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
 };
-
-const capitalizeFirstLetter = (value: string) =>
-  value.length > 0
-    ? `${value.charAt(0).toLocaleUpperCase("fr-FR")}${value.slice(1)}`
-    : value;
 
 const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   const { pathname } = useLocation();
@@ -45,9 +41,9 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       <div className="min-w-0 flex-1">
         <ImageHeader
           imageUrl={isLoading ? "" : (image ?? "")}
-          title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : ${capitalizeFirstLetter(lastLesson.lesson.title)}`}
+          title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : ${formatTitle(lastLesson.lesson.title)}`}
           titleIcon={<FileEditIcon className="stroke-white w-5" />}
-          subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : ${capitalizeFirstLetter(lastLesson.lesson.course.title)}`}
+          subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : ${formatTitle(lastLesson.lesson.course.title)}`}
           subTitleIcon={
             <div className="text-white w-5">
               <BookMarked />
@@ -63,7 +59,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               <div className="flex min-w-0 gap-2">
                 <ComponentIcon className="shrink-0 stroke-white" />
                 <p className="truncate text-white">
-                  {capitalizeFirstLetter(
+                  {formatTitle(
                     lastLesson.lesson.course.module.title,
                   )}
                 </p>

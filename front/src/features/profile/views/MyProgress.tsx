@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { ChartNoAxesCombined } from "lucide-react";
 import { Link, useLocation, useSearchParams } from "react-router";
@@ -63,7 +64,7 @@ export default function MyProgress() {
           >
             {parcours.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.title}
+                {formatTitle(item.title)}
               </option>
             ))}
           </select>
@@ -85,7 +86,7 @@ export default function MyProgress() {
           </p>
         ) : (
           <div className="rounded-xl border border-base-300 bg-base-200 p-5">
-            <h3 className="mb-4 font-semibold">{selectedParcours.title}</h3>
+            <h3 className="mb-4 font-semibold">{formatTitle(selectedParcours.title)}</h3>
             {selectedParcours.modules?.length ? (
               <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {selectedParcours.modules.map((module) => {
@@ -103,7 +104,7 @@ export default function MyProgress() {
                           to={`/${space}/parcours/module/${module.id}`}
                           className="font-medium hover:underline first-letter:uppercase"
                         >
-                          {module.title}
+                          {formatTitle(module.title)}
                         </Link>
                         <span className="font-semibold text-primary">
                           {progress}%
@@ -113,7 +114,7 @@ export default function MyProgress() {
                         className="progress progress-primary w-full"
                         value={progress}
                         max={100}
-                        aria-label={`Progression du module ${module.title}`}
+                        aria-label={`Progression du module ${formatTitle(module.title)}`}
                       />
                     </li>
                   );

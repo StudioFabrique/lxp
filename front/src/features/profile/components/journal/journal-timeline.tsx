@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { CalendarDays, CircleCheck } from "lucide-react";
 import Course from "../../../../utils/interfaces/course";
 
@@ -16,7 +17,7 @@ const JournalTimeline = ({ course }: Props) => {
     <div className="flex flex-col p-5 sm:p-7">
       <div className="mb-6 flex items-center gap-3 border-b border-base-200 pb-5">
         <h3 className="text-xl font-bold first-letter:uppercase mx-auto">
-          {course.title}
+          {formatTitle(course.title)}
         </h3>
       </div>
 

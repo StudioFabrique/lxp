@@ -1,4 +1,5 @@
 import { FC, useState, ChangeEvent } from "react";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type Item = {
   id: number;
@@ -50,11 +51,11 @@ const Selecter: FC<Props> = ({
 
           {list.map((item: Item) => (
             <option
-              className="capitalize text-xs"
+              className="text-xs"
               key={item.id}
               value={item.id}
             >
-              {item.title}
+              {formatTitle(item.title)}
             </option>
           ))}
         </select>

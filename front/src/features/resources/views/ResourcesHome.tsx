@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -156,7 +157,7 @@ export default function ResourcesHome() {
           onLeftClick={() => setResourceToDelete(null)}
           onRightClick={handleDeleteResource}
         >
-          La ressource « {resourceToDelete.title} » et toutes ses activités
+          La ressource « {formatTitle(resourceToDelete.title)} » et toutes ses activités
           seront supprimées définitivement.
         </Modal>
       )}
