@@ -18,12 +18,11 @@ de la fenêtre est défini dans
    divergence avec `beta` et la
    tête de la branche. Il donne leurs titres, descriptions et noms de fichiers
    modifiés au modèle, sans lui donner le code. Il écrit une à quatre cartes en
-   français avec des titres de 28 caractères et des descriptions de 78 caractères
-   au maximum, puis le workflow crée un commit sur la même branche si les notes
-   ont changé. Le nom réel de cette branche est conservé avec la note.
-3. Relire et corriger si besoin `release-notes.json` avant de fusionner la
-   branche. La fenêtre affichera la nouvelle première entrée après la fusion et
-   le déploiement du front.
+   français, puis commite une proposition dans `.github/release-notes-draft.json`.
+   La proposition ne modifie pas les notes affichées.
+3. Relire la proposition, corriger si besoin, puis copier la première entrée dans
+   `front/src/config/release-notes.json` avant de fusionner la branche. La fenêtre
+   affichera cette entrée après la fusion et le déploiement du front.
 
 Le workflow ne crée pas de notes si la branche ne contient encore aucun commit
 de patch. Le téléchargement du modèle prend environ 2 Go à chaque exécution

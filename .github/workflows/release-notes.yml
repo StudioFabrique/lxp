@@ -60,17 +60,17 @@ jobs:
         if: steps.commits.outputs.has_commits == 'true'
         run: node .github/scripts/generate-release-notes.mjs
 
-      - name: Commit generated notes
+      - name: Commit draft release notes
         if: steps.commits.outputs.has_commits == 'true'
         run: |
-          git add front/src/config/release-notes.json
+          git add .github/release-notes-draft.json
           if git diff --cached --quiet; then
-            echo "Les notes de version sont déjà à jour."
+            echo "La proposition de notes de version est déjà à jour."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(release): actualiser les notes de version"
+          git commit -m "chore(release): proposer les notes de version"
           git push origin "HEAD:${GITHUB_REF}"
 
       - name: Stop the local language model

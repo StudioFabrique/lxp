@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const notesFile = fileURLToPath(
   new URL("../../front/src/config/release-notes.json", import.meta.url),
 );
+const draftFile = fileURLToPath(new URL("../release-notes-draft.json", import.meta.url));
 
 function git(...args) {
   return execFileSync("git", args, { encoding: "utf8" }).trim();
@@ -85,21 +86,19 @@ export function validateContent(content) {
           : iconForChange(change?.title ?? "", change?.description ?? ""),
       }))
     : [];
-  const textIsComplete = (value, max, isTitle = false) =>
+  const textIsComplete = (value, max) =>
     value && value.length <= max && !/(?:…|\.\.\.)/.test(value) &&
-    (isTitle
-      ? !/\s+(?:et|de|du|des|la|le|les|pour)$/i.test(value)
-      : /[.!?]$/.test(value));
+    !/\s+(?:et|de|du|des|la|le|les|pour|en)$/i.test(value);
   if (
-    !textIsComplete(summary, 85) ||
+    !textIsComplete(summary, 120) ||
     changes.length < 1 || changes.length > 4 ||
     changes.some(({ title, description }) =>
-      !textIsComplete(title, 28, true) || !textIsComplete(description, 78)) ||
+      !textIsComplete(title, 45) || !textIsComplete(description, 140)) ||
     /notes? de version/i.test([summary, ...changes.flatMap(({ title, description }) => [title, description])].join(" "))
   ) {
     throw new Error(
-      "Le résumé IA doit contenir 1 à 4 cartes, sans phrase coupée ni référence aux notes de version " +
-        "(résumé ≤ 85 caractères, titres ≤ 28, descriptions ≤ 78).",
+      "La proposition IA doit contenir 1 à 4 cartes, sans phrase coupée ni référence aux notes de version " +
+        "(résumé ≤ 120 caractères, titres ≤ 45, descriptions ≤ 140).",
     );
   }
   return { summary, changes };
@@ -131,7 +130,7 @@ export async function generateContent(commits) {
   const schema = {
     type: "object",
     properties: {
-      summary: { type: "string", maxLength: 85 },
+      summary: { type: "string", maxLength: 120 },
       changes: {
         type: "array",
         minItems: 1,
@@ -139,8 +138,8 @@ export async function generateContent(commits) {
         items: {
           type: "object",
           properties: {
-            title: { type: "string", maxLength: 28 },
-            description: { type: "string", maxLength: 78 },
+            title: { type: "string", maxLength: 45 },
+            description: { type: "string", maxLength: 140 },
           },
           required: ["title", "description"],
           additionalProperties: false,
@@ -160,9 +159,9 @@ export async function generateContent(commits) {
         "Privilégie les effets visibles pour les apprenants et les administrateurs; " +
         "ignore le jargon technique et les changements purement internes. " +
         "Sois très concis, comme dans une fenêtre de notes de version. " +
-        "Le résumé général tient en 85 caractères maximum. Rédige une à quatre cartes, " +
-        "avec un titre nominal de 28 caractères maximum et une description de 78 caractères maximum pour chacune. " +
-        "Chaque résumé et description est une phrase complète terminée par un point, sans points de suspension. " +
+        "Le résumé général tient en 120 caractères maximum. Rédige une à quatre cartes, " +
+        "avec un titre nominal de 45 caractères maximum et une description de 140 caractères maximum pour chacune. " +
+        "Chaque résumé et description est une phrase complète, sans points de suspension. " +
         "Chaque titre est complet et ne finit pas par une préposition. " +
         "Évite les formules vagues comme 'meilleure expérience utilisateur'. " +
         "Ne parle pas des notes de version elles-mêmes. " +
@@ -192,7 +191,10 @@ export async function generateContent(commits) {
     try {
       return validateContent(JSON.parse(output));
     } catch (error) {
-      if (attempt === 1) throw error;
+      if (attempt === 1) {
+        console.error("Proposition refusée :", output);
+        throw error;
+      }
       messages.push(
         { role: "assistant", content: output },
         { role: "user", content: `${error.message} Reformule en phrases courtes et complètes.` },
@@ -253,8 +255,8 @@ async function main() {
   const notes = JSON.parse(readFileSync(notesFile, "utf8"));
   const content = await generateContent(commitDetails);
   const updated = updateNotes(notes, version, content, process.env.GITHUB_REF_NAME);
-  writeFileSync(notesFile, `${JSON.stringify(updated, null, 2)}\n`);
-  console.log(`Notes ${version} générées à partir de ${commits.length} commit(s).`);
+  writeFileSync(draftFile, `${JSON.stringify(updated, null, 2)}\n`);
+  console.log(`Proposition ${version} générée à partir de ${commits.length} commit(s).`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
