@@ -27,7 +27,14 @@ const Welcome = ({ onNext }: Props) => {
           permettra de gérer les paramètres de l’instance et les accès à ANDRIA.
         </p>
       </div>
-      <div className="mt-9 grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
+      <button
+        type="button"
+        className="btn btn-primary mt-9 w-full gap-2 rounded-lg normal-case text-base-100"
+        onClick={onNext}
+      >
+        Commencer <ArrowRight className="size-4" aria-hidden="true" />
+      </button>
+      <div className="mt-3 grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
         <CursorGlowCard
           autoGlow
           glowColor="accent"
@@ -54,13 +61,6 @@ const Welcome = ({ onNext }: Props) => {
         </CursorGlowCard>
         <ReleaseNotesCard />
       </div>
-      <button
-        type="button"
-        className="btn btn-primary mb-7 mt-auto w-full gap-2 rounded-lg normal-case text-base-100"
-        onClick={onNext}
-      >
-        Commencer <ArrowRight className="size-4" aria-hidden="true" />
-      </button>
     </motion.section>
   );
 };

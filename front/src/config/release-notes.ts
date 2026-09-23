@@ -10,7 +10,7 @@ export type ReleaseNote = {
 export const releaseNotes: ReleaseNote[] = [
   {
     version: "0.9",
-    status: "Bêta",
+    status: "Beta",
     summary: "Une version bêta plus simple à configurer et à utiliser.",
     changes: [
       {

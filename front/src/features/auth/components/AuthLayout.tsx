@@ -144,10 +144,10 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                     <button
                       type="button"
                       onClick={() => setShowReleaseNotes(true)}
-                      className="rounded-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="link"
                       aria-label={`Voir les notes de version ${currentRelease.version}`}
                     >
-                      v{currentRelease.version} · {currentRelease.status}
+                      ANDRIA v{currentRelease.version} - {currentRelease.status}
                     </button>
                   </>
                 )}

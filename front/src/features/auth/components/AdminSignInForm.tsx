@@ -115,7 +115,7 @@ const AdminSignInForm = ({
               <strong className="text-base-content">{activationEmail}</strong>
             </div>
             <p>
-              Cliquez sur ce lien pour activer votre compte.
+              Cliquez sur ce lien compris dans le mail pour activer votre compte.
             </p>
           </div>
 
