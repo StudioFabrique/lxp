@@ -2,23 +2,23 @@
   {
     "version": "0.9.1",
     "status": "Beta",
-    "summary": "Une version bêta plus simple à configurer et à utiliser.",
+    "summary": "Les notes de patch ont été améliorées pour être plus visibles et adaptées aux nouvelles fenêtres.",
     "changes": [
       {
-        "title": "Démarrage simplifié",
-        "description": "Création du premier compte et configuration de l’instance plus claires."
+        "title": "fix(ci): adapter les notes au format de la fenêtre",
+        "description": "Les notes de patch ont été modifiées pour être plus visibles et adaptées aux nouvelles fenêtres."
       },
       {
-        "title": "Parcours apprenant",
-        "description": "Profil d’apprentissage par module et progression plus faciles à suivre."
+        "title": "chore(version): increment",
+        "description": "La version a été incrémentée pour mettre à jour les notes de patch."
       },
       {
-        "title": "Personnalisation",
-        "description": "Nouvelles couleurs pour le calendrier et interface harmonisée."
+        "title": "feat(ci): générer les notes de patch avec Ollama",
+        "description": "Une nouvelle méthode a été mise en place pour générer les notes de patch, améliorant leur visibilité."
       },
       {
-        "title": "Fiabilité",
-        "description": "États de chargement, listes vides et messages d’erreur plus lisibles."
+        "title": "feat(front): actualiser les rôles et ajuster les…",
+        "description": "Les rôles ont été actualisés et les thèmes sombres ont été ajustés pour une meilleure visibilité."
       }
     ]
   },
