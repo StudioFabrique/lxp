@@ -133,3 +133,4 @@ avant le premier lancement.
 | Déployer une instance                       | [Guide de déploiement](deployment/README.md)                 |
 | Sauvegarder ou restaurer une instance       | [Sauvegardes](docs/sauvegardes.md)                           |
 | Gérer l'instance de démonstration           | [Mode démonstration](docs/mode-demo.md)                      |
+| Préparer les notes d'un patch               | [Notes de version](docs/notes-de-version.md)                |
