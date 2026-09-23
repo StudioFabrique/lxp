@@ -23,8 +23,9 @@ dans `front/src/components/UI/ReleaseNotesModal.tsx`.
 
 Le workflow ne crée pas de notes si la branche ne contient encore aucun commit
 de patch. Le téléchargement du modèle prend environ 1 Go à chaque exécution
-avec des commits à résumer. Un push qui ne corrige que le fichier de notes ne
-relance pas la génération. Un commit créé avec `GITHUB_TOKEN` ne relance pas ce
+avec des commits à résumer. Un push qui ne corrige que le texte de la version
+courante ne relance pas le modèle ; un changement du numéro de version le fait.
+Un commit créé avec `GITHUB_TOKEN` ne relance pas ce
 workflow. Le modèle ne demande aucun crédit API ; les minutes GitHub Actions
 restent soumises au quota du dépôt s'il est privé.
 La branche doit accepter les pushes du workflow (`contents: write`) ; si elle

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   generateContent,
+  isTextOnlyCorrection,
   parseCommits,
   updateNotes,
   versionFromBranch,
@@ -75,4 +76,14 @@ test("demande un JSON au modèle local et valide sa réponse", async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("une correction de texte ne relance pas l'IA, mais un changement de version oui", () => {
+  const files = ["front/src/config/release-notes.json"];
+  assert.equal(isTextOnlyCorrection(files, "0.9.1", "0.9.1"), true);
+  assert.equal(isTextOnlyCorrection(files, "0.9", "0.9.1"), false);
+  assert.equal(
+    isTextOnlyCorrection([...files, "front/src/App.tsx"], "0.9.1", "0.9.1"),
+    false,
+  );
 });

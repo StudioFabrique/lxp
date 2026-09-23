@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - 'release/*'
-    paths-ignore:
-      - 'front/src/config/release-notes.json'
   workflow_dispatch:
 
 permissions:
@@ -40,6 +38,8 @@ jobs:
 
       - name: Check for patch commits
         id: commits
+        env:
+          PUSH_BEFORE: ${{ github.event.before }}
         run: echo "has_commits=$(node .github/scripts/generate-release-notes.mjs --check)" >> "$GITHUB_OUTPUT"
 
       - name: Start the local language model

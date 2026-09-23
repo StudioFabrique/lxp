@@ -73,6 +73,14 @@ export function updateNotes(notes, version, content) {
   ];
 }
 
+export function isTextOnlyCorrection(changedFiles, previousVersion, currentVersion) {
+  return (
+    changedFiles.length === 1 &&
+    changedFiles[0] === "front/src/config/release-notes.json" &&
+    previousVersion === currentVersion
+  );
+}
+
 export async function generateContent(commits) {
   const schema = {
     type: "object",
@@ -140,7 +148,27 @@ async function main() {
   );
 
   if (process.argv.includes("--check")) {
-    console.log(commits.length > 0);
+    let shouldGenerate = commits.length > 0;
+    if (shouldGenerate && process.env.PUSH_BEFORE) {
+      const before = /^0{40}$/.test(process.env.PUSH_BEFORE)
+        ? git("rev-parse", "HEAD^")
+        : process.env.PUSH_BEFORE;
+      const changedFiles = git("diff", "--name-only", before, "HEAD")
+        .split("\n")
+        .filter(Boolean);
+      if (changedFiles.length === 1 && changedFiles[0] === "front/src/config/release-notes.json") {
+        const previousVersion = JSON.parse(
+          git("show", `${before}:front/src/config/release-notes.json`),
+        )[0]?.version;
+        const currentVersion = JSON.parse(readFileSync(notesFile, "utf8"))[0]?.version;
+        shouldGenerate = !isTextOnlyCorrection(
+          changedFiles,
+          previousVersion,
+          currentVersion,
+        );
+      }
+    }
+    console.log(shouldGenerate);
     return;
   }
   if (!commits.length) {

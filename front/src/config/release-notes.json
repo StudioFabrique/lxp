@@ -21,5 +21,28 @@
         "description": "États de chargement, listes vides et messages d’erreur plus lisibles."
       }
     ]
+  },
+  {
+    "version": "0.9",
+    "status": "Beta",
+    "summary": "Une version bêta plus simple à configurer et à utiliser.",
+    "changes": [
+      {
+        "title": "Démarrage simplifié",
+        "description": "Création du premier compte et configuration de l’instance plus claires."
+      },
+      {
+        "title": "Parcours apprenant",
+        "description": "Profil d’apprentissage par module et progression plus faciles à suivre."
+      },
+      {
+        "title": "Personnalisation",
+        "description": "Nouvelles couleurs pour le calendrier et interface harmonisée."
+      },
+      {
+        "title": "Fiabilité",
+        "description": "États de chargement, listes vides et messages d’erreur plus lisibles."
+      }
+    ]
   }
 ]
