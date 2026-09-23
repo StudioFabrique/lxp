@@ -54,7 +54,7 @@ jobs:
             sleep 2
           done
           curl --fail --silent http://127.0.0.1:11434/api/version >/dev/null
-          docker exec release-notes-ollama ollama pull qwen2.5:1.5b-instruct
+          docker exec release-notes-ollama ollama pull qwen2.5:3b-instruct
 
       - name: Generate French release notes from commits
         if: steps.commits.outputs.has_commits == 'true'

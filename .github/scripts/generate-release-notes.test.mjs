@@ -25,7 +25,10 @@ test("exclut les commits générés des résumés suivants", () => {
     `${first}\x1ffix(front): clarifier les erreurs\x1fUn texte utile.\x1e\n` +
     `${generated}\x1fchore(release): actualiser les notes de version\x1f\x1e\n` +
     `${"c".repeat(40)}\x1ffeat(ci): générer les notes\x1f\x1e\n` +
-    `${"d".repeat(40)}\x1fchore(version): increment\x1f\x1e`;
+    `${"d".repeat(40)}\x1fchore(version): increment\x1f\x1e\n` +
+    `${"e".repeat(40)}\x1ffeat(ui): compléter les notes de version\x1f\x1e\n` +
+    `${"f".repeat(40)}\x1fstyle(ui): harmoniser le halo de la carte version\x1f\x1e\n` +
+    `${"1".repeat(40)}\x1ffeat(ui): compléter les notes et adapter leurs icônes\x1f\x1e`;
   assert.deepEqual(parseCommits(log), [
     {
       sha: first,
@@ -89,7 +92,7 @@ test("demande un JSON au modèle local et valide sa réponse", async () => {
   try {
     const result = await generateContent([{ subject: "fix: clarifier la navigation" }]);
     assert.equal(request.url, "http://127.0.0.1:11434/api/chat");
-    assert.equal(request.body.model, "qwen2.5:1.5b-instruct");
+    assert.equal(request.body.model, "qwen2.5:3b-instruct");
     assert.equal(request.body.stream, false);
     assert.equal(request.body.format.required[0], "summary");
     assert.equal(result.changes[0].title, "Navigation");
@@ -120,19 +123,19 @@ test("choisit une icône liée au sujet de la carte", () => {
   }).changes[0].icon, "calendar");
 });
 
-test("raccourcit le texte du modèle pour conserver quatre cartes lisibles", () => {
-  const result = validateContent({
-    summary: `Une amélioration utile\n${"pour les apprenants ".repeat(20)}`,
-    changes: Array.from({ length: 6 }, (_, index) => ({
-      title: `Amélioration ${index} ${"très longue ".repeat(8)}`,
-      description: `<b>Une correction</b> ${"plus claire ".repeat(20)}`,
-    })),
-  });
-  assert.equal(result.changes.length, 4);
-  assert.ok(result.summary.length <= 85);
-  assert.ok(result.changes.every(({ title, description }) => title.length <= 28 && description.length <= 78));
-  assert.ok(result.changes.every(({ title }) => !title.endsWith("…")));
-  assert.ok(!/[<>\r\n]/.test(JSON.stringify(result)));
+test("refuse les textes coupés au lieu de les publier", () => {
+  assert.throws(() => validateContent({
+    summary: "Une correction utile.",
+    changes: [{ title: "Amélioration de", description: "Le parcours est plus clair…" }],
+  }));
+  assert.throws(() => validateContent({
+    summary: `Une amélioration utile ${"pour les apprenants ".repeat(20)}`,
+    changes: [{ title: "Parcours", description: "Le parcours est plus clair." }],
+  }));
+  assert.throws(() => validateContent({
+    summary: "Des notes de version plus claires.",
+    changes: [{ title: "Nouveautés", description: "Les notes sont plus claires." }],
+  }));
   assert.equal(
     validateContent({
       summary: "Une correction utile.",
@@ -140,4 +143,21 @@ test("raccourcit le texte du modèle pour conserver quatre cartes lisibles", () 
     }).changes[0].title,
     "Navigation",
   );
+});
+
+test("demande une reformulation quand la première réponse est coupée", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({ message: { content: JSON.stringify(++calls === 1
+      ? { summary: "Une correction utile.", changes: [{ title: "Amélioration de", description: "Texte coupé…" }] }
+      : { summary: "Une correction utile.", changes: [{ title: "Parcours", description: "Le parcours est plus clair." }] }) } }),
+  });
+  try {
+    assert.equal((await generateContent([{ subject: "fix: clarifier le parcours" }])).changes[0].title, "Parcours");
+    assert.equal(calls, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

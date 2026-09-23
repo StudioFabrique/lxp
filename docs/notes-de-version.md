@@ -13,7 +13,7 @@ de la fenêtre est défini dans
    `release/v0.9.1`, puis y pousser les corrections du patch. Le workflow
    `.github/workflows/release-notes.yml` se lance sur chaque push de cette branche.
 2. Le workflow télécharge et lance localement le modèle libre
-   `qwen2.5:1.5b-instruct` avec Ollama. Aucun compte ni clé API d'IA n'est requis.
+   `qwen2.5:3b-instruct` avec Ollama. Aucun compte ni clé API d'IA n'est requis.
    Le script résume les commits visibles pour les utilisateurs entre le point de
    divergence avec `beta` et la
    tête de la branche. Il donne leurs titres, descriptions et noms de fichiers
@@ -26,7 +26,7 @@ de la fenêtre est défini dans
    le déploiement du front.
 
 Le workflow ne crée pas de notes si la branche ne contient encore aucun commit
-de patch. Le téléchargement du modèle prend environ 1 Go à chaque exécution
+de patch. Le téléchargement du modèle prend environ 2 Go à chaque exécution
 avec des commits à résumer. Un push qui corrige le texte de la version
 courante ne relance pas le modèle ; un changement du numéro de version le fait.
 Un commit créé avec `GITHUB_TOKEN` ne relance pas ce
