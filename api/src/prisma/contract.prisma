@@ -400,6 +400,7 @@ model Module {
   bonusSkills      BonusSkillsOnModule[]
   quizzes          Quiz[]
   modulesRead      ModuleRead[]
+  studentAssessments StudentModuleAssessment[]
 
   @@map("Module")
 }
@@ -531,6 +532,7 @@ model Student {
   contentReadCredits    ContentReadCredit[]
   learningProfile       StudentLearningProfile?
   formationAssessments  StudentFormationAssessment[]
+  moduleAssessments StudentModuleAssessment[]
   availabilityNotifications ContentAvailabilityNotification[]
 
   @@map("Student")
@@ -567,6 +569,21 @@ model StudentFormationAssessment {
   @@unique([studentId, formationId])
   @@index([formationId])
   @@map("StudentFormationAssessment")
+}
+
+model StudentModuleAssessment {
+  id        Int       @id @default(autoincrement())
+  studentId Int
+  moduleId  Int
+  level     String
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  module    Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, moduleId])
+  @@index([moduleId])
+  @@map("StudentModuleAssessment")
 }
 
 /// Outbox durable pour l'annonce de la première disponibilité d'une formation.

@@ -20,7 +20,7 @@ vi.mock("../hooks/use-student-dashboard", () => ({
         hasAvailableContent: true,
         onboardingRequired: false,
         shouldAutoRedirect: false,
-        formationsToAssess: [],
+        modulesToAssess: [],
       },
       refetch: vi.fn(),
     },

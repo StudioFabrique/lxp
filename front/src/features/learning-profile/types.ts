@@ -24,9 +24,13 @@ export type LearningFormation = {
     id: number;
     title: string;
     tags: Array<{ id: number; name: string; color: string }>;
-    contentSamples: Array<{ title: string; type: "module" | "course" }>;
+    modules: Array<{
+      id: number;
+      title: string;
+      courses: Array<{ title: string; tags: Array<{ id: number; name: string; color: string }> }>;
+      assessment: { level: FormationLevel; updatedAt: string } | null;
+    }>;
   }>;
-  assessment: { level: FormationLevel; updatedAt: string } | null;
 };
 
 export type LearningContext = {
@@ -35,7 +39,7 @@ export type LearningContext = {
   onboardingMode: "initial" | "additional" | null;
   shouldAutoRedirect: boolean;
   availableFormations: LearningFormation[];
-  formationsToAssess: LearningFormation[];
+  modulesToAssess: Array<LearningFormation["parcours"][number]["modules"][number]>;
   profile: {
     pace: LearningPace | null;
     preferences: LearningPreference[];

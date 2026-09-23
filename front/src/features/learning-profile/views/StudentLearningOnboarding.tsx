@@ -36,8 +36,8 @@ import { cn } from "../../../utils/cn";
 type OnboardingStep = {
   key: string;
   label: string;
-  kind: "pace" | "preferences" | "formation" | "profile" | "theme" | "summary";
-  formationId?: number;
+  kind: "pace" | "preferences" | "module" | "profile" | "theme" | "summary";
+  moduleId?: number;
 };
 
 export default function StudentLearningOnboarding() {
@@ -71,9 +71,7 @@ export default function StudentLearningOnboarding() {
 
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
-    const formation =
-      context.formationsToAssess[0] ?? context.availableFormations[0];
-    if (!formation) return [];
+    if (!context.availableFormations.length) return [];
     const onboardingSteps: OnboardingStep[] = [];
 
     if (context.onboardingMode === "initial") {
@@ -83,14 +81,16 @@ export default function StudentLearningOnboarding() {
     onboardingSteps.push(
       { key: "pace", label: "Rythme", kind: "pace" },
       { key: "preferences", label: "Préférences", kind: "preferences" },
-      {
-        key: `formation:${formation.id}`,
-        label: "Votre niveau",
-        kind: "formation",
-        formationId: formation.id,
-      },
-      { key: "profile", label: "À propos de vous", kind: "profile" },
     );
+
+    for (const formation of context.availableFormations) {
+      for (const parcours of formation.parcours) {
+        for (const module of parcours.modules.filter((item) => context.onboardingMode === "initial" || !item.assessment)) {
+          onboardingSteps.push({ key: `module:${module.id}`, label: module.title, kind: "module", moduleId: module.id });
+        }
+      }
+    }
+    onboardingSteps.push({ key: "profile", label: "À propos de vous", kind: "profile" });
 
     onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
     return onboardingSteps;
@@ -113,9 +113,9 @@ export default function StudentLearningOnboarding() {
     setPreferences(context.profile.preferences);
     setLevels(
       Object.fromEntries(
-        context.availableFormations
-          .filter((formation) => formation.assessment)
-          .map((formation) => [formation.id, formation.assessment!.level]),
+        context.availableFormations.flatMap((formation) => formation.parcours.flatMap((parcours) => parcours.modules
+          .filter((module) => module.assessment)
+          .map((module) => [module.id, module.assessment!.level]))),
       ),
     );
     const resumeIndex = Math.max(
@@ -153,8 +153,9 @@ export default function StudentLearningOnboarding() {
   }
 
   const step = steps[index]!;
-  const formation =
-    context.formationsToAssess[0] ?? context.availableFormations[0];
+  const formation = context.availableFormations.find((item) => item.parcours.some((parcours) => parcours.modules.some((module) => module.id === step.moduleId))) ?? context.availableFormations[0];
+  const parcours = formation?.parcours.find((item) => item.modules.some((module) => module.id === step.moduleId)) ?? formation?.parcours[0];
+  const module = parcours?.modules.find((item) => item.id === step.moduleId);
 
   const continueToNext = async () => {
     if (step.kind === "pace" && !pace) {
@@ -166,9 +167,9 @@ export default function StudentLearningOnboarding() {
       return;
     }
     if (
-      step.kind === "formation" &&
-      step.formationId &&
-      !levels[step.formationId]
+      step.kind === "module" &&
+      step.moduleId &&
+      !levels[step.moduleId]
     ) {
       toast.error("Choisissez un niveau pour continuer.");
       return;
@@ -180,10 +181,10 @@ export default function StudentLearningOnboarding() {
         await learningProfileApi.update({ pace });
       if (step.kind === "preferences")
         await learningProfileApi.update({ preferences });
-      if (step.kind === "formation" && step.formationId) {
-        await learningProfileApi.updateFormation(
-          step.formationId,
-          levels[step.formationId]!,
+      if (step.kind === "module" && step.moduleId) {
+        await learningProfileApi.updateModule(
+          step.moduleId,
+          levels[step.moduleId]!,
         );
       }
       const next = steps[index + 1];
@@ -229,10 +230,10 @@ export default function StudentLearningOnboarding() {
 
   return (
     <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-8 pb-[9px]">
-      {formation?.parcours[0] ? (
+      {parcours ? (
         <header className="px-5 py-3 sm:px-6">
           <h2 className="mt-1 text-2xl font-extrabold leading-tight text-secondary first-letter:uppercase sm:text-3xl">
-            {formation.parcours[0].title}
+            {parcours.title}
           </h2>
           <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
             {formation.title}
@@ -247,7 +248,7 @@ export default function StudentLearningOnboarding() {
           animate={{ opacity: 1, x: 0 }}
           exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }}
           transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }}
-          className={cn("flex min-h-0 w-full flex-1 flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm", step.kind === "formation" ? "sm:p-5" : "sm:p-7")}
+          className={cn("flex min-h-0 w-full flex-1 flex-col overflow-y-auto rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm", step.kind === "module" ? "sm:p-5" : "sm:p-7")}
         >
           {step.kind === "pace" ? (
             <div className="space-y-5">
@@ -280,60 +281,42 @@ export default function StudentLearningOnboarding() {
             </div>
           ) : null}
 
-          {step.kind === "formation" && formation ? (
+          {step.kind === "module" && module ? (
             <div className="space-y-6">
               <div>
                 <h1 className="text-2xl font-bold">
-                  Quel est votre niveau actuel ?
+                  Quel est votre niveau dans « {module.title} » ?
                 </h1>
                 <p className="mt-1 text-sm text-base-content/65">
-                  Appuyez-vous sur ces exemples tirés du parcours pour vous
-                  situer.
+                  Appuyez-vous sur les cours et leurs tags pour vous situer.
                 </p>
               </div>
-              {formation.parcours[0]?.tags.length ? (
-                <div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {formation.parcours[0].tags.slice(0, 4).map((tag) => (
-                      <TagItem key={tag.id} tag={tag} noIcon />
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              {formation.parcours[0]?.contentSamples.length ? (
+              {module.courses.length ? (
                 <div>
                   <p className="mb-1 text-sm font-semibold">
-                    Exemples de contenus
+                    Cours du module
                   </p>
                   <ul className="space-y-1 text-sm leading-5">
-                    {formation.parcours[0].contentSamples.map((sample) => (
+                    {module.courses.map((course) => (
                       <li
-                        key={`${sample.type}-${sample.title}`}
-                        className="flex gap-2"
+                        key={course.title}
+                        className="space-y-1"
                       >
-                        <span className="text-primary">•</span>
-                        <span>
-                          <span>
-                            {sample.title.charAt(0).toLocaleUpperCase("fr-FR") +
-                              sample.title.slice(1)}
-                          </span>{" "}
-                          <span className="text-base-content/50">
-                            ({sample.type === "module" ? "module" : "cours"})
-                          </span>
-                        </span>
+                        <span className="font-medium">{course.title}</span>
+                        <div className="flex flex-wrap gap-1.5">{course.tags.map((tag) => <TagItem key={tag.id} tag={tag} noIcon />)}</div>
                       </li>
                     ))}
                   </ul>
                 </div>
               ) : null}
               <SingleChoiceCards
-                name={`level-${formation.id}`}
+                name={`level-${module.id}`}
                 options={levelOptions}
-                value={levels[formation.id] ?? null}
+                value={levels[module.id] ?? null}
                 onChange={(level) =>
                   setLevels((current) => ({
                     ...current,
-                    [formation.id]: level,
+                    [module.id]: level,
                   }))
                 }
                 compact
@@ -441,16 +424,16 @@ export default function StudentLearningOnboarding() {
                     <Check className="size-4" aria-hidden="true" />
                   </span>
                 </div>
-                {formation ? (
-                  <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                {context.availableFormations.flatMap((item) => item.parcours.flatMap((parcours) => parcours.modules)).map((module) => (
+                  <div key={module.id} className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
                     <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                       <GraduationCap className="size-5" aria-hidden="true" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <dt className="text-sm text-base-content/65">Niveau</dt>
+                      <dt className="text-sm text-base-content/65">{module.title}</dt>
                       <dd className="mt-1 font-semibold">
                         {levelOptions.find(
-                          (option) => option.value === levels[formation.id],
+                          (option) => option.value === levels[module.id],
                         )?.label ?? "Non renseigné"}
                       </dd>
                     </div>
@@ -458,7 +441,7 @@ export default function StudentLearningOnboarding() {
                       <Check className="size-4" aria-hidden="true" />
                     </span>
                   </div>
-                ) : null}
+                ))}
                 <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
                   <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                     <Shapes className="size-5" aria-hidden="true" />
@@ -489,7 +472,7 @@ export default function StudentLearningOnboarding() {
           ) : null}
 
           <div
-            className={cn("mt-auto flex justify-between gap-3 border-t border-base-300", step.kind === "formation" ? "pt-4" : "pt-5")}
+            className={cn("mt-auto flex justify-between gap-3 border-t border-base-300", step.kind === "module" ? "pt-4" : "pt-5")}
           >
             <button
               type="button"

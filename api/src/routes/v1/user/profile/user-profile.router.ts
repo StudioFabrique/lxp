@@ -14,7 +14,7 @@ import { checkValidatorResult } from "../../../../middleware/validators.ts";
 import {
   httpGetLearningProfile,
   httpPatchLearningProfile,
-  httpPutFormationAssessment,
+  httpPutModuleAssessment,
 } from "../../../../controllers/user/profile/http-learning-profile.ts";
 import {
   FORMATION_LEVELS,
@@ -57,14 +57,14 @@ userProfileRouter.patch(
 );
 
 userProfileRouter.put(
-  "/learning/formations/:formationId",
+  "/learning/modules/:moduleId",
   checkPermissions("cursus", "update"),
   [
-    param("formationId").isInt({ min: 1 }),
+    param("moduleId").isInt({ min: 1 }),
     body("level").isIn(FORMATION_LEVELS),
     checkValidatorResult,
   ],
-  httpPutFormationAssessment,
+  httpPutModuleAssessment,
 );
 
 userProfileRouter.get(

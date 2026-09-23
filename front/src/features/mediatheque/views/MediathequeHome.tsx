@@ -6,6 +6,7 @@ import { HierarchicalListRow } from "../../../components/UI/hierarchical-list-ca
 import Modal from "../../../components/UI/modal/modal";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import Header from "../../../components/headers/Header";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import TablePagination from "../../../components/table/TablePagination";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import activityIconType from "../../../utils/helpers/activity-icon-type";
@@ -150,10 +151,7 @@ function MediathequeHomePage() {
       ) : null}
 
       {isLoading ? (
-        <div role="status" aria-label="Chargement des médias" className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          <span className="sr-only">Chargement des médias…</span>
-          {[0, 1, 2].map((item) => <div key={item} className="skeleton h-48 rounded-box" aria-hidden="true" />)}
-        </div>
+        <LoadingSkeleton variant="cards" label="Chargement des médias" />
       ) : error ? (
         <div role="alert" className="alert alert-error">
           {error}

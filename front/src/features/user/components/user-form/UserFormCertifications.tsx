@@ -5,6 +5,7 @@ import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-object
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
 import DatePicker from "../../../../../src/components/UI/date-picker/date-picker";
 import { parseDateValue } from "../../../../../src/components/UI/date-picker/date-picker.utils";
+import { cn } from "../../../../../src/utils/cn";
 
 type EditState = {
   isActive: boolean;
@@ -91,7 +92,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
 
   return (
     <BoxWrapper>
-      <div className="grid grid-cols-2 gap-x-10">
+      <div className={cn("grid gap-x-10", graduations.length > 0 && "md:grid-cols-2")}>
         <div className="flex flex-col justify-between">
           <div className="flex flex-col justify-between gap-y-3">
             <h2 className="font-bold text-xl">Certifications</h2>
@@ -142,8 +143,9 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
             </button>
           )}
         </div>
-        <div className="bg-secondary/10 flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
-          {graduations.map((g) => (
+        {graduations.length > 0 && (
+          <div className="bg-secondary/10 flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+            {graduations.map((g) => (
             <div
               key={g._id ?? g.id}
               className="flex items-center justify-between bg-secondary/20 rounded-md w-full py-2 px-5 max-h-[80px]"
@@ -165,8 +167,9 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
                 </button>
               </span>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </BoxWrapper>
   );

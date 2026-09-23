@@ -92,9 +92,9 @@ const StudentDashboard = () => {
           <div>
             <h2 className="font-bold">Compléter mon profil d’apprentissage</h2>
             <p className="text-sm text-base-content/70">
-              Formations en attente :{" "}
-              {learningContext.data.formationsToAssess
-                .map((formation) => formation.title)
+              Modules en attente :{" "}
+              {learningContext.data.modulesToAssess
+                .map((module) => module.title)
                 .join(", ") || "préférences générales"}
             </p>
           </div>

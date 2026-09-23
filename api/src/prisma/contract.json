@@ -192,6 +192,10 @@
       "model": "StudentLearningProfile",
       "namespace": "public"
     },
+    "StudentModuleAssessment": {
+      "model": "StudentModuleAssessment",
+      "namespace": "public"
+    },
     "SystemJobState": {
       "model": "SystemJobState",
       "namespace": "public"
@@ -3974,6 +3978,21 @@
                   "model": "Quiz",
                   "namespace": "public"
                 }
+              },
+              "studentAssessments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "moduleId"
+                  ]
+                },
+                "to": {
+                  "model": "StudentModuleAssessment",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -5893,6 +5912,21 @@
                   "namespace": "public"
                 }
               },
+              "moduleAssessments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "studentId"
+                  ]
+                },
+                "to": {
+                  "model": "StudentModuleAssessment",
+                  "namespace": "public"
+                }
+              },
               "modulesRead": {
                 "cardinality": "1:N",
                 "on": {
@@ -6183,6 +6217,110 @@
               },
               "namespaceId": "public",
               "table": "StudentLearningProfile"
+            }
+          },
+          "StudentModuleAssessment": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "level": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "moduleId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "studentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "module": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "moduleId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Module",
+                  "namespace": "public"
+                }
+              },
+              "student": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "studentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Student",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "level": {
+                  "column": "level"
+                },
+                "moduleId": {
+                  "column": "moduleId"
+                },
+                "studentId": {
+                  "column": "studentId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "StudentModuleAssessment"
             }
           },
           "SystemJobState": {
@@ -11262,6 +11400,115 @@
                 }
               ]
             },
+            "StudentModuleAssessment": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "level": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "moduleId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "studentId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "studentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "StudentModuleAssessment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Student"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "moduleId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "StudentModuleAssessment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Module"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "moduleId"
+                  ],
+                  "name": "StudentModuleAssessment_moduleId_idx_04fe188b",
+                  "prefix": "StudentModuleAssessment_moduleId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "studentId"
+                  ],
+                  "name": "StudentModuleAssessment_studentId_idx_bf255322",
+                  "prefix": "StudentModuleAssessment_studentId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "studentId",
+                    "moduleId"
+                  ]
+                }
+              ]
+            },
             "SystemJobState": {
               "columns": {
                 "completedAt": {
@@ -11692,10 +11939,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "3474c5a734db7b5feae0022201ed74c3633c7160741d06fecdec9d80b71223f5"
+    "storageHash": "81126da82ef2898f11040430d21775259954989e86d1795b5c17adc50bf61e43"
   },
   "execution": {
-    "executionHash": "f6ebe31908f861b0176236677bacf9442eb3a1775a543a8fb0638dea106928c8",
+    "executionHash": "66190f9a80de94e86878e89872489dc18e562c01c8c62b54232716f90998ee70",
     "mutations": {
       "defaults": [
         {
@@ -12011,6 +12258,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "StudentLearningProfile"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "StudentModuleAssessment"
           }
         },
         {

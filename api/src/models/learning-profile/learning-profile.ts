@@ -17,7 +17,11 @@ export type AvailableFormation = {
     id: number;
     title: string;
     tags: Array<{ id: number; name: string; color: string }>;
-    contentSamples: Array<{ title: string; type: "module" | "course" }>;
+    modules: Array<{
+      id: number;
+      title: string;
+      courses: Array<{ title: string; tags: Array<{ id: number; name: string; color: string }> }>;
+    }>;
   }>;
 };
 
@@ -57,7 +61,7 @@ export async function resolveAvailableFormations(
     )
     .include("modules", (modules) =>
       modules
-        .select("title")
+        .select("id", "title")
         .include("courses", (courses) =>
           courses
             .where((course) =>
@@ -73,6 +77,7 @@ export async function resolveAvailableFormations(
               ),
             )
             .select("title")
+            .include("tags", (tags) => tags.include("tag", (tag) => tag.select("id", "name", "color")))
             .orderBy((course) => course.order.asc()),
         ),
     )
@@ -87,16 +92,6 @@ export async function resolveAvailableFormations(
       title: formation.title,
       parcours: [],
     };
-    const contentSamples = item.modules
-      .flatMap((module) => [
-        { title: module.title, type: "module" as const },
-        ...module.courses.map((course) => ({
-          title: course.title,
-          type: "course" as const,
-        })),
-      ])
-      .filter((sample) => sample.title.trim().length > 0)
-      .slice(0, 4);
     existing.parcours.push({
       id: item.id,
       title: item.title,
@@ -106,7 +101,14 @@ export async function resolveAvailableFormations(
           (tag): tag is { id: number; name: string; color: string } =>
             Boolean(tag),
         ),
-      contentSamples,
+      modules: item.modules.filter((module) => module.courses.length > 0).map((module) => ({
+        id: module.id,
+        title: module.title,
+        courses: module.courses.map((course) => ({
+          title: course.title,
+          tags: course.tags.map((link) => link.tag).filter((tag): tag is { id: number; name: string; color: string } => Boolean(tag)),
+        })),
+      })),
     });
     byFormation.set(formation.id, existing);
   }
@@ -137,38 +139,36 @@ export async function getLearningContext(userIdMdb: string) {
         "updatedAt",
       )
       .first(),
-    prisma.orm.public.StudentFormationAssessment.where({
+    prisma.orm.public.StudentModuleAssessment.where({
       studentId: student.id,
     })
-      .select("formationId", "level", "updatedAt")
+      .select("moduleId", "level", "updatedAt")
       .all(),
   ]);
 
-  const assessmentByFormation = new Map(
-    assessments.map((assessment) => [assessment.formationId, assessment]),
+  const assessmentByModule = new Map(
+    assessments.map((assessment) => [assessment.moduleId, assessment]),
   );
   const availableFormations = formations.map((formation) => ({
     ...formation,
-    assessment: assessmentByFormation.get(formation.id)
-      ? {
-          level: assessmentByFormation.get(formation.id)!.level,
-          updatedAt: assessmentByFormation.get(formation.id)!.updatedAt,
-        }
-      : null,
+    parcours: formation.parcours.map((parcours) => ({
+      ...parcours,
+      modules: parcours.modules.map((module) => ({
+        ...module,
+        assessment: assessmentByModule.get(module.id)
+          ? { level: assessmentByModule.get(module.id)!.level, updatedAt: assessmentByModule.get(module.id)!.updatedAt }
+          : null,
+      })),
+    })),
   }));
-  const formationsToAssess = availableFormations.filter(
-    (formation) => !formation.assessment,
-  );
+  const modulesToAssess = availableFormations.flatMap((formation) => formation.parcours.flatMap((parcours) => parcours.modules.filter((module) => !module.assessment)));
   const hasGlobalAnswers = Boolean(
     profile?.pace && profile.preferences.length > 0,
   );
   const initialCompleted = Boolean(profile?.initialCompletedAt);
-  // L'onboarding initial porte volontairement sur un seul parcours. Les autres
-  // niveaux restent disponibles dans le profil sans imposer un nouveau tunnel.
   const onboardingRequired =
     formations.length > 0 &&
-    !initialCompleted &&
-    (!hasGlobalAnswers || assessments.length === 0);
+    (!initialCompleted || !hasGlobalAnswers || modulesToAssess.length > 0);
 
   return {
     hasAvailableContent: formations.length > 0,
@@ -181,7 +181,7 @@ export async function getLearningContext(userIdMdb: string) {
     shouldAutoRedirect:
       onboardingRequired && profile?.onboardingStatus !== "in_progress",
     availableFormations,
-    formationsToAssess,
+    modulesToAssess,
     profile: {
       pace: profile?.pace ?? null,
       preferences: profile?.preferences ?? [],
@@ -216,10 +216,7 @@ export async function updateLearningProfile(
 
   if (input.action === "confirm") {
     const context = await getLearningContext(userIdMdb);
-    const hasAssessment = context.availableFormations.some(
-      (formation) => formation.assessment,
-    );
-    if (!pace || preferences.length === 0 || !hasAssessment) {
+    if (!pace || preferences.length === 0 || context.modulesToAssess.length > 0) {
       throw {
         statusCode: 400,
         message: "Complétez toutes les réponses requises avant de confirmer.",
@@ -264,9 +261,9 @@ export async function updateLearningProfile(
   return getLearningContext(userIdMdb);
 }
 
-export async function updateFormationAssessment(
+export async function updateModuleAssessment(
   userIdMdb: string,
-  formationId: number,
+  moduleId: number,
   level: FormationLevel,
 ) {
   const [student, formations] = await Promise.all([
@@ -274,19 +271,19 @@ export async function updateFormationAssessment(
     resolveAvailableFormations(userIdMdb),
   ]);
   if (!student) throw { statusCode: 404, message: "Profil étudiant introuvable." };
-  if (!formations.some((formation) => formation.id === formationId)) {
+  if (!formations.some((formation) => formation.parcours.some((parcours) => parcours.modules.some((module) => module.id === moduleId)))) {
     throw {
       statusCode: 403,
-      message: "Cette formation n'est pas accessible.",
+      message: "Ce module n'est pas accessible.",
     };
   }
 
-  await prisma.orm.public.StudentFormationAssessment.where((row) =>
-    and(row.studentId.eq(student.id), row.formationId.eq(formationId)),
+  await prisma.orm.public.StudentModuleAssessment.where((row) =>
+    and(row.studentId.eq(student.id), row.moduleId.eq(moduleId)),
   ).upsert({
-    create: { studentId: student.id, formationId, level },
+    create: { studentId: student.id, moduleId, level },
     update: { level },
-    conflictOn: { studentId: student.id, formationId },
+    conflictOn: { studentId: student.id, moduleId },
   });
 
   return getLearningContext(userIdMdb);

@@ -31,10 +31,10 @@ const render = (state: Partial<ReturnType<typeof useStudentResources>>) => {
 };
 
 describe("Ressources supplémentaires", () => {
-  it("montre les cartes skeleton pendant le chargement sans afficher l'état vide", () => {
+  it("annonce le chargement sans afficher l'état vide", () => {
     const markup = render({ isLoading: true });
     expect(markup).toContain('aria-label="Chargement des ressources supplémentaires"');
-    expect(markup).toContain("skeleton");
+    expect(markup).not.toContain("skeleton");
     expect(markup).not.toContain("Aucune ressource disponible");
   });
 

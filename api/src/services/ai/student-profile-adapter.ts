@@ -53,21 +53,18 @@ export async function buildStudentProfile(
   const [student, course] = await Promise.all([
     prisma.orm.public.Student.where({ idMdb: userIdMdb }).select("id").first(),
     prisma.orm.public.Course.where({ id: courseId })
-      .select("id")
-      .include("module", (module) =>
-        module.include("parcours", (parcours) => parcours.select("formationId")),
-      )
+      .select("moduleId")
       .first(),
   ]);
-  const formationId = course?.module?.parcours?.formationId;
-  if (!student || !formationId) return neutral;
+  const moduleId = course?.moduleId;
+  if (!student || !moduleId) return neutral;
 
   const [profile, assessment] = await Promise.all([
     prisma.orm.public.StudentLearningProfile.where({ studentId: student.id })
       .select("pace", "preferences", "initialCompletedAt")
       .first(),
-    prisma.orm.public.StudentFormationAssessment.where((row) =>
-      and(row.studentId.eq(student.id), row.formationId.eq(formationId)),
+    prisma.orm.public.StudentModuleAssessment.where((row) =>
+      and(row.studentId.eq(student.id), row.moduleId.eq(moduleId)),
     )
       .select("level")
       .first(),
@@ -100,4 +97,3 @@ export async function buildStudentProfile(
     metrics,
   };
 }
-
