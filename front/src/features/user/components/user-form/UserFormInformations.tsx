@@ -58,17 +58,6 @@ const UserFormInformations = ({
   return (
     <BoxWrapper>
       <h2 className="font-bold text-xl">Informations</h2>
-      <div className="flex flex-col items-center gap-2">
-        <label className="font-medium">Avatar</label>
-        <ImageFileUpload
-          temporaryImage={temporaryAvatar}
-          onSetTemporaryImage={setTemporaryAvatar}
-          maxSize={avatarImageMaxSize}
-        />
-        <p className="text-xs text-base-content/60">
-          Cliquez sur l'avatar pour ajouter une image
-        </p>
-      </div>
       <span className="flex flex-col gap-y-2">
         <label>Prénom *</label>
         <input
@@ -121,6 +110,19 @@ const UserFormInformations = ({
           </span>
         ) : null}
       </span>
+      <div className="flex items-center justify-between gap-4 border-t border-base-300 pt-4">
+        <div>
+          <p className="font-medium">Avatar</p>
+          <p className="text-xs text-base-content/60">
+            Cliquez sur l'avatar pour ajouter une image
+          </p>
+        </div>
+        <ImageFileUpload
+          temporaryImage={temporaryAvatar}
+          onSetTemporaryImage={setTemporaryAvatar}
+          maxSize={avatarImageMaxSize}
+        />
+      </div>
     </BoxWrapper>
   );
 };

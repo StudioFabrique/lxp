@@ -29,6 +29,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
       city: "",
       postCode: "",
       phoneNumber: "",
+      invitationSent: false,
     },
   });
 
@@ -118,10 +119,14 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
           </BoxWrapper>
         </div>
         <div className="w-full flex flex-col gap-y-4">
-          <p className="text-xs px-2 mt-2">
-            Note : Le formateur recevra un lien par mail pour créer son mot de
-            passe. Son compte sera activé à cette occasion.
-          </p>
+          <label className="flex place-items-center gap-x-2 px-2 mt-2">
+            <input
+              className="checkbox checkbox-primary"
+              type="checkbox"
+              {...register("invitationSent")}
+            />
+            Envoyer un mail d'invitation
+          </label>
           <div className="w-full flex flex-col items-center gap-x-2 pr-2">
             <DrawerFormButtons onCancel={handleCancel} />
           </div>

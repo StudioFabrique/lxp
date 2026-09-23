@@ -57,26 +57,9 @@ describe("Personnalisez votre espace", () => {
     vi.clearAllMocks();
   });
 
-  it("prévisualise et enregistre la couleur choisie", async () => {
-    await act(async () => {
-      container.querySelector<HTMLButtonElement>('button[title="Blue"]')?.click();
-    });
-
-    expect(container.querySelector('[data-testid="logo-preview"]')?.getAttribute("data-background"))
-      .toBe("#3b82f6");
-
-    await act(async () => {
-      container.querySelector("form")?.dispatchEvent(
-        new Event("submit", { bubbles: true, cancelable: true }),
-      );
-    });
-
-    const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
-    expect(payload).toBeInstanceOf(FormData);
-    expect(payload?.get("color")).toBe("#3b82f6");
-  });
-
   it("enregistre le site internet de l’organisme", async () => {
+    expect(container.textContent).not.toContain("Continuer avec ANDRIA");
+
     await act(async () => {
       container.querySelector("form")?.dispatchEvent(
         new Event("submit", { bubbles: true, cancelable: true }),
@@ -85,18 +68,6 @@ describe("Personnalisez votre espace", () => {
 
     const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
     expect(payload?.get("website")).toBe("https://step.eco");
-  });
-
-  it("garde le fond blanc avec les paramètres ANDRIA par défaut", async () => {
-    await act(async () => {
-      container.querySelector<HTMLButtonElement>('button[title="Blue"]')?.click();
-      Array.from(container.querySelectorAll("button"))
-        .find((button) => button.textContent?.includes("Continuer avec ANDRIA"))
-        ?.click();
-    });
-
-    const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
     expect(payload?.get("color")).toBe("#ffffff");
-    expect(payload?.get("website")).toBe("");
   });
 });

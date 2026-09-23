@@ -213,78 +213,82 @@ const UserForm = ({
             />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-x-5">
-          <ItemsAdder
-            styleOptions={{
-              label: "Centre d'intérêts",
-              placeholder: "Ajouter un nouveau centre d'intérêt",
-              itemsHasColor: true,
-            }}
-            items={hobbies}
-            disabled={disabled}
-            getValue={(item) => item.title}
-            onValidate={(value) => {
-              if (!(value.length > 0))
-                throw new Error("Le centre d'intérêt est vide");
-              if (hobbies.some((hobby) => hobby.title === value))
-                throw new Error(`Le centre d'intérêt '${value}' existe déjà`);
-              if (!regexGeneric.test(value))
-                throw new Error("La valeur est incorrecte");
-            }}
-            onAddItem={async (value) => {
-              setHobbies((hobbies) => [...hobbies, { title: value }]);
-              return true;
-            }}
-            onDelete={async (item) => {
-              setHobbies((hobbies) =>
-                hobbies.filter((hobby) => hobby.title !== item.title),
-              );
-              return true;
-            }}
-          />
-          <div className="col-span-2">
-            <UserFormPresentation
-              description={description}
-              onDescription={setDescription}
+        {editMode && (
+          <div className="grid grid-cols-3 gap-x-5">
+            <ItemsAdder
+              styleOptions={{
+                label: "Centre d'intérêts",
+                placeholder: "Ajouter un nouveau centre d'intérêt",
+                itemsHasColor: true,
+              }}
+              items={hobbies}
               disabled={disabled}
+              getValue={(item) => item.title}
+              onValidate={(value) => {
+                if (!(value.length > 0))
+                  throw new Error("Le centre d'intérêt est vide");
+                if (hobbies.some((hobby) => hobby.title === value))
+                  throw new Error(`Le centre d'intérêt '${value}' existe déjà`);
+                if (!regexGeneric.test(value))
+                  throw new Error("La valeur est incorrecte");
+              }}
+              onAddItem={async (value) => {
+                setHobbies((hobbies) => [...hobbies, { title: value }]);
+                return true;
+              }}
+              onDelete={async (item) => {
+                setHobbies((hobbies) =>
+                  hobbies.filter((hobby) => hobby.title !== item.title),
+                );
+                return true;
+              }}
             />
+            <div className="col-span-2">
+              <UserFormPresentation
+                description={description}
+                onDescription={setDescription}
+                disabled={disabled}
+              />
+            </div>
           </div>
-        </div>
+        )}
         <div className="grid grid-cols-3 gap-x-5">
-          <div className="col-span-2">
+          <div className={editMode ? "col-span-2" : "col-span-3"}>
             <UserFormCertifications
               graduations={graduations}
               setGraduations={setGraduations}
               disabled={disabled}
             />
           </div>
-          <ItemsAdder
-            styleOptions={{
-              label: "Liens",
-              placeholder:
-                "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
-              itemsHasColor: true,
-            }}
-            items={links}
-            disabled={disabled}
-            getValue={(item) => item.url}
-            onValidate={(value) => {
-              if (!(value.length > 0)) throw new Error("L'url est vide");
-              if (links.some((hobby) => hobby.url === value))
-                throw new Error(`L'url '${value}' existe déjà`);
-              if (!urlIsValid(value)) throw new Error("L'url est incorrecte");
-            }}
-            onAddItem={async (value) => {
-              setLinks((links) => [...links, { ...transformLink(value) }]);
-              return true;
-            }}
-            onDelete={async (item) => {
-              setLinks((hobbies) =>
-                hobbies.filter((hobby) => hobby.url !== item.url),
-              );
-              return true;
-            }}
-          />
+          {editMode && (
+            <ItemsAdder
+              styleOptions={{
+                label: "Liens",
+                placeholder:
+                  "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
+                itemsHasColor: true,
+              }}
+              items={links}
+              disabled={disabled}
+              getValue={(item) => item.url}
+              onValidate={(value) => {
+                if (!(value.length > 0)) throw new Error("L'url est vide");
+                if (links.some((hobby) => hobby.url === value))
+                  throw new Error(`L'url '${value}' existe déjà`);
+                if (!urlIsValid(value)) throw new Error("L'url est incorrecte");
+              }}
+              onAddItem={async (value) => {
+                setLinks((links) => [...links, { ...transformLink(value) }]);
+                return true;
+              }}
+              onDelete={async (item) => {
+                setLinks((hobbies) =>
+                  hobbies.filter((hobby) => hobby.url !== item.url),
+                );
+                return true;
+              }}
+            />
+          )}
         </div>
       </div>
     </PageWrapper>

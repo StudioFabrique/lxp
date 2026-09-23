@@ -31,10 +31,10 @@ const StepItem: FC<Props> = ({
         "step after:content-[counter(step)] [&:first-child::before]:hidden",
         "min-h-12 md:min-h-auto md:before:h-1.5",
         "before:w-1.5 md:before:w-full",
-        isActive ? "step-secondary" : undefined,
+        isActive ? "step-primary after:text-primary-content" : undefined,
         stepItem.id === actualStepId && [
-          "before:bg-secondary",
-          "after:bg-info",
+          "before:bg-primary",
+          "after:bg-info after:text-info-content",
           "cursor-auto",
         ],
         disabled && "pointer-events-none",

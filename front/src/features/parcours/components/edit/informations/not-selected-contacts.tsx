@@ -27,6 +27,7 @@ type Teacher = {
   city?: string;
   postCode?: string;
   phoneNumber?: string;
+  invitationSent: boolean;
 };
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {

@@ -20,6 +20,7 @@ import { profileApi } from "../api/profile.api";
 import ProfileEditorModal from "./ProfileEditorModal";
 import ThemeSelect from "./theme-select";
 import { sidebarControlClassName } from "../../../components/sidebar/sidebar-styles";
+import { useVisualPreferences } from "../../../store/VisualPreferences";
 
 type Props = { interfaceType: string };
 
@@ -33,7 +34,9 @@ export default function ProfilePopover({ interfaceType }: Props) {
     availableDarkThemes,
   } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
+  const { glow, confetti, animations, setPreference } = useVisualPreferences();
   const [open, setOpen] = useState(false);
+  const [showRenderSettings, setShowRenderSettings] = useState(false);
   const [editing, setEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -147,18 +150,18 @@ export default function ProfilePopover({ interfaceType }: Props) {
               >
                 <motion.div
                   initial={
-                    reduceMotion
+                    reduceMotion || !animations
                       ? { opacity: 0 }
                       : { opacity: 0, scale: 0.96, x: -6 }
                   }
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={
-                    reduceMotion
+                    reduceMotion || !animations
                       ? { opacity: 0 }
                       : { opacity: 0, scale: 0.98, x: -4 }
                   }
                   transition={{
-                    duration: reduceMotion ? 0.01 : 0.2,
+                    duration: reduceMotion || !animations ? 0 : 0.2,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   style={{
@@ -277,6 +280,35 @@ export default function ProfilePopover({ interfaceType }: Props) {
                         </button>
                       </div>
                     </div>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm mt-2 w-full justify-start gap-2"
+                      aria-expanded={showRenderSettings}
+                      aria-controls="render-settings"
+                      onClick={() => setShowRenderSettings((visible) => !visible)}
+                    >
+                      <Settings className="size-4" aria-hidden="true" />
+                      Paramètres d’affichage
+                    </button>
+                    {showRenderSettings && (
+                      <div id="render-settings" className="mt-1 space-y-2 rounded-lg bg-base-200 p-3 text-sm">
+                        {([
+                          ["glow", "Effet lumineux", glow],
+                          ["confetti", "Confettis et récompenses", confetti],
+                          ["animations", "Animations décoratives", animations],
+                        ] as const).map(([key, label, enabled]) => (
+                          <label key={key} className="flex cursor-pointer items-center justify-between gap-3">
+                            <span>{label}</span>
+                            <input
+                              type="checkbox"
+                              className="toggle toggle-primary toggle-sm"
+                              checked={enabled}
+                              onChange={(event) => setPreference(key, event.target.checked)}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {canManageInstance && (
                     <div className="mt-6">

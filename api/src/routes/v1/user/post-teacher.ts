@@ -57,6 +57,10 @@ postTeacherRouter.post(
       "Le numéro de téléphone contient des caractères non autorisés."
     )
     .optional(),
+  body("invitationSent")
+    .optional()
+    .isBoolean({ strict: true })
+    .withMessage("L'option d'envoi de l'invitation doit être un booléen."),
   checkPermissions("user"),
   httpPostTeacher
 );

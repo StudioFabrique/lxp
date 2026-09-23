@@ -16,6 +16,7 @@ const AuthLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isStudentOnboarding = pathname === "/student/onboarding";
+  const isInstanceSetup = pathname === "/instance-setup";
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
   const shouldLoadBranding = showOrganizationName || isStudentOnboarding;
@@ -58,7 +59,11 @@ const AuthLayout = () => {
 
           <div
             className={`mx-auto flex h-full flex-col ${
-              isStudentOnboarding ? "w-full max-w-2xl" : "w-100"
+              isStudentOnboarding
+                ? "w-full max-w-2xl"
+                : isInstanceSetup
+                  ? "w-full max-w-xl"
+                  : "w-100"
             }`}
           >
             {!isStudentOnboarding && (

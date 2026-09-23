@@ -216,6 +216,7 @@ const mutations = {
     firstname: string;
     lastname: string;
     email: string;
+    invitationSent: boolean;
   }) => {
     const res = await apiClient.post("/user/new-teacher", teacher);
     return res.data;

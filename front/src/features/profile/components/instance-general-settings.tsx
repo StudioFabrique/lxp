@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Eye, Loader2, Plus, X } from "lucide-react";
 import toast from "react-hot-toast";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
@@ -12,6 +12,7 @@ import {
   themeLabels,
 } from "../../../config/themes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import { ThemeContext } from "../../../store/ThemeProvider";
 import { profileApi, type InstanceSettings } from "../api/profile.api";
 import EmailTemplateSettings, {
   type EmailTemplateId,
@@ -30,14 +31,17 @@ const defaultBackgroundColor = "#ffffff";
 const validBackgroundColor = /^#[0-9a-f]{6}$/i;
 
 export default function InstanceGeneralSettings() {
+  const { chooseTheme } = useContext(ThemeContext);
   const [settings, setSettings] = useState(emptySettings);
   const [initialSettings, setInitialSettings] = useState(emptySettings);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
-  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] = useState(false);
+  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] =
+    useState(false);
   const [websiteError, setWebsiteError] = useState("");
-  const [draftEmailTemplate, setDraftEmailTemplate] = useState<EmailTemplateId>("minimal");
+  const [draftEmailTemplate, setDraftEmailTemplate] =
+    useState<EmailTemplateId>("minimal");
   const [themeDrawerMode, setThemeDrawerMode] = useState<
     "light" | "dark" | null
   >(null);
@@ -94,7 +98,8 @@ export default function InstanceGeneralSettings() {
       if (website) {
         try {
           const parsedWebsite = new URL(website);
-          if (!['http:', 'https:'].includes(parsedWebsite.protocol)) throw new Error();
+          if (!["http:", "https:"].includes(parsedWebsite.protocol))
+            throw new Error();
         } catch {
           setWebsiteError(
             "Saisissez une adresse complète commençant par http:// ou https://.",
@@ -134,7 +139,8 @@ export default function InstanceGeneralSettings() {
       );
       if (scope === "identity" && logo.file) payload.append("image", logo.file);
 
-      const updatedSettings = await profileApi.mutations.updateInstanceSettings(payload);
+      const updatedSettings =
+        await profileApi.mutations.updateInstanceSettings(payload);
       if (scope === "email") {
         setSettings(updatedSettings);
         setInitialSettings(updatedSettings);
@@ -200,10 +206,13 @@ export default function InstanceGeneralSettings() {
   const sendTestEmail = async () => {
     setIsSendingTestEmail(true);
     try {
-      const { message } = await profileApi.mutations.sendInstanceTemplateTestEmail();
+      const { message } =
+        await profileApi.mutations.sendInstanceTemplateTestEmail();
       toast.success(message);
     } catch (error: unknown) {
-      toast.error(getApiErrorMessage(error, "L’e-mail de test n’a pas pu être envoyé."));
+      toast.error(
+        getApiErrorMessage(error, "L’e-mail de test n’a pas pu être envoyé."),
+      );
     } finally {
       setIsSendingTestEmail(false);
     }
@@ -251,13 +260,20 @@ export default function InstanceGeneralSettings() {
               </label>
 
               <label className="flex flex-col gap-2">
-                <span className="text-sm font-bold">Site internet <span className="font-normal text-base-content/60">(optionnel)</span></span>
+                <span className="text-sm font-bold">
+                  Site internet{" "}
+                  <span className="font-normal text-base-content/60">
+                    (optionnel)
+                  </span>
+                </span>
                 <input
                   type="text"
                   inputMode="url"
                   autoComplete="url"
                   aria-invalid={Boolean(websiteError)}
-                  aria-describedby={websiteError ? "instance-website-error" : undefined}
+                  aria-describedby={
+                    websiteError ? "instance-website-error" : undefined
+                  }
                   className={`input input-bordered w-full max-w-xl focus:outline-none ${websiteError ? "input-error" : ""}`}
                   value={settings.website}
                   maxLength={2048}
@@ -271,7 +287,10 @@ export default function InstanceGeneralSettings() {
                   }}
                 />
                 {websiteError && (
-                  <span id="instance-website-error" className="text-sm text-error">
+                  <span
+                    id="instance-website-error"
+                    className="text-sm text-error"
+                  >
                     {websiteError}
                   </span>
                 )}
@@ -280,6 +299,7 @@ export default function InstanceGeneralSettings() {
               <div className="w-full max-w-sm self-center">
                 <InstanceLogoControls
                   temporaryImage={logo}
+                  optional
                   onSetTemporaryImage={(image) => {
                     setLogo(image);
                     setDeleteLogo(false);
@@ -296,7 +316,7 @@ export default function InstanceGeneralSettings() {
                         }
                       : undefined
                   }
-                  helpText="JPG ou PNG"
+                  helpText="JPG ou PNG, 500 Ko maximum."
                 />
               </div>
             </fieldset>
@@ -356,26 +376,37 @@ export default function InstanceGeneralSettings() {
 
                     <div className="grid gap-2 sm:grid-cols-2 2xl:grid-cols-4">
                       {enabledThemes.map((theme) => (
-                        <button
+                        <div
                           key={theme}
-                          type="button"
                           data-theme={theme}
-                          onClick={() => toggleAvailableTheme(theme, themeList)}
-                          className="group flex min-w-0 items-center gap-3 rounded-xl border border-primary bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5"
+                          className="group relative flex min-w-0 cursor-pointer items-center gap-3 rounded-xl border border-primary bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5"
                         >
-                          <span className="flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
+                          <button
+                            type="button"
+                            aria-label={`Appliquer le thème ${themeLabels[theme] ?? theme}`}
+                            onClick={() => chooseTheme(theme, mode)}
+                            className="absolute inset-0 cursor-pointer rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                          />
+                          <span className="pointer-events-none flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
                             <span className="h-full w-1/2 bg-primary" />
                             <span className="h-full w-1/2 bg-secondary" />
                           </span>
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold text-base-content">
+                            <span className="pointer-events-none block truncate text-sm font-semibold text-base-content">
                               {themeLabels[theme] ?? theme}
                             </span>
-                            <span className="text-xs text-base-content/60 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                            <button
+                              type="button"
+                              aria-label={`Retirer le thème ${themeLabels[theme] ?? theme}`}
+                              onClick={() =>
+                                toggleAvailableTheme(theme, themeList)
+                              }
+                              className="btn btn-ghost btn-xs relative z-10 px-1 normal-case opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100"
+                            >
                               Retirer
-                            </span>
+                            </button>
                           </span>
-                        </button>
+                        </div>
                       ))}
 
                       <button
