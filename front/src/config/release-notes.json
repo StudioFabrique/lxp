@@ -3,23 +3,23 @@
     "version": "0.9.1",
     "status": "Beta",
     "branch": "release/0.9.1",
-    "summary": "Actualisation des rôles et ajustement des thèmes sombres, réorganisation de l'accueil et de l'affichage des nouveautés, simplification de l'initialisation et présentation de la…",
+    "summary": "Corrections et améliorations de l'interface utilisateur.",
     "changes": [
       {
         "title": "Actualiser les rôles et ajuster les thèmes sombres",
-        "description": "Les rôles ont été actualisés, et les thèmes sombres ont été ajustés pour une meilleure visibilité et une meilleure expérience utilisateur."
+        "description": "Les rôles et les thèmes sombres ont été mis à jour pour une meilleure expérience utilisateur."
       },
       {
         "title": "Réorganiser l'accueil et l'affichage des…",
-        "description": "L'accueil a été réorganisé, et les nouvelles fonctionnalités ont été présentées de manière plus claire et accessible."
+        "description": "L'accueil et les nouvelles ont été réorganisés pour une meilleure présentation."
       },
       {
         "title": "Simplifier l'initialisation et présenter la bêta…",
-        "description": "L'initialisation a été simplifiée, et la version beta 0.9 a été présentée pour les utilisateurs."
+        "description": "L'initialisation et la bêta 0.9 ont été simplifiées et présentées pour une meilleure compréhension."
       },
       {
         "title": "Améliorer la mise en page de /init",
-        "description": "La mise en page de l'initialisation a été améliorée pour une meilleure expérience utilisateur."
+        "description": "La mise en page de /init a été améliorée pour une meilleure présentation."
       }
     ]
   },
