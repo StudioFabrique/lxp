@@ -1,5 +1,23 @@
 [
   {
+    "version": "0.9.1",
+    "status": "Beta",
+    "branch": "release/0.9.1",
+    "summary": "Harmonisation des notes de version et amélioration de la présentation des nouveautés.",
+    "changes": [
+      {
+        "title": "Harmonisation des notes",
+        "description": "Les notes de version ont été harmonisées pour une meilleure lisibilité et…",
+        "icon": "layout"
+      },
+      {
+        "title": "Amélioration de",
+        "description": "Les nouvelles fonctionnalités ont été présentées de manière plus claire et…",
+        "icon": "layout"
+      }
+    ]
+  },
+  {
     "version": "0.9",
     "status": "Beta",
     "commit": "31560a9349e17e9c9e8bdf31c85bd91319b5dc33",
