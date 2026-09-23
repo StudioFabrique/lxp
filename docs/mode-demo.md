@@ -214,8 +214,9 @@ npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 démonstration, à chaque déploiement, dès que l'environnement porte
 `DEMO_MODE=true` :
 
-1. `DROP SCHEMA public CASCADE` sur la base LXP. Le dump est un `pg_dump -a`,
-   il ne se rejoue que sur un schéma vide ;
+1. arrêt de l'application et recréation de la base LXP. Le dump est un
+   `pg_dump -a` et ne se rejoue que sur une base vide ; cette étape efface aussi
+   le marqueur de migration Prisma 8 ;
 2. `prisma db migrate`, puis les triggers ANDRIA ;
 3. `psql < api/dumps/demo/dump-pgsql.sql` ;
 4. `mongorestore --drop` du dump Mongo, copié dans le conteneur au préalable ;
