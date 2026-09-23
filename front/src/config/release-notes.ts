@@ -3,6 +3,7 @@ import notes from "./release-notes.json";
 export type ReleaseNote = {
   version: string;
   status: string;
+  branch?: string;
   summary: string;
   changes: { title: string; description: string }[];
 };

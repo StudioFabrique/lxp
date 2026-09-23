@@ -2,6 +2,7 @@
   {
     "version": "0.9.1",
     "status": "Beta",
+    "branch": "release/0.9.1",
     "summary": "Actualisation des rôles et ajustement des thèmes sombres, réorganisation de l'accueil et de l'affichage des nouveautés, simplification de l'initialisation et présentation de la…",
     "changes": [
       {

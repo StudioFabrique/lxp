@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { GraduationCap, Palette, Rocket, ShieldCheck } from "lucide-react";
 import CursorGlowCard from "./cursor-glow-card";
 import Modal from "./modal/modal";
 import BoxWrapper from "../wrappers/BoxWrapper";
-import { currentRelease } from "../../config/release-notes";
+import { currentRelease, releaseNotes } from "../../config/release-notes";
 
 type Props = {
   onClose: () => void;
@@ -13,6 +13,13 @@ type Props = {
 const changeIcons = [Rocket, GraduationCap, Palette, ShieldCheck];
 
 export default function ReleaseNotesModal({ onClose }: Props) {
+  const [selectedVersion, setSelectedVersion] = useState(currentRelease.version);
+  const selectedRelease =
+    releaseNotes.find(({ version }) => version === selectedVersion) ?? currentRelease;
+  const githubUrl = selectedRelease.branch
+    ? `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.branch}`
+    : "https://github.com/StudioFabrique/lxp";
+
   useEffect(() => {
     const previousFocus = document.activeElement as HTMLElement | null;
     const closeButton = document.querySelector<HTMLButtonElement>(
@@ -41,6 +48,23 @@ export default function ReleaseNotesModal({ onClose }: Props) {
       dialogAdditionalClass="text-left"
     >
       <div className="mt-5 space-y-4">
+        <div className="flex items-center justify-end gap-3">
+          <label htmlFor="release-notes-version" className="text-sm text-base-content/70">
+            Version
+          </label>
+          <select
+            id="release-notes-version"
+            value={selectedVersion}
+            onChange={(event) => setSelectedVersion(event.target.value)}
+            className="select select-sm w-auto max-w-full border-base-300 bg-base-200 text-base-content focus-visible:outline-primary"
+          >
+            {releaseNotes.map(({ version, status }) => (
+              <option key={version} value={version}>
+                {version} · {status}
+              </option>
+            ))}
+          </select>
+        </div>
         <CursorGlowCard
           autoGlow
           glowColor="accent"
@@ -48,20 +72,24 @@ export default function ReleaseNotesModal({ onClose }: Props) {
           className="bg-primary"
         >
           <a
-            href="https://github.com/StudioFabrique/lxp"
+            href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Voir le dépôt GitHub d’ANDRIA (nouvel onglet)"
+            aria-label={
+              selectedRelease.branch
+                ? `Voir la branche ${selectedRelease.branch} sur GitHub (nouvel onglet)`
+                : "Voir le dépôt GitHub d’ANDRIA (nouvel onglet)"
+            }
             className="group block cursor-pointer rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <BoxWrapper className="relative h-auto gap-2 overflow-hidden border-primary bg-transparent p-6 text-primary-content transition-colors group-hover:border-primary-content/40">
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none text-6xl font-black leading-none text-primary-content/20 sm:right-6 sm:text-8xl" aria-hidden="true">
-                {currentRelease.version}
+                {selectedRelease.version}
               </span>
               <div className="relative z-10 flex items-center gap-2">
                 <h2 className="text-2xl font-bold">ANDRIA</h2>
                 <span className="badge border-primary-content/30 bg-primary-content/15 text-primary-content">
-                  {currentRelease.status}
+                  {selectedRelease.status}
                 </span>
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-primary-content/20 bg-primary-content/10 text-primary-content transition-colors group-hover:bg-primary-content/20">
                   <svg
@@ -75,17 +103,17 @@ export default function ReleaseNotesModal({ onClose }: Props) {
                 </span>
               </div>
               <p className="relative z-10 max-w-md pr-10 text-sm text-primary-content/80">
-                {currentRelease.summary}
+                {selectedRelease.summary}
               </p>
             </BoxWrapper>
           </a>
         </CursorGlowCard>
         <div className="grid gap-3 sm:grid-cols-2">
-          {currentRelease.changes.map(({ title, description }, index) => {
+          {selectedRelease.changes.map(({ title, description }, index) => {
             const Icon = changeIcons[index] ?? ShieldCheck;
             return (
               <BoxWrapper
-                key={title}
+                key={`${index}-${title}`}
                 className="h-auto gap-2 border-base-300 bg-base-200 p-4"
               >
                 <div className="flex items-center gap-2">

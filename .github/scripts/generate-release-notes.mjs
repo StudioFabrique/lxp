@@ -73,14 +73,19 @@ export function validateContent(content) {
   return { summary, changes };
 }
 
-export function updateNotes(notes, version, content) {
+export function updateNotes(notes, version, content, branch) {
   if (!Array.isArray(notes) || !notes.length) {
     throw new Error("Le catalogue des notes de version est vide.");
   }
   return [
-    { version, status: notes[0].status, ...validateContent(content) },
+    {
+      version,
+      status: notes[0].status,
+      ...(branch ? { branch } : {}),
+      ...validateContent(content),
+    },
     ...notes.filter((note) => note.version !== version),
-  ];
+  ].slice(0, 5);
 }
 
 export function isTextOnlyCorrection(changedFiles, previousVersion, currentVersion) {
@@ -129,7 +134,8 @@ export async function generateContent(commits) {
             "Résume uniquement les changements attestés par ces commits. N'invente rien. " +
             "Privilégie les effets visibles pour les apprenants et les administrateurs; " +
             "ignore le jargon technique et les changements purement internes. " +
-            "Une phrase brève pour le résumé général et une à quatre cartes avec un titre court et une phrase chacune. " +
+            "Le résumé général doit tenir en 110 caractères. Rédige une à quatre cartes, " +
+            "avec un titre de 35 caractères maximum et une description de 120 caractères maximum pour chacune. " +
             "Ne mentionne pas les numéros de commit ni les noms de fichiers. " +
             `Réponds uniquement avec un objet JSON conforme à ce schéma : ${JSON.stringify(schema)}`,
         },
@@ -200,7 +206,7 @@ async function main() {
   }));
   const notes = JSON.parse(readFileSync(notesFile, "utf8"));
   const content = await generateContent(commitDetails);
-  const updated = updateNotes(notes, version, content);
+  const updated = updateNotes(notes, version, content, process.env.GITHUB_REF_NAME);
   writeFileSync(notesFile, `${JSON.stringify(updated, null, 2)}\n`);
   console.log(`Notes ${version} générées à partir de ${commits.length} commit(s).`);
 }

@@ -44,12 +44,26 @@ test("remplace la version courante tout en conservant l'historique", () => {
     summary: "Les erreurs sont plus claires.",
     changes: [{ title: "Messages", description: "Les erreurs indiquent quoi faire." }],
   };
-  const result = updateNotes(old, "0.9.1", content);
+  const result = updateNotes(old, "0.9.1", content, "release/0.9.1");
   assert.deepEqual(result.map(({ version }) => version), ["0.9.1", "0.9"]);
   assert.equal(result[0].status, "Beta");
+  assert.equal(result[0].branch, "release/0.9.1");
   assert.equal(result[0].summary, content.summary);
   assert.equal(old[0].summary, "Ancien");
   assert.throws(() => updateNotes(old, "0.9.1", { summary: "", changes: [] }));
+});
+
+test("ne conserve que les cinq dernières versions", () => {
+  const old = Array.from({ length: 6 }, (_, index) => ({
+    version: `0.9.${6 - index}`,
+    status: "Beta",
+  }));
+  const result = updateNotes(old, "0.9.7", {
+    summary: "Une correction utile.",
+    changes: [{ title: "Navigation", description: "Un lien fonctionne." }],
+  }, "release/0.9.7");
+  assert.equal(result.length, 5);
+  assert.deepEqual(result.map(({ version }) => version), ["0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3"]);
 });
 
 test("demande un JSON au modèle local et valide sa réponse", async () => {
