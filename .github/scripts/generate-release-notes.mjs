@@ -34,33 +34,31 @@ export function parseCommits(log) {
 }
 
 export function validateContent(content) {
-  const validText = (value, max) =>
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.length <= max &&
-    !/[<>\r\n]/.test(value);
-
-  if (
-    !content ||
-    !validText(content.summary, 180) ||
-    !Array.isArray(content.changes) ||
-    content.changes.length < 1 ||
-    content.changes.length > 4 ||
-    !content.changes.every(
-      (change) =>
-        validText(change.title, 50) &&
-        validText(change.description, 180),
-    )
-  ) {
-    throw new Error("Le résumé IA ne respecte pas le format des notes de version.");
-  }
-  return {
-    summary: content.summary.trim(),
-    changes: content.changes.map(({ title, description }) => ({
-      title: title.trim(),
-      description: description.trim(),
-    })),
+  const compactText = (value, max) => {
+    if (typeof value !== "string") return null;
+    const clean = value.replace(/<[^>]*>/g, "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim();
+    if (!clean) return null;
+    if (clean.length <= max) return clean;
+    const prefix = clean.slice(0, max - 1);
+    const wordEnd = prefix.lastIndexOf(" ");
+    return `${prefix.slice(0, wordEnd > max / 2 ? wordEnd : max - 1).trimEnd()}…`;
   };
+
+  const summary = compactText(content?.summary, 180);
+  const changes = Array.isArray(content?.changes)
+    ? content.changes.slice(0, 4).map((change) => ({
+        title: compactText(change?.title, 50),
+        description: compactText(change?.description, 180),
+      }))
+    : [];
+  if (!summary || !changes.length || changes.some(({ title, description }) => !title || !description)) {
+    throw new Error(
+      `Le résumé IA ne respecte pas le format des notes de version ` +
+        `(résumé: ${typeof content?.summary}, cartes: ${content?.changes?.length ?? "absentes"}, ` +
+        `cartes incomplètes: ${changes.filter(({ title, description }) => !title || !description).length}).`,
+    );
+  }
+  return { summary, changes };
 }
 
 export function updateNotes(notes, version, content) {

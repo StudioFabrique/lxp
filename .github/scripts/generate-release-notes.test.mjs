@@ -5,6 +5,7 @@ import {
   isTextOnlyCorrection,
   parseCommits,
   updateNotes,
+  validateContent,
   versionFromBranch,
 } from "./generate-release-notes.mjs";
 
@@ -86,4 +87,18 @@ test("une correction de texte ne relance pas l'IA, mais un changement de version
     isTextOnlyCorrection([...files, "front/src/App.tsx"], "0.9.1", "0.9.1"),
     false,
   );
+});
+
+test("raccourcit le texte du modèle pour conserver quatre cartes lisibles", () => {
+  const result = validateContent({
+    summary: `Une amélioration utile\n${"pour les apprenants ".repeat(20)}`,
+    changes: Array.from({ length: 6 }, (_, index) => ({
+      title: `Amélioration ${index} ${"très longue ".repeat(8)}`,
+      description: `<b>Une correction</b> ${"plus claire ".repeat(20)}`,
+    })),
+  });
+  assert.equal(result.changes.length, 4);
+  assert.ok(result.summary.length <= 180);
+  assert.ok(result.changes.every(({ title, description }) => title.length <= 50 && description.length <= 180));
+  assert.ok(!/[<>\r\n]/.test(JSON.stringify(result)));
 });
