@@ -13,7 +13,7 @@ import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholde
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { ChartNoAxesCombined } from "lucide-react";
+import { ChartNoAxesCombined, Play } from "lucide-react";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -36,6 +36,12 @@ const StudentDashboard = () => {
     }
   }, [learningContext.data, navigate]);
 
+  const canResumeOnboarding =
+    !learningContext.isError &&
+    learningContext.data?.hasAvailableContent === true &&
+    learningContext.data.onboardingRequired &&
+    !learningContext.data.shouldAutoRedirect;
+
   if (learningContext.isLoading) {
     return (
       <PageWrapper aria-busy="true">
@@ -56,10 +62,17 @@ const StudentDashboard = () => {
             description={welcomeMessage}
             classname="capitalize"
           >
-            <Link to="/student/mon-avancement" className="btn btn-outline btn-primary">
-              <ChartNoAxesCombined className="size-4" aria-hidden="true" />
-              Mon avancement
-            </Link>
+            {canResumeOnboarding ? (
+              <Link to="/student/onboarding" className="btn btn-primary">
+                <Play className="size-4 fill-current" aria-hidden="true" />
+                Reprendre mon onboarding
+              </Link>
+            ) : (
+              <Link to="/student/mon-avancement" className="btn btn-outline btn-primary">
+                <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+                Mon avancement
+              </Link>
+            )}
           </Header>
         )}
       </div>
@@ -82,30 +95,6 @@ const StudentDashboard = () => {
       {!learningContext.isError &&
       learningContext.data?.hasAvailableContent === false ? (
         <EmptyStatePlaceholder title="Aucun contenu disponible pour l’instant, revenez plus tard !" />
-      ) : null}
-
-      {!learningContext.isError &&
-      learningContext.data?.hasAvailableContent &&
-      learningContext.data.onboardingRequired &&
-      !learningContext.data.shouldAutoRedirect ? (
-        <BoxWrapper className="flex-row flex-wrap items-center justify-between gap-4 border border-primary/25 bg-primary/5">
-          <div>
-            <h2 className="font-bold">Compléter mon profil d’apprentissage</h2>
-            <p className="text-sm text-base-content/70">
-              Modules en attente :{" "}
-              {learningContext.data.modulesToAssess
-                .map((module) => module.title)
-                .join(", ") || "préférences générales"}
-            </p>
-          </div>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => navigate("/student/onboarding")}
-          >
-            Reprendre mon onboarding
-          </button>
-        </BoxWrapper>
       ) : null}
 
       {!learningContext.isError &&

@@ -9,7 +9,7 @@ type Props = {
 const TopFiveUsers = ({ topUsers }: Props) => (
   <>
     {topUsers.length === 0 ? (
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-sm text-base-content/70">
         Aucune donnée disponible
       </p>
     ) : (

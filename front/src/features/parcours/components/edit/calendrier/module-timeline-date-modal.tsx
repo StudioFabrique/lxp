@@ -103,7 +103,7 @@ const ModuleTimelineDateModal = ({
         <div className="card bg-base-100 shadow-xl w-full">
           {/* --- CARD IMAGE --- */}
           {currentModule.thumb && (
-            <figure className="h-48 w-full relative overflow-hidden bg-gray-100">
+            <figure className="h-48 w-full relative overflow-hidden bg-base-200">
               <img
                 src={normalizeImageSource(currentModule.thumb)}
                 alt={formatTitle(currentModule.title)}
@@ -122,7 +122,7 @@ const ModuleTimelineDateModal = ({
               <h2 className="card-title text-2xl">{formatTitle(currentModule.title)}</h2>
             )}
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-base-content/70">
               Modifiez les dates de disponibilité pour ce module.
             </p>
 

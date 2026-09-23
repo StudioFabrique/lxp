@@ -39,18 +39,7 @@ export async function resolveAvailableFormations(
         links.group.some((group) => group.idMdb.in(groupIds)),
       ),
       row.modules.some((module) =>
-        module.courses.some((course) =>
-          and(
-            course.isPublished.eq(true),
-            course.visibility.eq(true),
-            course.lessons.some((lesson) =>
-              and(
-                lesson.visibility.eq(true),
-                lesson.activities.some((activity) => activity.id.gt(0)),
-              ),
-            ),
-          ),
-        ),
+        module.courses.some((course) => course.id.gt(0)),
       ),
     ),
   )
@@ -64,18 +53,6 @@ export async function resolveAvailableFormations(
         .select("id", "title")
         .include("courses", (courses) =>
           courses
-            .where((course) =>
-              and(
-                course.isPublished.eq(true),
-                course.visibility.eq(true),
-                course.lessons.some((lesson) =>
-                  and(
-                    lesson.visibility.eq(true),
-                    lesson.activities.some((activity) => activity.id.gt(0)),
-                  ),
-                ),
-              ),
-            )
             .select("title")
             .include("tags", (tags) => tags.include("tag", (tag) => tag.select("id", "name", "color")))
             .orderBy((course) => course.order.asc()),

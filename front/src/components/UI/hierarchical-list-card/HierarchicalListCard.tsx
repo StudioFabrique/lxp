@@ -76,7 +76,7 @@ const HierarchicalListCard = ({
             "list overflow-visible pb-2 rounded-box border border-base-300",
             {
               "h-full min-h-52": !fullWidth,
-              "border-dashed border-primary/25": !hasHeader,
+              "border-dashed border-primary/55 bg-base-200/40": !hasHeader,
               "bg-base-200": hasHeader,
             },
           )}
@@ -104,7 +104,7 @@ const HierarchicalListCard = ({
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       {label ? (
-                        <p className="select-none text-xs tracking-wide opacity-60">
+                        <p className={cn("select-none text-xs tracking-wide", headerBackgroundImage ? "text-white/80" : "text-base-content/80")}>
                           {label}
                         </p>
                       ) : null}
@@ -125,7 +125,7 @@ const HierarchicalListCard = ({
                       </h4>
                     </div>
                     {description ? (
-                      <div className="mt-1 text-xs opacity-60">
+                      <div className={cn("mt-1 text-xs", headerBackgroundImage ? "text-white/80" : "text-base-content/80")}>
                         {description}
                       </div>
                     ) : null}
@@ -145,7 +145,7 @@ const HierarchicalListCard = ({
               ))}
 
               {items.length === 0 ? (
-                <li className="flex flex-1 items-center justify-center px-5 py-8 text-sm opacity-60 select-none">
+                <li className="flex flex-1 items-center justify-center px-5 py-8 text-sm text-base-content/80 select-none">
                   {emptyMessage}
                 </li>
               ) : null}

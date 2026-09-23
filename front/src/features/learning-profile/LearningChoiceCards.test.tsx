@@ -6,6 +6,7 @@ import {
   paceOptions,
 } from "./learning-choice-options";
 import {
+  LevelChoiceButtons,
   PreferenceCards,
   SingleChoiceCards,
 } from "./LearningChoiceCards";
@@ -36,6 +37,17 @@ describe("LearningChoiceCards", () => {
     ]);
   });
 
+  it("affiche les niveaux comme des boutons radio compacts", () => {
+    const markup = renderToStaticMarkup(
+      <LevelChoiceButtons name="level-1" value="advanced" onChange={vi.fn()} />,
+    );
+
+    expect(markup).toContain('role="radiogroup"');
+    expect(markup.match(/type="radio"/g)).toHaveLength(4);
+    expect(markup).toContain("Je suis déjà à l&#x27;aise avec le sujet.");
+    expect(markup).toContain("focus-within:ring-inset");
+  });
+
   it("expose les préférences comme des cases à cocher accessibles", () => {
     const markup = renderToStaticMarkup(
       <PreferenceCards
@@ -47,6 +59,7 @@ describe("LearningChoiceCards", () => {
     expect(markup).toContain('role="group"');
     expect(markup).toContain('type="checkbox"');
     expect(markup).toContain("Exemples concrets");
-    expect(markup).toContain("Supports visuels");
+    expect(markup).toContain("Questions d’entraînement");
+    expect(markup).not.toContain("Supports visuels");
   });
 });

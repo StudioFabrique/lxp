@@ -8,6 +8,7 @@ import { PreferenceCards, SingleChoiceCards } from "../../learning-profile/Learn
 import { learningProfileApi, learningProfileKey } from "../../learning-profile/learning-profile.api";
 import type { FormationLevel, LearningPace, LearningPreference } from "../../learning-profile/types";
 import { cn } from "../../../utils/cn";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type Props = { onClose?: () => void };
 
@@ -16,9 +17,21 @@ export default function StudentProfile({ onClose }: Props) {
   const [pace, setPace] = useState<LearningPace | null>(null);
   const [preferences, setPreferences] = useState<LearningPreference[]>([]);
   const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
+  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const queryClient = useQueryClient();
   const query = useQuery({ queryKey: learningProfileKey, queryFn: learningProfileApi.get });
+  const modules = query.data?.availableFormations.flatMap((formation) =>
+    formation.parcours.flatMap((parcours) =>
+      parcours.modules.map((module) => ({
+        ...module,
+        formationTitle: formation.title,
+        parcoursTitle: parcours.title,
+      })),
+    ),
+  ) ?? [];
+  const selectedModule =
+    modules.find((module) => module.id === selectedModuleId) ?? modules[0];
 
   useEffect(() => {
     if (!query.data) return;
@@ -63,13 +76,43 @@ export default function StudentProfile({ onClose }: Props) {
       <SingleChoiceCards name="profile-pace" options={paceOptions} value={pace} onChange={setPace} />
       <h3 className="font-semibold">Comment aimez-vous apprendre ?</h3>
       <PreferenceCards value={preferences} onChange={setPreferences} />
-    </div> : <div className="space-y-5">{query.data?.availableFormations.map((formation) => <section key={formation.id} className="rounded-xl border border-base-300 p-4">
-      <h3 className="mb-3 font-semibold first-letter:uppercase">{formation.title}</h3>
-      {formation.parcours.flatMap((parcours) => parcours.modules.map((module) => ({ ...module, parcoursTitle: parcours.title }))).map((module) => <div key={module.id} className="mb-4">
-        <h4 className="mb-2 text-sm font-medium">{module.title} <span className="text-base-content/60">· {module.parcoursTitle}</span></h4>
-        <SingleChoiceCards name={`profile-level-${module.id}`} options={levelOptions} value={levels[module.id] ?? null} onChange={(level) => setLevels((current) => ({ ...current, [module.id]: level }))} />
-      </div>)}
-    </section>)}</div>}
+    </div> : <div className="space-y-4">
+      {modules.length > 0 ? (
+        <>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer par module">
+            {modules.map((module) => (
+              <button
+                key={module.id}
+                type="button"
+                className={cn(
+                  "btn btn-xs btn-secondary h-auto min-h-7 max-w-full px-2 py-1 text-xs leading-tight whitespace-normal text-left",
+                  selectedModule?.id !== module.id && "btn-outline",
+                )}
+                title={`${formatTitle(module.title)} · ${formatTitle(module.parcoursTitle)}`}
+                aria-pressed={selectedModule?.id === module.id}
+                onClick={() => setSelectedModuleId(module.id)}
+              >
+                <span>{formatTitle(module.title)}</span>
+              </button>
+            ))}
+          </div>
+          {selectedModule && (
+            <section className="rounded-xl border border-base-300 p-4" aria-label={`Niveau dans ${formatTitle(selectedModule.title)}`}>
+              <h3 className="font-semibold">{formatTitle(selectedModule.title)}</h3>
+              <p className="mb-4 text-xs text-base-content/60">
+                {formatTitle(selectedModule.formationTitle)} · {formatTitle(selectedModule.parcoursTitle)}
+              </p>
+              <SingleChoiceCards
+                name={`profile-level-${selectedModule.id}`}
+                options={levelOptions}
+                value={levels[selectedModule.id] ?? null}
+                onChange={(level) => setLevels((current) => ({ ...current, [selectedModule.id]: level }))}
+              />
+            </section>
+          )}
+        </>
+      ) : <p className="text-sm text-base-content/65">Aucun module disponible.</p>}
+    </div>}
     <div className="flex justify-end border-t border-base-300 pt-4"><button type="button" className="btn btn-primary" disabled={saving || query.isLoading || query.isError} onClick={() => void save()}>{saving ? "Enregistrement…" : "Enregistrer"}</button></div>
   </div>;
 

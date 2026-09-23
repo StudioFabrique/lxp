@@ -9,11 +9,8 @@ type Props = {
 const TagsList = ({ tagsList, onRemove }: Props) => (
   <ul className="flex flex-wrap gap-2">
     {tagsList.map((item) => (
-      <li
-        key={item.id}
-        onClick={onRemove ? () => onRemove(item.id) : undefined}
-      >
-        <TagItem tag={item} />
+      <li key={item.id}>
+        <TagItem tag={item} onClick={onRemove ? () => onRemove(item.id) : undefined} />
       </li>
     ))}
   </ul>

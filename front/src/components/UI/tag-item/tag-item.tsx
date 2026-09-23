@@ -1,44 +1,50 @@
-import { FC } from "react";
+import type { CSSProperties, FC } from "react";
+import { X } from "lucide-react";
 
-import Tag from "../../../utils/interfaces/tag";
+import type Tag from "../../../utils/interfaces/tag";
 import { cn } from "../../../utils/cn";
 
-const TagItem: FC<{ tag: Tag; noIcon?: boolean; disabled?: boolean }> = ({
+type TagItemProps = {
+  tag: Tag;
+  noIcon?: boolean;
+  disabled?: boolean;
+  compact?: boolean;
+  onClick?: () => void;
+};
+
+const TagItem: FC<TagItemProps> = ({
   tag,
   noIcon = false,
   disabled = false,
+  compact = false,
+  onClick,
 }) => {
-  const tagStyle: React.CSSProperties = {
-    backgroundColor: tag.color,
+  const style: CSSProperties = {
+    backgroundColor: `color-mix(in srgb, ${tag.color} 45%, white)`,
+    color: "#17202a",
   };
+  const className = cn(
+    "inline-flex items-center gap-2 rounded-lg border border-black/10 font-bold leading-5",
+    compact ? "px-2.5 py-1 text-xs" : "min-h-8 px-4 py-1 text-sm",
+    onClick && !disabled ? "cursor-pointer hover:brightness-95" : "cursor-default",
+  );
+  const content = (
+    <>
+      <span>#{tag.name}</span>
+      {onClick && !noIcon && !disabled && (
+        <X className="size-3.5 shrink-0 opacity-70" aria-hidden="true" />
+      )}
+    </>
+  );
 
-  if (noIcon) tagStyle.cursor = "default";
+  if (!onClick || disabled) {
+    return <span className={className} style={style}>{content}</span>;
+  }
 
   return (
-    <div>
-      <button
-        className={cn("btn btn-sm px-4 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125", noIcon && "no-animation")}
-        type="button"
-        style={{ backgroundColor: tag.color }}
-        disabled={disabled}
-      >
-        <p>{`#${tag.name}`}</p>
-        {noIcon ? null : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-4 h-4 text-base-content/50"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-              clipRule="evenodd"
-            />
-          </svg>
-        )}
-      </button>
-    </div>
+    <button type="button" className={className} style={style} onClick={onClick}>
+      {content}
+    </button>
   );
 };
 

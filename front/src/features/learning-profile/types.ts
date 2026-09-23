@@ -8,8 +8,7 @@ export type LearningPreference =
   | "concrete_examples"
   | "step_by_step"
   | "summary"
-  | "practical_exercises"
-  | "visual_aids";
+  | "practical_exercises";
 
 export type FormationLevel =
   | "beginner"

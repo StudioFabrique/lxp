@@ -91,11 +91,11 @@ const ModuleTimelineDetailsPopover = ({
     <div
       ref={cardRef}
       style={style}
-      className={cn("absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-gray-200 animate-in fade-in zoom-in-95 duration-200", isBottomHalf ? "origin-bottom-left" : "origin-top-left")}
+      className={cn("absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-base-300 animate-in fade-in zoom-in-95 duration-200", isBottomHalf ? "origin-bottom-left" : "origin-top-left")}
     >
       {/* --- BANNER IMAGE --- */}
       {currentModule.thumb && (
-        <figure className="h-32 w-full relative bg-gray-100">
+        <figure className="h-32 w-full relative bg-base-200">
           <button
             onClick={onClose}
             className="z-50 absolute top-2 right-2 btn btn-xs btn-circle"
@@ -132,7 +132,7 @@ const ModuleTimelineDetailsPopover = ({
         </div>
 
         {currentModule.description && (
-          <p className="text-sm py-2 text-gray-600 line-clamp-4">
+          <p className="text-sm py-2 text-base-content/80 line-clamp-4">
             {currentModule.description}
           </p>
         )}
@@ -141,7 +141,7 @@ const ModuleTimelineDetailsPopover = ({
         {currentModule.minDate && currentModule.maxDate && (
           <div className="grid grid-cols-2 gap-2 bg-base-200/50 p-3 rounded-lg border border-base-200 text-xs">
             <div>
-              <span className="uppercase font-bold text-gray-400 block mb-1">
+              <span className="uppercase font-bold text-base-content/70 block mb-1">
                 Début
               </span>
               <span className="font-semibold">
@@ -149,7 +149,7 @@ const ModuleTimelineDetailsPopover = ({
               </span>
             </div>
             <div>
-              <span className="uppercase font-bold text-gray-400 block mb-1">
+              <span className="uppercase font-bold text-base-content/70 block mb-1">
                 Fin
               </span>
               <span className="font-semibold">

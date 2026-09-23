@@ -173,7 +173,7 @@ export const HierarchicalListRow = ({
 
       <div className="pointer-events-none relative z-10 list-col-grow min-w-0 self-center">
         {item.description ? (
-          <div className="truncate text-xs font-light opacity-60">
+          <div className="truncate text-xs text-base-content/80">
             {item.description}
           </div>
         ) : null}
@@ -187,7 +187,7 @@ export const HierarchicalListRow = ({
         </div>
 
         {item.subDescription ? (
-          <div className="truncate text-xs font-light opacity-60">
+          <div className="truncate text-xs text-base-content/80">
             {item.subDescription}
           </div>
         ) : null}

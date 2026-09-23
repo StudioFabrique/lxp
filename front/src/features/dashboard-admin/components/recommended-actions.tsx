@@ -39,7 +39,7 @@ export default function RecommendedActions({
           >
             Actions recommandées
           </h2>
-          <p className="text-sm text-base-content/65">
+          <p className="text-sm text-base-content/80">
             Quelques étapes pour bien démarrer sur la plateforme.
           </p>
         </div>
@@ -70,13 +70,13 @@ export default function RecommendedActions({
                   to={action.to}
                   className="group block h-full rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
-                  <BoxWrapper className="flex-row items-start gap-3 bg-primary/5 p-4 transition group-hover:border-primary/50 group-hover:bg-primary/10 group-hover:shadow-md">
+                  <BoxWrapper className="flex-row items-start gap-3 border-primary/40 bg-base-200 p-4 transition group-hover:border-primary/70 group-hover:bg-base-300/60 group-hover:shadow-md">
                     <span className="flex size-10 shrink-0 items-center justify-center text-primary">
                       <Icon className="h-5 w-5" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-semibold">{action.title}</span>
-                      <span className="mt-1 block text-sm text-base-content/65">
+                      <span className="mt-1 block text-sm text-base-content/80">
                         {action.description}
                       </span>
                     </span>

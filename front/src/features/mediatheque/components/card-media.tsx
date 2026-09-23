@@ -65,7 +65,7 @@ function CardMedia({ children, media }: Props) {
             >
               <button disabled={media.used > 0}>
                 <Trash2
-                  className={cn("w-5 h-5", media.used > 0 ? "text-gray-500" : "text-error")}
+                  className={cn("w-5 h-5", media.used > 0 ? "text-base-content/60" : "text-error")}
                 />
               </button>
             </div>
