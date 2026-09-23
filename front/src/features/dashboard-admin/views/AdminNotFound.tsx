@@ -3,7 +3,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   BookOpen,
-  Boxes,
+  Component,
   RotateCw,
   Users,
 } from "lucide-react";
@@ -40,7 +40,7 @@ const shortcuts: {
     description: "Accéder aux modules pédagogiques.",
     to: "/admin/module",
     subject: "module",
-    icon: Boxes,
+    icon: Component,
   },
 ];
 

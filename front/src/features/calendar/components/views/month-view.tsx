@@ -13,7 +13,11 @@ type Props = {
   onSelectDay?: (date: Date) => void;
   onShowMore: (events: CalendarEvent[]) => void;
   currentDate: Date;
-  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
+  onClickEventDetails?: (
+    id: number | string,
+    rect: DOMRect,
+    element?: HTMLElement,
+  ) => void;
 };
 
 const MonthView = ({
@@ -72,21 +76,21 @@ const MonthView = ({
           return (
             <div
               key={idx}
-              onClick={event => {
-                if (!(event.target as HTMLElement).closest("button")) onSelectDay?.(new Date(cellDate));
+              onClick={(event) => {
+                if (!(event.target as HTMLElement).closest("button"))
+                  onSelectDay?.(new Date(cellDate));
               }}
-              className={`border-b border-r min-h-[80px] p-1 flex flex-col gap-1 transition-colors
+              className={`border-b border-r min-h-20 p-1 flex flex-col gap-1 transition-colors
                   ${theme.border}
                   ${onSelectDay ? "cursor-pointer hover:bg-primary/5" : ""}
                   ${
                     !cell.currentMonth ? "bg-base-200 text-base-content/40" : ""
                   }
-                  ${
-                    isToday ? theme.todayBg : ""
-                  }
+                  ${isToday ? theme.todayBg : ""}
                 `}
             >
-              <button type="button"
+              <button
+                type="button"
                 aria-label={`Voir le ${cellDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} en vue Jour`}
                 onClick={() => onSelectDay?.(new Date(cellDate))}
                 className={`self-end rounded px-1 text-right text-xs font-bold mb-1 hover:bg-primary/10 focus-visible:outline-primary ${
@@ -100,7 +104,7 @@ const MonthView = ({
                   : cell.date.getDate()}
               </button>
 
-              <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] no-scrollbar">
+              <div className="flex flex-col gap-1 overflow-y-auto max-h-25 no-scrollbar">
                 {dayEvents.slice(0, 2).map((event) => {
                   const styleClass = eventConfig[event.type];
                   return (
@@ -119,16 +123,24 @@ const MonthView = ({
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
                         {event.category === "assignment"
-                          ? event.deadlineTime ?? event.start
+                          ? (event.deadlineTime ?? event.start)
                           : event.allDay
-                            ? "Sans horaire"
+                            ? "Sans horaire - "
                             : event.start}
                       </span>
                       {event.title}
                     </button>
                   );
                 })}
-                {dayEvents.length > 2 && <button type="button" className="text-left text-xs text-primary hover:underline" onClick={() => onShowMore(dayEvents.slice(2))}>Afficher plus ({dayEvents.length - 2})</button>}
+                {dayEvents.length > 2 && (
+                  <button
+                    type="button"
+                    className="text-left text-xs text-primary hover:underline"
+                    onClick={() => onShowMore(dayEvents.slice(2))}
+                  >
+                    Afficher plus ({dayEvents.length - 2})
+                  </button>
+                )}
               </div>
             </div>
           );

@@ -1,4 +1,6 @@
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -29,10 +31,15 @@ import {
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { moduleCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
+import useValidateParcours from "../hooks/useValidateParcours";
+import { parcoursApi } from "../api/parcours.api";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
+  const navigate = useNavigate();
+  const { validateParcours } = useValidateParcours();
+  const [isPublishing, setIsPublishing] = useState(false);
   const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const onboardingNavigationLocked =
     onboardingStatus === "in_progress" &&
@@ -81,6 +88,29 @@ const EditParcours = () => {
           6: "Groupe d'apprenants",
           7: "Aperçu général",
         }[actualStep.id] ?? actualStep.label);
+  const handlePublishParcours = async () => {
+    if (!id || isPublishing) return;
+
+    const validationErrors = validateParcours();
+    if (validationErrors.length > 0) {
+      toast.error(Object.values(validationErrors[0]).toString());
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      const data = await parcoursApi.mutations.publishParcours(id, true);
+      if (data.success) {
+        toast.success(data.message);
+        navigate(`/admin/parcours/view/${id}`);
+      }
+    } catch {
+      toast.error("Erreur lors de la publication");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const renderActualStep = () => {
     switch (actualStep.id) {
       case 1:
@@ -176,13 +206,24 @@ const EditParcours = () => {
                     </button>
                   }
                   endActions={
-                    <button
-                      className="btn btn-info px-6"
-                      onClick={() => handleUpdateStep(actualStep.id)}
-                      disabled={onboardingNavigationLocked}
-                    >
-                      Étape suivante
-                    </button>
+                    <>
+                      <button
+                        className="btn btn-info px-6"
+                        onClick={() => handleUpdateStep(actualStep.id)}
+                        disabled={onboardingNavigationLocked}
+                      >
+                        Étape suivante
+                      </button>
+                      {!isTeacher && !infos?.isPublished && (
+                        <button
+                          className="btn btn-primary"
+                          onClick={handlePublishParcours}
+                          disabled={onboardingNavigationLocked || isPublishing}
+                        >
+                          Publier
+                        </button>
+                      )}
+                    </>
                   }
                 />
               ) : null}
