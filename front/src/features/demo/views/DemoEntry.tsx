@@ -8,6 +8,7 @@ import { ThemeContext } from "../../../store/ThemeProvider";
 import { useDemoMode } from "../../../store/DemoContext";
 import Loader from "../../../components/loaders/Loader";
 import ThemeToggle from "../../../components/buttons/ThemeToggle";
+import AuthLayout from "../../auth/components/AuthLayout";
 import DemoCaptcha from "../components/DemoCaptcha";
 import { demoApi, type DemoProfile } from "../api/demo-client";
 import { solveChallenge, type DemoSolution } from "../lib/altcha-solver";
@@ -56,8 +57,7 @@ const DemoEntry = () => {
   useEffect(() => {
     if (!isConfigLoaded || demoMode) return;
     if (demoUrl) window.location.replace(demoUrl);
-    else navigate("/login", { replace: true });
-  }, [isConfigLoaded, demoMode, demoUrl, navigate]);
+  }, [isConfigLoaded, demoMode, demoUrl]);
 
   // La vérification tourne pendant que le visiteur lit la page : quand il a
   // choisi son interface, elle est déjà prête.
@@ -126,7 +126,43 @@ const DemoEntry = () => {
     [solution, pending, handshake, navigate],
   );
 
-  if (!isConfigLoaded || !demoMode) return <Loader />;
+  if (!isConfigLoaded || (!demoMode && demoUrl)) return <Loader />;
+
+  if (!demoMode) {
+    return (
+      <AuthLayout setupStyle>
+        <div className="flex min-h-0 w-full flex-1 flex-col text-center">
+          <div className="mb-12 mt-[clamp(5rem,15vh,10rem)] flex flex-col items-center gap-2">
+            <img
+              className="h-auto w-56"
+              src={theme === "light" ? logoLightMode : logoDarkMode}
+              alt="logo ANDRIA"
+            />
+            <span className="mt-2 max-w-xs text-xs font-semibold text-base-content">
+              Apprentissage Numérique & Développement Renforcé par Intelligence
+              Artificielle
+            </span>
+          </div>
+          <section className="flex w-full flex-1 flex-col">
+            <div className="mx-auto max-w-md">
+              <h1 className="text-2xl font-bold text-base-content">
+                Démo indisponible
+              </h1>
+              <p className="mt-5 text-sm leading-6 text-base-content/70">
+                Aucune démonstration n’est configurée pour cette instance.
+              </p>
+            </div>
+            <Link
+              to="/"
+              className="btn btn-primary mx-auto mt-9 rounded-lg normal-case text-base-100"
+            >
+              Retour à l’accueil
+            </Link>
+          </section>
+        </div>
+      </AuthLayout>
+    );
+  }
 
   return (
     <main className="h-screen bg-base-100 px-4 py-24">

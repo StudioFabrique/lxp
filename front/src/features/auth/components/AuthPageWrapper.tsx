@@ -22,7 +22,7 @@ const AuthPageWrapper = ({
 }: Props) => {
   if (variant === "setup") {
     return (
-      <section className="w-full">
+      <section className="flex min-h-full w-full flex-col">
         <header className="mb-7 text-center">
           <div className="flex items-start justify-center gap-2">
             <h1 className="text-2xl font-bold leading-tight text-base-content">

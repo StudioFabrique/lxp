@@ -8,6 +8,7 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import RecommendedActions from "../components/recommended-actions";
 import { useAdminDashboard } from "../hooks/use-admin-dashboard";
+import ReleaseNotesCard from "../../../components/UI/ReleaseNotesCard";
 
 const AdminDashboard = () => {
   const {
@@ -62,6 +63,9 @@ const AdminDashboard = () => {
           </article>
         </div>
       </section>
+      <aside className="mt-2 w-full max-w-xs self-end" aria-label="Nouveautés de la plateforme">
+        <ReleaseNotesCard />
+      </aside>
     </PageWrapper>
   );
 };

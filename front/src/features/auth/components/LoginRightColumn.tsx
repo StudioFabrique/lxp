@@ -6,9 +6,10 @@ import { cn } from "../../../utils/cn";
 type Props = {
   background: AuthBackground | null;
   isFailed: boolean;
+  alignTop?: boolean;
 };
 
-const LoginRightColumn = ({ background, isFailed }: Props) => {
+const LoginRightColumn = ({ background, isFailed, alignTop = false }: Props) => {
   const [failedBackgroundId, setFailedBackgroundId] = useState<string | null>(
     null,
   );
@@ -44,7 +45,7 @@ const LoginRightColumn = ({ background, isFailed }: Props) => {
   };
 
   return (
-    <div className="hidden lg:flex flex-col justify-center items-end relative w-full h-full">
+    <div className={cn("hidden lg:flex flex-col items-end relative w-full h-full", alignTop ? "justify-start" : "justify-center")}>
       <svg className="absolute">
         <defs>
           <clipPath
