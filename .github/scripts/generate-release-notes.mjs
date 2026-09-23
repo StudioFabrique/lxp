@@ -40,6 +40,28 @@ export function readerFriendlySubject(subject) {
   return subject.replace(/^(?:feat|fix|style|perf)(?:\([^)]*\))?!?:\s*/i, "");
 }
 
+const icons = new Set([
+  "book", "calendar", "clipboard", "graduation", "layout", "mail",
+  "monitor", "palette", "rocket", "shield", "user", "users",
+]);
+
+export function iconForChange(title, description = "") {
+  const normalized = `${title} ${description}`.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (/calendrier|agenda/.test(normalized)) return "calendar";
+  if (/role|utilisateur/.test(normalized)) return "users";
+  if (/mot de passe|secur|activation|fiabil|erreur/.test(normalized)) return "shield";
+  if (/profil/.test(normalized)) return "user";
+  if (/e-mail|email|courriel/.test(normalized)) return "mail";
+  if (/evaluation|quiz/.test(normalized)) return "clipboard";
+  if (/devoir|cours/.test(normalized)) return "book";
+  if (/parcours|apprenant|formation/.test(normalized)) return "graduation";
+  if (/theme|couleur|logo|identite|personnalis/.test(normalized)) return "palette";
+  if (/ecran|mise en page/.test(normalized)) return "monitor";
+  if (/demarr|initialis|configur|installation/.test(normalized)) return "rocket";
+  return "layout";
+}
+
 export function validateContent(content) {
   const compactText = (value, max, isTitle = false) => {
     if (typeof value !== "string") return null;
@@ -63,6 +85,9 @@ export function validateContent(content) {
     ? content.changes.slice(0, 4).map((change) => ({
         title: compactText(change?.title, 28, true),
         description: compactText(change?.description, 78),
+        icon: icons.has(change?.icon)
+          ? change.icon
+          : iconForChange(change?.title ?? "", change?.description ?? ""),
       }))
     : [];
   if (!summary || !changes.length || changes.some(({ title, description }) => !title || !description)) {
@@ -90,10 +115,9 @@ export function updateNotes(notes, version, content, branch) {
   ].slice(0, 5);
 }
 
-export function isTextOnlyCorrection(changedFiles, previousVersion, currentVersion) {
+export function isManualNoteUpdate(changedFiles, previousVersion, currentVersion) {
   return (
-    changedFiles.length === 1 &&
-    changedFiles[0] === "front/src/config/release-notes.json" &&
+    changedFiles.includes("front/src/config/release-notes.json") &&
     previousVersion === currentVersion
   );
 }
@@ -177,12 +201,12 @@ async function main() {
       const changedFiles = git("diff", "--name-only", before, "HEAD")
         .split("\n")
         .filter(Boolean);
-      if (changedFiles.length === 1 && changedFiles[0] === "front/src/config/release-notes.json") {
+      if (changedFiles.includes("front/src/config/release-notes.json")) {
         const previousVersion = JSON.parse(
           git("show", `${before}:front/src/config/release-notes.json`),
         )[0]?.version;
         const currentVersion = JSON.parse(readFileSync(notesFile, "utf8"))[0]?.version;
-        shouldGenerate = !isTextOnlyCorrection(
+        shouldGenerate = !isManualNoteUpdate(
           changedFiles,
           previousVersion,
           currentVersion,

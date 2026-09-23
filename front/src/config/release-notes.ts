@@ -4,8 +4,9 @@ export type ReleaseNote = {
   version: string;
   status: string;
   branch?: string;
+  commit?: string;
   summary: string;
-  changes: { title: string; description: string }[];
+  changes: { title: string; description: string; icon?: string }[];
 };
 
 // La première entrée est affichée dans la carte et la fenêtre des nouveautés.

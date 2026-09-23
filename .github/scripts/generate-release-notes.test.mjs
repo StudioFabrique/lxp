@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   generateContent,
-  isTextOnlyCorrection,
+  iconForChange,
+  isManualNoteUpdate,
   parseCommits,
   readerFriendlySubject,
   updateNotes,
@@ -99,12 +100,24 @@ test("demande un JSON au modèle local et valide sa réponse", async () => {
 
 test("une correction de texte ne relance pas l'IA, mais un changement de version oui", () => {
   const files = ["front/src/config/release-notes.json"];
-  assert.equal(isTextOnlyCorrection(files, "0.9.1", "0.9.1"), true);
-  assert.equal(isTextOnlyCorrection(files, "0.9", "0.9.1"), false);
+  assert.equal(isManualNoteUpdate(files, "0.9.1", "0.9.1"), true);
+  assert.equal(isManualNoteUpdate(files, "0.9", "0.9.1"), false);
   assert.equal(
-    isTextOnlyCorrection([...files, "front/src/App.tsx"], "0.9.1", "0.9.1"),
-    false,
+    isManualNoteUpdate([...files, "front/src/App.tsx"], "0.9.1", "0.9.1"),
+    true,
   );
+});
+
+test("choisit une icône liée au sujet de la carte", () => {
+  assert.equal(iconForChange("Comptes sécurisés"), "shield");
+  assert.equal(iconForChange("Rôles corrigés"), "users");
+  assert.equal(iconForChange("Calendrier cohérent"), "calendar");
+  assert.equal(iconForChange("Profil réorganisé"), "user");
+  assert.equal(iconForChange("Écran d’initialisation"), "monitor");
+  assert.equal(validateContent({
+    summary: "Une correction utile.",
+    changes: [{ title: "Calendrier", description: "Plus lisible." }],
+  }).changes[0].icon, "calendar");
 });
 
 test("raccourcit le texte du modèle pour conserver quatre cartes lisibles", () => {

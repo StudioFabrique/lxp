@@ -1,6 +1,20 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { GraduationCap, Palette, Rocket, ShieldCheck } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  ClipboardCheck,
+  GraduationCap,
+  LayoutDashboard,
+  Mail,
+  Monitor,
+  Palette,
+  Rocket,
+  ShieldCheck,
+  UserRound,
+  UsersRound,
+  type LucideIcon,
+} from "lucide-react";
 import CursorGlowCard from "./cursor-glow-card";
 import Modal from "./modal/modal";
 import BoxWrapper from "../wrappers/BoxWrapper";
@@ -10,7 +24,20 @@ type Props = {
   onClose: () => void;
 };
 
-const changeIcons = [Rocket, GraduationCap, Palette, ShieldCheck];
+const changeIcons: Record<string, LucideIcon> = {
+  book: BookOpen,
+  calendar: CalendarDays,
+  clipboard: ClipboardCheck,
+  graduation: GraduationCap,
+  layout: LayoutDashboard,
+  mail: Mail,
+  monitor: Monitor,
+  palette: Palette,
+  rocket: Rocket,
+  shield: ShieldCheck,
+  user: UserRound,
+  users: UsersRound,
+};
 
 export default function ReleaseNotesModal({ onClose }: Props) {
   const [selectedVersion, setSelectedVersion] = useState(currentRelease.version);
@@ -18,7 +45,9 @@ export default function ReleaseNotesModal({ onClose }: Props) {
     releaseNotes.find(({ version }) => version === selectedVersion) ?? currentRelease;
   const githubUrl = selectedRelease.branch
     ? `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.branch}`
-    : "https://github.com/StudioFabrique/lxp";
+    : selectedRelease.commit
+      ? `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.commit}`
+      : "https://github.com/StudioFabrique/lxp";
 
   useEffect(() => {
     const previousFocus = document.activeElement as HTMLElement | null;
@@ -44,12 +73,9 @@ export default function ReleaseNotesModal({ onClose }: Props) {
       closeButtonAtTop
       leftLabel="Fermer"
       onLeftClick={onClose}
-      modalBoxStyle="max-w-2xl text-left"
-      dialogAdditionalClass="text-left"
-    >
-      <div className="mt-5 space-y-4">
-        <div className="flex items-center justify-end gap-3">
-          <label htmlFor="release-notes-version" className="text-sm text-base-content/70">
+      headerActions={
+        <>
+          <label htmlFor="release-notes-version" className="sr-only">
             Version
           </label>
           <select
@@ -64,7 +90,12 @@ export default function ReleaseNotesModal({ onClose }: Props) {
               </option>
             ))}
           </select>
-        </div>
+        </>
+      }
+      modalBoxStyle="max-w-2xl text-left"
+      dialogAdditionalClass="text-left"
+    >
+      <div className="mt-5 space-y-4">
         <CursorGlowCard
           autoGlow
           glowColor="accent"
@@ -78,7 +109,9 @@ export default function ReleaseNotesModal({ onClose }: Props) {
             aria-label={
               selectedRelease.branch
                 ? `Voir la branche ${selectedRelease.branch} sur GitHub (nouvel onglet)`
-                : "Voir le dépôt GitHub d’ANDRIA (nouvel onglet)"
+                : selectedRelease.commit
+                  ? `Voir le code associé à la version ${selectedRelease.version} sur GitHub (nouvel onglet)`
+                  : "Voir le dépôt GitHub d’ANDRIA (nouvel onglet)"
             }
             className="group block cursor-pointer rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
@@ -109,8 +142,8 @@ export default function ReleaseNotesModal({ onClose }: Props) {
           </a>
         </CursorGlowCard>
         <div className="grid gap-3 sm:grid-cols-2">
-          {selectedRelease.changes.map(({ title, description }, index) => {
-            const Icon = changeIcons[index] ?? ShieldCheck;
+          {selectedRelease.changes.map(({ title, description, icon }, index) => {
+            const Icon = changeIcons[icon ?? "layout"] ?? LayoutDashboard;
             return (
               <BoxWrapper
                 key={`${index}-${title}`}

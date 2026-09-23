@@ -3,46 +3,139 @@
     "version": "0.9.1",
     "status": "Beta",
     "branch": "release/0.9.1",
-    "summary": "Corrections et améliorations de l'interface utilisateur.",
+    "summary": "Une interface plus claire pour démarrer et gérer les rôles.",
     "changes": [
       {
-        "title": "Actualiser les rôles",
-        "description": "Actualise les rôles et les thèmes sombres pour une meilleure expérience…"
+        "title": "Rôles et thèmes",
+        "icon": "users",
+        "description": "Les rôles sont actualisés et les thèmes sombres harmonisés."
       },
       {
-        "title": "Réorganiser l'accueil",
-        "description": "Réorganise l'accueil et l'affichage des nouveautés pour une meilleure…"
+        "title": "Accueil réorganisé",
+        "icon": "layout",
+        "description": "Les nouveautés sont plus faciles à repérer depuis l’accueil."
       },
       {
-        "title": "Simplifier l'initialisation",
-        "description": "Simplifie l'initialisation et présente la bêta 0.9 pour une meilleure…"
+        "title": "Démarrage simplifié",
+        "icon": "rocket",
+        "description": "La configuration de départ est plus claire."
       },
       {
-        "title": "Améliorer la mise en page",
-        "description": "Améliore la mise en page de /init pour une meilleure expérience utilisateur."
+        "title": "Écran d’initialisation",
+        "icon": "monitor",
+        "description": "La page de création de l’instance gagne en lisibilité."
       }
     ]
   },
   {
     "version": "0.9",
     "status": "Beta",
+    "commit": "31560a9349e17e9c9e8bdf31c85bd91319b5dc33",
     "summary": "Une version bêta plus simple à configurer et à utiliser.",
     "changes": [
       {
         "title": "Démarrage simplifié",
+        "icon": "rocket",
         "description": "Création du premier compte et configuration de l’instance plus claires."
       },
       {
         "title": "Parcours apprenant",
+        "icon": "graduation",
         "description": "Profil d’apprentissage par module et progression plus faciles à suivre."
       },
       {
         "title": "Personnalisation",
+        "icon": "palette",
         "description": "Nouvelles couleurs pour le calendrier et interface harmonisée."
       },
       {
         "title": "Fiabilité",
+        "icon": "shield",
         "description": "États de chargement, listes vides et messages d’erreur plus lisibles."
+      }
+    ]
+  },
+  {
+    "version": "0.8.2",
+    "status": "Beta",
+    "commit": "f7ac559831ff2750fb6ad5b2865b773234272aae",
+    "summary": "Un démarrage plus simple et une identité visuelle personnalisable.",
+    "changes": [
+      {
+        "title": "Configuration guidée",
+        "icon": "rocket",
+        "description": "La création du compte administrateur est plus claire."
+      },
+      {
+        "title": "Identité de l’instance",
+        "icon": "palette",
+        "description": "Logo, thème et accueil peuvent être adaptés à l’organisme."
+      },
+      {
+        "title": "E-mails harmonisés",
+        "icon": "mail",
+        "description": "Les messages reprennent l’identité visuelle de l’organisme."
+      },
+      {
+        "title": "Profil apprenant",
+        "icon": "user",
+        "description": "Un accueil guidé facilite la découverte du profil d’apprentissage."
+      }
+    ]
+  },
+  {
+    "version": "0.8.1",
+    "status": "Beta",
+    "commit": "7b40397b42c6c9177d5b723076fbdaaf39756d5f",
+    "summary": "Le profil et l’accès aux comptes deviennent plus clairs.",
+    "changes": [
+      {
+        "title": "Profil réorganisé",
+        "icon": "user",
+        "description": "Un menu donne accès aux pages du profil."
+      },
+      {
+        "title": "Comptes sécurisés",
+        "icon": "shield",
+        "description": "L’activation et la réinitialisation du mot de passe sont fiabilisées."
+      },
+      {
+        "title": "Rôles corrigés",
+        "icon": "users",
+        "description": "Changer un rôle ne crée plus de profil apprenant en double."
+      },
+      {
+        "title": "Calendrier cohérent",
+        "icon": "calendar",
+        "description": "Le calendrier suit le thème actif."
+      }
+    ]
+  },
+  {
+    "version": "0.8.0",
+    "status": "Beta",
+    "commit": "3cee78e6a5da25be770b59af385eff5be2082935",
+    "summary": "De nouveaux outils pour les devoirs et une interface rafraîchie.",
+    "changes": [
+      {
+        "title": "Remise de devoirs",
+        "icon": "book",
+        "description": "Les apprenants peuvent remettre leurs devoirs en ligne."
+      },
+      {
+        "title": "Évaluations",
+        "icon": "clipboard",
+        "description": "Enseignants et apprenants retrouvent leurs évaluations."
+      },
+      {
+        "title": "Rôles plus lisibles",
+        "icon": "users",
+        "description": "Les rôles sont affichés sous forme de cartes."
+      },
+      {
+        "title": "Interface rafraîchie",
+        "icon": "layout",
+        "description": "La disposition générale et les animations ont été revues."
       }
     ]
   }
