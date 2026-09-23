@@ -51,6 +51,8 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     handleSubmitUpdateModule,
     handleUpdateModule,
     id,
+    isLoading,
+    error,
     isSubmittingModule,
     isAssigningContacts,
     isAssigningSkills,
@@ -114,8 +116,11 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
         />
 
         {/* Module grid display */}
-        <ModuleGrid
+        {error && !parcours && !isLoading ? (
+          <p role="alert">Impossible de charger les modules associés.</p>
+        ) : <ModuleGrid
           modules={modules}
+          isLoading={isLoading}
           parcoursContacts={parcours?.contacts ?? []}
           parcoursSkills={parcours?.bonusSkills ?? []}
           isAssigningContacts={isAssigningContacts}
@@ -133,7 +138,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
           onAssignSkills={handleAssignSkills}
           onRemoveContact={handleRemoveContact}
           onRemoveSkill={handleRemoveSkill}
-        />
+        />}
 
         {showForm && (
           <Modal

@@ -10,11 +10,12 @@ import RightSideDrawer from "../../../../../components/UI/right-side-drawer/righ
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
 import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutations";
+import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
 const SkillsList = () => {
   const { id } = useParams();
   const parcoursId = Number(id);
-  const { skills: skillList } = useParcoursSkills(parcoursId);
+  const { skills: skillList, isPending, isError } = useParcoursSkills(parcoursId);
   const { createSkill, updateSkill, deleteSkill } =
     useParcoursSkillMutations(parcoursId);
   const [itemToUpdate, setItemToUpdate] = useState<Skill | null>(null);
@@ -95,6 +96,10 @@ const SkillsList = () => {
             </li>
           ))}
         </ul>
+      ) : isPending ? (
+        <LoadingSkeleton variant="rows" label="Chargement des compétences" />
+      ) : isError ? (
+        <p role="alert">Impossible de charger les compétences.</p>
       ) : (
         <p>Compétences non renseignées</p>
       )}

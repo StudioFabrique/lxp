@@ -5,6 +5,7 @@ import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import Media from "../interfaces/media";
 import Pagination from "../../../components/pagination";
 import { cn } from "../../../utils/cn";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 type Props = {
   onClose: () => void;
@@ -16,7 +17,7 @@ type Props = {
  */
 function DialogImages({ onClose }: Props) {
   // Hook personnalisé pour gérer la pagination des médias
-  const { list, page, perPage, totalPages, setPage, setLimit } =
+  const { list, isLoading, error, page, perPage, totalPages, setPage, setLimit } =
     usePaginatedMediatheque();
   // État pour gérer l'image sélectionnée
   const [selectedImage, setSelectedImage] = useState<Media | null>(null);
@@ -58,7 +59,11 @@ function DialogImages({ onClose }: Props) {
         <div className="h-full flex flex-col gap-y-4">
           <h2 className="font-bold text-primary">Importer un fichier image</h2>
           {/* Affiche la grille d'images si la liste n'est pas vide */}
-          {list.length > 0 ? (
+          {isLoading ? (
+            <LoadingSkeleton variant="cards" label="Chargement des images" />
+          ) : error ? (
+            <p role="alert">Impossible de charger les images.</p>
+          ) : list.length > 0 ? (
             <>
               {/* Grille d'images */}
               <ul className="flex flex-wrap gap-x-8 gap-y-4 justify-start">

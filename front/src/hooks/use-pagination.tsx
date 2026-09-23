@@ -32,11 +32,13 @@ const usePagination = (
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadedRequest, setLoadedRequest] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const requestIdRef = useRef(0);
   const [path, setPath] = useState(defaultUrlPath);
   const [allChecked, setAllChecked] = useState(false);
   const [urlComplement, setUrlComplement] = useState<string | null>(null);
+  const currentRequest = JSON.stringify([path, stype, sdir, page, perPage, urlComplement]);
 
   const handlePageNumber = useCallback((value: number) => {
     setPage(value);
@@ -117,9 +119,13 @@ const usePagination = (
         if (requestId === requestIdRef.current) setIsError(true);
       })
       .finally(() => {
-        if (requestId === requestIdRef.current) setIsLoading(false);
+        if (requestId === requestIdRef.current) {
+          setLoadedRequest(currentRequest);
+          setIsLoading(false);
+        }
       });
   }, [
+    currentRequest,
     page,
     perPage,
     handleTotalPages,
@@ -188,7 +194,7 @@ const usePagination = (
   return {
     allChecked,
     dataList,
-    isLoading,
+    isLoading: isLoading || loadedRequest !== currentRequest,
     isError,
     getList,
     getSelectedIds,

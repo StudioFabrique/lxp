@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { feedbacksApi } from "../api/feedbacks.api";
 import FeedbacksList from "../components/FeedbacksList";
 import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 const FeedbacksHome = () => {
-  const { data: feedbacks = [] } = useQuery({
+  const { data: feedbacks = [], isPending, isError } = useQuery({
     queryKey: ["last-feedbacks"],
     queryFn: feedbacksApi.queries.getLastFeedbacks,
   });
@@ -13,7 +14,11 @@ const FeedbacksHome = () => {
     <div className="flex flex-col gap-y-4">
       <h1 className="text-2xl font-bold">Feedbacks des apprenants</h1>
       <section className="w-full">
-        {feedbacks.length > 0 ? (
+        {isPending ? (
+          <LoadingSkeleton variant="rows" label="Chargement des feedbacks" />
+        ) : isError ? (
+          <p role="alert">Impossible de charger les feedbacks.</p>
+        ) : feedbacks.length > 0 ? (
           <FeedbacksList feedbacks={feedbacks} />
         ) : (
           <div className="w-full mt-2">

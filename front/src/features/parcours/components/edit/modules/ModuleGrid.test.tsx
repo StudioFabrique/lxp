@@ -43,6 +43,32 @@ const module: ModuleData = {
 };
 
 describe("ModuleGrid", () => {
+  it("attend la réponse avant d'afficher l'état vide", () => {
+    const renderEmptyGrid = (isLoading: boolean) => renderToStaticMarkup(
+      <ModuleGrid
+        modules={[]}
+        isLoading={isLoading}
+        parcoursContacts={[]}
+        parcoursSkills={[]}
+        isAssigningContacts={false}
+        isAssigningSkills={false}
+        removingContact={null}
+        removingSkill={null}
+        emptyMessage="Aucun module trouvé"
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+        onAssignContacts={vi.fn()}
+        onAssignSkills={vi.fn()}
+        onRemoveContact={vi.fn()}
+        onRemoveSkill={vi.fn()}
+      />,
+    );
+
+    expect(renderEmptyGrid(true)).toContain('aria-label="Chargement des modules associés"');
+    expect(renderEmptyGrid(true)).not.toContain("Aucun module trouvé");
+    expect(renderEmptyGrid(false)).toContain("Aucun module trouvé");
+  });
+
   it("affiche l'image, les actions en pied de liste et toutes les compétences", () => {
     const markup = renderToStaticMarkup(
       <ModuleGrid

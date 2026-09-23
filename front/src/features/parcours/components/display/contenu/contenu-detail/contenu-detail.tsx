@@ -16,6 +16,7 @@ import { cn } from "../../../../../../utils/cn";
 import toast from "react-hot-toast";
 import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
 import { parcoursApi } from "../../../../api/parcours.api";
+import LoadingSkeleton from "../../../../../../components/loaders/LoadingSkeleton";
 
 const ContenuDetail: FC<{
   canEdit?: boolean;
@@ -27,7 +28,8 @@ const ContenuDetail: FC<{
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const handlePublish = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -59,7 +61,10 @@ const ContenuDetail: FC<{
       .then((data) => {
         setCourses(data.response);
       })
-      .catch(() => toast.error("Erreur lors du chargement des cours"))
+      .catch(() => {
+        setIsError(true);
+        toast.error("Erreur lors du chargement des cours");
+      })
       .finally(() => setIsLoading(false));
   }, [moduleId]);
 
@@ -132,6 +137,10 @@ const ContenuDetail: FC<{
           ) : null}
         </div>
       ))
+    ) : isLoading ? (
+      <LoadingSkeleton variant="rows" label="Chargement des cours du module" />
+    ) : isError ? (
+      <p role="alert">Impossible de charger les cours du module.</p>
     ) : (
       <p className="ml-4 opacity-70">Aucun cours disponible</p>
     );

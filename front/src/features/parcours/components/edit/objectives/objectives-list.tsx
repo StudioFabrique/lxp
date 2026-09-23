@@ -9,11 +9,12 @@ import toast from "react-hot-toast";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
+import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
 const ObjectivesList = ({ readOnly = false }: { readOnly?: boolean }) => {
   const { id } = useParams();
   const parcoursId = Number(id);
-  const { data: parcours } = useParcoursQuery(parcoursId);
+  const { data: parcours, isPending, isError } = useParcoursQuery(parcoursId);
   const objectivesList = parcours?.objectives ?? [];
   const updateParcours = useUpdateParcours(parcoursId);
   const [itemToUpdate, setItemToUpdate] = useState<Objective | null>(null);
@@ -87,6 +88,10 @@ const ObjectivesList = ({ readOnly = false }: { readOnly?: boolean }) => {
               />
             </li>
           ))
+        ) : isPending ? (
+          <LoadingSkeleton variant="rows" label="Chargement des objectifs" />
+        ) : isError ? (
+          <p role="alert">Impossible de charger les objectifs.</p>
         ) : (
           <p>Objectifs non renseignés</p>
         )}

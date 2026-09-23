@@ -9,7 +9,7 @@ import ImageHeader from "../../../../src/components/image-header/image-header";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 
 const ResumeParcours = () => {
-  const { data: parcoursList } = useQuery({
+  const { data: parcoursList, isSuccess } = useQuery({
     queryKey: ["parcours-as-student"],
     queryFn: dashboardStudentApi.queries.getParcoursAsStudent,
   });
@@ -54,13 +54,13 @@ const ResumeParcours = () => {
                     <p>Accéder à la liste des autres parcours</p>
                   </Link>
                 )
-              ) : (
+              ) : isSuccess ? (
                 <FadeWrapper>
                   <p className="text-white text-4xl text-center opacity-95 select-none">
                     Votre formation sera bientôt disponible dans votre espace
                   </p>
                 </FadeWrapper>
-              )}
+              ) : null}
             </div>,
           ]}
         />

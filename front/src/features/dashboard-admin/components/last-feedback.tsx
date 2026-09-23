@@ -9,6 +9,7 @@ import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
 import AvatarCard from "../../../components/UI/avatar-card";
 import Modal from "../../../components/UI/modal/modal";
+import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 export default function LastFeedback() {
   const { socket } = useContext(AuthContext);
@@ -17,7 +18,7 @@ export default function LastFeedback() {
   const [feedbackToReview, setFeedbackToReview] = useState<StudentFeedback | null>(null);
   const [reviewMessage, setReviewMessage] = useState("");
 
-  useQuery({
+  const { isPending, isError } = useQuery({
     queryKey: ["last-feedbacks-false"],
     queryFn: async () => {
       const data = await dashboardAdminApi.queries.getLastFeedbacks();
@@ -76,7 +77,11 @@ export default function LastFeedback() {
   return (
     <div className="flex flex-col gap-y-2 w-full">
       <h2 className="font-bold">Derniers feedbacks des apprenants</h2>
-      {feedbacks.length > 0 ? (
+      {isPending ? (
+        <LoadingSkeleton variant="rows" label="Chargement des feedbacks" />
+      ) : isError ? (
+        <p role="alert">Impossible de charger les feedbacks récents.</p>
+      ) : feedbacks.length > 0 ? (
         <ul className="flex flex-col gap-y-2">
           {feedbacks.map((item) => (
             <li key={item._id}>

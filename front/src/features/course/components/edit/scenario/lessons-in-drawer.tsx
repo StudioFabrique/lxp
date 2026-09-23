@@ -8,10 +8,10 @@ import { useQuery } from "@tanstack/react-query";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import SearchDropdown from "../../../../../../src/components/UI/search-dropdown/search-dropdown";
-import { LessonWithActivitiesCount } from "../../../../../../src/utils/interfaces/lesson";
 import LessonsTable from "./lessons-table";
 import { courseApi } from "../../../api/course.api";
 import TagItem from "../../../../../components/UI/tag-item/tag-item";
+import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
 interface LessonsInDrawerProps {
   onAddNewLessons: (lessonsIds: number[]) => void;
@@ -23,20 +23,13 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   ) as Tag[];
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
   const [tag, setTag] = useState<Tag | null>(null);
-  const [lessonsList, setLessonsList] = useState<
-    LessonWithActivitiesCount[] | null
-  >(null);
 
-  const { data: lessonsData, error } = useQuery({
+  const { data: lessonsData, error, isPending } = useQuery({
     ...courseApi.queries.lessonsByTag(tag?.id ?? 0),
     enabled: !!tag,
   });
 
-  useEffect(() => {
-    if (lessonsData) {
-      setLessonsList(lessonsData.data);
-    }
-  }, [lessonsData]);
+  const lessonsList = lessonsData?.data ?? [];
 
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
@@ -66,7 +59,7 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   };
 
   const handleAddLessons = (lessonsIds: number[]) => {
-    const updatedLessons = lessonsList!.filter((lesson) =>
+    const updatedLessons = lessonsList.filter((lesson) =>
       lessonsIds.includes(lesson.id)
     );
 
@@ -76,7 +69,6 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
 
     handleCloseDrawer("add-lessons");
     setTag(null);
-    setLessonsList(null);
   };
 
   useEffect(() => {
@@ -114,14 +106,18 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
           </>
         ) : null}
         <div className="divider" />
-        {lessonsList && lessonsList.length > 0 ? (
+        {tag && isPending ? (
+          <LoadingSkeleton variant="rows" label="Chargement des contenus" />
+        ) : tag && error ? (
+          <p role="alert">Impossible de charger les contenus.</p>
+        ) : lessonsList.length > 0 ? (
           <LessonsTable
             list={lessonsList}
             onAddItems={handleAddLessons}
           />
-        ) : (
+        ) : tag ? (
           <p>Aucun contenu trouvé</p>
-        )}
+        ) : null}
       </div>
     </RightSideDrawer>
   );

@@ -53,7 +53,7 @@ export default function ParcoursCreationModal({
   });
   const formationList: Item[] = Array.isArray(formations) ? formations : [];
 
-  const { data: parcoursList = [], isError: isParcoursListError } = useQuery({
+  const { data: parcoursList = [], isPending: isParcoursListPending, isError: isParcoursListError } = useQuery({
     queryKey: ["parcours", "formation", formationId],
     queryFn: async () => (await parcoursApi.queries.getByFormation(formationId!)).data,
     enabled: mode === "template" && formationId !== undefined,
@@ -212,6 +212,8 @@ export default function ParcoursCreationModal({
                 <p className="p-6 text-center text-sm text-base-content/60">Sélectionnez une formation pour afficher ses parcours.</p>
               ) : isParcoursListError ? (
                 <p className="p-6 text-center text-sm text-error">Erreur lors du chargement des parcours.</p>
+              ) : isParcoursListPending ? (
+                <Loader variant="rows" label="Chargement des parcours disponibles" />
               ) : parcoursList.length === 0 ? (
                 <p className="rounded-xl p-6 text-center text-sm text-base-content/60">Aucun parcours ne peut être utilisé comme modèle.</p>
               ) : (

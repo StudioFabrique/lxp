@@ -118,6 +118,7 @@ const Contenu = ({ modules }: ContenuProps) => {
                 title={selectedModule.title}
               />
               <ContenuDetail
+                key={selectedModule.id}
                 canEdit={canEditModule}
                 parcoursId={Number(parcoursId)}
                 moduleId={selectedModule.id}
