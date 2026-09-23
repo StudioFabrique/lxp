@@ -1,33 +1,5 @@
 [
   {
-    "version": "0.9.1",
-    "status": "Beta",
-    "branch": "release/0.9.1",
-    "summary": "Une interface plus claire et des nouveautés plus agréables à consulter.",
-    "changes": [
-      {
-        "title": "Rôles et thèmes",
-        "icon": "users",
-        "description": "Les rôles sont actualisés et les thèmes sombres harmonisés."
-      },
-      {
-        "title": "Accueil réorganisé",
-        "icon": "layout",
-        "description": "Les nouveautés sont plus faciles à repérer et à consulter."
-      },
-      {
-        "title": "Démarrage simplifié",
-        "icon": "rocket",
-        "description": "La configuration de départ est plus claire."
-      },
-      {
-        "title": "Écran d’initialisation",
-        "icon": "monitor",
-        "description": "La page de création de l’instance gagne en lisibilité."
-      }
-    ]
-  },
-  {
     "version": "0.9",
     "status": "Beta",
     "commit": "31560a9349e17e9c9e8bdf31c85bd91319b5dc33",
