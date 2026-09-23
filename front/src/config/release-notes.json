@@ -2,23 +2,23 @@
   {
     "version": "0.9.1",
     "status": "Beta",
-    "summary": "Les notes de patch ont été améliorées pour être plus visibles et adaptées aux nouvelles fenêtres.",
+    "summary": "Actualisation des rôles et ajustement des thèmes sombres, réorganisation de l'accueil et de l'affichage des nouveautés, simplification de l'initialisation et présentation de la…",
     "changes": [
       {
-        "title": "fix(ci): adapter les notes au format de la fenêtre",
-        "description": "Les notes de patch ont été modifiées pour être plus visibles et adaptées aux nouvelles fenêtres."
+        "title": "Actualiser les rôles et ajuster les thèmes sombres",
+        "description": "Les rôles ont été actualisés, et les thèmes sombres ont été ajustés pour une meilleure visibilité et une meilleure expérience utilisateur."
       },
       {
-        "title": "chore(version): increment",
-        "description": "La version a été incrémentée pour mettre à jour les notes de patch."
+        "title": "Réorganiser l'accueil et l'affichage des…",
+        "description": "L'accueil a été réorganisé, et les nouvelles fonctionnalités ont été présentées de manière plus claire et accessible."
       },
       {
-        "title": "feat(ci): générer les notes de patch avec Ollama",
-        "description": "Une nouvelle méthode a été mise en place pour générer les notes de patch, améliorant leur visibilité."
+        "title": "Simplifier l'initialisation et présenter la bêta…",
+        "description": "L'initialisation a été simplifiée, et la version beta 0.9 a été présentée pour les utilisateurs."
       },
       {
-        "title": "feat(front): actualiser les rôles et ajuster les…",
-        "description": "Les rôles ont été actualisés et les thèmes sombres ont été ajustés pour une meilleure visibilité."
+        "title": "Améliorer la mise en page de /init",
+        "description": "La mise en page de l'initialisation a été améliorée pour une meilleure expérience utilisateur."
       }
     ]
   },
