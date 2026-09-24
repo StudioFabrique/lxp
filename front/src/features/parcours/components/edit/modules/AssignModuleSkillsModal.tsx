@@ -52,7 +52,7 @@ export default function AssignModuleSkillsModal({
       rightDisabled={selectedSkillIds.length === 0}
       isSubmitting={isSubmitting}
       modalBoxStyle="w-11/12 max-w-xl"
-      dialogAdditionalClass="z-30"
+      dialogAdditionalClass="z-40"
     >
       <div className="mt-6">
         {availableSkills.length === 0 ? (

@@ -123,7 +123,11 @@ export default function ProfilePopover({ interfaceType }: Props) {
         <Popover.Trigger asChild>
           <button
             type="button"
-            className={cn(sidebarControlClassName, "capitalize", open && "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)")}
+            className={cn(
+              sidebarControlClassName,
+              "capitalize",
+              open && "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)",
+            )}
             data-tip={fullName}
             aria-label={`Ouvrir le menu de ${fullName}`}
           >
@@ -244,25 +248,40 @@ export default function ProfilePopover({ interfaceType }: Props) {
                       title="Paramètres d’affichage"
                       aria-expanded={showRenderSettings}
                       aria-controls="render-settings"
-                      onClick={() => setShowRenderSettings((visible) => !visible)}
+                      onClick={() =>
+                        setShowRenderSettings((visible) => !visible)
+                      }
                     >
-                      <SlidersHorizontal className="size-4" aria-hidden="true" />
+                      <SlidersHorizontal
+                        className="size-4"
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
                   {showRenderSettings && (
-                    <div id="render-settings" className="mt-2 space-y-2 rounded-lg bg-base-200 p-3 text-sm">
-                      {([
-                        ["glow", "Effet lumineux", glow],
-                        ["confetti", "Confettis et récompenses", confetti],
-                        ["animations", "Animations décoratives", animations],
-                      ] as const).map(([key, label, enabled]) => (
-                        <label key={key} className="flex cursor-pointer items-center justify-between gap-3">
+                    <div
+                      id="render-settings"
+                      className="mt-2 space-y-2 rounded-lg bg-base-200 p-3 text-sm"
+                    >
+                      {(
+                        [
+                          ["glow", "Effet lumineux", glow],
+                          ["confetti", "Confettis et récompenses", confetti],
+                          ["animations", "Animations décoratives", animations],
+                        ] as const
+                      ).map(([key, label, enabled]) => (
+                        <label
+                          key={key}
+                          className="flex cursor-pointer items-center justify-between gap-3"
+                        >
                           <span>{label}</span>
                           <input
                             type="checkbox"
                             className="toggle toggle-primary toggle-sm"
                             checked={enabled}
-                            onChange={(event) => setPreference(key, event.target.checked)}
+                            onChange={(event) =>
+                              setPreference(key, event.target.checked)
+                            }
                           />
                         </label>
                       ))}

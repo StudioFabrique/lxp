@@ -136,16 +136,18 @@ const GroupList = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <div className="mb-4">
-        <ParcoursFilterBadges
-          parcours={parcours}
-          selectedParcours={selectedParcours}
-          onSelect={(value) => {
-            setSelectedParcours(value);
-            setRowSelection({});
-          }}
-        />
-      </div>
+      {parcours.some(Boolean) && (
+        <div className="mb-4">
+          <ParcoursFilterBadges
+            parcours={parcours}
+            selectedParcours={selectedParcours}
+            onSelect={(value) => {
+              setSelectedParcours(value);
+              setRowSelection({});
+            }}
+          />
+        </div>
+      )}
 
       <BoxWrapper
         className={cn((filteredData.length > 0 || isLoading || searchValue) && "px-10", "items-center")}

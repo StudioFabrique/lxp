@@ -1,5 +1,5 @@
 import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
-import { Pencil, Trash2 } from "lucide-react";
+import { ChartNoAxesCombined, Pencil, Trash2 } from "lucide-react";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
@@ -63,6 +63,14 @@ export const getGroupColumns = (
 
       return (
         <div className="flex gap-2 justify-center">
+          <Link
+            to={`/admin/group/risk-analysis`}
+            className="btn btn-ghost btn-xs btn-square text-accent tooltip"
+            data-tip="Analyse décrochage"
+          >
+            <ChartNoAxesCombined className="w-4.5 h-4.5" strokeWidth={2.5} />
+          </Link>
+
           <Link
             to={`/admin/group/edit/${groupId}`}
             className="btn btn-ghost btn-xs btn-square text-primary tooltip"
