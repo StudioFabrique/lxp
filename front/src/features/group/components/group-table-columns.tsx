@@ -64,7 +64,9 @@ export const getGroupColumns = (
       return (
         <div className="flex gap-2 justify-center">
           <Link
-            to={`/admin/group/risk-analysis`}
+            to={`/admin/dashboard-ia/group/${groupId}`}
+            state={{ groupName: row.original.name }}
+            aria-label={`Analyse décrochage du groupe ${row.original.name}`}
             className="btn btn-ghost btn-xs btn-square text-accent tooltip"
             data-tip="Analyse décrochage"
           >

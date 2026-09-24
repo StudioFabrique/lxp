@@ -37,7 +37,7 @@ const ParcoursFilterBadges = ({
       ? [...collapsedParcours.slice(0, -1), selectedParcours]
       : collapsedParcours;
 
-  if (uniqueParcours.length === 0) return null;
+  if (uniqueParcours.length <= 1) return null;
 
   return (
     <fieldset className="flex flex-col gap-2">

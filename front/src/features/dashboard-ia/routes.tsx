@@ -6,4 +6,8 @@ export const adminDashboardIARoutes: RouteObject[] = [
     path: "dashboard-ia",
     lazy: lazyRoute(() => import("./views/DashboardIAHome")),
   },
+  {
+    path: "dashboard-ia/group/:groupId",
+    lazy: lazyRoute(() => import("./views/GroupDropoutAnalysis")),
+  },
 ];

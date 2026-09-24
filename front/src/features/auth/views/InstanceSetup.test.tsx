@@ -20,7 +20,10 @@ vi.mock("../../../components/UI/image-file-upload/image-file-upload", () => ({
   ),
 }));
 vi.mock("../components/AuthPageWrapper", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children, title }: { children: React.ReactNode; title: React.ReactNode }) => <div>{title}{children}</div>,
+}));
+vi.mock("../../../components/UI/OnboardingProgressPanel", () => ({
+  default: ({ children, footer }: { children: React.ReactNode; footer?: React.ReactNode }) => <div>{children}{footer}</div>,
 }));
 
 describe("Personnalisez votre espace", () => {
@@ -59,6 +62,12 @@ describe("Personnalisez votre espace", () => {
 
   it("enregistre le site internet de l’organisme", async () => {
     expect(container.textContent).not.toContain("Continuer avec ANDRIA");
+    expect(container.textContent).toContain("Choisissez votre thème");
+
+    await act(async () => {
+      Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Continuer")?.click();
+    });
+    expect(container.textContent).toContain("Personnalisez votre espace");
 
     await act(async () => {
       container.querySelector("form")?.dispatchEvent(

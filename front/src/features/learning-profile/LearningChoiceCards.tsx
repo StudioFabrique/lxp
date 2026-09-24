@@ -1,9 +1,6 @@
 import { Check } from "lucide-react";
 import { cn } from "../../utils/cn";
-import type {
-  FormationLevel,
-  LearningPreference,
-} from "./types";
+import type { FormationLevel, LearningPreference } from "./types";
 import { levelOptions, preferenceOptions } from "./learning-choice-options";
 
 type SingleOption<T extends string> = {
@@ -55,7 +52,12 @@ export function SingleChoiceCards<T extends string>({
               <span>
                 <span className="block font-semibold">{option.label}</span>
                 {option.description ? (
-                  <span className={cn("block text-sm text-base-content/65", compact ? "mt-0.5" : "mt-1")}>
+                  <span
+                    className={cn(
+                      "block text-sm text-base-content/65",
+                      compact ? "mt-0.5" : "mt-1",
+                    )}
+                  >
                     {option.description}
                   </span>
                 ) : null}
@@ -91,8 +93,12 @@ export function LevelChoiceButtons({
   const selectedOption = levelOptions.find((option) => option.value === value);
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Niveau du module">
+    <div className="min-h-16">
+      <div
+        className="flex flex-wrap gap-2"
+        role="radiogroup"
+        aria-label="Niveau du module"
+      >
         {levelOptions.map((option) => (
           <label
             key={option.value}
@@ -115,7 +121,9 @@ export function LevelChoiceButtons({
         ))}
       </div>
       {selectedOption && (
-        <p className="mt-2 text-xs text-base-content/65">{selectedOption.description}</p>
+        <p className="mt-2 text-xs text-base-content/65">
+          {selectedOption.description}
+        </p>
       )}
     </div>
   );
@@ -141,7 +149,9 @@ export function PreferenceCards({
             key={option.value}
             className={cn(
               "flex min-h-20 cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary",
-              selected ? "border-primary bg-primary/10" : "border-base-300 bg-base-200",
+              selected
+                ? "border-primary bg-primary/10"
+                : "border-base-300 bg-base-200",
             )}
           >
             <input
@@ -159,7 +169,7 @@ export function PreferenceCards({
             <span className="font-semibold">{option.label}</span>
             <span
               className={cn(
-                  "flex size-6 shrink-0 items-center justify-center rounded border",
+                "flex size-6 shrink-0 items-center justify-center rounded border",
                 selected
                   ? "border-primary bg-primary text-primary-content"
                   : "border-base-300",

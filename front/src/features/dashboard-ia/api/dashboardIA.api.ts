@@ -1,6 +1,9 @@
 import apiClient from "../../../lib/axios";
 import type { GroupsStats, TopUser } from "../types";
 
+export type DropoutPreferences = { enabled: boolean; frequency: "weekly" | "monthly"; hasParcours: boolean; onboardingRequired: boolean };
+export type DropoutSummary = { groupId: string; name: string; analyzed: number; critical: number; completedAt: string };
+
 const queries = {
   getTotalTokens: async (): Promise<{
     totalTokens: number;
@@ -9,6 +12,10 @@ const queries = {
     const res = await apiClient.get("/dashboard-ia/total-tokens");
     return res.data;
   },
+  getDropoutPreferences: async (): Promise<DropoutPreferences> =>
+    (await apiClient.get("/dashboard-ia/dropout/preferences")).data,
+  getDropoutSummaries: async (): Promise<DropoutSummary[]> =>
+    (await apiClient.get("/dashboard-ia/dropout/summaries")).data,
   getGroupsStats: async (): Promise<GroupsStats[]> => {
     const res = await apiClient.get("/dashboard-ia/groups-all-stats");
     return res.data;
@@ -30,4 +37,6 @@ const queries = {
 
 export const dashboardIAApi = {
   queries,
+  updateDropoutPreferences: async (input: Pick<DropoutPreferences, "enabled" | "frequency">): Promise<DropoutPreferences> =>
+    (await apiClient.put("/dashboard-ia/dropout/preferences", input)).data,
 };

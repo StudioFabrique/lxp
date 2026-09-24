@@ -71,10 +71,6 @@ export default function LastParcours({
     emitOnboardingEvent({ type: "formation_entry_clicked" });
   };
 
-  const openFormationEdition = (formationId: number) => {
-    setFormationModal({ isOpen: true, formationId });
-  };
-
   const closeFormationModal = () => {
     setFormationModal({ isOpen: false, formationId: null });
     if (searchParams.has("createFormation")) {
@@ -161,7 +157,6 @@ export default function LastParcours({
                 fullWidth={usesFullWidthLayout}
                 isManagementView
                 onCreateParcours={setParcoursFormationId}
-                onEditFormation={openFormationEdition}
                 onDeleteParcours={(item) => {
                   setParcoursToDelete(item);
                   setDeleteConfirmation("");

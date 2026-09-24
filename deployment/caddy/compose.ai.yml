@@ -1,6 +1,6 @@
 # Couche IA, superposée au socle `compose.yml` :
 #
-#   docker compose -f compose.yml -f compose.ai.yml up -d app
+#   docker compose -f compose.yml -f compose.ai.yml up -d app dropout-worker
 #
 # Ce fichier n'est pas autonome : il complète des services et référence des
 # réseaux déclarés par le socle. Il n'est pas chargé sur l'instance de
@@ -15,6 +15,51 @@ services:
       DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL:?Set DOCKER_IA_API_BASE_URL}
       DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
       DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
+
+  dropout-worker:
+    image: "${LXP_IMAGE:-studiostep/lxp}:${LXP_IMAGE_TAG:-latest}"
+    pull_policy: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-dropout-worker
+    command: ["node", "api/dist/src/scripts/dropout-worker.js"]
+    restart: unless-stopped
+    init: true
+    depends_on:
+      db-pg:
+        condition: service_healthy
+      db-mongo:
+        condition: service_healthy
+      ai:
+        condition: service_healthy
+    networks:
+      - backend
+      - egress
+    volumes:
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/logs:/app/api/dist/logs
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+      MONGO_LOCAL_URL: ${MONGO_LOCAL_URL:?Set MONGO_LOCAL_URL}
+      SECRET: ${SECRET:?Set SECRET}
+      REGISTER_SECRET: ${REGISTER_SECRET:?Set REGISTER_SECRET}
+      ENVIRONMENT: ${ENVIRONMENT}
+      FRONT_URL: ${FRONT_URL}
+      UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
+      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL:?Set DOCKER_IA_API_BASE_URL}
+      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
+      DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
+      MAILER_EMAIL: ${MAILER_EMAIL:-}
+      MAILER_PASSWORD: ${MAILER_PASSWORD:-}
+      MAILER_SMTP: ${MAILER_SMTP:-}
+      MAILER_SMTP_PORT: ${MAILER_SMTP_PORT:-}
+      MAILER_FROM: ${MAILER_FROM:-}
+      MAILER_DEV_RECIPIENT: ${MAILER_DEV_RECIPIENT:-}
+    stop_grace_period: 60s
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   ai:
     image: "${LXP_AI_IMAGE:-studiostep/lxp-ai}:${LXP_AI_IMAGE_TAG:-latest}"

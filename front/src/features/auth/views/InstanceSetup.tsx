@@ -11,6 +11,8 @@ import {
 } from "../../profile/api/profile.api";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 import { cn } from "../../../utils/cn";
+import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
+import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
 
 const DEFAULT_NAME = "ANDRIA";
 const DEFAULT_LOGO_BACKGROUND = "#ffffff";
@@ -26,6 +28,7 @@ export default function InstanceSetup() {
     DEFAULT_LOGO_BACKGROUND,
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [step, setStep] = useState(1);
 
   useEffect(() => {
     profileApi.queries
@@ -87,13 +90,24 @@ export default function InstanceSetup() {
   };
 
   return (
-    <AuthPageWrapper
+    <OnboardingProgressPanel contentKey={String(step)} currentStep={step} stepCount={2} progressLabel="Progression de la personnalisation" className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"
+      footer={step === 1 ? <div className="mt-5 flex justify-end border-t border-base-300 pt-4"><button type="button" className="btn btn-primary text-base normal-case" onClick={() => setStep(2)}>Continuer</button></div>
+        : <div className="mt-5 flex items-center justify-between gap-3 border-t border-base-300 pt-4">
+          <button type="button" className="btn btn-ghost text-base normal-case" disabled={isSaving} onClick={() => setStep(1)}>Précédent</button>
+          <button type="submit" form="instance-setup-form" disabled={!settings || isSaving} className="btn btn-primary rounded-lg text-base normal-case text-base-100">
+            {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSaving ? "Configuration…" : "Configurer mon espace"}
+          </button>
+        </div>}>
+    {step === 1 ? <ThemeSelectionStep /> : <AuthPageWrapper
       title="Personnalisez votre espace"
       titleAccessory={<Building2 className="mt-0.5 h-6 w-6 text-primary" />}
       description="Configurez l’identité de votre organisme. Vous pourrez modifier ces informations plus tard dans les paramètres."
+      variant="setup"
     >
       <form
-        className="mx-auto flex w-full max-w-xl flex-col items-center gap-5"
+        id="instance-setup-form"
+        className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-5"
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
@@ -160,15 +174,8 @@ export default function InstanceSetup() {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={!settings || isSaving}
-          className="btn btn-primary mt-2 w-full rounded-lg text-base normal-case text-base-100"
-        >
-          {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-          {isSaving ? "Configuration…" : "Configurer mon espace"}
-        </button>
       </form>
-    </AuthPageWrapper>
+    </AuthPageWrapper>}
+    </OnboardingProgressPanel>
   );
 }

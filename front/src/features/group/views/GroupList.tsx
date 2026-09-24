@@ -136,7 +136,7 @@ const GroupList = () => {
         </PermissionGuard>
       </PageHeader>
 
-      {parcours.some(Boolean) && (
+      {new Set(parcours.filter(Boolean)).size > 1 && (
         <div className="mb-4">
           <ParcoursFilterBadges
             parcours={parcours}

@@ -26,8 +26,10 @@ Le fichier `compose.yml` démarre :
 - PostgreSQL `db-pg` ;
 - MongoDB `db-mongo`.
 
-Le fichier `compose.ai.yml` ajoute le service `ai`, sa base `db-ai` et le cache
-des modèles. Les pipelines chargent ce second fichier quand
+Le fichier `compose.ai.yml` ajoute le service `ai`, sa base `db-ai`, le cache
+des modèles et `dropout-worker`. Ce dernier reprend l'analyse hebdomadaire du
+décrochage et les récapitulatifs mensuels après un arrêt, sans charger le
+processus HTTP. Les pipelines chargent ce second fichier quand
 `DEMO_MODE=false`.
 
 Une instance de démonstration utilise seulement `compose.yml`. Elle ne démarre

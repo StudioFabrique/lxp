@@ -23,12 +23,15 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isStudentOnboarding = pathname === "/student/onboarding";
+  const isStaffOnboarding = pathname === "/staff/onboarding";
+  const isOnboarding = isStudentOnboarding || isStaffOnboarding;
   const isInstanceSetup = pathname === "/instance-setup";
   const isAdminInit = pathname === "/init";
   const hasSetupLayout = isAdminInit || setupStyle;
+  const isOnboardingLayout = isOnboarding || isInstanceSetup || hasSetupLayout;
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
-  const shouldLoadBranding = showOrganizationName || isStudentOnboarding;
+  const shouldLoadBranding = showOrganizationName || isOnboarding;
   const [organizationName, setOrganizationName] = useState<string | null>(null);
   const [hasOrganizationLogo, setHasOrganizationLogo] = useState(false);
 
@@ -51,11 +54,11 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   }, [shouldLoadBranding]);
 
   return (
-    <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isStudentOnboarding ? "py-4" : "py-12")}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
-        <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isStudentOnboarding ? "min-h-[calc(100vh-2rem)]" : hasSetupLayout ? "min-h-[calc(100vh-6rem)] lg:h-[85vh] lg:min-h-[600px]" : "min-h-[calc(100vh-6rem)]")}>
-          <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-8" : "top-0")}>
-            {isStudentOnboarding && (
+    <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isOnboardingLayout ? "py-4 lg:items-center lg:py-0" : "py-12")}>
+      <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
+        <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}>
+          <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
+            {isOnboarding && (
               <button
                 type="button"
                 className="btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content"
@@ -86,19 +89,19 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           </div>
 
           <div
-            className={cn("mx-auto flex h-full flex-col", isStudentOnboarding
+            className={cn("relative mx-auto flex h-full min-h-0 flex-col", isOnboarding
                 ? "w-full max-w-2xl"
                 : isInstanceSetup || hasSetupLayout
                   ? "w-full max-w-xl"
                   : "w-100")}
           >
-            {!isStudentOnboarding && !hasSetupLayout && (
+            {!isOnboarding && !hasSetupLayout && (
               <div
                 className={cn("flex cursor-pointer select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
                 onClick={() => navigate("/")}
               >
                 <img
-                  className={cn("h-auto w-56", isAdminInit ? "mt-8" : "mt-20")}
+                  className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
                   src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
                   alt="logo ANDRIA"
                 />
@@ -113,8 +116,8 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               {children ?? <LoginGuard />}
             </div>
 
-            {isStudentOnboarding && (
-              <div className="mt-3 flex min-h-8 select-none items-center justify-center gap-4" aria-label="Partenaires de la plateforme">
+            {isOnboarding && (
+              <div className="absolute inset-x-0 top-full mt-2 flex min-h-8 select-none items-center justify-center gap-4" aria-label="Partenaires de la plateforme">
                 <img
                   className="h-6 w-auto"
                   src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
@@ -157,7 +160,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
         </div>
 
         {/* Colonne Droite */}
-        <LoginRightColumn background={background} isFailed={isFailed} alignTop={hasSetupLayout} />
+        <LoginRightColumn background={background} isFailed={isFailed} alignTop={isOnboardingLayout} />
       </div>
       {showReleaseNotes && (
         <ReleaseNotesModal onClose={() => setShowReleaseNotes(false)} />
