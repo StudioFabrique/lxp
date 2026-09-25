@@ -11,7 +11,7 @@
         "icon": "layout"
       },
       {
-        "title": "Gestion et paiement des alertes de décrochage",
+        "title": "Gestion des alertes de décrochage",
         "description": "Formateurs peuvent gérer et acquitter les alertes de décrochage",
         "icon": "layout"
       },
@@ -21,8 +21,8 @@
         "icon": "layout"
       },
       {
-        "title": "Simplification de l'initialisation et présent",
-        "description": "Simplification de l'initialisation et présentation de la bêta 0.9",
+        "title": "Simplification de l'initialisation",
+        "description": "Simplification de l'initialisation des nouveaux comptes avec des onboardings",
         "icon": "rocket"
       }
     ]
