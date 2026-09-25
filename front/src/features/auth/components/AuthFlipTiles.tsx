@@ -14,6 +14,20 @@ const colors = [
 type Tile = { x: number; y: number; quality: number; color: number };
 const revealDuration = 980;
 const currentTime = () => Date.now();
+const initialDelays = (count: number) => {
+  const order = Array.from({ length: count }, (_, index) => index);
+  for (let index = count - 1; index > 0; index--) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [order[index], order[swap]] = [order[swap], order[index]];
+  }
+  const delays = Array<number>(count);
+  let delay = 800;
+  order.forEach((color, index) => {
+    if (index) delay += 1800 + Math.random() * 1200;
+    delays[color] = delay;
+  });
+  return delays;
+};
 
 export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { image: HTMLImageElement; imageSrc?: string; onClipPathChange: (value: string) => void }) {
   const reducedMotion = useReducedMotion();
@@ -23,9 +37,11 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
   const [focused, setFocused] = useState<number | null>(null);
   const [heldTiles, setHeldTiles] = useState<Tile[]>([]);
   const holdTimers = useRef(new Map<number, ReturnType<typeof setTimeout>>());
+  const holdEndsAt = useRef(new Map<number, number>());
   const automaticRestoreTimers = useRef(new Map<number, ReturnType<typeof setTimeout>>());
   const [selected, setSelected] = useState<Tile | null>(null);
   const [assignments, setAssignments] = useState([0, 1, 2]);
+  const assignedQualities = useRef([0, 1, 2]);
   const [revealedColors, setRevealedColors] = useState<number[]>([]);
   const revealTimers = useRef(new Map<number, ReturnType<typeof setTimeout>>());
   const firstAppearance = useRef(true);
@@ -78,24 +94,29 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
       if (protectedColors.has(color) || !heldTiles.some((tile) => tile.color === color)) {
         clearTimeout(timer);
         timers.delete(color);
+        holdEndsAt.current.delete(color);
       }
     }
     heldTiles.forEach(({ color }) => {
       if (protectedColors.has(color) || timers.has(color) || (!reducedMotion && !revealedColors.includes(color))) return;
       timers.set(color, setTimeout(() => {
         timers.delete(color);
+        holdEndsAt.current.delete(color);
         setHeldTiles((current) => current.filter((tile) => tile.color !== color));
       }, 4000));
+      holdEndsAt.current.set(color, currentTime() + 4000);
     });
   }, [heldTiles, hovered, focused, selected, revealedColors, reducedMotion]);
 
   useEffect(() => {
     const timers = holdTimers.current;
+    const ends = holdEndsAt.current;
     const automaticTimers = automaticRestoreTimers.current;
     const revealTimeouts = revealTimers.current;
     return () => {
       timers.forEach(clearTimeout);
       timers.clear();
+      ends.clear();
       automaticTimers.forEach(clearTimeout);
       automaticTimers.clear();
       revealTimeouts.forEach(clearTimeout);
@@ -127,6 +148,13 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
     measure();
     return () => observer.disconnect();
   }, [image]);
+
+  const isTurningBack = (color: number) => {
+    const automaticStart = autoStartedAt.current.get(color);
+    const heldEnd = holdEndsAt.current.get(color);
+    return (automaticStart !== undefined && currentTime() - automaticStart >= 7000 * 0.86)
+      || (heldEnd !== undefined && currentTime() >= heldEnd - 1000);
+  };
 
   useEffect(() => {
     if (!geometry || reducedMotion) return;
@@ -174,7 +202,10 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
           firstAppearance.current = false;
           visibleColors.current.add(color);
           autoStartedAt.current.set(color, currentTime());
-          const quality = Math.floor(Math.random() * qualities.length);
+          const occupied = new Set(assignedQualities.current.filter((_, index) => index !== color));
+          const candidates = qualities.map((_, index) => index).filter((index) => !occupied.has(index));
+          const quality = candidates[Math.floor(Math.random() * candidates.length)];
+          assignedQualities.current[color] = quality;
           setAssignments((current) => current.map((value, index) => index === color ? quality : value));
           clearTimeout(revealTimers.current.get(color));
           setRevealedColors((current) => current.filter((item) => item !== color));
@@ -194,15 +225,15 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
       setRevealedColors([]);
       visibleColors.current.clear();
       autoStartedAt.current.clear();
-      if (!document.hidden) available.forEach((_, color) => schedule(color, 800 + color * 1200));
+      if (!document.hidden) initialDelays(available.length).forEach((delay, color) => schedule(color, delay));
     };
     autoTiles.current.forEach((tile) => {
       visibleColors.current.add(tile.color);
       restore(tile.color, Math.max(0, 7000 - (currentTime() - (autoStartedAt.current.get(tile.color) ?? currentTime()))));
     });
+    const intro = initialDelays(available.length);
     available.forEach((_, color) => schedule(color,
-      resuming || interaction.current.protectedColors.has(color) ? 12000 + Math.random() * 6000
-        : (firstAppearance.current ? 800 : 1200) + color * (1000 + Math.random() * 300),
+      resuming || interaction.current.protectedColors.has(color) ? 12000 + Math.random() * 6000 : intro[color],
     ));
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
@@ -277,7 +308,7 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
                 style={{ left: x, top: y, width: tileWidth, height: tileHeight }}
                 disabled={!active} tabIndex={active && !hiddenSource ? 0 : -1} aria-hidden={!active || hiddenSource}
                 aria-label={`${label} : découvrir les fonctionnalités`} aria-haspopup="dialog"
-                onMouseEnter={() => { if (active) { takeControlOfTile({ x, y, color, quality }); setHovered(color); } }}
+                onMouseEnter={() => { if (active && !isTurningBack(color)) { takeControlOfTile({ x, y, color, quality }); setHovered(color); } }}
                 onMouseLeave={() => {
                   setHovered(null);
                 }}
@@ -306,6 +337,7 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
                 key={`${selected.color}-${selected.quality}`}
                 quality={selected.quality}
                 color={colors[selected.color]}
+                colorIndex={selected.color}
                 x={selected.x}
                 y={selected.y}
                 geometry={geometry}

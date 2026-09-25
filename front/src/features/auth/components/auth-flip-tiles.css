@@ -27,10 +27,6 @@
   transform: rotateY(180deg);
 }
 
-.auth-tile-button:hover .auth-flip-icon-face {
-  box-shadow: inset 0 0 0 3px currentColor;
-}
-
 .auth-flip-tile.auth-tile-returning {
   animation: auth-tile-return 4s ease-in-out both;
 }

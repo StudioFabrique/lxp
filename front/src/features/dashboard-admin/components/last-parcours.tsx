@@ -22,11 +22,13 @@ import { cn } from "../../../utils/cn";
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
   isLoading: boolean;
+  showQuickActions?: boolean;
 };
 
 export default function LastParcours({
   parcours,
   isLoading,
+  showQuickActions = true,
 }: LastParcoursProps) {
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
@@ -131,10 +133,12 @@ export default function LastParcours({
             Derniers parcours ajoutés
           </h3>
         )}
-        <QuickActions
-          onCreateFormation={openFormationModal}
-          onCreateParcours={() => setParcoursFormationId(-1)}
-        />
+        {showQuickActions && (
+          <QuickActions
+            onCreateFormation={openFormationModal}
+            onCreateParcours={() => setParcoursFormationId(-1)}
+          />
+        )}
       </div>
 
       <div className="w-full mt-4">
@@ -181,7 +185,7 @@ export default function LastParcours({
           </Link>
         </div>
       )}
-      {formationModal.isOpen ? (
+      {formationModal.isOpen || searchParams.get("createFormation") === "true" ? (
         <FormationModal formationId={formationModal.formationId} onClose={closeFormationModal} />
       ) : null}
       {isParcoursModalOpen ? (

@@ -10,7 +10,8 @@ describe("quality logo", () => {
     try {
       const regions = [0, 41, 84, 123, 162, 192];
       for (let quality = 0; quality < 6; quality++) {
-        act(() => root.render(<AuthQualityLogo quality={quality} />));
+        const color = quality % 3;
+        act(() => root.render(<AuthQualityLogo quality={quality} color={color} />));
         expect(container.querySelector("clipPath rect")?.getAttribute("x")).toBe(String(regions[quality]));
         const overlay = container.querySelector(`[data-highlight-letter="${quality}"]`)!;
         expect(overlay.querySelectorAll("path")).toHaveLength(quality < 4 ? 1 : 2);
@@ -19,6 +20,12 @@ describe("quality logo", () => {
         expect(container.querySelector("[data-highlight-backdrop]")).toBeNull();
         expect(overlay.getAttribute("filter")).toBeNull();
         expect(overlay.getAttribute("clip-path")).toContain(container.querySelector("clipPath")!.id);
+        if (quality < 4) {
+          expect(overlay.getAttribute("style")).toContain(["var(--color-primary)", "var(--color-secondary)", "var(--color-accent)"][color]);
+          expect(container.querySelector("svg > path")?.getAttribute("fill")).toBe("#000000");
+        } else {
+          expect(overlay.getAttribute("style")).toContain("rgb(96, 165, 250)");
+        }
       }
     } finally { act(() => root.unmount()); }
   });

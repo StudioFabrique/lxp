@@ -17,14 +17,18 @@ const letters = [
   { letter: "A", x: 192, width: 49 },
 ];
 
-export default function AuthQualityLogo({ quality }: { quality: number }) {
+const tileColors = ["var(--color-primary)", "var(--color-secondary)", "var(--color-accent)"];
+const logoColor = (tileColor: string, amount: number) => `color-mix(in srgb, ${tileColor} ${amount}%, #0F172A)`;
+
+export default function AuthQualityLogo({ quality, color = 0 }: { quality: number; color?: number }) {
   const clipId = useId();
   const { letter, x, width } = letters[quality];
+  const tileColor = color % tileColors.length;
   return (
       <svg viewBox="0 0 241 78" className="mb-5 block h-auto w-32" role="img" aria-label={`ANDRIA — lettre ${letter} mise en avant`}>
         <defs><clipPath id={clipId}><rect x={x} y="0" width={width} height="78" /></clipPath></defs>
         {paths.map((path, index) => <path key={index} d={path.d} fill={index === 1 ? "#0F172A" : path.fill === "white" ? "#FFFFFF" : "#000000"} fillRule={path.evenodd ? "evenodd" : undefined} />)}
-        <g clipPath={`url(#${clipId})`} style={{ color: "#0000FF" }} data-highlight-letter={quality}>
+        <g clipPath={`url(#${clipId})`} style={{ color: quality >= 4 ? "#60A5FA" : logoColor(tileColors[tileColor], 45) }} data-highlight-letter={quality}>
           {paths.map((path, index) => (quality < 4 ? index === 0 : quality === 4 ? index === 3 || index === 6 : index === 4 || index === 5)
             ? <path key={index} d={path.d} fill="currentColor" fillRule={path.evenodd ? "evenodd" : undefined} /> : null)}
         </g>

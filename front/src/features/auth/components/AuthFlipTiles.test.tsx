@@ -86,13 +86,15 @@ describe("auth flip tiles", () => {
     act(() => vi.advanceTimersByTime(1));
     expect(container.querySelectorAll(".auth-flip-tile")).toHaveLength(1);
     expect(image.style.clipPath).toContain("evenodd");
-    act(() => vi.advanceTimersByTime(1300));
+    act(() => vi.advanceTimersByTime(3000));
     expect(container.querySelectorAll(".auth-flip-tile")).toHaveLength(2);
-    act(() => vi.advanceTimersByTime(1300));
+    act(() => vi.advanceTimersByTime(3000));
     expect(container.querySelectorAll(".auth-flip-tile")).toHaveLength(3);
-    act(() => vi.advanceTimersByTime(4400));
+    const labels = [...container.querySelectorAll(".auth-tile-button:not(:disabled)")].map((button) => button.textContent);
+    expect(new Set(labels).size).toBe(3);
+    act(() => vi.advanceTimersByTime(1000));
     expect(container.querySelectorAll(".auth-flip-tile")).toHaveLength(2);
-    act(() => vi.advanceTimersByTime(2600));
+    act(() => vi.advanceTimersByTime(6000));
     expect(container.querySelectorAll(".auth-flip-tile")).toHaveLength(0);
     expect(image.style.clipPath).toBe("");
     act(() => vi.advanceTimersByTime(1500));
@@ -104,7 +106,7 @@ describe("auth flip tiles", () => {
 
   it("keeps other visible cards and their animations when one card is hovered", () => {
     act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
-    act(() => vi.advanceTimersByTime(2100));
+    act(() => vi.advanceTimersByTime(3900));
     const buttons = container.querySelectorAll<HTMLButtonElement>(".auth-tile-button");
     const otherAnimation = buttons[1].querySelector(".auth-flip-tile");
     expect(otherAnimation).not.toBeNull();
@@ -120,12 +122,15 @@ describe("auth flip tiles", () => {
 
   it("pauses other card animations while details are expanded", () => {
     act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
-    act(() => vi.advanceTimersByTime(2100));
+    act(() => vi.advanceTimersByTime(3900));
     const buttons = container.querySelectorAll<HTMLButtonElement>(".auth-tile-button");
     act(() => buttons[0].click());
     expect(image.style.clipPath).toContain("M150 180h610v510h-610Z");
     expect(image.style.clipPath).not.toContain("M150 440h300v250h-300Z");
     expect(container.querySelectorAll("[data-auth-photo-fade] img")).toHaveLength(4);
+    expect(container.querySelectorAll('[role="dialog"] figure img')).toHaveLength(0);
+    act(() => vi.advanceTimersByTime(350));
+    expect(container.querySelectorAll('[role="dialog"] figure img')).toHaveLength(1);
     const other = buttons[1].querySelector(".auth-flip-tile");
     const otherLabel = buttons[1].textContent;
     expect(other?.className).toContain("animation-play-state:paused");
@@ -145,7 +150,7 @@ describe("auth flip tiles", () => {
 
   it("keeps the clicked right tile at its original grid position after closing", () => {
     act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
-    act(() => vi.advanceTimersByTime(3400));
+    act(() => vi.advanceTimersByTime(6800));
     const right = container.querySelectorAll<HTMLButtonElement>(".auth-tile-button")[2];
     const originalLeft = right.style.left;
     const originalTop = right.style.top;
@@ -174,7 +179,7 @@ describe("auth flip tiles", () => {
 
   it("gives each card its own return delay when hovering several in succession", () => {
     act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
-    act(() => vi.advanceTimersByTime(3400));
+    act(() => vi.advanceTimersByTime(6800));
     const buttons = container.querySelectorAll<HTMLButtonElement>(".auth-tile-button");
     const enter = (index: number) => act(() => buttons[index].dispatchEvent(new MouseEvent("mouseover", { bubbles: true })));
     const leave = (index: number) => act(() => buttons[index].dispatchEvent(new MouseEvent("mouseout", { bubbles: true, relatedTarget: document.body })));
@@ -263,6 +268,29 @@ describe("auth flip tiles", () => {
     act(() => vi.advanceTimersByTime(3999));
     expect(button.disabled).toBe(false);
     act(() => vi.advanceTimersByTime(1));
+    expect(button.disabled).toBe(true);
+  });
+
+  it("lets the automatic return flip finish when hovered near its end", () => {
+    act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
+    act(() => vi.advanceTimersByTime(7000));
+    const button = container.querySelector<HTMLButtonElement>(".auth-tile-button")!;
+    act(() => button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true })));
+    expect(button.querySelector(".auth-tile-revealed")).toBeNull();
+    act(() => vi.advanceTimersByTime(800));
+    expect(button.disabled).toBe(true);
+  });
+
+  it("lets a held card finish turning back after a late hover", () => {
+    act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
+    act(() => vi.advanceTimersByTime(1780));
+    const button = container.querySelector<HTMLButtonElement>(".auth-tile-button")!;
+    act(() => button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true })));
+    act(() => button.dispatchEvent(new MouseEvent("mouseout", { bubbles: true, relatedTarget: document.body })));
+    act(() => vi.advanceTimersByTime(3500));
+    act(() => button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true })));
+    expect(button.querySelector(".auth-tile-returning")).not.toBeNull();
+    act(() => vi.advanceTimersByTime(500));
     expect(button.disabled).toBe(true);
   });
 
