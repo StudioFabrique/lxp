@@ -59,12 +59,12 @@ export default function AuthQualityPanel({ quality, color, colorIndex, x, y, geo
     >
       <motion.div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[15px] bg-white" initial={{ opacity: reducedMotion ? 1 : 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.2, delay: reducedMotion ? 0 : 0.15 }}>
       <div className="relative shrink-0 bg-white p-5 text-black">
-        <button ref={closeButton} type="button" className="btn btn-circle btn-ghost btn-sm absolute right-3 top-3 text-current" onClick={onClose} aria-label="Fermer les détails"><X className="size-5" /></button>
+        <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" onClick={onClose} aria-label="Fermer les détails"><X className="size-5" /></button>
         <AuthQualityLogo quality={quality} color={colorIndex} />
         <div className="flex items-center gap-3"><Icon className="size-7 shrink-0" aria-hidden="true" /><h2 id={titleId} className="text-xl font-bold">{label}</h2></div>
         <p id={descriptionId} className="mt-2 text-sm">{description}</p>
       </div>
-      <div className={`min-h-0 flex-1 overflow-y-auto p-5 ${color}`}>
+      <div className={`min-h-0 flex-1 overflow-y-auto rounded-t-[15px] p-5 ${color}`}>
         {showDetails && <motion.div className="flex min-h-full flex-col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reducedMotion ? 0 : 0.25 }}>
           <h3 className="mb-3 text-sm font-semibold">Les fonctionnalités clés</h3>
           <ul className="space-y-2">{features.map((feature) => <li key={feature} className="flex gap-3 text-sm leading-5"><Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" /><span>{feature}</span></li>)}</ul>
