@@ -63,6 +63,19 @@ const monthlySchema = new Schema({
   key: { type: String, required: true, unique: true },
   completedAt: { type: Date, required: true },
 });
+const alertReviewSchema = new Schema({
+  key: { type: String, required: true, unique: true },
+  teacherId: { type: String, required: true },
+  groupId: { type: String, required: true },
+  weekKey: { type: String, required: true },
+  reviewedAt: { type: Date, required: true },
+});
+const groupAlertSettingsSchema = new Schema({
+  key: { type: String, required: true, unique: true },
+  teacherId: { type: String, required: true },
+  groupId: { type: String, required: true },
+  disabledStudentIds: { type: [String], default: [] },
+});
 export const DropoutWeek = mongoose.model("DropoutWeek", weeklySchema);
 export const DropoutPrediction = mongoose.model(
   "DropoutPrediction",
@@ -73,6 +86,8 @@ export const DropoutDelivery = mongoose.model(
   deliverySchema,
 );
 export const DropoutMonth = mongoose.model("DropoutMonth", monthlySchema);
+export const DropoutAlertReview = mongoose.model("DropoutAlertReview", alertReviewSchema);
+export const DropoutGroupAlertSettings = mongoose.model("DropoutGroupAlertSettings", groupAlertSettingsSchema);
 
 export async function initializeDropoutAnalysis() {
   await Promise.all([
@@ -80,6 +95,8 @@ export async function initializeDropoutAnalysis() {
     DropoutPrediction.createIndexes(),
     DropoutDelivery.createIndexes(),
     DropoutMonth.createIndexes(),
+    DropoutAlertReview.createIndexes(),
+    DropoutGroupAlertSettings.createIndexes(),
   ]);
 }
 

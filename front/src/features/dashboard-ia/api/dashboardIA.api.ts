@@ -2,11 +2,11 @@ import apiClient from "../../../lib/axios";
 import type { GroupsStats, TopUser } from "../types";
 
 export type DropoutPreferences = { enabled: boolean; frequency: "weekly" | "monthly"; minCritical?: 1 | 2; hasParcours: boolean; onboardingRequired: boolean };
-export type DropoutSummary = { groupId: string; name: string; analyzed: number; critical: number; completedAt: string };
+export type DropoutSummary = { groupId: string; name: string; analyzed: number; critical: number; alertCritical: number; completedAt: string; weekKey: string; reviewed: boolean };
 export type DropoutStudent = { userId: string; name: string; critical: boolean; effectiveLevel: number; indicators: {
   pass_rate: number | null; monthly_connection_days: number | null; days_since_last_activity: number | null;
 } | null; coverage: { available: number; total: number } | null };
-export type GroupDropoutAnalysis = DropoutSummary & { students: DropoutStudent[] };
+export type GroupDropoutAnalysis = DropoutSummary & { students: DropoutStudent[]; canReview: boolean; canManageAlerts: boolean; disabledStudentIds: string[] };
 
 const queries = {
   getTotalTokens: async (): Promise<{
@@ -43,6 +43,10 @@ const queries = {
 
 export const dashboardIAApi = {
   queries,
+  reviewGroupDropoutAlert: async (groupId: string, weekKey: string): Promise<{ reviewed: boolean }> =>
+    (await apiClient.post(`/dashboard-ia/dropout/groups/${encodeURIComponent(groupId)}/review`, { weekKey })).data,
+  updateGroupDropoutAlertSettings: async (groupId: string, disabledStudentIds: string[]): Promise<{ disabledStudentIds: string[] }> =>
+    (await apiClient.put(`/dashboard-ia/dropout/groups/${encodeURIComponent(groupId)}/alert-settings`, { disabledStudentIds })).data,
   updateDropoutPreferences: async (input: Pick<DropoutPreferences, "enabled" | "frequency" | "minCritical"> & { completeOnboarding?: boolean }): Promise<DropoutPreferences> =>
     (await apiClient.put("/dashboard-ia/dropout/preferences", input)).data,
 };

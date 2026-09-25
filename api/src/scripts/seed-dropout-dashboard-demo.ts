@@ -16,16 +16,48 @@ const students = [
   { firstname: "Noah", lastname: "Laurent", critical: false, description: "Participe aux activités et consolide ses acquis." },
 ] as const;
 const demoIndicators = [
-  { pass_rate: 0.28, monthly_connection_days: 4, days_since_last_activity: 22 },
-  { pass_rate: 0.42, monthly_connection_days: 7, days_since_last_activity: 15 },
-  { pass_rate: 0.86, monthly_connection_days: 23, days_since_last_activity: 1 },
-  { pass_rate: 0.72, monthly_connection_days: 18, days_since_last_activity: 3 },
+  { session_time: 12, mood_proxy: 2, monthly_connection_days: 4, days_since_last_activity: 22,
+    time_on_content: 8, quiz_interaction_count: 2, chatbot_proxy: 1, score_evolution: -0.08,
+    assessment_count: 3, cumul_assessments: 7, pass_rate: 0.28 },
+  { session_time: 18, mood_proxy: 2, monthly_connection_days: 7, days_since_last_activity: 15,
+    time_on_content: 12, quiz_interaction_count: 4, chatbot_proxy: 2, score_evolution: -0.03,
+    assessment_count: 4, cumul_assessments: 10, pass_rate: 0.42 },
+  { session_time: 48, mood_proxy: 4, monthly_connection_days: 23, days_since_last_activity: 1,
+    time_on_content: 36, quiz_interaction_count: 17, chatbot_proxy: 6, score_evolution: 0.06,
+    assessment_count: 8, cumul_assessments: 22, pass_rate: 0.86 },
+  { session_time: 39, mood_proxy: 4, monthly_connection_days: 18, days_since_last_activity: 3,
+    time_on_content: 29, quiz_interaction_count: 13, chatbot_proxy: 4, score_evolution: 0.03,
+    assessment_count: 6, cumul_assessments: 18, pass_rate: 0.72 },
 ] as const;
+
+async function updateExistingPredictions() {
+  const group = await Group.findOne({ name: "promotion démo · développement web" }).select("users").lean();
+  if (!group) throw new Error("Groupe de démonstration introuvable.");
+  const week = await DropoutWeek.findOne({ status: "complete", "groups.groupId": String(group._id) })
+    .sort({ completedAt: -1 }).lean();
+  if (!week) throw new Error("Analyse de démonstration introuvable.");
+  const users = await User.find().where("_id").in(group.users ?? []).select("_id firstname lastname").lean();
+  for (const [index, student] of students.entries()) {
+    const user = users.find((candidate) => candidate.firstname === student.firstname.toLowerCase()
+      && candidate.lastname === student.lastname.toLowerCase());
+    if (!user) throw new Error(`Apprenant de démonstration introuvable : ${student.firstname} ${student.lastname}`);
+    const updated = await DropoutPrediction.updateOne({ key: `${week.key}:${user._id}`, status: "complete" }, { $set: {
+      effectiveLevel: student.critical ? 3 : 0,
+      indicators: demoIndicators[index], coverage: { available: 11, total: 11 },
+    } });
+    if (updated.matchedCount !== 1) throw new Error(`Prédiction introuvable : ${student.firstname} ${student.lastname}`);
+  }
+  console.log("Indicateurs de démonstration mis à jour pour les 4 apprenants.");
+}
 
 async function main() {
   if (env.ENVIRONMENT !== "development") throw new Error("Ce script est réservé à la base de développement.");
   await mongoose.connect(env.MONGO_LOCAL_URL);
   try {
+    if (process.argv.includes("--predictions-only")) {
+      await updateExistingPredictions();
+      return;
+    }
     const teacher = await User.findOne({ email: "formateur@studio.eco" });
     const teacherRole = await Role.findOne({ role: "teacher", rank: 2 });
     const studentRole = await Role.findOne({ role: "student", rank: 3 });
