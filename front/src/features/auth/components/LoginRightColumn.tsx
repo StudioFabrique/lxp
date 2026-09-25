@@ -1,6 +1,7 @@
 import { useState } from "react";
 import bgPhoto from "../assets/bg-photo.jpeg";
 import { AuthBackground } from "../api/backgrounds.api";
+import AuthFlipTiles from "./AuthFlipTiles";
 import { cn } from "../../../utils/cn";
 
 // Tuile de 300 × 250 px, espacement de 10 px et décalage du motif d’origine.
@@ -14,43 +15,38 @@ type Props = {
 };
 
 const LoginRightColumn = ({ background, isFailed, alignTop = false }: Props) => {
-  const [failedBackgroundId, setFailedBackgroundId] = useState<string | null>(
-    null,
-  );
-  const [loadedUnsplashId, setLoadedUnsplashId] = useState<string | null>(null);
-  const displayedBackground =
-    background?.id === failedBackgroundId ? null : background;
-  const isUnsplashReady =
-    displayedBackground !== null && loadedUnsplashId === displayedBackground.id;
+  const [clipPath, setClipPath] = useState("");
+  const [readyImage, setReadyImage] = useState<HTMLImageElement | null>(null);
+  const [failedBackgroundId, setFailedBackgroundId] = useState<string | null>(null);
+  const [loadedBackground, setLoadedBackground] = useState<Pick<AuthBackground, "url" | "alt"> | null>(null);
+  const useFallback = isFailed || (background !== null && background.id === failedBackgroundId);
+  // Keep the last loaded photo while the next theme's photo is downloading.
+  // The image element and interactive cards stay mounted across theme changes.
+  const source = useFallback
+    ? { url: bgPhoto, alt: "Décoration" }
+    : loadedBackground;
 
   return (
     <div className={cn("hidden lg:flex flex-col items-end relative w-full h-full", alignTop ? "justify-start" : "justify-center")}>
-      {/* Skeleton pulse en attendant le chargement */}
-      {!displayedBackground && !failedBackgroundId && !isFailed && (
-        <div
-          className={cn("h-full max-h-[85vh] min-h-150 rounded-l-2xl bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse", gridMaskClassName)}
-        />
+      {background && !useFallback && (
+        <img key={background.id} src={background.url} alt="" aria-hidden="true" className="hidden"
+          onLoad={() => setLoadedBackground(background)}
+          onError={() => setFailedBackgroundId(background.id)} />
       )}
-
-      {/* Image de secours uniquement en cas d'erreur */}
-      {(failedBackgroundId || isFailed) && (
-        <img
-          src={bgPhoto}
-          alt="Décoration"
+      {!source && (
+        <div className={cn("w-full h-full max-h-[85vh] min-h-150 rounded-l-2xl bg-gradient-to-br from-base-300 via-base-200 to-base-300 animate-pulse motion-reduce:animate-none", gridMaskClassName)} />
+      )}
+      {source && (
+        <img src={source.url} alt={source.alt}
+          onLoad={(event) => {
+            setReadyImage(event.currentTarget);
+            if (useFallback) setLoadedBackground({ url: bgPhoto, alt: "Décoration" });
+          }}
           className={cn("h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl", gridMaskClassName)}
-        />
+          style={{ clipPath }} />
       )}
-
-      {/* Image Unsplash par-dessus, fondu une fois chargée */}
-      {displayedBackground && (
-        <img
-          key={displayedBackground.id}
-          src={displayedBackground.url}
-          alt={displayedBackground.alt}
-          onLoad={() => setLoadedUnsplashId(displayedBackground.id)}
-          onError={() => setFailedBackgroundId(background?.id ?? null)}
-          className={cn("absolute h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl transition-opacity duration-700", gridMaskClassName, isUnsplashReady ? "opacity-100" : "opacity-0")}
-        />
+      {readyImage && source && (
+        <AuthFlipTiles image={readyImage} imageSrc={source.url} onClipPathChange={setClipPath} />
       )}
     </div>
   );
