@@ -3,6 +3,10 @@ import bgPhoto from "../assets/bg-photo.jpeg";
 import { AuthBackground } from "../api/backgrounds.api";
 import { cn } from "../../../utils/cn";
 
+// Tuile de 300 × 250 px, espacement de 10 px et décalage du motif d’origine.
+const gridMaskClassName =
+  "mask-[url(/masks/login-tile.svg)] mask-repeat mask-size-[310px_260px] mask-position-[-160px_-80px]";
+
 type Props = {
   background: AuthBackground | null;
   isFailed: boolean;
@@ -19,49 +23,12 @@ const LoginRightColumn = ({ background, isFailed, alignTop = false }: Props) => 
   const isUnsplashReady =
     displayedBackground !== null && loadedUnsplashId === displayedBackground.id;
 
-  // Constantes sorties de la boucle pour faciliter les réglages
-  const gridSize = 10;
-  const squareSize = 300;
-  const gap = 10;
-  const radius = 15;
-
-  const generateGridMask = () => {
-    const rects = [];
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
-        rects.push(
-          <rect
-            key={`${i}-${j}`}
-            x={j * (squareSize + gap)}
-            y={i * (squareSize + gap - 50)}
-            width={squareSize}
-            height={squareSize - 50}
-            rx={radius}
-          />,
-        );
-      }
-    }
-    return rects;
-  };
-
   return (
     <div className={cn("hidden lg:flex flex-col items-end relative w-full h-full", alignTop ? "justify-start" : "justify-center")}>
-      <svg className="absolute">
-        <defs>
-          <clipPath
-            id="image-grid-mask"
-            className="-translate-x-40 -translate-y-20"
-          >
-            {generateGridMask()}
-          </clipPath>
-        </defs>
-      </svg>
-
       {/* Skeleton pulse en attendant le chargement */}
       {!displayedBackground && !failedBackgroundId && !isFailed && (
         <div
-          className="h-full max-h-[85vh] min-h-150 rounded-l-2xl bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse"
-          style={{ clipPath: "url(#image-grid-mask)" }}
+          className={cn("h-full max-h-[85vh] min-h-150 rounded-l-2xl bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse", gridMaskClassName)}
         />
       )}
 
@@ -70,8 +37,7 @@ const LoginRightColumn = ({ background, isFailed, alignTop = false }: Props) => 
         <img
           src={bgPhoto}
           alt="Décoration"
-          className="h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl"
-          style={{ clipPath: "url(#image-grid-mask)" }}
+          className={cn("h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl", gridMaskClassName)}
         />
       )}
 
@@ -83,8 +49,7 @@ const LoginRightColumn = ({ background, isFailed, alignTop = false }: Props) => 
           alt={displayedBackground.alt}
           onLoad={() => setLoadedUnsplashId(displayedBackground.id)}
           onError={() => setFailedBackgroundId(background?.id ?? null)}
-          className={cn("absolute h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl transition-opacity duration-700", isUnsplashReady ? "opacity-100" : "opacity-0")}
-          style={{ clipPath: "url(#image-grid-mask)" }}
+          className={cn("absolute h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl transition-opacity duration-700", gridMaskClassName, isUnsplashReady ? "opacity-100" : "opacity-0")}
         />
       )}
     </div>
