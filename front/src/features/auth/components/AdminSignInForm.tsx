@@ -102,24 +102,26 @@ const AdminSignInForm = ({
     };
 
     return (
-      <AuthPageWrapper title="Vérifiez votre boîte mail">
-        <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
+      <AuthPageWrapper
+        title="Vérifiez votre boîte mail"
+        variant={mode === "first" ? "setup" : "default"}
+      >
+        <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-5 text-center">
           <MailCheck className="h-8 w-8" aria-hidden="true" />
 
-          <div className="flex flex-col gap-2 text-sm text-base-content/70">
+          <div className="flex flex-col gap-10 text-sm text-base-content/70">
             <div className="flex flex-col">
               <span>Un lien d’activation a été envoyé à</span>
               <strong className="text-base-content">{activationEmail}</strong>
             </div>
             <p>
-              Cliquez sur ce lien pour activer votre compte, puis connectez-vous
-              à votre espace.
+              Cliquez sur ce lien compris dans le mail pour activer votre compte.
             </p>
           </div>
 
           <button
             type="button"
-            className="btn btn-ghost btn-sm w-full normal-case text-base-content/70"
+            className="btn btn-ghost btn-sm mt-auto w-full normal-case text-base-content/70"
             onClick={restartCreation}
           >
             Recommencer la création
@@ -131,16 +133,17 @@ const AdminSignInForm = ({
 
   return (
     <AuthPageWrapper
+      variant={mode === "first" ? "setup" : "default"}
       title={
         mode === "additional"
           ? "Créer votre compte root"
-          : "Créer votre administrateur"
+          : "Créer le compte super administrateur"
       }
       titleAccessory={
         <QuestionMarkTooltip tooltipValue={ROOT_ACCOUNT_POLICY} />
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col gap-3">
         {/* Email */}
         <div className="form-control w-full">
           <input
@@ -206,7 +209,7 @@ const AdminSignInForm = ({
         <button
           type="submit"
           disabled={isLoading}
-          className="btn btn-primary w-full text-base-100 rounded-lg normal-case text-base mt-1"
+          className="btn btn-primary mt-auto w-full rounded-lg text-base normal-case text-base-100"
         >
           {isLoading ? (
             <>
@@ -216,7 +219,7 @@ const AdminSignInForm = ({
           ) : mode === "additional" ? (
             "Créer le compte root"
           ) : (
-            "Créer l'administrateur"
+            "Créer le compte root"
           )}
         </button>
       </form>

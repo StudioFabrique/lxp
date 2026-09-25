@@ -177,6 +177,15 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, [user, fetchRoles]);
 
+  // Un rôle peut être créé dans un autre onglet depuis le formulaire utilisateur.
+  useEffect(() => {
+    const refreshRolesOnFocus = () => {
+      if (user?.roles[0]) void fetchRoles(user.roles[0]);
+    };
+    window.addEventListener("focus", refreshRolesOnFocus);
+    return () => window.removeEventListener("focus", refreshRolesOnFocus);
+  }, [user, fetchRoles]);
+
   useEffect(() => {
     handshake().finally(() => {
       // Que le handshake réussisse ou échoue, l'application a fini de vérifier la session

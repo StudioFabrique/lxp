@@ -63,6 +63,7 @@ const renderAt = async (
                   <Route path="/confirm-email" element={<p>page-email</p>} />
                   <Route path="/instance-setup" element={<p>page-configuration</p>} />
                   <Route path="/student/onboarding" element={<p>page-onboarding</p>} />
+                  <Route path="/staff/onboarding" element={<p>page-accueil-equipe</p>} />
                 </Route>
                 <Route path="/demo" element={<p>page-demo</p>} />
                 <Route path="/admin" element={<p>tableau-de-bord</p>} />
@@ -115,6 +116,16 @@ describe("LoginGuard", () => {
     expect(await renderAt("/login", false)).toBe("page-premier-admin");
   });
 
+  it("affiche un chargement discret sur /init pendant la vérification", async () => {
+    getSetupStatus.mockReturnValue(new Promise(() => {}));
+
+    await renderAt("/init", false);
+
+    expect(container.querySelector('[role="status"]')?.getAttribute("aria-label"))
+      .toBe("Vérification de l'instance");
+    expect(container.querySelector(".skeleton")).toBeNull();
+  });
+
   it.each([
     ["/createRoot", "page-nouveau-root"],
     ["/confirm-email", "page-email"],
@@ -161,6 +172,18 @@ describe("LoginGuard", () => {
 
   it("renvoie vers la connexion un visiteur qui ouvre l'onboarding", async () => {
     expect(await renderAt("/student/onboarding", false)).toBe("page-connexion");
+  });
+
+  it.each([1, 2])("laisse l'accueil au personnel de rang %i", async (rank) => {
+    expect(await renderAt("/staff/onboarding", false, true, rank)).toBe("page-accueil-equipe");
+  });
+
+  it("renvoie l'apprenant hors de l'accueil du personnel", async () => {
+    expect(await renderAt("/staff/onboarding", false, true, 3)).toBe("espace-apprenant");
+  });
+
+  it("renvoie le visiteur vers la connexion depuis l'accueil du personnel", async () => {
+    expect(await renderAt("/staff/onboarding", false)).toBe("page-connexion");
   });
 
   it("renvoie les autres utilisateurs vers leur accueil", async () => {

@@ -1,0 +1,78 @@
+name: Generate patch release notes
+
+on:
+  push:
+    branches:
+      - 'release/*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-notes-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.ref_type == 'branch' && startsWith(github.ref_name, 'release/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out the release branch and its history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Fetch the beta baseline
+        run: git fetch --no-tags origin +beta:refs/remotes/origin/beta
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check the release note generator
+        run: node .github/scripts/generate-release-notes.test.mjs
+
+      - name: Check for patch commits
+        id: commits
+        env:
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: echo "has_commits=$(node .github/scripts/generate-release-notes.mjs --check)" >> "$GITHUB_OUTPUT"
+
+      - name: Start the local language model
+        if: steps.commits.outputs.has_commits == 'true'
+        run: |
+          docker run -d --rm --name release-notes-ollama \
+            -p 127.0.0.1:11434:11434 ollama/ollama
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:11434/api/version >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:11434/api/version >/dev/null
+          docker exec release-notes-ollama ollama pull qwen2.5:3b-instruct
+
+      - name: Generate French release notes from commits
+        if: steps.commits.outputs.has_commits == 'true'
+        run: node .github/scripts/generate-release-notes.mjs
+
+      - name: Commit draft release notes
+        if: steps.commits.outputs.has_commits == 'true'
+        run: |
+          git add .github/release-notes-draft.json
+          if git diff --cached --quiet; then
+            echo "La proposition de notes de version est déjà à jour."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(release): proposer les notes de version"
+          git push origin "HEAD:${GITHUB_REF}"
+
+      - name: Stop the local language model
+        if: always()
+        run: docker stop release-notes-ollama || true

@@ -32,7 +32,7 @@ const UserFormTypeUser = ({
     ? (currentUser.roles[0]?.rank ?? 4)
     : 4;
 
-  const { data: roles, isLoading } = useQuery({
+  const { data: roles, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["permission-roles"],
     queryFn: async () => {
       const res = { data: await queries.roles() };
@@ -63,14 +63,16 @@ const UserFormTypeUser = ({
             data-tip="Ouverture dans un nouvel onglet"
             target="_blank"
           >
-            Gérer les roles
+            Gérer les rôles
           </Link>
           {showRefreshButton && (
             <button
               type="button"
-              data-tip="Rafraichir la liste de roles"
+              data-tip="Rafraîchir la liste des rôles"
               className="btn btn-ghost btn-sm tooltip"
-              disabled
+              aria-label="Rafraîchir la liste des rôles"
+              disabled={isFetching}
+              onClick={() => void refetch()}
             >
               <RefreshCcw width={20} height={20} />
             </button>

@@ -30,6 +30,7 @@ type HierarchicalListCardProps = {
   hideLastItemDivider?: boolean;
   placeholder?: ReactNode;
   fullWidth?: boolean;
+  disableHoverScale?: boolean;
 };
 
 const HierarchicalListCard = ({
@@ -54,6 +55,7 @@ const HierarchicalListCard = ({
   hideLastItemDivider = false,
   placeholder,
   fullWidth = false,
+  disableHoverScale = false,
 }: HierarchicalListCardProps) => {
   const [showRemainingItems, setShowRemainingItems] = useState(false);
   const visibleItems = items.slice(0, maxItemsShown);
@@ -66,6 +68,7 @@ const HierarchicalListCard = ({
         glowColor="secondary"
         glowSize={2.4}
         allowOverflow
+        disableHoverScale={disableHoverScale}
         className={cn(
           "rounded-box hover:z-10 focus-within:z-10",
           { "h-full": !fullWidth },

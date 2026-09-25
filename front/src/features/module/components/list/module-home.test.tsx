@@ -83,7 +83,10 @@ describe("ModuleHomeList", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <ModuleHomeList
-          modulesList={[module]}
+          modulesList={[
+            module,
+            { ...module, id: 2, parcoursId: 3, parcours: "Autre parcours" },
+          ]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
           onPublishCourse={vi.fn()}

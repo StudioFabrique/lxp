@@ -13,6 +13,7 @@ import {
 } from "./instance-settings.ts";
 import fs from "fs";
 import path from "path";
+import { DROPOUT_SUMMARY_SUBJECT, dropoutSummaryHtml } from "../helpers/mail-template/dropout-summary.ts";
 import {
   ANDRIA_FOOTER_LOGO_DARK_CID,
   ANDRIA_FOOTER_LOGO_LIGHT_CID,
@@ -395,5 +396,20 @@ export async function sendContentAvailabilityEmail(input: {
       ...(await instanceLogoAttachment()),
       ...andriaFooterLogoAttachment(),
     ],
+  });
+}
+
+export async function sendDropoutSummaryEmail(input: {
+  email: string;
+  groups: { name: string; critical: number }[];
+  messageId: string;
+}) {
+  if (mailerDisabled) return;
+  if (!regexMail.test(input.email)) throw { statusCode: 400, message: badQuery };
+  const destination = env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : input.email;
+  const html = dropoutSummaryHtml(input.groups);
+  return transporter.sendMail({
+    from: env.MAILER_FROM, to: destination, subject: DROPOUT_SUMMARY_SUBJECT,
+    messageId: input.messageId, html,
   });
 }

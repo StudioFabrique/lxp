@@ -8,6 +8,11 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import RecommendedActions from "../components/recommended-actions";
 import { useAdminDashboard } from "../hooks/use-admin-dashboard";
+import { isTeacherUser } from "../../../utils/helpers/user-role";
+import GroupAiAlerts from "../components/group-ai-alerts";
+import QuickActions from "../components/quick-actions";
+import { useSearchParams } from "react-router";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 
 const AdminDashboard = () => {
   const {
@@ -22,6 +27,15 @@ const AdminDashboard = () => {
     isModulesLoading,
     areRecommendationsLoading,
   } = useAdminDashboard();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isTeacher = isTeacherUser(user);
+
+  const openCreateModal = (key: "createFormation" | "createParcours") => {
+    if (key === "createFormation") emitOnboardingEvent({ type: "formation_entry_clicked" });
+    const next = new URLSearchParams(searchParams);
+    next.set(key, "true");
+    setSearchParams(next);
+  };
 
   return (
     <PageWrapper>
@@ -34,7 +48,15 @@ const AdminDashboard = () => {
           title={welcomeTitle}
           description={welcomeMessage}
           classname="capitalize"
-        />
+          containerClassname="z-20"
+        >
+          {isTeacher && (
+            <QuickActions
+              onCreateFormation={() => openCreateModal("createFormation")}
+              onCreateParcours={() => openCreateModal("createParcours")}
+            />
+          )}
+        </Header>
       )}
 
       {/* --- Contenu Principal --- */}
@@ -48,7 +70,7 @@ const AdminDashboard = () => {
                 isLoading={areRecommendationsLoading}
               />
             ) : null}
-            <LastParcours parcours={parcours} isLoading={isParcoursLoading} />
+            <LastParcours parcours={parcours} isLoading={isParcoursLoading} showQuickActions={!isTeacher} />
             <LastModules modules={modules} isLoading={isModulesLoading} />
           </article>
 
@@ -61,6 +83,7 @@ const AdminDashboard = () => {
             </RoleRankGuard>
           </article>
         </div>
+        {isTeacherUser(user) && <GroupAiAlerts />}
       </section>
     </PageWrapper>
   );

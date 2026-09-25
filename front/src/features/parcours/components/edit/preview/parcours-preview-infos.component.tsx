@@ -8,9 +8,12 @@ import { localeDate } from "../../../../../utils/helpers/locale-date";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
+import type Group from "../../../../../utils/interfaces/group";
 
 interface ParcoursPreviewInfosProps {
   onEdit: (id: number) => void;
+  groups: Group[];
+  isTeacher: boolean;
 }
 
 /* Informations générales du parcours */
@@ -66,6 +69,18 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
               <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
               <ContactsList contactsList={contacts} />
             </BoxWrapper>
+            {props.isTeacher && (
+              <BoxWrapper>
+                <h2 className="text-xl font-bold">Groupes</h2>
+                <ul className="flex flex-wrap gap-2">
+                  {props.groups.map((group) => (
+                    <li className="badge badge-outline badge-primary text-xs" key={group._id}>
+                      {group.name}
+                    </li>
+                  ))}
+                </ul>
+              </BoxWrapper>
+            )}
             <BoxWrapper>
               <h2 className="text-xl font-bold">Tags</h2>
               <TagsList tagsList={tags} />

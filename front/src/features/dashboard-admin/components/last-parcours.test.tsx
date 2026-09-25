@@ -108,5 +108,6 @@ describe("LastParcours", () => {
     expect(markup).toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
     expect(markup).toContain("Actions pour le parcours Parcours test");
+    expect(markup).not.toContain("Modifier la formation Formation test");
   });
 });

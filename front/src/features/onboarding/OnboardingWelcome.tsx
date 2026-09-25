@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { Joyride } from "react-joyride";
 
@@ -13,9 +13,10 @@ import { isTeacherUser } from "../../utils/helpers/user-role";
 
 type Props = {
   layout: "admin" | "student";
+  children?: ReactNode;
 };
 
-const OnboardingWelcome = ({ layout }: Props) => {
+const OnboardingWelcome = ({ layout, children }: Props) => {
   const { user } = useContext(AuthContext);
   const { isSaving, start, skip } = useOnboarding();
   const { demoUrl } = useDemoMode();
@@ -113,8 +114,9 @@ const OnboardingWelcome = ({ layout }: Props) => {
         <Header
           title={title}
           description={description}
-          containerClassname="relative pr-12"
+          containerClassname="relative z-20 pr-12"
         >
+          {children}
           <button
             type="button"
             className="btn btn-primary"

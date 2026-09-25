@@ -94,10 +94,11 @@ const TokenForm = ({ onNext }: Props) => {
 
   return (
     <AuthPageWrapper
-      title="Création du premier administrateur"
-      description="Veuillez renseigner la clé d'activation pour créer votre premier utilisateur."
+      variant="setup"
+      title="Activer le compte root"
+      description="Cette clé sécurise la création du compte qui gérera l’identité et les paramètres de votre instance."
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
         <div className="form-control w-full">
           <input
             type="text"
@@ -124,10 +125,54 @@ const TokenForm = ({ onNext }: Props) => {
           </span>
         )}
 
+        <div className="group collapse collapse-arrow rounded-lg bg-base-200">
+          <input type="checkbox" />
+          <div className="collapse-title text-sm font-medium text-warning/60 group-hover:text-warning/80">
+            Vous ne trouvez pas la clé d'activation ?
+          </div>
+          <div className="collapse-content">
+            <p className="text-sm mb-2 text-base-content/60">
+              Vous pouvez régénérer une nouvelle clé d'activation en exécutant la
+              commande suivante sur le serveur :
+            </p>
+            <div className="flex items-center gap-2 bg-base-300 rounded-lg p-2">
+              <textarea
+                readOnly
+                value={command}
+                aria-label="Commande de génération de la clé d'activation"
+                className="textarea min-h-0 min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none field-sizing-content"
+              />
+              <button
+                type="button"
+                onClick={handleCopyCommand}
+                className="btn btn-xs self-start btn-ghost shrink-0 gap-1 text-base-content/60 hover:text-base-content"
+                aria-label="Copier la commande"
+                title="Copier la commande"
+              >
+                {isCommandCopied ? (
+                  <Check className="size-3.5 text-success" />
+                ) : (
+                  <Copy className="size-3.5" />
+                )}
+                <span className="hidden sm:inline">
+                  {isCommandCopied ? "Copié" : ""}
+                </span>
+              </button>
+            </div>
+            <p className="text-xs text-base-content/50 mt-4">
+              La nouvelle clé s'affichera dans le terminal. Elle est valide
+              pendant{" "}
+              {activationTokenTtlMinutes >= 60
+                ? `${activationTokenTtlMinutes / 60} heures`
+                : `${activationTokenTtlMinutes} minutes`}
+              .
+            </p>
+          </div>
+        </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="btn btn-primary w-full text-base-100 rounded-lg normal-case text-base"
+          className="btn btn-primary mt-auto w-full rounded-lg text-base normal-case text-base-100"
         >
           {isLoading ? (
             <>
@@ -139,51 +184,6 @@ const TokenForm = ({ onNext }: Props) => {
           )}
         </button>
       </form>
-
-      <div className="group collapse collapse-arrow bg-base-200 rounded-lg mt-5">
-        <input type="checkbox" />
-        <div className="collapse-title text-sm font-medium text-warning/60 group-hover:text-warning/80">
-          Vous ne trouvez pas la clé d'activation ?
-        </div>
-        <div className="collapse-content">
-          <p className="text-sm mb-2 text-base-content/60">
-            Vous pouvez régénérer une nouvelle clé d'activation en exécutant la
-            commande suivante sur le serveur :
-          </p>
-          <div className="flex items-center gap-2 bg-base-300 rounded-lg p-2">
-            <textarea
-              readOnly
-              value={command}
-              aria-label="Commande de génération de la clé d'activation"
-              className="textarea min-h-0 min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none field-sizing-content"
-            />
-            <button
-              type="button"
-              onClick={handleCopyCommand}
-              className="btn btn-xs self-start btn-ghost shrink-0 gap-1 text-base-content/60 hover:text-base-content"
-              aria-label="Copier la commande"
-              title="Copier la commande"
-            >
-              {isCommandCopied ? (
-                <Check className="size-3.5 text-success" />
-              ) : (
-                <Copy className="size-3.5" />
-              )}
-              <span className="hidden sm:inline">
-                {isCommandCopied ? "Copié" : ""}
-              </span>
-            </button>
-          </div>
-          <p className="text-xs text-base-content/50 mt-4">
-            La nouvelle clé s'affichera dans le terminal. Elle est valide
-            pendant{" "}
-            {activationTokenTtlMinutes >= 60
-              ? `${activationTokenTtlMinutes / 60} heures`
-              : `${activationTokenTtlMinutes} minutes`}
-            .
-          </p>
-        </div>
-      </div>
     </AuthPageWrapper>
   );
 };

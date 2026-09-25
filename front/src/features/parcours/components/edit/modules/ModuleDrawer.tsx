@@ -48,13 +48,15 @@ export default function ModuleDrawer({
     >
       {hasModules ? (
         <>
-          <div className="mb-4">
-            <ParcoursFilterBadges
-              parcours={parcours}
-              selectedParcours={selectedParcours}
-              onSelect={setSelectedParcours}
-            />
-          </div>
+          {new Set(parcours.filter(Boolean)).size > 1 && (
+            <div className="mb-4">
+              <ParcoursFilterBadges
+                parcours={parcours}
+                selectedParcours={selectedParcours}
+                onSelect={setSelectedParcours}
+              />
+            </div>
+          )}
           {filteredModules.length > 0 ? (
             <ul className="flex flex-col gap-3 pr-1">
               {filteredModules.map((module) => (

@@ -19,6 +19,8 @@
     "typecheck": "prisma contract emit && tsc --project ./ --noEmit",
     "start:dev": "NODE_ENV=development node --watch src/server.ts",
     "start:prod": "NODE_ENV=production node dist/src/server.js",
+    "start:worker:dev": "NODE_ENV=development node --watch src/scripts/dropout-worker.ts",
+    "start:worker:prod": "NODE_ENV=production node dist/src/scripts/dropout-worker.js",
     "prisma-generate": "prisma contract emit",
     "test:debug": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
     "test:list": "jest --listTests",

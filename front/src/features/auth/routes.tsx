@@ -33,6 +33,10 @@ export const authRoutes: RouteObject[] = [
         ),
       },
       {
+        path: "/staff/onboarding",
+        lazy: lazyRoute(() => import("./views/StaffOnboarding")),
+      },
+      {
         path: "/register",
         lazy: lazyRoute(() => import("./views/Register")),
       },

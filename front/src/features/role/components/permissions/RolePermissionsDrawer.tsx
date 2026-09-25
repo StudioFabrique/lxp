@@ -24,9 +24,46 @@ type RolePermissionsDrawerProps = {
   onClose: () => void;
 };
 
+const permissionLabels: Record<string, string> = {
+  activity: "Activités",
+  bonusSkill: "Compétences bonus",
+  chatbot: "Assistant pédagogique",
+  course: "Cours",
+  cursus: "Espace personnel",
+  dashboardIa: "Tableau de bord IA",
+  feedback: "Retours apprenants",
+  formation: "Formations",
+  group: "Groupes",
+  lesson: "Leçons",
+  mediatheque: "Médiathèque",
+  module: "Modules",
+  objective: "Objectifs",
+  parcours: "Parcours",
+  permission: "Permissions",
+  quiz: "Quiz",
+  resource: "Ressources",
+  role: "Rôles",
+  stats: "Statistiques",
+  tag: "Étiquettes",
+  user: "Utilisateurs",
+};
+
+const getPermissionLabel = (name: string) => {
+  if (permissionLabels[name]) return permissionLabels[name];
+
+  const readableName = name
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ");
+  return readableName.charAt(0).toLocaleUpperCase("fr") + readableName.slice(1);
+};
+
 const sortPermissions = (items: PermissionItem[] | undefined) =>
   [...(items ?? [])].sort((first, second) =>
-    first.name.localeCompare(second.name, "fr", { sensitivity: "base" }),
+    getPermissionLabel(first.name).localeCompare(
+      getPermissionLabel(second.name),
+      "fr",
+      { sensitivity: "base" },
+    ),
   );
 
 const PermissionIcon = ({ isRole }: { isRole?: boolean }) =>
@@ -63,7 +100,7 @@ export default function RolePermissionsDrawer({
   const readOnlyItem = (permission: PermissionItem) => (
     <span className="flex items-center gap-2 rounded-field border border-base-300 bg-base-100 px-3 py-2 text-sm">
       <PermissionIcon isRole={permission.isRole} />
-      <span className="capitalize">{permission.name}</span>
+      <span>{getPermissionLabel(permission.name)}</span>
     </span>
   );
 
@@ -95,9 +132,11 @@ export default function RolePermissionsDrawer({
             <section className="flex flex-col gap-3">
               <div>
                 <h3 className="font-bold">Permissions attribuées</h3>
-                <p className="text-xs text-base-content/60">
-                  Cliquez sur une permission pour la retirer.
-                </p>
+                {!permissionsAreLocked && (
+                  <p className="text-xs text-base-content/60">
+                    Cliquez sur une permission pour la retirer.
+                  </p>
+                )}
               </div>
 
               {assignedPermissions.length > 0 ? (
@@ -117,8 +156,8 @@ export default function RolePermissionsDrawer({
                         onClick={() => onDeletePermission(permission.fullName)}
                       >
                         <PermissionIcon isRole={permission.isRole} />
-                        <span className="capitalize">{permission.name}</span>
-                        {isUpdatingPermission &&
+                        <span>{getPermissionLabel(permission.name)}</span>
+                        {permissionsAreLocked ? null : isUpdatingPermission &&
                         pendingPermission === permission.fullName ? (
                           <LoaderCircle className="size-4 animate-spin" />
                         ) : (
@@ -138,9 +177,11 @@ export default function RolePermissionsDrawer({
             <section className="flex flex-col gap-3 border-t border-base-300 pt-6">
               <div>
                 <h3 className="font-bold">Permissions non attribuées</h3>
-                <p className="text-xs text-base-content/60">
-                  Cliquez sur une permission pour l'ajouter.
-                </p>
+                {!permissionsAreLocked && (
+                  <p className="text-xs text-base-content/60">
+                    Cliquez sur une permission pour l'ajouter.
+                  </p>
+                )}
               </div>
 
               {availablePermissions.length > 0 ? (
@@ -160,8 +201,8 @@ export default function RolePermissionsDrawer({
                       >
                         <PermissionIcon isRole={permission.isRole} />
                         <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-semibold capitalize">
-                            {permission.name}
+                          <span className="block text-sm font-semibold">
+                            {getPermissionLabel(permission.name)}
                           </span>
                           {permission.description ? (
                             <span className="block text-xs text-base-content/60">
@@ -173,7 +214,7 @@ export default function RolePermissionsDrawer({
                             </span>
                           ) : null}
                         </span>
-                        {isUpdatingPermission &&
+                        {permissionsAreLocked ? null : isUpdatingPermission &&
                         pendingPermission === permission.fullName ? (
                           <LoaderCircle className="size-4 animate-spin" />
                         ) : (

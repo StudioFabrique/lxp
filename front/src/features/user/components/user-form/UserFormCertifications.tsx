@@ -6,6 +6,7 @@ import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-d
 import DatePicker from "../../../../../src/components/UI/date-picker/date-picker";
 import { parseDateValue } from "../../../../../src/components/UI/date-picker/date-picker.utils";
 import { cn } from "../../../../../src/utils/cn";
+import { Pencil, Trash2 } from "lucide-react";
 
 type EditState = {
   isActive: boolean;
@@ -62,8 +63,12 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
     }
   };
 
-  const handleDelete = (id: number) => {
-    setGraduations(graduations.filter((item) => item.id !== id));
+  const handleDelete = (graduation: Graduation) => {
+    setGraduations(
+      graduations.filter((item) =>
+        graduation._id ? item._id !== graduation._id : item.id !== graduation.id,
+      ),
+    );
     setCurrent(initGraduation);
     setEditMode({ isActive: false, idToEdit: null, _idToEdit: null });
   };
@@ -144,31 +149,48 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
           )}
         </div>
         {graduations.length > 0 && (
-          <div className="bg-secondary/10 flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+          <ul className="flex max-h-80 flex-col gap-2 overflow-y-auto rounded-lg border border-base-300 bg-base-100/60 p-3 md:my-1" aria-label="Certifications enregistrées">
             {graduations.map((g) => (
-            <div
-              key={g._id ?? g.id}
-              className="flex items-center justify-between bg-secondary/20 rounded-md w-full py-2 px-5 max-h-[80px]"
-            >
-              <span>
-                <p className="text-lg font-bold">{g.title}</p>
-                <p>{new Date(g.date).getFullYear()}</p>
-              </span>
-              <span className="flex items-center gap-2">
-                <button type="button" onClick={() => handleSetEdit(g)} className="h-6 w-6 cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                  </svg>
-                </button>
-                <button type="button" onClick={() => handleDelete(g.id!)} className="h-6 w-6 cursor-pointer text-error">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                  </svg>
-                </button>
-              </span>
-            </div>
+              <li
+                key={g._id ?? g.id}
+                className={cn(
+                  "flex min-w-0 items-center gap-3 rounded-lg border border-base-300 bg-base-100 px-3 py-2 shadow-sm",
+                  editMode.isActive &&
+                    (g._id ? g._id === editMode._idToEdit : g.id === editMode.idToEdit) &&
+                    "border-primary",
+                )}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold" title={g.title}>{g.title}</p>
+                  <p className="truncate text-sm text-base-content/70">
+                    {g.degree} · {new Date(g.date).getFullYear()}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => handleSetEdit(g)}
+                    className="btn btn-ghost btn-square btn-sm text-primary"
+                    aria-label={`Modifier la certification ${g.title}`}
+                    title="Modifier"
+                    disabled={disabled}
+                  >
+                    <Pencil className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(g)}
+                    className="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10"
+                    aria-label={`Supprimer la certification ${g.title}`}
+                    title="Supprimer"
+                    disabled={disabled}
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     </BoxWrapper>

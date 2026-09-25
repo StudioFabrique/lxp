@@ -41,6 +41,7 @@ const Header = ({
       onClick={onClick}
       className={cn(
         "h-auto w-full flex-row flex-wrap items-center justify-between gap-3 px-4 shadow-none select-none",
+        !alternateBgColor && !successBgColor && "themed-page-header",
         isSubHeader ? "py-2" : "py-4",
         isSubHeader && !disabled && "ring-1",
         alternateBgColor && "bg-base-300",

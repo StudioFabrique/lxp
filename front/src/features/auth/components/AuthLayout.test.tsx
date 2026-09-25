@@ -67,4 +67,23 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
     expect(container.textContent).not.toContain("STEP");
     expect(profileApi.queries.getInstanceSettings).not.toHaveBeenCalled();
   });
+
+  it("ouvre les notes de version depuis le pied de la connexion", async () => {
+    await act(async () => {
+      root.render(
+        <MemoryRouter initialEntries={["/login"]}>
+          <AuthLayout />
+        </MemoryRouter>,
+      );
+    });
+
+    await act(async () => {
+      container
+        .querySelector<HTMLButtonElement>('button[aria-label="Voir les notes de version 0.9"]')
+        ?.click();
+    });
+
+    expect(document.querySelector("dialog h2")?.textContent).toBe("ANDRIA");
+    expect(document.querySelector("dialog")?.textContent).toContain("0.9");
+  });
 });

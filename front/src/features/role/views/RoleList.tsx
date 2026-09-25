@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -19,6 +19,7 @@ import useEagerLoadingList from "../../../hooks/useEagerLoadingList";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { normalizeSearchText } from "../../../utils/helpers/normalize-search-text";
 import type Role from "../../../utils/interfaces/role";
+import { AuthContext } from "../../../store/AuthProvider";
 import { roleApi, type PermissionTypes, type RoleCounts } from "../api/role.api";
 import RoleCard from "../components/RoleCard";
 import RolePermissionsDrawer from "../components/permissions/RolePermissionsDrawer";
@@ -40,6 +41,7 @@ const asRole = (role: RoleCounts): Role => role;
 const RoleList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user, fetchRoles } = useContext(AuthContext);
   const [searchValue, setSearchValue] = useState("");
   const [formModal, setFormModal] = useState<RoleFormModal | null>(null);
   const [roleToDelete, setRoleToDelete] = useState<RoleCounts | null>(null);
@@ -77,6 +79,7 @@ const RoleList = () => {
   const refreshRoleQueries = () => {
     void queryClient.invalidateQueries({ queryKey: ["roles"] });
     void queryClient.invalidateQueries({ queryKey: ["permission-roles"] });
+    if (user?.roles[0]) void fetchRoles(user.roles[0]);
   };
 
   const {

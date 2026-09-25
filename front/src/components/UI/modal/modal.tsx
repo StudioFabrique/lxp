@@ -1,10 +1,11 @@
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import { Loader2, Minimize2, X } from "lucide-react";
 import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 import { cn } from "../../../utils/cn";
 
 type ModalProps = {
   title?: string;
+  headerActions?: ReactNode;
   titleTooltip?: string;
   onLeftClick?: () => void;
   onRightClick?: () => void;
@@ -53,14 +54,24 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
           </div>
         )}
-        <div className="flex justify-between gap-5">
-          {props.title && <h3 className="font-bold text-lg">{props.title}</h3>}
+        <div
+          className={cn(
+            "flex justify-between gap-5",
+            props.headerActions && "flex-wrap items-center gap-3",
+          )}
+        >
+          {props.title && (
+            <h3 className={cn("font-bold text-lg", props.headerActions && "mr-auto")}>
+              {props.title}
+            </h3>
+          )}
           {props.titleTooltip && (
             <QuestionMarkTooltip
               tooltipPosition="left"
               tooltipValue={props.titleTooltip}
             />
           )}
+          {props.headerActions}
           {props.closeButtonAtTop && props.onLeftClick ? (
             <button
               type="button"

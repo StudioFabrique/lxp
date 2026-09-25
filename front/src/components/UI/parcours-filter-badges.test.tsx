@@ -4,6 +4,25 @@ import { describe, expect, it, vi } from "vitest";
 import ParcoursFilterBadges from "./parcours-filter-badges";
 
 describe("ParcoursFilterBadges", () => {
+  it.each([
+    { parcours: [] },
+    { parcours: ["Parcours A"] },
+    { parcours: ["Parcours A", "Parcours A"] },
+  ])(
+    "masque les filtres avec au plus un parcours distinct : %j",
+    ({ parcours }) => {
+      const markup = renderToStaticMarkup(
+        <ParcoursFilterBadges
+          parcours={parcours}
+          selectedParcours={null}
+          onSelect={vi.fn()}
+        />,
+      );
+
+      expect(markup).toBe("");
+    },
+  );
+
   it("affiche cinq parcours puis un badge secondaire pour voir la suite", () => {
     const markup = renderToStaticMarkup(
       <ParcoursFilterBadges

@@ -8,12 +8,13 @@ import FadeWrapper from "../FadeWrapper";
 import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 import DemoTour from "../../../features/demo/components/DemoTour";
 import { useDemoMode } from "../../../store/DemoContext";
+import StaffOnboardingGate from "../../guards/StaffOnboardingGate";
 
 const AdminLayout = () => {
   const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
 
   return (
-    <ChatbotProvider>
+    <StaffOnboardingGate><ChatbotProvider>
       {/* En démonstration, `OnboardingTour` ne fournit qu'un contexte inerte :
           plusieurs vues appellent `useOnboarding`, mais le tutoriel lui-même
           n'a pas lieu d'être sur un compte partagé. */}
@@ -29,7 +30,7 @@ const AdminLayout = () => {
         {isConfigLoaded && !aiDisabled && <Chatbot />}
         {demoMode && <DemoTour layout="admin" />}
       </OnboardingTour>
-    </ChatbotProvider>
+    </ChatbotProvider></StaffOnboardingGate>
   );
 };
 
