@@ -41,14 +41,7 @@ const AdminDashboard = () => {
     <PageWrapper>
       {showOnboardingWelcome ? (
         <div data-onboarding="admin-dashboard-header">
-          <OnboardingWelcome layout="admin">
-            {isTeacher && (
-              <QuickActions
-                onCreateFormation={() => openCreateModal("createFormation")}
-                onCreateParcours={() => openCreateModal("createParcours")}
-              />
-            )}
-          </OnboardingWelcome>
+          <OnboardingWelcome layout="admin" />
         </div>
       ) : (
         <Header

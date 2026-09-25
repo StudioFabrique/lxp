@@ -5,6 +5,7 @@ import User from "../utils/interfaces/db/user.ts";
 import Role from "../utils/interfaces/db/role.ts";
 import Group from "../utils/interfaces/db/group.ts";
 import predictOutcome from "../models/indicators/predict-outcome.ts";
+import type { ModelIndicators } from "../models/indicators/model-features.ts";
 import { sendDropoutSummaryEmail } from "./mailer.ts";
 import { logger } from "../utils/logs/logger.ts";
 import {
@@ -47,6 +48,9 @@ const predictionSchema = new Schema({
   userId: String,
   status: String,
   critical: Boolean,
+  effectiveLevel: Number,
+  indicators: { type: Schema.Types.Mixed },
+  coverage: { available: Number, total: Number },
   leaseUntil: Date,
 });
 const deliverySchema = new Schema({
@@ -201,7 +205,8 @@ async function predictionFor(week: string, userId: string): Promise<boolean> {
     const critical = result.alert.effectiveLevel === 3;
     await DropoutPrediction.updateOne(
       { key },
-      { $set: { status: "complete", critical } },
+      { $set: { status: "complete", critical, effectiveLevel: result.alert.effectiveLevel,
+        indicators: result.indicators satisfies ModelIndicators, coverage: result.coverage } },
     );
     return critical;
   } catch (error) {
@@ -297,7 +302,7 @@ async function deliver(
     "dropoutAnalysis.enabled": true,
     "dropoutAnalysis.frequency": frequency,
   })
-    .select("_id email")
+    .select("_id email dropoutAnalysis.minCritical")
     .lean();
   const attachedContacts = await prisma.orm.public.Contact.where((c) =>
     c.idMdb.in(teacherIds),
@@ -316,7 +321,7 @@ async function deliver(
       week.groups ?? [],
       String(teacher._id),
       assignments.get(String(teacher._id)) ?? new Set<number>(),
-    );
+    ).filter((group) => group.critical >= (teacher.dropoutAnalysis?.minCritical ?? 1));
     if (!groups.length) continue;
     const key = `${frequency}:${period}:${teacher._id}`;
     // Claim before SMTP: a restart cannot cause a second delivery.

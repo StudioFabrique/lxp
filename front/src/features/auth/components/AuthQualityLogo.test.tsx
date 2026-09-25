@@ -21,7 +21,7 @@ describe("quality logo", () => {
         expect(overlay.getAttribute("filter")).toBeNull();
         expect(overlay.getAttribute("clip-path")).toContain(container.querySelector("clipPath")!.id);
         if (quality < 4) {
-          expect(overlay.getAttribute("style")).toContain(["var(--color-primary)", "var(--color-secondary)", "var(--color-accent)"][color]);
+          expect(overlay.getAttribute("style")).toContain(["rgb(30, 64, 175)", "var(--color-secondary)", "var(--color-accent)"][color]);
           expect(container.querySelector("svg > path")?.getAttribute("fill")).toBe("#000000");
         } else {
           expect(overlay.getAttribute("style")).toContain("rgb(96, 165, 250)");

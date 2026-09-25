@@ -7,7 +7,7 @@ import "./auth-flip-tiles.css";
 import { getExpandedTileBounds, getVisibleAuthTiles, tileWidth, tileHeight, type Geometry } from "./auth-tile-grid";
 
 const colors = [
-  "bg-primary text-primary-content",
+  "bg-[#1e40af] text-white",
   "bg-secondary text-secondary-content",
   "bg-accent text-accent-content",
 ];

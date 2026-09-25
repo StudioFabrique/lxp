@@ -75,7 +75,7 @@ describe("identité de l’instance dans les e-mails", () => {
     expect(html).toContain("Bienvenue parmi nous !");
     expect(html).toContain("Votre compte est prêt.");
     expect(html).not.toContain("Bonjour,");
-    expect(html).not.toContain("user@test.fr");
+    expect(html).toContain("Adresse e-mail : <strong>user@test.fr</strong>");
   });
 
   test("conserve une signature visuelle distincte pour chaque template", () => {

@@ -2,15 +2,14 @@ import { useContext, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
-import { ArrowRight, Brain } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
-import CursorGlowCard from "../../../components/UI/cursor-glow-card";
-import BoxWrapper from "../../../components/wrappers/BoxWrapper";
+import ReleaseNotesCard from "../../../components/UI/ReleaseNotesCard";
 import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
 import DropoutPreferencesForm from "../../dashboard-ia/components/DropoutPreferencesForm";
 import { dashboardIAApi } from "../../dashboard-ia/api/dashboardIA.api";
@@ -66,7 +65,8 @@ export default function StaffOnboarding() {
             ? "Préparez votre espace d’administration en choisissant votre thème. Vous pourrez le modifier plus tard depuis votre profil."
             : "Personnalisez votre espace et choisissez si vous souhaitez activer l’analyse automatique du décrochage pour vos parcours."}</p>
         </div>
-        <button type="button" className="btn btn-primary mt-9 w-full gap-2 rounded-lg" onClick={() => setStep(1)}>Commencer <ArrowRight className="size-4" /></button>
+        <button type="button" className="btn btn-primary mx-auto mt-9 w-full max-w-xs gap-2 rounded-lg" onClick={() => setStep(1)}>Commencer <ArrowRight className="size-4" /></button>
+        {!admin && <ReleaseNotesCard className="mx-auto mt-3 h-28 w-full max-w-xs flex-none" />}
       </motion.section> : <motion.div className="flex min-h-0 flex-1 flex-col" initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.45 }}>
         <OnboardingProgressPanel contentKey={String(step)} currentStep={step} stepCount={admin ? 1 : 2}
           progressLabel="Progression de l’accueil" className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"
@@ -75,13 +75,9 @@ export default function StaffOnboarding() {
             <button type="button" className="btn btn-primary text-base normal-case" disabled={saving} onClick={() => admin ? void finishAdmin() : setStep(2)}>{admin ? "Terminer" : "Continuer"}</button>
           </div> : undefined}>
           {step === 1 ? <ThemeSelectionStep /> : <div className="flex flex-1 flex-col gap-5">
-            <div><h1 className="text-2xl font-bold">Analyse automatique du décrochage</h1>
-              <p className="mt-2 text-sm text-base-content/70">Choisissez si les apprenants de vos parcours doivent être analysés chaque semaine. Vous pouvez modifier ce choix à tout moment dans le tableau de bord IA.</p></div>
-            <CursorGlowCard autoGlow glowColor="primary" className="rounded-lg"><BoxWrapper className="h-auto items-center text-center">
-              <Brain className="size-10 text-primary" aria-hidden="true" />
-              <p>Vous recevrez un récapitulatif uniquement lorsqu’un de vos groupes présente un cas critique.</p>
-            </BoxWrapper></CursorGlowCard>
-            {teacherStatus.data && <DropoutPreferencesForm initial={teacherStatus.data} onSaved={teacherCompleted} onBack={() => setStep(1)} submitLabel="Terminer" />}
+            <div><h1 className="text-2xl font-bold">Suivi des apprenants</h1>
+              <p className="mt-2 text-sm text-base-content/70">Repérez les groupes qui pourraient avoir besoin d’un accompagnement. Choisissez les alertes et les récapitulatifs que vous souhaitez recevoir.</p></div>
+            {teacherStatus.data && <DropoutPreferencesForm initial={teacherStatus.data} onSaved={teacherCompleted} onBack={() => setStep(1)} submitLabel="Terminer" completeOnboarding={false} />}
           </div>}
         </OnboardingProgressPanel>
       </motion.div>}

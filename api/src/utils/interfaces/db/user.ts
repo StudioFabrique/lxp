@@ -24,6 +24,7 @@ export interface IUser extends MongoRecord {
   dropoutAnalysis?: {
     enabled: boolean;
     frequency: "weekly" | "monthly";
+    minCritical: 1 | 2;
     onboardingCompletedAt?: Date;
   };
   email: string;
@@ -119,9 +120,10 @@ const userSchema: Schema = new Schema(
       type: new Schema({
         enabled: { type: Boolean, default: false },
         frequency: { type: String, enum: ["weekly", "monthly"], default: "weekly" },
+        minCritical: { type: Number, enum: [1, 2], default: 1 },
         onboardingCompletedAt: Date,
       }, { _id: false }),
-      default: () => ({ enabled: false, frequency: "weekly" }),
+      default: () => ({ enabled: false, frequency: "weekly", minCritical: 1 }),
     },
 
     connectionInfos: {

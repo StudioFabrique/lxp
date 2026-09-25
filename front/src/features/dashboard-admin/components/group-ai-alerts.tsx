@@ -10,7 +10,11 @@ export default function GroupAiAlerts() {
     queryKey: ["dropout-summaries"],
     queryFn: dashboardIAApi.queries.getDropoutSummaries,
   });
-  const alerts = data?.filter((group) => group.critical > 0) ?? [];
+  const { data: preferences } = useQuery({
+    queryKey: ["dropout-preferences"],
+    queryFn: dashboardIAApi.queries.getDropoutPreferences,
+  });
+  const alerts = data?.filter((group) => group.critical >= (preferences?.minCritical ?? 1)) ?? [];
 
   return (
     <CursorGlowCard

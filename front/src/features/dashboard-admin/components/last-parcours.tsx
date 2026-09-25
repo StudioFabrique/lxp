@@ -159,6 +159,7 @@ export default function LastParcours({
                 key={formation.id}
                 formation={formation}
                 fullWidth={usesFullWidthLayout}
+                disableHoverScale
                 isManagementView
                 onCreateParcours={setParcoursFormationId}
                 onDeleteParcours={(item) => {

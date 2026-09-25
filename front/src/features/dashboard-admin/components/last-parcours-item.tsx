@@ -43,6 +43,7 @@ type LastParcoursItemProps = {
   ) => void;
   exportingParcoursId?: number | null;
   fullWidth?: boolean;
+  disableHoverScale?: boolean;
 };
 
 const LastParcoursItem = ({
@@ -57,6 +58,7 @@ const LastParcoursItem = ({
   onExportParcours,
   exportingParcoursId = null,
   fullWidth,
+  disableHoverScale = false,
 }: LastParcoursItemProps) => {
   const usesFullWidthLayout = fullWidth ?? baseRoute === "student";
 
@@ -164,6 +166,7 @@ const LastParcoursItem = ({
         ) : undefined
       }
       fullWidth={usesFullWidthLayout}
+      disableHoverScale={disableHoverScale}
     />
   );
 };
