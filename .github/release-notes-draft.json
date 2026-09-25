@@ -3,27 +3,27 @@
     "version": "0.9.1",
     "status": "Beta",
     "branch": "release/0.9.1",
-    "summary": "Améliorations et réorganisations pour une meilleure expérience",
+    "summary": "Améliorations et nouvelles fonctionnalités pour ANDRIA",
     "changes": [
       {
-        "title": "Rôles et thèmes sombres",
-        "description": "Réorganisation des rôles et ajustement des thèmes sombres",
-        "icon": "users"
-      },
-      {
-        "title": "Accueil et nouveautés",
-        "description": "Réorganisation de l'accueil et affichage des nouveautés",
+        "title": "Header et PageHeader teintés",
+        "description": "Teintement des en-têtes pour une meilleure visibilité",
         "icon": "layout"
       },
       {
-        "title": "Bêta 0.9 et initialisation",
-        "description": "Simplification de l'initialisation et présentation de la bêta 0.9",
-        "icon": "rocket"
+        "title": "Gestion et paiement des alertes de décrochage",
+        "description": "Formateurs peuvent gérer et acquitter les alertes de décrochage",
+        "icon": "layout"
       },
       {
-        "title": "Mise en page de /init",
-        "description": "Amélioration de la mise en page de l'initialisation",
-        "icon": "monitor"
+        "title": "Améliorations et nouvelles tuiles interactifs",
+        "description": "Peaufinement des tuiles interactives et ajout de nouvelles qualités ANDRIA",
+        "icon": "layout"
+      },
+      {
+        "title": "Simplification de l'initialisation et présent",
+        "description": "Simplification de l'initialisation et présentation de la bêta 0.9",
+        "icon": "rocket"
       }
     ]
   },
