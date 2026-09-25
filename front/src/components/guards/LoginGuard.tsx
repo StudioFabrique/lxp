@@ -20,6 +20,7 @@ const LoginGuard = () => {
   );
   const isInstanceSetupRoute = location.pathname === "/instance-setup";
   const isStudentOnboardingRoute = location.pathname === "/student/onboarding";
+  const isStaffOnboardingRoute = location.pathname === "/staff/onboarding";
 
   useEffect(() => {
     let active = true;
@@ -73,6 +74,14 @@ const LoginGuard = () => {
     );
   }
 
+  if (isLoggedIn && user && isStaffOnboardingRoute) {
+    return hasRoleRank(user, [1, 2]) ? (
+      <Outlet />
+    ) : (
+      <Navigate replace to={getUserHomePath(user) ?? "/access-denied"} />
+    );
+  }
+
   if (isLoggedIn && user && location.pathname === "/register" &&
       new URLSearchParams(location.search).has("id")) {
     const homePath = getUserHomePath(user) ?? "/access-denied";
@@ -104,7 +113,7 @@ const LoginGuard = () => {
   }
 
 
-  if (!isLoggedIn && isStudentOnboardingRoute) {
+  if (!isLoggedIn && (isStudentOnboardingRoute || isStaffOnboardingRoute)) {
     return <Navigate replace to="/login" />;
   }
 

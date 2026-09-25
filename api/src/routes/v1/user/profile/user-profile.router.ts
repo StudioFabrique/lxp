@@ -22,8 +22,11 @@ import {
   LEARNING_PREFERENCES,
 } from "../../../../config/learning-profile.ts";
 import { newPasswordValidate } from "../../../../helpers/custom-validators.ts";
+import { getStaffOnboarding, completeStaffOnboarding } from "../../../../controllers/user/profile/http-staff-onboarding.ts";
 
 const userProfileRouter = Router();
+userProfileRouter.get("/staff-onboarding", checkPermissions("cursus", "read"), getStaffOnboarding);
+userProfileRouter.put("/staff-onboarding", checkPermissions("cursus", "read"), completeStaffOnboarding);
 
 /**
  * Récupère les informations de l'utilisateur connecté

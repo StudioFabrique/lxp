@@ -88,7 +88,7 @@ export function DataTable<TData extends RowData>({
                 return (
                   <th
                     key={header.id}
-                    className={cn("text-base-content pl-6", isActionsColumn && "text-center")}
+                    className={cn("text-base-content pl-6", isActionsColumn && "w-[1%] whitespace-nowrap pr-6 text-center")}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -139,7 +139,7 @@ export function DataTable<TData extends RowData>({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className={cn("border-y border-base-300/50 pl-6 bg-base-100 text-base-content first:rounded-l-xl first:border-l last:rounded-r-xl last:border-r group-hover:bg-base-100/60 transition-colors", cell.column.id === "actions" && "data-table-actions text-center")}
+                    className={cn("border-y border-base-300/50 pl-6 bg-base-100 text-base-content first:rounded-l-xl first:border-l last:rounded-r-xl last:border-r group-hover:bg-base-100/60 transition-colors", cell.column.id === "actions" && "data-table-actions w-[1%] whitespace-nowrap pr-6 text-center")}
                     // Sélection et actions sont des commandes propres à la
                     // cellule : leur clic ne doit pas déclencher la navigation
                     // portée par la ligne.

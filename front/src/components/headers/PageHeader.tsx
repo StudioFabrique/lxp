@@ -58,6 +58,7 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
       data-page-tour="header"
       className={cn(
         "mb-6 h-auto w-full flex-row flex-wrap items-center justify-between gap-3 px-4 shadow-none select-none",
+        !props.successBgColor && "themed-page-header",
         props.isSubHeader ? "py-2" : "py-4",
         props.isSubHeader && !props.disabled && "ring-1",
         props.hasError && "ring-2 ring-error",

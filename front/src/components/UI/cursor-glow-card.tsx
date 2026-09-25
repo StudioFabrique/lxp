@@ -18,6 +18,7 @@ type CursorGlowCardProps = {
   className?: string;
   allowOverflow?: boolean;
   autoGlow?: boolean;
+  disableHoverScale?: boolean;
 };
 
 const CursorGlowCard = ({
@@ -27,6 +28,7 @@ const CursorGlowCard = ({
   className,
   allowOverflow = false,
   autoGlow = false,
+  disableHoverScale = false,
 }: CursorGlowCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -79,7 +81,7 @@ const CursorGlowCard = ({
       onMouseMove={autoGlow || !glowEnabled ? undefined : handleMouseMove}
       className={cn(
         "group relative rounded-xl",
-        animations && "transition-transform duration-200 hover:scale-101",
+        animations && !disableHoverScale && "transition-transform duration-200 hover:scale-101",
         allowOverflow ? "overflow-visible" : "overflow-hidden",
         className,
       )}

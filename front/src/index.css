@@ -64,6 +64,17 @@
     margin-inline: 0;
 }
 
+/* A subtle theme tint distinguishes page headers from the cards below them. */
+.themed-page-header {
+    background-color: color-mix(in oklab, var(--color-base-200) 88%, var(--color-primary));
+    border-color: color-mix(in oklab, var(--color-base-300) 72%, var(--color-primary));
+}
+
+.theme-tinted-dropdown {
+    background-color: color-mix(in oklab, var(--color-base-200) 78%, var(--color-primary));
+    border-color: color-mix(in oklab, var(--color-base-300) 60%, var(--color-primary));
+}
+
 /* Preserve a clear keyboard focus indicator on every interactive control. */
 :where(
     input:not([type="hidden"]),

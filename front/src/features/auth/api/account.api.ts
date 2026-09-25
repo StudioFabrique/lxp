@@ -9,7 +9,7 @@ const checkEmail = async (
 
 const checkInvitation = async (
   token: string,
-): Promise<{ success: boolean; message: string }> => {
+): Promise<{ success: boolean; message: string; email: string }> => {
   const res = await apiClient.post("/user/check-invitation", { token });
   return res.data;
 };

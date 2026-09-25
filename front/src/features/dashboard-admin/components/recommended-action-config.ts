@@ -1,5 +1,5 @@
 import {
-  BookPlus,
+  Component,
   ImagePlus,
   ShieldPlus,
   UserRoundPlus,
@@ -21,5 +21,5 @@ export const recommendedActionIcons = {
   changeLogo: ImagePlus,
   inviteStudents: UserRoundPlus,
   createGroup: UsersRound,
-  createModule: BookPlus,
+  createModule: Component,
 };

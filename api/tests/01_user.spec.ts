@@ -1036,10 +1036,11 @@ describe("HTTP /user", () => {
         process.env.REGISTER_SECRET!,
         { expiresIn: "7d" }
       );
-      await request(app)
+      const response = await request(app)
         .post("/v1/user/check-invitation")
         .send({ token })
         .expect(200);
+      expect(response.body.email).toBe("invitation5@test.fr");
     });
 
     test("It should respond 400 bad reques", async () => {

@@ -163,7 +163,7 @@ else
     DEMO_ENABLED=false
     AI_ENABLED=true
     COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
-    LOG_SERVICES="app ai"
+    LOG_SERVICES="app ai dropout-worker"
 fi
 
 # --------------------------------------------------------------------------
@@ -485,7 +485,11 @@ fi
 # `--remove-orphans` retire les conteneurs IA d'une stack qui bascule en
 # démonstration.
 echo "Démarrage des applications..."
-compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app
+if [ "$AI_ENABLED" = "true" ]; then
+    compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app dropout-worker
+else
+    compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app
+fi
 
 if [ "$DEMO_ENABLED" = "false" ]; then
     echo "Génération de la clé d'activation..."

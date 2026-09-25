@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 import { cn } from "../../../utils/cn";
 
@@ -46,12 +45,6 @@ const RightSideDrawer: FC<Props> = ({
     }
   };
 
-  const handleToggle = (_event: React.ChangeEvent<HTMLInputElement>) => {
-    if (onCloseDrawer && checkboxRef.current?.checked === false) {
-      onCloseDrawer(id);
-    }
-  };
-
   useEffect(() => {
     if (isOpen !== undefined) {
       checkboxRef.current!.checked = isOpen;
@@ -65,7 +58,6 @@ const RightSideDrawer: FC<Props> = ({
         type="checkbox"
         className="drawer-toggle"
         ref={checkboxRef}
-        onChange={handleToggle}
       />
       <div className="drawer-content sticky top-0 z-0">
         {visible ? (
@@ -106,9 +98,10 @@ const RightSideDrawer: FC<Props> = ({
         ) : null}
       </div>
       <div className="drawer-side h-screen overflow-hidden" style={{ zIndex }}>
-        <label
-          htmlFor={!isOpen ? id : undefined}
-          onClick={isOpen ? handleCloseDrawer : undefined}
+        <button
+          type="button"
+          aria-label="Fermer le panneau"
+          onClick={handleCloseDrawer}
           className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
         />
         <div
@@ -119,7 +112,9 @@ const RightSideDrawer: FC<Props> = ({
         >
           <div className="flex-shrink-0 py-4 pl-4">
             <div className="flex items-center gap-x-4">
-              <div
+              <button
+                type="button"
+                aria-label="Retour"
                 className="text-primary cursor-pointer"
                 onClick={handleCloseDrawer}
               >
@@ -135,7 +130,7 @@ const RightSideDrawer: FC<Props> = ({
                     clipRule="evenodd"
                   />
                 </svg>
-              </div>
+              </button>
               <h2 className="text-xl font-bold text-primary">{title}</h2>
             </div>
             <div className="divider divider-vertical"></div>

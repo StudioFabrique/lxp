@@ -30,7 +30,7 @@ export default function QuickActions({
         <span>Actions rapides</span>
         <EllipsisVertical className="w-4 h-4" />
       </summary>
-      <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+      <ul className="menu dropdown-content theme-tinted-dropdown rounded-box z-20 w-52 border p-2 shadow-lg">
         <PermissionGuard action="write" object="formation">
           <li>
             <button

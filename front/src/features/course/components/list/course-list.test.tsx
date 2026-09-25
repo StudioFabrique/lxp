@@ -72,7 +72,13 @@ describe("CourseList", () => {
   it("propose les filtres parcours au-dessus de la recherche multicritère", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
-        <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
+        <CourseList
+          coursesList={[
+            course,
+            { ...course, id: 2, parcours: "Autre parcours" },
+          ]}
+          onRefreshCourses={vi.fn()}
+        />
       </MemoryRouter>,
     );
 

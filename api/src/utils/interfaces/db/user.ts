@@ -20,6 +20,13 @@ export interface IUserOnboarding {
 }
 
 export interface IUser extends MongoRecord {
+  staffOnboardingCompletedAt?: Date;
+  dropoutAnalysis?: {
+    enabled: boolean;
+    frequency: "weekly" | "monthly";
+    minCritical: 1 | 2;
+    onboardingCompletedAt?: Date;
+  };
   email: string;
   firstname: string;
   lastname: string;
@@ -107,6 +114,16 @@ const userSchema: Schema = new Schema(
     onboarding: {
       type: onboardingSchema,
       default: () => ({ status: "pending", step: "", version: 1 }),
+    },
+    staffOnboardingCompletedAt: Date,
+    dropoutAnalysis: {
+      type: new Schema({
+        enabled: { type: Boolean, default: false },
+        frequency: { type: String, enum: ["weekly", "monthly"], default: "weekly" },
+        minCritical: { type: Number, enum: [1, 2], default: 1 },
+        onboardingCompletedAt: Date,
+      }, { _id: false }),
+      default: () => ({ enabled: false, frequency: "weekly", minCritical: 1 }),
     },
 
     connectionInfos: {

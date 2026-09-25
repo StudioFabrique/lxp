@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { Settings } from "lucide-react";
+import { AuthContext } from "../../../store/AuthProvider";
+import { isTeacherUser } from "../../../utils/helpers/user-role";
+import DropoutPreferencesForm from "../components/DropoutPreferencesForm";
 import { dashboardIAApi } from "../api/dashboardIA.api";
 import useTopUsers from "../hooks/useTopUsers";
 import GroupsStats from "../components/GroupsStats";
@@ -13,6 +17,11 @@ import ElementNotFound from "../../../components/UI/element-not-found";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 
 const DashboardIAHome = () => {
+  const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { data: preferences } = useQuery({ queryKey: ["dropout-preferences"], queryFn: dashboardIAApi.queries.getDropoutPreferences, enabled: isTeacher });
+  const { data: dropoutSummaries, isPending: summariesPending, isError: summariesError } = useQuery({ queryKey: ["dropout-summaries"], queryFn: dashboardIAApi.queries.getDropoutSummaries });
   const {
     dataList,
     totalPages,
@@ -54,7 +63,27 @@ const DashboardIAHome = () => {
       <Header
         title="Tableau de bord IA"
         description="Consultez les statistiques de consommation de l'IA par vos apprenants"
-      />
+      >
+        {isTeacher && preferences?.hasParcours && <button className="btn btn-outline btn-sm" onClick={() => setSettingsOpen(true)}><Settings className="size-4" aria-hidden="true" /> Paramètres</button>}
+      </Header>
+      <section className="w-full">
+        <h2 className="mb-4 pl-1 font-semibold">Analyse du décrochage par groupe</h2>
+        <BoxWrapper className="h-auto">
+          {summariesPending ? <LoadingSkeleton variant="rows" label="Chargement des analyses" />
+            : summariesError ? <p role="alert">Impossible de charger les analyses.</p>
+            : dropoutSummaries?.length ? <ul className="divide-y divide-base-300">
+              {dropoutSummaries.map((group) => <li key={group.groupId} className="flex flex-wrap justify-between gap-2 py-3">
+                <strong>{group.name}</strong><span>{group.analyzed} apprenants analysés · {group.critical} cas critiques · {new Date(group.completedAt).toLocaleDateString("fr-FR")}</span>
+              </li>)}
+            </ul> : <p>Aucun traitement terminé pour le moment.</p>}
+        </BoxWrapper>
+      </section>
+      {settingsOpen && preferences && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label="Paramètres d'analyse du décrochage">
+        <BoxWrapper className="h-auto w-full max-w-lg bg-base-100">
+          <div className="flex justify-between"><h2 className="text-xl font-bold">Paramètres de l'analyse</h2><button aria-label="Fermer" onClick={() => setSettingsOpen(false)}>✕</button></div>
+          <DropoutPreferencesForm initial={preferences} onSaved={() => setSettingsOpen(false)} />
+        </BoxWrapper>
+      </div>}
       <section className="flex justify-start gap-x-4 items-center w-full">
         <div className="border border-primary/50 rounded-lg p-4">
           <article className="flex gap-x-2 items-center">

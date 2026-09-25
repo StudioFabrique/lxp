@@ -1,14 +1,13 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { Check, Gauge, GraduationCap, Shapes } from "lucide-react";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
-import { ThemeContext } from "../../../store/ThemeProvider";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
 import { profileApi } from "../../profile/api/profile.api";
-import { themeLabels } from "../../../config/themes";
+import ThemeSelectionStep from "../ThemeSelectionStep";
 import type Hobby from "../../user/interfaces/hobby";
 import type { Link } from "../../user/interfaces/link";
 import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
@@ -17,7 +16,11 @@ import {
   paceOptions,
   preferenceOptions,
 } from "../learning-choice-options";
-import { LevelChoiceButtons, PreferenceCards, SingleChoiceCards } from "../LearningChoiceCards";
+import {
+  LevelChoiceButtons,
+  PreferenceCards,
+  SingleChoiceCards,
+} from "../LearningChoiceCards";
 import {
   learningProfileApi,
   learningProfileKey,
@@ -27,7 +30,6 @@ import type {
   LearningPace,
   LearningPreference,
 } from "../types";
-import { cn } from "../../../utils/cn";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
 type OnboardingStep = {
@@ -47,8 +49,6 @@ const availablePreferenceValues = new Set(
 export default function StudentLearningOnboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { chooseTheme, availableLightThemes, availableDarkThemes } =
-    useContext(ThemeContext);
   const query = useQuery({
     queryKey: learningProfileKey,
     queryFn: learningProfileApi.get,
@@ -67,10 +67,6 @@ export default function StudentLearningOnboarding() {
     unknown
   > | null>(null);
   const [profileItemsChanged, setProfileItemsChanged] = useState(false);
-  const [selectedThemes, setSelectedThemes] = useState(() => ({
-    light: localStorage.getItem("lightTheme") ?? "classic",
-    dark: localStorage.getItem("darkTheme") ?? "classic-dark",
-  }));
   const contentScrollRef = useRef<HTMLDivElement>(null);
 
   const steps = useMemo<OnboardingStep[]>(() => {
@@ -294,7 +290,7 @@ export default function StudentLearningOnboarding() {
           <div className="mt-4 flex shrink-0 justify-between gap-3 border-t border-base-300 pt-5">
             <button
               type="button"
-              className="btn btn-ghost"
+              className="btn btn-ghost text-base normal-case"
               disabled={index === 0 || saving}
               onClick={() => setIndex((current) => Math.max(0, current - 1))}
             >
@@ -303,12 +299,15 @@ export default function StudentLearningOnboarding() {
             {step.kind === "summary" ? (
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary text-base normal-case"
                 disabled={saving}
                 onClick={() => void confirm()}
               >
                 {saving ? (
-                  <span className="loading loading-spinner loading-sm" aria-label="Confirmation en cours" />
+                  <span
+                    className="loading loading-spinner loading-sm"
+                    aria-label="Confirmation en cours"
+                  />
                 ) : (
                   "Confirmer"
                 )}
@@ -316,7 +315,7 @@ export default function StudentLearningOnboarding() {
             ) : (
               <button
                 type="button"
-                className="btn btn-primary disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
+                className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
                 disabled={cannotContinue}
                 onClick={() => void continueToNext()}
               >
@@ -326,277 +325,215 @@ export default function StudentLearningOnboarding() {
           </div>
         }
       >
-              {step.kind === "learning" ? (
-                <div className="space-y-7">
-                  <section className="space-y-4" aria-labelledby="learning-pace-title">
-                    <div>
-                      <h1 id="learning-pace-title" className="text-2xl font-bold">
-                        Quel rythme préférez-vous ?
-                      </h1>
-                      <p className="mt-2 text-sm leading-5 text-base-content/65">
-                        Choisissez la proposition qui vous convient. Vous pourrez la modifier plus tard.
-                      </p>
-                    </div>
-                    <SingleChoiceCards
-                      name="pace"
-                      options={paceOptions}
-                      value={pace}
-                      onChange={setPace}
-                      compact
-                    />
-                  </section>
+        {step.kind === "learning" ? (
+          <div className="space-y-7">
+            <section
+              className="space-y-4"
+              aria-labelledby="learning-pace-title"
+            >
+              <div>
+                <h1 id="learning-pace-title" className="text-2xl font-bold">
+                  Quel rythme préférez-vous ?
+                </h1>
+                <p className="mt-2 text-sm leading-5 text-base-content/65">
+                  Choisissez la proposition qui vous convient. Vous pourrez la
+                  modifier plus tard.
+                </p>
+              </div>
+              <SingleChoiceCards
+                name="pace"
+                options={paceOptions}
+                value={pace}
+                onChange={setPace}
+                compact
+              />
+            </section>
 
-                  <section className="space-y-4" aria-labelledby="learning-preferences-title">
-                    <div>
-                      <h2 id="learning-preferences-title" className="text-2xl font-bold">
-                        Comment aimez-vous apprendre ?
-                      </h2>
-                      <p className="mt-2 text-sm leading-5 text-base-content/70">
-                        Sélectionnez au moins une préférence.
-                      </p>
-                    </div>
-                    <PreferenceCards
-                      value={preferences}
-                      onChange={setPreferences}
-                    />
-                  </section>
-                </div>
-              ) : null}
+            <section
+              className="space-y-4"
+              aria-labelledby="learning-preferences-title"
+            >
+              <div>
+                <h2
+                  id="learning-preferences-title"
+                  className="text-2xl font-bold"
+                >
+                  Comment aimez-vous apprendre ?
+                </h2>
+                <p className="mt-2 text-sm leading-5 text-base-content/70">
+                  Sélectionnez au moins une préférence.
+                </p>
+              </div>
+              <PreferenceCards value={preferences} onChange={setPreferences} />
+            </section>
+          </div>
+        ) : null}
 
-              {step.kind === "module" && module ? (
-                <div className="space-y-5">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span
-                        className="shrink-0 text-lg font-bold text-accent"
-                        aria-label={`Module ${moduleNumber} sur ${moduleCount}`}
-                      >
-                        {moduleNumber}/{moduleCount}
-                      </span>
-                      <h1 className="min-w-0 text-2xl font-bold">
-                        Quel est votre niveau dans{" "}
-                        <span className="font-extrabold text-primary">
-                          {capitalizeTitle(module.title)}
-                        </span>{" "}
-                        ?
-                      </h1>
-                    </div>
-                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                      <span>
-                        Appuyez-vous sur les cours et leurs tags pour vous
-                        situer.
-                      </span>
-                    </p>
-                  </div>
-                  {module.courses.length ? (
-                    <ul className="divide-y divide-base-300 text-sm leading-5">
-                      {module.courses.map((course) => (
-                        <li
-                          key={course.title}
-                          className="space-y-1.5 py-3 first:pt-0 last:pb-0"
-                        >
-                          <span className="block font-semibold">
-                            {capitalizeTitle(course.title)}
-                          </span>
-                          {course.tags.length ? (
-                            <div className="flex flex-wrap gap-1">
-                              {course.tags.map((tag) => (
-                                <TagItem key={tag.id} tag={tag} noIcon compact />
-                              ))}
-                            </div>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  <div className="pt-2">
-                    <LevelChoiceButtons
-                      name={`level-${module.id}`}
-                      value={levels[module.id] ?? null}
-                      onChange={(level) =>
-                        setLevels((current) => ({
-                          ...current,
-                          [module.id]: level,
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              ) : null}
-
-              {step.kind === "profile" ? (
-                <div className="space-y-2">
-                  <h1 className="text-2xl font-bold">
-                    Souhaitez-vous en dire un peu plus ?
-                  </h1>
-                  <p className="flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                    <span>
-                      Cette étape est entièrement facultative. Vous pouvez la
-                      passer sans rien renseigner.
+        {step.kind === "module" && module ? (
+          <div className="space-y-5">
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span
+                  className="shrink-0 text-lg font-bold text-accent"
+                  aria-label={`Module ${moduleNumber} sur ${moduleCount}`}
+                >
+                  {moduleNumber}/{moduleCount}
+                </span>
+                <h1 className="min-w-0 text-2xl font-bold">
+                  Quel est votre niveau dans{" "}
+                  <span className="font-extrabold text-primary">
+                    {capitalizeTitle(module.title)}
+                  </span>{" "}
+                  ?
+                </h1>
+              </div>
+            </div>
+            <div className="pt-2">
+              <LevelChoiceButtons
+                name={`level-${module.id}`}
+                value={levels[module.id] ?? null}
+                onChange={(level) =>
+                  setLevels((current) => ({
+                    ...current,
+                    [module.id]: level,
+                  }))
+                }
+              />
+            </div>
+            {module.courses.length ? (
+              <ul className="text-sm leading-5">
+                {module.courses.map((course) => (
+                  <li
+                    key={course.title}
+                    className="space-y-1.5 py-3 first:pt-0 last:pb-0"
+                  >
+                    <span className="block font-semibold">
+                      {capitalizeTitle(course.title)}
                     </span>
-                  </p>
-                  <ProfileItemsEditor
-                    hobbies={hobbies}
-                    links={links}
-                    onHobbiesChange={(items) => {
-                      setHobbies(items);
-                      setProfileItemsChanged(true);
-                    }}
-                    onLinksChange={(items) => {
-                      setLinks(items);
-                      setProfileItemsChanged(true);
-                    }}
-                  />
-                </div>
-              ) : null}
-
-              {step.kind === "theme" ? (
-                <div className="space-y-4">
-                  <div>
-                    <h1 className="text-2xl font-bold">
-                      Choisissez votre thème
-                    </h1>
-                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                      <span>
-                        Personnalisez les modes clair et sombre. Vous pourrez
-                        toujours les modifier depuis votre profil.
-                      </span>
-                    </p>
-                  </div>
-                  {(
-                    [
-                      ["light", "Thèmes clairs", availableLightThemes],
-                      ["dark", "Thèmes sombres", availableDarkThemes],
-                    ] as const
-                  ).map(([mode, label, themeList]) => (
-                    <section key={mode}>
-                      <h2 className="mb-2 text-sm font-bold">{label}</h2>
-                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                        {themeList.map((themeName) => {
-                          const selected = selectedThemes[mode] === themeName;
-                          return (
-                            <button
-                              key={themeName}
-                              type="button"
-                              data-theme={themeName}
-                              aria-pressed={selected}
-                              onClick={() => {
-                                chooseTheme(themeName, mode);
-                                setSelectedThemes((current) => ({
-                                  ...current,
-                                  [mode]: themeName,
-                                }));
-                              }}
-                              className={cn(
-                                "group flex min-h-16 min-w-0 items-center gap-2 rounded-xl border bg-base-200 p-3 text-left shadow-sm transition hover:-translate-y-0.5",
-                                selected
-                                  ? "border-primary ring-2 ring-primary/50"
-                                  : "border-base-300 hover:border-primary/70",
-                              )}
-                            >
-                              <span className="flex size-8 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
-                                <span className="h-full w-1/2 bg-primary" />
-                                <span className="h-full w-1/2 bg-secondary" />
-                              </span>
-                              <span className="min-w-0 flex-1 text-sm font-semibold leading-tight text-base-content">
-                                {themeLabels[themeName] ?? themeName}
-                              </span>
-                            </button>
-                          );
-                        })}
+                    {course.tags.length ? (
+                      <div className="flex flex-wrap gap-1">
+                        {course.tags.map((tag) => (
+                          <TagItem key={tag.id} tag={tag} noIcon compact />
+                        ))}
                       </div>
-                    </section>
-                  ))}
-                </div>
-              ) : null}
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
 
-              {step.kind === "summary" ? (
-                <div className="space-y-5">
-                  <div>
-                    <h1 className="text-2xl font-bold">Votre profil</h1>
-                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                      <span>
-                        Vérifiez vos réponses avant de commencer. Vous pourrez
-                        les modifier plus tard depuis votre profil.
-                      </span>
-                    </p>
-                  </div>
-                  <dl className="grid gap-3 sm:grid-cols-2">
-                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                        <Gauge className="size-5" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <dt className="text-sm text-base-content/65">Rythme</dt>
-                        <dd className="mt-1 font-semibold">
-                          {paceOptions.find((option) => option.value === pace)
-                            ?.label ?? "Non renseigné"}
-                        </dd>
-                      </div>
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                        <Check className="size-4" aria-hidden="true" />
-                      </span>
+        {step.kind === "profile" ? (
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold">
+              Souhaitez-vous en dire un peu plus ?
+            </h1>
+            <p className="flex min-h-10 items-end text-sm leading-5 text-base-content/65">
+              <span>
+                Cette étape est entièrement facultative. Vous pouvez la passer
+                sans rien renseigner.
+              </span>
+            </p>
+            <ProfileItemsEditor
+              hobbies={hobbies}
+              links={links}
+              onHobbiesChange={(items) => {
+                setHobbies(items);
+                setProfileItemsChanged(true);
+              }}
+              onLinksChange={(items) => {
+                setLinks(items);
+                setProfileItemsChanged(true);
+              }}
+            />
+          </div>
+        ) : null}
+
+        {step.kind === "theme" ? <ThemeSelectionStep /> : null}
+
+        {step.kind === "summary" ? (
+          <div className="space-y-5">
+            <div>
+              <h1 className="text-2xl font-bold">Votre profil</h1>
+              <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
+                <span>
+                  Vérifiez vos réponses avant de commencer. Vous pourrez les
+                  modifier plus tard depuis votre profil.
+                </span>
+              </p>
+            </div>
+            <dl className="grid gap-3 sm:grid-cols-2">
+              <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                  <Gauge className="size-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <dt className="text-sm text-base-content/65">Rythme</dt>
+                  <dd className="mt-1 font-semibold">
+                    {paceOptions.find((option) => option.value === pace)
+                      ?.label ?? "Non renseigné"}
+                  </dd>
+                </div>
+                <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                  <Check className="size-4" aria-hidden="true" />
+                </span>
+              </div>
+              {context.availableFormations
+                .flatMap((item) =>
+                  item.parcours.flatMap((parcours) => parcours.modules),
+                )
+                .map((module) => (
+                  <div
+                    key={module.id}
+                    className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4"
+                  >
+                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                      <GraduationCap className="size-5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <dt className="text-sm text-base-content/65">
+                        {capitalizeTitle(module.title)}
+                      </dt>
+                      <dd className="mt-1 font-semibold">
+                        {levelOptions.find(
+                          (option) => option.value === levels[module.id],
+                        )?.label ?? "Non renseigné"}
+                      </dd>
                     </div>
-                    {context.availableFormations
-                      .flatMap((item) =>
-                        item.parcours.flatMap((parcours) => parcours.modules),
-                      )
-                      .map((module) => (
-                        <div
-                          key={module.id}
-                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4"
+                    <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                      <Check className="size-4" aria-hidden="true" />
+                    </span>
+                  </div>
+                ))}
+              <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                  <Shapes className="size-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <dt className="text-sm text-base-content/65">
+                    Préférences d’apprentissage
+                  </dt>
+                  <dd className="mt-3 flex flex-wrap gap-2">
+                    {preferenceOptions
+                      .filter((option) => preferences.includes(option.value))
+                      .map((option) => (
+                        <span
+                          key={option.value}
+                          className="rounded-lg border border-primary/25 bg-base-100 px-3 py-2 text-sm font-semibold"
                         >
-                          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                            <GraduationCap
-                              className="size-5"
-                              aria-hidden="true"
-                            />
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <dt className="text-sm text-base-content/65">
-                              {capitalizeTitle(module.title)}
-                            </dt>
-                            <dd className="mt-1 font-semibold">
-                              {levelOptions.find(
-                                (option) => option.value === levels[module.id],
-                              )?.label ?? "Non renseigné"}
-                            </dd>
-                          </div>
-                          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                            <Check className="size-4" aria-hidden="true" />
-                          </span>
-                        </div>
+                          {option.label}
+                        </span>
                       ))}
-                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                        <Shapes className="size-5" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <dt className="text-sm text-base-content/65">
-                          Préférences d’apprentissage
-                        </dt>
-                        <dd className="mt-3 flex flex-wrap gap-2">
-                          {preferenceOptions
-                            .filter((option) =>
-                              preferences.includes(option.value),
-                            )
-                            .map((option) => (
-                              <span
-                                key={option.value}
-                                className="rounded-lg border border-primary/25 bg-base-100 px-3 py-2 text-sm font-semibold"
-                              >
-                                {option.label}
-                              </span>
-                            ))}
-                        </dd>
-                      </div>
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                        <Check className="size-4" aria-hidden="true" />
-                      </span>
-                    </div>
-                  </dl>
+                  </dd>
                 </div>
-              ) : null}
+                <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                  <Check className="size-4" aria-hidden="true" />
+                </span>
+              </div>
+            </dl>
+          </div>
+        ) : null}
       </OnboardingProgressPanel>
     </section>
   );

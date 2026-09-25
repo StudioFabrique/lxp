@@ -14,6 +14,7 @@ import {
   initializeContentAvailabilityNotifications,
   startContentAvailabilityWorker,
 } from "./services/content-availability-notifications.ts";
+import { initializeDropoutAnalysis } from "./services/dropout-analysis.ts";
 
 let server: http.Server | https.Server;
 
@@ -52,6 +53,7 @@ async function mongoInit() {
   await removeLegacyInterfaceRbac();
   await syncTeacherContentRbac();
   await syncAnalyticsIndexes();
+  await initializeDropoutAnalysis();
   await initializeContentAvailabilityNotifications();
 
   server.listen(PORT, () => {

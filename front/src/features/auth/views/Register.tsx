@@ -26,6 +26,7 @@ export default function RegisterHome() {
 
   const [error, setError] = useState("");
   const [expiredEmail, setExpiredEmail] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
@@ -51,7 +52,9 @@ export default function RegisterHome() {
       return;
     }
 
-    accountApi.checkInvitation(token).catch((err: unknown) => {
+    accountApi.checkInvitation(token).then((result) => {
+      if (active) setEmail(result.email);
+    }).catch((err: unknown) => {
       if (!active) return;
       const response = (err as {
         response?: { data?: { code?: string; message?: string; email?: string } };
@@ -90,7 +93,10 @@ export default function RegisterHome() {
   };
 
   return (
-    <AuthPageWrapper title="Activation du compte">
+    <AuthPageWrapper
+      title="Activation du compte"
+      description={email ? <strong>{email}</strong> : undefined}
+    >
       {isChecking ? (
         <div role="status" aria-label="Vérification du lien" className="space-y-3">
           <span className="sr-only">Vérification du lien…</span>

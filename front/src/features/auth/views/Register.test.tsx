@@ -85,9 +85,11 @@ it("affiche le formulaire lorsque le lien est valide", async () => {
   vi.mocked(accountApi.checkInvitation).mockResolvedValue({
     success: true,
     message: "Lien valide.",
+    email: "invitee@example.fr",
   });
 
   await render();
   expect(container.querySelectorAll('input[type="password"]')).toHaveLength(2);
+  expect(container.querySelector("header strong")?.textContent).toBe("invitee@example.fr");
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
 });

@@ -64,7 +64,7 @@ export default function OnboardingProgressPanel({
       </div>
       <div
         ref={contentRef}
-        className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto", contentClassName)}
+        className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-2", contentClassName)}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
