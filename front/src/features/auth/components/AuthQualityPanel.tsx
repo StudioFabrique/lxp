@@ -22,7 +22,7 @@ export default function AuthQualityPanel({ quality, color, colorIndex, x, y, geo
   const [showDetails, setShowDetails] = useState(reducedMotion);
   const titleId = useId();
   const descriptionId = useId();
-  const { label, icon: Icon, description, features, screenshot, screenshotAlt } = platformQualities[quality];
+  const { label, description, features, screenshot, screenshotAlt } = platformQualities[quality];
   const { left, top, width, height } = getExpandedTileBounds(geometry);
 
   useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
@@ -61,7 +61,7 @@ export default function AuthQualityPanel({ quality, color, colorIndex, x, y, geo
       <div className="relative shrink-0 bg-white p-5 text-black">
         <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" onClick={onClose} aria-label="Fermer les détails"><X className="size-5" /></button>
         <AuthQualityLogo quality={quality} color={colorIndex} />
-        <div className="flex items-center gap-3"><Icon className="size-7 shrink-0" aria-hidden="true" /><h2 id={titleId} className="text-xl font-bold">{label}</h2></div>
+        <h2 id={titleId} className="text-xl font-bold">{label}</h2>
         <p id={descriptionId} className="mt-2 text-sm">{description}</p>
       </div>
       <div className={`min-h-0 flex-1 overflow-y-auto rounded-t-[15px] p-5 ${color}`}>
