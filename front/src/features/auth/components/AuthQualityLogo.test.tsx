@@ -14,7 +14,7 @@ describe("quality logo", () => {
         act(() => root.render(<AuthQualityLogo quality={quality} color={color} />));
         expect(container.querySelector("clipPath rect")?.getAttribute("x")).toBe(String(regions[quality]));
         const overlay = container.querySelector(`[data-highlight-letter="${quality}"]`)!;
-        expect(overlay.querySelectorAll("path")).toHaveLength(quality < 4 ? 1 : 2);
+        expect(overlay.querySelectorAll("path")).toHaveLength(quality === 1 ? 1 : 2);
         expect(container.querySelectorAll("svg > path")).toHaveLength(9);
         expect(container.querySelectorAll("svg > path")[1].getAttribute("fill")).toBe("#0F172A");
         expect(container.querySelector("[data-highlight-backdrop]")).toBeNull();
