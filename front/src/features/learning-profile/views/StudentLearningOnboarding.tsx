@@ -219,6 +219,15 @@ export default function StudentLearningOnboarding() {
     !context.profile.currentStep &&
     !welcomeStarted &&
     !showIntro;
+  const welcomeTags = Array.from(
+    new Map(
+      context.availableFormations.flatMap((formation) =>
+        formation.parcours.flatMap((entry) =>
+          entry.tags.map((tag) => [tag.id, tag] as const),
+        ),
+      ),
+    ).values(),
+  ).slice(0, 5);
 
   const begin = async () => {
     setSaving(true);
@@ -335,7 +344,7 @@ export default function StudentLearningOnboarding() {
               showIntro
                 ? "my-auto flex flex-col items-center gap-2 text-center"
                 : showWelcome
-                  ? "mb-5 mt-[clamp(5rem,15vh,10rem)] flex flex-col items-center gap-2 text-center"
+                  ? "mb-5 mt-[clamp(2.5rem,7vh,6rem)] flex flex-col items-center gap-2 text-center"
                   : "mb-3 flex flex-col items-center gap-2 text-center"
             }
           >
@@ -364,7 +373,7 @@ export default function StudentLearningOnboarding() {
             transition={{ duration: reduceMotion ? 0 : 0.5 }}
           >
             <div className="mx-auto w-full max-w-md">
-              <h1 className="text-2xl font-bold text-base-content">
+              <h1 className="text-2xl font-bold text-base-content sm:text-3xl">
                 Bienvenue sur{" "}
                 <span
                   style={{
@@ -375,11 +384,11 @@ export default function StudentLearningOnboarding() {
                   ANDRIA
                 </span>
               </h1>
-              <p className="mt-2 text-sm leading-5 text-base-content/70">
+              <p className="mt-2 text-sm leading-5 text-base-content/70 sm:text-base sm:leading-6">
                 Votre parcours commence ici. Personnalisez votre expérience
                 d'apprentissage.
               </p>
-              <dl className="mx-auto mt-5 flex w-fit max-w-full flex-col gap-3 text-left">
+              <dl className="mx-auto mt-5 flex w-fit max-w-full flex-col gap-3 text-left sm:mt-6 sm:gap-4">
                 {context.availableFormations.flatMap((formation) =>
                   formation.parcours.map((entry) => (
                     <div
@@ -387,19 +396,19 @@ export default function StudentLearningOnboarding() {
                       className="space-y-3"
                     >
                       <div>
-                        <dt className="pl-2 text-xs font-medium text-base-content/60">
-                          Parcours
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                          Formation
                         </dt>
-                        <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase">
-                          {capitalizeTitle(entry.title)}
+                        <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                          {capitalizeTitle(formation.title)}
                         </dd>
                       </div>
                       <div>
-                        <dt className="pl-2 text-xs font-medium text-base-content/60">
-                          Formation
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                          Parcours
                         </dt>
-                        <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase">
-                          {capitalizeTitle(formation.title)}
+                        <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                          {capitalizeTitle(entry.title)}
                         </dd>
                       </div>
                     </div>
@@ -407,19 +416,43 @@ export default function StudentLearningOnboarding() {
                 )}
                 {context.groupNames.length > 0 && (
                   <div>
-                    <dt className="pl-2 text-xs font-medium text-base-content/60">
+                    <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
                       {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
                     </dt>
-                    <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content">
+                    <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content sm:text-lg">
                       {context.groupNames.map(capitalizeTitle).join(", ")}
                     </dd>
                   </div>
                 )}
               </dl>
+              {welcomeTags.length > 0 && (
+                <ul
+                  aria-label="Tags du parcours"
+                  className="mt-5 flex flex-wrap justify-center gap-2 sm:mt-6"
+                >
+                  {welcomeTags.map((tag, tagIndex) => (
+                    <motion.li
+                      key={tag.id}
+                      initial={
+                        reduceMotion
+                          ? false
+                          : { opacity: 0, y: 8, scale: 0.94 }
+                      }
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{
+                        duration: reduceMotion ? 0 : 0.3,
+                        delay: reduceMotion ? 0 : 0.35 + tagIndex * 0.12,
+                      }}
+                    >
+                      <TagItem tag={tag} noIcon compact />
+                    </motion.li>
+                  ))}
+                </ul>
+              )}
             </div>
             <button
               type="button"
-              className="btn btn-primary mx-auto mt-5 w-full max-w-xs gap-2 rounded-lg"
+              className="btn btn-primary mx-auto mt-5 w-full max-w-xs gap-2 rounded-lg sm:mt-6 sm:min-h-12 sm:max-w-sm sm:text-base"
               disabled={saving}
               onClick={() => void begin()}
             >

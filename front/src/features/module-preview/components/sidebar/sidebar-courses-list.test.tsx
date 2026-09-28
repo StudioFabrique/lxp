@@ -11,11 +11,13 @@ vi.mock("./course-item", () => ({
   default: ({
     course,
     isOpen,
+    disabled,
     onToggle,
     onToggleLessonReordering,
   }: {
     course: { id: number };
     isOpen: boolean;
+    disabled: boolean;
     onToggle: () => void;
     onToggleLessonReordering: () => void;
   }) => (
@@ -24,6 +26,7 @@ vi.mock("./course-item", () => ({
         type="button"
         data-testid={`course-${course.id}`}
         data-open={isOpen}
+        data-disabled={disabled}
         onClick={onToggle}
       />
       <button type="button" data-testid={`reorder-lessons-${course.id}`} onClick={onToggleLessonReordering} />
@@ -58,6 +61,7 @@ const renderCourses = (
   calendarAdding = calendarMode,
   onSelectCalendarCourse = vi.fn(),
   displayedCourses: Course[] = [course],
+  isReorderingActivities = false,
 ) => {
   let root = roots[0];
   if (!root) {
@@ -87,6 +91,7 @@ const renderCourses = (
           courses={displayedCourses}
           moduleProgress={0}
           selectedLesson={lesson}
+          isReorderingActivities={isReorderingActivities}
           onSelectLesson={vi.fn()}
           onDeleteCourse={vi.fn().mockResolvedValue(undefined)}
           onEnableCourse={vi.fn().mockResolvedValue(undefined)}
@@ -188,6 +193,15 @@ it("désactive les autres cours pendant la réorganisation des leçons", () => {
   act(() => container.querySelector<HTMLButtonElement>('[data-testid="reorder-lessons-1"]')!.click());
   expect(second.closest("[inert]")).toBeNull();
   expect(container.textContent).toContain("Créer un cours");
+});
+
+it("désactive tous les cours pendant la réorganisation des activités", () => {
+  const container = document.createElement("div");
+  const secondCourse = { id: 2, title: "Deuxième cours", lessons: [] } as unknown as Course;
+  renderCourses(container, "", false, false, [], vi.fn(), false, vi.fn(), [course, secondCourse], true);
+
+  expect(getCourseButton(container).dataset.disabled).toBe("true");
+  expect(container.querySelector<HTMLButtonElement>('[data-testid="course-2"]')?.dataset.disabled).toBe("true");
 });
 
 

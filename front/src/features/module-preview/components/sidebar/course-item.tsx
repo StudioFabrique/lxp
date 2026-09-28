@@ -41,6 +41,7 @@ import { getUserArea } from "../../../../utils/helpers/user-role";
 
 type CourseItemProps = {
   calendarMode?: boolean;
+  disabled?: boolean;
   course: Course;
   selectedLesson: Lesson | undefined;
   assignmentSelected?: boolean;
@@ -89,6 +90,7 @@ export type ModalCourseType =
 
 const CourseItem = ({
   calendarMode = false,
+  disabled = false,
   course,
   selectedLesson,
   assignmentSelected,
@@ -176,6 +178,7 @@ const CourseItem = ({
   const isCourseCompleted = courseProgress === 100;
 
   const handleToggleCourseTab = () => {
+    if (disabled) return;
     onToggle();
   };
 
@@ -306,13 +309,16 @@ const CourseItem = ({
         <div
           className={cn(
             "flex flex-col w-full cursor-pointer group z-10",
+            disabled && "pointer-events-none opacity-50",
             isCourseOpen
-              ? "bg-secondary/80 hover:bg-secondary/90"
-              : "bg-secondary/75 hover:bg-secondary/90",
+              ? "bg-primary/80 hover:bg-primary/90"
+              : "bg-primary/75 hover:bg-primary/90",
             isStaff && isCourseOpen ? "rounded-t-lg" : "rounded-lg",
           )}
           role="button"
-          tabIndex={0}
+          tabIndex={disabled ? -1 : 0}
+          aria-disabled={disabled}
+          inert={disabled}
           aria-expanded={isCourseOpen}
           aria-label={formatTitle(course.title)}
           onClick={handleToggleCourseTab}
@@ -328,14 +334,14 @@ const CourseItem = ({
           <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
               <span className="flex gap-1 items-center min-w-0">
-                <div className="text-secondary-content">
+                <div className="text-primary-content">
                   {isCourseOpen ? (
                     <ChevronDown className="w-5" />
                   ) : (
                     <ChevronRight className="w-5" />
                   )}
                 </div>
-                <h3 className="font-semibold text-secondary-content truncate first-letter:uppercase">
+                <h3 className="font-semibold text-primary-content truncate first-letter:uppercase">
                   {formatTitle(course.title)}
                 </h3>
               </span>
@@ -365,7 +371,7 @@ const CourseItem = ({
                     <PermissionGuard action="update" object="lesson">
                       <button
                         type="button"
-                        className={cn("btn btn-xs tooltip", isReorderingLessons ? "btn-primary" : "btn-ghost text-secondary-content")}
+                        className={cn("btn btn-xs tooltip", isReorderingLessons ? "btn-secondary" : "btn-ghost text-primary-content")}
                         data-tip={isReorderingLessons ? "Terminer" : "Réorganiser les leçons"}
                         aria-label={isReorderingLessons ? "Terminer la réorganisation des leçons" : "Réorganiser les leçons"}
                         aria-pressed={isReorderingLessons}
@@ -394,7 +400,7 @@ const CourseItem = ({
           {!isStaff && (
             <RoleRankGuard ranks={[3]}>
               <progress
-                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all"
+                className="w-full progress progress-secondary bg-primary rounded-b-full -mt-1.5 transition-all"
                 value={courseProgress}
                 max={100}
               />
@@ -403,7 +409,7 @@ const CourseItem = ({
         </div>
         <motion.div
           className={cn(
-            "bg-secondary/20 rounded-b-xl overflow-y-auto",
+            "bg-primary/20 rounded-b-xl overflow-y-auto",
             !isStaff && "-mt-2 pt-2",
           )}
           initial={{ maxHeight: 0 }}
@@ -428,8 +434,8 @@ const CourseItem = ({
                 {/* Render the button based on the state calculated in useEffect */}
                 {(showDescriptionExpander || isDescriptionExpanded) && (
                   <span
-                    className="text-xs link cursor-pointer select-"
-                    onClick={handleClickToggleExpandDescription}
+                    className={cn("text-xs link cursor-pointer select-", disabled && "pointer-events-none opacity-50")}
+                    onClick={disabled ? undefined : handleClickToggleExpandDescription}
                   >
                     {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
                   </span>
@@ -445,6 +451,7 @@ const CourseItem = ({
                     <SortableLessonItem key={lesson.id} courseId={course.id} lessonId={lesson.id} lessonTitle={formatTitle(lesson.title)} enabled={isReorderingLessons && !calendarMode}>
                       <LessonItem
                         calendarMode={calendarMode}
+                        disabled={disabled}
                         lesson={lesson}
                         courseTags={course.tags ?? []}
                         selectedLesson={selectedLesson}
@@ -483,6 +490,7 @@ const CourseItem = ({
                     ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
                     : "bg-warning/25 text-warning-content hover:bg-warning/40",
                 )}
+                disabled={disabled}
                 aria-current={assignmentSelected ? "step" : undefined}
                 onClick={(event) => {
                   event.stopPropagation();

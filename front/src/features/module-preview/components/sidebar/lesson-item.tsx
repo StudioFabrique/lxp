@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 
 type LessonItemProps = {
   calendarMode?: boolean;
+  disabled?: boolean;
   lesson: Lesson;
   courseTags: Tag[];
   selectedLesson: Lesson | undefined;
@@ -42,6 +43,7 @@ type LessonItemProps = {
 
 const LessonItem = ({
   calendarMode = false,
+  disabled = false,
   lesson,
   courseTags,
   selectedLesson,
@@ -72,6 +74,7 @@ const LessonItem = ({
   );
 
   const handleBeginReadLesson = () => {
+    if (disabled) return;
     if (calendarMode) {
       setCalendarExpanded(expanded => !expanded);
     } else if (!isLessonSelected) {
@@ -191,7 +194,9 @@ const LessonItem = ({
       <div
         ref={lessonRef}
         role="button"
-        tabIndex={0}
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled}
+        inert={disabled}
         aria-label={formatTitle(lesson.title)}
         aria-expanded={isLessonSelected}
         onClick={handleBeginReadLesson}
@@ -204,9 +209,10 @@ const LessonItem = ({
         }}
         className={cn(
           "flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group",
+          disabled && "pointer-events-none opacity-50",
           isLessonSelected
-            ? "bg-primary text-primary-content"
-            : "bg-primary/20 text-base-content hover:bg-primary/30",
+            ? "bg-secondary text-secondary-content"
+            : "bg-secondary/20 text-base-content hover:bg-secondary/30",
         )}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
@@ -230,7 +236,7 @@ const LessonItem = ({
                     ref={buttonRef}
                     tabIndex={0}
                     type="button"
-                    className="btn btn-sm px-2 btn-ghost text-primary-content w-fit hover:text-primary"
+                    className="btn btn-sm px-2 btn-ghost text-secondary-content w-fit hover:text-secondary"
                     onClick={handleDropdownToggle}
                     aria-label={`Actions pour ${formatTitle(lesson.title)}`}
                   >

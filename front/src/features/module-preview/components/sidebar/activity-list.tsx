@@ -24,6 +24,8 @@ type ActivityListProps = {
   onActivityReorder?: (args: BaseEventPayload<ElementDragType>) => void;
   onSelectActivity?: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
+  isReorderingActivities?: boolean;
+  onReorderingActivitiesChange?: (isReordering: boolean) => void;
 };
 
 export default function ActivityList({
@@ -37,9 +39,12 @@ export default function ActivityList({
   onActivityReorder,
   onSelectActivity,
   onClickCreateActivity,
+  isReorderingActivities,
+  onReorderingActivitiesChange,
 }: ActivityListProps) {
   const ability = useContext(AbilityContext);
-  const [isReordering, setIsReordering] = useState(false);
+  const [localIsReordering, setLocalIsReordering] = useState(false);
+  const isReordering = isReorderingActivities ?? localIsReordering;
 
   const canUserEdit = Boolean(!readOnly && canEdit && ability.can("update", "lesson"));
 
@@ -83,7 +88,13 @@ export default function ActivityList({
               data-tip={isReordering ? "Terminer" : "Réorganiser les activités"}
               aria-label={isReordering ? "Terminer la réorganisation des activités" : "Réorganiser les activités"}
               aria-pressed={isReordering}
-              onClick={() => setIsReordering((current) => !current)}
+              onClick={() => {
+                if (onReorderingActivitiesChange) {
+                  onReorderingActivitiesChange(!isReordering);
+                } else {
+                  setLocalIsReordering((current) => !current);
+                }
+              }}
             >
               <ArrowDownUp className="size-4" />
             </button>

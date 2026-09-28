@@ -52,7 +52,7 @@ const CourseActions = ({
       <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenu.Trigger asChild>
           <button type="button" className="flex cursor-pointer">
-            <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
+            <MoreVertical className="stroke-primary-content w-7 h-7 hover:bg-secondary/20 px-1 rounded-lg transition-colors" />
           </button>
         </DropdownMenu.Trigger>
 

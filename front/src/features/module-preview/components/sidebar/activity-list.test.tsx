@@ -58,3 +58,31 @@ it("active le déplacement uniquement après le clic sur Réorganiser les activi
   expect(container.querySelector(".lucide-grip-vertical")).toBeNull();
   expect(container.textContent).toContain("Ajouter une activité");
 });
+
+it("signale le mode de réorganisation à la barre latérale", () => {
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  roots.push(root);
+  const onChange = vi.fn();
+  const render = (active: boolean) => root.render(
+    <AbilityContext value={createAppAbility([{ action: "update", subject: "lesson" }])}>
+      <ActivityList
+        lessonId={10}
+        activities={activities}
+        canEdit
+        isLoading={false}
+        isReorderingActivities={active}
+        onReorderingActivitiesChange={onChange}
+      />
+    </AbilityContext>,
+  );
+
+  act(() => render(false));
+  act(() => container.querySelector<HTMLButtonElement>('button[aria-label="Réorganiser les activités"]')!.click());
+  expect(onChange).toHaveBeenCalledWith(true);
+
+  act(() => render(true));
+  expect(container.querySelectorAll(".lucide-grip-vertical")).toHaveLength(2);
+  act(() => container.querySelector<HTMLButtonElement>('button[aria-label="Terminer la réorganisation des activités"]')!.click());
+  expect(onChange).toHaveBeenLastCalledWith(false);
+});

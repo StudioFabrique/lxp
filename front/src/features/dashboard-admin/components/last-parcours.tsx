@@ -1,5 +1,5 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
-import { useContext, useState } from "react";
+import { useContext, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
 import { MoveUpRight } from "lucide-react";
@@ -23,12 +23,14 @@ type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
   isLoading: boolean;
   showQuickActions?: boolean;
+  sideContent?: ReactNode;
 };
 
 export default function LastParcours({
   parcours,
   isLoading,
   showQuickActions = true,
+  sideContent,
 }: LastParcoursProps) {
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
@@ -141,51 +143,54 @@ export default function LastParcours({
         )}
       </div>
 
-      <div className="w-full mt-4">
-        {isLoading ? (
-          <div className={cn("grid gap-5", gridClassName)}>
-            {[0, 1, 2].map((item) => (
-              <div
-                className="h-72 skeleton rounded-box"
-                key={item}
-                aria-hidden="true"
-              />
-            ))}
-          </div>
-        ) : (
-          <div className={cn("grid items-start gap-5", gridClassName)}>
-            {displayedFormations.map((formation) => (
-              <LastParcoursItem
-                key={formation.id}
-                formation={formation}
-                fullWidth={usesFullWidthLayout}
-                disableHoverScale
-                isManagementView
-                onCreateParcours={setParcoursFormationId}
-                onDeleteParcours={(item) => {
-                  setParcoursToDelete(item);
-                  setDeleteConfirmation("");
-                }}
-                onExportParcours={(item) => exportParcoursMutation.mutate(item)}
-                exportingParcoursId={exportParcoursMutation.isPending ? exportParcoursMutation.variables?.id : null}
-              />
-            ))}
-            <PermissionGuard action="write" object="parcours">
-              <LastParcoursItem onCreateFormation={openFormationModal} />
-            </PermissionGuard>
-          </div>
-        )}
-      </div>
-      {parcours.length > 0 && (
-        <div className="flex justify-end mt-2">
-          <Link
-            className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline select-none"
-            to="/admin/parcours"
-          >
-            Voir tous les parcours <MoveUpRight className="w-4 h-4" />
-          </Link>
+      <div className="mt-4 flex flex-col gap-6 2xl:flex-row">
+        <div className="min-w-0 flex-1">
+          {isLoading ? (
+            <div className={cn("grid gap-5", gridClassName)}>
+              {[0, 1, 2].map((item) => (
+                <div
+                  className="h-72 skeleton rounded-box"
+                  key={item}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={cn("grid items-start gap-5", gridClassName)}>
+              {displayedFormations.map((formation) => (
+                <LastParcoursItem
+                  key={formation.id}
+                  formation={formation}
+                  fullWidth={usesFullWidthLayout}
+                  disableHoverScale
+                  isManagementView
+                  onCreateParcours={setParcoursFormationId}
+                  onDeleteParcours={(item) => {
+                    setParcoursToDelete(item);
+                    setDeleteConfirmation("");
+                  }}
+                  onExportParcours={(item) => exportParcoursMutation.mutate(item)}
+                  exportingParcoursId={exportParcoursMutation.isPending ? exportParcoursMutation.variables?.id : null}
+                />
+              ))}
+              <PermissionGuard action="write" object="parcours">
+                <LastParcoursItem onCreateFormation={openFormationModal} />
+              </PermissionGuard>
+            </div>
+          )}
+          {parcours.length > 0 && (
+            <div className="mt-2 flex justify-end">
+              <Link
+                className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline select-none"
+                to="/admin/parcours"
+              >
+                Voir tous les parcours <MoveUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+          )}
         </div>
-      )}
+        {sideContent}
+      </div>
       {formationModal.isOpen || searchParams.get("createFormation") === "true" ? (
         <FormationModal formationId={formationModal.formationId} onClose={closeFormationModal} />
       ) : null}

@@ -46,6 +46,7 @@ type SidebarCoursesListProps = {
   ) => Promise<boolean>;
   onCourseReorder?: (args: BaseEventPayload<ElementDragType>) => void;
   isReorderingCourses?: boolean;
+  isReorderingActivities?: boolean;
   editCourseId?: number;
   editLessonId?: number;
   openedCourseId?: number;
@@ -85,6 +86,7 @@ const SidebarCoursesList = ({
   onUpdateCourse,
   onCourseReorder,
   isReorderingCourses = false,
+  isReorderingActivities = false,
   editCourseId,
   editLessonId,
   openedCourseId,
@@ -241,6 +243,7 @@ const SidebarCoursesList = ({
             >
             <CourseItem
               calendarMode={calendarMode}
+              disabled={isReorderingActivities}
               course={course}
               selectedLesson={selectedLesson}
               assignmentSelected={selectedAssignmentCourseId === course.id}

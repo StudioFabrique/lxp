@@ -112,3 +112,31 @@ it("masque la sélection et les actions pendant la réorganisation", () => {
   act(() => render(false));
   expect(container.querySelector('[role="button"]')?.getAttribute("aria-expanded")).toBe("true");
 });
+
+it("désactive la leçon tout en laissant ses activités affichées", () => {
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  roots.push(root);
+  const onSelect = vi.fn();
+
+  act(() => root.render(
+    <LessonItem
+      disabled
+      lesson={lesson}
+      courseTags={[]}
+      selectedLesson={lesson}
+      onSelectLesson={onSelect}
+      onOpenModal={vi.fn()}
+      onUpdateLesson={vi.fn().mockResolvedValue(true)}
+    >
+      <button type="button">Activité déplaçable</button>
+    </LessonItem>,
+  ));
+
+  const header = container.querySelector<HTMLElement>('[role="button"]')!;
+  expect(header.hasAttribute("inert")).toBe(true);
+  expect(header.getAttribute("aria-disabled")).toBe("true");
+  expect(container.querySelector<HTMLButtonElement>('button')?.closest('[inert]')).toBeNull();
+  act(() => header.click());
+  expect(onSelect).not.toHaveBeenCalled();
+});

@@ -85,7 +85,7 @@
 }
 
 .theme-tinted-dropdown {
-    background-color: color-mix(in oklab, var(--color-base-200) 78%, var(--color-primary));
+    background-color: color-mix(in oklab, var(--color-base-200) 95%, var(--color-primary));
     border-color: color-mix(in oklab, var(--color-base-300) 60%, var(--color-primary));
 }
 
