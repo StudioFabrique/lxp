@@ -13,12 +13,14 @@ import { INSTANCE_LOGO } from "../../../config/urls";
 import { cn } from "../../../utils/cn";
 import ReleaseNotesModal from "../../../components/UI/ReleaseNotesModal";
 import { currentRelease } from "../../../config/release-notes";
+import { AuthHeaderActionContext } from "./AuthHeaderActionContext";
 
 const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupStyle?: boolean }>) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { isLoggedIn, logout } = useContext(AuthContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
+  const [headerActionHost, setHeaderActionHost] = useState<HTMLDivElement | null>(null);
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -58,6 +60,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
       <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
         <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}>
           <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
+            <div ref={setHeaderActionHost} className="contents" />
             {isOnboardingLayout && isLoggedIn && (
               <button
                 type="button"
@@ -113,7 +116,9 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
             )}
 
             <div className="flex min-h-0 w-full flex-1 flex-col">
-              {children ?? <LoginGuard />}
+              <AuthHeaderActionContext value={headerActionHost}>
+                {children ?? <LoginGuard />}
+              </AuthHeaderActionContext>
             </div>
 
             {isOnboarding && (

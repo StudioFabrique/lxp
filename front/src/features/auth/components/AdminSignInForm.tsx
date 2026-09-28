@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useContext, useState } from "react";
-import { Mail } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Mail, RotateCcw } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
@@ -13,6 +14,7 @@ import {
   setPendingRootActivationEmail,
 } from "../pending-root-activation";
 import { ThemeContext } from "../../../store/ThemeProvider";
+import { AuthHeaderActionContext } from "./AuthHeaderActionContext";
 
 type Props = {
   token: string;
@@ -40,6 +42,7 @@ const AdminSignInForm = ({
   mode = "first",
 }: Props) => {
   const { theme } = useContext(ThemeContext);
+  const headerActionHost = useContext(AuthHeaderActionContext);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activationEmail, setActivationEmail] = useState(
@@ -102,32 +105,39 @@ const AdminSignInForm = ({
     };
 
     return (
-      <AuthPageWrapper
-        title="Vérifiez votre boîte mail"
-        variant={mode === "first" ? "setup" : "default"}
-      >
-        <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-5 text-center">
-          <Mail className="h-8 w-8" aria-hidden="true" />
+      <>
+        {headerActionHost &&
+          createPortal(
+            <button
+              type="button"
+              className="btn btn-circle btn-ghost tooltip tooltip-bottom text-base-content/70 transition-colors hover:text-base-content"
+              data-tip="Recommencer la création"
+              aria-label="Recommencer la création"
+              onClick={restartCreation}
+            >
+              <RotateCcw className="size-5" aria-hidden="true" />
+            </button>,
+            headerActionHost,
+          )}
+        <AuthPageWrapper
+          title="Vérifiez votre boîte mail"
+          variant={mode === "first" ? "setup" : "default"}
+        >
+          <div className="flex min-h-64 flex-1 flex-col items-center justify-start gap-5 text-center">
+            <Mail className="h-8 w-8" aria-hidden="true" />
 
-          <div className="flex flex-col gap-10 text-sm text-base-content/70">
-            <div className="flex flex-col">
-              <span>Un lien d’activation a été envoyé à</span>
-              <strong className="text-base-content">{activationEmail}</strong>
+            <div className="flex flex-col gap-10 text-sm text-base-content/70">
+              <div className="flex flex-col">
+                <span>Un lien d’activation a été envoyé à</span>
+                <strong className="text-base-content">{activationEmail}</strong>
+              </div>
+              <p>
+                Cliquez sur ce lien compris dans le mail pour activer votre compte.
+              </p>
             </div>
-            <p>
-              Cliquez sur ce lien compris dans le mail pour activer votre compte.
-            </p>
           </div>
-
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm mt-auto w-full normal-case text-base-content/70"
-            onClick={restartCreation}
-          >
-            Recommencer la création
-          </button>
-        </div>
-      </AuthPageWrapper>
+        </AuthPageWrapper>
+      </>
     );
   }
 
