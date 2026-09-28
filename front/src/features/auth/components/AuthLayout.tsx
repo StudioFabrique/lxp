@@ -119,8 +119,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           >
             {!isOnboarding && !hasSetupLayout && (
               <div
-                className={cn("flex select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8", !isOnboardingLayout && "cursor-pointer")}
-                onClick={isOnboardingLayout ? undefined : () => navigate("/")}
+                className={cn("flex select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
               >
                 <img
                   className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
