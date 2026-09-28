@@ -9,16 +9,18 @@ import LoginRightColumn from "./LoginRightColumn";
 import LoginGuard from "../../../components/guards/LoginGuard";
 import { useLocation, useNavigate } from "react-router";
 import { profileApi } from "../../profile/api/profile.api";
-import { INSTANCE_LOGO } from "../../../config/urls";
+import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import { cn } from "../../../utils/cn";
 import ReleaseNotesModal from "../../../components/UI/ReleaseNotesModal";
 import { currentRelease } from "../../../config/release-notes";
+import { AuthHeaderActionContext } from "./AuthHeaderActionContext";
 
 const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupStyle?: boolean }>) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { logout } = useContext(AuthContext);
+  const { isLoggedIn, isLoading, logout } = useContext(AuthContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
+  const [headerActionHost, setHeaderActionHost] = useState<HTMLDivElement | null>(null);
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -27,13 +29,14 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const isOnboarding = isStudentOnboarding || isStaffOnboarding;
   const isInstanceSetup = pathname === "/instance-setup";
   const isAdminInit = pathname === "/init";
-  const hasSetupLayout = isAdminInit || setupStyle;
+  const hasSetupLayout = isAdminInit || pathname === "/confirm-email" || setupStyle;
   const isOnboardingLayout = isOnboarding || isInstanceSetup || hasSetupLayout;
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
   const shouldLoadBranding = showOrganizationName || isOnboarding;
   const [organizationName, setOrganizationName] = useState<string | null>(null);
   const [hasOrganizationLogo, setHasOrganizationLogo] = useState(false);
+  const [organizationLogoBackground, setOrganizationLogoBackground] = useState("#ffffff");
 
   useEffect(() => {
     if (!shouldLoadBranding) return;
@@ -53,12 +56,31 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
     };
   }, [shouldLoadBranding]);
 
+  useEffect(() => {
+    if (!isOnboarding || !hasOrganizationLogo) return;
+    const controller = new AbortController();
+    fetch(INSTANCE_LOGO_COLOR, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Couleur du logo indisponible");
+        return response.text();
+      })
+      .then((color) => {
+        const savedColor = color.trim();
+        if (/^#[0-9a-f]{6}$/i.test(savedColor)) {
+          setOrganizationLogoBackground(savedColor);
+        }
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [isOnboarding, hasOrganizationLogo]);
+
   return (
     <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isOnboardingLayout ? "py-4 lg:items-center lg:py-0" : "py-12")}>
       <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
         <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}>
           <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
-            {isOnboarding && (
+            <div ref={setHeaderActionHost} className="contents" />
+            {isOnboardingLayout && isLoggedIn && (
               <button
                 type="button"
                 className="btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content"
@@ -97,8 +119,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           >
             {!isOnboarding && !hasSetupLayout && (
               <div
-                className={cn("flex cursor-pointer select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
-                onClick={() => navigate("/")}
+                className={cn("flex select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
               >
                 <img
                   className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
@@ -112,8 +133,18 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               </div>
             )}
 
-            <div className="flex min-h-0 w-full flex-1 flex-col">
-              {children ?? <LoginGuard />}
+            <div className="relative flex min-h-0 w-full flex-1 flex-col">
+              {pathname === "/login" && (isLoading || isLoggedIn) && (
+                <div className="absolute inset-0 z-20 flex items-start justify-center bg-base-100/90 pt-36" role="status" aria-live="polite">
+                  <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-base-content">
+                    <span className="loading loading-spinner loading-md text-primary" aria-hidden="true" />
+                    <span className="font-medium">Connexion en cours…</span>
+                  </div>
+                </div>
+              )}
+              <AuthHeaderActionContext value={headerActionHost}>
+                {children ?? <LoginGuard />}
+              </AuthHeaderActionContext>
             </div>
 
             {isOnboarding && (
@@ -127,12 +158,17 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 {hasOrganizationLogo && (
                   <>
                     <span className="h-5 w-px bg-base-content/20" aria-hidden="true" />
-                    <img
-                      className="max-h-8 max-w-28 object-contain"
-                      src={INSTANCE_LOGO}
-                      alt={organizationName ? `Logo ${organizationName}` : "Logo de l’organisme"}
-                      draggable={false}
-                    />
+                    <span
+                      className="flex min-h-8 items-center rounded-md px-2 py-1"
+                      style={{ backgroundColor: organizationLogoBackground }}
+                    >
+                      <img
+                        className="max-h-8 max-w-28 object-contain"
+                        src={INSTANCE_LOGO}
+                        alt={organizationName ? `Logo ${organizationName}` : "Logo de l’organisme"}
+                        draggable={false}
+                      />
+                    </span>
                   </>
                 )}
               </div>
@@ -143,7 +179,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 {organizationName && <p>{organizationName}</p>}
                 {pathname === "/login" && (
                   <>
-                    {organizationName && <span aria-hidden="true">·</span>}
+                    {organizationName && <span className="h-3 border-l border-current opacity-40" aria-hidden="true" />}
                     <button
                       type="button"
                       onClick={() => setShowReleaseNotes(true)}

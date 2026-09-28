@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
+  GripVertical,
 } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
@@ -22,10 +23,12 @@ import toast from "react-hot-toast";
 
 type LessonItemProps = {
   calendarMode?: boolean;
+  disabled?: boolean;
   lesson: Lesson;
   courseTags: Tag[];
   selectedLesson: Lesson | undefined;
   canEditLesson?: boolean;
+  isReordering?: boolean;
   openEditOnMount?: boolean;
   isCourseOpen?: boolean;
   shouldScrollIntoView?: boolean;
@@ -40,10 +43,12 @@ type LessonItemProps = {
 
 const LessonItem = ({
   calendarMode = false,
+  disabled = false,
   lesson,
   courseTags,
   selectedLesson,
   canEditLesson,
+  isReordering = false,
   openEditOnMount = false,
   isCourseOpen = false,
   shouldScrollIntoView = false,
@@ -54,7 +59,7 @@ const LessonItem = ({
   children,
 }: PropsWithChildren<LessonItemProps>) => {
   const [calendarExpanded, setCalendarExpanded] = useState(selectedLesson?.id === lesson.id);
-  const isLessonSelected = calendarMode ? calendarExpanded : selectedLesson?.id === lesson.id;
+  const isLessonSelected = !isReordering && (calendarMode ? calendarExpanded : selectedLesson?.id === lesson.id);
   const lessonRef = useRef<HTMLDivElement>(null);
 
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -69,6 +74,7 @@ const LessonItem = ({
   );
 
   const handleBeginReadLesson = () => {
+    if (disabled) return;
     if (calendarMode) {
       setCalendarExpanded(expanded => !expanded);
     } else if (!isLessonSelected) {
@@ -188,7 +194,9 @@ const LessonItem = ({
       <div
         ref={lessonRef}
         role="button"
-        tabIndex={0}
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled}
+        inert={disabled}
         aria-label={formatTitle(lesson.title)}
         aria-expanded={isLessonSelected}
         onClick={handleBeginReadLesson}
@@ -201,9 +209,10 @@ const LessonItem = ({
         }}
         className={cn(
           "flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group",
+          disabled && "pointer-events-none opacity-50",
           isLessonSelected
-            ? "bg-primary text-primary-content"
-            : "bg-primary/50 text-primary-content hover:bg-primary/80",
+            ? "bg-secondary text-secondary-content"
+            : "bg-secondary/20 text-base-content hover:bg-secondary/30",
         )}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
@@ -217,8 +226,9 @@ const LessonItem = ({
               <EyeOff className="size-3.5" />
             </span>
           ) : null}
-          <p className="max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
-          {selectedLesson?.id === lesson.id && (
+          <p className="min-w-0 max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
+          {isReordering && <GripVertical aria-hidden="true" className="size-4 shrink-0" />}
+          {!isReordering && selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
               {!calendarMode && canEditLesson && (
                 <PermissionGuard action="update" object="lesson">
@@ -226,7 +236,7 @@ const LessonItem = ({
                     ref={buttonRef}
                     tabIndex={0}
                     type="button"
-                    className="btn btn-sm px-2 btn-ghost text-primary-content w-fit hover:text-primary"
+                    className="btn btn-sm px-2 btn-ghost text-secondary-content w-fit hover:text-secondary"
                     onClick={handleDropdownToggle}
                     aria-label={`Actions pour ${formatTitle(lesson.title)}`}
                   >

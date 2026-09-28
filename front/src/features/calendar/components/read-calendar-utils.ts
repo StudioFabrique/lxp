@@ -64,7 +64,7 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
           const deadlineTime = `${String(deadline.getHours()).padStart(2, "0")}:${String(deadline.getMinutes()).padStart(2, "0")}`;
           events.push({
             id: `assignment:${course.assignment.id}`,
-            title: `Devoir · ${formatTitle(course.title)}`,
+            title: `Devoir : ${formatTitle(course.title)}`,
             subtitle: formatTitle(module.title),
             description: course.description ?? undefined,
             date: new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate()),

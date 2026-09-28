@@ -51,7 +51,7 @@ export default function DeclaredLearningProfile({ data }: { data: DeclaredProfil
             <div key={module.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-base-200 p-3">
               <div>
                 <p className="font-semibold">{formatTitle(module.title)}</p>
-                <p className="text-xs text-base-content/60">{formatTitle(formation.title)} · {formatTitle(parcours.title)}</p>
+                <p className="text-xs text-base-content/60">{formatTitle(formation.title)} / {formatTitle(parcours.title)}</p>
               </div>
               <div className="text-right">
                 <p>{labelFor(levelOptions, module.assessment?.level)}</p>

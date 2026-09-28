@@ -3,7 +3,8 @@ import Module from "../../../../../src/utils/interfaces/module";
 import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, LockKeyhole } from "lucide-react";
+import { cn } from "../../../../utils/cn";
 
 type ProgressModulesStatsProps = {
   modules: Module[];
@@ -57,20 +58,14 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
           <div className="grid grid-cols-4 gap-5 w-full">
             {displayedModules.map((module) => {
               const moduleProgress = getModuleProgress(module);
-
-              return (
-                <Link
-                  to={`/${space}/parcours/module/${module.id}`}
-                  aria-label={`Accéder au module ${formatTitle(module.title)}`}
-                  className="tooltip tooltip-bottom flex w-full flex-col justify-between gap-4 rounded-lg border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  data-tip={formatTitle(module.title)}
-                  key={module.id}
-                >
+              const isEmpty = space === "student" && !module.courses?.length;
+              const cardContent = (
+                <>
                   <div className="flex items-center justify-between">
                     <p className="text-base-content text-sm font-semibold truncate w-3/4 text-left">
                       {formatTitle(module.title)}
                     </p>
-                    <p className="text-2xl text-primary font-bold">{`${moduleProgress}%`}</p>
+                    {isEmpty ? <LockKeyhole className="size-5 text-base-content/60" aria-hidden="true" /> : <p className="text-2xl text-primary font-bold">{`${moduleProgress}%`}</p>}
                   </div>
 
                   <progress
@@ -78,6 +73,32 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                     value={moduleProgress}
                     max="100"
                   />
+                </>
+              );
+              const cardClass = cn(
+                "tooltip tooltip-bottom flex w-full flex-col justify-between gap-4 rounded-lg border border-base-300 bg-base-200 p-4 shadow-sm",
+                isEmpty ? "cursor-not-allowed opacity-60" : "transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+              );
+
+              return isEmpty ? (
+                <div
+                  key={module.id}
+                  className={cardClass}
+                  data-tip="Aucun contenu disponible dans ce module"
+                  title="Aucun contenu disponible dans ce module"
+                  aria-label={`${formatTitle(module.title)} : aucun contenu disponible`}
+                >
+                  {cardContent}
+                </div>
+              ) : (
+                <Link
+                  to={`/${space}/parcours/module/${module.id}`}
+                  aria-label={`Accéder au module ${formatTitle(module.title)}`}
+                  className={cardClass}
+                  data-tip={formatTitle(module.title)}
+                  key={module.id}
+                >
+                  {cardContent}
                 </Link>
               );
             })}

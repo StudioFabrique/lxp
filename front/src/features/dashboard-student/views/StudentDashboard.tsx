@@ -11,12 +11,12 @@ import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useStudentDashboard } from "../hooks/use-student-dashboard";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { useDemoMode } from "../../../store/DemoContext";
+import { Link } from "react-router";
 import { ChartNoAxesCombined, Play } from "lucide-react";
 
 const StudentDashboard = () => {
-  const navigate = useNavigate();
+  const { demoMode } = useDemoMode();
   const {
     showOnboardingWelcome,
     welcomeTitle,
@@ -27,17 +27,8 @@ const StudentDashboard = () => {
     learningContext,
   } = useStudentDashboard();
 
-  useEffect(() => {
-    if (
-      learningContext.data?.onboardingRequired &&
-      learningContext.data.shouldAutoRedirect
-    ) {
-      navigate("/student/onboarding", { replace: true });
-    }
-  }, [learningContext.data, navigate]);
-
   const canResumeOnboarding =
-    !learningContext.isError &&
+    !demoMode && !learningContext.isError &&
     learningContext.data?.hasAvailableContent === true &&
     learningContext.data.onboardingRequired &&
     !learningContext.data.shouldAutoRedirect;
@@ -99,7 +90,7 @@ const StudentDashboard = () => {
 
       {!learningContext.isError &&
       learningContext.data?.hasAvailableContent &&
-      !learningContext.data.shouldAutoRedirect ? (
+      (demoMode || !learningContext.data.shouldAutoRedirect) ? (
       <div className="grid gap-16 xl:grid-cols-3">
         <div
           className="flex flex-col gap-5 xl:col-span-2"

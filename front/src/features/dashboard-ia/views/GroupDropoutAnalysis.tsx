@@ -125,7 +125,7 @@ export default function GroupDropoutAnalysis() {
   const toggleStudent = (studentId: string) => setDisabledStudentIds((ids) => ids.includes(studentId)
     ? ids.filter((id) => id !== studentId) : [...ids, studentId]);
   return <PageWrapper as="main">
-    <Header icon={ChartNoAxesCombined} title={nameLines[0]} description={nameLines.slice(1).join(" · ")}>
+    <Header icon={ChartNoAxesCombined} title={nameLines[0]} description={nameLines.slice(1).join(" / ")}>
       <Link to="/admin/group" className="btn btn-outline md:w-32 normal-case">Retour</Link>
       {summary?.canReview && summary.alertCritical > 0 && (summary.reviewed ?
         <span className="inline-flex items-center gap-2 text-sm text-success"><CheckCheck className="size-4" aria-hidden="true" /> Alerte prise en compte</span>

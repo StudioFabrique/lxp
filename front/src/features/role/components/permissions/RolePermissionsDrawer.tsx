@@ -110,7 +110,7 @@ export default function RolePermissionsDrawer({
       visible={false}
       isOpen
       panelClassName="w-1/2 min-w-0"
-      title={`${permissionLabel} · ${role.label}`}
+      title={`${permissionLabel} : ${role.label}`}
       onCloseDrawer={onClose}
     >
       <div className="flex min-h-full flex-col gap-8 pb-8">

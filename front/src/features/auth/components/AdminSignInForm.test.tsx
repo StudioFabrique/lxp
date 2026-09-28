@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { onboardingApi } from "../api/onboarding.api";
 import AdminSignInForm from "./AdminSignInForm";
 import { getPendingRootActivationEmail } from "../pending-root-activation";
+import { AuthHeaderActionContext } from "./AuthHeaderActionContext";
 
 vi.mock("../api/onboarding.api", () => ({
   onboardingApi: {
@@ -15,12 +16,15 @@ vi.mock("../api/onboarding.api", () => ({
 describe("AdminSignInForm", () => {
   let container: HTMLDivElement;
   let root: Root;
+  let headerActionHost: HTMLDivElement;
   const onSuccess = vi.fn();
 
   beforeEach(async () => {
     localStorage.clear();
     container = document.createElement("div");
     document.body.appendChild(container);
+    headerActionHost = document.createElement("div");
+    document.body.appendChild(headerActionHost);
     root = createRoot(container);
     vi.mocked(onboardingApi.createFirstAdmin).mockResolvedValue({
       success: true,
@@ -30,11 +34,13 @@ describe("AdminSignInForm", () => {
 
     await act(async () => {
       root.render(
-        <AdminSignInForm
-          token="setup-token"
-          onSuccess={onSuccess}
-          onRestart={onSuccess}
-        />,
+        <AuthHeaderActionContext value={headerActionHost}>
+          <AdminSignInForm
+            token="setup-token"
+            onSuccess={onSuccess}
+            onRestart={onSuccess}
+          />
+        </AuthHeaderActionContext>,
       );
     });
   });
@@ -42,6 +48,7 @@ describe("AdminSignInForm", () => {
   afterEach(() => {
     act(() => root.unmount());
     container.remove();
+    headerActionHost.remove();
     vi.clearAllMocks();
   });
 
@@ -87,13 +94,17 @@ describe("AdminSignInForm", () => {
     expect(getPendingRootActivationEmail()).toBe("root@test.fr");
     expect(container.textContent).toContain("Vérifiez votre boîte mail");
     expect(container.textContent).toContain("root@test.fr");
+    expect(container.querySelector(".lucide-mail")).not.toBeNull();
+    expect(container.querySelector(".lucide-mail-check")).toBeNull();
+    const restartButton = headerActionHost.querySelector<HTMLButtonElement>(
+      'button[aria-label="Recommencer la création"]',
+    );
+    expect(restartButton?.getAttribute("data-tip")).toBe("Recommencer la création");
+    expect(restartButton?.querySelector(".lucide-rotate-ccw")).not.toBeNull();
+    expect(container.querySelector('button[aria-label="Recommencer la création"]')).toBeNull();
 
     await act(async () => {
-      Array.from(container.querySelectorAll("button"))
-        .find((button) =>
-          button.textContent?.includes("Recommencer la création"),
-        )
-        ?.click();
+      restartButton?.click();
     });
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(getPendingRootActivationEmail()).toBe("");

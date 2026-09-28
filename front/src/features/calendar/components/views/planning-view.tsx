@@ -213,7 +213,7 @@ export default function PlanningView({
                       aria-disabled={disabled}
                       aria-pressed={selectedEventId === event.id}
                       aria-label={`${formatTitle(event.title)}, du ${formatDate(event.startDate)} au ${formatDate(event.endDate)}`}
-                      title={`${formatTitle(event.title)} · ${formatDate(event.startDate)} – ${formatDate(event.endDate)}`}
+                      title={`${formatTitle(event.title)} : ${formatDate(event.startDate)} – ${formatDate(event.endDate)}`}
                       className={cn("relative mx-0.5 flex h-8 min-w-0 items-center rounded-md border text-base-content shadow-sm touch-none", eventConfig[event.color ?? "primary"], disabled ? "opacity-60" : "cursor-grab active:cursor-grabbing", selectedEventId === event.id ? "ring-2 ring-primary ring-offset-1 ring-offset-base-100" : "hover:brightness-95")}
                       style={{
                         gridColumn: `${Math.max(start - first, 0) + 1} / ${Math.min(end - first, 6) + 2}`,

@@ -31,7 +31,7 @@ export default function ReleaseNotesCard({ className }: Props) {
             <ArrowUpRight className="size-4 shrink-0" aria-hidden="true" />
           </span>
           <span className="relative z-10 mt-1 text-sm text-success-content/80">
-            {currentRelease.status} · Nouveautés
+            Nouveautés ({currentRelease.status})
           </span>
           <History
             className="pointer-events-none absolute -bottom-5 -right-3 size-24 text-success-content/10"

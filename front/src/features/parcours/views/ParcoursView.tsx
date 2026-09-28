@@ -34,12 +34,14 @@ import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import { parcoursApi } from "../api/parcours.api";
 import { cn } from "../../../utils/cn";
+import { useDemoMode } from "../../../store/DemoContext";
 import {
   learningProfileApi,
   learningProfileKey,
 } from "../../learning-profile/learning-profile.api";
 
 const ParcoursView = () => {
+  const { demoMode } = useDemoMode();
   const {
     isLoading,
     error,
@@ -179,17 +181,17 @@ const ParcoursView = () => {
         ) : currentRoute[0] === "student" && learningContext.data ? (
           <Link
             to={
-              learningContext.data.onboardingRequired
+              learningContext.data.onboardingRequired && !demoMode
                 ? "/student/onboarding"
                 : `/student/mon-avancement?parcoursId=${id}`
             }
             className={
-              learningContext.data.onboardingRequired
+              learningContext.data.onboardingRequired && !demoMode
                 ? "btn btn-primary"
                 : "btn btn-outline btn-primary"
             }
           >
-            {learningContext.data.onboardingRequired ? (
+            {learningContext.data.onboardingRequired && !demoMode ? (
               <>
                 <Play className="size-4 fill-current" aria-hidden="true" />
                 Reprendre mon onboarding
@@ -219,6 +221,7 @@ const ParcoursView = () => {
                 <PermissionGuard key="header" object="cursus" action="read">
                   <HeaderMenu
                     key="header"
+                    groupLinkTo={`/admin/parcours/edit/${id}?step=6`}
                     onClickResume={handleClickResume}
                     hideResumeCourseButton={!(modules?.length > 0)}
                     isStudent={isStudent}

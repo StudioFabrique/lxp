@@ -5,9 +5,10 @@ import type {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { UserPlus } from "lucide-react";
+import { UserPlus, UserRoundPlus } from "lucide-react";
 import type User from "../../../../../../utils/interfaces/user";
 import RightSideDrawer from "../../../../../../components/UI/right-side-drawer/right-side-drawer";
+import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
 import MultiCriteriaSearch from "../../../../../../components/UI/multi-criteria-search";
 import { DataTable } from "../../../../../../components/table/DataTable";
 import TablePagination from "../../../../../../components/table/TablePagination";
@@ -17,9 +18,10 @@ import { getAvailableStudentColumns } from "../../group-user-table-columns";
 type Props = {
   usersToAdd: User[];
   onAddUsers: (users: User[]) => void;
+  onCreateStudent: () => void;
 };
 
-const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
+const GroupManageUserList = ({ usersToAdd, onAddUsers, onCreateStudent }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [selectedUsers, setSelectedUsers] = useState<Map<string, User>>(
@@ -103,6 +105,19 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
         onCloseDrawer={handleClose}
       >
         <div className="flex min-h-full flex-col gap-5">
+          <PermissionGuard object="user" action="write">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="btn btn-outline btn-sm btn-primary whitespace-nowrap"
+                onClick={onCreateStudent}
+              >
+                <UserRoundPlus className="h-5 w-5" />
+                Créer un nouvel étudiant
+              </button>
+            </div>
+          </PermissionGuard>
+
           {isLoading || data.length > 0 || searchValue ? (
             <MultiCriteriaSearch
               value={searchValue ?? ""}

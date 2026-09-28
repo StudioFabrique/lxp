@@ -196,7 +196,7 @@ export default function StudentProfile({ onClose }: Props) {
                       "btn btn-xs btn-secondary h-auto min-h-7 max-w-full px-2 py-1 text-xs leading-tight whitespace-normal text-left",
                       selectedModule?.id !== module.id && "btn-outline",
                     )}
-                    title={`${formatTitle(module.title)} · ${formatTitle(module.parcoursTitle)}`}
+                    title={`${formatTitle(module.title)} / ${formatTitle(module.parcoursTitle)}`}
                     aria-pressed={selectedModule?.id === module.id}
                     onClick={() => setSelectedModuleId(module.id)}
                   >
@@ -213,7 +213,7 @@ export default function StudentProfile({ onClose }: Props) {
                     {formatTitle(selectedModule.title)}
                   </h3>
                   <p className="mb-4 text-xs text-base-content/60">
-                    {formatTitle(selectedModule.formationTitle)} ·{" "}
+                    {formatTitle(selectedModule.formationTitle)} /{" "}
                     {formatTitle(selectedModule.parcoursTitle)}
                   </p>
                   <SingleChoiceCards

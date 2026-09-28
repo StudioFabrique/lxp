@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { Building2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ const DEFAULT_LOGO_BACKGROUND = "#ffffff";
 
 export default function InstanceSetup() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
   const [settings, setSettings] = useState<InstanceSettings | null>(null);
   const [name, setName] = useState(DEFAULT_NAME);
   const [website, setWebsite] = useState("");
@@ -90,7 +92,19 @@ export default function InstanceSetup() {
   };
 
   return (
+    <motion.div
+      className="flex min-h-0 w-full flex-1 flex-col"
+      initial={reduceMotion ? false : { opacity: 0, y: 12, scale: 0.99 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.6,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
     <OnboardingProgressPanel contentKey={String(step)} currentStep={step} stepCount={2} progressLabel="Progression de la personnalisation" className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"
+      animateProgressOnMount={step === 1}
+      progressMountDelay={0.35}
+      progressMountDuration={0.9}
       footer={step === 1 ? <div className="mt-5 flex justify-end border-t border-base-300 pt-4"><button type="button" className="btn btn-primary text-base normal-case" onClick={() => setStep(2)}>Continuer</button></div>
         : <div className="mt-5 flex items-center justify-between gap-3 border-t border-base-300 pt-4">
           <button type="button" className="btn btn-ghost text-base normal-case" disabled={isSaving} onClick={() => setStep(1)}>Précédent</button>
@@ -177,5 +191,6 @@ export default function InstanceSetup() {
       </form>
     </AuthPageWrapper>}
     </OnboardingProgressPanel>
+    </motion.div>
   );
 }

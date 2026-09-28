@@ -30,7 +30,7 @@ const AuthHarness = ({ children, initiallyLoggedIn, rank }: {
   const [isLoggedIn, setIsLoggedIn] = useState(initiallyLoggedIn);
   return (
     <AuthContext value={{
-      user: isLoggedIn ? { roles: [{ rank }] } : null,
+      user: isLoggedIn ? { email: "personne@example.com", roles: [{ rank }] } : null,
       isLoggedIn,
       isAppInitialized: true,
       logout: async () => setIsLoggedIn(false),
@@ -68,6 +68,7 @@ const renderAt = async (
                 <Route path="/demo" element={<p>page-demo</p>} />
                 <Route path="/admin" element={<p>tableau-de-bord</p>} />
                 <Route path="/student" element={<p>espace-apprenant</p>} />
+                <Route path="/student/dashboard" element={<p>tableau-de-bord-apprenant</p>} />
               </Routes>
             </MemoryRouter>
           </AbilityContext>
@@ -138,7 +139,7 @@ describe("LoginGuard", () => {
 
   it("demande la déconnexion avant l'activation d'un autre compte", async () => {
     expect(await renderAt("/register?id=lien", false, true)).toContain(
-      "Vous êtes déjà connectée",
+      "Vous êtes déjà connectée avec personne@example.com",
     );
     expect(container.textContent).not.toContain("page-inscription");
 
@@ -172,6 +173,12 @@ describe("LoginGuard", () => {
 
   it("renvoie vers la connexion un visiteur qui ouvre l'onboarding", async () => {
     expect(await renderAt("/student/onboarding", false)).toBe("page-connexion");
+  });
+
+  it("renvoie l'étudiant de démonstration vers son tableau de bord", async () => {
+    expect(await renderAt("/student/onboarding", true, true, 3)).toBe(
+      "tableau-de-bord-apprenant",
+    );
   });
 
   it.each([1, 2])("laisse l'accueil au personnel de rang %i", async (rank) => {

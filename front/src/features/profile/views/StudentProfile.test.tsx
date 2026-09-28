@@ -22,6 +22,7 @@ const context: LearningContext = {
   onboardingMode: null,
   shouldAutoRedirect: false,
   modulesToAssess: [],
+  groupNames: [],
   availableFormations: [{
     id: 1,
     title: "réceptionniste en hôtellerie",
@@ -78,7 +79,7 @@ describe("StudentProfile, niveaux par module", () => {
 
     expect(container.querySelector('section[aria-label="Niveau dans Accueil client"]')).not.toBeNull();
     expect(container.querySelectorAll('input[name^="profile-level-"]')).toHaveLength(4);
-    expect(container.textContent).toContain("Réceptionniste en hôtellerie · Promo réceptionniste");
+    expect(container.textContent).toContain("Réceptionniste en hôtellerie / Promo réceptionniste");
 
     const relationFilter = [...container.querySelectorAll('button[aria-pressed]')]
       .find((button) => button.textContent === "Relation client") as HTMLButtonElement;

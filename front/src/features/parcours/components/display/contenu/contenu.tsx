@@ -13,7 +13,7 @@ import { AbilityContext } from "../../../../../rbac/AbilityProvider";
 import { Edit, Plus } from "lucide-react";
 import { cn } from "../../../../../utils/cn";
 import { sortModulesByStartDate } from "../../../helpers/sort-modules-by-start-date";
-import { getModulesLabel } from "../../../../../utils/helpers/user-role";
+import { getModulesLabel, getUserArea } from "../../../../../utils/helpers/user-role";
 
 type ContenuProps = {
   modules: Module[];
@@ -32,15 +32,21 @@ const Contenu = ({ modules }: ContenuProps) => {
     : sortedModules.slice(0, INITIAL_MODULE_COUNT);
   const hiddenModuleCount = sortedModules.length - INITIAL_MODULE_COUNT;
   const { user } = useContext(AuthContext);
+  const isStudent = getUserArea(user) === "student";
   const ability = useContext(AbilityContext);
   const { id: parcoursId } = useParams();
   const { data: parcours } = useParcoursQuery(
     parcoursId ? Number(parcoursId) : undefined,
   );
 
-  const [selectedModule, setSelectedModule] = useState<Module | null>(
-    sortedModules[0] ?? null,
+  const [selectedModuleState, setSelectedModule] = useState<Module | null>(null);
+  const requestedModule = sortedModules.find(
+    (module) => module.id === selectedModuleState?.id,
   );
+  const selectedModule =
+    requestedModule && (!isStudent || requestedModule.courses?.length)
+      ? requestedModule
+      : displayedModules.find((module) => !isStudent || module.courses?.length) ?? null;
 
   const canEditParcoursContent =
     parcours?.canManage !== false &&
@@ -80,6 +86,7 @@ const Contenu = ({ modules }: ContenuProps) => {
               <ContenuItem
                 key={module.id}
                 module={module}
+                isStudent={isStudent}
                 selectedModuleId={selectedModule?.id}
                 iterationCount={i + 1}
                 setSelectedModule={setSelectedModule}

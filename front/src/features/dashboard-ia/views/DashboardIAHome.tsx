@@ -15,6 +15,7 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
+import { groupAnalysisNameLines } from "../helpers/group-analysis-name";
 
 const DashboardIAHome = () => {
   const { user } = useContext(AuthContext);
@@ -73,7 +74,7 @@ const DashboardIAHome = () => {
             : summariesError ? <p role="alert">Impossible de charger les analyses.</p>
             : dropoutSummaries?.length ? <ul className="divide-y divide-base-300">
               {dropoutSummaries.map((group) => <li key={group.groupId} className="flex flex-wrap justify-between gap-2 py-3">
-                <strong>{group.name}</strong><span>{group.analyzed} apprenants analysés · {group.critical} cas critiques · {new Date(group.completedAt).toLocaleDateString("fr-FR")}</span>
+                <strong>{groupAnalysisNameLines(group.name).join(" / ")}</strong><span>{group.analyzed} apprenants analysés, {group.critical} cas critiques, le {new Date(group.completedAt).toLocaleDateString("fr-FR")}</span>
               </li>)}
             </ul> : <p>Aucun traitement terminé pour le moment.</p>}
         </BoxWrapper>

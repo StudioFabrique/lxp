@@ -3,7 +3,10 @@ import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { profileApi } from "../../profile/api/profile.api";
+import { currentRelease } from "../../../config/release-notes";
+import { AuthContext } from "../../../store/AuthProvider";
 import AuthLayout from "./AuthLayout";
+import AdminSignInForm from "./AdminSignInForm";
 
 vi.mock("../../profile/api/profile.api", () => ({
   profileApi: { queries: { getInstanceSettings: vi.fn() } },
@@ -68,6 +71,51 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
     expect(profileApi.queries.getInstanceSettings).not.toHaveBeenCalled();
   });
 
+  it("place le redémarrage avant le changement de thème sur l'écran d'activation", async () => {
+    await act(async () => {
+      root.render(
+        <MemoryRouter initialEntries={["/init"]}>
+          <AuthLayout>
+            <AdminSignInForm
+              token=""
+              initialActivationEmail="root@test.fr"
+              onSuccess={vi.fn()}
+              onRestart={vi.fn()}
+            />
+          </AuthLayout>
+        </MemoryRouter>,
+      );
+    });
+
+    const restartButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Recommencer la création"]',
+    );
+    const themeButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Changer le thème"]',
+    );
+    expect(restartButton?.parentElement?.parentElement).toBe(themeButton?.parentElement);
+    expect(restartButton?.compareDocumentPosition(themeButton!)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(restartButton?.getAttribute("data-tip")).toBe("Recommencer la création");
+  });
+
+  it("affiche la déconnexion et garde le logo inactif pendant la personnalisation", async () => {
+    await act(async () => {
+      root.render(
+        <AuthContext value={{ isLoggedIn: true, logout: vi.fn() } as never}>
+          <MemoryRouter initialEntries={["/instance-setup"]}>
+            <AuthLayout />
+          </MemoryRouter>
+        </AuthContext>,
+      );
+    });
+
+    expect(container.querySelector('button[aria-label="Se déconnecter"]')).not.toBeNull();
+    const logo = container.querySelector('img[alt="logo ANDRIA"]');
+    expect(logo?.parentElement?.className).not.toContain("cursor-pointer");
+  });
+
   it("ouvre les notes de version depuis le pied de la connexion", async () => {
     await act(async () => {
       root.render(
@@ -79,11 +127,11 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
 
     await act(async () => {
       container
-        .querySelector<HTMLButtonElement>('button[aria-label="Voir les notes de version 0.9"]')
+        .querySelector<HTMLButtonElement>(`button[aria-label="Voir les notes de version ${currentRelease.version}"]`)
         ?.click();
     });
 
     expect(document.querySelector("dialog h2")?.textContent).toBe("ANDRIA");
-    expect(document.querySelector("dialog")?.textContent).toContain("0.9");
+    expect(document.querySelector("dialog")?.textContent).toContain(currentRelease.version);
   });
 });

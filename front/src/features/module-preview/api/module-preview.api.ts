@@ -255,6 +255,10 @@ const mutations = {
     const res = await apiClient.put(`/course/reorder/${moduleId}`, courseIds);
     return res.data;
   },
+  reorderLessons: async (courseId: number, lessonIds: number[]) => {
+    const res = await apiClient.put(`/lesson/reorder/${courseId}`, lessonIds);
+    return res.data;
+  },
   reorderActivities: async (lessonId: number, activitiesIds: number[]) => {
     const res = await apiClient.put(`/activity/reorder/${lessonId}`, {
       activitiesIds,

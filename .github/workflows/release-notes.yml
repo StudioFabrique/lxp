@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'release/*'
+    paths-ignore:
+      - 'front/src/config/release-notes.json'
   workflow_dispatch:
 
 permissions:

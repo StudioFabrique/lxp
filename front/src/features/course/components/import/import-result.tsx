@@ -209,7 +209,7 @@ const ImportResult = ({
                   </div>
                   <p className="truncate text-xs text-base-content/55">
                     {item.context}
-                    {item.filename ? ` · ${item.filename}` : ""}
+                    {item.filename ? ` (${item.filename})` : ""}
                   </p>
                   {item.error && (
                     <p className="mt-1 text-xs text-error">{item.error}</p>

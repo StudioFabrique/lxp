@@ -25,7 +25,13 @@ const ModuleContentHeader = ({
       subTitle={moduleData.parcours}
       subTitleIcon={<RocketIcon className="stroke-white w-5" />}
       subTitleLinkTo={`/${baseRoute}/parcours/view/${moduleData.parcoursId}`}
-      children={[<Fragment key="fragment" />, <HeaderMenu key="header" />]}
+      children={[
+        <Fragment key="fragment" />,
+        <HeaderMenu
+          key="header"
+          groupLinkTo={`/admin/parcours/edit/${moduleData.parcoursId}?step=6`}
+        />,
+      ]}
       hidePublished
     />
   );

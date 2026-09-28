@@ -46,6 +46,7 @@ type SidebarCoursesListProps = {
   ) => Promise<boolean>;
   onCourseReorder?: (args: BaseEventPayload<ElementDragType>) => void;
   isReorderingCourses?: boolean;
+  isReorderingActivities?: boolean;
   editCourseId?: number;
   editLessonId?: number;
   openedCourseId?: number;
@@ -61,6 +62,7 @@ type SidebarCoursesListProps = {
     lessonId: number,
     values: LessonFormValues,
   ) => Promise<boolean>;
+  onLessonReorder?: (courseId: number, args: BaseEventPayload<ElementDragType>) => void;
   disableCourseCreationFloating?: boolean;
   children: React.ReactNode[];
 };
@@ -84,6 +86,7 @@ const SidebarCoursesList = ({
   onUpdateCourse,
   onCourseReorder,
   isReorderingCourses = false,
+  isReorderingActivities = false,
   editCourseId,
   editLessonId,
   openedCourseId,
@@ -93,6 +96,7 @@ const SidebarCoursesList = ({
   onCreateLesson,
   onLessonCreated,
   onUpdateLesson,
+  onLessonReorder,
   disableCourseCreationFloating = false,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
@@ -121,6 +125,7 @@ const SidebarCoursesList = ({
       openedCourseId
     );
   });
+  const [reorderingLessonCourseId, setReorderingLessonCourseId] = useState<number | undefined>();
   const actionsSentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -230,13 +235,15 @@ const SidebarCoursesList = ({
             <div className={cn("relative w-full rounded-lg transition-opacity", {
               "ring-2 ring-primary ring-offset-4 ring-offset-base-200": calendarMode && calendarSelectedCourseId === course.id,
               "opacity-30": calendarMode && calendarAdding && !calendarOrphanIds.includes(course.id),
+              "opacity-50": reorderingLessonCourseId !== undefined && reorderingLessonCourseId !== course.id,
             })}>
             <div
-              inert={(calendarMode && calendarAdding) || isReorderingCourses}
-              className={cn((calendarMode && calendarAdding) || isReorderingCourses ? "pointer-events-none" : undefined)}
+              inert={(calendarMode && calendarAdding) || isReorderingCourses || (reorderingLessonCourseId !== undefined && reorderingLessonCourseId !== course.id)}
+              className={cn((calendarMode && calendarAdding) || isReorderingCourses || (reorderingLessonCourseId !== undefined && reorderingLessonCourseId !== course.id) ? "pointer-events-none" : undefined)}
             >
             <CourseItem
               calendarMode={calendarMode}
+              disabled={isReorderingActivities}
               course={course}
               selectedLesson={selectedLesson}
               assignmentSelected={selectedAssignmentCourseId === course.id}
@@ -249,11 +256,14 @@ const SidebarCoursesList = ({
               openEditOnMount={!calendarMode && course.id === editCourseId}
               editLessonId={calendarMode ? undefined : editLessonId}
               isOpen={!calendarAdding && !isReorderingCourses && course.id === openCourseId}
+              isReorderingLessons={reorderingLessonCourseId === course.id}
+              onToggleLessonReordering={() => setReorderingLessonCourseId((current) => current === course.id ? undefined : course.id)}
               hideCreateLessonButton={isReorderingCourses}
               lessonIdToScroll={lessonIdToScroll}
               onLessonScrolled={onLessonScrolled}
               onToggle={() => {
                 if (calendarMode && calendarAdding) return;
+                if (reorderingLessonCourseId === course.id) return;
                 if (calendarMode) onSelectCalendarCourse?.(course.id);
                 setOpenCourseId((currentId) => {
                   if (
@@ -271,6 +281,7 @@ const SidebarCoursesList = ({
               onCreateLesson={onCreateLesson}
               onLessonCreated={onLessonCreated}
               onUpdateLesson={onUpdateLesson}
+              onLessonReorder={onLessonReorder}
               children={children[1]}
             />
             </div>
@@ -289,7 +300,7 @@ const SidebarCoursesList = ({
           </RoleRankGuard>
         )}
       </div>
-      {!calendarMode && !isReorderingCourses && (
+      {!calendarMode && !isReorderingCourses && reorderingLessonCourseId === undefined && (
         <PermissionGuard action="update" object="course">
           <div
             className={cn(

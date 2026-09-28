@@ -47,6 +47,8 @@ const ModuleContentSidebar = ({
   const createCourse = searchParams.get("createCourse") === "true";
   const [openedCourse, setOpenedCourse] = useState({ key: location.key, id: requestedCourseId });
   const openedCourseId = openedCourse.key === location.key ? openedCourse.id : requestedCourseId;
+  const [activityReordering, setActivityReordering] = useState<{ lessonId?: number; active: boolean }>({ active: false });
+  const isReorderingActivities = activityReordering.lessonId === selectedLesson?.id && activityReordering.active;
   if (!module) return null;
 
   return (
@@ -93,6 +95,7 @@ const ModuleContentSidebar = ({
           onUpdateCourse={courseActions.updateCourse}
           onCourseReorder={courseActions.courseReorder}
           isReorderingCourses={isReorderingCourses}
+          isReorderingActivities={isReorderingActivities}
           editCourseId={editCourseId}
           editLessonId={editLessonId}
           openedCourseId={openedCourseId}
@@ -104,6 +107,7 @@ const ModuleContentSidebar = ({
             dispatch({ type: "select_lesson_by_id", id: lessonId })
           }
           onUpdateLesson={lessonActions.updateLesson}
+          onLessonReorder={lessonActions.lessonReorder}
           disableCourseCreationFloating={
             (state.mode === "write" && state.activityType === "text") ||
             (state.mode === "edit" && selectedActivity?.type === "text")
@@ -122,6 +126,10 @@ const ModuleContentSidebar = ({
             </PermissionGuard>
           )}
           <ActivityList
+            key={selectedLesson?.id}
+            lessonId={selectedLesson?.id}
+            isReorderingActivities={isReorderingActivities}
+            onReorderingActivitiesChange={(active) => setActivityReordering({ lessonId: selectedLesson?.id, active })}
             canEdit={canEditSelectedLesson}
             activities={selectedLesson?.activities}
             selectedActivity={selectedActivity}

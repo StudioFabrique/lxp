@@ -46,7 +46,7 @@ it("ouvre les modules associés au clic, affiche les compteurs et referme au cla
   act(() => trigger.click());
   const dialog = document.body.querySelector("dialog")!;
   expect(dialog.textContent).toContain("Terminé");
-  expect(dialog.textContent).toContain("À terminer · 50 %");
+  expect(dialog.textContent).toContain("À terminer : 50 %");
   expect(dialog.querySelector('a[href="/student/parcours/module/20"]')?.textContent).toBe("La pratique");
   expect(dialog.querySelector('[aria-haspopup="dialog"]')).toBeNull();
   act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));

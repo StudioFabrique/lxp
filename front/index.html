@@ -28,6 +28,121 @@
   </head>
 
   <body>
+    <script>
+      try {
+        const mode = localStorage.getItem('activeTheme') === 'dark' ? 'dark' : 'light';
+        const stored = localStorage.getItem(mode === 'dark' ? 'darkTheme' : 'lightTheme');
+        document.documentElement.setAttribute('data-theme', stored || (mode === 'dark' ? 'classic-dark' : 'classic'));
+        document.documentElement.classList.toggle('boot-dark', mode === 'dark');
+      } catch {}
+      if (/^\/(login|register|reset-password|reset-update|init|createRoot|confirm-email|instance-setup|student\/onboarding|staff\/onboarding)(?:\/|$)/.test(location.pathname)) {
+        document.documentElement.classList.add('boot-auth-route');
+      }
+    </script>
+    <style>
+      [data-theme="classic"]{--boot-base:#ffffff;--boot-panel:#f7f9fc;--boot-shade:#dce4ed;--boot-content:#172638;--boot-side:#192d43;--boot-side-shade:#25415d}
+      [data-theme="ocean"]{--boot-base:#f0f9ff;--boot-panel:#e0f2fe;--boot-shade:#bae6fd;--boot-content:#082f49;--boot-side:#0c4a6e;--boot-side-shade:#075985}
+      [data-theme="linen"]{--boot-base:#fffdf9;--boot-panel:#f8f1e7;--boot-shade:#eadcc9;--boot-content:#3b241b;--boot-side:#63321f;--boot-side-shade:#7c3f26}
+      [data-theme="sage"]{--boot-base:#fbfef5;--boot-panel:#f1f8df;--boot-shade:#dcebbf;--boot-content:#1a2e05;--boot-side:#294936;--boot-side-shade:#365b43}
+      [data-theme="lavender"]{--boot-base:#fdfbff;--boot-panel:#f5f0ff;--boot-shade:#e9ddff;--boot-content:#2e1065;--boot-side:#4c326d;--boot-side-shade:#604186}
+      [data-theme="sunrise"]{--boot-base:#fffaf0;--boot-panel:#fff0d2;--boot-shade:#fed7aa;--boot-content:#431407;--boot-side:#71301e;--boot-side-shade:#8c3d26}
+      [data-theme="glacier"]{--boot-base:#fbfdff;--boot-panel:#eef5ff;--boot-shade:#dbeafe;--boot-content:#172554;--boot-side:#243b67;--boot-side-shade:#315184}
+      [data-theme="sand"]{--boot-base:#fffdf5;--boot-panel:#f7f0dc;--boot-shade:#e8dcc0;--boot-content:#3f2d1d;--boot-side:#5b442d;--boot-side-shade:#73583b}
+      [data-theme="classic-dark"]{--boot-base:#172637;--boot-panel:#203247;--boot-shade:#344b63;--boot-content:#e8eef5;--boot-side:#102235;--boot-side-shade:#1b354e}
+      [data-theme="aurora"]{--boot-base:#1e1d27;--boot-panel:#1a1830;--boot-shade:#2a2750;--boot-content:#f5f3ff;--boot-side:#221e46;--boot-side-shade:#312e5a}
+      [data-theme="ember"]{--boot-base:#1e1d27;--boot-panel:#28130e;--boot-shade:#482319;--boot-content:#fff7ed;--boot-side:#35150f;--boot-side-shade:#4a2118}
+      [data-theme="abyss"]{--boot-base:#1e1d27;--boot-panel:#06242c;--boot-shade:#0b3a45;--boot-content:#ecfeff;--boot-side:#073440;--boot-side-shade:#0b4654}
+      [data-theme="graphite"]{--boot-base:#1e1d27;--boot-panel:#1c1c20;--boot-shade:#303036;--boot-content:#f4f4f5;--boot-side:#1c1c20;--boot-side-shade:#323238}
+      [data-theme="plum"]{--boot-base:#1e1d27;--boot-panel:#2b1025;--boot-shade:#4a1d40;--boot-content:#fdf4ff;--boot-side:#35112e;--boot-side-shade:#502044}
+      [data-theme="moss"]{--boot-base:#1e1d27;--boot-panel:#1e2812;--boot-shade:#34451c;--boot-content:#f7fee7;--boot-side:#253218;--boot-side-shade:#364520}
+      [data-theme="cobalt"]{--boot-base:#1e1d27;--boot-panel:#0d2340;--boot-shade:#173964;--boot-content:#eff6ff;--boot-side:#0d2850;--boot-side-shade:#1c3b6b}
+      [data-theme="pearl"]{--boot-base:#fff;--boot-panel:#f8fafc;--boot-shade:#e2e8f0;--boot-content:#0f172a;--boot-side:#475569;--boot-side-shade:#475569}
+      [data-theme="mint"]{--boot-base:#fbfffd;--boot-panel:#ecfdf5;--boot-shade:#bbf7d0;--boot-content:#052e16;--boot-side:#365f58;--boot-side-shade:#365f58}
+      [data-theme="blossom"]{--boot-base:#fffafd;--boot-panel:#fdf2f8;--boot-shade:#fbcfe8;--boot-content:#3f0a24;--boot-side:#6b3f55;--boot-side-shade:#6b3f55}
+      [data-theme="sky"]{--boot-base:#fff;--boot-panel:#f0f9ff;--boot-shade:#bae6fd;--boot-content:#082f49;--boot-side:#334e68;--boot-side-shade:#334e68}
+      [data-theme="lemon"]{--boot-base:#fffffb;--boot-panel:#fefce8;--boot-shade:#fef08a;--boot-content:#365314;--boot-side:#4b5320;--boot-side-shade:#4b5320}
+      [data-theme="clay"]{--boot-base:#fffcf8;--boot-panel:#faf1e6;--boot-shade:#ead7c3;--boot-content:#431407;--boot-side:#65483c;--boot-side-shade:#65483c}
+      [data-theme="ice"]{--boot-base:#fff;--boot-panel:#f0f7ff;--boot-shade:#cfe8ff;--boot-content:#172554;--boot-side:#455d7a;--boot-side-shade:#455d7a}
+      [data-theme="paper"]{--boot-base:#fffef9;--boot-panel:#f5f3ea;--boot-shade:#dedbd0;--boot-content:#1c1917;--boot-side:#44403c;--boot-side-shade:#44403c}
+      [data-theme="midnight"]{--boot-base:#1e1d27;--boot-panel:#111827;--boot-shade:#243047;--boot-content:#e5e7eb;--boot-side:#111827;--boot-side-shade:#111827}
+      [data-theme="forest-night"]{--boot-base:#1e1d27;--boot-panel:#0d2a1e;--boot-shade:#1d4936;--boot-content:#dcfce7;--boot-side:#16352a;--boot-side-shade:#16352a}
+      [data-theme="coffee"]{--boot-base:#1e1d27;--boot-panel:#302117;--boot-shade:#513827;--boot-content:#f5e8dc;--boot-side:#38291f;--boot-side-shade:#38291f}
+      [data-theme="amethyst"]{--boot-base:#1e1d27;--boot-panel:#29153d;--boot-shade:#4b2868;--boot-content:#f3e8ff;--boot-side:#352347;--boot-side-shade:#352347}
+      [data-theme="storm"]{--boot-base:#1e1d27;--boot-panel:#1a2533;--boot-shade:#35455a;--boot-content:#e2e8f0;--boot-side:#263445;--boot-side-shade:#263445}
+      [data-theme="wine"]{--boot-base:#1e1d27;--boot-panel:#38111f;--boot-shade:#64243a;--boot-content:#ffe4e6;--boot-side:#4a1d2d;--boot-side-shade:#4a1d2d}
+      [data-theme="teal-night"]{--boot-base:#1e1d27;--boot-panel:#0b2c2f;--boot-shade:#185054;--boot-content:#ccfbf1;--boot-side:#123b3d;--boot-side-shade:#123b3d}
+      [data-theme="obsidian"]{--boot-base:#1e1d27;--boot-panel:#18181b;--boot-shade:#303036;--boot-content:#fafafa;--boot-side:#18181b;--boot-side-shade:#18181b}
+      #boot-skeleton{position:fixed;inset:0;z-index:9999;display:flex;gap:8px;padding:8px;box-sizing:border-box;background:var(--boot-base,#fff)}
+      #boot-skeleton *{box-sizing:border-box}
+      #boot-skeleton aside{width:64px;flex:none;border-radius:12px;background:var(--boot-side,#24364b);padding:16px;display:flex;flex-direction:column;justify-content:space-between}
+      #boot-skeleton .skeleton{border-radius:6px;background-color:var(--boot-shade,#dce4ed);background-image:linear-gradient(105deg,transparent 35%,#ffffff55 50%,transparent 65%);background-size:200% 100%;animation:boot-shimmer 1.8s ease-in-out infinite}
+      #boot-skeleton aside .skeleton{background-color:var(--boot-side-shade,#516274);opacity:.65}
+      @keyframes boot-shimmer{to{background-position-x:-200%}}
+      #boot-skeleton .boot-logo{width:32px;height:32px;border-radius:50%;margin-bottom:20px}
+      #boot-skeleton .boot-nav{display:flex;align-items:center;gap:12px;height:36px;width:32px;justify-content:center}
+      #boot-skeleton .boot-icon{width:16px;height:16px;flex:none}
+      #boot-skeleton .boot-label{display:none;height:12px;width:55%}
+      #boot-skeleton main{flex:1;min-width:0}
+      #boot-skeleton .boot-content{width:90%;margin:8vh auto 0}
+      #boot-skeleton .boot-header{height:78px;border-radius:8px;background:var(--boot-panel,#f7f9fc);border:1px solid var(--boot-shade,#dce4ed);padding:16px;display:flex;align-items:center;gap:12px}
+      #boot-skeleton .boot-header-icon{height:28px;width:28px}
+      #boot-skeleton .boot-title{height:20px;width:165px;margin-bottom:8px}
+      #boot-skeleton .boot-subtitle{height:12px;width:205px}
+      #boot-skeleton .boot-body{margin-top:24px;padding:20px;border:1px solid var(--boot-shade,#dce4ed);border-radius:8px;background:var(--boot-panel,#f7f9fc)}
+      #boot-skeleton .boot-line{height:40px;width:100%;margin-bottom:20px}
+      #boot-skeleton .boot-line-short{height:20px;width:65%}
+      #boot-skeleton .boot-line-row{height:48px;margin-bottom:0}
+      .boot-dark #boot-skeleton{background:var(--boot-base,#1e1d27)}
+      .boot-dark #boot-skeleton aside{background:var(--boot-side,#192d43)}
+      .boot-dark #boot-skeleton .skeleton{background-color:var(--boot-shade,#35455a)}
+      .boot-dark #boot-skeleton aside .skeleton{background-color:var(--boot-side-shade,#526176)}
+      .boot-dark #boot-skeleton .boot-header,.boot-dark #boot-skeleton .boot-body{background:var(--boot-panel,#1a2533);border-color:var(--boot-shade,#35455a)}
+      .boot-auth-route #boot-skeleton{display:none}
+      #boot-auth-skeleton{display:none;position:fixed;inset:0;z-index:9999;background:var(--boot-base,#fff);color:var(--boot-content,#192739)}
+      .boot-auth-route #boot-auth-skeleton{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:48px 0}
+      #boot-auth-skeleton *{box-sizing:border-box}
+      #boot-auth-skeleton .auth-left{display:flex;justify-content:center;padding:0 32px}
+      #boot-auth-skeleton .auth-column{position:relative;width:400px;max-width:100%;height:100%;display:flex;flex-direction:column;align-items:center}
+      #boot-auth-skeleton .auth-logo{display:block;width:224px;height:auto;margin-top:80px}
+      #boot-auth-skeleton .auth-logo-dark,.boot-dark #boot-auth-skeleton .auth-logo-light{display:none}
+      .boot-dark #boot-auth-skeleton .auth-logo-dark{display:block}
+      #boot-auth-skeleton .auth-tagline{font:600 12px/1.3 Arial,sans-serif;text-align:center;max-width:315px;margin-top:18px}
+      #boot-auth-skeleton .auth-form{width:100%;margin-top:78px}
+      #boot-auth-skeleton .auth-heading{height:26px;width:72%;margin:0 auto 22px}
+      #boot-auth-skeleton .auth-field{height:48px;width:100%;margin-bottom:16px}
+      #boot-auth-skeleton .auth-button{height:40px;width:100%;margin-top:24px}
+      #boot-auth-skeleton .auth-link{height:14px;width:38%;margin:28px auto 0}
+      #boot-auth-skeleton .auth-version{height:12px;width:40%;margin-top:auto}
+      #boot-auth-skeleton .auth-right{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:8px;overflow:hidden}
+      #boot-auth-skeleton .auth-tile{border-radius:14px}
+      #boot-auth-skeleton .skeleton{border-radius:8px;background-color:var(--boot-shade,#e8e9ed);background-image:linear-gradient(105deg,transparent 35%,#ffffff99 50%,transparent 65%);background-size:200% 100%;animation:boot-shimmer 1.8s ease-in-out infinite}
+      .boot-dark #boot-auth-skeleton{background:var(--boot-base,#1e1d27);color:var(--boot-content,#e5e7eb)}
+      .boot-dark #boot-auth-skeleton .skeleton{background-color:var(--boot-shade,#35455a)}
+      @media(max-width:1023px){.boot-auth-route #boot-auth-skeleton{grid-template-columns:1fr}#boot-auth-skeleton .auth-right{display:none}}
+      @media(min-width:1280px){#boot-skeleton .boot-content{width:80%}}
+      @media(min-width:1536px){#boot-skeleton aside{width:320px;padding:16px}#boot-skeleton .boot-logo{width:50px;height:50px}#boot-skeleton .boot-nav{width:100%;justify-content:flex-start;padding:0 8px}#boot-skeleton .boot-label{display:block}}
+    </style>
+    <div id="boot-skeleton" role="status" aria-label="Chargement de l’application">
+      <aside aria-hidden="true"><div><div class="skeleton boot-logo"></div><div id="boot-nav-top"></div></div><div id="boot-nav-bottom"></div></aside>
+      <main aria-hidden="true"><div class="boot-content">
+        <div class="boot-header"><div class="skeleton boot-header-icon"></div><div><div class="skeleton boot-title"></div><div class="skeleton boot-subtitle"></div></div></div>
+        <div class="boot-body"><div class="skeleton boot-line"></div><div class="skeleton boot-line boot-line-short"></div><div class="skeleton boot-line boot-line-row"></div>
+        </div>
+      </div></main>
+    </div>
+    <div id="boot-auth-skeleton" role="status" aria-label="Chargement de la connexion">
+      <div class="auth-left"><div class="auth-column">
+        <img class="auth-logo auth-logo-light" src="/andria-logo-light.svg" alt="ANDRIA"><img class="auth-logo auth-logo-dark" src="/andria-logo-dark.svg" alt="ANDRIA"><div class="auth-tagline">Apprentissage Numérique &amp; Développement Renforcé<br>par Intelligence Artificielle</div>
+        <div class="auth-form"><div class="skeleton auth-heading"></div><div class="skeleton auth-field"></div><div class="skeleton auth-field"></div><div class="skeleton auth-button"></div><div class="skeleton auth-link"></div></div>
+        <div class="skeleton auth-version"></div>
+      </div></div>
+      <div class="auth-right" aria-hidden="true"><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div></div>
+    </div>
+    <script>
+      for (const [id, count] of [['boot-nav-top', 8], ['boot-nav-bottom', 4]]) {
+        document.getElementById(id).innerHTML = '<div class="boot-nav"><div class="skeleton boot-icon"></div><div class="skeleton boot-label"></div></div>'.repeat(count);
+      }
+    </script>
     <div id="root"></div>
     <div id="portal"></div>
     <script type="module" src="/src/main.tsx"></script>

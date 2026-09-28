@@ -62,7 +62,7 @@ it("ouvre le popover et le lien exact du cours, puis la liste des cours masqués
   expect(link?.getAttribute("href")).toBe("/student/parcours/module/42");
   expect(document.body.textContent).toContain("09:00 – 12:00, chaque jour");
   act(() => document.querySelector<HTMLButtonElement>('[aria-label="Fermer les détails"]')!.click());
-  await click("Afficher plus (1) · cours superposés");
+  await click("Afficher 1 cours superposé");
   const dialog = document.querySelector("dialog")!;
   expect(dialog.textContent).toContain("Cours 3");
   expect(dialog.textContent).not.toContain("Cours 1");

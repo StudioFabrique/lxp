@@ -25,7 +25,7 @@ export default function TooltipLayer() {
 
   useEffect(() => {
     const show = (trigger: HTMLElement | null) => {
-      if (!trigger || activeTrigger.current === trigger) return;
+      if (!trigger?.isConnected || activeTrigger.current === trigger) return;
       activeTrigger.current = trigger;
       const style = getComputedStyle(trigger, "::before");
       setPosition(null);
@@ -37,6 +37,11 @@ export default function TooltipLayer() {
       });
     };
     const onPointerOver = (event: PointerEvent) => show(getTrigger(event.target));
+    const onPointerMove = (event: PointerEvent) => {
+      const trigger = getTrigger(event.target);
+      if (trigger?.isConnected) show(trigger);
+      else if (activeTrigger.current) dismiss();
+    };
     const onPointerOut = (event: PointerEvent) => {
       const trigger = getTrigger(event.target);
       if (trigger && !(event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) {
@@ -61,22 +66,37 @@ export default function TooltipLayer() {
     };
 
     document.addEventListener("pointerover", onPointerOver);
+    document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerout", onPointerOut);
     document.addEventListener("focusin", onFocusIn);
     document.addEventListener("focusout", onFocusOut);
     document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("click", dismiss, true);
     window.addEventListener("scroll", dismiss, true);
     window.addEventListener("resize", dismiss);
     return () => {
       document.removeEventListener("pointerover", onPointerOver);
+      document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerout", onPointerOut);
       document.removeEventListener("focusin", onFocusIn);
       document.removeEventListener("focusout", onFocusOut);
       document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("click", dismiss, true);
       window.removeEventListener("scroll", dismiss, true);
       window.removeEventListener("resize", dismiss);
     };
   }, []);
+
+  useEffect(() => {
+    if (!active) return;
+    const observer = new MutationObserver(() => {
+      if (active.trigger.isConnected) return;
+      if (activeTrigger.current === active.trigger) activeTrigger.current = null;
+      setActive((current) => current?.trigger === active.trigger ? null : current);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [active]);
 
   useLayoutEffect(() => {
     if (!active || !bubble.current) return;

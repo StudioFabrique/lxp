@@ -14,6 +14,8 @@ type Props = {
   contentRef?: Ref<HTMLDivElement>;
   footer?: ReactNode;
   animateProgressOnMount?: boolean;
+  progressMountDelay?: number;
+  progressMountDuration?: number;
 };
 
 export default function OnboardingProgressPanel({
@@ -27,6 +29,8 @@ export default function OnboardingProgressPanel({
   contentRef,
   footer,
   animateProgressOnMount = false,
+  progressMountDelay = 0.05,
+  progressMountDuration = 0.35,
 }: Props) {
   const { theme } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
@@ -56,8 +60,12 @@ export default function OnboardingProgressPanel({
           initial={animateProgressOnMount ? { width: "0%" } : false}
           animate={{ width: `${progress}%` }}
           transition={{
-            duration: reduceMotion ? 0 : animateProgressOnMount ? 0.35 : 0.3,
-            delay: animateProgressOnMount && !reduceMotion ? 0.05 : 0,
+            duration: reduceMotion
+              ? 0
+              : animateProgressOnMount
+                ? progressMountDuration
+                : 0.3,
+            delay: animateProgressOnMount && !reduceMotion ? progressMountDelay : 0,
             ease: "easeOut",
           }}
         />

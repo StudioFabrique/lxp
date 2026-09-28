@@ -7,7 +7,11 @@ import {
   ClipboardCheck,
   EyeOff,
   Plus,
+  ArrowDownUp,
 } from "lucide-react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type { BaseEventPayload, ElementDragType } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import SortableLessonItem from "./sortable-lesson-item";
 import Course from "../../../../../src/utils/interfaces/course";
 import {
   PropsWithChildren,
@@ -37,6 +41,7 @@ import { getUserArea } from "../../../../utils/helpers/user-role";
 
 type CourseItemProps = {
   calendarMode?: boolean;
+  disabled?: boolean;
   course: Course;
   selectedLesson: Lesson | undefined;
   assignmentSelected?: boolean;
@@ -52,6 +57,8 @@ type CourseItemProps = {
   openEditOnMount?: boolean;
   editLessonId?: number;
   isOpen: boolean;
+  isReorderingLessons?: boolean;
+  onToggleLessonReordering?: () => void;
   hideCreateLessonButton?: boolean;
   lessonIdToScroll?: number;
   onLessonScrolled?: (lessonId: number) => void;
@@ -72,6 +79,7 @@ type CourseItemProps = {
     lessonId: number,
     values: LessonFormValues,
   ) => Promise<boolean>;
+  onLessonReorder?: (courseId: number, args: BaseEventPayload<ElementDragType>) => void;
 };
 
 export type ModalCourseType =
@@ -82,6 +90,7 @@ export type ModalCourseType =
 
 const CourseItem = ({
   calendarMode = false,
+  disabled = false,
   course,
   selectedLesson,
   assignmentSelected,
@@ -94,6 +103,8 @@ const CourseItem = ({
   openEditOnMount = false,
   editLessonId,
   isOpen: isCourseOpen,
+  isReorderingLessons = false,
+  onToggleLessonReordering,
   hideCreateLessonButton = false,
   lessonIdToScroll,
   onLessonScrolled,
@@ -103,6 +114,7 @@ const CourseItem = ({
   onCreateLesson,
   onLessonCreated,
   onUpdateLesson,
+  onLessonReorder,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
@@ -124,6 +136,14 @@ const CourseItem = ({
   const [isSavingLesson, setIsSavingLesson] = useState(false);
   const [isEditingCourse, setIsEditingCourse] = useState(openEditOnMount);
   const [isSavingCourse, setIsSavingCourse] = useState(false);
+
+  useEffect(() => {
+    if (!isReorderingLessons || !onLessonReorder) return;
+    return monitorForElements({
+      canMonitor: ({ source }) => source.data.type === "lesson" && source.data.courseId === course.id,
+      onDrop: (args) => onLessonReorder(course.id, args),
+    });
+  }, [course.id, isReorderingLessons, onLessonReorder]);
 
   const handleCreateLesson = async (data: {
     title: string;
@@ -158,6 +178,7 @@ const CourseItem = ({
   const isCourseCompleted = courseProgress === 100;
 
   const handleToggleCourseTab = () => {
+    if (disabled) return;
     onToggle();
   };
 
@@ -288,13 +309,16 @@ const CourseItem = ({
         <div
           className={cn(
             "flex flex-col w-full cursor-pointer group z-10",
+            disabled && "pointer-events-none opacity-50",
             isCourseOpen
-              ? "bg-secondary/60 hover:bg-secondary/75"
-              : "bg-secondary/50 hover:bg-secondary/75",
+              ? "bg-primary/80 hover:bg-primary/90"
+              : "bg-primary/75 hover:bg-primary/90",
             isStaff && isCourseOpen ? "rounded-t-lg" : "rounded-lg",
           )}
           role="button"
-          tabIndex={0}
+          tabIndex={disabled ? -1 : 0}
+          aria-disabled={disabled}
+          inert={disabled}
           aria-expanded={isCourseOpen}
           aria-label={formatTitle(course.title)}
           onClick={handleToggleCourseTab}
@@ -310,14 +334,14 @@ const CourseItem = ({
           <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
               <span className="flex gap-1 items-center min-w-0">
-                <div className="text-secondary-content">
+                <div className="text-primary-content">
                   {isCourseOpen ? (
                     <ChevronDown className="w-5" />
                   ) : (
                     <ChevronRight className="w-5" />
                   )}
                 </div>
-                <h3 className="font-semibold text-secondary-content/80 truncate first-letter:uppercase">
+                <h3 className="font-semibold text-primary-content truncate first-letter:uppercase">
                   {formatTitle(course.title)}
                 </h3>
               </span>
@@ -326,7 +350,7 @@ const CourseItem = ({
               )}
               {canEditCourse && (
                 <div className="flex gap-1 items-center">
-                  {!hideCreateLessonButton && (
+                  {isCourseOpen && !hideCreateLessonButton && (
                     <PermissionGuard action="write" object="course">
                       <button
                         data-onboarding="lesson-create"
@@ -339,6 +363,21 @@ const CourseItem = ({
                         }}
                       >
                         <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    </PermissionGuard>
+                  )}
+
+                  {isCourseOpen && !calendarMode && !hideCreateLessonButton && course.lessons.length > 1 && (
+                    <PermissionGuard action="update" object="lesson">
+                      <button
+                        type="button"
+                        className={cn("btn btn-xs tooltip", isReorderingLessons ? "btn-secondary" : "btn-ghost text-primary-content")}
+                        data-tip={isReorderingLessons ? "Terminer" : "Réorganiser les leçons"}
+                        aria-label={isReorderingLessons ? "Terminer la réorganisation des leçons" : "Réorganiser les leçons"}
+                        aria-pressed={isReorderingLessons}
+                        onClick={(event) => { event.stopPropagation(); onToggleLessonReordering?.(); }}
+                      >
+                        <ArrowDownUp className="size-4" />
                       </button>
                     </PermissionGuard>
                   )}
@@ -361,7 +400,7 @@ const CourseItem = ({
           {!isStaff && (
             <RoleRankGuard ranks={[3]}>
               <progress
-                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all"
+                className="w-full progress progress-secondary bg-primary rounded-b-full -mt-1.5 transition-all"
                 value={courseProgress}
                 max={100}
               />
@@ -370,7 +409,7 @@ const CourseItem = ({
         </div>
         <motion.div
           className={cn(
-            "bg-secondary/20 rounded-b-xl overflow-y-auto",
+            "bg-primary/20 rounded-b-xl overflow-y-auto",
             !isStaff && "-mt-2 pt-2",
           )}
           initial={{ maxHeight: 0 }}
@@ -395,8 +434,8 @@ const CourseItem = ({
                 {/* Render the button based on the state calculated in useEffect */}
                 {(showDescriptionExpander || isDescriptionExpanded) && (
                   <span
-                    className="text-xs link cursor-pointer select-"
-                    onClick={handleClickToggleExpandDescription}
+                    className={cn("text-xs link cursor-pointer select-", disabled && "pointer-events-none opacity-50")}
+                    onClick={disabled ? undefined : handleClickToggleExpandDescription}
                   >
                     {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
                   </span>
@@ -409,13 +448,15 @@ const CourseItem = ({
               course.lessons.map(
                 (lesson) =>
                   lesson.id && (
-                    <div className={`w-full`} key={lesson.id}>
+                    <SortableLessonItem key={lesson.id} courseId={course.id} lessonId={lesson.id} lessonTitle={formatTitle(lesson.title)} enabled={isReorderingLessons && !calendarMode}>
                       <LessonItem
                         calendarMode={calendarMode}
+                        disabled={disabled}
                         lesson={lesson}
                         courseTags={course.tags ?? []}
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
+                        isReordering={isReorderingLessons}
                         openEditOnMount={lesson.id === editLessonId}
                         isCourseOpen={isCourseOpen}
                         shouldScrollIntoView={lesson.id === lessonIdToScroll}
@@ -424,13 +465,13 @@ const CourseItem = ({
                         onOpenModal={handleOpenLessonDeletionModal}
                         onUpdateLesson={onUpdateLesson}
                       >
-                        {calendarMode ? (
+                        {isReorderingLessons ? null : calendarMode ? (
                           <CalendarLessonActivities
                             lesson={selectedLesson?.id === lesson.id ? selectedLesson : lesson}
                           />
                         ) : children}
                       </LessonItem>
-                    </div>
+                    </SortableLessonItem>
                   ),
               )
             ) : !course.assignment ? (
@@ -449,6 +490,7 @@ const CourseItem = ({
                     ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
                     : "bg-warning/25 text-warning-content hover:bg-warning/40",
                 )}
+                disabled={disabled}
                 aria-current={assignmentSelected ? "step" : undefined}
                 onClick={(event) => {
                   event.stopPropagation();

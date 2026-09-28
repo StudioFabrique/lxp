@@ -75,7 +75,7 @@ type ModuleContentAction =
   | { type: "mark_lesson_as_complete"; lesson: Lesson; lessonRead: LessonRead }
   | { type: "go_to_next_lesson" }
   | { type: "delete_lesson"; id: number }
-  | { type: "reorder_lesson"; fromId: number; toId: number }
+  | { type: "reorder_lesson"; courseId: number; fromIndex: number; toIndex: number }
   // Activity
   | { type: "select_activity"; activity?: Activity }
   | { type: "select_last_activity_from_current_lesson" }
@@ -338,53 +338,16 @@ export function moduleContentReducer(
 
     case "reorder_lesson": {
       if (!state.module) return state;
-
-      const courses = state.module.courses.map((course) => ({ ...course }));
-
-      // Trouver la leçon à déplacer et le cours où elle se trouve
-      let fromCourseIndex, fromLessonIndex, lessonToMove;
-      for (let i = 0; i < courses.length; i++) {
-        const lessonIndex = courses[i].lessons.findIndex(
-          (l) => l.id === action.fromId
-        );
-        if (lessonIndex !== -1) {
-          fromCourseIndex = i;
-          fromLessonIndex = lessonIndex;
-          lessonToMove = courses[i].lessons[lessonIndex];
-          break;
-        }
-      }
-
-      if (!lessonToMove) return state; // leçon non trouvée
-
-      // Trouver la cible (toId)
-      let toCourseIndex, toLessonIndex;
-      for (let i = 0; i < courses.length; i++) {
-        const lessonIndex = courses[i].lessons.findIndex(
-          (l) => l.id === action.toId
-        );
-        if (lessonIndex !== -1) {
-          toCourseIndex = i;
-          toLessonIndex = lessonIndex;
-          break;
-        }
-      }
-
-      if (
-        !(fromCourseIndex && fromLessonIndex && toLessonIndex && toCourseIndex)
-      )
-        return state;
-
-      // Retirer la leçon de son ancien cours
-      courses[fromCourseIndex].lessons.splice(fromLessonIndex, 1);
-
-      // Si même cours → insérer à la nouvelle position
-      if (fromCourseIndex === toCourseIndex) {
-        courses[toCourseIndex].lessons.splice(toLessonIndex, 0, lessonToMove);
-      } else {
-        // Si changement de cours → insérer dans le nouveau cours
-        courses[toCourseIndex].lessons.splice(toLessonIndex, 0, lessonToMove);
-      }
+      const courseIndex = state.module.courses.findIndex((course) => course.id === action.courseId);
+      if (courseIndex < 0) return state;
+      const course = state.module.courses[courseIndex];
+      const lessons = [...course.lessons];
+      const valid = (index: number) => Number.isInteger(index) && index >= 0 && index < lessons.length;
+      if (!valid(action.fromIndex) || !valid(action.toIndex)) return state;
+      const [lesson] = lessons.splice(action.fromIndex, 1);
+      lessons.splice(action.toIndex, 0, lesson);
+      const courses = [...state.module.courses];
+      courses[courseIndex] = { ...course, lessons: lessons.map((item, order) => ({ ...item, order })) };
 
       return {
         ...state,

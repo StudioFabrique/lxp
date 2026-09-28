@@ -38,6 +38,7 @@ export type LearningContext = {
   onboardingMode: "initial" | "additional" | null;
   shouldAutoRedirect: boolean;
   availableFormations: LearningFormation[];
+  groupNames: string[];
   modulesToAssess: Array<LearningFormation["parcours"][number]["modules"][number]>;
   profile: {
     pace: LearningPace | null;
