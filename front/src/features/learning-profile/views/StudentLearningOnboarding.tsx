@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { Check, Gauge, GraduationCap, Shapes } from "lucide-react";
+import { ArrowRight, Check, Gauge, GraduationCap, Shapes } from "lucide-react";
+import { LayoutGroup, motion, useReducedMotion } from "motion/react";
+import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
+import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
+import { ThemeContext } from "../../../store/ThemeProvider";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
@@ -47,6 +51,8 @@ const availablePreferenceValues = new Set(
 );
 
 export default function StudentLearningOnboarding() {
+  const { theme } = useContext(ThemeContext);
+  const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const query = useQuery({
@@ -60,6 +66,8 @@ export default function StudentLearningOnboarding() {
   const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
   const [saving, setSaving] = useState(false);
   const [started, setStarted] = useState(false);
+  const [introFinished, setIntroFinished] = useState(false);
+  const [welcomeStarted, setWelcomeStarted] = useState(false);
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [links, setLinks] = useState<Link[]>([]);
   const [profileInformation, setProfileInformation] = useState<Record<
@@ -149,11 +157,19 @@ export default function StudentLearningOnboarding() {
     );
     setIndex(resumeIndex);
     setStarted(true);
-    void learningProfileApi.update({
-      action: "start",
-      currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
-    });
+    if (context.onboardingMode !== "initial" || savedStep) {
+      void learningProfileApi.update({
+        action: "start",
+        currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
+      });
+    }
   }, [context, started, steps]);
+
+  useEffect(() => {
+    if (context?.onboardingMode !== "initial" || !context.onboardingRequired) return;
+    const timer = window.setTimeout(() => setIntroFinished(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [context?.onboardingMode, context?.onboardingRequired]);
 
   useEffect(() => {
     if (contentScrollRef.current) contentScrollRef.current.scrollTop = 0;
@@ -180,6 +196,25 @@ export default function StudentLearningOnboarding() {
   if (!context.onboardingRequired || steps.length === 0) {
     return <Navigate to="/student/dashboard" replace />;
   }
+
+  const showIntro = context.onboardingMode === "initial" && !introFinished;
+  const showWelcome =
+    context.onboardingMode === "initial" &&
+    introFinished &&
+    !context.profile.currentStep &&
+    !welcomeStarted;
+
+  const begin = async () => {
+    setSaving(true);
+    try {
+      await learningProfileApi.update({ action: "start", currentStep: "theme" });
+      setWelcomeStarted(true);
+    } catch {
+      toast.error("Impossible de démarrer votre accueil.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const step = steps[index]!;
   const moduleCount = steps.filter((item) => item.kind === "module").length;
@@ -268,7 +303,66 @@ export default function StudentLearningOnboarding() {
   };
 
   return (
+    <LayoutGroup>
     <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-4 pb-[9px]">
+      {context.onboardingMode === "initial" && (
+        <motion.div
+          layout
+          transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className={showIntro || showWelcome
+            ? "mb-12 mt-[clamp(5rem,15vh,10rem)] flex flex-col items-center gap-2 text-center"
+            : "mb-3 flex flex-col items-center gap-2 text-center"}
+        >
+          <motion.img
+            className="h-auto w-56"
+            src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
+            alt="logo ANDRIA"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.82 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: reduceMotion ? 0 : 5, ease: [0.22, 1, 0.36, 1] }}
+          />
+          <span className="mt-2 max-w-xs text-xs font-semibold text-base-content">
+            Apprentissage Numérique &amp; Développement Renforcé par Intelligence Artificielle
+          </span>
+        </motion.div>
+      )}
+      {showIntro ? (
+        <div className="flex-1" aria-label="Chargement de votre accueil" />
+      ) : showWelcome ? (
+        <motion.section
+          className="flex w-full flex-1 flex-col text-center"
+          initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduceMotion ? 0 : 0.5 }}
+        >
+          <div className="mx-auto max-w-lg">
+            <h1 className="text-2xl font-bold">Bienvenue sur ANDRIA</h1>
+            <p className="mt-6 text-sm text-base-content/65">Votre parcours</p>
+            {context.availableFormations.map((item) => (
+              <div key={item.id} className="mt-2">
+                {item.parcours.map((entry) => (
+                  <p key={entry.id} className="text-3xl font-extrabold leading-tight text-primary first-letter:uppercase sm:text-4xl">
+                    {capitalizeTitle(entry.title)}
+                  </p>
+                ))}
+                <p className="mt-2 text-2xl font-bold first-letter:uppercase">{capitalizeTitle(item.title)}</p>
+              </div>
+            ))}
+            {context.groupNames.length > 0 && (
+              <p className="mt-6 text-base text-base-content/70">
+                {context.groupNames.length === 1 ? "Votre groupe : " : "Vos groupes : "}
+                <span className="font-semibold text-base-content">
+                  {context.groupNames.map(capitalizeTitle).join(", ")}
+                </span>
+              </p>
+            )}
+          </div>
+          <button type="button" className="btn btn-primary mx-auto mt-9 w-full max-w-xs gap-2 rounded-lg" disabled={saving} onClick={() => void begin()}>
+            Commencer <ArrowRight className="size-4" aria-hidden="true" />
+          </button>
+        </motion.section>
+      ) : (
+      <motion.div className="flex min-h-0 flex-1 flex-col gap-3" initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.45 }}>
       {parcours ? (
         <header className="px-5 py-3 pr-24 sm:px-6 sm:pr-28">
           <h2 className="mt-1 text-2xl font-extrabold leading-tight text-base-content first-letter:uppercase sm:text-3xl">
@@ -291,8 +385,11 @@ export default function StudentLearningOnboarding() {
             <button
               type="button"
               className="btn btn-ghost text-base normal-case"
-              disabled={index === 0 || saving}
-              onClick={() => setIndex((current) => Math.max(0, current - 1))}
+              disabled={(index === 0 && !welcomeStarted) || saving}
+              onClick={() => {
+                if (index === 0) setWelcomeStarted(false);
+                else setIndex((current) => current - 1);
+              }}
             >
               Précédent
             </button>
@@ -535,6 +632,9 @@ export default function StudentLearningOnboarding() {
           </div>
         ) : null}
       </OnboardingProgressPanel>
+      </motion.div>
+      )}
     </section>
+    </LayoutGroup>
   );
 }

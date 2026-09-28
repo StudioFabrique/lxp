@@ -148,7 +148,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 {organizationName && <p>{organizationName}</p>}
                 {pathname === "/login" && (
                   <>
-                    {organizationName && <span aria-hidden="true">·</span>}
+                    {organizationName && <span className="h-3 border-l border-current opacity-40" aria-hidden="true" />}
                     <button
                       type="button"
                       onClick={() => setShowReleaseNotes(true)}

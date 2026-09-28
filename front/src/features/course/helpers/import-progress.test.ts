@@ -38,7 +38,7 @@ describe("buildImportProgressItems", () => {
       expect.objectContaining({
         id: "activity-10-20-30",
         title: "Support PDF",
-        context: "Cours Moodle · Introduction",
+        context: "Cours Moodle / Introduction",
         filename: "support.pdf",
         kind: "activity",
         status: "pending",

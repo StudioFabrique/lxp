@@ -15,7 +15,7 @@ export default function SkillModules({ skill, onNavigate }: { skill: Skill; onNa
             <span className="inline-block first-letter:uppercase">{module.title}</span>
           </Link>
           <p className={cn(module.isCompleted ? "text-success" : "text-base-content/70")}>
-            {module.isCompleted ? "Terminé" : `À terminer · ${module.progress} %`}
+            {module.isCompleted ? "Terminé" : `À terminer : ${module.progress} %`}
           </p>
         </li>
       ))}

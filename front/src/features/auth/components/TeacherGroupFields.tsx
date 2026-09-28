@@ -45,7 +45,7 @@ export default function TeacherGroupFields({ name, setName, parcoursId, setParco
     <label className="flex flex-col gap-2 text-sm font-semibold">Parcours associé
       <select className="select select-bordered w-full" value={parcoursId} onChange={(event) => setParcoursId(Number(event.target.value))}>
         <option value={0}>Associer un parcours plus tard</option>
-        {options.map((item) => <option key={item.id} value={item.id}>{formatTitle(item.title.replace(/\s*·\s*/g, " — "))}</option>)}
+        {options.map((item) => <option key={item.id} value={item.id}>{formatTitle(item.title.replace(/\s*\u00b7\s*/g, " / "))}</option>)}
       </select>
     </label>
     <div className="flex flex-wrap items-center justify-between gap-3">

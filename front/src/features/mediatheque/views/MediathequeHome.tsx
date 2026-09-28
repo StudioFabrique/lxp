@@ -57,12 +57,12 @@ const getActivityDestination = (activity: MediaAssociatedActivity) => {
 
 const activityContext = (activity: MediaAssociatedActivity) => {
   if (activity.parent === "resource") {
-    return `Ressource supplémentaire · ${activity.parentTitle}`;
+    return `Ressource supplémentaire : ${activity.parentTitle}`;
   }
 
   return [activity.moduleTitle, activity.courseTitle, activity.parentTitle]
     .filter(Boolean)
-    .join(" · ");
+    .join(" / ");
 };
 
 function MediathequeHomePage() {

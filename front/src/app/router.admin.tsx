@@ -22,13 +22,13 @@ import InstanceSetupGate from "../components/guards/InstanceSetupGate";
 
 export const adminRoutes: RouteObject[] = [
   {
-    path: "/admin",
-    HydrateFallback: () => null,
-    lazy: lazyRoute(() => import("../components/wrappers/layouts/AdminLayout")),
-    errorElement: <RouterErrorBoundary />,
+    element: <InstanceSetupGate />,
     children: [
       {
-        element: <InstanceSetupGate />,
+        path: "/admin",
+        HydrateFallback: () => null,
+        lazy: lazyRoute(() => import("../components/wrappers/layouts/AdminLayout")),
+        errorElement: <RouterErrorBoundary />,
         children: [
           { index: true, element: <Navigate to="./dashboard" replace /> },
           guard("course", studentCalendarRoutes),

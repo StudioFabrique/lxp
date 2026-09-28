@@ -25,7 +25,7 @@ describe("cours en lecture", () => {
     const events = calendarCourseEvents(copy, new Date(2026, 9, 24), "day", "student");
     expect(events.map(({ title, subtitle }) => [title, subtitle])).toEqual([
       ["Cours d’introduction", "Module pratique"],
-      ["Devoir · Cours d’introduction", "Module pratique"],
+      ["Devoir : Cours d’introduction", "Module pratique"],
     ]);
   });
   it("répète les heures chaque jour, bornes incluses, sans décalage au changement d'heure", () => {
@@ -70,7 +70,7 @@ describe("cours en lecture", () => {
     expect(events).toHaveLength(1);
     expect(events[0]).toMatchObject({
       id: "assignment:8",
-      title: "Devoir · Cours",
+      title: "Devoir : Cours",
       start: "18:00",
       end: "19:00",
       deadlineTime: "18:30",

@@ -31,7 +31,14 @@ export default function InstanceSetupGate() {
   }, [isRoot]);
 
   if (!isRoot) return <Outlet />;
-  if (setupCompleted === null) return <Loader />;
+  if (setupCompleted === null) return (
+    <main className="flex min-h-screen items-center justify-center bg-base-100 px-6">
+      <Loader
+        variant="rows"
+        label="Vérification de la configuration de l’instance"
+      />
+    </main>
+  );
   if (!setupCompleted) return <Navigate replace to="/instance-setup" />;
   return <Outlet />;
 }

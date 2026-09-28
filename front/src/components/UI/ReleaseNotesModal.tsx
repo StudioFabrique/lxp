@@ -86,7 +86,7 @@ export default function ReleaseNotesModal({ onClose }: Props) {
           >
             {releaseNotes.map(({ version, status }) => (
               <option key={version} value={version}>
-                {version} · {status}
+                {version} ({status})
               </option>
             ))}
           </select>

@@ -48,7 +48,7 @@ export default function LastModules({ modules, isLoading }: Props) {
                 {module.parcours ?? "Non rattaché"}
               </div>
               <div className="text-xs text-base-content/80">
-                {module.coursesCount} cours · Créé le{" "}
+                {module.coursesCount} cours, créé le{" "}
                 {localeDate(module.createdAt)}
               </div>
             </div>
