@@ -125,26 +125,26 @@
 @plugin "daisyui/theme" {
     name: "classic";
     color-scheme: light;
-    /* Thème très épuré, type "Notion" ou "Linear" */
-    --color-primary: #0f172a; /* Presque noir */
+    /* Bleu ardoise et surfaces claires pour un thème par défaut sobre. */
+    --color-primary: #284b70;
     --color-primary-content: #ffffff;
-    --color-secondary: #64748b; /* Gris moyen */
+    --color-secondary: #526b85;
     --color-secondary-content: #ffffff;
-    --color-accent: #2563eb; /* Bleu vif pour les actions clés */
+    --color-accent: #0f766e;
     --color-accent-content: #ffffff;
-    --color-neutral: #1e293b;
+    --color-neutral: #24364b;
     --color-neutral-content: #ffffff;
-    --color-base-100: #ffffff; /* Blanc pur */
-    --color-base-200: #f8fafc; /* Gris ultra léger */
-    --color-base-300: #e2e8f0;
-    --color-base-content: #020617;
-    --color-info: #0ea5e9;
+    --color-base-100: #ffffff;
+    --color-base-200: #f7f9fc;
+    --color-base-300: #dce4ed;
+    --color-base-content: #172638;
+    --color-info: #0369a1;
     --color-info-content: #ffffff;
-    --color-success: #16a34a;
+    --color-success: #15803d;
     --color-success-content: #ffffff;
-    --color-warning: #ea580c;
+    --color-warning: #b45309;
     --color-warning-content: #ffffff;
-    --color-error: #dc2626;
+    --color-error: #b91c1c;
     --color-error-content: #ffffff;
     --radius-selector: 0.5rem;
     --radius-field: 0.5rem;
@@ -152,13 +152,13 @@
     --border: 1px;
     --depth: 1;
     --noise: 0;
-    --sidebar-bg: #172033;
+    --sidebar-bg: #192d43;
     --sidebar-content: #f8fafc;
-    --sidebar-surface: #253249;
-    --sidebar-hover: #31415c;
-    --sidebar-active: #253249;
+    --sidebar-surface: #25415d;
+    --sidebar-hover: #30516f;
+    --sidebar-active: #30516f;
     --sidebar-active-content: #f8fafc;
-    --sidebar-border: #34435c;
+    --sidebar-border: #3d5872;
 }
 
 @plugin "daisyui/theme" {
@@ -435,25 +435,26 @@
 @plugin "daisyui/theme" {
     name: "classic-dark";
     color-scheme: dark;
-    --color-primary: #f1f5f9;
-    --color-primary-content: #111827;
-    --color-secondary: #94a3b8;
-    --color-secondary-content: #0f172a;
-    --color-accent: #60a5fa;
-    --color-accent-content: #07111f;
-    --color-neutral: #253249;
+    /* Version sombre du bleu ardoise et de l'accent sarcelle de classic. */
+    --color-primary: #a8c8e6;
+    --color-primary-content: #102638;
+    --color-secondary: #a2b6c9;
+    --color-secondary-content: #15293b;
+    --color-accent: #65c5b6;
+    --color-accent-content: #073b38;
+    --color-neutral: #26394e;
     --color-neutral-content: #f8fafc;
-    --color-base-100: #1e1d27;
-    --color-base-200: #111827;
-    --color-base-300: #263348;
-    --color-base-content: #e5e7eb;
-    --color-info: #38bdf8;
+    --color-base-100: #172637;
+    --color-base-200: #203247;
+    --color-base-300: #344b63;
+    --color-base-content: #e8eef5;
+    --color-info: #7cc1df;
     --color-info-content: #082f49;
-    --color-success: #4ade80;
+    --color-success: #72c99a;
     --color-success-content: #052e16;
-    --color-warning: #facc15;
+    --color-warning: #e5bd69;
     --color-warning-content: #422006;
-    --color-error: #fb7185;
+    --color-error: #e88d98;
     --color-error-content: #4c0519;
     --radius-selector: 0.5rem;
     --radius-field: 0.5rem;
@@ -461,13 +462,13 @@
     --border: 1px;
     --depth: 1;
     --noise: 0;
-    --sidebar-bg: #111827;
+    --sidebar-bg: #102235;
     --sidebar-content: #f8fafc;
-    --sidebar-surface: #1e293b;
-    --sidebar-hover: #2b3a51;
-    --sidebar-active: #1e293b;
+    --sidebar-surface: #1b354e;
+    --sidebar-hover: #284867;
+    --sidebar-active: #284867;
     --sidebar-active-content: #f8fafc;
-    --sidebar-border: #334155;
+    --sidebar-border: #36516b;
 }
 
 @plugin "daisyui/theme" {
