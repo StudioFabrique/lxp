@@ -9,7 +9,7 @@ import LoginRightColumn from "./LoginRightColumn";
 import LoginGuard from "../../../components/guards/LoginGuard";
 import { useLocation, useNavigate } from "react-router";
 import { profileApi } from "../../profile/api/profile.api";
-import { INSTANCE_LOGO } from "../../../config/urls";
+import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import { cn } from "../../../utils/cn";
 import ReleaseNotesModal from "../../../components/UI/ReleaseNotesModal";
 import { currentRelease } from "../../../config/release-notes";
@@ -36,6 +36,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const shouldLoadBranding = showOrganizationName || isOnboarding;
   const [organizationName, setOrganizationName] = useState<string | null>(null);
   const [hasOrganizationLogo, setHasOrganizationLogo] = useState(false);
+  const [organizationLogoBackground, setOrganizationLogoBackground] = useState("#ffffff");
 
   useEffect(() => {
     if (!shouldLoadBranding) return;
@@ -54,6 +55,24 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
       active = false;
     };
   }, [shouldLoadBranding]);
+
+  useEffect(() => {
+    if (!isOnboarding || !hasOrganizationLogo) return;
+    const controller = new AbortController();
+    fetch(INSTANCE_LOGO_COLOR, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Couleur du logo indisponible");
+        return response.text();
+      })
+      .then((color) => {
+        const savedColor = color.trim();
+        if (/^#[0-9a-f]{6}$/i.test(savedColor)) {
+          setOrganizationLogoBackground(savedColor);
+        }
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [isOnboarding, hasOrganizationLogo]);
 
   return (
     <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isOnboardingLayout ? "py-4 lg:items-center lg:py-0" : "py-12")}>
@@ -132,12 +151,17 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 {hasOrganizationLogo && (
                   <>
                     <span className="h-5 w-px bg-base-content/20" aria-hidden="true" />
-                    <img
-                      className="max-h-8 max-w-28 object-contain"
-                      src={INSTANCE_LOGO}
-                      alt={organizationName ? `Logo ${organizationName}` : "Logo de l’organisme"}
-                      draggable={false}
-                    />
+                    <span
+                      className="flex min-h-8 items-center rounded-md px-2 py-1"
+                      style={{ backgroundColor: organizationLogoBackground }}
+                    >
+                      <img
+                        className="max-h-8 max-w-28 object-contain"
+                        src={INSTANCE_LOGO}
+                        alt={organizationName ? `Logo ${organizationName}` : "Logo de l’organisme"}
+                        draggable={false}
+                      />
+                    </span>
                   </>
                 )}
               </div>
