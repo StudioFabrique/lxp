@@ -80,3 +80,35 @@ describe("visibilité d'une leçon dans la sidebar", () => {
     expect(container.querySelector('[aria-label="Leçon invisible"]')).toBeNull();
   });
 });
+
+it("masque la sélection et les actions pendant la réorganisation", () => {
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  roots.push(root);
+  const render = (isReordering: boolean) => root.render(
+    <LessonItem
+      lesson={lesson}
+      courseTags={[]}
+      selectedLesson={lesson}
+      canEditLesson
+      isReordering={isReordering}
+      onSelectLesson={vi.fn()}
+      onOpenModal={vi.fn()}
+      onUpdateLesson={vi.fn().mockResolvedValue(true)}
+    >
+      <span>Activités de la leçon</span>
+    </LessonItem>,
+  );
+
+  act(() => render(false));
+  expect(container.querySelector('[role="button"]')?.getAttribute("aria-expanded")).toBe("true");
+  expect(container.querySelector('button[aria-label^="Actions pour"]')).not.toBeNull();
+
+  act(() => render(true));
+  expect(container.querySelector('[role="button"]')?.getAttribute("aria-expanded")).toBe("false");
+  expect(container.querySelector('button[aria-label^="Actions pour"]')).toBeNull();
+  expect(container.textContent).not.toContain("Activités de la leçon");
+
+  act(() => render(false));
+  expect(container.querySelector('[role="button"]')?.getAttribute("aria-expanded")).toBe("true");
+});

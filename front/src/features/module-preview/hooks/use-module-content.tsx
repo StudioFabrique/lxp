@@ -830,6 +830,36 @@ const useModuleContent = () => {
     }
   };
 
+  const lessonReorder = async (
+    courseId: number,
+    { source, location }: BaseEventPayload<ElementDragType>,
+  ) => {
+    if (isReordering.current.lesson || !state.module) return;
+    const destination = location.current.dropTargets[0];
+    if (source.data.type !== "lesson" || destination?.data.type !== "lesson" ||
+        source.data.courseId !== courseId || destination.data.courseId !== courseId) return;
+
+    const lessons = state.module.courses.find((course) => course.id === courseId)?.lessons;
+    if (!lessons) return;
+    const fromIndex = lessons.findIndex((lesson) => lesson.id === source.data.id);
+    const toIndex = lessons.findIndex((lesson) => lesson.id === destination.data.id);
+    if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return;
+
+    const reordered = [...lessons];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
+    isReordering.current.lesson = true;
+    dispatch({ type: "reorder_lesson", courseId, fromIndex, toIndex });
+    try {
+      await modulePreviewApi.mutations.reorderLessons(courseId, reordered.map((lesson) => lesson.id!));
+    } catch {
+      dispatch({ type: "reorder_lesson", courseId, fromIndex: toIndex, toIndex: fromIndex });
+      toast.error("Impossible de modifier l’ordre des leçons");
+    } finally {
+      isReordering.current.lesson = false;
+    }
+  };
+
   const nextLesson = () => {
     dispatch({ type: "go_to_next_lesson" });
   };
@@ -989,6 +1019,7 @@ const useModuleContent = () => {
       nextLesson,
       createLesson,
       updateLesson,
+      lessonReorder,
     },
     activityActions: {
       saveActivity,

@@ -10,7 +10,7 @@ import ModuleCourseCalendar from "../components/calendar/module-course-calendar"
 vi.mock("../../../lib/axios", () => ({ default: { post: vi.fn(), put: vi.fn() } }));
 vi.mock("react-hot-toast", () => ({ default: { error: vi.fn() } }));
 
-const module = { id: 42, courses: [{ id: 1, title: "Cours 1" }, { id: 2, title: "Cours 2" }] } as Module;
+const module = { id: 42, title: "Module test", courses: [{ id: 1, title: "Cours 1" }, { id: 2, title: "Cours 2" }] } as Module;
 const initialDates = [{ id: 1, minDate: "2026-09-01T00:00:00.000Z", maxDate: "2026-09-05T00:00:00.000Z", synchroneDuration: 3, asynchroneDuration: 7 }];
 let store: ModuleCalendarStore;
 let root: Root | undefined;
@@ -66,10 +66,12 @@ describe("planification des cours du module", () => {
     vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} });
     try {
       await render(true, true);
+      expect(container.querySelector("h2")?.textContent).toBe("Module test");
       act(() => container.querySelector<HTMLButtonElement>('[aria-label="Mois suivant"]')!.click());
-      expect(container.textContent).toContain("octobre 2026");
+      expect(store.currentDate.getMonth()).toBe(9);
+      expect(container.querySelector('[aria-label="Date affichée"]')?.textContent).toContain("oct.");
       act(() => store.selectCourse(1));
-      expect(container.textContent).toContain("septembre 2026");
+      expect(store.currentDate.getMonth()).toBe(8);
       const item = container.querySelector<HTMLElement>('[data-calendar-event="1:0"]')!;
       expect(item.getAttribute("aria-pressed")).toBe("true");
       expect(item.classList.contains("ring-primary")).toBe(true);
@@ -82,6 +84,18 @@ describe("planification des cours du module", () => {
     } finally {
       Reflect.deleteProperty(HTMLElement.prototype, "scrollIntoView");
     }
+  });
+
+  it("masque le retour à aujourd’hui sur le mois courant et le réaffiche ailleurs", async () => {
+    await render(true, true);
+    const todayButton = () => container.querySelector<HTMLButtonElement>('[aria-label="Revenir à la date d\'aujourd\'hui"]');
+    act(() => store.setCurrentDate(new Date()));
+    expect(todayButton()).toBeNull();
+    act(() => container.querySelector<HTMLButtonElement>('[aria-label="Mois précédent"]')!.click());
+    expect(todayButton()).not.toBeNull();
+    act(() => todayButton()!.click());
+    expect(store.currentDate.getMonth()).toBe(new Date().getMonth());
+    expect(todayButton()).toBeNull();
   });
 
   it("sélectionne la première plage chronologique sans modifier les dates", async () => {

@@ -13,7 +13,9 @@ type Props = {
 
 const TimeSelector = ({ view = "week", date, setDate }: Props) => {
   const today = new Date();
-  const isToday = date?.toDateString() === today.toDateString();
+  const isToday = view === "month"
+    ? date?.getMonth() === today.getMonth() && date?.getFullYear() === today.getFullYear()
+    : date?.toDateString() === today.toDateString();
 
   const handleClickToday = (e: MouseEvent) => {
     e.stopPropagation();
@@ -71,6 +73,7 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
       <button
         type="button"
         className="btn btn-sm rounded-xl"
+        aria-label={view === "month" ? "Mois précédent" : "Période précédente"}
         onClick={handleClickPreviousDate}
       >
         <ChevronLeft className="w-5" />
@@ -103,6 +106,7 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
       <button
         type="button"
         className="btn btn-sm rounded-xl"
+        aria-label={view === "month" ? "Mois suivant" : "Période suivante"}
         onClick={handleClickNextDate}
       >
         <ChevronRight className="w-5" />

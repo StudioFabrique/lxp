@@ -7,7 +7,11 @@ import {
   ClipboardCheck,
   EyeOff,
   Plus,
+  ArrowDownUp,
 } from "lucide-react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type { BaseEventPayload, ElementDragType } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import SortableLessonItem from "./sortable-lesson-item";
 import Course from "../../../../../src/utils/interfaces/course";
 import {
   PropsWithChildren,
@@ -52,6 +56,8 @@ type CourseItemProps = {
   openEditOnMount?: boolean;
   editLessonId?: number;
   isOpen: boolean;
+  isReorderingLessons?: boolean;
+  onToggleLessonReordering?: () => void;
   hideCreateLessonButton?: boolean;
   lessonIdToScroll?: number;
   onLessonScrolled?: (lessonId: number) => void;
@@ -72,6 +78,7 @@ type CourseItemProps = {
     lessonId: number,
     values: LessonFormValues,
   ) => Promise<boolean>;
+  onLessonReorder?: (courseId: number, args: BaseEventPayload<ElementDragType>) => void;
 };
 
 export type ModalCourseType =
@@ -94,6 +101,8 @@ const CourseItem = ({
   openEditOnMount = false,
   editLessonId,
   isOpen: isCourseOpen,
+  isReorderingLessons = false,
+  onToggleLessonReordering,
   hideCreateLessonButton = false,
   lessonIdToScroll,
   onLessonScrolled,
@@ -103,6 +112,7 @@ const CourseItem = ({
   onCreateLesson,
   onLessonCreated,
   onUpdateLesson,
+  onLessonReorder,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
@@ -124,6 +134,14 @@ const CourseItem = ({
   const [isSavingLesson, setIsSavingLesson] = useState(false);
   const [isEditingCourse, setIsEditingCourse] = useState(openEditOnMount);
   const [isSavingCourse, setIsSavingCourse] = useState(false);
+
+  useEffect(() => {
+    if (!isReorderingLessons || !onLessonReorder) return;
+    return monitorForElements({
+      canMonitor: ({ source }) => source.data.type === "lesson" && source.data.courseId === course.id,
+      onDrop: (args) => onLessonReorder(course.id, args),
+    });
+  }, [course.id, isReorderingLessons, onLessonReorder]);
 
   const handleCreateLesson = async (data: {
     title: string;
@@ -289,8 +307,8 @@ const CourseItem = ({
           className={cn(
             "flex flex-col w-full cursor-pointer group z-10",
             isCourseOpen
-              ? "bg-secondary/60 hover:bg-secondary/75"
-              : "bg-secondary/50 hover:bg-secondary/75",
+              ? "bg-secondary/80 hover:bg-secondary/90"
+              : "bg-secondary/75 hover:bg-secondary/90",
             isStaff && isCourseOpen ? "rounded-t-lg" : "rounded-lg",
           )}
           role="button"
@@ -317,7 +335,7 @@ const CourseItem = ({
                     <ChevronRight className="w-5" />
                   )}
                 </div>
-                <h3 className="font-semibold text-secondary-content/80 truncate first-letter:uppercase">
+                <h3 className="font-semibold text-secondary-content truncate first-letter:uppercase">
                   {formatTitle(course.title)}
                 </h3>
               </span>
@@ -326,7 +344,7 @@ const CourseItem = ({
               )}
               {canEditCourse && (
                 <div className="flex gap-1 items-center">
-                  {!hideCreateLessonButton && (
+                  {isCourseOpen && !hideCreateLessonButton && (
                     <PermissionGuard action="write" object="course">
                       <button
                         data-onboarding="lesson-create"
@@ -339,6 +357,21 @@ const CourseItem = ({
                         }}
                       >
                         <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    </PermissionGuard>
+                  )}
+
+                  {isCourseOpen && !calendarMode && !hideCreateLessonButton && course.lessons.length > 1 && (
+                    <PermissionGuard action="update" object="lesson">
+                      <button
+                        type="button"
+                        className={cn("btn btn-xs tooltip", isReorderingLessons ? "btn-primary" : "btn-ghost text-secondary-content")}
+                        data-tip={isReorderingLessons ? "Terminer" : "Réorganiser les leçons"}
+                        aria-label={isReorderingLessons ? "Terminer la réorganisation des leçons" : "Réorganiser les leçons"}
+                        aria-pressed={isReorderingLessons}
+                        onClick={(event) => { event.stopPropagation(); onToggleLessonReordering?.(); }}
+                      >
+                        <ArrowDownUp className="size-4" />
                       </button>
                     </PermissionGuard>
                   )}
@@ -409,13 +442,14 @@ const CourseItem = ({
               course.lessons.map(
                 (lesson) =>
                   lesson.id && (
-                    <div className={`w-full`} key={lesson.id}>
+                    <SortableLessonItem key={lesson.id} courseId={course.id} lessonId={lesson.id} lessonTitle={formatTitle(lesson.title)} enabled={isReorderingLessons && !calendarMode}>
                       <LessonItem
                         calendarMode={calendarMode}
                         lesson={lesson}
                         courseTags={course.tags ?? []}
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
+                        isReordering={isReorderingLessons}
                         openEditOnMount={lesson.id === editLessonId}
                         isCourseOpen={isCourseOpen}
                         shouldScrollIntoView={lesson.id === lessonIdToScroll}
@@ -424,13 +458,13 @@ const CourseItem = ({
                         onOpenModal={handleOpenLessonDeletionModal}
                         onUpdateLesson={onUpdateLesson}
                       >
-                        {calendarMode ? (
+                        {isReorderingLessons ? null : calendarMode ? (
                           <CalendarLessonActivities
                             lesson={selectedLesson?.id === lesson.id ? selectedLesson : lesson}
                           />
                         ) : children}
                       </LessonItem>
-                    </div>
+                    </SortableLessonItem>
                   ),
               )
             ) : !course.assignment ? (

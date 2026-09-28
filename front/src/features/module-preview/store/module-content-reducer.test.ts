@@ -122,6 +122,26 @@ describe("moduleContentReducer", () => {
     ]);
   });
 
+  it("réordonne les leçons dans leur cours sans modifier les autres cours", () => {
+    const module = {
+      id: 2,
+      courses: [
+        { id: 10, lessons: [{ id: 1, order: 0 }, { id: 2, order: 1 }, { id: 3, order: 2 }] },
+        { id: 11, lessons: [{ id: 4, order: 0 }] },
+      ],
+    } as unknown as Module & { parcours: string };
+
+    const state = moduleContentReducer(
+      { ...initialModuleContentState, module },
+      { type: "reorder_lesson", courseId: 10, fromIndex: 0, toIndex: 2 },
+    );
+
+    expect(state.module?.courses[0].lessons.map(({ id, order }) => ({ id, order }))).toEqual([
+      { id: 2, order: 0 }, { id: 3, order: 1 }, { id: 1, order: 2 },
+    ]);
+    expect(state.module?.courses[1]).toBe(module.courses[1]);
+  });
+
   it.each([
     { fromIndex: -1, toIndex: 1 },
     { fromIndex: 3, toIndex: 0 },

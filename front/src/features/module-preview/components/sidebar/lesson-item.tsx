@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
+  GripVertical,
 } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
@@ -26,6 +27,7 @@ type LessonItemProps = {
   courseTags: Tag[];
   selectedLesson: Lesson | undefined;
   canEditLesson?: boolean;
+  isReordering?: boolean;
   openEditOnMount?: boolean;
   isCourseOpen?: boolean;
   shouldScrollIntoView?: boolean;
@@ -44,6 +46,7 @@ const LessonItem = ({
   courseTags,
   selectedLesson,
   canEditLesson,
+  isReordering = false,
   openEditOnMount = false,
   isCourseOpen = false,
   shouldScrollIntoView = false,
@@ -54,7 +57,7 @@ const LessonItem = ({
   children,
 }: PropsWithChildren<LessonItemProps>) => {
   const [calendarExpanded, setCalendarExpanded] = useState(selectedLesson?.id === lesson.id);
-  const isLessonSelected = calendarMode ? calendarExpanded : selectedLesson?.id === lesson.id;
+  const isLessonSelected = !isReordering && (calendarMode ? calendarExpanded : selectedLesson?.id === lesson.id);
   const lessonRef = useRef<HTMLDivElement>(null);
 
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -217,8 +220,9 @@ const LessonItem = ({
               <EyeOff className="size-3.5" />
             </span>
           ) : null}
-          <p className="max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
-          {selectedLesson?.id === lesson.id && (
+          <p className="min-w-0 max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
+          {isReordering && <GripVertical aria-hidden="true" className="size-4 shrink-0 text-primary-content" />}
+          {!isReordering && selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
               {!calendarMode && canEditLesson && (
                 <PermissionGuard action="update" object="lesson">

@@ -12,17 +12,22 @@ vi.mock("./course-item", () => ({
     course,
     isOpen,
     onToggle,
+    onToggleLessonReordering,
   }: {
     course: { id: number };
     isOpen: boolean;
     onToggle: () => void;
+    onToggleLessonReordering: () => void;
   }) => (
-    <button
-      type="button"
-      data-testid={`course-${course.id}`}
-      data-open={isOpen}
-      onClick={onToggle}
-    />
+    <>
+      <button
+        type="button"
+        data-testid={`course-${course.id}`}
+        data-open={isOpen}
+        onClick={onToggle}
+      />
+      <button type="button" data-testid={`reorder-lessons-${course.id}`} onClick={onToggleLessonReordering} />
+    </>
   ),
 }));
 
@@ -52,6 +57,7 @@ const renderCourses = (
   onAddCalendarCourse = vi.fn(),
   calendarAdding = calendarMode,
   onSelectCalendarCourse = vi.fn(),
+  displayedCourses: Course[] = [course],
 ) => {
   let root = roots[0];
   if (!root) {
@@ -78,7 +84,7 @@ const renderCourses = (
           calendarOrphanIds={orphanIds}
           onAddCalendarCourse={onAddCalendarCourse}
           onSelectCalendarCourse={onSelectCalendarCourse}
-          courses={[course]}
+          courses={displayedCourses}
           moduleProgress={0}
           selectedLesson={lesson}
           onSelectLesson={vi.fn()}
@@ -162,6 +168,26 @@ describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
     expect(actionsContainer?.classList.contains("sticky")).toBe(false);
     expect(actionsContainer?.classList.contains("backdrop-blur")).toBe(false);
   });
+});
+
+it("désactive les autres cours pendant la réorganisation des leçons", () => {
+  const container = document.createElement("div");
+  const secondCourse = { id: 2, title: "Deuxième cours", lessons: [] } as unknown as Course;
+  renderCourses(container, "", false, false, [], vi.fn(), false, vi.fn(), [course, secondCourse]);
+
+  const first = getCourseButton(container);
+  const second = container.querySelector<HTMLButtonElement>('[data-testid="course-2"]')!;
+  act(() => container.querySelector<HTMLButtonElement>('[data-testid="reorder-lessons-1"]')!.click());
+
+  expect(first.closest("[inert]")).toBeNull();
+  expect(second.closest("[inert]")).not.toBeNull();
+  expect(container.textContent).not.toContain("Créer un cours");
+  act(() => first.click());
+  expect(first.dataset.open).toBe("true");
+
+  act(() => container.querySelector<HTMLButtonElement>('[data-testid="reorder-lessons-1"]')!.click());
+  expect(second.closest("[inert]")).toBeNull();
+  expect(container.textContent).toContain("Créer un cours");
 });
 
 
