@@ -103,7 +103,7 @@ export async function getLearningContext(userIdMdb: string) {
     throw { statusCode: 404, message: "Profil étudiant introuvable." };
   }
 
-  const [formations, profile, assessments] = await Promise.all([
+  const [formations, profile, assessments, groups] = await Promise.all([
     resolveAvailableFormations(userIdMdb),
     prisma.orm.public.StudentLearningProfile.where({ studentId: student.id })
       .select(
@@ -121,6 +121,7 @@ export async function getLearningContext(userIdMdb: string) {
     })
       .select("moduleId", "level", "updatedAt")
       .all(),
+    Group.find({ users: userIdMdb }).select("name").lean(),
   ]);
 
   const assessmentByModule = new Map(
@@ -158,6 +159,7 @@ export async function getLearningContext(userIdMdb: string) {
     shouldAutoRedirect:
       onboardingRequired && profile?.onboardingStatus !== "in_progress",
     availableFormations,
+    groupNames: groups.map((group) => group.name),
     modulesToAssess,
     profile: {
       pace: profile?.pace ?? null,

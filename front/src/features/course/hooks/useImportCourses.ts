@@ -81,7 +81,7 @@ export function buildImportProgressItems(courses: CourseImport[]) {
       (lesson.activities ?? []).map((activity) => ({
         id: activityProgressId(course.id, lesson.id!, activity.id),
         title: activity.title || "Activité sans titre",
-        context: `${course.title} · ${lesson.title}`,
+        context: `${course.title} / ${lesson.title}`,
         filename: activity.url?.split("/").pop() || undefined,
         kind: "activity" as const,
         status: "pending" as const,

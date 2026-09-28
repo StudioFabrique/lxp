@@ -1,64 +1,75 @@
 import { act } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
+import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type Module from "../../../../../utils/interfaces/module";
 import ContenuItem from "./contenu-item";
 
-const module = {
-  id: 1,
-  title: "Architecture applicative et développement des composants métier",
-  description: "",
-  contacts: [],
-  bonusSkills: [],
-  duration: 1,
-  parcours: {},
-  courses: [],
-  tags: [],
-} as unknown as Module;
+const moduleData = (courses: Module["courses"]) => ({
+  id: 12,
+  title: "Module test",
+  courses,
+}) as Module;
 
-describe("Élément du contenu du parcours", () => {
-  let container: HTMLDivElement;
-  let root: Root;
+const renderItem = (module: Module, isStudent = true) => renderToStaticMarkup(
+  <MemoryRouter>
+    <ContenuItem
+      module={module}
+      isStudent={isStudent}
+      iterationCount={1}
+      selectedModuleId={undefined}
+      setSelectedModule={vi.fn()}
+    />
+  </MemoryRouter>,
+);
 
-  beforeEach(() => {
-    container = document.createElement("div");
-    document.body.appendChild(container);
-    root = createRoot(container);
+describe("Module dans l'aperçu du parcours", () => {
+  it("affiche un cadenas sans lien quand le module est vide", () => {
+    const markup = renderItem(moduleData([]));
+
+    expect(markup).toContain("Module test");
+    expect(markup).toContain("Aucun contenu disponible dans ce module");
+    expect(markup).not.toContain("href=");
   });
 
-  afterEach(async () => {
-    await act(async () => root.unmount());
-    container.remove();
+  it("conserve l'accès à un module qui contient un cours", () => {
+    const markup = renderItem(moduleData([{} as Module["courses"][number]]));
+
+    expect(markup).toContain('href="/module/12"');
   });
 
-  it("laisse la ligne grandir lorsque le titre occupe plusieurs lignes", async () => {
+  it("laisse les rôles supérieurs ouvrir un module vide", () => {
+    const markup = renderItem(moduleData([]), false);
+
+    expect(markup).toContain('href="/module/12"');
+    expect(markup).not.toContain("Aucun contenu disponible dans ce module");
+  });
+
+  it("ne sélectionne pas un module vide lorsque l'apprenant clique dessus", async () => {
+    const container = document.createElement("div");
+    const root = createRoot(container);
+    const setSelectedModule = vi.fn();
+
     await act(async () => {
       root.render(
         <MemoryRouter>
           <ContenuItem
-            module={module}
+            module={moduleData([])}
+            isStudent
             iterationCount={1}
-            selectedModuleId={module.id}
-            setSelectedModule={vi.fn()}
+            selectedModuleId={undefined}
+            setSelectedModule={setSelectedModule}
           />
         </MemoryRouter>,
       );
     });
 
-    const row = container.querySelector<HTMLElement>(
-      '[data-testid="contenu-item"]',
-    );
-    const date = row?.children[0];
-    const content = row?.children[1];
-    const title = content?.querySelector("p:last-child");
-
-    expect(row?.classList.contains("items-stretch")).toBe(true);
-    expect(date?.classList.contains("min-h-20")).toBe(true);
-    expect(date?.classList.contains("h-20")).toBe(false);
-    expect(content?.classList.contains("min-h-20")).toBe(true);
-    expect(content?.classList.contains("h-20")).toBe(false);
-    expect(title?.classList.contains("wrap-break-word")).toBe(true);
+    await act(async () => {
+      container.querySelector<HTMLElement>('[data-testid="contenu-item"]')?.click();
+    });
+    expect(setSelectedModule).not.toHaveBeenCalled();
+    await act(async () => root.unmount());
   });
 });

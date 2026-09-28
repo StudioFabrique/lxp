@@ -736,41 +736,32 @@ const useModuleContent = () => {
       return;
     }
 
-    // Extraction des index depuis les données attachées aux éléments
-    const fromId = source.data.index as number;
-
     const destination = location.current.dropTargets[0];
+    const lesson = state.selectedLesson;
+    if (!lesson?.id || !lesson.activities ||
+        source.data.type !== "activity" || destination?.data.type !== "activity" ||
+        source.data.lessonId !== lesson.id || destination.data.lessonId !== lesson.id) return;
 
-    if (!destination) return;
+    const fromId = lesson.activities.findIndex((activity) => activity.id === source.data.id);
+    const toId = lesson.activities.findIndex((activity) => activity.id === destination.data.id);
+    if (fromId < 0 || toId < 0 || fromId === toId) return;
 
-    const toId = destination.data.index as number;
-
-    if (fromId === undefined || toId === undefined || fromId === toId) return;
-
-    dispatch({ type: "reorder_activity", fromId, toId });
+    const reorderedActivities = [...lesson.activities];
+    const [movedActivity] = reorderedActivities.splice(fromId, 1);
+    reorderedActivities.splice(toId, 0, movedActivity);
 
     isReordering.current.activity = true;
+    dispatch({ type: "reorder_activity", fromId, toId });
 
-    if (state.selectedLesson && state.selectedLesson.activities) {
-      const reorderedActivities = Array.from(state.selectedLesson.activities);
-      const [movedItem] = reorderedActivities.splice(fromId, 1);
-      reorderedActivities.splice(toId, 0, movedItem);
-
-      const newActivitiesIds = reorderedActivities.map(
-        (activity) => activity.id,
+    try {
+      await modulePreviewApi.mutations.reorderActivities(
+        lesson.id,
+        reorderedActivities.map((activity) => activity.id),
       );
-
-      try {
-        await modulePreviewApi.mutations.reorderActivities(
-          state.selectedLesson.id!,
-          newActivitiesIds,
-        );
-      } catch {
-        // silently fail
-      } finally {
-        isReordering.current.activity = false;
-      }
-    } else {
+    } catch {
+      dispatch({ type: "reorder_activity", fromId: toId, toId: fromId });
+      toast.error("Impossible de modifier l’ordre des activités");
+    } finally {
       isReordering.current.activity = false;
     }
   };
@@ -827,6 +818,36 @@ const useModuleContent = () => {
       toast.error("Impossible de modifier l’ordre des cours");
     } finally {
       isReordering.current.course = false;
+    }
+  };
+
+  const lessonReorder = async (
+    courseId: number,
+    { source, location }: BaseEventPayload<ElementDragType>,
+  ) => {
+    if (isReordering.current.lesson || !state.module) return;
+    const destination = location.current.dropTargets[0];
+    if (source.data.type !== "lesson" || destination?.data.type !== "lesson" ||
+        source.data.courseId !== courseId || destination.data.courseId !== courseId) return;
+
+    const lessons = state.module.courses.find((course) => course.id === courseId)?.lessons;
+    if (!lessons) return;
+    const fromIndex = lessons.findIndex((lesson) => lesson.id === source.data.id);
+    const toIndex = lessons.findIndex((lesson) => lesson.id === destination.data.id);
+    if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return;
+
+    const reordered = [...lessons];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
+    isReordering.current.lesson = true;
+    dispatch({ type: "reorder_lesson", courseId, fromIndex, toIndex });
+    try {
+      await modulePreviewApi.mutations.reorderLessons(courseId, reordered.map((lesson) => lesson.id!));
+    } catch {
+      dispatch({ type: "reorder_lesson", courseId, fromIndex: toIndex, toIndex: fromIndex });
+      toast.error("Impossible de modifier l’ordre des leçons");
+    } finally {
+      isReordering.current.lesson = false;
     }
   };
 
@@ -989,6 +1010,7 @@ const useModuleContent = () => {
       nextLesson,
       createLesson,
       updateLesson,
+      lessonReorder,
     },
     activityActions: {
       saveActivity,

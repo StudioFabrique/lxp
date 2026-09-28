@@ -109,4 +109,15 @@ describe("ModuleContentToolbar", () => {
     ).toBe(true);
     expect(button?.querySelector(".lucide-check")).toBeNull();
   });
+
+  it("désactive Tout réduire lorsque le calendrier est ouvert", () => {
+    const container = document.createElement("div");
+    const onCloseContent = vi.fn();
+    renderToolbar(container, { isCalendarView: true, onCloseContent });
+
+    const button = container.querySelector<HTMLButtonElement>('button[aria-label="Tout réduire"]');
+    expect(button?.disabled).toBe(true);
+    act(() => button?.click());
+    expect(onCloseContent).not.toHaveBeenCalled();
+  });
 });

@@ -9,6 +9,10 @@ on:
   push:
     branches:
       - beta
+    # Une correction manuelle des notes sur release/* ne redéploie pas beta
+    # si elle constitue le seul changement de la fusion.
+    paths-ignore:
+      - 'front/src/config/release-notes.json'
   workflow_dispatch:
     inputs:
       image_tag:

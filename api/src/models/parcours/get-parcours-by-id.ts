@@ -59,23 +59,7 @@ async function getParcoursById(
               : row.id.in(scope.moduleIds)
             : all();
 
-          const isAvailableToLearner =
-            scope?.kind === "learner"
-              ? row.courses.some((course) =>
-                  and(
-                    course.isPublished.eq(true),
-                    course.visibility.eq(true),
-                    course.lessons.some((lesson) =>
-                      and(
-                        lesson.visibility.eq(true),
-                        lesson.activities.some((activity) => activity.id.gt(0)),
-                      ),
-                    ),
-                  ),
-                )
-              : all();
-
-          return and(isInScope, isAvailableToLearner);
+          return isInScope;
         })
         .select(
           "id",

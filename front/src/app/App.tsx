@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router";
 
@@ -13,6 +14,14 @@ import { AbilityProvider } from "../rbac/AbilityProvider";
 import { VisualPreferencesProvider } from "../store/VisualPreferences";
 
 function App() {
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      document.getElementById("boot-skeleton")?.remove();
+      document.getElementById("boot-auth-skeleton")?.remove();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <>
       <Toaster />

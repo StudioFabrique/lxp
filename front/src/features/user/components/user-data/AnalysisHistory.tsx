@@ -80,8 +80,7 @@ export default function AnalysisHistory({
                     {new Date(analysis.evaluatedAt).toLocaleTimeString(
                       "fr-FR",
                       { hour: "2-digit", minute: "2-digit" },
-                    )}{" "}
-                    · Issue estimée :{" "}
+                    )}{", issue estimée : "}
                     {formatOutcome(analysis.outcome.prediction)}
                   </p>
                   <div className="mt-2 flex items-center gap-1 text-xs text-base-content/60">

@@ -11,6 +11,7 @@ const createModule = (id: number, progress: number) =>
     id,
     title: `Module ${id}`,
     stats: { progress },
+    courses: [{ lessons: [{ id: 1 }] }],
   }) as Module;
 
 describe("Votre avancement dans le parcours", () => {
@@ -101,5 +102,13 @@ describe("Votre avancement dans le parcours", () => {
     expect(container.textContent).not.toContain("Module 5");
     expect(container.textContent).not.toContain("Module 6");
     expect(container.querySelector("button")).toBeNull();
+  });
+
+  it("affiche un cadenas sans lien pour un module vide", async () => {
+    await renderComponent([{ ...createModule(1, 0), courses: [] }]);
+
+    expect(container.querySelector("a")).toBeNull();
+    expect(container.querySelector('[data-tip="Aucun contenu disponible dans ce module"]')).not.toBeNull();
+    expect(container.querySelector("svg")).not.toBeNull();
   });
 });

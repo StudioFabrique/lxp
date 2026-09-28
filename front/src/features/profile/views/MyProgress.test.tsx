@@ -23,6 +23,14 @@ function CurrentSearch() {
 let root: Root | undefined;
 let container: HTMLDivElement | undefined;
 
+function mockProgressQuery(data: unknown, hasAvailableContent: boolean) {
+  vi.mocked(useQuery).mockImplementation(({ queryKey }) =>
+    queryKey[0] === "my-progress"
+      ? { data, isLoading: false, isError: false } as never
+      : { data: { hasAvailableContent } } as never,
+  );
+}
+
 afterEach(() => {
   if (root) act(() => root?.unmount());
   container?.remove();
@@ -32,14 +40,13 @@ afterEach(() => {
 });
 
 it("ouvre le parcours demandé et filtre les sections lors du changement", () => {
-  vi.mocked(useQuery).mockReturnValue({
-    data: [
+  mockProgressQuery(
+    [
       { id: 1, title: "Parcours A", modules: [{ id: 11, title: "Module A", stats: { progress: 25 } }] },
       { id: 2, title: "Parcours B", modules: [{ id: 22, title: "Module B", stats: { progress: 75 } }] },
     ],
-    isLoading: false,
-    isError: false,
-  } as never);
+    true,
+  );
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -57,6 +64,7 @@ it("ouvre le parcours demandé et filtre les sections lors du changement", () =>
   expect(container.textContent).not.toContain("Module A");
   expect(container.querySelector("[data-journal='2']")).not.toBeNull();
   expect(container.querySelector("[data-awards='2']")).not.toBeNull();
+  expect(container.textContent).toContain("Mes préférences et niveaux");
 
   act(() => {
     select.value = "1";
@@ -69,11 +77,7 @@ it("ouvre le parcours demandé et filtre les sections lors du changement", () =>
 });
 
 it("masque le filtre lorsqu'un seul parcours est associé", () => {
-  vi.mocked(useQuery).mockReturnValue({
-    data: [{ id: 1, title: "Parcours A", modules: [] }],
-    isLoading: false,
-    isError: false,
-  } as never);
+  mockProgressQuery([{ id: 1, title: "Parcours A", modules: [] }], true);
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -86,4 +90,20 @@ it("masque le filtre lorsqu'un seul parcours est associé", () => {
 
   expect(container.querySelector("#progress-parcours")).toBeNull();
   expect(container.textContent).toContain("Parcours A");
+});
+
+it("masque les préférences et niveaux quand aucun contenu n'est rattaché", () => {
+  mockProgressQuery([], false);
+  container = document.createElement("div");
+  document.body.appendChild(container);
+  root = createRoot(container);
+
+  act(() => root?.render(
+    <MemoryRouter initialEntries={["/student/mon-avancement"]}>
+      <MyProgress />
+    </MemoryRouter>,
+  ));
+
+  expect(container.textContent).toContain("Aucun parcours disponible.");
+  expect(container.textContent).not.toContain("Mes préférences et niveaux");
 });

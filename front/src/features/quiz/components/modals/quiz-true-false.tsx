@@ -8,9 +8,10 @@ interface Props {
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onReport: (externalId: string, comment: string) => Promise<void>;
   isAnswered: boolean;
+  nextAction?: { label: string; onClick: () => void };
 }
 
-const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
+const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
   const [selected, setSelected] = useState<boolean | null>(null);
 
   const isValid = selected !== null;
@@ -49,12 +50,13 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
           FAUX
         </button>
       </div>
-      {!isAnswered && (
+      {(!isAnswered || nextAction) && (
         <QuizModalButtons
           isValid={isValid}
           onValidate={handleValidate}
           onReport={onReport}
           externalId={quiz.id}
+          nextAction={isAnswered ? nextAction : undefined}
         />
       )}
     </div>

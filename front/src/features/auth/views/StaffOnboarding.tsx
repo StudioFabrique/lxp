@@ -10,6 +10,7 @@ import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 import ReleaseNotesCard from "../../../components/UI/ReleaseNotesCard";
+import WelcomeActions from "../components/WelcomeActions";
 import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
 import DropoutPreferencesForm from "../../dashboard-ia/components/DropoutPreferencesForm";
 import { dashboardIAApi } from "../../dashboard-ia/api/dashboardIA.api";
@@ -65,8 +66,8 @@ export default function StaffOnboarding() {
             ? "Préparez votre espace d’administration en choisissant votre thème. Vous pourrez le modifier plus tard depuis votre profil."
             : "Personnalisez votre espace et choisissez si vous souhaitez activer l’analyse automatique du décrochage pour vos parcours."}</p>
         </div>
-        <button type="button" className="btn btn-primary mx-auto mt-9 w-full max-w-xs gap-2 rounded-lg" onClick={() => setStep(1)}>Commencer <ArrowRight className="size-4" /></button>
-        {!admin && <ReleaseNotesCard className="mx-auto mt-3 h-28 w-full max-w-xs flex-none" />}
+        <button type="button" className={`btn btn-primary mx-auto mt-9 w-full gap-2 rounded-lg ${admin ? "max-w-md" : "max-w-xs"}`} onClick={() => setStep(1)}>Commencer <ArrowRight className="size-4" /></button>
+        {admin ? <div className="mx-auto w-full max-w-md"><WelcomeActions /></div> : <ReleaseNotesCard className="mx-auto mt-3 h-28 w-full max-w-xs flex-none" />}
       </motion.section> : <motion.div className="flex min-h-0 flex-1 flex-col" initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.45 }}>
         <OnboardingProgressPanel contentKey={String(step)} currentStep={step} stepCount={admin ? 1 : 2}
           progressLabel="Progression de l’accueil" className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"

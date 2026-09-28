@@ -2,7 +2,7 @@ import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { useEffect, useRef, useState } from "react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
-import { ArrowDownUp } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Activity } from "../../../../../src/utils/interfaces/activity";
@@ -12,8 +12,10 @@ type ActivityItemProps = {
   disabled?: boolean;
   activity: Activity;
   index: number;
+  lessonId?: number;
   isSelected: boolean;
   canEdit: boolean;
+  isReordering?: boolean;
   onSelect: () => void;
 };
 
@@ -21,8 +23,10 @@ export default function ActivityItem({
   disabled = false,
   activity,
   index,
+  lessonId,
   isSelected,
   canEdit,
+  isReordering = false,
   onSelect,
 }: ActivityItemProps) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -31,29 +35,30 @@ export default function ActivityItem({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !canEdit || disabled) return;
+    if (!el || !canEdit || disabled || !isReordering) return;
 
     return combine(
       draggable({
         element: el,
-        getInitialData: () => ({ index, id: activity.id }),
+        getInitialData: () => ({ type: "activity", lessonId, index, id: activity.id }),
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
       }),
       dropTargetForElements({
         element: el,
-        getData: () => ({ index }),
+        canDrop: ({ source }) => source.data.type === "activity" && source.data.lessonId === lessonId,
+        getData: () => ({ type: "activity", lessonId, index, id: activity.id }),
         onDragEnter: () => setIsDraggedOver(true),
         onDragLeave: () => setIsDraggedOver(false),
         onDrop: () => setIsDraggedOver(false),
       }),
     );
-  }, [index, activity.id, canEdit, disabled]);
+  }, [index, activity.id, canEdit, disabled, isReordering, lessonId]);
 
   return (
     <button
       ref={ref}
-      onClick={disabled ? undefined : onSelect}
+      onClick={disabled || isReordering ? undefined : onSelect}
       disabled={disabled}
       className={cn(
         "btn btn-ghost justify-start text-start btn-sm w-full h-6 transition-all opacity-100 border-t-2 border-transparent",
@@ -61,6 +66,7 @@ export default function ActivityItem({
           "opacity-30": isDragging,
           "border-t-2 border-primary": isDraggedOver,
           "hover:bg-transparent cursor-default": disabled,
+          "cursor-grab active:cursor-grabbing": isReordering,
         },
       )}
     >
@@ -70,8 +76,8 @@ export default function ActivityItem({
       >
         {formatTitle(activity.title)}
       </span>
-      {canEdit && !disabled && (
-        <ArrowDownUp className="w-4 hover:text-primary ml-auto" />
+      {isReordering && (
+        <GripVertical aria-hidden="true" className="w-4 ml-auto shrink-0" />
       )}
     </button>
   );

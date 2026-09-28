@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
+import LoginLoadingSkeleton from "../../features/auth/components/LoginLoadingSkeleton";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
 import { useDemoMode } from "../../store/DemoContext";
 import { getUserHomePath, hasRoleRank } from "../../utils/helpers/user-role";
@@ -50,14 +51,9 @@ const LoginGuard = () => {
   }, [isLoggedIn]);
 
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked)) {
-    return location.pathname === "/init" ? (
-      <Loader
-        variant="rows"
-        label="Vérification de l'instance"
-        className="my-10"
-      />
-    ) : (
-      <Loader />
+    if (location.pathname !== "/init") return <LoginLoadingSkeleton />;
+    return (
+      <Loader variant="rows" label="Vérification de l'instance" className="my-10" />
     );
   }
 
@@ -67,6 +63,7 @@ const LoginGuard = () => {
   }
 
   if (isLoggedIn && user && isStudentOnboardingRoute) {
+    if (demoMode) return <Navigate replace to="/student/dashboard" />;
     return hasRoleRank(user, [3]) ? (
       <Outlet />
     ) : (
@@ -87,7 +84,7 @@ const LoginGuard = () => {
     const homePath = getUserHomePath(user) ?? "/access-denied";
     return (
       <Modal
-        title="Vous êtes déjà connectée"
+        title={`Vous êtes déjà connectée avec ${user.email}`}
         leftLabel="Annuler"
         rightLabel="Confirmer la déconnexion"
         onLeftClick={() => navigate(homePath, { replace: true })}

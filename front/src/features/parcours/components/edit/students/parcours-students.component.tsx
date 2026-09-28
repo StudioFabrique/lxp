@@ -111,51 +111,35 @@ const ParcoursStudents = () => {
         <p role="alert">Impossible de charger les groupes du parcours.</p>
       ) : areGroupsPending ? (
         <LoadingSkeleton variant="rows" label="Chargement des groupes du parcours" />
-      ) : !groups || groups.length === 0 ? (
-        // Si aucun groupe n'est présent, affiche un bouton pour en ajouter
+      ) : (
         <section>
           <BoxWrapper>
-            <article className="w-full flex flex-col items-center">
-              <div className="py-24">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleDrawer("add-group")}
-                >
-                  Ajouter un groupe d'apprenants
-                </button>
-              </div>
-            </article>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
+              <ButtonAdd
+                label="Ajouter un groupe d'apprenants"
+                outline={true}
+                onClickEvent={handleAddGroup}
+              />
+            </div>
+            {groups.length === 0 ? (
+              <p className="py-24 text-center">Aucun groupe d'apprenants ajouté.</p>
+            ) : groupIds.length > 0 && areStudentsError ? (
+              <p role="alert">Impossible de charger les apprenants.</p>
+            ) : groupIds.length > 0 && areStudentsPending ? (
+              <LoadingSkeleton variant="rows" label="Chargement des apprenants" />
+            ) : <StudentsList
+              initalList={students}
+              groups={groups}
+              parcoursId={parcoursId}
+              onRemoveGroup={(groupId) =>
+                setDraftGroups(
+                  groups.filter((group) => group._id !== groupId),
+                )
+              }
+            />}
           </BoxWrapper>
         </section>
-      ) : (
-        // Si des groupes sont présents, affiche la liste des étudiants
-        <>
-          <section>
-            <BoxWrapper>
-              {groupIds.length > 0 && areStudentsError ? (
-                <p role="alert">Impossible de charger les apprenants.</p>
-              ) : groupIds.length > 0 && areStudentsPending ? (
-                <LoadingSkeleton variant="rows" label="Chargement des apprenants" />
-              ) : <StudentsList
-                initalList={students}
-                groups={groups}
-                parcoursId={parcoursId}
-                onRemoveGroup={(groupId) =>
-                  setDraftGroups(
-                    groups.filter((group) => group._id !== groupId),
-                  )
-                }
-              />}
-              <div className="mt-2 self-end">
-                <ButtonAdd
-                  label="Ajouter un groupe d'apprenants"
-                  outline={true}
-                  onClickEvent={handleAddGroup}
-                />
-              </div>
-            </BoxWrapper>
-          </section>
-        </>
       )}
     </div>
   );

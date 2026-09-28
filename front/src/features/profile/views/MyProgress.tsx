@@ -1,6 +1,6 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
-import { ChartNoAxesCombined } from "lucide-react";
+import { ChartNoAxesCombined, LockKeyhole } from "lucide-react";
 import { Link, useLocation, useSearchParams } from "react-router";
 import { useState } from "react";
 import StudentProfile from "./StudentProfile";
@@ -9,6 +9,10 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import Loader from "../../../components/loaders/Loader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { parcoursApi } from "../../parcours/api/parcours.api";
+import {
+  learningProfileApi,
+  learningProfileKey,
+} from "../../learning-profile/learning-profile.api";
 import type Parcours from "../../../utils/interfaces/parcours";
 import Journal from "../components/journal/journal";
 import Awards from "../components/awards/awards";
@@ -33,6 +37,10 @@ export default function MyProgress() {
     queryKey: ["my-progress", "modules"],
     queryFn: loadParcoursProgress,
   });
+  const { data: learningContext } = useQuery({
+    queryKey: learningProfileKey,
+    queryFn: learningProfileApi.get,
+  });
   const requestedParcoursId = Number(searchParams.get("parcoursId"));
   const selectedParcours =
     parcours.find((item) => item.id === requestedParcoursId) ?? parcours[0];
@@ -43,8 +51,14 @@ export default function MyProgress() {
         title="Mon avancement"
         description="Suivez la progression de vos modules, vos accomplissements et vos badges de compétences."
         icon={ChartNoAxesCombined}
-      ><button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>Mes préférences et niveaux</button></Header>
-      {settingsOpen && <StudentProfile onClose={() => setSettingsOpen(false)} />}
+      >{learningContext?.hasAvailableContent && (
+        <button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>
+          Mes préférences et niveaux
+        </button>
+      )}</Header>
+      {learningContext?.hasAvailableContent && settingsOpen && (
+        <StudentProfile onClose={() => setSettingsOpen(false)} />
+      )}
       {parcours.length > 1 && (
         <div className="flex flex-col gap-2 sm:max-w-md">
           <label htmlFor="progress-parcours" className="font-semibold">
@@ -94,21 +108,27 @@ export default function MyProgress() {
                     100,
                     Math.max(0, module.stats?.progress ?? 0),
                   );
+                  const isEmpty = space === "student" && !module.courses?.length;
                   return (
                     <li
                       key={module.id}
-                      className="rounded-lg bg-base-100 p-4"
+                      className={`rounded-lg bg-base-100 p-4 ${isEmpty ? "opacity-60" : ""}`}
                     >
                       <div className="mb-3 flex items-start justify-between gap-3">
-                        <Link
-                          to={`/${space}/parcours/module/${module.id}`}
-                          className="font-medium hover:underline first-letter:uppercase"
-                        >
-                          {formatTitle(module.title)}
-                        </Link>
-                        <span className="font-semibold text-primary">
-                          {progress}%
-                        </span>
+                        {isEmpty ? (
+                          <span className="tooltip tooltip-bottom inline-flex items-center gap-2 font-medium" data-tip="Aucun contenu disponible dans ce module" title="Aucun contenu disponible dans ce module">
+                            <LockKeyhole className="size-4 shrink-0" aria-hidden="true" />
+                            {formatTitle(module.title)}
+                          </span>
+                        ) : (
+                          <Link
+                            to={`/${space}/parcours/module/${module.id}`}
+                            className="font-medium hover:underline first-letter:uppercase"
+                          >
+                            {formatTitle(module.title)}
+                          </Link>
+                        )}
+                        <span className="font-semibold text-primary">{progress}%</span>
                       </div>
                       <progress
                         className="progress progress-primary w-full"

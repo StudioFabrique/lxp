@@ -163,7 +163,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold" title={g.title}>{g.title}</p>
                   <p className="truncate text-sm text-base-content/70">
-                    {g.degree} · {new Date(g.date).getFullYear()}
+                    {g.degree} ({new Date(g.date).getFullYear()})
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">

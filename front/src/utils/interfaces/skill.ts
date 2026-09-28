@@ -10,6 +10,7 @@ export default interface Skill {
     title: string;
     progress: number;
     isCompleted: boolean;
+    hasContent?: boolean;
   }[];
   createdAt?: string;
   updatedAt?: string;

@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
-import { Trash2, UserRoundPlus } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import type User from "../../../../../utils/interfaces/user";
 import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 import MultiCriteriaSearch from "../../../../../components/UI/multi-criteria-search";
-import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { DataTable } from "../../../../../components/table/DataTable";
 import TablePagination from "../../../../../components/table/TablePagination";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
@@ -127,17 +126,8 @@ const GroupUserList = ({
           <GroupManageUserList
             onAddUsers={onAddUsers}
             usersToAdd={usersToAdd}
+            onCreateStudent={onCreateStudent}
           />
-          <PermissionGuard object="user" action="write">
-            <button
-              type="button"
-              className="btn btn-outline btn-sm btn-primary whitespace-nowrap"
-              onClick={onCreateStudent}
-            >
-              <UserRoundPlus className="h-5 w-5" />
-              Créer un nouvel étudiant
-            </button>
-          </PermissionGuard>
           <CsvImportUserList onAddUsers={onAddUsers} />
         </div>
       </div>

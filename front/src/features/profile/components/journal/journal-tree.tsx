@@ -77,7 +77,7 @@ const JournalTree = ({ parcoursList }: Props) => {
                       <span
                         className={cn("block truncate text-xs", isSelected ? "text-primary-content/75" : "text-base-content/55")}
                       >
-                        {formatTitle(parcours.title)} ·{" "}
+                        {formatTitle(parcours.title)} /{" "}
                         {formatTitle(module.title)}
                       </span>
                     </span>

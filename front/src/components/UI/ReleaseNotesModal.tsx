@@ -19,6 +19,7 @@ import CursorGlowCard from "./cursor-glow-card";
 import Modal from "./modal/modal";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import { currentRelease, releaseNotes } from "../../config/release-notes";
+import AndriaLogoDarkMode from "../../assets/andria-logo/logo-darkmode.svg";
 
 type Props = {
   onClose: () => void;
@@ -86,7 +87,7 @@ export default function ReleaseNotesModal({ onClose }: Props) {
           >
             {releaseNotes.map(({ version, status }) => (
               <option key={version} value={version}>
-                {version} · {status}
+                {version} ({status})
               </option>
             ))}
           </select>
@@ -120,7 +121,9 @@ export default function ReleaseNotesModal({ onClose }: Props) {
                 {selectedRelease.version}
               </span>
               <div className="relative z-10 flex items-center gap-2">
-                <h2 className="text-2xl font-bold">ANDRIA</h2>
+                <h2>
+                  <img className="h-auto w-24" src={AndriaLogoDarkMode} alt="ANDRIA" />
+                </h2>
                 <span className="badge border-primary-content/30 bg-primary-content/15 text-primary-content">
                   {selectedRelease.status}
                 </span>

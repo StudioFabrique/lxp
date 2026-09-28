@@ -167,6 +167,7 @@ const ModuleContent = () => {
       <DiagnosticQuiz
         isStarted={diagnosticQuiz.isStarted}
         moduleTitle={state.module?.title}
+        moduleImage={state.module?.image}
         quiz={diagnosticQuiz.currentQuiz}
         currentIndex={diagnosticQuiz.currentIndex}
         totalQuizzes={diagnosticQuiz.quizzes?.length || 0}

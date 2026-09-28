@@ -161,6 +161,7 @@ export default function ModuleContentToolbar({
           className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Tout réduire"
           data-tip="Tout réduire"
+          disabled={isCalendarView}
           onClick={onCloseContent}
         >
           <ListChevronsUpDown className="size-5" />

@@ -12,7 +12,16 @@ export const skillAchievementSelect = (userId: string) => ({
           id: true,
           title: true,
           courses: {
-            where: { visibility: true, isPublished: true },
+            where: {
+              visibility: true,
+              isPublished: true,
+              lessons: {
+                some: {
+                  visibility: true,
+                  activities: { some: {} },
+                },
+              },
+            },
             select: {
               assignment: {
                 select: {
@@ -23,6 +32,10 @@ export const skillAchievementSelect = (userId: string) => ({
                 },
               },
               lessons: {
+                where: {
+                  visibility: true,
+                  activities: { some: {} },
+                },
                 select: {
                   lessonsRead: {
                     where: { student: { idMdb: userId } },
@@ -54,6 +67,7 @@ export function withSkillAchievement<
     title: module.title,
     progress: calculateModuleProgress(module),
     isCompleted: isModuleCompleted(module),
+    hasContent: (module.courses?.length ?? 0) > 0,
   }));
   const completedModules = associatedModules.filter((module) => module.isCompleted).length;
   return {

@@ -8,9 +8,9 @@ import { ThemeContext } from "../../../store/ThemeProvider";
 import { Link, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { MailCheck } from "lucide-react";
 import { accountApi } from "../api/account.api";
 import PasswordUpdateError from "../components/PasswordUpdateError";
-import PasswordUpdateSuccess from "../components/PasswordUpdateSuccess";
 import PasswordForm from "../components/PasswordForm";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 
@@ -94,7 +94,7 @@ export default function RegisterHome() {
 
   return (
     <AuthPageWrapper
-      title="Activation du compte"
+      title={success ? "Compte activé" : "Activation du compte"}
       description={email ? <strong>{email}</strong> : undefined}
     >
       {isChecking ? (
@@ -117,10 +117,18 @@ export default function RegisterHome() {
           )}
         </div>
       ) : success ? (
-        <PasswordUpdateSuccess
-          message="Votre compte a été activé avec succès."
-          url="/"
-        />
+        <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
+          <MailCheck className="h-8 w-8" aria-hidden="true" />
+          <p className="text-sm text-base-content/70">
+            Votre compte a été activé avec succès.
+          </p>
+          <Link
+            className="btn btn-primary mt-auto w-full rounded-lg text-base normal-case text-base-100"
+            to="/"
+          >
+            Retour à la page de connexion
+          </Link>
+        </div>
       ) : (
         <section>
           <form
