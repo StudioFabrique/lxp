@@ -1,4 +1,4 @@
-import { formatTitle } from "../../../utils/helpers/text-helpers";
+import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { Loader2 } from "lucide-react";
 import { Quiz, QuizAttempt, UserAnswer } from "../interfaces/quiz";
 import QuizMatching from "./modals/quiz-matching";
@@ -8,10 +8,17 @@ import QuizTrueFalse from "./modals/quiz-true-false";
 import QuizResults from "./results/quiz-results";
 import QuizMarkdown from "./quiz-markdown";
 import { cn } from "../../../utils/cn";
+import defaultModuleImage from "../../../assets/images/module-default.jpg";
+import { normalizeImageSource } from "../../../utils/images/image-source";
+import { bgImageGradient } from "../../../utils/helpers/color-helpers";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 
 type Props = {
   isStarted: boolean;
   moduleTitle?: string;
+  moduleImage?: string;
   quiz?: Quiz;
   currentIndex: number;
   totalQuizzes: number;
@@ -32,6 +39,7 @@ type Props = {
 const DiagnosticQuiz = ({
   isStarted,
   moduleTitle,
+  moduleImage,
   quiz,
   currentIndex,
   totalQuizzes,
@@ -48,144 +56,65 @@ const DiagnosticQuiz = ({
   onContinueFromResults,
   onReport,
 }: Props) => {
-  // Accueil du test
-  if (!isStarted) {
-    return (
-      <div className="w-full flex justify-center p-4">
-        <div className="card w-full max-w-2xl text-center">
-          <div className="card-body gap-6">
-            <h3 className="card-title justify-center text-3xl text-primary font-bold">
-              Test de connaissances sur {formatTitle(moduleTitle) || "ce module"}
-            </h3>
-            <p className="py-4 text-lg text-base-content/80">
-              Avant de te lancer dans le module <strong>{formatTitle(moduleTitle)}</strong>,
-              prenons un court instant pour évaluer tes connaissances initiales.
-              <br />
-              <br />
-              Réponds à ces quelques questions afin de bénéficier d'un
-              apprentissage sur-mesure et d'un accompagnement personnalisé.
-            </p>
-            <div className="card-actions justify-center mt-4">
-              <button
-                className="btn btn-primary px-8 text-base-100"
-                onClick={onStart}
-              >
-                Commencer l'évaluation
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const reduceMotion = useReducedMotion();
+  const isLoading = isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming));
+  const upcomingNumber = currentIndex + (isWaitingForNext ? 2 : 1);
+  const contentKey = !isStarted
+    ? "intro"
+    : showResults
+      ? "results"
+      : isLoading
+        ? `loading-${upcomingNumber}`
+        : `question-${currentIndex}`;
 
-  if (showResults) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center p-4">
-        <div className="card w-full max-w-3xl bg-base-100">
-          <div className="card-body gap-6">
-            <div className="flex justify-between items-center border-b border-base-200 pb-4">
-              <h3 className="font-bold text-lg text-primary">
-                Résultats du diagnostic
-              </h3>
-              {/* Bouton continuer */}
-              <button
-                className="btn btn-primary"
-                onClick={onContinueFromResults}
-              >
-                Démarrer le module
-              </button>
-            </div>
-            <QuizResults
-              score={score}
-              attempts={attempts}
-              onContinue={onContinueFromResults}
-              continueLabel="Démarrer le module"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isStarted && !showResults && !isLoading && !quiz) return null;
 
-  // Attente du prochain quiz en cours de stream (l'utilisateur a répondu plus
-  // vite que la génération) — on affiche un skeleton plutôt qu'une page blanche.
-  if (isWaitingForNext || (!quiz && isStreaming)) {
-    const upcomingNumber = currentIndex + (isWaitingForNext ? 2 : 1);
-    return (
-      <div className="min-h-[80vh] w-full flex items-center justify-center p-4">
-        <div className="card w-full max-w-3xl bg-base-100">
-          <div className="card-body gap-6">
-            {/* Header */}
-            <div className="flex justify-between items-center border-b border-base-200 pb-4">
-              <h3 className="font-bold text-lg text-primary">
-                Diagnostic initial : Évaluons vos acquis ({upcomingNumber} /{" "}
-                {totalQuizzes || "…"})
-              </h3>
-            </div>
+  const isLastQuestion = !isStreaming && currentIndex === totalQuizzes - 1;
+  const nextAction = {
+    label: isLastQuestion ? "Démarrer le module" : "Question suivante",
+    onClick: onNext,
+  };
 
-            {/* Skeleton question */}
-            <div className="flex flex-col gap-4 py-4">
-              <div className="skeleton h-6 w-3/4 rounded" />
-              <div className="skeleton h-4 w-1/2 rounded" />
-            </div>
-
-            {/* Skeleton réponses */}
-            <div className="flex flex-col gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="skeleton h-12 w-full rounded-lg" />
-              ))}
-            </div>
-
-            {/* Indicateur de chargement */}
-            <div className="flex items-center gap-2 text-base-content/50 text-sm mt-2">
-              <Loader2 className="animate-spin w-4 h-4" />
-              <span>Génération de la prochaine question…</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!quiz) return null;
-
-  const renderQuizComponent = () => {
-    switch (quiz.type) {
+  const renderQuizComponent = (currentQuiz: Quiz) => {
+    switch (currentQuiz.type) {
       case "mcq":
         return (
           <QuizMcq
-            quiz={quiz}
+            quiz={currentQuiz}
             onAnswer={onAnswer}
             onReport={onReport}
             isAnswered={isAnswered}
+            nextAction={nextAction}
           />
         );
       case "matching":
         return (
           <QuizMatching
-            quiz={quiz}
+            quiz={currentQuiz}
             onAnswer={onAnswer}
             onReport={onReport}
             isAnswered={isAnswered}
+            nextAction={nextAction}
           />
         );
       case "ordering":
         return (
           <QuizOrdering
-            quiz={quiz}
+            quiz={currentQuiz}
             onAnswer={onAnswer}
             onReport={onReport}
             isAnswered={isAnswered}
+            nextAction={nextAction}
           />
         );
       case "true_false":
         return (
           <QuizTrueFalse
-            quiz={quiz}
+            quiz={currentQuiz}
             onAnswer={onAnswer}
             onReport={onReport}
             isAnswered={isAnswered}
+            nextAction={nextAction}
           />
         );
       default:
@@ -193,64 +122,133 @@ const DiagnosticQuiz = ({
     }
   };
 
-  // Le bouton "Démarrer le module" n'est pertinent que si le stream est terminé
-  // et qu'on est réellement à la dernière question.
-  const isLastQuestion = !isStreaming && currentIndex === totalQuizzes - 1;
-
   return (
-    <div className="min-h-[80vh] w-full flex items-center justify-center p-4">
-      <div className="card w-full max-w-3xl bg-base-100">
-        <div className="card-body gap-6">
-          {/* Header */}
-          <div className="flex justify-between items-center border-b border-base-200 pb-4">
-            <h3 className="font-bold text-lg text-primary">
-              Diagnostic initial : Évaluons vos acquis ({currentIndex + 1} /{" "}
-              {totalQuizzes})
-            </h3>
-          </div>
-
-          {/* Question et Composant */}
-          <div className="flex flex-col gap-4">
-            <div className="text-xl font-medium">
-              <QuizMarkdown>{quiz.question}</QuizMarkdown>
-            </div>
-            {renderQuizComponent()}
-          </div>
-
-          {/* Feedback après réponse */}
-          {isAnswered && (
-            <div
-              className={cn(
-                "alert shadow-sm",
-                isCorrect ? "alert-success" : "alert-error",
-              )}
-            >
-              <div className="text-base-100">
-                <h3 className="font-bold">
-                  {isCorrect
-                    ? "Bonne réponse !"
-                    : "Ce n'est pas tout à fait ça."}
-                </h3>
-                <div className="text-sm">
-                  <QuizMarkdown>
-                    {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
-                  </QuizMarkdown>
-                </div>
-              </div>
-            </div>
+    <PageWrapper>
+      <div className="card min-h-[32rem] w-full overflow-hidden border border-base-200 bg-base-100 shadow-sm">
+        <div
+          className={cn(
+            "relative shrink-0 overflow-hidden bg-cover bg-center",
+            isStarted ? "h-40 sm:h-44" : "h-48 sm:h-60",
           )}
-
-          {/* Actions */}
-          <div className="card-actions justify-end mt-4">
-            {isAnswered && (
-              <button className="btn btn-primary" onClick={onNext}>
-                {isLastQuestion ? "Démarrer le module" : "Question suivante"}
-              </button>
-            )}
+          style={{
+            backgroundImage: bgImageGradient(
+              normalizeImageSource(moduleImage) ?? defaultModuleImage,
+            ),
+          }}
+        >
+          <div className="absolute inset-0 bg-neutral/50" />
+          <div className="absolute bottom-0 left-0 p-6 text-white sm:p-8">
+            <h1 className="mt-2 text-2xl font-bold sm:text-3xl">
+              Test de connaissances sur le module{" "}
+              {moduleTitle && (
+                <span
+                  style={{
+                    color: "color-mix(in srgb, var(--color-secondary) 55%, white)",
+                  }}
+                >
+                  {toTitleCase(moduleTitle)}
+                </span>
+              )}
+            </h1>
           </div>
         </div>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={contentKey}
+            className={cn(
+              "card-body flex min-h-[18rem] flex-col px-6 sm:px-10",
+              isStarted ? "gap-4 py-6 sm:py-7" : "gap-5 py-8 sm:py-10",
+            )}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
+            transition={{ duration: reduceMotion ? 0.01 : 0.22, ease: "easeOut" }}
+          >
+            {!isStarted ? (
+              <>
+                <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
+                  Avant de te lancer, prends un court instant pour évaluer tes
+                  connaissances initiales.
+                </p>
+                <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
+                  Ces quelques questions permettront d'adapter ton apprentissage
+                  et ton accompagnement.
+                </p>
+                <div className="card-actions mt-auto justify-end pt-3">
+                  <button className="btn btn-primary px-8" onClick={onStart}>
+                    Commencer l'évaluation
+                  </button>
+                </div>
+              </>
+            ) : showResults ? (
+              <>
+                <h2 className="border-b border-base-200 pb-4 text-lg font-bold text-primary">
+                  Résultats du diagnostic
+                </h2>
+                <QuizResults
+                  score={score}
+                  attempts={attempts}
+                  onContinue={onContinueFromResults}
+                  continueLabel="Démarrer le module"
+                />
+              </>
+            ) : isLoading ? (
+              <>
+                <h2 className="border-b border-base-200 pb-4 text-lg font-bold text-primary">
+                  Diagnostic initial : Évaluons vos acquis ({upcomingNumber} /{" "}
+                  {totalQuizzes || "…"})
+                </h2>
+                <div className="flex flex-col gap-4 py-4">
+                  <div className="skeleton h-6 w-3/4 rounded" />
+                  <div className="skeleton h-4 w-1/2 rounded" />
+                </div>
+                <div className="flex flex-col gap-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="skeleton h-12 w-full rounded-lg" />
+                  ))}
+                </div>
+                <div className="mt-2 flex items-center gap-2 text-sm text-base-content/50">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Génération de la prochaine question…</span>
+                </div>
+              </>
+            ) : quiz ? (
+              <>
+                <h2 className="border-b border-base-200 pb-4 text-lg font-bold text-primary">
+                  Diagnostic initial : Évaluons vos acquis ({currentIndex + 1} /{" "}
+                  {totalQuizzes})
+                </h2>
+                <div className="flex flex-col gap-4">
+                  <div className="text-xl font-medium">
+                    <QuizMarkdown>{quiz.question}</QuizMarkdown>
+                  </div>
+                  {renderQuizComponent(quiz)}
+                </div>
+                {isAnswered && (
+                  <BoxWrapper
+                    className={cn(
+                      "h-auto gap-2 shadow-none",
+                      isCorrect
+                        ? "border-success/20 bg-success/10"
+                        : "border-error/20 bg-error/10",
+                    )}
+                  >
+                    <h3 className={cn("font-bold", isCorrect ? "text-success" : "text-error")}>
+                      {isCorrect ? "Bonne réponse !" : "Ce n'est pas tout à fait ça."}
+                    </h3>
+                    <div className="text-sm text-base-content">
+                      <QuizMarkdown>
+                        {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+                      </QuizMarkdown>
+                    </div>
+                  </BoxWrapper>
+                )}
+              </>
+            ) : null}
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

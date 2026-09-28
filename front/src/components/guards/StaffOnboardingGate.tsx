@@ -5,7 +5,7 @@ import { AuthContext } from "../../store/AuthProvider";
 import { useDemoMode } from "../../store/DemoContext";
 import { dashboardIAApi } from "../../features/dashboard-ia/api/dashboardIA.api";
 import { staffOnboardingApi } from "../../features/auth/api/staff-onboarding.api";
-import Loader from "../loaders/Loader";
+import AppLoadingSkeleton from "../loaders/AppLoadingSkeleton";
 
 export default function StaffOnboardingGate() {
   const { user } = useContext(AuthContext);
@@ -13,7 +13,7 @@ export default function StaffOnboardingGate() {
   const rank = user?.roles?.[0]?.rank;
   const admin = useQuery({ queryKey: ["staff-onboarding"], queryFn: staffOnboardingApi.get, enabled: !demoMode && rank === 1 });
   const teacher = useQuery({ queryKey: ["dropout-preferences"], queryFn: dashboardIAApi.queries.getDropoutPreferences, enabled: !demoMode && rank === 2 });
-  if (!demoMode && ((rank === 1 && admin.isPending) || (rank === 2 && teacher.isPending))) return <Loader />;
+  if (!demoMode && ((rank === 1 && admin.isPending) || (rank === 2 && teacher.isPending))) return <AppLoadingSkeleton />;
   if (!demoMode && ((rank === 1 && admin.isError) || (rank === 2 && teacher.isError)))
     return <div className="flex min-h-screen flex-col items-center justify-center gap-4" role="alert">
       <p>Impossible de vérifier votre accueil.</p>

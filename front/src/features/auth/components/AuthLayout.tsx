@@ -17,7 +17,7 @@ import { AuthHeaderActionContext } from "./AuthHeaderActionContext";
 
 const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupStyle?: boolean }>) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, isLoading, logout } = useContext(AuthContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const [headerActionHost, setHeaderActionHost] = useState<HTMLDivElement | null>(null);
@@ -134,7 +134,15 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               </div>
             )}
 
-            <div className="flex min-h-0 w-full flex-1 flex-col">
+            <div className="relative flex min-h-0 w-full flex-1 flex-col">
+              {pathname === "/login" && (isLoading || isLoggedIn) && (
+                <div className="absolute inset-0 z-20 flex items-start justify-center bg-base-100/90 pt-36" role="status" aria-live="polite">
+                  <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-base-content">
+                    <span className="loading loading-spinner loading-md text-primary" aria-hidden="true" />
+                    <span className="font-medium">Connexion en cours…</span>
+                  </div>
+                </div>
+              )}
               <AuthHeaderActionContext value={headerActionHost}>
                 {children ?? <LoginGuard />}
               </AuthHeaderActionContext>

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import { useDemoMode } from "../../store/DemoContext";
 import { getUserArea, type AppArea } from "../../utils/helpers/user-role";
-import Loader from "../loaders/Loader";
+import AppLoadingSkeleton from "../loaders/AppLoadingSkeleton";
 import { Navigate, Outlet } from "react-router";
 
 const RouteGuard = ({ area }: { area: AppArea }) => {
@@ -14,7 +14,7 @@ const RouteGuard = ({ area }: { area: AppArea }) => {
   // l'instance de démonstration se comporterait comme une page ordinaire —
   // génération IA lancée, temps réel connecté, écritures tentées. `LoginGuard`
   // attend déjà cette même valeur.
-  if (!isAppInitialized || !isConfigLoaded) return <Loader />;
+  if (!isAppInitialized || !isConfigLoaded) return <AppLoadingSkeleton />;
   // Un visiteur de la démonstration n'a pas d'identifiants : quand sa session
   // expire, le renvoyer vers le formulaire de connexion serait une impasse.
   if (!isLoggedIn || !user) {

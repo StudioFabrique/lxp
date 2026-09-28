@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router";
 import { profileApi } from "../../features/profile/api/profile.api";
 import { AuthContext } from "../../store/AuthProvider";
-import Loader from "../loaders/Loader";
+import AppLoadingSkeleton from "../loaders/AppLoadingSkeleton";
 
 /** Sends only the root account through the one-time instance setup. */
 export default function InstanceSetupGate() {
@@ -31,14 +31,7 @@ export default function InstanceSetupGate() {
   }, [isRoot]);
 
   if (!isRoot) return <Outlet />;
-  if (setupCompleted === null) return (
-    <main className="flex min-h-screen items-center justify-center bg-base-100 px-6">
-      <Loader
-        variant="rows"
-        label="Vérification de la configuration de l’instance"
-      />
-    </main>
-  );
+  if (setupCompleted === null) return <AppLoadingSkeleton />;
   if (!setupCompleted) return <Navigate replace to="/instance-setup" />;
   return <Outlet />;
 }

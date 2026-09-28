@@ -33,6 +33,7 @@ describe("Obtention des badges", () => {
   it("ne valide pas une compétence sans module ou avec un module vide", () => {
     expect(withSkillAchievement({ modules: [] }).isEarned).toBe(false);
     expect(withSkillAchievement({ modules: [{ module: moduleWith() }] }).isEarned).toBe(false);
+    expect(withSkillAchievement({ modules: [{ module: { id: 3, title: "Vide", courses: [] } }] }).modules[0].hasContent).toBe(false);
   });
 
   it("n'assimile pas une progression arrondie à 100 % à une complétion", () => {
@@ -43,7 +44,15 @@ describe("Obtention des badges", () => {
 
   it("filtre les lectures par étudiant et ne compte que les cours accessibles", () => {
     const courses = skillAchievementSelect("student-42").modules.select.module.select.courses;
-    expect(courses.where).toEqual({ visibility: true, isPublished: true });
+    expect(courses.where).toEqual({
+      visibility: true,
+      isPublished: true,
+      lessons: { some: { visibility: true, activities: { some: {} } } },
+    });
+    expect(courses.select.lessons.where).toEqual({
+      visibility: true,
+      activities: { some: {} },
+    });
     expect(courses.select.lessons.select.lessonsRead.where).toEqual({
       student: { idMdb: "student-42" },
     });

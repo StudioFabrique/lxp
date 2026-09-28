@@ -1,5 +1,6 @@
 import { guard, lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
+import AppLoadingSkeleton from "../components/loaders/AppLoadingSkeleton";
 import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 import { adminGroupRoutes } from "../features/group/routes";
 import { adminCourseRoutes } from "../features/course/routes";
@@ -34,7 +35,7 @@ export const adminRoutes: RouteObject[] = [
             children: [
               {
                 path: "/admin",
-                HydrateFallback: () => null,
+                HydrateFallback: AppLoadingSkeleton,
                 lazy: lazyRoute(() => import("../components/wrappers/layouts/AdminLayout")),
                 errorElement: <RouterErrorBoundary />,
                 children: [

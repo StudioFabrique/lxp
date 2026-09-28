@@ -1,10 +1,11 @@
+import AuthLoadingSkeleton from "./components/AuthLoadingSkeleton";
 import { RouteObject } from "react-router";
 import { lazyRoute } from "../../utils/helpers/router-helpers";
 
 export const authRoutes: RouteObject[] = [
   {
     lazy: lazyRoute(() => import("./components/AuthLayout")),
-    HydrateFallback: () => null,
+    HydrateFallback: AuthLoadingSkeleton,
     children: [
       {
         path: "/init",

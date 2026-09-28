@@ -9,13 +9,15 @@ interface Props {
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onReport: (externalId: string, comment: string) => Promise<void>;
   isAnswered: boolean;
+  nextAction?: { label: string; onClick: () => void };
 }
 
-const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
+const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
   const [items, setItems] = useState(() =>
     quiz.data.items.map((text: string, originalIndex: number) => ({ text, originalIndex })),
   );
   const [dragOver, setDragOver] = useState<number | null>(null);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const dragging = useRef<number | null>(null);
 
   const moveItem = (from: number, to: number) => {
@@ -43,6 +45,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
             draggable={!isAnswered}
             onDragStart={(event) => {
               dragging.current = index;
+              setDraggingIndex(index);
               event.dataTransfer.effectAllowed = "move";
               event.dataTransfer.setData("text/plain", String(index));
             }}
@@ -57,12 +60,13 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
               if (dragging.current !== null) moveItem(dragging.current, index);
               setDragOver(null);
               dragging.current = null;
+              setDraggingIndex(null);
             }}
-            onDragEnd={() => { dragging.current = null; setDragOver(null); }}
+            onDragEnd={() => { dragging.current = null; setDraggingIndex(null); setDragOver(null); }}
             className={cn(
               "flex items-center gap-2 rounded-box border border-base-300 bg-base-200 p-2 sm:gap-3 sm:p-3",
               !isAnswered && "cursor-grab active:cursor-grabbing",
-              dragOver === index && dragging.current !== index && "ring-2 ring-primary",
+              dragOver === index && draggingIndex !== index && "ring-2 ring-primary",
             )}
           >
             <GripVertical size={18} className="shrink-0 text-base-content/50" aria-hidden="true" />
@@ -75,7 +79,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
           </li>
         ))}
       </ul>
-      {!isAnswered && <QuizModalButtons isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} />}
+      {(!isAnswered || nextAction) && <QuizModalButtons isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />}
     </div>
   );
 };

@@ -7,7 +7,7 @@ import {
   learningProfileApi,
   learningProfileKey,
 } from "../../features/learning-profile/learning-profile.api";
-import Loader from "../loaders/Loader";
+import AppLoadingSkeleton from "../loaders/AppLoadingSkeleton";
 
 /** Checks the student's onboarding before mounting the layout and its sidebar. */
 export default function StudentOnboardingGate() {
@@ -22,9 +22,9 @@ export default function StudentOnboardingGate() {
     enabled: shouldCheck,
   });
 
-  if (!isAppInitialized || !isConfigLoaded) return <Loader />;
+  if (!isAppInitialized || !isConfigLoaded) return <AppLoadingSkeleton />;
   if (!shouldCheck) return <Outlet />;
-  if (learningContext.isPending) return <Loader />;
+  if (learningContext.isPending) return <AppLoadingSkeleton />;
   if (learningContext.isError) return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-base-100 px-6 text-center" role="alert">
       <p>Impossible de vérifier votre accueil.</p>

@@ -6,6 +6,7 @@ import { studentProfileRoutes } from "../features/profile/routes";
 import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 import { studentDashboardRoutes } from "../features/dashboard-student/routes";
 import { studentAssignmentRoutes } from "../features/assignments/routes";
+import AppLoadingSkeleton from "../components/loaders/AppLoadingSkeleton";
 import { guard, lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
 import StudentOnboardingGate from "../components/guards/StudentOnboardingGate";
@@ -20,7 +21,7 @@ export const studentRoutes: RouteObject[] = [
         children: [
           {
             path: "/student",
-            HydrateFallback: () => null,
+            HydrateFallback: AppLoadingSkeleton,
             lazy: lazyRoute(
               () => import("../components/wrappers/layouts/StudentLayout"),
             ),

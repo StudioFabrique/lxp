@@ -51,15 +51,9 @@ const LoginGuard = () => {
   }, [isLoggedIn]);
 
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked)) {
-    if (location.pathname === "/login") return <LoginLoadingSkeleton />;
-    return location.pathname === "/init" ? (
-      <Loader
-        variant="rows"
-        label="Vérification de l'instance"
-        className="my-10"
-      />
-    ) : (
-      <Loader />
+    if (location.pathname !== "/init") return <LoginLoadingSkeleton />;
+    return (
+      <Loader variant="rows" label="Vérification de l'instance" className="my-10" />
     );
   }
 

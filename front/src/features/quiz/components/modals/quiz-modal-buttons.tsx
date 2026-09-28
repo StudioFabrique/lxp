@@ -5,6 +5,7 @@ type Props = {
   isValid: boolean;
   onValidate: () => void;
   onReport: (externalId: string, comment: string) => Promise<void>;
+  nextAction?: { label: string; onClick: () => void };
 };
 
 const QuizModalButtons = ({
@@ -12,6 +13,7 @@ const QuizModalButtons = ({
   isValid,
   onValidate,
   onReport,
+  nextAction,
 }: Props) => {
   const [isReporting, setIsReporting] = useState(false);
   const [comment, setComment] = useState("");
@@ -28,6 +30,16 @@ const QuizModalButtons = ({
       }
     }
   };
+
+  if (nextAction) {
+    return (
+      <div className="mt-4 flex justify-end">
+        <button className="btn btn-primary min-w-44" onClick={nextAction.onClick}>
+          {nextAction.label}
+        </button>
+      </div>
+    );
+  }
 
   if (isReporting) {
     return (
@@ -84,7 +96,7 @@ const QuizModalButtons = ({
         </button>
       </div>
       <button
-        className="btn btn-secondary"
+        className="btn btn-secondary min-w-44"
         onClick={onValidate}
         disabled={!isValid}
       >
