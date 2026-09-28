@@ -123,6 +123,8 @@ const ModuleContentSidebar = ({
             </PermissionGuard>
           )}
           <ActivityList
+            key={selectedLesson?.id}
+            lessonId={selectedLesson?.id}
             canEdit={canEditSelectedLesson}
             activities={selectedLesson?.activities}
             selectedActivity={selectedActivity}

@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState, useContext } from "react";
-import { Plus } from "lucide-react";
-import {
-  dropTargetForElements,
-  monitorForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { useEffect, useState, useContext } from "react";
+import { ArrowDownUp, Plus } from "lucide-react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Activity } from "../../../../../src/utils/interfaces/activity";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -19,6 +16,7 @@ import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 type ActivityListProps = {
   readOnly?: boolean;
   activities?: Activity[];
+  lessonId?: number;
   selectedActivity?: Activity | null;
   newActivityButtonDisabled?: boolean;
   canEdit?: boolean;
@@ -31,6 +29,7 @@ type ActivityListProps = {
 export default function ActivityList({
   readOnly = false,
   activities,
+  lessonId,
   selectedActivity,
   newActivityButtonDisabled,
   canEdit,
@@ -40,43 +39,27 @@ export default function ActivityList({
   onClickCreateActivity,
 }: ActivityListProps) {
   const ability = useContext(AbilityContext);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
 
   const canUserEdit = Boolean(!readOnly && canEdit && ability.can("update", "lesson"));
 
   useEffect(() => {
-    if (readOnly) return;
+    if (!isReordering || !canUserEdit || !onActivityReorder) return;
     return monitorForElements({
+      canMonitor: ({ source }) => source.data.type === "activity" && source.data.lessonId === lessonId,
       onDrop({ source, location }) {
         const destination = location.current.dropTargets[0];
-        if (!destination) return;
-        onActivityReorder?.({ source, location });
+        if (destination?.data.type !== "activity" || destination.data.lessonId !== lessonId) return;
+        onActivityReorder({ source, location });
       },
     });
-  }, [onActivityReorder, readOnly]);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    return dropTargetForElements({
-      element: el,
-      // canDrop doit retourner un boolean strict
-      canDrop: () => canUserEdit,
-      onDragEnter: () => setIsDraggingOver(true),
-      onDragLeave: () => setIsDraggingOver(false),
-      onDrop: () => setIsDraggingOver(false),
-    });
-  }, [canUserEdit]);
+  }, [canUserEdit, isReordering, lessonId, onActivityReorder]);
 
   return (
     <FadeWrapper>
       <div
-        ref={containerRef}
         className={cn(
           "flex items-center gap-1 w-full select-none px-4 transition-all mt-2",
-          isDraggingOver ? "bg-base-200/50" : "",
           activities && activities.length === 0 ? "flex-row" : "flex-col",
         )}
       >
@@ -93,6 +76,18 @@ export default function ActivityList({
           ) : (
             <p>Aucune activité</p>
           )}
+          {canUserEdit && (activities?.length ?? 0) > 1 && (
+            <button
+              type="button"
+              className={cn("btn btn-xs tooltip", isReordering ? "btn-primary" : "btn-ghost text-base-content")}
+              data-tip={isReordering ? "Terminer" : "Réorganiser les activités"}
+              aria-label={isReordering ? "Terminer la réorganisation des activités" : "Réorganiser les activités"}
+              aria-pressed={isReordering}
+              onClick={() => setIsReordering((current) => !current)}
+            >
+              <ArrowDownUp className="size-4" />
+            </button>
+          )}
         </div>
         {activities && activities.length > 0 ? (
           activities.map((activity, index) => (
@@ -101,8 +96,10 @@ export default function ActivityList({
               disabled={readOnly}
               activity={activity}
               index={index}
+              lessonId={lessonId}
               isSelected={selectedActivity?.id === activity.id}
               canEdit={canUserEdit}
+              isReordering={isReordering}
               onSelect={() => onSelectActivity?.(activity)}
             />
           ))
@@ -112,7 +109,7 @@ export default function ActivityList({
             {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
           </div>
         ) : null}
-        {!readOnly && onClickCreateActivity && canEdit && !isDraggingOver && (
+        {!readOnly && onClickCreateActivity && canEdit && !isReordering && (
           <PermissionGuard action="update" object="lesson">
             <button
               data-onboarding="activity-create"

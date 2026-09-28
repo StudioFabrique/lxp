@@ -206,7 +206,7 @@ const LessonItem = ({
           "flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group",
           isLessonSelected
             ? "bg-primary text-primary-content"
-            : "bg-primary/50 text-primary-content hover:bg-primary/80",
+            : "bg-primary/20 text-base-content hover:bg-primary/30",
         )}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
@@ -221,7 +221,7 @@ const LessonItem = ({
             </span>
           ) : null}
           <p className="min-w-0 max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
-          {isReordering && <GripVertical aria-hidden="true" className="size-4 shrink-0 text-primary-content" />}
+          {isReordering && <GripVertical aria-hidden="true" className="size-4 shrink-0" />}
           {!isReordering && selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
               {!calendarMode && canEditLesson && (
