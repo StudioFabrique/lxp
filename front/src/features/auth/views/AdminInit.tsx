@@ -76,9 +76,17 @@ const AdminInit = () => {
     !pendingActivationEmail &&
     !(invitedToken && invitedEmail) &&
     initStep === InitStep.Welcome;
+  const isTokenForm =
+    !pendingActivationEmail &&
+    !(invitedToken && invitedEmail) &&
+    initStep === InitStep.TokenForm;
 
   return (
-    <AdminSetupLayout isWelcome={isWelcome} currentStep={panelStep}>
+    <AdminSetupLayout
+      isWelcome={isWelcome}
+      currentStep={panelStep}
+      contentClassName={isTokenForm ? "root-activation-content" : undefined}
+    >
       {content}
     </AdminSetupLayout>
   );

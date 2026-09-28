@@ -4,12 +4,14 @@ import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPa
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { ThemeContext } from "../../../store/ThemeProvider";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   children: ReactNode;
   isWelcome?: boolean;
   currentStep?: 1 | 2;
   contentKey?: string;
+  contentClassName?: string;
 };
 
 export default function AdminSetupLayout({
@@ -17,6 +19,7 @@ export default function AdminSetupLayout({
   isWelcome = false,
   currentStep = 1,
   contentKey = String(currentStep),
+  contentClassName,
 }: Props) {
   const { theme } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
@@ -65,7 +68,7 @@ export default function AdminSetupLayout({
               animateProgressOnMount={currentStep === 1}
               progressLabel="Progression de la configuration"
               className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"
-              contentClassName="flex flex-col"
+              contentClassName={cn("flex flex-col", contentClassName)}
             >
               {children}
             </OnboardingProgressPanel>

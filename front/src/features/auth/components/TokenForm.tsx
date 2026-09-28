@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import AuthPageWrapper from "./AuthPageWrapper";
@@ -33,6 +33,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCommandCopied, setIsCommandCopied] = useState(false);
+  const tokenInputRef = useRef<HTMLInputElement>(null);
   const [containerId, setContainerId] = useState<string>();
   const [activationTokenTtlMinutes, setActivationTokenTtlMinutes] =
     useState(30);
@@ -65,7 +66,17 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
     formState: { errors },
   } = useForm<TokenFormValues>({
     defaultValues: { token: "" },
+    shouldFocusError: false,
   });
+
+  const tokenField = register("token", {
+    required: "La clé d'activation est requise.",
+    onChange: () => setError(""),
+  });
+
+  const focusInvalidToken = () => {
+    tokenInputRef.current?.focus({ preventScroll: true });
+  };
 
   const onSubmit = async (data: TokenFormValues) => {
     setError("");
@@ -99,17 +110,23 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
       title="Activer le compte root"
       description="Cette clé sécurise la création du compte qui gérera l’identité et les paramètres de votre instance."
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
+      <form
+        onSubmit={(event) => {
+          void handleSubmit(onSubmit, focusInvalidToken)(event);
+        }}
+        className="flex flex-1 flex-col gap-4"
+      >
         <div className="form-control w-full">
           <input
             type="text"
             placeholder="Clé d'activation"
             autoComplete="off"
             style={{ WebkitTextSecurity: "disc" } as React.CSSProperties}
-            {...register("token", {
-              required: "La clé d'activation est requise.",
-              onChange: () => setError(""),
-            })}
+            {...tokenField}
+            ref={(element) => {
+              tokenField.ref(element);
+              tokenInputRef.current = element;
+            }}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
           {errors.token && (

@@ -41,6 +41,20 @@
         obsidian;
 }
 
+.root-activation-content {
+    overflow-y: clip;
+}
+
+.root-activation-content:has(.collapse > input:checked) {
+    overflow-y: auto;
+}
+
+@media (max-width: 1023px), (max-height: 700px) {
+    .root-activation-content {
+        overflow-y: auto;
+    }
+}
+
 /* data-tip tooltips are rendered in a page-level layer so cards cannot clip them. */
 .tooltip[data-tip]::before,
 .tooltip[data-tip]::after {
