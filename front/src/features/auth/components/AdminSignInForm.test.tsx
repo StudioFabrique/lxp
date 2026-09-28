@@ -87,6 +87,8 @@ describe("AdminSignInForm", () => {
     expect(getPendingRootActivationEmail()).toBe("root@test.fr");
     expect(container.textContent).toContain("Vérifiez votre boîte mail");
     expect(container.textContent).toContain("root@test.fr");
+    expect(container.querySelector(".lucide-mail")).not.toBeNull();
+    expect(container.querySelector(".lucide-mail-check")).toBeNull();
 
     await act(async () => {
       Array.from(container.querySelectorAll("button"))

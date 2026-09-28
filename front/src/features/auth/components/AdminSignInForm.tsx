@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useContext, useState } from "react";
-import { MailCheck } from "lucide-react";
+import { Mail } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
@@ -107,7 +107,7 @@ const AdminSignInForm = ({
         variant={mode === "first" ? "setup" : "default"}
       >
         <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-5 text-center">
-          <MailCheck className="h-8 w-8" aria-hidden="true" />
+          <Mail className="h-8 w-8" aria-hidden="true" />
 
           <div className="flex flex-col gap-10 text-sm text-base-content/70">
             <div className="flex flex-col">

@@ -22,13 +22,14 @@ const activationKeyCommand = (containerId?: string) => {
 
 type Props = {
   onNext: (token: string) => void;
+  onPrevious: () => void;
 };
 
 type TokenFormValues = {
   token: string;
 };
 
-const TokenForm = ({ onNext }: Props) => {
+const TokenForm = ({ onNext, onPrevious }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCommandCopied, setIsCommandCopied] = useState(false);
@@ -169,20 +170,30 @@ const TokenForm = ({ onNext }: Props) => {
             </p>
           </div>
         </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="btn btn-primary mt-auto w-full rounded-lg text-base normal-case text-base-100"
-        >
-          {isLoading ? (
-            <>
-              <span className="loading loading-spinner loading-sm"></span>
-              Vérification...
-            </>
-          ) : (
-            "Valider"
-          )}
-        </button>
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-base-300 pt-4">
+          <button
+            type="button"
+            onClick={onPrevious}
+            disabled={isLoading}
+            className="btn btn-ghost text-base normal-case"
+          >
+            Précédent
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="btn btn-primary rounded-lg text-base normal-case text-base-100"
+          >
+            {isLoading ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Vérification...
+              </>
+            ) : (
+              "Valider"
+            )}
+          </button>
+        </div>
       </form>
     </AuthPageWrapper>
   );

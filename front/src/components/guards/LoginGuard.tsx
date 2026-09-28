@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
+import LoginLoadingSkeleton from "../../features/auth/components/LoginLoadingSkeleton";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
 import { useDemoMode } from "../../store/DemoContext";
 import { getUserHomePath, hasRoleRank } from "../../utils/helpers/user-role";
@@ -50,6 +51,7 @@ const LoginGuard = () => {
   }, [isLoggedIn]);
 
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked)) {
+    if (location.pathname === "/login") return <LoginLoadingSkeleton />;
     return location.pathname === "/init" ? (
       <Loader
         variant="rows"
@@ -67,6 +69,7 @@ const LoginGuard = () => {
   }
 
   if (isLoggedIn && user && isStudentOnboardingRoute) {
+    if (demoMode) return <Navigate replace to="/student/dashboard" />;
     return hasRoleRank(user, [3]) ? (
       <Outlet />
     ) : (

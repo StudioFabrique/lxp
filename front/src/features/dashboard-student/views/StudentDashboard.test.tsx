@@ -2,10 +2,11 @@ import { act, type PropsWithChildren } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_DEMO_CONFIG, DemoContext } from "../../../store/DemoContext";
 
 import StudentDashboard from "./StudentDashboard";
 
-const dashboardState = vi.hoisted(() => ({ onboardingRequired: false }));
+const dashboardState = vi.hoisted(() => ({ onboardingRequired: false, shouldAutoRedirect: false }));
 
 vi.mock("../hooks/use-student-dashboard", () => ({
   useStudentDashboard: () => ({
@@ -21,7 +22,7 @@ vi.mock("../hooks/use-student-dashboard", () => ({
       data: {
         hasAvailableContent: true,
         onboardingRequired: dashboardState.onboardingRequired,
-        shouldAutoRedirect: false,
+        shouldAutoRedirect: dashboardState.shouldAutoRedirect,
         modulesToAssess: [],
       },
       refetch: vi.fn(),
@@ -46,6 +47,7 @@ describe("StudentDashboard onboarding targets", () => {
 
   beforeEach(() => {
     dashboardState.onboardingRequired = false;
+    dashboardState.shouldAutoRedirect = false;
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
@@ -89,5 +91,23 @@ describe("StudentDashboard onboarding targets", () => {
     expect(resumeLink?.querySelector("svg")).not.toBeNull();
     expect(container.textContent).not.toContain("Mon avancement");
     expect(container.textContent).not.toContain("Compléter mon profil d’apprentissage");
+  });
+
+  it("affiche le tableau de bord étudiant en démo sans relancer le questionnaire", async () => {
+    dashboardState.onboardingRequired = true;
+    dashboardState.shouldAutoRedirect = true;
+
+    await act(async () => {
+      root.render(
+        <DemoContext value={{ ...DEFAULT_DEMO_CONFIG, demoMode: true, isConfigLoaded: true }}>
+          <MemoryRouter initialEntries={["/student/dashboard"]}>
+            <StudentDashboard />
+          </MemoryRouter>
+        </DemoContext>,
+      );
+    });
+
+    expect(container.querySelector('[data-onboarding="student-content"]')).not.toBeNull();
+    expect(container.querySelector('a[href="/student/onboarding"]')).toBeNull();
   });
 });

@@ -14,6 +14,10 @@ export default function useAdminInit() {
     setInitStep((prev) => prev + 1);
   };
 
+  const onPreviousStep = () => {
+    setInitStep(InitStep.Welcome);
+  };
+
   const onTokenValidated = (validatedToken: string) => {
     setToken(validatedToken);
     setInitStep(InitStep.SignInForm);
@@ -24,5 +28,5 @@ export default function useAdminInit() {
     setInitStep(InitStep.Welcome);
   };
 
-  return { initStep, token, onNextStep, onTokenValidated, restart };
+  return { initStep, token, onNextStep, onPreviousStep, onTokenValidated, restart };
 }

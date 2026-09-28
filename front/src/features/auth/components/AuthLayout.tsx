@@ -16,7 +16,7 @@ import { currentRelease } from "../../../config/release-notes";
 
 const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupStyle?: boolean }>) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { logout } = useContext(AuthContext);
+  const { isLoggedIn, logout } = useContext(AuthContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const { background, isFailed } = useAuthBackground(theme);
@@ -27,7 +27,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const isOnboarding = isStudentOnboarding || isStaffOnboarding;
   const isInstanceSetup = pathname === "/instance-setup";
   const isAdminInit = pathname === "/init";
-  const hasSetupLayout = isAdminInit || setupStyle;
+  const hasSetupLayout = isAdminInit || pathname === "/confirm-email" || setupStyle;
   const isOnboardingLayout = isOnboarding || isInstanceSetup || hasSetupLayout;
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
@@ -58,7 +58,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
       <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
         <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}>
           <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
-            {isOnboarding && (
+            {isOnboardingLayout && isLoggedIn && (
               <button
                 type="button"
                 className="btn btn-circle btn-ghost text-base-content/70 transition-colors hover:text-base-content"
@@ -97,8 +97,8 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           >
             {!isOnboarding && !hasSetupLayout && (
               <div
-                className={cn("flex cursor-pointer select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
-                onClick={() => navigate("/")}
+                className={cn("flex select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8", !isOnboardingLayout && "cursor-pointer")}
+                onClick={isOnboardingLayout ? undefined : () => navigate("/")}
               >
                 <img
                   className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
