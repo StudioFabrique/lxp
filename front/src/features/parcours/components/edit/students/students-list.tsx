@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import { Pencil, RefreshCw, Trash2 } from "lucide-react";
+import { Pencil, RefreshCw, Trash2, UsersRound } from "lucide-react";
 import type Group from "../../../../../utils/interfaces/group";
 import type { StudentWithGroup } from "../../../hooks/useParcoursStudentsQuery";
 import { sortArray } from "../../../../../utils/helpers/sort-array";
@@ -62,16 +62,15 @@ const StudentsList = ({ initalList, groups, parcoursId, onRemoveGroup }: Student
   return (
     <>
       <div>
-        <h4 className="mb-1.5 text-sm font-semibold">Groupes d'apprenants</h4>
         <ul className="flex flex-wrap gap-1.5">
           {groups.map((group) => (
             <li
-              className="flex min-w-0 items-center gap-1.5 rounded-md border border-base-300 bg-base-100 p-2"
+              className="flex min-w-0 flex-wrap items-center gap-1.5 rounded-md border border-base-300 bg-base-100 p-1.5"
               key={group._id}
             >
               <button
                 type="button"
-                className={cn("btn btn-sm h-8 min-h-8 min-w-0 justify-start px-2.5 normal-case", group._id === groupId ? "btn-accent" : "btn-ghost")}
+                className={cn("btn btn-sm h-9 min-h-9 min-w-0 justify-start gap-2 px-2 normal-case", group._id === groupId ? "btn-accent" : "btn-ghost")}
                 aria-pressed={group._id === groupId}
                 title="Filtrer les apprenants de ce groupe"
                 onClick={() => {
@@ -79,6 +78,7 @@ const StudentsList = ({ initalList, groups, parcoursId, onRemoveGroup }: Student
                   setPage(1);
                 }}
               >
+                <UsersRound className="size-4 shrink-0" aria-hidden="true" />
                 <span className="truncate text-left font-semibold capitalize">{group.name}</span>
               </button>
               <div className="flex shrink-0 items-center gap-1">

@@ -19,39 +19,51 @@ import { adminModulePreviewRoutes } from "../features/module-preview/routes";
 import { studentCalendarRoutes } from "../features/calendar/routes";
 import { teacherAssignmentRoutes } from "../features/assignments/routes";
 import InstanceSetupGate from "../components/guards/InstanceSetupGate";
+import StaffOnboardingGate from "../components/guards/StaffOnboardingGate";
+import RouteGuard from "../components/guards/RouteGuard";
 
 export const adminRoutes: RouteObject[] = [
   {
     element: <InstanceSetupGate />,
     children: [
       {
-        path: "/admin",
-        HydrateFallback: () => null,
-        lazy: lazyRoute(() => import("../components/wrappers/layouts/AdminLayout")),
-        errorElement: <RouterErrorBoundary />,
+        element: <RouteGuard area="staff" />,
         children: [
-          { index: true, element: <Navigate to="./dashboard" replace /> },
-          guard("course", studentCalendarRoutes),
-          guard("course", teacherAssignmentRoutes),
-          guard("stats", adminDashboardRoutes),
-          guard("parcours", adminParcoursRoutes),
-          guard("module", adminModulePreviewRoutes),
-          guard("group", adminGroupRoutes),
-          guard("module", adminModuleRoutes),
-          guard("course", adminCourseRoutes),
-          guard("tag", adminTagsRoutes),
-          guard("role", adminRoleRoutes),
-          guard("user", adminUserRoutes),
-          guard("feedback", adminFeedbacksRoutes),
-          guard("dashboardIa", adminDashboardIARoutes),
-          guard("mediatheque", adminMediathequeRoutes),
-          guard("resource", adminResourcesRoutes),
-          guard("cursus", adminProfileRoutes),
           {
-            path: "*",
-            lazy: lazyRoute(
-              () => import("../features/dashboard-admin/views/AdminNotFound"),
-            ),
+            element: <StaffOnboardingGate />,
+            children: [
+              {
+                path: "/admin",
+                HydrateFallback: () => null,
+                lazy: lazyRoute(() => import("../components/wrappers/layouts/AdminLayout")),
+                errorElement: <RouterErrorBoundary />,
+                children: [
+                  { index: true, element: <Navigate to="./dashboard" replace /> },
+                  guard("course", studentCalendarRoutes),
+                  guard("course", teacherAssignmentRoutes),
+                  guard("stats", adminDashboardRoutes),
+                  guard("parcours", adminParcoursRoutes),
+                  guard("module", adminModulePreviewRoutes),
+                  guard("group", adminGroupRoutes),
+                  guard("module", adminModuleRoutes),
+                  guard("course", adminCourseRoutes),
+                  guard("tag", adminTagsRoutes),
+                  guard("role", adminRoleRoutes),
+                  guard("user", adminUserRoutes),
+                  guard("feedback", adminFeedbacksRoutes),
+                  guard("dashboardIa", adminDashboardIARoutes),
+                  guard("mediatheque", adminMediathequeRoutes),
+                  guard("resource", adminResourcesRoutes),
+                  guard("cursus", adminProfileRoutes),
+                  {
+                    path: "*",
+                    lazy: lazyRoute(
+                      () => import("../features/dashboard-admin/views/AdminNotFound"),
+                    ),
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

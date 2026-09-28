@@ -90,7 +90,7 @@ const LoginGuard = () => {
     const homePath = getUserHomePath(user) ?? "/access-denied";
     return (
       <Modal
-        title="Vous êtes déjà connectée"
+        title={`Vous êtes déjà connectée avec ${user.email}`}
         leftLabel="Annuler"
         rightLabel="Confirmer la déconnexion"
         onLeftClick={() => navigate(homePath, { replace: true })}

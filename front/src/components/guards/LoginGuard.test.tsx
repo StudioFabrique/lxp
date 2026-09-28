@@ -30,7 +30,7 @@ const AuthHarness = ({ children, initiallyLoggedIn, rank }: {
   const [isLoggedIn, setIsLoggedIn] = useState(initiallyLoggedIn);
   return (
     <AuthContext value={{
-      user: isLoggedIn ? { roles: [{ rank }] } : null,
+      user: isLoggedIn ? { email: "personne@example.com", roles: [{ rank }] } : null,
       isLoggedIn,
       isAppInitialized: true,
       logout: async () => setIsLoggedIn(false),
@@ -139,7 +139,7 @@ describe("LoginGuard", () => {
 
   it("demande la déconnexion avant l'activation d'un autre compte", async () => {
     expect(await renderAt("/register?id=lien", false, true)).toContain(
-      "Vous êtes déjà connectée",
+      "Vous êtes déjà connectée avec personne@example.com",
     );
     expect(container.textContent).not.toContain("page-inscription");
 

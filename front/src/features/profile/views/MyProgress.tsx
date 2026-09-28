@@ -9,6 +9,10 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import Loader from "../../../components/loaders/Loader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { parcoursApi } from "../../parcours/api/parcours.api";
+import {
+  learningProfileApi,
+  learningProfileKey,
+} from "../../learning-profile/learning-profile.api";
 import type Parcours from "../../../utils/interfaces/parcours";
 import Journal from "../components/journal/journal";
 import Awards from "../components/awards/awards";
@@ -33,6 +37,10 @@ export default function MyProgress() {
     queryKey: ["my-progress", "modules"],
     queryFn: loadParcoursProgress,
   });
+  const { data: learningContext } = useQuery({
+    queryKey: learningProfileKey,
+    queryFn: learningProfileApi.get,
+  });
   const requestedParcoursId = Number(searchParams.get("parcoursId"));
   const selectedParcours =
     parcours.find((item) => item.id === requestedParcoursId) ?? parcours[0];
@@ -43,8 +51,14 @@ export default function MyProgress() {
         title="Mon avancement"
         description="Suivez la progression de vos modules, vos accomplissements et vos badges de compétences."
         icon={ChartNoAxesCombined}
-      ><button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>Mes préférences et niveaux</button></Header>
-      {settingsOpen && <StudentProfile onClose={() => setSettingsOpen(false)} />}
+      >{learningContext?.hasAvailableContent && (
+        <button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>
+          Mes préférences et niveaux
+        </button>
+      )}</Header>
+      {learningContext?.hasAvailableContent && settingsOpen && (
+        <StudentProfile onClose={() => setSettingsOpen(false)} />
+      )}
       {parcours.length > 1 && (
         <div className="flex flex-col gap-2 sm:max-w-md">
           <label htmlFor="progress-parcours" className="font-semibold">

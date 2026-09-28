@@ -1,6 +1,5 @@
 import { ChatbotProvider } from "../../../store/ChatbotProvider";
 import Chatbot from "../../../features/chatbot/components/chatbot";
-import RouteGuard from "../../guards/RouteGuard";
 import Loader from "../../loaders/Loader";
 import Sidebar from "../../sidebar/Sidebar";
 import AppWrapper from "../AppWrapper";
@@ -8,13 +7,13 @@ import FadeWrapper from "../FadeWrapper";
 import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 import DemoTour from "../../../features/demo/components/DemoTour";
 import { useDemoMode } from "../../../store/DemoContext";
-import StaffOnboardingGate from "../../guards/StaffOnboardingGate";
+import { Outlet } from "react-router";
 
 const AdminLayout = () => {
   const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
 
   return (
-    <StaffOnboardingGate><ChatbotProvider>
+    <ChatbotProvider>
       {/* En démonstration, `OnboardingTour` ne fournit qu'un contexte inerte :
           plusieurs vues appellent `useOnboarding`, mais le tutoriel lui-même
           n'a pas lieu d'être sur un compte partagé. */}
@@ -24,13 +23,13 @@ const AdminLayout = () => {
           loader={<Loader />}
         >
           <FadeWrapper>
-            <RouteGuard area="staff" />
+            <Outlet />
           </FadeWrapper>
         </AppWrapper>
         {isConfigLoaded && !aiDisabled && <Chatbot />}
         {demoMode && <DemoTour layout="admin" />}
       </OnboardingTour>
-    </ChatbotProvider></StaffOnboardingGate>
+    </ChatbotProvider>
   );
 };
 

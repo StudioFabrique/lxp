@@ -10,6 +10,7 @@ type HeaderMenuProps = {
   onClickResume?: () => void;
   isStudent?: boolean;
   hasStarted?: boolean;
+  groupLinkTo?: string;
 };
 
 const HeaderMenu = ({
@@ -17,6 +18,7 @@ const HeaderMenu = ({
   onClickResume,
   isStudent,
   hasStarted,
+  groupLinkTo,
 }: HeaderMenuProps) => {
   const location = useLocation();
   const [isModalOpen, setModalState] = useState(false);
@@ -30,8 +32,10 @@ const HeaderMenu = ({
           <div className="self-end flex flex-col gap-4">
             <PermissionGuard action="write" object="group">
               <Link
-                to={`/${location.pathname.split("/")[1]}/group`}
-                className="btn btn-primary btn-sm text-base-100 py-1"
+                to={groupLinkTo ?? `/${location.pathname.split("/")[1]}/group`}
+                className="btn btn-primary btn-sm tooltip tooltip-left text-base-100 py-1"
+                data-tip="Modifier les groupes d'apprenants"
+                aria-label="Modifier les groupes d'apprenants"
               >
                 <GroupIcon />
               </Link>

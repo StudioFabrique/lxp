@@ -1,13 +1,13 @@
-import { useContext, type ReactNode } from "react";
+import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Navigate } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { AuthContext } from "../../store/AuthProvider";
 import { useDemoMode } from "../../store/DemoContext";
 import { dashboardIAApi } from "../../features/dashboard-ia/api/dashboardIA.api";
 import { staffOnboardingApi } from "../../features/auth/api/staff-onboarding.api";
 import Loader from "../loaders/Loader";
 
-export default function StaffOnboardingGate({ children }: { children: ReactNode }) {
+export default function StaffOnboardingGate() {
   const { user } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const rank = user?.roles?.[0]?.rank;
@@ -21,5 +21,5 @@ export default function StaffOnboardingGate({ children }: { children: ReactNode 
     </div>;
   if (!demoMode && ((rank === 1 && admin.data?.required) || (rank === 2 && teacher.data?.onboardingRequired)))
     return <Navigate to="/staff/onboarding" replace />;
-  return children;
+  return <Outlet />;
 }

@@ -11,13 +11,11 @@ import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useStudentDashboard } from "../hooks/use-student-dashboard";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
-import { useEffect } from "react";
 import { useDemoMode } from "../../../store/DemoContext";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { ChartNoAxesCombined, Play } from "lucide-react";
 
 const StudentDashboard = () => {
-  const navigate = useNavigate();
   const { demoMode } = useDemoMode();
   const {
     showOnboardingWelcome,
@@ -28,15 +26,6 @@ const StudentDashboard = () => {
     hasLastLessons,
     learningContext,
   } = useStudentDashboard();
-
-  useEffect(() => {
-    if (
-      !demoMode && learningContext.data?.onboardingRequired &&
-      learningContext.data.shouldAutoRedirect
-    ) {
-      navigate("/student/onboarding", { replace: true });
-    }
-  }, [demoMode, learningContext.data, navigate]);
 
   const canResumeOnboarding =
     !demoMode && !learningContext.isError &&

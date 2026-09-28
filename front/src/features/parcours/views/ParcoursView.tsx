@@ -221,6 +221,7 @@ const ParcoursView = () => {
                 <PermissionGuard key="header" object="cursus" action="read">
                   <HeaderMenu
                     key="header"
+                    groupLinkTo={`/admin/parcours/edit/${id}?step=6`}
                     onClickResume={handleClickResume}
                     hideResumeCourseButton={!(modules?.length > 0)}
                     isStudent={isStudent}

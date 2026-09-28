@@ -8,29 +8,41 @@ import { studentDashboardRoutes } from "../features/dashboard-student/routes";
 import { studentAssignmentRoutes } from "../features/assignments/routes";
 import { guard, lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
+import StudentOnboardingGate from "../components/guards/StudentOnboardingGate";
+import RouteGuard from "../components/guards/RouteGuard";
 
 export const studentRoutes: RouteObject[] = [
   {
-    path: "/student",
-    HydrateFallback: () => null,
-    lazy: lazyRoute(
-      () => import("../components/wrappers/layouts/StudentLayout"),
-    ),
-    errorElement: <RouterErrorBoundary />,
+    element: <RouteGuard area="student" />,
     children: [
-      { index: true, element: <Navigate to="./dashboard" replace /> },
-      guard("cursus", studentDashboardRoutes),
-      guard("parcours", studentParcoursRoutes),
-      guard("module", studentModulePreviewRoutes),
-      guard("resource", studentResourcesRoutes),
-      guard("cursus", studentCalendarRoutes),
-      guard("cursus", studentAssignmentRoutes),
-      guard("cursus", studentProfileRoutes),
       {
-        path: "*",
-        lazy: lazyRoute(
-          () => import("../features/dashboard-student/views/FeaturesList"),
-        ),
+        element: <StudentOnboardingGate />,
+        children: [
+          {
+            path: "/student",
+            HydrateFallback: () => null,
+            lazy: lazyRoute(
+              () => import("../components/wrappers/layouts/StudentLayout"),
+            ),
+            errorElement: <RouterErrorBoundary />,
+            children: [
+              { index: true, element: <Navigate to="./dashboard" replace /> },
+              guard("cursus", studentDashboardRoutes),
+              guard("parcours", studentParcoursRoutes),
+              guard("module", studentModulePreviewRoutes),
+              guard("resource", studentResourcesRoutes),
+              guard("cursus", studentCalendarRoutes),
+              guard("cursus", studentAssignmentRoutes),
+              guard("cursus", studentProfileRoutes),
+              {
+                path: "*",
+                lazy: lazyRoute(
+                  () => import("../features/dashboard-student/views/FeaturesList"),
+                ),
+              },
+            ],
+          },
+        ],
       },
     ],
   },
