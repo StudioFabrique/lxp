@@ -1,5 +1,28 @@
 [
   {
+    "version": "0.9.2",
+    "status": "Beta",
+    "branch": "release/0.9.2",
+    "summary": "Améliorations de l'accueil et de l'affichage des modules",
+    "changes": [
+      {
+        "title": "Accueil et diagnostic",
+        "description": "Modules sans contenu visibles",
+        "icon": "layout"
+      },
+      {
+        "title": "Contraste et alignement",
+        "description": "Contraste amélioré et alignement ajusté",
+        "icon": "layout"
+      },
+      {
+        "title": "Réorganisation des activités",
+        "description": "Réorganisation et ajustement des commandes",
+        "icon": "layout"
+      }
+    ]
+  },
+  {
     "version": "0.9.1",
     "status": "Beta",
     "branch": "release/0.9.1",
@@ -108,34 +131,6 @@
         "title": "Calendrier cohérent",
         "icon": "calendar",
         "description": "Le calendrier suit le thème actif."
-      }
-    ]
-  },
-  {
-    "version": "0.8.0",
-    "status": "Beta",
-    "commit": "3cee78e6a5da25be770b59af385eff5be2082935",
-    "summary": "De nouveaux outils pour les devoirs et une interface rafraîchie.",
-    "changes": [
-      {
-        "title": "Remise de devoirs",
-        "icon": "book",
-        "description": "Les apprenants peuvent remettre leurs devoirs en ligne."
-      },
-      {
-        "title": "Évaluations",
-        "icon": "clipboard",
-        "description": "Enseignants et apprenants retrouvent leurs évaluations."
-      },
-      {
-        "title": "Rôles plus lisibles",
-        "icon": "users",
-        "description": "Les rôles sont affichés sous forme de cartes."
-      },
-      {
-        "title": "Interface rafraîchie",
-        "icon": "layout",
-        "description": "La disposition générale et les animations ont été revues."
       }
     ]
   }
