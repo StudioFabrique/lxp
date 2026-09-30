@@ -89,7 +89,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
           </li>
         ))}
       </ul>
-      {(!isAnswered || nextAction) && <QuizModalButtons isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />}
+      <QuizModalButtons isAnswered={isAnswered} isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />
     </div>
   );
 };

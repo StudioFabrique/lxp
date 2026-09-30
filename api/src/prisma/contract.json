@@ -3442,6 +3442,13 @@
           },
           "LessonRating": {
             "fields": {
+              "comment": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -3507,6 +3514,9 @@
             },
             "storage": {
               "fields": {
+                "comment": {
+                  "column": "comment"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -9315,6 +9325,11 @@
             },
             "LessonRating": {
               "columns": {
+                "comment": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -11939,7 +11954,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "81126da82ef2898f11040430d21775259954989e86d1795b5c17adc50bf61e43"
+    "storageHash": "dae3340eb8f66c82e5140f379b40427a8fed799abe03f86d4c40fd6988a81f93"
   },
   "execution": {
     "executionHash": "66190f9a80de94e86878e89872489dc18e562c01c8c62b54232716f90998ee70",

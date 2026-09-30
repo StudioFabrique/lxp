@@ -24,11 +24,12 @@ async function render(changes: Partial<typeof props> = {}) {
 }
 function nextButton() { return container.querySelector<HTMLButtonElement>(".modal-action button")!; }
 
-it("affiche Question suivante à 1/1 pendant la génération d'une question supplémentaire", async () => {
+it("attend la question supplémentaire avant de permettre de continuer", async () => {
   await render();
   expect(nextButton().textContent).toBe("Question suivante");
   await act(async () => nextButton().click());
-  expect(props.onNext).toHaveBeenCalledOnce();
+  expect(nextButton().disabled).toBe(true);
+  expect(props.onNext).not.toHaveBeenCalled();
 });
 it("conserve Question suivante une fois la question supplémentaire reçue", async () => {
   await render();
@@ -39,4 +40,19 @@ it("affiche Terminer uniquement à la dernière question quand la génération e
   await render();
   await render({ isStreaming: false });
   expect(nextButton().textContent).toBe("Terminer");
+});
+
+it.each([
+  { type: "true_false" as const, data: { answer: true } },
+  { type: "mcq" as const, data: { options: ["A", "B"], answerIndex: 0 } },
+  { type: "matching" as const, data: { pairs: [{ left: "A", right: "1" }, { left: "B", right: "2" }] } },
+  { type: "ordering" as const, data: { items: ["A", "B"], order: [0, 1] } },
+])("permet de signaler après la réponse pour $type", async (specific) => {
+  await render({ quiz: { id: "q1", question: "Question", trueExplanation: "Oui", falseExplanation: "Non", ...specific } });
+  const report = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Signaler un problème")!;
+  expect(report).toBeDefined();
+  expect(container.textContent).not.toContain("Valider ma réponse");
+  await act(async () => report.click());
+  expect(container.querySelector("textarea")).not.toBeNull();
+  expect(container.textContent).toContain("Pourquoi cette question est-elle incorrecte ?");
 });

@@ -62,10 +62,12 @@ const queries = {
   /** Quiz de fin de cours, servi en flux comme le diagnostique. */
   streamEndingQuiz: async (
     courseId: number,
+    signal?: AbortSignal,
   ): Promise<ReadableStream<Uint8Array>> => {
     const res = await apiClient({
       method: "get",
       url: `/quiz/course/ending/stream/${courseId}`,
+      signal,
       responseType: "stream",
       adapter: "fetch",
     });

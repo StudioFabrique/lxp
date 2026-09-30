@@ -201,7 +201,7 @@ const useModuleContent = () => {
   }, [selectedLessonId, initiateLesson]);
 
   const completeLesson = useCallback(
-    async (rating: number) => {
+    async (rating?: number, comment?: string) => {
       const lessonId = state.selectedLesson?.id;
       if (state.selectedLesson && lessonId && !completionInFlight.current) {
         completionInFlight.current = true;
@@ -221,17 +221,19 @@ const useModuleContent = () => {
             lessonRead,
           });
           // La note ne conditionne pas l'obtention des compétences.
-          try {
-            const { data: lessonRating } =
-              (await modulePreviewApi.mutations.rateLesson(lessonId, rating)) as {
-                data: LessonRating;
-              };
-            if (activeModuleId.current !== String(state.module?.id)) return;
-            dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
-          } catch {
-            toast.error(
-              "La leçon est terminée, mais votre évaluation n'a pas pu être enregistrée.",
-            );
+          if (rating !== undefined) {
+            try {
+              const { data: lessonRating } =
+                (await modulePreviewApi.mutations.rateLesson(lessonId, rating, comment)) as {
+                  data: LessonRating;
+                };
+              if (activeModuleId.current !== String(state.module?.id)) return;
+              dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
+            } catch {
+              toast.error(
+                "La leçon est terminée, mais votre évaluation n'a pas pu être enregistrée.",
+              );
+            }
           }
 
           if (state.module?.id) {

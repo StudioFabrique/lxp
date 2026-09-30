@@ -45,15 +45,14 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Pro
           </button>
         ))}
       </div>
-      {(!isAnswered || nextAction) && (
-        <QuizModalButtons
-          isValid={isValid}
-          onValidate={handleValidate}
-          onReport={onReport}
-          externalId={quiz.id}
-          nextAction={isAnswered ? nextAction : undefined}
-        />
-      )}
+      <QuizModalButtons
+        isAnswered={isAnswered}
+        isValid={isValid}
+        onValidate={handleValidate}
+        onReport={onReport}
+        externalId={quiz.id}
+        nextAction={isAnswered ? nextAction : undefined}
+      />
     </div>
   );
 };

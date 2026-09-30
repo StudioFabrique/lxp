@@ -197,8 +197,8 @@ const mutations = {
     return res.data;
   },
   /** Première notation d'une leçon, à sa complétion. */
-  rateLesson: async (lessonId: number, rate: number) => {
-    const res = await apiClient.post(`/lesson/rate/${lessonId}`, { rate });
+  rateLesson: async (lessonId: number, rate: number, comment?: string) => {
+    const res = await apiClient.post(`/lesson/rate/${lessonId}`, { rate, comment });
     return res.data;
   },
   /** Modification d'une note déjà attribuée. */

@@ -4,16 +4,18 @@ import { FileText } from "lucide-react";
 import Competences from "./competences";
 import Contacts from "./contacts";
 import ModuleBadges from "./module-badges";
+import type { ReactNode } from "react";
 // import Objectifs from "./objectifs";
 
 // Type pour les props du composant ModuleData
-type ModuleDataProps = { moduleData: Module };
+type ModuleDataProps = { moduleData: Module; nextCourseAction?: ReactNode };
 
 // Composant principal qui affiche les données d'un module
-const ModuleData = ({ moduleData }: ModuleDataProps) => (
+const ModuleData = ({ moduleData, nextCourseAction }: ModuleDataProps) => (
   <>
     <div className="flex w-full flex-col gap-2">
       <ModuleBadges skills={moduleData.bonusSkills} />
+      {nextCourseAction}
       {moduleData.description?.trim() && (
         <BoxWrapper className="w-full">
           <div className="flex flex-col gap-2 p-2">

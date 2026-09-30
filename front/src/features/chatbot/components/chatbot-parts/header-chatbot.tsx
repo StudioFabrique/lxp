@@ -26,7 +26,7 @@ export default function HeaderChatbot({
   onNewChat,
 }: Props) {
   return (
-    <div className="bg-info text-info-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
+    <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-base-100 text-base-content rounded-full p-1 shadow-inner">
           <Bot className="w-full h-full object-contain" />
@@ -41,7 +41,7 @@ export default function HeaderChatbot({
         {showNewChatButton && (
           <button
             type="button"
-            className="btn btn-ghost text-info-content tooltip tooltip-left btn-sm btn-circle transition-colors"
+            className="btn btn-ghost text-primary-content tooltip tooltip-left btn-sm btn-circle transition-colors"
             onClick={onNewChat}
             title="Nouvelle discussion"
             aria-label="Nouvelle discussion"
@@ -54,7 +54,7 @@ export default function HeaderChatbot({
         {showFullScreenButton && (
           <button
             type="button"
-            className="btn btn-ghost text-info-content btn-sm btn-circle transition-colors"
+            className="btn btn-ghost text-primary-content btn-sm btn-circle transition-colors"
             onClick={() => onChangeSize()}
             aria-label="Changer la taille"
           >
@@ -70,7 +70,7 @@ export default function HeaderChatbot({
 
         <button
           type="button"
-          className="btn btn-ghost btn-sm text-info-content hover:bg-info-content/10 btn-circle"
+          className="btn btn-ghost btn-sm text-primary-content hover:bg-primary-content/10 btn-circle"
           onClick={onClose}
           aria-label="Fermer le chatbot"
         >

@@ -68,6 +68,20 @@ afterEach(async () => {
 });
 
 describe("Complétion du module", () => {
+  it("termine la leçon sans envoyer de note quand l'évaluation est ignorée", async () => {
+    await renderExplorer();
+    await act(async () => store.lessonActions.completeLesson());
+    expect(modulePreviewApi.tracking.finish).toHaveBeenCalledWith("lesson", 100);
+    expect(modulePreviewApi.mutations.rateLesson).not.toHaveBeenCalled();
+    expect(store.computed.isLessonCompleted).toBe(true);
+  });
+
+  it("transmet le commentaire avec la note", async () => {
+    await renderExplorer();
+    await act(async () => store.lessonActions.completeLesson(4, "Très utile"));
+    expect(modulePreviewApi.mutations.rateLesson).toHaveBeenCalledWith(100, 4, "Très utile");
+  });
+
   it("obtient les badges en terminant la première leçon en dernier et rafraîchit le parcours", async () => {
     await renderExplorer();
     const invalidate = vi.spyOn(client, "invalidateQueries");

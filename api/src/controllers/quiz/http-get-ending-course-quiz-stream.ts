@@ -34,7 +34,8 @@ export default async function httpGetEndingCourseQuizStream(
     );
 
     if (generation.kind === "cached") {
-      res.setHeader("Content-Type", "application/json");
+      res.setHeader("Content-Type", "application/x-ndjson");
+      res.setHeader("Cache-Control", "no-cache, no-transform");
       res.setHeader("Transfer-Encoding", "chunked");
       for (const question of generation.questions) {
         res.write(`${JSON.stringify(toQuizApiQuestion(question))}\n`);
@@ -50,8 +51,11 @@ export default async function httpGetEndingCourseQuizStream(
       return res.end();
     }
 
-    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Content-Type", "application/x-ndjson");
+    // La compression accumule les petits chunks et retarde les questions.
+    res.setHeader("Cache-Control", "no-cache, no-transform");
     res.setHeader("Transfer-Encoding", "chunked");
+    res.flushHeaders();
     await relayQuizStream(generation.stream, res, generation);
   } catch (error) {
     logger.error("Erreur de génération du quiz de fin :", error);

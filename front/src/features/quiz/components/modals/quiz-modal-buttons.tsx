@@ -3,6 +3,7 @@ import { useState } from "react";
 type Props = {
   externalId: string;
   isValid: boolean;
+  isAnswered?: boolean;
   onValidate: () => void;
   onReport: (externalId: string, comment: string) => Promise<void>;
   nextAction?: { label: string; onClick: () => void };
@@ -11,6 +12,7 @@ type Props = {
 const QuizModalButtons = ({
   externalId,
   isValid,
+  isAnswered = false,
   onValidate,
   onReport,
   nextAction,
@@ -31,16 +33,6 @@ const QuizModalButtons = ({
     }
   };
 
-  if (nextAction) {
-    return (
-      <div className="mt-4 flex justify-end">
-        <button className="btn btn-primary min-w-44" onClick={nextAction.onClick}>
-          {nextAction.label}
-        </button>
-      </div>
-    );
-  }
-
   if (isReporting) {
     return (
       <div className="flex flex-col gap-2 mt-4 p-3 transition-all">
@@ -51,7 +43,7 @@ const QuizModalButtons = ({
         </label>
         <textarea
           className="textarea w-full text-sm bg-base-100 focus:outline-none resize-none"
-          placeholder="Ex: Il manque une réponse"
+          placeholder="Ex. : la question n'est pas compréhensible, la réponse attendue est incorrecte ou le sujet n'est pas abordé dans le cours."
           rows={3}
           draggable={false}
           value={comment}
@@ -95,13 +87,19 @@ const QuizModalButtons = ({
           Signaler un problème
         </button>
       </div>
-      <button
-        className="btn btn-primary min-w-44"
-        onClick={onValidate}
-        disabled={!isValid}
-      >
-        Valider ma réponse
-      </button>
+      {nextAction ? (
+        <button className="btn btn-primary min-w-44" onClick={nextAction.onClick}>
+          {nextAction.label}
+        </button>
+      ) : !isAnswered && (
+        <button
+          className="btn btn-primary min-w-44"
+          onClick={onValidate}
+          disabled={!isValid}
+        >
+          Valider ma réponse
+        </button>
+      )}
     </div>
   );
 };

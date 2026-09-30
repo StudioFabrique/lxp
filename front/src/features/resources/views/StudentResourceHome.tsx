@@ -25,7 +25,7 @@ export default function StudentResourceHome() {
   return (
     <PageWrapper as="main">
       <Header
-        title="Ressources Supplémentaires"
+        title="Ressources supplémentaires"
         description="Accédez à plus de ressources supplémentaires"
       />
 
@@ -39,11 +39,16 @@ export default function StudentResourceHome() {
       ) : null}
 
       {isLoading ? (
-        <LoadingSkeleton variant="cards" label="Chargement des ressources supplémentaires" />
+        <LoadingSkeleton
+          variant="cards"
+          label="Chargement des ressources supplémentaires"
+        />
       ) : isError ? (
         <div role="alert" className="alert alert-error">
           Impossible de charger les ressources supplémentaires.
-          <button type="button" className="btn btn-sm" onClick={refetch}>Réessayer</button>
+          <button type="button" className="btn btn-sm" onClick={refetch}>
+            Réessayer
+          </button>
         </div>
       ) : dataList && dataList.length > 0 ? (
         <>

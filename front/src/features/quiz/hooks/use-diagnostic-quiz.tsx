@@ -1,10 +1,9 @@
+import { mapExternalToInternal } from "../utils/map-external-quiz";
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import {
-  ExternalApiQuiz,
-  Pair,
   Quiz,
   QuizAttempt,
   UserAnswer,
@@ -89,55 +88,6 @@ export default function useDiagnosticQuiz(
     );
   }, [onFinishInitialQuiz, setAiUnavailable, toastWarning]);
 
-  const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
-    const base = {
-      id: external.id,
-      question: external.prompt,
-      trueExplanation: external.explanation_correct,
-      falseExplanation: external.explanation_wrong,
-    };
-
-    switch (external.type) {
-      case "mcq":
-        return {
-          ...base,
-          type: "mcq",
-          data: {
-            options: external.choices,
-            answerIndex: external.answer_key,
-          },
-        };
-
-      case "true_false":
-        return {
-          ...base,
-          type: "true_false",
-          data: { answer: external.answer_key },
-        };
-
-      case "matching": {
-        const pairs: Pair[] = external.pairs;
-
-        return {
-          ...base,
-          type: "matching",
-          data: { pairs },
-        };
-      }
-
-      case "ordering":
-        return {
-          ...base,
-          type: "ordering",
-          data: {
-            items: external.ordering_items,
-            order: external.ordering_answer,
-          },
-        };
-      default:
-        return null;
-    }
-  };
 
   const onLoadPreliminaryQuizzes = useCallback(async () => {
     if (aiDisabled) {

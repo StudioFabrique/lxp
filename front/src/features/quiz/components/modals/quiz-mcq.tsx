@@ -44,15 +44,14 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) =>
           </button>
         ))}
       </div>
-      {(!isAnswered || nextAction) && (
-        <QuizModalButtons
-          isValid={isValid}
-          onValidate={handleValidate}
-          onReport={onReport}
-          externalId={quiz.id}
-          nextAction={isAnswered ? nextAction : undefined}
-        />
-      )}
+      <QuizModalButtons
+        isAnswered={isAnswered}
+        isValid={isValid}
+        onValidate={handleValidate}
+        onReport={onReport}
+        externalId={quiz.id}
+        nextAction={isAnswered ? nextAction : undefined}
+      />
     </div>
   );
 };

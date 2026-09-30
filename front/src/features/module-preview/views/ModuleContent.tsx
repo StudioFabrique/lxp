@@ -275,6 +275,7 @@ const ModuleContent = () => {
             canEditSelectedLesson={canEditSelectedLesson}
             canNavigateAsAdmin={isAdminView}
             isStaff={userArea === "staff"}
+            onSelectAssignment={handleSelectAssignment}
           />
         </ModuleContentLayout>
       ) : (

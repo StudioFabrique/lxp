@@ -5,6 +5,7 @@ export default async function postRateLesson(
   lessonId: number,
   userIdMdb: string,
   rating: number,
+  comment?: string,
 ) {
   const student = await prisma.orm.public.Student.where({
     idMdb: userIdMdb,
@@ -36,6 +37,7 @@ export default async function postRateLesson(
       lessonId,
       studentId: student.id,
       rating: +rating,
+      comment: comment?.trim() || null,
     });
     await tx.orm.public.Accomplishment.create({
       name: `${studentData.firstname} ${studentData.lastname}`,

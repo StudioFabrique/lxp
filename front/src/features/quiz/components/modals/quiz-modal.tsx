@@ -102,7 +102,7 @@ const QuizModal = ({
           <h3 className="font-bold text-lg text-primary flex items-center gap-2">
             <span>Quiz d'auto-évaluation</span>
             <span>
-              {quiz && totalQuizzes > 0
+              {!showResults && quiz && totalQuizzes > 0
                 ? `${currentIndex + 1} / ${Math.max(totalQuizzes, currentIndex + 1)}`
                 : ""}
             </span>
@@ -186,7 +186,11 @@ const QuizModal = ({
                 {/* Actions */}
                 <div className="modal-action">
                   {isAnswered && quiz && (
-                    <button className="btn btn-primary" onClick={onNext}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={onNext}
+                      disabled={isStreaming && currentIndex >= totalQuizzes - 1}
+                    >
                       {!isStreaming && currentIndex === totalQuizzes - 1
                         ? "Terminer"
                         : "Question suivante"}

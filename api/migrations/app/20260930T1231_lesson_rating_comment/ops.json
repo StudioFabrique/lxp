@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.LessonRating.comment",
+    "label": "Add column \"comment\" to \"LessonRating\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "comment",
+        "table": "LessonRating"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"comment\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "LessonRating",
+          "comment"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"comment\"",
+        "sql": "ALTER TABLE \"public\".\"LessonRating\" ADD COLUMN \"comment\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"comment\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "LessonRating",
+          "comment"
+        ]
+      }
+    ]
+  }
+]
