@@ -1,6 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { instanceIdentitySchema, instanceThemesSchema, instanceEmailSchema } from "../schemas/instance-schema";
+import {
+  instanceIdentitySchema,
+  instanceThemesSchema,
+  instanceEmailSchema,
+} from "../schemas/instance-schema";
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -40,12 +44,24 @@ export default function InstanceGeneralSettings() {
   const { chooseTheme } = useContext(ThemeContext);
   const [initialSettings, setInitialSettings] = useState(emptySettings);
 
-  const identityForm = useForm({ resolver: zodResolver(instanceIdentitySchema), defaultValues: { name: "", website: "", color: defaultBackgroundColor } });
-  const themesForm = useForm({ resolver: zodResolver(instanceThemesSchema), defaultValues: { enabledThemes: [...defaultEnabledThemes] } });
-  const emailForm = useForm({ resolver: zodResolver(instanceEmailSchema), defaultValues: { emailTemplate: "minimal" as EmailTemplateId } });
+  const identityForm = useForm({
+    resolver: zodResolver(instanceIdentitySchema),
+    defaultValues: { name: "", website: "", color: defaultBackgroundColor },
+  });
+  const themesForm = useForm({
+    resolver: zodResolver(instanceThemesSchema),
+    defaultValues: { enabledThemes: [...defaultEnabledThemes] },
+  });
+  const emailForm = useForm({
+    resolver: zodResolver(instanceEmailSchema),
+    defaultValues: { emailTemplate: "minimal" as EmailTemplateId },
+  });
   const [name, setName] = useFormField(identityForm, "name");
   const [website, setWebsite] = useFormField(identityForm, "website");
-  const [enabledThemes, setEnabledThemes] = useFormField(themesForm, "enabledThemes");
+  const [enabledThemes, setEnabledThemes] = useFormField(
+    themesForm,
+    "enabledThemes",
+  );
   const settings = { ...initialSettings, name, website, enabledThemes };
 
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +70,10 @@ export default function InstanceGeneralSettings() {
   const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] =
     useState(false);
   const websiteError = identityForm.formState.errors.website?.message ?? "";
-  const [draftEmailTemplate, setDraftEmailTemplate] = useFormField(emailForm, "emailTemplate");
+  const [draftEmailTemplate, setDraftEmailTemplate] = useFormField(
+    emailForm,
+    "emailTemplate",
+  );
   const [themeDrawerMode, setThemeDrawerMode] = useState<
     "light" | "dark" | null
   >(null);
@@ -66,7 +85,10 @@ export default function InstanceGeneralSettings() {
   });
   const [hasLogo, setHasLogo] = useState(false);
   const [deleteLogo, setDeleteLogo] = useState(false);
-  const [backgroundColor, setBackgroundColor] = useFormField(identityForm, "color");
+  const [backgroundColor, setBackgroundColor] = useFormField(
+    identityForm,
+    "color",
+  );
   const [initialBackgroundColor, setInitialBackgroundColor] = useState(
     defaultBackgroundColor,
   );
@@ -79,7 +101,11 @@ export default function InstanceGeneralSettings() {
     profileApi.queries
       .getInstanceSettings()
       .then((data) => {
-        resetIdentity({ name: data.name, website: data.website, color: identityValues("color") });
+        resetIdentity({
+          name: data.name,
+          website: data.website,
+          color: identityValues("color"),
+        });
         resetThemes({ enabledThemes: data.enabledThemes });
         resetEmail({ emailTemplate: data.emailTemplate });
         setInitialSettings(data);
@@ -107,24 +133,35 @@ export default function InstanceGeneralSettings() {
       .catch(() => undefined);
 
     return () => abortController.abort();
-  }, [resetIdentity, identityValues, resetThemes, resetEmail, setBackgroundColor]);
+  }, [
+    resetIdentity,
+    identityValues,
+    resetThemes,
+    resetEmail,
+    setBackgroundColor,
+  ]);
 
   const save = async (scope: "identity" | "interface" | "email") => {
     if (isSaving || isLoading) return;
-    const activeForm = scope === "identity" ? identityForm : scope === "interface" ? themesForm : emailForm;
-    if (!await activeForm.trigger()) { showFormErrors(activeForm.formState.errors); return; }
-    const identity = scope === "identity" ? instanceIdentitySchema.parse(identityForm.getValues()) : { ...initialSettings, color: initialBackgroundColor };
+    const activeForm =
+      scope === "identity"
+        ? identityForm
+        : scope === "interface"
+          ? themesForm
+          : emailForm;
+    if (!(await activeForm.trigger())) {
+      showFormErrors(activeForm.formState.errors);
+      return;
+    }
+    const identity =
+      scope === "identity"
+        ? instanceIdentitySchema.parse(identityForm.getValues())
+        : { ...initialSettings, color: initialBackgroundColor };
     setIsSaving(true);
     try {
       const payload = new FormData();
-      payload.append(
-        "name",
-        identity.name,
-      );
-      payload.append(
-        "website",
-        identity.website,
-      );
+      payload.append("name", identity.name);
+      payload.append("website", identity.website);
       payload.append(
         "enabledThemes",
         JSON.stringify(
@@ -133,10 +170,7 @@ export default function InstanceGeneralSettings() {
             : initialSettings.enabledThemes,
         ),
       );
-      payload.append(
-        "color",
-        identity.color,
-      );
+      payload.append("color", identity.color);
       payload.append("deleteLogo", String(scope === "identity" && deleteLogo));
       payload.append(
         "emailTemplate",
@@ -166,10 +200,18 @@ export default function InstanceGeneralSettings() {
     modeThemes: readonly string[],
   ) => {
     const isEnabled = enabledThemes.includes(theme);
-    if (isEnabled && modeThemes.filter((item) => enabledThemes.includes(item)).length === 1) {
-      toast.error("Conservez au moins un thème dans chaque mode."); return;
+    if (
+      isEnabled &&
+      modeThemes.filter((item) => enabledThemes.includes(item)).length === 1
+    ) {
+      toast.error("Conservez au moins un thème dans chaque mode.");
+      return;
     }
-    setEnabledThemes(isEnabled ? enabledThemes.filter((item) => item !== theme) : [...enabledThemes, theme]);
+    setEnabledThemes(
+      isEnabled
+        ? enabledThemes.filter((item) => item !== theme)
+        : [...enabledThemes, theme],
+    );
   };
 
   const openThemeDrawer = (mode: "light" | "dark") => {
@@ -243,9 +285,7 @@ export default function InstanceGeneralSettings() {
                   className="input input-bordered w-full max-w-xl focus:outline-none"
                   value={settings.name}
                   maxLength={80}
-                  onChange={(event) =>
-                    setName(event.target.value)
-                  }
+                  onChange={(event) => setName(event.target.value)}
                 />
               </label>
 
@@ -264,7 +304,10 @@ export default function InstanceGeneralSettings() {
                   aria-describedby={
                     websiteError ? "instance-website-error" : undefined
                   }
-                  className={cn("input input-bordered w-full max-w-xl focus:outline-none", websiteError && "input-error")}
+                  className={cn(
+                    "input input-bordered w-full max-w-xl focus:outline-none",
+                    websiteError && "input-error",
+                  )}
                   value={settings.website}
                   maxLength={2048}
                   placeholder="https://www.exemple.fr"
@@ -466,7 +509,12 @@ export default function InstanceGeneralSettings() {
                             <article
                               key={theme}
                               data-theme={theme}
-                              className={cn("min-w-0 rounded-xl border bg-base-100 p-3 text-left transition", previewedTheme === theme ? "border-primary ring-2 ring-primary/25" : "border-base-300")}
+                              className={cn(
+                                "min-w-0 rounded-xl border bg-base-100 p-3 text-left transition",
+                                previewedTheme === theme
+                                  ? "border-primary ring-2 ring-primary/25"
+                                  : "border-base-300",
+                              )}
                             >
                               <div className="flex min-w-0 items-center gap-3">
                                 <span className="flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
@@ -490,7 +538,10 @@ export default function InstanceGeneralSettings() {
                                 )}
                                 <button
                                   type="button"
-                                  className={cn("btn btn-primary btn-xs normal-case", previewedTheme === theme && "col-span-2")}
+                                  className={cn(
+                                    "btn btn-primary btn-xs normal-case",
+                                    previewedTheme === theme && "col-span-2",
+                                  )}
                                   onClick={() =>
                                     toggleAvailableTheme(theme, themeList)
                                   }

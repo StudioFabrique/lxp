@@ -32,7 +32,10 @@ export default function AnalysisFeedbackForm({
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const form = useForm({ resolver: zodResolver(analysisFeedbackSchema), defaultValues: { verdict: "", comment: "", actionTaken: "", outcome: "" } });
+  const form = useForm({
+    resolver: zodResolver(analysisFeedbackSchema),
+    defaultValues: { verdict: "", comment: "", actionTaken: "", outcome: "" },
+  });
   const [verdict, setVerdict] = useFormField(form, "verdict");
   const [comment, setComment] = useFormField(form, "comment");
   const [actionTaken, setActionTaken] = useFormField(form, "actionTaken");
@@ -52,11 +55,18 @@ export default function AnalysisFeedbackForm({
       });
     },
   });
-  if (!prediction.analysisId || hasExistingFeedback || hasSubmitted) return null;
+  if (!prediction.analysisId || hasExistingFeedback || hasSubmitted)
+    return null;
   const submit = form.handleSubmit((values) => {
     if (mutation.isPending) return;
-    mutation.mutate({ verdict: values.verdict as AnalysisFeedbackInput["verdict"], comment: values.comment,
-      actionTaken: values.actionTaken, ...(values.outcome ? { observedOutcome: values.outcome as PredictionOutcome } : {}) });
+    mutation.mutate({
+      verdict: values.verdict as AnalysisFeedbackInput["verdict"],
+      comment: values.comment,
+      actionTaken: values.actionTaken,
+      ...(values.outcome
+        ? { observedOutcome: values.outcome as PredictionOutcome }
+        : {}),
+    });
   }, showFormErrors);
   const resetForm = () => {
     mutation.reset();

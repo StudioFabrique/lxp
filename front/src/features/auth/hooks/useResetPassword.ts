@@ -22,13 +22,15 @@ type ApiError = {
   };
 };
 
-
 export function useResetPassword({
   initialEmail = "",
   initialMode = "reset",
   initialRetryAfterSeconds = 0,
 }: UseResetPasswordOptions = {}) {
-  const form = useForm({ resolver: zodResolver(recoverySchema), defaultValues: { email: initialEmail } });
+  const form = useForm({
+    resolver: zodResolver(recoverySchema),
+    defaultValues: { email: initialEmail },
+  });
   const [email, setEmail] = useFormField(form, "email");
   const [mode, setMode] = useState<AccountRecoveryMode>(initialMode);
   const [error, setError] = useState("");
@@ -59,32 +61,32 @@ export function useResetPassword({
     setRetryAfterSeconds(0);
   };
 
-  const handleCheckEmail = form.handleSubmit(async ({ email: normalizedEmail }) => {
-    if (isLoading || retryAfterSeconds > 0) return;
-    setError("");
-    setIsLoading(true);
-    try {
-      const data =
-        mode === "activation"
-          ? await accountApi.resendActivation(normalizedEmail)
-          : await accountApi.checkEmail(normalizedEmail);
+  const handleCheckEmail = form.handleSubmit(
+    async ({ email: normalizedEmail }) => {
+      if (isLoading || retryAfterSeconds > 0) return;
+      setError("");
+      setIsLoading(true);
+      try {
+        const data =
+          mode === "activation"
+            ? await accountApi.resendActivation(normalizedEmail)
+            : await accountApi.checkEmail(normalizedEmail);
 
-      if (data.success) {
-        setSuccessMessage(data.message);
-        setRequestSent(true);
+        if (data.success) {
+          setSuccessMessage(data.message);
+          setRequestSent(true);
+        }
+      } catch (err: unknown) {
+        const apiError = err as ApiError;
+        setError(
+          apiError.response?.data?.message ?? "Une erreur est survenue.",
+        );
+        setRetryAfterSeconds(apiError.response?.data?.retryAfterSeconds ?? 0);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err: unknown) {
-      const apiError = err as ApiError;
-      setError(
-        apiError.response?.data?.message ?? "Une erreur est survenue.",
-      );
-      setRetryAfterSeconds(
-        apiError.response?.data?.retryAfterSeconds ?? 0,
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  });
+    },
+  );
 
   return {
     email,

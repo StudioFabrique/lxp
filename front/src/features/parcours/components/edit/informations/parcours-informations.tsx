@@ -50,11 +50,11 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           startDate,
           endDate,
         });
-        if (data.success) {
-          toast.success(data.message);
-        }
-      } catch {
+        if (!data.success) throw new Error(data.message);
+        toast.success(data.message);
+      } catch (error) {
         toast.error("Erreur lors de la mise à jour des dates");
+        throw error;
       }
     },
     [updateParcours],
@@ -107,7 +107,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   // Callback pour soumettre les dates du parcours
   const submitDates = useCallback(
     (dates: { startDate: string; endDate: string }) => {
-      updateDates(dates.startDate, dates.endDate);
+      return updateDates(dates.startDate, dates.endDate);
     },
     [updateDates],
   );

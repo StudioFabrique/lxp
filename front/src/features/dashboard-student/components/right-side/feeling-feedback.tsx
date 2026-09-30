@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { feelingFeedbackSchema } from "../../../user/feedback.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
- 
+
 import { ChangeEvent, useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -19,8 +19,14 @@ const FeelingFeedback = () => {
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
 
-  const form = useForm({ resolver: zodResolver(feelingFeedbackSchema), defaultValues: { feelingLevel: 3, comment: "" } });
-  const [currentProgressValue, setCurrentProgressValue] = useFormField(form, "feelingLevel");
+  const form = useForm({
+    resolver: zodResolver(feelingFeedbackSchema),
+    defaultValues: { feelingLevel: 3, comment: "" },
+  });
+  const [currentProgressValue, setCurrentProgressValue] = useFormField(
+    form,
+    "feelingLevel",
+  );
 
   const [commentValue, setCommentValue] = useFormField(form, "comment");
 
@@ -46,9 +52,7 @@ const FeelingFeedback = () => {
       const lastFeedback = data.data;
       if (lastFeedback) {
         const feedbackDate = new Date(lastFeedback.feedbackAt);
-        if (
-          isSameDate(new Date(), feedbackDate)
-        ) {
+        if (isSameDate(new Date(), feedbackDate)) {
           setFeedbackSent(true);
           setCurrentProgressValue(lastFeedback.feelingLevel);
         }

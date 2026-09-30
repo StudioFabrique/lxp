@@ -5,7 +5,11 @@ import VideoPlayer from "../../../../../components/UI/VideoPlayer";
 import { toast } from "react-hot-toast";
 
 import { activityVideoSize } from "../../../../../config/images-sizes";
-import { videoSchema, videoFileError, type VideoFormValues } from "../../../media.schema";
+import {
+  videoSchema,
+  videoFileError,
+  type VideoFormValues,
+} from "../../../media.schema";
 import { useFormField } from "../../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../../components/form/form-errors";
 import { Loader2 } from "lucide-react";
@@ -27,7 +31,6 @@ interface VideoEditorProps {
   }) => void;
 }
 
-
 export default function VideoEditor({
   propVideo = "",
   loading,
@@ -38,7 +41,16 @@ export default function VideoEditor({
 }: VideoEditorProps) {
   const [video, setVideo] = useState<string>(propVideo);
 
-  const form = useForm<VideoFormValues>({ resolver: zodResolver(videoSchema), defaultValues: { title: "", description: "", origin: "web", url: propVideo, file: null } });
+  const form = useForm<VideoFormValues>({
+    resolver: zodResolver(videoSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      origin: "web",
+      url: propVideo,
+      file: null,
+    },
+  });
   const [origin, setOrigin] = useFormField(form, "origin");
   const [, setFile] = useFormField(form, "file");
   const [url, setUrl] = useFormField(form, "url");
@@ -57,7 +69,10 @@ export default function VideoEditor({
 
   const handleSelectFile = (selectedFile: File) => {
     const error = videoFileError(selectedFile);
-    if (error) { toast.error(error); return; }
+    if (error) {
+      toast.error(error);
+      return;
+    }
     setFile(selectedFile);
     setVideo(URL.createObjectURL(selectedFile));
   };
@@ -81,7 +96,13 @@ export default function VideoEditor({
   }, showFormErrors);
 
   useEffect(() => {
-    reset({ title: title ?? "", description: description ?? "", origin: "web", url: propVideo, file: null });
+    reset({
+      title: title ?? "",
+      description: description ?? "",
+      origin: "web",
+      url: propVideo,
+      file: null,
+    });
   }, [title, description, propVideo, reset]);
 
   useEffect(() => {

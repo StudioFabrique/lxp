@@ -23,16 +23,25 @@ const QuizModalButtons = ({
   nextAction,
 }: Props) => {
   const [isReporting, setIsReporting] = useState(false);
-  const form = useForm({ resolver: zodResolver(quizReportSchema), defaultValues: { comment: "" } });
+  const form = useForm({
+    resolver: zodResolver(quizReportSchema),
+    defaultValues: { comment: "" },
+  });
   const [comment, setComment] = useFormField(form, "comment");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitReport = form.handleSubmit(async ({ comment }) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    try { await onReport(externalId, comment); setIsReporting(false); form.reset(); }
-    catch (error) { console.error(error); }
-    finally { setIsSubmitting(false); }
+    try {
+      await onReport(externalId, comment);
+      setIsReporting(false);
+      form.reset();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }, showFormErrors);
 
   if (isReporting) {
@@ -90,17 +99,22 @@ const QuizModalButtons = ({
         </button>
       </div>
       {nextAction ? (
-        <button className="btn btn-primary min-w-44" onClick={nextAction.onClick}>
-          {nextAction.label}
-        </button>
-      ) : !isAnswered && (
         <button
           className="btn btn-primary min-w-44"
-          onClick={onValidate}
-          disabled={!isValid}
+          onClick={nextAction.onClick}
         >
-          Valider ma réponse
+          {nextAction.label}
         </button>
+      ) : (
+        !isAnswered && (
+          <button
+            className="btn btn-primary min-w-44"
+            onClick={onValidate}
+            disabled={!isValid}
+          >
+            Valider ma réponse
+          </button>
+        )
       )}
     </div>
   );

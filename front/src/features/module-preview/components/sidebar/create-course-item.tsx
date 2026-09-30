@@ -33,7 +33,10 @@ const CreateCourseItem = ({
   const [showTitleInput, setShowTitleInput] = useState(false);
   const [showDetailsForm, setShowDetailsForm] = useState(openDetailsOnMount);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const form = useForm({ resolver: zodResolver(courseTitleSchema), defaultValues: { title: "" } });
+  const form = useForm({
+    resolver: zodResolver(courseTitleSchema),
+    defaultValues: { title: "" },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const validationButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -74,7 +77,10 @@ const CreateCourseItem = ({
       )}
       <motion.div
         data-onboarding="course-create"
-        className={cn("flex w-full flex-col gap-4 rounded-xl", showTitleInput && "bg-success")}
+        className={cn(
+          "flex w-full flex-col gap-4 rounded-xl",
+          showTitleInput && "bg-success",
+        )}
         initial={{ scale: 0.95, padding: 0 }}
         animate={{
           scale: 1,

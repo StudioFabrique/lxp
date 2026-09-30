@@ -22,10 +22,7 @@ import {
   withSelectedModuleAssociations,
 } from "./useNewModuleReducer";
 import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
-import type {
-  ModuleData,
-  SourceModule,
-} from "../../../interfaces/new-module";
+import type { ModuleData, SourceModule } from "../../../interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import { parcoursApi } from "../../../api/parcours.api";
@@ -124,13 +121,15 @@ const useNewModule = () => {
     }
   }, [id]);
 
-  const runModuleSubmission = async (submission: (values: ModuleCreateFormValues) => Promise<void>) => {
+  const runModuleSubmission = async (
+    submission: (values: ModuleCreateFormValues) => Promise<void>,
+  ) => {
     if (isModuleSubmissionRunning.current) return;
 
     isModuleSubmissionRunning.current = true;
     setIsSubmittingModule(true);
     try {
-      if (!await trigger(undefined, { shouldFocus: true })) return;
+      if (!(await trigger(undefined, { shouldFocus: true }))) return;
       await submission(moduleCreateSchema.parse(getValues()));
     } finally {
       isModuleSubmissionRunning.current = false;
@@ -145,10 +144,11 @@ const useNewModule = () => {
     return payload;
   };
 
-  const refreshModules = () => Promise.all([
-    getParcoursModules(),
-    queryClient.invalidateQueries({ queryKey: parcoursKeys.detail(+id!) }),
-  ]);
+  const refreshModules = () =>
+    Promise.all([
+      getParcoursModules(),
+      queryClient.invalidateQueries({ queryKey: parcoursKeys.detail(+id!) }),
+    ]);
 
   const finishCreation = async (module: ModuleData) => {
     reset();
@@ -167,7 +167,6 @@ const useNewModule = () => {
   const handleSubmitNewModule = async (e: React.FormEvent) => {
     e.preventDefault();
     await runModuleSubmission(async (values) => {
-
       const moduleData = {
         ...values,
         formationId: state.parcours?.formationId,
@@ -294,29 +293,31 @@ const useNewModule = () => {
     (drawer as HTMLDialogElement).click();
   };
 
-  const handleUpdateModule = useCallback((moduleToUpdate: ModuleData) => {
-    setModuleImageFile(null);
-    dispatch({
-      type: "UPDATE_MODULE",
-      payload: {
-        id: moduleToUpdate.id,
-        contacts: moduleToUpdate.contacts,
-        skills: moduleToUpdate.skills,
-        duration: moduleToUpdate.duration ? +moduleToUpdate.duration : 1,
-      },
-    });
-    reset({
-      title: moduleToUpdate.title,
-      description: moduleToUpdate.description,
-      duration: moduleToUpdate.duration,
-      quizInstructions: moduleToUpdate.quizInstructions,
-    });
-  }, [reset]);
+  const handleUpdateModule = useCallback(
+    (moduleToUpdate: ModuleData) => {
+      setModuleImageFile(null);
+      dispatch({
+        type: "UPDATE_MODULE",
+        payload: {
+          id: moduleToUpdate.id,
+          contacts: moduleToUpdate.contacts,
+          skills: moduleToUpdate.skills,
+          duration: moduleToUpdate.duration ? +moduleToUpdate.duration : 1,
+        },
+      });
+      reset({
+        title: moduleToUpdate.title,
+        description: moduleToUpdate.description,
+        duration: moduleToUpdate.duration,
+        quizInstructions: moduleToUpdate.quizInstructions,
+      });
+    },
+    [reset],
+  );
 
   const handleSubmitDuplicateModule = async (e: React.FormEvent) => {
     e.preventDefault();
     await runModuleSubmission(async (values) => {
-
       const isEmptyObject = (obj: unknown) =>
         obj == null ||
         (typeof obj === "object" &&
@@ -352,7 +353,6 @@ const useNewModule = () => {
   const handleSubmitUpdateModule = async (e: React.FormEvent) => {
     e.preventDefault();
     await runModuleSubmission(async (values) => {
-
       try {
         const updatedModule = {
           id: state.moduleToUpdate,

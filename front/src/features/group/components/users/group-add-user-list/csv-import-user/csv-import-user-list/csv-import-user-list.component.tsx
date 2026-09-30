@@ -1,7 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { csvUsersSchema, type CsvUserRow } from "../../../../../../user/csv-user.schema";
+import {
+  csvUsersSchema,
+  type CsvUserRow,
+} from "../../../../../../user/csv-user.schema";
 import { showFormErrors } from "../../../../../../../components/form/form-errors";
 import { FC, useState } from "react";
 import { Download, Upload } from "lucide-react";
@@ -26,9 +29,14 @@ const CsvImportUserList: FC<{
   onAddUsers: (users: Array<User>) => void;
 }> = ({ onAddUsers }) => {
   const [usersToImport, setUsersToImport] = useState<CsvUserRow[]>([]);
-  const form = useForm<z.input<typeof csvUsersSchema>, unknown, z.output<typeof csvUsersSchema>>({ resolver: zodResolver(csvUsersSchema), defaultValues: { users: [] } });
+  const form = useForm<
+    z.input<typeof csvUsersSchema>,
+    unknown,
+    z.output<typeof csvUsersSchema>
+  >({ resolver: zodResolver(csvUsersSchema), defaultValues: { users: [] } });
   const selectedUsersToUpload = form.watch("users");
-  const setSelectedUsersToUpload = (users: CsvUserRow[]) => form.setValue("users", users, { shouldDirty: true, shouldValidate: true });
+  const setSelectedUsersToUpload = (users: CsvUserRow[]) =>
+    form.setValue("users", users, { shouldDirty: true, shouldValidate: true });
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -56,41 +64,41 @@ const CsvImportUserList: FC<{
     setSelectedUsersToUpload(users);
   };
 
-  const handleSubmitToDatabase = form.handleSubmit(async ({ users: usersToUpload }) => {
-    if (isLoading) return;
-    const applyData = (data: CreateManyUsersResponse) => {
-      handleCloseDrawer();
-      onAddUsers(data.usersCreated);
+  const handleSubmitToDatabase = form.handleSubmit(
+    async ({ users: usersToUpload }) => {
+      if (isLoading) return;
+      const applyData = (data: CreateManyUsersResponse) => {
+        handleCloseDrawer();
+        onAddUsers(data.usersCreated);
 
-      // L'API détaille ce qui a été créé et ce qui a été écarté (adresses déjà
-      // enregistrées, lignes sans email). Un fichier entièrement composé de
-      // doublons affichait auparavant « étudiants enregistrés ».
-      const message = data.message ?? "étudiants enregistrés";
+        // L'API détaille ce qui a été créé et ce qui a été écarté (adresses déjà
+        // enregistrées, lignes sans email). Un fichier entièrement composé de
+        // doublons affichait auparavant « étudiants enregistrés ».
+        const message = data.message ?? "étudiants enregistrés";
 
-      if (data.createdCount === 0) {
-        toast(message, { icon: "ℹ️" });
-        return;
-      }
+        if (data.createdCount === 0) {
+          toast(message, { icon: "ℹ️" });
+          return;
+        }
 
-      toast.success(message);
-    };
-    setIsLoading(true);
-    await userMutations
-      .createMany(usersToUpload)
-      .then(applyData)
-      .catch((err) => {
-        toast.error(
-          getApiErrorMessage(err, "L'import des étudiants a échoué."),
-        );
-      })
-      .finally(() => setIsLoading(false));
-  }, showFormErrors);
+        toast.success(message);
+      };
+      setIsLoading(true);
+      await userMutations
+        .createMany(usersToUpload)
+        .then(applyData)
+        .catch((err) => {
+          toast.error(
+            getApiErrorMessage(err, "L'import des étudiants a échoué."),
+          );
+        })
+        .finally(() => setIsLoading(false));
+    },
+    showFormErrors,
+  );
 
   const handleAddSelectedUser = (user: CsvUserRow) => {
-    setSelectedUsersToUpload([
-      ...selectedUsersToUpload,
-      user,
-    ]);
+    setSelectedUsersToUpload([...selectedUsersToUpload, user]);
   };
 
   const handleAddAllUsers = () => {

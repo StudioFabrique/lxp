@@ -22,18 +22,55 @@ interface DatesFormProps {
 }
 
 const DatesForm = (props: DatesFormProps) => {
-  const usedDuration = (props.datesList ?? []).reduce((sum, date) => sum + Number(date.synchroneDuration) + Number(date.asynchroneDuration), 0);
-  const schema = useMemo(() => createDatesSchema(props.module.minDate, props.module.maxDate, props.module.duration, usedDuration), [props.module.minDate, props.module.maxDate, props.module.duration, usedDuration]);
-  const form = useForm({ resolver: zodResolver(schema), defaultValues: { minDate: "", maxDate: "", synchroneDuration: 0, asynchroneDuration: 0, startTime: "", endTime: "" } });
+  const usedDuration = (props.datesList ?? []).reduce(
+    (sum, date) =>
+      sum + Number(date.synchroneDuration) + Number(date.asynchroneDuration),
+    0,
+  );
+  const schema = useMemo(
+    () =>
+      createDatesSchema(
+        props.module.minDate,
+        props.module.maxDate,
+        props.module.duration,
+        usedDuration,
+      ),
+    [
+      props.module.minDate,
+      props.module.maxDate,
+      props.module.duration,
+      usedDuration,
+    ],
+  );
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      minDate: "",
+      maxDate: "",
+      synchroneDuration: 0,
+      asynchroneDuration: 0,
+      startTime: "",
+      endTime: "",
+    },
+  });
   const [minDate, setMinDate] = useFormField(form, "minDate");
   const [maxDate, setMaxDate] = useFormField(form, "maxDate");
-  const times = { startTime: form.watch("startTime"), endTime: form.watch("endTime") };
+  const times = {
+    startTime: form.watch("startTime"),
+    endTime: form.watch("endTime"),
+  };
   const setTimes = (next: { startTime?: string; endTime?: string }) => {
     form.setValue("startTime", next.startTime ?? "", { shouldDirty: true });
     form.setValue("endTime", next.endTime ?? "", { shouldDirty: true });
   };
-  const handleSubmit = form.handleSubmit((values) => { if (!props.isLoading) props.onSubmitDates(values); }, showFormErrors);
-  const setInputStyle = (hasError: boolean) => cn("flex-1 input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
+  const handleSubmit = form.handleSubmit((values) => {
+    if (!props.isLoading) props.onSubmitDates(values);
+  }, showFormErrors);
+  const setInputStyle = (hasError: boolean) =>
+    cn(
+      "flex-1 input input-sm input-bordered focus:outline-none w-full",
+      hasError && "input-error text-error",
+    );
 
   return (
     <form
@@ -96,7 +133,9 @@ const DatesForm = (props: DatesFormProps) => {
               Synchrone
             </label>
             <input
-              className={setInputStyle(Boolean(form.formState.errors.synchroneDuration))}
+              className={setInputStyle(
+                Boolean(form.formState.errors.synchroneDuration),
+              )}
               type="number"
               id="synchrone"
               min={0}
@@ -108,7 +147,9 @@ const DatesForm = (props: DatesFormProps) => {
               Asynchrone
             </label>
             <input
-              className={setInputStyle(Boolean(form.formState.errors.asynchroneDuration))}
+              className={setInputStyle(
+                Boolean(form.formState.errors.asynchroneDuration),
+              )}
               type="number"
               id="asynchrone"
               min={0}

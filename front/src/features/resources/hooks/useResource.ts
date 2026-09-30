@@ -26,24 +26,40 @@ export default function useResource({
   const [isLoading, setIsLoading] = useState(Boolean(resourceId));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [previewActivity, setPreviewActivityState] = useState<Activity | null>(null);
-  const [activityType, setActivityType] = useState<Activity["type"] | null>(null);
-  const [activityState, setActivityState] = useState<"read" | "write" | "edit">("read");
-  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null);
+  const [previewActivity, setPreviewActivityState] = useState<Activity | null>(
+    null,
+  );
+  const [activityType, setActivityType] = useState<Activity["type"] | null>(
+    null,
+  );
+  const [activityState, setActivityState] = useState<"read" | "write" | "edit">(
+    "read",
+  );
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
+    null,
+  );
   const form = useForm({
     resolver: zodResolver(resourceSchema),
     defaultValues: { title: "", description: "", tags: [], file: null },
   });
 
-  const { register, handleSubmit, reset, formState: { errors } } = form;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = form;
   const [tags, setTags] = useFormField(form, "tags");
   const [, setFile] = useFormField(form, "file");
 
-  const selectActivity = useCallback((activity: Activity | null, mode: "read" | "edit" = "read") => {
-    setPreviewActivityState(activity);
-    setActivityType(activity?.type ?? null);
-    setActivityState(mode);
-  }, []);
+  const selectActivity = useCallback(
+    (activity: Activity | null, mode: "read" | "edit" = "read") => {
+      setPreviewActivityState(activity);
+      setActivityType(activity?.type ?? null);
+      setActivityState(mode);
+    },
+    [],
+  );
 
   const loadResource = useCallback(async () => {
     if (!resourceId) return null;
@@ -64,19 +80,46 @@ export default function useResource({
       return;
     }
     setIsLoading(true);
-    loadResource().then((details) => {
-      if (!active || !details) return;
-      setResource(details);
-      setTags(details.tags ?? []);
-      reset({ title: details.title, description: details.description ?? "", tags: details.tags ?? [], file: null });
-      selectActivity(details.activities.find((activity) => activity.id === requestedActivityId) ?? details.activities[0] ?? null);
-    }).catch((err) => {
-      if (active) setError(getApiErrorMessage(err, "La ressource n'a pas pu être chargée."));
-    }).finally(() => {
-      if (active) setIsLoading(false);
-    });
-    return () => { active = false; };
-  }, [resourceId, requestedActivityId, loadResource, reset, selectActivity, setFile, setTags]);
+    loadResource()
+      .then((details) => {
+        if (!active || !details) return;
+        setResource(details);
+        setTags(details.tags ?? []);
+        reset({
+          title: details.title,
+          description: details.description ?? "",
+          tags: details.tags ?? [],
+          file: null,
+        });
+        selectActivity(
+          details.activities.find(
+            (activity) => activity.id === requestedActivityId,
+          ) ??
+            details.activities[0] ??
+            null,
+        );
+      })
+      .catch((err) => {
+        if (active)
+          setError(
+            getApiErrorMessage(err, "La ressource n'a pas pu être chargée."),
+          );
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [
+    resourceId,
+    requestedActivityId,
+    loadResource,
+    reset,
+    selectActivity,
+    setFile,
+    setTags,
+  ]);
 
   const refreshActivityList = async (selectLastActivity = false) => {
     try {
@@ -85,11 +128,15 @@ export default function useResource({
       setResource(details);
       const selected = selectLastActivity
         ? details.activities[details.activities.length - 1]
-        : details.activities.find((activity) => activity.id === previewActivity?.id);
+        : details.activities.find(
+            (activity) => activity.id === previewActivity?.id,
+          );
       selectActivity(selected ?? details.activities[0] ?? null);
       return true;
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "Les activités n'ont pas pu être actualisées."));
+      toast.error(
+        getApiErrorMessage(err, "Les activités n'ont pas pu être actualisées."),
+      );
       return false;
     }
   };
@@ -98,22 +145,45 @@ export default function useResource({
     if (isSubmitting) return;
     setIsSubmitting(true);
     const payload = new FormData();
-    payload.append("data", JSON.stringify({ title: values.title, description: values.description, tags: values.tags.map((tag) => tag.name) }));
+    payload.append(
+      "data",
+      JSON.stringify({
+        title: values.title,
+        description: values.description,
+        tags: values.tags.map((tag) => tag.name),
+      }),
+    );
     if (values.file) payload.append("image", values.file);
     try {
-      const result = await resourcesApi.mutations.save(payload, resourceId ?? undefined);
+      const result = await resourcesApi.mutations.save(
+        payload,
+        resourceId ?? undefined,
+      );
       if (!result.success) throw new Error(result.message);
       toast.success(result.message);
       setFile(null);
       if (!resourceId) {
         onResourceSaved?.();
-        navigate(`/admin/resources/edit/${result.resource.id}`, { replace: true });
+        navigate(`/admin/resources/edit/${result.resource.id}`, {
+          replace: true,
+        });
       } else {
-        setResource((current) => current ? { ...current, ...result.resource, activities: current.activities, tags } : current);
+        setResource((current) =>
+          current
+            ? {
+                ...current,
+                ...result.resource,
+                activities: current.activities,
+                tags,
+              }
+            : current,
+        );
         onResourceSaved?.();
       }
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "La ressource n'a pas pu être enregistrée."));
+      toast.error(
+        getApiErrorMessage(err, "La ressource n'a pas pu être enregistrée."),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -123,24 +193,44 @@ export default function useResource({
     if (!activityToDelete || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const result = await resourcesApi.mutations.removeActivity(activityToDelete.type, activityToDelete.id);
+      const result = await resourcesApi.mutations.removeActivity(
+        activityToDelete.type,
+        activityToDelete.id,
+      );
       if (!result.success) throw new Error(result.message);
       toast.success(result.message);
       setActivityToDelete(null);
       await refreshActivityList();
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "L'activité n'a pas pu être supprimée."));
+      toast.error(
+        getApiErrorMessage(err, "L'activité n'a pas pu être supprimée."),
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return {
-    resourceId, resource, tags, setTags, tagError, setTagError, setFile,
-    mode: resourceId ? "update" as const : "create" as const,
-    data: { register, errors }, isLoading, isSubmitting, error,
-    activityType, activityState, previewActivity, activityToDelete,
-    setActivityToDelete, setActivityState, handleSubmitForm, handleDeleteActivity,
+    resourceId,
+    resource,
+    tags,
+    setTags,
+    tagError,
+    setTagError,
+    setFile,
+    mode: resourceId ? ("update" as const) : ("create" as const),
+    data: { register, errors },
+    isLoading,
+    isSubmitting,
+    error,
+    activityType,
+    activityState,
+    previewActivity,
+    activityToDelete,
+    setActivityToDelete,
+    setActivityState,
+    handleSubmitForm,
+    handleDeleteActivity,
     refreshActivityList,
     setPreviewActivity: (activity: Activity | null) => selectActivity(activity),
     setEditActivity: (activity: Activity) => selectActivity(activity, "edit"),

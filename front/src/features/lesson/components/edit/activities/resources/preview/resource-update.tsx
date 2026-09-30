@@ -9,10 +9,12 @@ import FormInput from "../../../../../../../components/form/FormInput";
 const schema = z.object({
   label: z
     .string()
-    .trim().min(1, "Le nom de la ressource est requis.")
-    .trim().min(1, "Ce champ est obligatoire.").regex(regexGeneric, {
-      message:
-        "Le nom de la ressource contient des caractères non autorisés.",
+    .trim()
+    .min(1, "Le nom de la ressource est requis.")
+    .trim()
+    .min(1, "Ce champ est obligatoire.")
+    .regex(regexGeneric, {
+      message: "Le nom de la ressource contient des caractères non autorisés.",
     }),
 });
 
@@ -48,7 +50,12 @@ function ResourceUpdate({ resource, onSubmit, onCancel }: Props) {
       <form className="modal-box" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-y-4">
           <h2>Modification du nom de la ressource</h2>
-          <FormInput name="label" label="" register={register} error={errors.label} />
+          <FormInput
+            name="label"
+            label=""
+            register={register}
+            error={errors.label}
+          />
           <span className="flex justify-center items-center gap-x-2">
             <p className="text-xs">
               Si vous souhaitez modifier le fichier de la ressource : veuillez

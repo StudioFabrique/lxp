@@ -32,7 +32,11 @@ const NewParcoursForm: FC<Props> = ({
   onCreateFormation,
   onSubmit,
 }) => {
-  const form = useForm({ resolver: zodResolver(newParcoursSchema), defaultValues: { title: "", formationId: initialFormationId ?? 0 }, mode: "onChange" });
+  const form = useForm({
+    resolver: zodResolver(newParcoursSchema),
+    defaultValues: { title: "", formationId: initialFormationId ?? 0 },
+    mode: "onChange",
+  });
   const formationId = form.watch("formationId");
   const titleInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,7 +49,10 @@ const NewParcoursForm: FC<Props> = ({
    * @param id number
    */
   const handleFormation = (id: number) => {
-    form.setValue("formationId", id, { shouldDirty: true, shouldValidate: true });
+    form.setValue("formationId", id, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   /**
@@ -54,7 +61,10 @@ const NewParcoursForm: FC<Props> = ({
    * @returns string
    */
   const setInputStyle = (hasError: boolean) => {
-    return cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
+    return cn(
+      "input input-sm input-bordered focus:outline-none w-full",
+      hasError && "input-error text-error",
+    );
   };
 
   /**
@@ -93,7 +103,10 @@ const NewParcoursForm: FC<Props> = ({
             Donner un nom au parcours
           </label>
           <input
-            ref={(element) => { form.register("title").ref(element); titleInputRef.current = element; }}
+            ref={(element) => {
+              form.register("title").ref(element);
+              titleInputRef.current = element;
+            }}
             data-onboarding-field="parcours-title"
             className={setInputStyle(Boolean(form.formState.errors.title))}
             id="title"

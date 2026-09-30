@@ -16,7 +16,10 @@ type Props = {
 };
 
 const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
-  const form = useForm({ resolver: zodResolver(descriptionFormSchema), defaultValues: { description: objective?.description ?? "" } });
+  const form = useForm({
+    resolver: zodResolver(descriptionFormSchema),
+    defaultValues: { description: objective?.description ?? "" },
+  });
   const error = Boolean(form.formState.errors.description);
 
   /**

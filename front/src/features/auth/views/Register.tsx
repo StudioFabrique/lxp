@@ -55,22 +55,32 @@ export default function RegisterHome() {
       return;
     }
 
-    accountApi.checkInvitation(token).then((result) => {
-      if (active) setEmail(result.email);
-    }).catch((err: unknown) => {
-      if (!active) return;
-      const response = (err as {
-        response?: { data?: { code?: string; message?: string; email?: string } };
-      }).response;
-      setError(response?.data?.message ?? "Ce lien n'est plus valide.");
-      if (response?.data?.code === "ACTIVATION_LINK_EXPIRED") {
-        setExpiredEmail(response.data.email ?? "");
-      }
-    }).finally(() => {
-      if (active) setIsChecking(false);
-    });
+    accountApi
+      .checkInvitation(token)
+      .then((result) => {
+        if (active) setEmail(result.email);
+      })
+      .catch((err: unknown) => {
+        if (!active) return;
+        const response = (
+          err as {
+            response?: {
+              data?: { code?: string; message?: string; email?: string };
+            };
+          }
+        ).response;
+        setError(response?.data?.message ?? "Ce lien n'est plus valide.");
+        if (response?.data?.code === "ACTIVATION_LINK_EXPIRED") {
+          setExpiredEmail(response.data.email ?? "");
+        }
+      })
+      .finally(() => {
+        if (active) setIsChecking(false);
+      });
 
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [token]);
 
   const onSubmit = async (data: RegisterValues) => {
@@ -80,11 +90,14 @@ export default function RegisterHome() {
       const res = await accountApi.activateAccount(token, data.password);
       if (res.success) setSuccess(true);
     } catch (err: unknown) {
-      const response = (err as {
-        response?: { data?: { code?: string; message?: string; email?: string } };
-      }).response;
-      const msg =
-        response?.data?.message ?? "Une erreur est survenue";
+      const response = (
+        err as {
+          response?: {
+            data?: { code?: string; message?: string; email?: string };
+          };
+        }
+      ).response;
+      const msg = response?.data?.message ?? "Une erreur est survenue";
       setError(msg);
       if (response?.data?.code === "ACTIVATION_LINK_EXPIRED") {
         setExpiredEmail(response.data.email ?? "");
@@ -101,7 +114,11 @@ export default function RegisterHome() {
       description={email ? <strong>{email}</strong> : undefined}
     >
       {isChecking ? (
-        <div role="status" aria-label="Vérification du lien" className="space-y-3">
+        <div
+          role="status"
+          aria-label="Vérification du lien"
+          className="space-y-3"
+        >
           <span className="sr-only">Vérification du lien…</span>
           <div className="skeleton h-8 w-2/3" />
           <div className="skeleton h-4 w-full" />

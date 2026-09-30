@@ -27,7 +27,6 @@ const ParcoursInformationsForm: FC<Props> = ({
   const formation = parcours?.formation;
   const parcoursInfos = parcours;
 
-
   const defaultValues = useMemo(
     () => ({
       title: parcoursInfos?.title ?? "",
@@ -48,7 +47,9 @@ const ParcoursInformationsForm: FC<Props> = ({
   });
 
   void dirtyFields;
-  useEffect(() => { if (parcoursInfos) reset(defaultValues, { keepDirtyValues: true }); }, [defaultValues, parcoursInfos, reset]);
+  useEffect(() => {
+    if (parcoursInfos) reset(defaultValues, { keepDirtyValues: true });
+  }, [defaultValues, parcoursInfos, reset]);
 
   const saveInfos = useCallback(
     async (data: { title: string; description?: string }) => {
@@ -88,7 +89,13 @@ const ParcoursInformationsForm: FC<Props> = ({
                 <p>{formatTitle(formation.title)}</p>
               </SubWrapper>
             </div>
-            <form className="w-full flex flex-col gap-y-8 mt-8" onSubmit={(event) => { event.preventDefault(); void onSave(); }}>
+            <form
+              className="w-full flex flex-col gap-y-8 mt-8"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void onSave().catch(() => undefined);
+              }}
+            >
               <div
                 className="flex flex-col gap-y-8"
                 data-onboarding="parcours-essential-information"

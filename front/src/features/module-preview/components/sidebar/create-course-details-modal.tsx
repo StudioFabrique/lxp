@@ -36,7 +36,18 @@ export default function CreateCourseDetailsModal({
   onClose,
   onSubmit,
 }: Props) {
-  const form = useForm({ resolver: zodResolver(courseCreationSchema), defaultValues: { title: initialTitle, description: "", visibility: true, tagIds: [], assignment: emptyAssignmentForm(), lessonTitles: [], selectedContents: [] } });
+  const form = useForm({
+    resolver: zodResolver(courseCreationSchema),
+    defaultValues: {
+      title: initialTitle,
+      description: "",
+      visibility: true,
+      tagIds: [],
+      assignment: emptyAssignmentForm(),
+      lessonTitles: [],
+      selectedContents: [],
+    },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const [description, setDescription] = useFormField(form, "description");
   const [selectedTagIds, setSelectedTagIds] = useFormField(form, "tagIds");
@@ -45,7 +56,10 @@ export default function CreateCourseDetailsModal({
   const [showExistingContents, setShowExistingContents] = useState(false);
   const [includeCourseContents, setIncludeCourseContents] = useState(false);
   const [contentTagId, setContentTagId] = useState(0);
-  const [selectedContents, setSelectedContents] = useFormField(form, "selectedContents");
+  const [selectedContents, setSelectedContents] = useFormField(
+    form,
+    "selectedContents",
+  );
   const [assignment, setAssignment] = useFormField(form, "assignment");
 
   const { data: lessonsResponse, isLoading: isLoadingLessons } = useQuery({
@@ -104,14 +118,22 @@ export default function CreateCourseDetailsModal({
   const needsTagForNewLessons =
     lessonTitles.length > 0 && selectedTagIds.length === 0;
 
-  const handleSubmit = form.handleSubmit(async ({ selectedContents, ...values }) => {
-    if (isSubmitting) return;
-    const success = await onSubmit({ ...values,
-      lessonIds: selectedContents.filter((content) => content.source === "lesson").map((content) => content.id),
-      resourceIds: selectedContents.filter((content) => content.source === "resource").map((content) => content.id),
-    });
-    if (success) onClose();
-  }, showFormErrors);
+  const handleSubmit = form.handleSubmit(
+    async ({ selectedContents, ...values }) => {
+      if (isSubmitting) return;
+      const success = await onSubmit({
+        ...values,
+        lessonIds: selectedContents
+          .filter((content) => content.source === "lesson")
+          .map((content) => content.id),
+        resourceIds: selectedContents
+          .filter((content) => content.source === "resource")
+          .map((content) => content.id),
+      });
+      if (success) onClose();
+    },
+    showFormErrors,
+  );
 
   return createPortal(
     <dialog className="modal modal-open z-100">
@@ -339,7 +361,11 @@ export default function CreateCourseDetailsModal({
                 </div>
 
                 {isLoadingLessons ? (
-                  <div role="status" aria-label="Chargement des contenus" className="w-full space-y-2">
+                  <div
+                    role="status"
+                    aria-label="Chargement des contenus"
+                    className="w-full space-y-2"
+                  >
                     <span className="sr-only">Chargement des contenus…</span>
                     <div className="skeleton h-9 w-full" />
                     <div className="skeleton h-9 w-full" />
@@ -371,7 +397,9 @@ export default function CreateCourseDetailsModal({
                                 onChange={() => toggleExistingLesson(content)}
                               />
                               <span className="flex-1">
-                                <span className="block">{formatTitle(content.title)}</span>
+                                <span className="block">
+                                  {formatTitle(content.title)}
+                                </span>
                                 <span className="text-xs text-base-content/50">
                                   {content.source === "resource"
                                     ? "Ressource supplémentaire"
@@ -411,7 +439,9 @@ export default function CreateCourseDetailsModal({
                                 onChange={() => toggleExistingLesson(content)}
                               />
                               <span className="flex-1">
-                                <span className="block">{formatTitle(content.title)}</span>
+                                <span className="block">
+                                  {formatTitle(content.title)}
+                                </span>
                                 <span className="text-xs text-base-content/50">
                                   {content.source === "resource"
                                     ? "Ressource supplémentaire"
@@ -446,8 +476,10 @@ export default function CreateCourseDetailsModal({
             form="create-course-details-form"
             className="btn btn-primary"
             disabled={
-              !title.trim() || selectedTagIds.length === 0 || isSubmitting
-              || !assignmentFormIsValid(assignment)
+              !title.trim() ||
+              selectedTagIds.length === 0 ||
+              isSubmitting ||
+              !assignmentFormIsValid(assignment)
             }
           >
             {isSubmitting && (

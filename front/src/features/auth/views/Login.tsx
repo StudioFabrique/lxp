@@ -19,7 +19,10 @@ const Login = () => {
   const [submittedEmail, setSubmittedEmail] = useState("");
 
   const [inputType, setInputType] = useState("password");
-  const { register, handleSubmit } = useForm({ resolver: zodResolver(loginSchema), defaultValues: { email: "", password: "" } });
+  const { register, handleSubmit } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
   const submitHandler = handleSubmit((values) => {
     setSubmittedEmail(values.email);
     login(values.email, values.password);

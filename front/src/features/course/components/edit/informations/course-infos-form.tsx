@@ -42,11 +42,17 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
   });
 
   void dirtyFields;
-  useEffect(() => { reset(defaultValues, { keepDirtyValues: true }); }, [defaultValues, reset]);
+  useEffect(() => {
+    reset(defaultValues, { keepDirtyValues: true });
+  }, [defaultValues, reset]);
   const visibility = watch("visibility");
 
   const saveCourse = useCallback(
-    async (data: { title: string; description?: string; visibility: boolean }) => {
+    async (data: {
+      title: string;
+      description?: string;
+      visibility: boolean;
+    }) => {
       try {
         const response = await courseApi.mutations.updateInfos({
           id: props.courseId,
@@ -56,7 +62,14 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
         });
         if (!response.success) throw new Error(response.message);
         if (response.success) {
-          dispatch({ type: "SET_COURSE_INFOS", payload: response.data as { title: string; description: string; visibility: boolean } });
+          dispatch({
+            type: "SET_COURSE_INFOS",
+            payload: response.data as {
+              title: string;
+              description: string;
+              visibility: boolean;
+            },
+          });
           toast.success(response.message);
         }
       } catch (err: unknown) {
@@ -76,10 +89,15 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
 
   useAutoSave(watch, onSave);
 
-
   return (
     <>
-      <form className="w-full flex flex-col gap-y-8" onSubmit={rhfHandleSubmit(saveCourse)}>
+      <form
+        className="w-full flex flex-col gap-y-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void onSave().catch(() => undefined);
+        }}
+      >
         <div className="flex flex-col gap-y-4">
           <FormInput
             label="Titre du cours *"

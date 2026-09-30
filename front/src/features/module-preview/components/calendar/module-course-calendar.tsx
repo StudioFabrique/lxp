@@ -115,14 +115,25 @@ export function DatesEditor({
   onSave: (dates: CourseDates[]) => Promise<boolean>;
   onDelete: () => void;
 }) {
-  const form = useForm({ resolver: zodResolver(courseDatesListSchema), defaultValues: { dates: dates.map((date) => ({ ...date })) } });
+  const form = useForm({
+    resolver: zodResolver(courseDatesListSchema),
+    defaultValues: { dates: dates.map((date) => ({ ...date })) },
+  });
   const [draft, setDraft] = useFormField(form, "dates");
   const valid = courseDatesListSchema.safeParse({ dates: draft }).success;
-  const validDates = courseDatesListSchema.safeParse({ dates: draft.map((date) => ({ ...date, startTime: undefined, endTime: undefined })) }).success;
+  const validDates = courseDatesListSchema.safeParse({
+    dates: draft.map((date) => ({
+      ...date,
+      startTime: undefined,
+      endTime: undefined,
+    })),
+  }).success;
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={form.handleSubmit(async ({ dates }) => { if (!isSaving) await onSave(dates); }, showFormErrors)}
+      onSubmit={form.handleSubmit(async ({ dates }) => {
+        if (!isSaving) await onSave(dates);
+      }, showFormErrors)}
     >
       <div className="max-h-[50vh] space-y-4 overflow-y-auto">
         {draft.map((date, index) => (

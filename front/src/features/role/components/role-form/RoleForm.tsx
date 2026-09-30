@@ -12,10 +12,7 @@ import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
 import type Role from "../../../../utils/interfaces/role";
-import {
-  roleApi,
-  type RoleFormPayload,
-} from "../../api/role.api";
+import { roleApi, type RoleFormPayload } from "../../api/role.api";
 import { setInputStyle } from "../../helpers/formClasses";
 import RoleTypeSelector from "./RoleTypeSelector";
 
@@ -44,9 +41,14 @@ const RoleForm = ({
   const actorRank = user?.roles[0]?.rank ?? 4;
   const defaultRoleType = Math.min(actorRank + 1, 4);
   const formId = useId();
-  const roleForm = useForm({ resolver: zodResolver(roleFormSchema), defaultValues: {
-    name: getInitialName(role, duplicateFrom), label: getInitialLabel(role, duplicateFrom), rank: role?.rank ?? duplicateFrom?.rank ?? defaultRoleType,
-  } });
+  const roleForm = useForm({
+    resolver: zodResolver(roleFormSchema),
+    defaultValues: {
+      name: getInitialName(role, duplicateFrom),
+      label: getInitialLabel(role, duplicateFrom),
+      rank: role?.rank ?? duplicateFrom?.rank ?? defaultRoleType,
+    },
+  });
   const [name, setName] = useFormField(roleForm, "name");
   const [label, setLabel] = useFormField(roleForm, "label");
   const [currentRoleType, setCurrentRoleType] = useFormField(roleForm, "rank");
@@ -177,9 +179,7 @@ const RoleForm = ({
           currentRoleType={currentRoleType}
           onSetCurrentRoleType={setCurrentRoleType}
           editMode={Boolean(role)}
-          disabled={Boolean(
-            duplicateFrom || (role && role.protection >= 1),
-          )}
+          disabled={Boolean(duplicateFrom || (role && role.protection >= 1))}
           minimumRank={actorRank}
         />
       </div>
@@ -191,7 +191,9 @@ const RoleForm = ({
           disabled={isRequestLoading}
         >
           {role ? "Enregistrer" : duplicateFrom ? "Dupliquer" : "Créer"}
-          {isRequestLoading ? <span className="loading loading-spinner" /> : null}
+          {isRequestLoading ? (
+            <span className="loading loading-spinner" />
+          ) : null}
         </button>
       </div>
     </form>

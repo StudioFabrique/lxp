@@ -34,7 +34,16 @@ type UseFormationFormOptions = {
 
 export function useFormationForm(options: UseFormationFormOptions = {}) {
   const queryClient = useQueryClient();
-  const form = useForm<FormationFormValues>({ resolver: zodResolver(formationSchema), defaultValues: { title: "", description: "", code: "", level: "", tags: [] } });
+  const form = useForm<FormationFormValues>({
+    resolver: zodResolver(formationSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      code: "",
+      level: "",
+      tags: [],
+    },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const [description, setDescription] = useFormField(form, "description");
   const [code, setCode] = useFormField(form, "code");
@@ -83,7 +92,15 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
         setCurrentTags(matched);
       }
     },
-    [formationsList, allTags, setTitle, setDescription, setCode, setLevel, setCurrentTags],
+    [
+      formationsList,
+      allTags,
+      setTitle,
+      setDescription,
+      setCode,
+      setLevel,
+      setCurrentTags,
+    ],
   );
 
   const handleTagSubmit = useCallback(
@@ -111,22 +128,43 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
     [allTags, setCurrentTags],
   );
 
-  const handleRemoveTag = useCallback((id: number) => {
-    setCurrentTags((prev) => prev.filter((t) => t.id !== id));
-  }, [setCurrentTags]);
+  const handleRemoveTag = useCallback(
+    (id: number) => {
+      setCurrentTags((prev) => prev.filter((t) => t.id !== id));
+    },
+    [setCurrentTags],
+  );
 
   const buildPayload = async (values: FormationFormValues) => {
-    const newTags = values.tags.filter((tag) => !allTags.some((existing) => existing.name.toLowerCase() === tag.name.toLowerCase()));
-    const created = newTags.length ? await formationApi.mutations.createTags(newTags.map(({ name, color }) => ({ name, color }))) : [];
+    const newTags = values.tags.filter(
+      (tag) =>
+        !allTags.some(
+          (existing) => existing.name.toLowerCase() === tag.name.toLowerCase(),
+        ),
+    );
+    const created = newTags.length
+      ? await formationApi.mutations.createTags(
+          newTags.map(({ name, color }) => ({ name, color })),
+        )
+      : [];
     if (created.length) void refetchTags();
     return {
-      title: values.title, description: values.description || undefined, code: values.code || undefined, level: values.level,
-      tags: values.tags.map((tag) => created.find((item) => item.name.toLowerCase() === tag.name.toLowerCase())?.id ?? tag.id),
+      title: values.title,
+      description: values.description || undefined,
+      code: values.code || undefined,
+      level: values.level,
+      tags: values.tags.map(
+        (tag) =>
+          created.find(
+            (item) => item.name.toLowerCase() === tag.name.toLowerCase(),
+          )?.id ?? tag.id,
+      ),
     };
   };
 
   const createMutation = useMutation({
-    mutationFn: async (values: FormationFormValues) => formationApi.mutations.createFormation(await buildPayload(values)),
+    mutationFn: async (values: FormationFormValues) =>
+      formationApi.mutations.createFormation(await buildPayload(values)),
     onSuccess: (formation) => {
       toast.success("Formation créée avec succès");
       emitOnboardingEvent({ type: "formation_created", id: formation.id });
@@ -156,7 +194,11 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (values: FormationFormValues) => formationApi.mutations.updateFormation(formationToEdit!.id, await buildPayload(values)),
+    mutationFn: async (values: FormationFormValues) =>
+      formationApi.mutations.updateFormation(
+        formationToEdit!.id,
+        await buildPayload(values),
+      ),
     onSuccess: () => {
       toast.success("Formation mise à jour avec succès");
       resetForm();
@@ -169,11 +211,19 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
 
   const handleSubmit = form.handleSubmit(async (values) => {
     if (createMutation.isPending || updateMutation.isPending) return;
-    if (!isEditing && formationsList.some((formation) => formation.title.trim().toLocaleLowerCase("fr") === values.title.toLocaleLowerCase("fr"))) {
+    if (
+      !isEditing &&
+      formationsList.some(
+        (formation) =>
+          formation.title.trim().toLocaleLowerCase("fr") ===
+          values.title.toLocaleLowerCase("fr"),
+      )
+    ) {
       toast.error("Une formation avec ce nom existe déjà.");
       return;
     }
-    if (isEditing) await updateMutation.mutateAsync(values).catch(() => undefined);
+    if (isEditing)
+      await updateMutation.mutateAsync(values).catch(() => undefined);
     else await createMutation.mutateAsync(values).catch(() => undefined);
   }, showFormErrors);
 
@@ -202,6 +252,8 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
     cancelEdit: resetForm,
     handleTagSubmit,
     handleRemoveTag,
-    handleSubmit: () => { void handleSubmit(); },
+    handleSubmit: () => {
+      void handleSubmit();
+    },
   };
 }

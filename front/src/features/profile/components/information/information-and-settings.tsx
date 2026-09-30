@@ -34,7 +34,9 @@ const InformationAndSettings: FC<{
 }> = ({ formRef, onSaved, onDirtyChange, isStudent = false }) => {
   const [isLoading, setIsLoading] = useState(true);
 
-  const form = useForm({ resolver: zodResolver(profileInformationSchema), defaultValues: {
+  const form = useForm({
+    resolver: zodResolver(profileInformationSchema),
+    defaultValues: {
       firstname: "",
       lastname: "",
       nickname: "",
@@ -43,10 +45,16 @@ const InformationAndSettings: FC<{
       city: "",
       postCode: "",
       phoneNumber: "",
-      hobbies: [] as Hobby[], links: [] as Link[],
+      hobbies: [] as Hobby[],
+      links: [] as Link[],
     },
   });
-  const { register, handleSubmit, formState: { errors, isDirty, isSubmitting }, reset } = form;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isSubmitting },
+    reset,
+  } = form;
   const [hobbies, setHobbies] = useFormField(form, "hobbies");
   const [links, setLinks] = useFormField(form, "links");
 
@@ -95,7 +103,8 @@ const InformationAndSettings: FC<{
         city: userData.city ?? "",
         postCode: userData.postCode ?? "",
         phoneNumber: userData.phoneNumber ?? "",
-        hobbies: userData.hobbies ?? [], links: userData.links ?? [],
+        hobbies: userData.hobbies ?? [],
+        links: userData.links ?? [],
       });
     }
   }, [userData, reset]);
@@ -115,7 +124,18 @@ const InformationAndSettings: FC<{
       })}
     >
       <Info formProps={{ register, errors }} />
-      {isStudent && <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); }} onLinksChange={(items) => { setLinks(items); }} />}
+      {isStudent && (
+        <ProfileItemsEditor
+          hobbies={hobbies}
+          links={links}
+          onHobbiesChange={(items) => {
+            setHobbies(items);
+          }}
+          onLinksChange={(items) => {
+            setLinks(items);
+          }}
+        />
+      )}
     </form>
   );
 };

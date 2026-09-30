@@ -2,7 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
-import { onboardingStepSchema, type OnboardingValues } from "../onboarding.schema";
+import {
+  onboardingStepSchema,
+  type OnboardingValues,
+} from "../onboarding.schema";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
@@ -73,13 +76,12 @@ export default function StudentLearningOnboarding() {
 
     if (context.onboardingMode === "initial") {
       onboardingSteps.push({ key: "theme", label: "Apparence", kind: "theme" });
+      onboardingSteps.push({
+        key: "learning",
+        label: "Votre façon d’apprendre",
+        kind: "learning",
+      });
     }
-
-    onboardingSteps.push({
-      key: "learning",
-      label: "Votre façon d’apprendre",
-      kind: "learning",
-    });
 
     for (const formation of context.availableFormations) {
       for (const parcours of formation.parcours) {
@@ -95,19 +97,32 @@ export default function StudentLearningOnboarding() {
         }
       }
     }
-    onboardingSteps.push({
-      key: "profile",
-      label: "À propos de vous",
-      kind: "profile",
-    });
-
-    onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
+    if (context.onboardingMode === "initial") {
+      onboardingSteps.push({
+        key: "profile",
+        label: "À propos de vous",
+        kind: "profile",
+      });
+      onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
+    }
     return onboardingSteps;
   }, [context]);
 
   const activeStep = steps[index];
-  const schema = onboardingStepSchema(activeStep?.kind ?? "theme", activeStep?.moduleId);
-  const form = useForm<OnboardingValues>({ resolver: zodResolver(schema), defaultValues: { pace: null, preferences: [], levels: {}, hobbies: [], links: [] } });
+  const schema = onboardingStepSchema(
+    activeStep?.kind ?? "theme",
+    activeStep?.moduleId,
+  );
+  const form = useForm<OnboardingValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      pace: null,
+      preferences: [],
+      levels: {},
+      hobbies: [],
+      links: [],
+    },
+  });
   const [pace, setPace] = useFormField(form, "pace");
   const [preferences, setPreferences] = useFormField(form, "preferences");
   const [levels, setLevels] = useFormField(form, "levels");
@@ -123,7 +138,6 @@ export default function StudentLearningOnboarding() {
   > | null>(null);
   const [profileItemsChanged, setProfileItemsChanged] = useState(false);
   const contentScrollRef = useRef<HTMLDivElement>(null);
-
 
   useEffect(() => {
     profileApi.queries
@@ -274,11 +288,21 @@ export default function StudentLearningOnboarding() {
     ) ?? formation?.parcours[0];
   const module = parcours?.modules.find((item) => item.id === step.moduleId);
 
+  const completeOnboarding = async () => {
+    await learningProfileApi.update({ action: "confirm" });
+    await queryClient.invalidateQueries({ queryKey: learningProfileKey });
+    toast.success("Votre profil d’apprentissage est prêt.");
+    navigate("/student/dashboard", { replace: true });
+  };
+
   const continueToNext = form.handleSubmit(async (values) => {
     setSaving(true);
     try {
       if (step.kind === "learning" && pace)
-        await learningProfileApi.update({ pace: values.pace!, preferences: values.preferences });
+        await learningProfileApi.update({
+          pace: values.pace!,
+          preferences: values.preferences,
+        });
       if (step.kind === "module" && step.moduleId) {
         await learningProfileApi.updateModule(
           step.moduleId,
@@ -295,7 +319,11 @@ export default function StudentLearningOnboarding() {
         payload.append(
           "data",
           JSON.stringify({
-            user: { ...profileInformation, hobbies: values.hobbies, links: values.links },
+            user: {
+              ...profileInformation,
+              hobbies: values.hobbies,
+              links: values.links,
+            },
           }),
         );
         await profileApi.mutations.updateInformation(payload);
@@ -304,6 +332,8 @@ export default function StudentLearningOnboarding() {
       if (next) {
         await learningProfileApi.update({ currentStep: next.key });
         setIndex(index + 1);
+      } else if (context.onboardingMode === "additional") {
+        await completeOnboarding();
       }
     } catch {
       toast.error("Cette étape n’a pas pu être enregistrée.");
@@ -315,10 +345,7 @@ export default function StudentLearningOnboarding() {
   const confirm = form.handleSubmit(async () => {
     setSaving(true);
     try {
-      await learningProfileApi.update({ action: "confirm" });
-      await queryClient.invalidateQueries({ queryKey: learningProfileKey });
-      toast.success("Votre profil d’apprentissage est prêt.");
-      navigate("/student/dashboard", { replace: true });
+      await completeOnboarding();
     } catch {
       toast.error("Vérifiez que toutes les réponses ont été enregistrées.");
     } finally {
@@ -530,7 +557,6 @@ export default function StudentLearningOnboarding() {
                       type="submit"
                       className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
                       disabled={cannotContinue}
-
                     >
                       Continuer
                     </button>

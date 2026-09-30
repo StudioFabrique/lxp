@@ -134,7 +134,8 @@ const AdminSignInForm = ({
                 <strong className="text-base-content">{activationEmail}</strong>
               </div>
               <p>
-                Cliquez sur ce lien compris dans le mail pour activer votre compte.
+                Cliquez sur ce lien compris dans le mail pour activer votre
+                compte.
               </p>
             </div>
           </div>
@@ -155,7 +156,10 @@ const AdminSignInForm = ({
         <QuestionMarkTooltip tooltipValue={ROOT_ACCOUNT_POLICY} />
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col gap-3">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-1 flex-col gap-3"
+      >
         {/* Email */}
         <div className="form-control w-full">
           <input

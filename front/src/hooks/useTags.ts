@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { tagSelectionSchema, tagDraftSchema } from "../features/tags/tag.schema";
+import {
+  tagSelectionSchema,
+  tagDraftSchema,
+} from "../features/tags/tag.schema";
 import { useFormField } from "../components/form/useFormField";
 import { showFormErrors } from "../components/form/form-errors";
 import { ChangeEvent, useCallback } from "react";
@@ -11,9 +14,15 @@ import {
 } from "../features/tags/helpers/tag-selection";
 
 const useTags = (initialTags: Tag[]) => {
-  const form = useForm({ resolver: zodResolver(tagSelectionSchema), defaultValues: { tags: [] as Tag[] } });
+  const form = useForm({
+    resolver: zodResolver(tagSelectionSchema),
+    defaultValues: { tags: [] as Tag[] },
+  });
   const [currentTags, setCurrentTags] = useFormField(form, "tags");
-  const draftForm = useForm({ resolver: zodResolver(tagDraftSchema), defaultValues: { tag: "" } });
+  const draftForm = useForm({
+    resolver: zodResolver(tagDraftSchema),
+    defaultValues: { tag: "" },
+  });
   const [tag, setTag] = useFormField(draftForm, "tag");
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -25,9 +34,7 @@ const useTags = (initialTags: Tag[]) => {
       return;
     }
 
-    setCurrentTags((current) =>
-      addPendingTag(current, initialTags, committed),
-    );
+    setCurrentTags((current) => addPendingTag(current, initialTags, committed));
     setTag(pending);
   };
 
@@ -43,14 +50,17 @@ const useTags = (initialTags: Tag[]) => {
     setCurrentTags((prevState) => prevState.filter((item) => item.id !== id));
   };
 
-  const handleCheckTags = useCallback((tagsToCheck = currentTags) => {
-    return tagsToCheck.filter(
-      (item) =>
-        !initialTags.find(
-          (elem) => elem.name.toLowerCase() === item.name.toLowerCase(),
-        ),
-    );
-  }, [currentTags, initialTags]);
+  const handleCheckTags = useCallback(
+    (tagsToCheck = currentTags) => {
+      return tagsToCheck.filter(
+        (item) =>
+          !initialTags.find(
+            (elem) => elem.name.toLowerCase() === item.name.toLowerCase(),
+          ),
+      );
+    },
+    [currentTags, initialTags],
+  );
 
   const getTagsWithPendingInput = useCallback(
     () => addPendingTag(currentTags, initialTags, tag),
@@ -78,9 +88,16 @@ const useTags = (initialTags: Tag[]) => {
     [initialTags, setCurrentTags],
   );
 
-  const submitTags = async (onSubmit: (tags: Tag[]) => void | Promise<void>) => {
-    form.setValue("tags", handleCheckTags(getTagsWithPendingInput()), { shouldDirty: true });
-    await form.handleSubmit(async ({ tags }) => onSubmit(tags), showFormErrors)();
+  const submitTags = async (
+    onSubmit: (tags: Tag[]) => void | Promise<void>,
+  ) => {
+    form.setValue("tags", handleCheckTags(getTagsWithPendingInput()), {
+      shouldDirty: true,
+    });
+    await form.handleSubmit(
+      async ({ tags }) => onSubmit(tags),
+      showFormErrors,
+    )();
   };
   return {
     submitTags,

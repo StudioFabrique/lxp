@@ -26,7 +26,15 @@ export default function EditLessonModal({
   onClose,
   onSubmit,
 }: Props) {
-  const form = useForm({ resolver: zodResolver(lessonDetailsSchema), defaultValues: { title: lesson.title, description: lesson.description ?? "", modalite: lesson.modalite ?? "distanciel", tagId: lesson.tag?.id ?? courseTags[0]?.id ?? 0 } });
+  const form = useForm({
+    resolver: zodResolver(lessonDetailsSchema),
+    defaultValues: {
+      title: lesson.title,
+      description: lesson.description ?? "",
+      modalite: lesson.modalite ?? "distanciel",
+      tagId: lesson.tag?.id ?? courseTags[0]?.id ?? 0,
+    },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const [description, setDescription] = useFormField(form, "description");
   const [modalite, setModalite] = useFormField(form, "modalite");
@@ -40,7 +48,11 @@ export default function EditLessonModal({
 
   const handleSubmit = form.handleSubmit(async (values) => {
     if (isSubmitting) return;
-    if (!courseTags.some((tag) => tag.id === values.tagId)) { form.setError("tagId", { message: "Sélectionnez un tag du cours." }); showFormErrors(form.formState.errors); return; }
+    if (!courseTags.some((tag) => tag.id === values.tagId)) {
+      form.setError("tagId", { message: "Sélectionnez un tag du cours." });
+      showFormErrors(form.formState.errors);
+      return;
+    }
     if (await onSubmit(values)) onClose();
   }, showFormErrors);
 
@@ -59,7 +71,9 @@ export default function EditLessonModal({
             <div className="min-w-0">
               <h3 className="text-lg font-bold">Modifier la leçon</h3>
               <p className="truncate text-sm text-base-content/60">
-                <span className="inline-block first-letter:uppercase">{lesson.title}</span>
+                <span className="inline-block first-letter:uppercase">
+                  {lesson.title}
+                </span>
               </p>
             </div>
           </div>

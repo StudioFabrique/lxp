@@ -13,7 +13,10 @@ type TagsHomeEditingProps = {
 };
 
 const TagsHomeEditing = ({ tag, onSubmitTag }: TagsHomeEditingProps) => {
-  const form = useForm({ resolver: zodResolver(tagNameSchema), defaultValues: { name: tag.name } });
+  const form = useForm({
+    resolver: zodResolver(tagNameSchema),
+    defaultValues: { name: tag.name },
+  });
   const [tagName, setTagName] = useFormField(form, "name");
   const tagError = Boolean(form.formState.errors.name);
 
@@ -22,10 +25,16 @@ const TagsHomeEditing = ({ tag, onSubmitTag }: TagsHomeEditingProps) => {
     setTagName(e.currentTarget.value);
   };
 
-  const handleSubmitTag = form.handleSubmit(({ name }) => onSubmitTag(tag.id, name), showFormErrors);
+  const handleSubmitTag = form.handleSubmit(
+    ({ name }) => onSubmitTag(tag.id, name),
+    showFormErrors,
+  );
 
   return (
-    <form onSubmit={handleSubmitTag} className="flex flex-col items-center gap-4 py-5 px-1">
+    <form
+      onSubmit={handleSubmitTag}
+      className="flex flex-col items-center gap-4 py-5 px-1"
+    >
       <input
         className={cn("input", tagError && "input-error")}
         value={tagName}

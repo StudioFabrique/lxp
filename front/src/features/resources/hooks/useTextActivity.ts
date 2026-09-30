@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { textActivitySchema } from "../text-activity.schema";
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
- 
+
 import { useCallback, useEffect, useState } from "react";
 import { resourcesApi } from "../api/resources.api";
 import toast from "react-hot-toast";
@@ -11,7 +11,10 @@ import { ACTIVITIES } from "../../../config/urls";
 import { Activity } from "../../../utils/interfaces/activity";
 
 const useTextActivity = () => {
-  const form = useForm({ resolver: zodResolver(textActivitySchema), defaultValues: { title: "", content: "" } });
+  const form = useForm({
+    resolver: zodResolver(textActivitySchema),
+    defaultValues: { title: "", content: "" },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const [content, setContent] = useFormField(form, "content");
   const [error, setError] = useState<string>("");
@@ -20,13 +23,16 @@ const useTextActivity = () => {
     id?: number,
     title?: string,
     content?: string,
-    mode: "read" | "write" | "edit" = "write"
+    mode: "read" | "write" | "edit" = "write",
   ): Promise<boolean> => {
     // Implementation for creating an activity
     if (!id) return false;
     form.setValue("title", title ?? form.getValues("title"));
     form.setValue("content", content ?? form.getValues("content"));
-    if (!await form.trigger()) { showFormErrors(form.formState.errors); return false; }
+    if (!(await form.trigger())) {
+      showFormErrors(form.formState.errors);
+      return false;
+    }
     const values = textActivitySchema.parse(form.getValues());
 
     const body = {
@@ -62,9 +68,12 @@ const useTextActivity = () => {
     setTitle(newTitle);
   };
 
-  const editActivityContent = useCallback((newContent: string) => {
-    setContent(newContent);
-  }, [setContent]);
+  const editActivityContent = useCallback(
+    (newContent: string) => {
+      setContent(newContent);
+    },
+    [setContent],
+  );
 
   const deleteActivity = () => {
     // Implementation for deleting an activity
@@ -102,10 +111,10 @@ const useTextActivity = () => {
         response.text().then((content) => {
           editActivityContent(content);
           setTitle(activity!.title!);
-        })
+        }),
       );
     },
-    [editActivityContent, setTitle]
+    [editActivityContent, setTitle],
   );
 
   useEffect(() => {

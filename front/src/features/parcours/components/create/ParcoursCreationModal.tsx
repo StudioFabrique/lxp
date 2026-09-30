@@ -3,7 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
-const templateSchema = z.object({ formationId: z.number().int().positive().optional(), parcoursId: z.number().int().positive().optional() }).refine((value) => !!value.formationId && !!value.parcoursId, "Choisissez une formation et un parcours.");
+const templateSchema = z
+  .object({
+    formationId: z.number().int().positive().optional(),
+    parcoursId: z.number().int().positive().optional(),
+  })
+  .refine(
+    (value) => !!value.formationId && !!value.parcoursId,
+    "Choisissez une formation et un parcours.",
+  );
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -46,8 +54,14 @@ export default function ParcoursCreationModal({
   const navigate = useNavigate();
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("create");
-  const templateForm = useForm<z.infer<typeof templateSchema>>({ resolver: zodResolver(templateSchema), defaultValues: { formationId: initialFormationId } });
-  const [formationId, setFormationId] = useFormField(templateForm, "formationId");
+  const templateForm = useForm<z.infer<typeof templateSchema>>({
+    resolver: zodResolver(templateSchema),
+    defaultValues: { formationId: initialFormationId },
+  });
+  const [formationId, setFormationId] = useFormField(
+    templateForm,
+    "formationId",
+  );
   const [parcoursId, setParcoursId] = useFormField(templateForm, "parcoursId");
   const [pendingArchive, setPendingArchive] = useState<File>();
   const [initialImportFormationChoice, setInitialImportFormationChoice] =
@@ -60,21 +74,35 @@ export default function ParcoursCreationModal({
   });
   const formationList: Item[] = Array.isArray(formations) ? formations : [];
 
-  const { data: parcoursList = [], isPending: isParcoursListPending, isError: isParcoursListError } = useQuery({
+  const {
+    data: parcoursList = [],
+    isPending: isParcoursListPending,
+    isError: isParcoursListError,
+  } = useQuery({
     queryKey: ["parcours", "formation", formationId],
-    queryFn: async () => (await parcoursApi.queries.getByFormation(formationId!)).data,
+    queryFn: async () =>
+      (await parcoursApi.queries.getByFormation(formationId!)).data,
     enabled: mode === "template" && formationId !== undefined,
   });
 
   const { mutate: createParcours, isPending: isCreating } = useMutation({
-    mutationFn: ({ title, formationId }: { title: string; formationId: number }) =>
+    mutationFn: ({
+      title,
+      formationId,
+    }: {
+      title: string;
+      formationId: number;
+    }) =>
       parcoursApi.mutations.createParcours({ title, formation: formationId }),
     onSuccess: (data) => {
       emitOnboardingEvent({ type: "parcours_created", id: data.parcoursId });
       navigate(`/admin/parcours/edit/${data.parcoursId}`);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(error.response?.data?.message ?? "Le parcours n'a pas pu être enregistré.");
+      toast.error(
+        error.response?.data?.message ??
+          "Le parcours n'a pas pu être enregistré.",
+      );
     },
   });
 
@@ -96,12 +124,16 @@ export default function ParcoursCreationModal({
     onSuccess: (data) => {
       toast.success(`Le parcours « ${data.title} » a été importé.`);
       if (data.warnings.length > 0) {
-        toast(`${data.warnings.length} fichier(s) étaient manquants lors de l'export.`);
+        toast(
+          `${data.warnings.length} fichier(s) étaient manquants lors de l'export.`,
+        );
       }
       navigate(`/admin/parcours/edit/${data.parcoursId}`);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(error.response?.data?.message ?? "Le parcours n'a pas pu être importé.");
+      toast.error(
+        error.response?.data?.message ?? "Le parcours n'a pas pu être importé.",
+      );
     },
   });
 
@@ -131,7 +163,10 @@ export default function ParcoursCreationModal({
     }
     try {
       const formationTitle = await readParcoursArchiveFormationTitle(archive);
-      const detectedFormationId = findDetectedFormationId(formationList, formationTitle);
+      const detectedFormationId = findDetectedFormationId(
+        formationList,
+        formationTitle,
+      );
       setPendingArchive(archive);
       setDetectedFormationTitle(formationTitle);
       setInitialImportFormationChoice(
@@ -139,27 +174,58 @@ export default function ParcoursCreationModal({
       );
       setMode("import");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Le parcours n'a pas pu être importé.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Le parcours n'a pas pu être importé.",
+      );
     }
   };
 
   return (
     <Modal
-      title={mode === "create" ? "Création d'un parcours" : mode === "template" ? "Créer un parcours à partir d'un modèle" : "Importer un parcours"}
-      titleTooltip={mode === "template" ? "Les objectifs, compétences, contacts, modules, cours, leçons et activités du parcours sélectionné seront dupliqués." : undefined}
-      onLeftClick={mode === "create" ? close : mode === "template" ? backToCreate : undefined}
+      title={
+        mode === "create"
+          ? "Création d'un parcours"
+          : mode === "template"
+            ? "Créer un parcours à partir d'un modèle"
+            : "Importer un parcours"
+      }
+      titleTooltip={
+        mode === "template"
+          ? "Les objectifs, compétences, contacts, modules, cours, leçons et activités du parcours sélectionné seront dupliqués."
+          : undefined
+      }
+      onLeftClick={
+        mode === "create"
+          ? close
+          : mode === "template"
+            ? backToCreate
+            : undefined
+      }
       leftLabel={mode === "create" ? "Fermer" : "Retour"}
       closeButtonAtTop={mode === "create"}
-      onRightClick={mode === "template" ? templateForm.handleSubmit(({ parcoursId }) => { if (!isPending) duplicateParcours(parcoursId!); }, showFormErrors) : undefined}
+      onRightClick={
+        mode === "template"
+          ? templateForm.handleSubmit(({ parcoursId }) => {
+              if (!isPending) duplicateParcours(parcoursId!);
+            }, showFormErrors)
+          : undefined
+      }
       rightLabel="Dupliquer le parcours"
       rightDisabled={parcoursId === undefined}
       isSubmitting={isDuplicating}
       modalBoxStyle="w-11/12 max-w-3xl"
     >
       {mode === "create" ? (
-        isCreating ? <Loader variant="panel" label="Création du parcours" /> : (
+        isCreating ? (
+          <Loader variant="panel" label="Création du parcours" />
+        ) : (
           <div className="mt-6 flex flex-col gap-6">
-            <p>Pour commencer, veuillez saisir les informations nécessaires pour créer le parcours</p>
+            <p>
+              Pour commencer, veuillez saisir les informations nécessaires pour
+              créer le parcours
+            </p>
             <div data-onboarding="parcours-create">
               <BoxWrapper>
                 <h2 className="text-lg font-bold">Créer un nouveau parcours</h2>
@@ -205,24 +271,38 @@ export default function ParcoursCreationModal({
         <>
           <div className="mt-6 flex flex-col gap-5">
             <div>
-              <label className="mb-2 block text-sm font-semibold">Rechercher par formation</label>
+              <label className="mb-2 block text-sm font-semibold">
+                Rechercher par formation
+              </label>
               <Selecter
                 list={formationList}
                 title="Sélectionner une formation"
                 defaultItem={{ id: initialFormationId ?? 0, title: "" }}
-                onSelectItem={(id) => { setFormationId(id); setParcoursId(undefined); }}
+                onSelectItem={(id) => {
+                  setFormationId(id);
+                  setParcoursId(undefined);
+                }}
               />
             </div>
             <div className="flex flex-col gap-2">
               <p className="text-sm font-semibold">Parcours disponibles</p>
               {!formationId ? (
-                <p className="p-6 text-center text-sm text-base-content/60">Sélectionnez une formation pour afficher ses parcours.</p>
+                <p className="p-6 text-center text-sm text-base-content/60">
+                  Sélectionnez une formation pour afficher ses parcours.
+                </p>
               ) : isParcoursListError ? (
-                <p className="p-6 text-center text-sm text-error">Erreur lors du chargement des parcours.</p>
+                <p className="p-6 text-center text-sm text-error">
+                  Erreur lors du chargement des parcours.
+                </p>
               ) : isParcoursListPending ? (
-                <Loader variant="rows" label="Chargement des parcours disponibles" />
+                <Loader
+                  variant="rows"
+                  label="Chargement des parcours disponibles"
+                />
               ) : parcoursList.length === 0 ? (
-                <p className="rounded-xl p-6 text-center text-sm text-base-content/60">Aucun parcours ne peut être utilisé comme modèle.</p>
+                <p className="rounded-xl p-6 text-center text-sm text-base-content/60">
+                  Aucun parcours ne peut être utilisé comme modèle.
+                </p>
               ) : (
                 <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
                   {parcoursList.map((item: Item) => (
@@ -230,10 +310,17 @@ export default function ParcoursCreationModal({
                       key={item.id}
                       type="button"
                       onClick={() => setParcoursId(item.id)}
-                      className={cn("flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors", parcoursId === item.id ? "border-primary bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer")}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors",
+                        parcoursId === item.id
+                          ? "border-primary bg-primary/10"
+                          : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer",
+                      )}
                     >
                       <Copy className="h-4 w-4 shrink-0 text-primary" />
-                      <span className="font-medium">{formatTitle(item.title)}</span>
+                      <span className="font-medium">
+                        {formatTitle(item.title)}
+                      </span>
                     </button>
                   ))}
                 </div>

@@ -31,7 +31,15 @@ export default function CreateLessonModal({
   onClose,
   onSubmit,
 }: Props) {
-  const form = useForm({ resolver: zodResolver(lessonDetailsSchema), defaultValues: { title: "", description: "", modalite: "distanciel", tagId: courseTags[0]?.id ?? 0 } });
+  const form = useForm({
+    resolver: zodResolver(lessonDetailsSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      modalite: "distanciel",
+      tagId: courseTags[0]?.id ?? 0,
+    },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const [description, setDescription] = useFormField(form, "description");
   const [modalite, setModalite] = useFormField(form, "modalite");

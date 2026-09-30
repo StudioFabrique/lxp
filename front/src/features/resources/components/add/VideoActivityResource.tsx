@@ -2,7 +2,11 @@ import { ChangeEvent, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { videoSchema, videoFileError, type VideoFormValues } from "../../../lesson/media.schema";
+import {
+  videoSchema,
+  videoFileError,
+  type VideoFormValues,
+} from "../../../lesson/media.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { Activity } from "../../../../utils/interfaces/activity";
 import ElementNotFound from "../../../../components/UI/element-not-found";
@@ -19,7 +23,16 @@ type Props = {
 
 export default function VideoActivityResource(props: Props) {
   // Hook personnalisé pour la gestion du formulaire
-  const form = useForm<VideoFormValues>({ resolver: zodResolver(videoSchema), defaultValues: { title: "", description: "", origin: "web", url: "", file: null } });
+  const form = useForm<VideoFormValues>({
+    resolver: zodResolver(videoSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      origin: "web",
+      url: "",
+      file: null,
+    },
+  });
   const [file, setFile] = useFormField(form, "file");
   const {
     register,
@@ -33,7 +46,10 @@ export default function VideoActivityResource(props: Props) {
     const selectedFile = event.target.files && event.target.files[0];
     if (selectedFile) {
       const error = videoFileError(selectedFile);
-      if (error) { toast.error(error); return; }
+      if (error) {
+        toast.error(error);
+        return;
+      }
       setValue("origin", "file");
       setFile(selectedFile);
     }
@@ -54,13 +70,10 @@ export default function VideoActivityResource(props: Props) {
     props.onSubmit(fd);
   };
 
-  const handleSubmitForm = handleSubmit(
-    submitForm,
-    (errs) => {
-      const firstError = Object.values(errs)[0];
-      if (firstError?.message) toast.error(firstError.message);
-    },
-  );
+  const handleSubmitForm = handleSubmit(submitForm, (errs) => {
+    const firstError = Object.values(errs)[0];
+    if (firstError?.message) toast.error(firstError.message);
+  });
 
   useEffect(() => {
     if (props.activity) {

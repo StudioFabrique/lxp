@@ -18,15 +18,26 @@ import { ROOT_ACCOUNT_POLICY } from "../../../auth/root-account-policy";
 const PromoteToRoot = () => {
   const { handshake } = useContext(AuthContext);
   const [isModalOpen, setModalOpen] = useState(false);
-  const form = useForm({ resolver: zodResolver(activationTokenSchema), defaultValues: { token: "" } });
+  const form = useForm({
+    resolver: zodResolver(activationTokenSchema),
+    defaultValues: { token: "" },
+  });
   const [token, setToken] = useFormField(form, "token");
   const [isLoading, setIsLoading] = useState(false);
-  const { command, activationTokenTtlMinutes, isCommandCopied, handleCopyCommand } = useActivationKey();
+  const {
+    command,
+    activationTokenTtlMinutes,
+    isCommandCopied,
+    handleCopyCommand,
+  } = useActivationKey();
 
-  const handleOpenModal = form.handleSubmit(() => setModalOpen(true), showFormErrors);
+  const handleOpenModal = form.handleSubmit(
+    () => setModalOpen(true),
+    showFormErrors,
+  );
 
   const onPromote = async () => {
-    if (!await form.trigger()) return;
+    if (!(await form.trigger())) return;
     const normalizedToken = activationTokenSchema.parse(form.getValues()).token;
 
     setIsLoading(true);
@@ -53,7 +64,10 @@ const PromoteToRoot = () => {
         <QuestionMarkTooltip tooltipValue={ROOT_ACCOUNT_POLICY} />
       </div>
       <BoxWrapper>
-        <form onSubmit={handleOpenModal} className="flex max-w-xl flex-col gap-4">
+        <form
+          onSubmit={handleOpenModal}
+          className="flex max-w-xl flex-col gap-4"
+        >
           <p className="text-sm text-base-content/70">
             Générez une clé sur le serveur avec la commande
             <code className="mx-1 rounded bg-base-300 px-1.5 py-0.5">

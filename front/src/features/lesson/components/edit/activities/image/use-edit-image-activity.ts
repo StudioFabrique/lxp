@@ -19,7 +19,15 @@ const useEditImageActivity = (
   parentId?: number,
   onSaved?: () => void | Promise<void>,
 ) => {
-  const form = useForm<ImageFormValues>({ resolver: zodResolver(imageSchema), defaultValues: { title: activity?.title ?? "", description: activity?.description ?? "", file: null, selectedImage: activity?.url ?? null } });
+  const form = useForm<ImageFormValues>({
+    resolver: zodResolver(imageSchema),
+    defaultValues: {
+      title: activity?.title ?? "",
+      description: activity?.description ?? "",
+      file: null,
+      selectedImage: activity?.url ?? null,
+    },
+  });
   const {
     register,
     watch,
@@ -38,7 +46,13 @@ const useEditImageActivity = (
 
   const handleSubmit = rhfHandleSubmit(async (formValues) => {
     if (isLoading) return;
-    const dataToSend = { title: formValues.title, description: formValues.description, ...(!formValues.file && formValues.selectedImage ? { url: formValues.selectedImage } : {}) };
+    const dataToSend = {
+      title: formValues.title,
+      description: formValues.description,
+      ...(!formValues.file && formValues.selectedImage
+        ? { url: formValues.selectedImage }
+        : {}),
+    };
     const formData = new FormData();
     formData.append("data", JSON.stringify(dataToSend));
     if (formValues.file) {
@@ -63,13 +77,20 @@ const useEditImageActivity = (
             else onCancel(false);
           }
         })
-        .catch((err: unknown) => toast.error(getApiErrorMessage(err, "Une erreur est survenue")))
+        .catch((err: unknown) =>
+          toast.error(getApiErrorMessage(err, "Une erreur est survenue")),
+        )
         .finally(() => setIsLoading(false));
     }
   }, showFormErrors);
 
   useEffect(() => {
-    reset({ title: activity?.title ?? "", description: activity?.description ?? "", file: null, selectedImage: activity?.url ?? null });
+    reset({
+      title: activity?.title ?? "",
+      description: activity?.description ?? "",
+      file: null,
+      selectedImage: activity?.url ?? null,
+    });
   }, [activity, reset]);
 
   useEffect(() => {

@@ -40,11 +40,13 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   };
 
   // vérifie si le formulaire est valide et le transmet les valeurs des champs au parent
-  const onSubmit = handleSubmit((data: z.infer<typeof userQuickCreateSchema>) => {
-    onSubmitUser(data);
-    reset();
-    onCloseDrawer("new-contact");
-  });
+  const onSubmit = handleSubmit(
+    (data: z.infer<typeof userQuickCreateSchema>) => {
+      onSubmitUser(data);
+      reset();
+      onCloseDrawer("new-contact");
+    },
+  );
 
   return (
     <div className="flex flex-col">

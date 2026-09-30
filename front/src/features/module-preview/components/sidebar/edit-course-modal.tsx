@@ -32,22 +32,31 @@ export default function EditCourseModal({
   onClose,
   onSubmit,
 }: Props) {
-  const form = useForm({ resolver: zodResolver(courseDetailsSchema), defaultValues: { title: course.title, description: course.description ?? "", visibility: course.visibility ?? true, tagIds: (course.tags ?? []).map((tag) => tag.id), assignment: course.assignment
-      ? {
-          required: true,
-          dueAt: assignmentDateForInput(course.assignment.dueAt),
-          maxScore: course.assignment.maxScore,
-          rubricVisible: course.assignment.rubricVisible,
-          instructions: course.assignment.instructions,
-          criteria: course.assignment.criteria.map((criterion) => ({
-            key: String(criterion.id),
-            label: criterion.label,
-            weight: criterion.weight,
-          })),
-          files: [],
-          removeFileIds: [],
-        }
-      : emptyAssignmentForm(), } });
+  const form = useForm({
+    resolver: zodResolver(courseDetailsSchema),
+    defaultValues: {
+      title: course.title,
+      description: course.description ?? "",
+      visibility: course.visibility ?? true,
+      tagIds: (course.tags ?? []).map((tag) => tag.id),
+      assignment: course.assignment
+        ? {
+            required: true,
+            dueAt: assignmentDateForInput(course.assignment.dueAt),
+            maxScore: course.assignment.maxScore,
+            rubricVisible: course.assignment.rubricVisible,
+            instructions: course.assignment.instructions,
+            criteria: course.assignment.criteria.map((criterion) => ({
+              key: String(criterion.id),
+              label: criterion.label,
+              weight: criterion.weight,
+            })),
+            files: [],
+            removeFileIds: [],
+          }
+        : emptyAssignmentForm(),
+    },
+  });
   const [title, setTitle] = useFormField(form, "title");
   const [description, setDescription] = useFormField(form, "description");
   const [visibility, setVisibility] = useFormField(form, "visibility");
@@ -83,7 +92,9 @@ export default function EditCourseModal({
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
             <h3 className="text-lg font-bold">Modifier le cours</h3>
-            <p className="text-sm text-base-content/60 first-letter:uppercase">{course.title}</p>
+            <p className="text-sm text-base-content/60 first-letter:uppercase">
+              {course.title}
+            </p>
           </div>
           <button
             type="button"

@@ -1,6 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { submissionSchema, finalSubmissionSchema, gradingFormSchema } from "../../assignment.schema";
+import {
+  submissionSchema,
+  finalSubmissionSchema,
+  gradingFormSchema,
+} from "../../assignment.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -110,7 +114,9 @@ function AssignmentHeader({ course }: { course: Course }) {
       <div className="flex items-center gap-3">
         <div>
           <h2 className="text-2xl font-bold">Devoir</h2>
-          <p className="mt-1 text-sm text-base-content/70 first-letter:uppercase">{course.title}</p>
+          <p className="mt-1 text-sm text-base-content/70 first-letter:uppercase">
+            {course.title}
+          </p>
         </div>
       </div>
       <div className="self-end text-end">
@@ -126,7 +132,10 @@ function AssignmentHeader({ course }: { course: Course }) {
 function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
   const assignment = course.assignment!;
   const submission = assignment.submissions[0];
-  const submissionForm = useForm({ resolver: zodResolver(submissionSchema), defaultValues: { text: submission?.text ?? "", files: [] as File[] } });
+  const submissionForm = useForm({
+    resolver: zodResolver(submissionSchema),
+    defaultValues: { text: submission?.text ?? "", files: [] as File[] },
+  });
   const [text, setText] = useFormField(submissionForm, "text");
   const [savedText, setSavedText] = useState(submission?.text ?? "");
   const [files, setFiles] = useFormField(submissionForm, "files");
@@ -134,35 +143,42 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
   const [showSubmitConfirmation, setShowSubmitConfirmation] = useState(false);
   const isSubmitted = Boolean(submission?.submittedAt);
 
-  const save = (submit: boolean) => submissionForm.handleSubmit(async (values) => {
-    if (saving) return;
-    if (submit) {
-      const result = finalSubmissionSchema.safeParse({ ...values, existingFileCount: submission?.files.length ?? 0 });
-      if (!result.success) { toast.error(result.error.issues[0].message); return; }
-    }
-    setSaving(submit ? "submit" : "draft");
-    try {
-      await modulePreviewApi.mutations.saveAssignmentSubmission(
-        course.id,
-        values.text,
-        values.files,
-        submit,
-      );
-      setFiles([]);
-      setSavedText(text);
-      if (submit) setShowSubmitConfirmation(false);
-      toast.success(submit ? "Devoir rendu" : "Brouillon enregistré");
-      await onChanged();
-    } catch {
-      toast.error(
-        submit
-          ? "Le devoir n’a pas pu être rendu."
-          : "Le brouillon n’a pas pu être enregistré.",
-      );
-    } finally {
-      setSaving(null);
-    }
-  }, showFormErrors)();
+  const save = (submit: boolean) =>
+    submissionForm.handleSubmit(async (values) => {
+      if (saving) return;
+      if (submit) {
+        const result = finalSubmissionSchema.safeParse({
+          ...values,
+          existingFileCount: submission?.files.length ?? 0,
+        });
+        if (!result.success) {
+          toast.error(result.error.issues[0].message);
+          return;
+        }
+      }
+      setSaving(submit ? "submit" : "draft");
+      try {
+        await modulePreviewApi.mutations.saveAssignmentSubmission(
+          course.id,
+          values.text,
+          values.files,
+          submit,
+        );
+        setFiles([]);
+        setSavedText(text);
+        if (submit) setShowSubmitConfirmation(false);
+        toast.success(submit ? "Devoir rendu" : "Brouillon enregistré");
+        await onChanged();
+      } catch {
+        toast.error(
+          submit
+            ? "Le devoir n’a pas pu être rendu."
+            : "Le brouillon n’a pas pu être enregistré.",
+        );
+      } finally {
+        setSaving(null);
+      }
+    }, showFormErrors)();
 
   return (
     <div className="flex flex-col gap-6">
@@ -217,9 +233,10 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
                 (score) => score.criterionId === criterion.id,
               )?.score;
               const scoreClass = cn(
-                awarded !== undefined && assignmentScoreTextClass[
-                  assignmentScoreTone(awarded, criterion.weight)
-                ],
+                awarded !== undefined &&
+                  assignmentScoreTextClass[
+                    assignmentScoreTone(awarded, criterion.weight)
+                  ],
               );
               return (
                 <li
@@ -341,9 +358,12 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
           <div className="mt-6 p-4 flex flex-col items-end">
             <p className="text-sm text-base-content/70">Note attribuée</p>
             <p
-              className={cn("text-3xl font-bold", assignmentScoreTextClass[
+              className={cn(
+                "text-3xl font-bold",
+                assignmentScoreTextClass[
                   assignmentScoreTone(submission.grade, assignment.maxScore)
-                ])}
+                ],
+              )}
             >
               {submission.grade}/{assignment.maxScore}
             </p>
@@ -370,11 +390,11 @@ function MissingStudents({
 
   return (
     <section
-      className={
-        cn(compact
+      className={cn(
+        compact
           ? "mt-4 border-t border-base-300 px-2 pt-4"
-          : "mx-auto mt-5 max-w-md text-left")
-      }
+          : "mx-auto mt-5 max-w-md text-left",
+      )}
     >
       <h4 className="text-sm font-semibold">
         En attente de remise ({students.length})
@@ -418,10 +438,21 @@ function StaffAssignment({
   );
   const selected =
     submitted.find((item) => item.id === selectedId) ?? submitted[0];
-  const gradingForm = useForm({ resolver: zodResolver(gradingFormSchema(assignment.maxScore, assignment.criteria)), defaultValues: {
-    scores: Object.fromEntries((initiallySelected?.criterionScores ?? []).map((score) => [score.criterionId, score.score])) as Record<string, number>,
-    freeGrade: initiallySelected?.grade ?? "" as number | "", feedback: initiallySelected?.feedback ?? "",
-  } });
+  const gradingForm = useForm({
+    resolver: zodResolver(
+      gradingFormSchema(assignment.maxScore, assignment.criteria),
+    ),
+    defaultValues: {
+      scores: Object.fromEntries(
+        (initiallySelected?.criterionScores ?? []).map((score) => [
+          score.criterionId,
+          score.score,
+        ]),
+      ) as Record<string, number>,
+      freeGrade: initiallySelected?.grade ?? ("" as number | ""),
+      feedback: initiallySelected?.feedback ?? "",
+    },
+  });
   const [scores, setScores] = useFormField(gradingForm, "scores");
   const [freeGrade, setFreeGrade] = useFormField(gradingForm, "freeGrade");
   const [feedback, setFeedback] = useFormField(gradingForm, "feedback");
@@ -522,9 +553,12 @@ function StaffAssignment({
               <button
                 key={submission.id}
                 type="button"
-                className={cn("rounded-xl bg-base-200 p-3 text-left text-sm", selected?.id === submission.id
+                className={cn(
+                  "rounded-xl bg-base-200 p-3 text-left text-sm",
+                  selected?.id === submission.id
                     ? "ring-1 ring-base-content"
-                    : "hover:bg-base-300")}
+                    : "hover:bg-base-300",
+                )}
                 onClick={() => selectSubmission(submission)}
               >
                 <span className="block font-semibold capitalize">{name}</span>

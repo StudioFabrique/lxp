@@ -230,3 +230,46 @@ Résultat : **8 fichiers, 31 tests réussis**. Cette sélection couvre plusieurs
 Un diagnostic Node a également chargé les schémas Zod de formation, cours et activité depuis leurs sources et vérifié `safeParse` avec un titre composé d’espaces : accepté dans les trois cas.
 
 Aucun code applicatif ni test n’a été modifié. Le seul livrable ajouté est ce rapport.
+
+## Mise à niveau réalisée — 30 septembre 2026
+
+L’inventaire ci-dessus décrit l’état **avant migration**. Les formulaires métier recensés utilisent désormais React Hook Form et un resolver Zod, dans le composant ou son hook parent. Les sous-composants de champs restent raccordés au formulaire parent ; ils ne créent pas de formulaire HTML imbriqué.
+
+### Couverture
+
+| Domaine | Mise à niveau |
+| --- | --- |
+| Authentification | Connexion, activation, création root, récupération, changement de mot de passe et token : schémas partagés. Le mot de passe de connexion reste intact, sans trim ni exigence de complexité nouvelle. |
+| Utilisateurs et profil | Formulaire utilisateur, création rapide, certifications, informations, passions/liens et mot de passe : validation des champs facultatifs renseignés, confirmation dans Zod, tableaux intégrés à RHF. |
+| Instance | Identité, thèmes et template email : trois formulaires avec validation par scope. Configuration initiale raccordée au même schéma d’identité. Correction de l’accès à `initialSettings` avant initialisation, avec test de montage. |
+| Organisation | Formation et rôle : valeurs RHF, payloads normalisés. Groupe : conservation de `FormProvider` et de son schéma existant. Groupe pendant onboarding : réutilisation de la validation groupe. |
+| Parcours et modules | Création, duplication/import, informations, objectifs et compétences : RHF/Zod. Modules : validation et normalisation communes, sérialisation des payloads et traitement de réussite mutualisés. |
+| Cours et leçons | Métadonnées, visibilité, création/modification de cours et leçons, scénario : schémas partagés et valeurs RHF. Dates, heures et durées validées avant envoi. |
+| Devoirs | Configuration, brouillon/remise et notation : schémas dédiés, présence du contenu lors de la remise finale, bornes de note et de critères contrôlées dans le handler. |
+| Ressources et activités | Métadonnées/tags, iframe, texte, vidéos et images : RHF/Zod. Origine et source vidéo validées ; taille et type contrôlés. Documents : liste entière validée avant upload, noms normalisés, doublons bloqués. Renommage avec soumission HTML. |
+| Imports CSV | Sélections RHF, validation Zod des lignes sélectionnées. Utilisateurs : email/contact et date de naissance vérifiés ; dates impossibles rejetées. Objectifs/compétences : description obligatoire, suppression du `any` dans le composant de confirmation. |
+| Retours et onboarding | Préférences de décrochage, feedback IA, ressenti et signalement quiz : payloads validés. Onboarding apprenant : validation contextualisée selon l’étape, champs et listes RHF. |
+| Dates parcours et classe virtuelle | RHF/Zod, règles communes et sauvegarde automatique partagée ; chargement tardif des données pris en compte. |
+
+### Structure et réutilisation
+
+- `utils/validation/fields.ts` centralise texte requis/facultatif, email, mot de passe, URL, téléphone, code postal, tags, passions et liens.
+- Les schémas métier restent dans leur feature. Les schémas de cours/leçons/devoirs sont partagés entre création et modification.
+- `components/form/useFormField.ts` raccorde les champs contrôlés et les listes à RHF. Les states conservés correspondent à l’affichage, aux requêtes, aux aperçus et aux fichiers temporaires des composants d’upload.
+- `components/form/form-errors.ts` extrait les erreurs imbriquées pour les flux utilisant une notification.
+- Les champs communs utilisent des identifiants uniques et associent les erreurs aux champs via les attributs ARIA.
+- La sauvegarde automatique est sérialisée, enregistre la première modification, conserve les modifications intervenues pendant une requête et réessaie après un échec réseau.
+- Formation : construction du payload/création de tags mutualisées. Modules : validation, sérialisation, rafraîchissement et réussite de création/duplication partagés. Activation root : commande, copie et chargement du statut partagés.
+- L’ancien hook `useInput` et les deux schémas de métadonnées vidéo inutilisés ont été supprimés après vérification de leurs usages.
+
+Les exceptions d’interface documentées plus haut restent pertinentes : recherches/filtres, fermeture de dialogues, moteur de quiz, toolbar Tiptap et préférences visuelles. Les sélections d’associations déjà existantes dans les stores restent des interactions métier distinctes du formulaire de métadonnées. Les contrôles d’upload partagés restent responsables des aperçus et de la compression ; ils ne doivent pas réintroduire un second état pour les champs textuels du formulaire.
+
+### Vérification
+
+- TypeScript et build frontend : réussis.
+- Suite complète : **716 tests réussis sur 721**, dans **174 fichiers réussis sur 179**.
+- Les cinq échecs restants ont été reproduits sur la version de départ : `InstanceSetupGate`, `current-tags`, `tag-table-columns`, `AuthLayout` et `Welcome` (attentes de rendu/couleur/notes de version).
+- Régressions couvertes : montage des paramètres instance, première sauvegarde et reprise après erreur, modifications pendant une sauvegarde, champs facultatifs invalides, mots de passe, bornes des notes, vidéos trop grandes, documents dupliqués, dates impossibles et validation par étape d’onboarding.
+- Lint global : une erreur préexistante dans le harness de `useStudentResources.test.tsx` (`react-hooks/globals`) ; les autres signalements sont des avertissements. Cette erreur existe aussi dans la version de départ.
+
+Les tests automatisés ne remplacent pas une recette de chaque parcours avec un serveur connecté. Ils couvrent ici les règles de validation, les régressions identifiées et les interactions déjà testées dans l’application.

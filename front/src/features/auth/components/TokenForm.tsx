@@ -20,7 +20,12 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const tokenInputRef = useRef<HTMLInputElement>(null);
-  const { command, activationTokenTtlMinutes, isCommandCopied, handleCopyCommand } = useActivationKey();
+  const {
+    command,
+    activationTokenTtlMinutes,
+    isCommandCopied,
+    handleCopyCommand,
+  } = useActivationKey();
 
   const {
     register,
@@ -102,8 +107,8 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
           </div>
           <div className="collapse-content">
             <p className="text-sm mb-2 text-base-content/60">
-              Vous pouvez régénérer une nouvelle clé d'activation en exécutant la
-              commande suivante sur le serveur :
+              Vous pouvez régénérer une nouvelle clé d'activation en exécutant
+              la commande suivante sur le serveur :
             </p>
             <div className="flex items-center gap-2 bg-base-300 rounded-lg p-2">
               <textarea

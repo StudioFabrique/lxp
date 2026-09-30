@@ -20,7 +20,10 @@ type Props = {
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | null>(null);
 
-  const form = useForm({ resolver: zodResolver(descriptionFormSchema), defaultValues: { description: skill?.description ?? "" } });
+  const form = useForm({
+    resolver: zodResolver(descriptionFormSchema),
+    defaultValues: { description: skill?.description ?? "" },
+  });
   const error = Boolean(form.formState.errors.description);
 
   /**
@@ -35,7 +38,6 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   };
 
   // test la validité du formulaire
-
 
   // définit le style du champ du formulaire en fonction de sa validité
   const style = "textarea focus:outline-none bg-secondary/20";
@@ -53,11 +55,15 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
    * @param event FormEvent
    */
   const handleSubmit = form.handleSubmit((values) => {
-    onSubmit({ id: skill?.id, description: values.description , badge: badge?.image, isBonus: skill?.isBonus });
+    onSubmit({
+      id: skill?.id,
+      description: values.description,
+      badge: badge?.image,
+      isBonus: skill?.isBonus,
+    });
     form.reset();
     onCloseDrawer("badge-drawer");
   }, showFormErrors);
-
 
   return (
     <div className="flex flex-col gap-y-4">

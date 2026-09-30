@@ -5,7 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { AxiosProgressEvent } from "axios";
-import { documentSchema, documentsSchema, type DocumentValues } from "../../../../document.schema";
+import {
+  documentSchema,
+  documentsSchema,
+  type DocumentValues,
+} from "../../../../document.schema";
 import { useFormField } from "../../../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../../../components/form/form-errors";
 import { getApiErrorMessage } from "../../../../../../utils/helpers/api-error-message";
@@ -22,11 +26,21 @@ const useUploadResources = (
   onSaved?: () => void | Promise<void>,
   title?: string,
 ) => {
-  const form = useForm<z.infer<typeof documentsSchema>>({ resolver: zodResolver(documentsSchema), defaultValues: { files: [] } });
+  const form = useForm<z.infer<typeof documentsSchema>>({
+    resolver: zodResolver(documentsSchema),
+    defaultValues: { files: [] },
+  });
   const { setValue } = form;
   const filesList = form.watch("files");
-  const setFilesList = useCallback((files: Resource[]) => setValue("files", files, { shouldDirty: true, shouldValidate: true }), [setValue]);
-  const draft = useForm({ resolver: zodResolver(documentSchema.pick({ name: true })), defaultValues: { name: "" } });
+  const setFilesList = useCallback(
+    (files: Resource[]) =>
+      setValue("files", files, { shouldDirty: true, shouldValidate: true }),
+    [setValue],
+  );
+  const draft = useForm({
+    resolver: zodResolver(documentSchema.pick({ name: true })),
+    defaultValues: { name: "" },
+  });
   const [resourceName, setResourceName] = useFormField(draft, "name");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -40,17 +54,27 @@ const useUploadResources = (
   else if (id === null && parent === "lesson" && lessonId)
     id = parseInt(lessonId);
 
-  const hasError = filesList.length > 0 && !documentsSchema.safeParse({ files: filesList }).success;
+  const hasError =
+    filesList.length > 0 &&
+    !documentsSchema.safeParse({ files: filesList }).success;
   const filesNumber = filesList.length;
 
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
 
   const handleFileChange = (selectedFile: File) => {
-    const result = documentSchema.safeParse({ name: resourceName, file: selectedFile, hasError: false });
-    if (!result.success) { toast.error(result.error.issues[0].message); return; }
+    const result = documentSchema.safeParse({
+      name: resourceName,
+      file: selectedFile,
+      hasError: false,
+    });
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
+      return;
+    }
     if (filesList.some(({ file }) => file.name === selectedFile.name)) {
-      toast.error("Ce fichier se trouve déjà dans la liste"); return;
+      toast.error("Ce fichier se trouve déjà dans la liste");
+      return;
     }
     setFilesList([...filesList, result.data]);
     draft.reset({ name: "" });
@@ -71,7 +95,10 @@ const useUploadResources = (
     setAbortController(controller);
     const formData = new FormData();
     files.forEach(({ file }) => formData.append("files", file));
-    const resources = files.map(({ name, file }) => ({ label: name, filename: file.name }));
+    const resources = files.map(({ name, file }) => ({
+      label: name,
+      filename: file.name,
+    }));
     formData.append("data", JSON.stringify({ resources, parent, title }));
 
     if (id === null) {
@@ -82,12 +109,17 @@ const useUploadResources = (
     setIsLoading(true);
     setUploadProgress(0);
     await lessonApi.mutations
-      .uploadResources(id, formData, controller.signal, (progressEvent: AxiosProgressEvent) => {
-        const progress = Math.round(
-          (progressEvent.loaded * 100) / (progressEvent.total || 1),
-        );
-        setUploadProgress(progress);
-      })
+      .uploadResources(
+        id,
+        formData,
+        controller.signal,
+        (progressEvent: AxiosProgressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1),
+          );
+          setUploadProgress(progress);
+        },
+      )
       .then((data: { success: boolean; message: string }) => {
         if (!data.success) return;
         toast.success(data.message);
@@ -97,7 +129,9 @@ const useUploadResources = (
         onCancel(false);
         onSubmit?.();
       })
-      .catch((err: unknown) => toast.error(getApiErrorMessage(err, "Une erreur est survenue")))
+      .catch((err: unknown) =>
+        toast.error(getApiErrorMessage(err, "Une erreur est survenue")),
+      )
       .finally(() => setIsLoading(false));
   }, showFormErrors);
 
