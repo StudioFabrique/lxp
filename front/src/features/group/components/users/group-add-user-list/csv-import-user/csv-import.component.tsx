@@ -4,14 +4,14 @@ import Papa from "papaparse";
 import { checkCSV } from "../../../../../../config/csv/csv-check";
 import toast from "react-hot-toast";
 import FileUpload from "../../../../../../components/UI/file-upload/FileUpload";
-import type User from "../../../../../../utils/interfaces/user";
+import type { CsvUserRow as User } from "../../../../../user/csv-user.schema";
 
 type Props = {
   onParseCsv: (data: User[]) => void;
   fields: Array<string>;
 };
 
-type CsvUser = Record<string, string>;
+
 
 const CsvImportUser: FC<Props> = ({ onParseCsv, fields }) => {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -23,7 +23,7 @@ const CsvImportUser: FC<Props> = ({ onParseCsv, fields }) => {
 
   const handleSelectedFile = (file: File) => {
     setFileError(null);
-    Papa.parse<CsvUser>(file, {
+    Papa.parse<User>(file, {
       worker: true,
       header: true,
       skipEmptyLines: "greedy",
@@ -38,7 +38,7 @@ const CsvImportUser: FC<Props> = ({ onParseCsv, fields }) => {
           return;
         }
 
-        onParseCsv(result.data as unknown as User[]);
+        onParseCsv(result.data);
       },
       error: () => {
         showFileError("Le fichier CSV n'a pas pu être lu");

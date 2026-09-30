@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFormField } from "../../../components/form/useFormField";
+import { showFormErrors } from "../../../components/form/form-errors";
+import { onboardingStepSchema, type OnboardingValues } from "../onboarding.schema";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
@@ -19,8 +24,6 @@ import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
 import { profileApi } from "../../profile/api/profile.api";
 import ThemeSelectionStep from "../ThemeSelectionStep";
-import type Hobby from "../../user/interfaces/hobby";
-import type { Link } from "../../user/interfaces/link";
 import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
 import {
   levelOptions,
@@ -36,11 +39,6 @@ import {
   learningProfileApi,
   learningProfileKey,
 } from "../learning-profile.api";
-import type {
-  FormationLevel,
-  LearningPace,
-  LearningPreference,
-} from "../types";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
 type OnboardingStep = {
@@ -68,22 +66,6 @@ export default function StudentLearningOnboarding() {
   });
   const context = query.data;
   const [index, setIndex] = useState(0);
-  const [pace, setPace] = useState<LearningPace | null>(null);
-  const [preferences, setPreferences] = useState<LearningPreference[]>([]);
-  const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
-  const [saving, setSaving] = useState(false);
-  const [started, setStarted] = useState(false);
-  const [introFinished, setIntroFinished] = useState(false);
-  const [welcomeStarted, setWelcomeStarted] = useState(false);
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
-  const [links, setLinks] = useState<Link[]>([]);
-  const [profileInformation, setProfileInformation] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
-  const [profileItemsChanged, setProfileItemsChanged] = useState(false);
-  const contentScrollRef = useRef<HTMLDivElement>(null);
-
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
     if (!context.availableFormations.length) return [];
@@ -123,6 +105,26 @@ export default function StudentLearningOnboarding() {
     return onboardingSteps;
   }, [context]);
 
+  const activeStep = steps[index];
+  const schema = onboardingStepSchema(activeStep?.kind ?? "theme", activeStep?.moduleId);
+  const form = useForm<OnboardingValues>({ resolver: zodResolver(schema), defaultValues: { pace: null, preferences: [], levels: {}, hobbies: [], links: [] } });
+  const [pace, setPace] = useFormField(form, "pace");
+  const [preferences, setPreferences] = useFormField(form, "preferences");
+  const [levels, setLevels] = useFormField(form, "levels");
+  const [saving, setSaving] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [introFinished, setIntroFinished] = useState(false);
+  const [welcomeStarted, setWelcomeStarted] = useState(false);
+  const [hobbies, setHobbies] = useFormField(form, "hobbies");
+  const [links, setLinks] = useFormField(form, "links");
+  const [profileInformation, setProfileInformation] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+  const [profileItemsChanged, setProfileItemsChanged] = useState(false);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
+
+
   useEffect(() => {
     profileApi.queries
       .getInformation()
@@ -132,7 +134,7 @@ export default function StudentLearningOnboarding() {
         setLinks(data.links ?? []);
       })
       .catch(() => undefined);
-  }, []);
+  }, [setHobbies, setLinks]);
 
   useEffect(() => {
     if (!context || started) return;
@@ -170,7 +172,7 @@ export default function StudentLearningOnboarding() {
         currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
       });
     }
-  }, [context, started, steps]);
+  }, [context, started, steps, setPace, setPreferences, setLevels]);
 
   useEffect(() => {
     if (
@@ -272,28 +274,15 @@ export default function StudentLearningOnboarding() {
     ) ?? formation?.parcours[0];
   const module = parcours?.modules.find((item) => item.id === step.moduleId);
 
-  const continueToNext = async () => {
-    if (step.kind === "learning" && !pace) {
-      toast.error("Choisissez un rythme pour continuer.");
-      return;
-    }
-    if (step.kind === "learning" && preferences.length === 0) {
-      toast.error("Choisissez au moins une préférence.");
-      return;
-    }
-    if (step.kind === "module" && step.moduleId && !levels[step.moduleId]) {
-      toast.error("Choisissez un niveau pour continuer.");
-      return;
-    }
-
+  const continueToNext = form.handleSubmit(async (values) => {
     setSaving(true);
     try {
       if (step.kind === "learning" && pace)
-        await learningProfileApi.update({ pace, preferences });
+        await learningProfileApi.update({ pace: values.pace!, preferences: values.preferences });
       if (step.kind === "module" && step.moduleId) {
         await learningProfileApi.updateModule(
           step.moduleId,
-          levels[step.moduleId]!,
+          values.levels[step.moduleId]!,
         );
       }
       const next = steps[index + 1];
@@ -306,7 +295,7 @@ export default function StudentLearningOnboarding() {
         payload.append(
           "data",
           JSON.stringify({
-            user: { ...profileInformation, hobbies, links },
+            user: { ...profileInformation, hobbies: values.hobbies, links: values.links },
           }),
         );
         await profileApi.mutations.updateInformation(payload);
@@ -321,9 +310,9 @@ export default function StudentLearningOnboarding() {
     } finally {
       setSaving(false);
     }
-  };
+  }, showFormErrors);
 
-  const confirm = async () => {
+  const confirm = form.handleSubmit(async () => {
     setSaving(true);
     try {
       await learningProfileApi.update({ action: "confirm" });
@@ -335,7 +324,7 @@ export default function StudentLearningOnboarding() {
     } finally {
       setSaving(false);
     }
-  };
+  }, showFormErrors);
 
   return (
     <LayoutGroup>

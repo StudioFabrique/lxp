@@ -1,7 +1,9 @@
-import { FC, FormEvent, useState } from "react";
+import { FC } from "react";
 
-import useInput from "../../../../../hooks/useInput";
-import { regexGeneric } from "../../../../../config/constantes";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { descriptionFormSchema } from "../../../parcours.schema";
+import { showFormErrors } from "../../../../../components/form/form-errors";
 import Objective from "../../../../../../src/utils/interfaces/objective";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
@@ -14,17 +16,8 @@ type Props = {
 };
 
 const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
-  const { value: description } = useInput(
-    (value) => regexGeneric.test(value),
-    objective?.description ?? ""
-  );
-  const [error, setError] = useState(false);
-  //const textAreaRef = useRef<any>(null);
-
-  // test la validité du formulaire
-  const formIsValid = description.isValid;
-
-  //console.log(objective?.description);
+  const form = useForm({ resolver: zodResolver(descriptionFormSchema), defaultValues: { description: objective?.description ?? "" } });
+  const error = Boolean(form.formState.errors.description);
 
   /**
    * ferme le drawer lorsqu'on click sur le bouton annuler
@@ -33,7 +26,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
   const handleCancel = () => {
     onCloseDrawer(objective ? "update-objective" : "add-objective");
     if (!objective) {
-      description.reset();
+      form.reset();
     }
   };
 
@@ -41,20 +34,11 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
    * soumet la nouvelle compétence, reset le formulaire et ferme le drawer
    * @param event FormEvent
    */
-  const handleSubmit = (event: FormEvent) => {
-    setError(false);
-    event.preventDefault();
-    if (formIsValid) {
-      onSubmit({
-        id: objective?.id,
-        description: description.value,
-      });
-      description.reset();
-      handleCancel();
-    } else {
-      setError(true);
-    }
-  };
+  const handleSubmit = form.handleSubmit((values) => {
+    onSubmit({ id: objective?.id, description: values.description });
+    form.reset();
+    onCloseDrawer(objective ? "update-objective" : "add-objective");
+  }, showFormErrors);
 
   // définit le style du champ du formulaire en fonction de sa validité
   const style = "textarea focus:outline-none bg-secondary/20";
@@ -68,9 +52,8 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
             <label htmlFor="description">Objectif de parcours *</label>
             <textarea
               className={textareaStyle}
-              value={description.value}
-              onChange={description.textAreaChangeHandler}
-              onBlur={description.valueBlurHandler}
+              id="description"
+              {...form.register("description")}
             />
           </div>
         </BoxWrapper>

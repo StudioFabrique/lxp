@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useRef } from "react";
+import { FC, useCallback, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
@@ -27,7 +27,6 @@ const ParcoursInformationsForm: FC<Props> = ({
   const formation = parcours?.formation;
   const parcoursInfos = parcours;
 
-  const isInitialRender = useRef(true);
 
   const defaultValues = useMemo(
     () => ({
@@ -38,14 +37,18 @@ const ParcoursInformationsForm: FC<Props> = ({
   );
 
   const {
+    reset,
     register,
     watch,
     handleSubmit: rhfHandleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({
     defaultValues,
     resolver: zodResolver(infosParCoursSchema),
   });
+
+  void dirtyFields;
+  useEffect(() => { if (parcoursInfos) reset(defaultValues, { keepDirtyValues: true }); }, [defaultValues, parcoursInfos, reset]);
 
   const saveInfos = useCallback(
     async (data: { title: string; description?: string }) => {
@@ -55,26 +58,23 @@ const ParcoursInformationsForm: FC<Props> = ({
           description: data.description ?? "",
         });
         toast.success(response.message);
-      } catch {
+      } catch (error) {
         toast.error("Erreur lors de la sauvegarde");
+        throw error;
       }
     },
     [updateParcours],
   );
 
-  const onSave = useCallback(() => {
+  const onSave = useCallback(async () => {
     if (readOnly) return;
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-      return;
-    }
-    rhfHandleSubmit(saveInfos, (errs) => {
+    await rhfHandleSubmit(saveInfos, (errs) => {
       const firstError = Object.values(errs)[0];
       if (firstError?.message) toast.error(firstError.message);
     })();
   }, [readOnly, rhfHandleSubmit, saveInfos]);
 
-  useAutoSave(watch, onSave);
+  useAutoSave(watch, onSave, !readOnly && Boolean(parcoursInfos));
 
   return (
     <>
@@ -87,7 +87,7 @@ const ParcoursInformationsForm: FC<Props> = ({
                 <p>{formatTitle(formation.title)}</p>
               </SubWrapper>
             </div>
-            <form className="w-full flex flex-col gap-y-8 mt-8">
+            <form className="w-full flex flex-col gap-y-8 mt-8" onSubmit={(event) => { event.preventDefault(); void onSave(); }}>
               <div
                 className="flex flex-col gap-y-8"
                 data-onboarding="parcours-essential-information"

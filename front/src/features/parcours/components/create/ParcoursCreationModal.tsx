@@ -1,3 +1,9 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
+const templateSchema = z.object({ formationId: z.number().int().positive().optional(), parcoursId: z.number().int().positive().optional() }).refine((value) => !!value.formationId && !!value.parcoursId, "Choisissez une formation et un parcours.");
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -40,8 +46,9 @@ export default function ParcoursCreationModal({
   const navigate = useNavigate();
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("create");
-  const [formationId, setFormationId] = useState(initialFormationId);
-  const [parcoursId, setParcoursId] = useState<number>();
+  const templateForm = useForm<z.infer<typeof templateSchema>>({ resolver: zodResolver(templateSchema), defaultValues: { formationId: initialFormationId } });
+  const [formationId, setFormationId] = useFormField(templateForm, "formationId");
+  const [parcoursId, setParcoursId] = useFormField(templateForm, "parcoursId");
   const [pendingArchive, setPendingArchive] = useState<File>();
   const [initialImportFormationChoice, setInitialImportFormationChoice] =
     useState<ImportFormationChoice>();
@@ -143,7 +150,7 @@ export default function ParcoursCreationModal({
       onLeftClick={mode === "create" ? close : mode === "template" ? backToCreate : undefined}
       leftLabel={mode === "create" ? "Fermer" : "Retour"}
       closeButtonAtTop={mode === "create"}
-      onRightClick={mode === "template" ? () => { if (parcoursId !== undefined) duplicateParcours(parcoursId); } : undefined}
+      onRightClick={mode === "template" ? templateForm.handleSubmit(({ parcoursId }) => { if (!isPending) duplicateParcours(parcoursId!); }, showFormErrors) : undefined}
       rightLabel="Dupliquer le parcours"
       rightDisabled={parcoursId === undefined}
       isSubmitting={isDuplicating}

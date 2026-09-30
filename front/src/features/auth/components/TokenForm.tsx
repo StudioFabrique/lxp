@@ -1,3 +1,5 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { activationTokenSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
@@ -65,6 +67,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
     handleSubmit,
     formState: { errors },
   } = useForm<TokenFormValues>({
+    resolver: zodResolver(activationTokenSchema),
     defaultValues: { token: "" },
     shouldFocusError: false,
   });

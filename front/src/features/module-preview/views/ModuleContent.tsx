@@ -98,7 +98,10 @@ const ModuleContent = () => {
   );
   useContentTracking(
     "activity",
-    !isStudentView || computed.hasStartedModule ? state.selectedActivity?.id : undefined,
+    (!isStudentView || computed.hasStartedModule) &&
+      state.mode === "read" && !contentStore.isActivityContentLoading
+      ? state.selectedActivity?.id : undefined,
+    (activityId, readId) => dispatch({ type: "mark_activity_as_read", activityId, readId }),
   );
 
   const diagnosticQuiz = useDiagnosticQuiz(
@@ -130,13 +133,15 @@ const ModuleContent = () => {
     isAnyQuizOpen: quizState.isOpen,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
-    onCompleteLesson: () =>
-      computed.isLessonCompleted
+    onCompleteLesson: () => {
+      if (!computed.isLessonCompleted && !computed.areAllActivitiesRead) return;
+      return computed.isLessonCompleted
         ? contentStore.lessonActions.nextLesson()
         : dispatch({
             type: "set_modal_visibility",
             modalVisibility: "lessonCompletionModal",
-          }),
+          });
+    },
     aiIndexed: isSelectedCourseAiIndexed,
   });
 
@@ -222,7 +227,14 @@ const ModuleContent = () => {
             <ModuleContentToolbar
               progress={
                 <RoleRankGuard ranks={[3]}>
-                  <ProgressBar courses={state.module.courses} />
+                  <ProgressBar
+                    courses={state.module.courses}
+                    selectedLessonId={state.selectedLesson?.id}
+                    onSelectLesson={(lessonId) => {
+                      setSelectedAssignmentCourseId(undefined);
+                      dispatch({ type: "select_content_by_id", lessonId });
+                    }}
+                  />
                 </RoleRankGuard>
               }
               progressRef={scrollTopRef}

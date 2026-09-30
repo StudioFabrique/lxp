@@ -1,21 +1,9 @@
 import { z } from "zod";
-import { regexPassword } from "../../../config/constantes";
+import { passwordField } from "../../../utils/validation/fields";
 
 export const passwordSchema = z.object({
-  oldPass: z
-    .string({ error: "L'ancien mot de passe est requis" })
-    .regex(regexPassword, {
-      message:
-        "L'ancien mot de passe est incorrecte. Veuillez contacter l'administrateur si l'erreur persiste.",
-    }),
-  newPass: z
-    .string({ error: "Le nouveau mot de passe est requis" })
-    .regex(regexPassword, {
-      message: "Le nouveau mot de passe n'est pas valide",
-    }),
-  confirmNewPass: z
-    .string({ error: "La vérification du mot de passe est requis" })
-    .regex(regexPassword, {
-      message: "La vérification du mot de passe n'est pas valide",
-    }),
+  oldPass: z.string().min(1, "L'ancien mot de passe est requis"),
+  newPass: passwordField, confirmNewPass: z.string().min(1, "La confirmation est requise"),
+}).refine((value) => value.newPass === value.confirmNewPass, {
+  message: "Les mots de passe ne correspondent pas.", path: ["confirmNewPass"],
 });

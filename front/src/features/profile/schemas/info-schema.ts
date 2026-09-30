@@ -1,50 +1,9 @@
 import { z } from "zod";
-import {
-  regexGeneric,
-  regexMail,
-  regexOptionalGeneric,
-} from "../../../config/constantes";
+import { emailField, requiredText, optionalText, phoneField, postCodeField, hobbySchema, linkSchema } from "../../../utils/validation/fields";
 
 export const informationSchema = z.object({
-  firstname: z
-    .string({ error: "Le prénom est obligatoire" })
-    .regex(regexGeneric, {
-      message: "Le prénom contient des caractères invalides",
-    }),
-  lastname: z.string({ error: "Le nom est obligatoire" }).regex(regexGeneric, {
-    message: "Le nom contient des caractères invalides",
-  }),
-  email: z.string({ error: "L'email est obligatoire" }).regex(regexMail, {
-    message: "L'email contient des caractères invalides",
-  }),
-  nickname: z
-    .string()
-    .regex(regexOptionalGeneric, {
-      message: "Le pseudo contient des caractères invalides",
-    })
-    .optional(),
-  address: z
-    .string()
-    .regex(regexOptionalGeneric, {
-      message: "L'adresse contient des caractères invalides",
-    })
-    .optional(),
-  city: z
-    .string()
-    .regex(regexOptionalGeneric, {
-      message: "La ville contient des caractères invalides",
-    })
-    .optional(),
-  postCode: z
-    .string()
-    .regex(regexOptionalGeneric, {
-      message: "Le code postal contient des caractères invalides",
-    })
-    .optional(),
-  phoneNumber: z
-    .string()
-    .regex(/* regexPhoneNumber */ regexOptionalGeneric, {
-      message: "Le numéro de téléphone contient des caractères invalides",
-    })
-    .optional(),
+  firstname: requiredText("Le prénom est obligatoire"), lastname: requiredText("Le nom est obligatoire"),
+  email: emailField, nickname: optionalText.optional(), address: optionalText.optional(), city: optionalText.optional(),
+  postCode: postCodeField.optional(), phoneNumber: phoneField.optional(),
 });
+export const profileInformationSchema = informationSchema.extend({ hobbies: z.array(hobbySchema), links: z.array(linkSchema) });

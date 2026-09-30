@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Loader2, Trash2 } from "lucide-react";
 import AddTag from "../../../components/UI/add-tag";
 import TagsList from "../../../components/tags/TagsList";
@@ -39,13 +40,15 @@ const FormationForm = ({
   onTagSubmit, onRemoveTag,
   isEditing, isPending, isDeleting = false, deleteDisabled = false,
   onSubmit, onCancel, onDelete, alternativeCreation,
-}: Props) => (
+}: Props) => {
+  const formId = useId();
+  return (
   <div className="flex flex-col gap-y-4">
     <div
       className="flex flex-col gap-y-4"
       data-onboarding="formation-fields"
     >
-      <form className="flex flex-col gap-y-4">
+      <form id={formId} className="flex flex-col gap-y-4" onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
         <span className="flex flex-col gap-y-2">
           <label data-onboarding-label="formation-title">Formation *</label>
           <input
@@ -158,11 +161,11 @@ const FormationForm = ({
           Annuler
         </button>
         <button
-          type="button"
+          type="submit"
           data-onboarding="formation-save"
           className="btn btn-primary"
           disabled={isPending || isDeleting}
-          onClick={onSubmit}
+          form={formId}
         >
           {isPending ? (
             <span className="flex items-center gap-x-2">
@@ -177,5 +180,6 @@ const FormationForm = ({
     </div>
   </div>
 );
+};
 
 export default FormationForm;

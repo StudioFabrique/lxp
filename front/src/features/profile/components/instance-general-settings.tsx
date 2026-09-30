@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { instanceIdentitySchema, instanceThemesSchema, instanceEmailSchema } from "../schemas/instance-schema";
+import { useFormField } from "../../../components/form/useFormField";
+import { showFormErrors } from "../../../components/form/form-errors";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Eye, Loader2, Plus, X } from "lucide-react";
 import toast from "react-hot-toast";
@@ -33,16 +38,23 @@ const validBackgroundColor = /^#[0-9a-f]{6}$/i;
 
 export default function InstanceGeneralSettings() {
   const { chooseTheme } = useContext(ThemeContext);
-  const [settings, setSettings] = useState(emptySettings);
   const [initialSettings, setInitialSettings] = useState(emptySettings);
+
+  const identityForm = useForm({ resolver: zodResolver(instanceIdentitySchema), defaultValues: { name: "", website: "", color: defaultBackgroundColor } });
+  const themesForm = useForm({ resolver: zodResolver(instanceThemesSchema), defaultValues: { enabledThemes: [...defaultEnabledThemes] } });
+  const emailForm = useForm({ resolver: zodResolver(instanceEmailSchema), defaultValues: { emailTemplate: "minimal" as EmailTemplateId } });
+  const [name, setName] = useFormField(identityForm, "name");
+  const [website, setWebsite] = useFormField(identityForm, "website");
+  const [enabledThemes, setEnabledThemes] = useFormField(themesForm, "enabledThemes");
+  const settings = { ...initialSettings, name, website, enabledThemes };
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
   const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] =
     useState(false);
-  const [websiteError, setWebsiteError] = useState("");
-  const [draftEmailTemplate, setDraftEmailTemplate] =
-    useState<EmailTemplateId>("minimal");
+  const websiteError = identityForm.formState.errors.website?.message ?? "";
+  const [draftEmailTemplate, setDraftEmailTemplate] = useFormField(emailForm, "emailTemplate");
   const [themeDrawerMode, setThemeDrawerMode] = useState<
     "light" | "dark" | null
   >(null);
@@ -54,9 +66,7 @@ export default function InstanceGeneralSettings() {
   });
   const [hasLogo, setHasLogo] = useState(false);
   const [deleteLogo, setDeleteLogo] = useState(false);
-  const [backgroundColor, setBackgroundColor] = useState(
-    defaultBackgroundColor,
-  );
+  const [backgroundColor, setBackgroundColor] = useFormField(identityForm, "color");
   const [initialBackgroundColor, setInitialBackgroundColor] = useState(
     defaultBackgroundColor,
   );
@@ -65,7 +75,9 @@ export default function InstanceGeneralSettings() {
     profileApi.queries
       .getInstanceSettings()
       .then((data) => {
-        setSettings(data);
+        identityForm.reset({ name: data.name, website: data.website, color: identityForm.getValues("color") });
+        themesForm.reset({ enabledThemes: data.enabledThemes });
+        emailForm.reset({ emailTemplate: data.emailTemplate });
         setInitialSettings(data);
       })
       .catch(() =>
@@ -94,32 +106,20 @@ export default function InstanceGeneralSettings() {
   }, []);
 
   const save = async (scope: "identity" | "interface" | "email") => {
-    if (scope === "identity") {
-      const website = settings.website.trim();
-      if (website) {
-        try {
-          const parsedWebsite = new URL(website);
-          if (!["http:", "https:"].includes(parsedWebsite.protocol))
-            throw new Error();
-        } catch {
-          setWebsiteError(
-            "Saisissez une adresse complète commençant par http:// ou https://.",
-          );
-          return;
-        }
-      }
-      setWebsiteError("");
-    }
+    if (isSaving || isLoading) return;
+    const activeForm = scope === "identity" ? identityForm : scope === "interface" ? themesForm : emailForm;
+    if (!await activeForm.trigger()) { showFormErrors(activeForm.formState.errors); return; }
+    const identity = instanceIdentitySchema.parse(scope === "identity" ? identityForm.getValues() : { ...initialSettings, color: initialBackgroundColor });
     setIsSaving(true);
     try {
       const payload = new FormData();
       payload.append(
         "name",
-        scope === "identity" ? settings.name : initialSettings.name,
+        identity.name,
       );
       payload.append(
         "website",
-        scope === "identity" ? settings.website : initialSettings.website,
+        identity.website,
       );
       payload.append(
         "enabledThemes",
@@ -131,7 +131,7 @@ export default function InstanceGeneralSettings() {
       );
       payload.append(
         "color",
-        scope === "identity" ? backgroundColor : initialBackgroundColor,
+        identity.color,
       );
       payload.append("deleteLogo", String(scope === "identity" && deleteLogo));
       payload.append(
@@ -143,7 +143,8 @@ export default function InstanceGeneralSettings() {
       const updatedSettings =
         await profileApi.mutations.updateInstanceSettings(payload);
       if (scope === "email") {
-        setSettings(updatedSettings);
+        identityForm.reset({ name: updatedSettings.name, website: updatedSettings.website, color: backgroundColor });
+        themesForm.reset({ enabledThemes: updatedSettings.enabledThemes });
         setInitialSettings(updatedSettings);
         setDraftEmailTemplate(updatedSettings.emailTemplate);
         setIsEmailTemplateModalOpen(false);
@@ -162,22 +163,11 @@ export default function InstanceGeneralSettings() {
     theme: string,
     modeThemes: readonly string[],
   ) => {
-    setSettings((current) => {
-      const isEnabled = current.enabledThemes.includes(theme);
-      const enabledInMode = modeThemes.filter((item) =>
-        current.enabledThemes.includes(item),
-      );
-      if (isEnabled && enabledInMode.length === 1) {
-        toast.error("Conservez au moins un thème dans chaque mode.");
-        return current;
-      }
-      return {
-        ...current,
-        enabledThemes: isEnabled
-          ? current.enabledThemes.filter((item) => item !== theme)
-          : [...current.enabledThemes, theme],
-      };
-    });
+    const isEnabled = enabledThemes.includes(theme);
+    if (isEnabled && modeThemes.filter((item) => enabledThemes.includes(item)).length === 1) {
+      toast.error("Conservez au moins un thème dans chaque mode."); return;
+    }
+    setEnabledThemes(isEnabled ? enabledThemes.filter((item) => item !== theme) : [...enabledThemes, theme]);
   };
 
   const openThemeDrawer = (mode: "light" | "dark") => {
@@ -252,10 +242,7 @@ export default function InstanceGeneralSettings() {
                   value={settings.name}
                   maxLength={80}
                   onChange={(event) =>
-                    setSettings((current) => ({
-                      ...current,
-                      name: event.target.value,
-                    }))
+                    setName(event.target.value)
                   }
                 />
               </label>
@@ -280,11 +267,8 @@ export default function InstanceGeneralSettings() {
                   maxLength={2048}
                   placeholder="https://www.exemple.fr"
                   onChange={(event) => {
-                    if (websiteError) setWebsiteError("");
-                    setSettings((current) => ({
-                      ...current,
-                      website: event.target.value,
-                    }));
+                    identityForm.clearErrors("website");
+                    setWebsite(event.target.value);
                   }}
                 />
                 {websiteError && (

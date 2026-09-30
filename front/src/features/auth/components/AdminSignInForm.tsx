@@ -1,10 +1,11 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { adminCreationSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
 import { useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { Mail, RotateCcw } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
-import { regexMail } from "../../../config/constantes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import AuthPageWrapper from "./AuthPageWrapper";
@@ -55,6 +56,7 @@ const AdminSignInForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<AdminSignInValues>({
+    resolver: zodResolver(adminCreationSchema),
     defaultValues: {
       email,
       firstname: "",
@@ -160,13 +162,7 @@ const AdminSignInForm = ({
             type="email"
             placeholder="Adresse email"
             readOnly={email.length > 0}
-            {...register("email", {
-              required: "L'adresse email est requise.",
-              pattern: {
-                value: regexMail,
-                message: "L'adresse email n'est pas valide.",
-              },
-            })}
+            {...register("email")}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg read-only:cursor-not-allowed read-only:text-base-content/60"
           />
           {errors.email && (
@@ -181,9 +177,7 @@ const AdminSignInForm = ({
           <input
             type="text"
             placeholder="Prénom"
-            {...register("firstname", {
-              required: "Le prénom est requis.",
-            })}
+            {...register("firstname")}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
           {errors.firstname && (
@@ -198,9 +192,7 @@ const AdminSignInForm = ({
           <input
             type="text"
             placeholder="Nom"
-            {...register("lastname", {
-              required: "Le nom est requis.",
-            })}
+            {...register("lastname")}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
           {errors.lastname && (

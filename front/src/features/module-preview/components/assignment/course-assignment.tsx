@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { submissionSchema, finalSubmissionSchema, gradingFormSchema } from "../../assignment.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingSkeleton from "../../../../components/loaders/LoadingSkeleton";
 import {
@@ -121,29 +126,26 @@ function AssignmentHeader({ course }: { course: Course }) {
 function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
   const assignment = course.assignment!;
   const submission = assignment.submissions[0];
-  const [text, setText] = useState(submission?.text ?? "");
+  const submissionForm = useForm({ resolver: zodResolver(submissionSchema), defaultValues: { text: submission?.text ?? "", files: [] as File[] } });
+  const [text, setText] = useFormField(submissionForm, "text");
   const [savedText, setSavedText] = useState(submission?.text ?? "");
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useFormField(submissionForm, "files");
   const [saving, setSaving] = useState<"draft" | "submit" | null>(null);
   const [showSubmitConfirmation, setShowSubmitConfirmation] = useState(false);
   const isSubmitted = Boolean(submission?.submittedAt);
 
-  const save = async (submit: boolean) => {
-    if (
-      submit &&
-      !text.trim() &&
-      files.length === 0 &&
-      !submission?.files.length
-    ) {
-      toast.error("Ajoutez un texte ou au moins un fichier.");
-      return;
+  const save = (submit: boolean) => submissionForm.handleSubmit(async (values) => {
+    if (saving) return;
+    if (submit) {
+      const result = finalSubmissionSchema.safeParse({ ...values, existingFileCount: submission?.files.length ?? 0 });
+      if (!result.success) { toast.error(result.error.issues[0].message); return; }
     }
     setSaving(submit ? "submit" : "draft");
     try {
       await modulePreviewApi.mutations.saveAssignmentSubmission(
         course.id,
-        text,
-        files,
+        values.text,
+        values.files,
         submit,
       );
       setFiles([]);
@@ -160,7 +162,7 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
     } finally {
       setSaving(null);
     }
-  };
+  }, showFormErrors)();
 
   return (
     <div className="flex flex-col gap-6">
@@ -416,18 +418,13 @@ function StaffAssignment({
   );
   const selected =
     submitted.find((item) => item.id === selectedId) ?? submitted[0];
-  const [scores, setScores] = useState<Record<number, number>>(() =>
-    Object.fromEntries(
-      (initiallySelected?.criterionScores ?? []).map((score) => [
-        score.criterionId,
-        score.score,
-      ]),
-    ),
-  );
-  const [freeGrade, setFreeGrade] = useState<number | "">(
-    initiallySelected?.grade ?? "",
-  );
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const gradingForm = useForm({ resolver: zodResolver(gradingFormSchema(assignment.maxScore, assignment.criteria)), defaultValues: {
+    scores: Object.fromEntries((initiallySelected?.criterionScores ?? []).map((score) => [score.criterionId, score.score])) as Record<string, number>,
+    freeGrade: initiallySelected?.grade ?? "" as number | "", feedback: initiallySelected?.feedback ?? "",
+  } });
+  const [scores, setScores] = useFormField(gradingForm, "scores");
+  const [freeGrade, setFreeGrade] = useFormField(gradingForm, "freeGrade");
+  const [feedback, setFeedback] = useFormField(gradingForm, "feedback");
   const [saving, setSaving] = useState(false);
 
   const selectSubmission = (submission: AssignmentSubmission) => {
@@ -458,8 +455,8 @@ function StaffAssignment({
   const currentFeedback =
     feedback === null ? (selected?.feedback ?? "") : feedback;
 
-  const grade = async () => {
-    if (!selected) return;
+  const grade = gradingForm.handleSubmit(async (values) => {
+    if (!selected || saving) return;
     setSaving(true);
     try {
       await modulePreviewApi.mutations.gradeAssignmentSubmission(
@@ -469,11 +466,11 @@ function StaffAssignment({
           ? {
               criterionScores: assignment.criteria.map((criterion) => ({
                 criterionId: criterion.id,
-                score: criterionScore(criterion.id),
+                score: values.scores[criterion.id] ?? 0,
               })),
-              feedback: currentFeedback,
+              feedback: values.feedback,
             }
-          : { grade: Number(currentFreeGrade), feedback: currentFeedback },
+          : { grade: Number(values.freeGrade), feedback: values.feedback },
       );
       toast.success("Note enregistrée");
       await onChanged();
@@ -482,7 +479,7 @@ function StaffAssignment({
     } finally {
       setSaving(false);
     }
-  };
+  }, showFormErrors);
 
   if (submitted.length === 0) {
     return (

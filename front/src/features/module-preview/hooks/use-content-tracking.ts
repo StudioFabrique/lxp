@@ -26,7 +26,11 @@ export const HEARTBEAT_INTERVAL_MS = 30_000;
 export default function useContentTracking(
   type: ContentTrackingType,
   contentId: number | null | undefined,
+  onOpened?: (contentId: number, readId: number) => void,
 ) {
+  const onOpenedRef = useRef(onOpened);
+  useEffect(() => { onOpenedRef.current = onOpened; }, [onOpened]);
+
   // Évite de relancer l'effet à chaque rendu pour une valeur inchangée.
   const trackedIdRef = useRef<number | null>(null);
 
@@ -36,10 +40,14 @@ export default function useContentTracking(
     trackedIdRef.current = contentId;
     let cancelled = false;
 
-    // Les échecs de suivi ne doivent jamais remonter à l'apprenant : ce n'est
-    // pas une fonctionnalité dont dépend sa lecture.
+    // La confirmation d'ouverture met à jour l'état de lecture. En cas
+    // d'échec, le contenu reste consultable mais n'est pas marqué comme lu.
     const begin = () =>
-      modulePreviewApi.tracking.begin(type, contentId).catch(() => undefined);
+      modulePreviewApi.tracking.begin(type, contentId)
+        .then((result) => {
+          if (!cancelled && result?.id) onOpenedRef.current?.(contentId, result.id);
+        })
+        .catch(() => undefined);
     const heartbeat = () =>
       modulePreviewApi.tracking
         .heartbeat(type, contentId)

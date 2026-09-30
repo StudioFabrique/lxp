@@ -1,3 +1,7 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { graduationSchema } from "../../user.schema";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { ChangeEvent, useState } from "react";
 import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import Graduation from "../../interfaces/graduation";
@@ -23,17 +27,17 @@ type Props = {
 const initGraduation = { title: "", date: new Date(), degree: "" };
 
 const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props) => {
-  const [current, setCurrent] = useState<Graduation>(initGraduation);
+  const form = useForm({ resolver: zodResolver(graduationSchema), defaultValues: initGraduation });
+  const current = form.watch();
+  const setCurrent = (values: Graduation) => form.reset({ ...values, date: new Date(values.date) });
   const [editMode, setEditMode] = useState<EditState>({
     isActive: false, idToEdit: null, _idToEdit: null,
   });
 
-  const handleAdd = () => {
-    if (current.date && current.degree && current.title) {
+  const handleAdd = form.handleSubmit((current) => {
       setGraduations(addIdToObject([...graduations, current]));
       setCurrent(initGraduation);
-    }
-  };
+  }, showFormErrors);
 
   const handleSetEdit = (g: Graduation) => {
     if (!g.id && !g._id) return;
@@ -45,8 +49,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
     );
   };
 
-  const handleEdit = () => {
-    if (current.date && current.degree && current.title) {
+  const handleEdit = form.handleSubmit((current) => {
       setGraduations(
         graduations.map((item) =>
           editMode._idToEdit
@@ -60,8 +63,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
       );
       setCurrent(initGraduation);
       setEditMode({ isActive: false, idToEdit: null, _idToEdit: null });
-    }
-  };
+  }, showFormErrors);
 
   const handleDelete = (graduation: Graduation) => {
     setGraduations(

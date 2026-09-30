@@ -1,4 +1,9 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { activationTokenSchema } from "../../../auth/auth.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
+import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
@@ -29,7 +34,8 @@ const activationKeyCommand = (containerId?: string) => {
 const PromoteToRoot = () => {
   const { handshake } = useContext(AuthContext);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [token, setToken] = useState("");
+  const form = useForm({ resolver: zodResolver(activationTokenSchema), defaultValues: { token: "" } });
+  const [token, setToken] = useFormField(form, "token");
   const [isLoading, setIsLoading] = useState(false);
   const [activationTokenTtlMinutes, setActivationTokenTtlMinutes] =
     useState(30);
@@ -48,19 +54,11 @@ const PromoteToRoot = () => {
     }
   };
 
-  const handleOpenModal = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!token.trim()) {
-      toast.error("La clé d'activation est requise.");
-      return;
-    }
-
-    setModalOpen(true);
-  };
+  const handleOpenModal = form.handleSubmit(() => setModalOpen(true), showFormErrors);
 
   const onPromote = async () => {
-    const normalizedToken = token.trim();
+    if (!await form.trigger()) return;
+    const normalizedToken = activationTokenSchema.parse(form.getValues()).token;
     if (!normalizedToken) {
       toast.error("La clé d'activation est requise.");
       return;

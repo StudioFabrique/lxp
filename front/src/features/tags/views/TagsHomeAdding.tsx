@@ -4,7 +4,6 @@ import TagsList from "../../../components/tags/TagsList";
 import AddTag from "../../../components/UI/add-tag";
 import useTags from "../../../hooks/useTags";
 import Tag from "../../../../src/utils/interfaces/tag";
-import toast from "react-hot-toast";
 import { tagApi } from "../api/tag.api";
 
 type TagsHomeAddingProps = {
@@ -26,6 +25,7 @@ const TagsHomeAdding = ({
   });
 
   const {
+    submitTags,
     currentTags,
     tag,
     getTagsWithPendingInput,
@@ -61,13 +61,7 @@ const TagsHomeAdding = ({
     handleOnChange(e);
   };
 
-  const handleSubmitAllTags = async () => {
-    if (tagsToSubmit.length > 0) {
-      await onSubmitAllTags(tagsToSubmit);
-    } else {
-      toast("Aucun tag n'a été ajouté");
-    }
-  };
+  const handleSubmitAllTags = () => submitTags(onSubmitAllTags);
 
   return (
     <div>

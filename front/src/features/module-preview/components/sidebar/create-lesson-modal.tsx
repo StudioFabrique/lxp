@@ -1,6 +1,10 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { lessonDetailsSchema } from "../../assignment.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { Loader2, X } from "lucide-react";
-import { useState } from "react";
 import { createPortal } from "react-dom";
 import type Tag from "../../../../utils/interfaces/tag";
 
@@ -26,10 +30,11 @@ export default function CreateLessonModal({
   onClose,
   onSubmit,
 }: Props) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [modalite, setModalite] = useState("distanciel");
-  const [tagId, setTagId] = useState<number | "">(courseTags[0]?.id ?? "");
+  const form = useForm({ resolver: zodResolver(lessonDetailsSchema), defaultValues: { title: "", description: "", modalite: "distanciel", tagId: courseTags[0]?.id ?? 0 } });
+  const [title, setTitle] = useFormField(form, "title");
+  const [description, setDescription] = useFormField(form, "description");
+  const [modalite, setModalite] = useFormField(form, "modalite");
+  const [tagId, setTagId] = useFormField(form, "tagId");
   const selectedTagId = courseTags.some((tag) => tag.id === tagId)
     ? tagId
     : (courseTags[0]?.id ?? "");
@@ -39,7 +44,7 @@ export default function CreateLessonModal({
     setTitle("");
     setDescription("");
     setModalite("distanciel");
-    setTagId(courseTags[0]?.id ?? "");
+    setTagId(courseTags[0]?.id ?? 0);
     onClose();
   };
 
@@ -56,23 +61,11 @@ export default function CreateLessonModal({
       <form
         className="modal-box max-w-xl"
         data-onboarding="lesson-details"
-        onSubmit={async (event) => {
-          event.preventDefault();
-          if (title.trim() && selectedTagId) {
-            const success = await onSubmit({
-              title: title.trim(),
-              description: description.trim(),
-              modalite,
-              tagId: +selectedTagId,
-            });
-            if (success) {
-              setTitle("");
-              setDescription("");
-              setModalite("distanciel");
-              setTagId(courseTags[0]?.id ?? "");
-            }
-          }
-        }}
+        onSubmit={form.handleSubmit(async (values) => {
+          if (isSaving) return;
+          if (!courseTags.some((tag) => tag.id === values.tagId)) return;
+          if (await onSubmit(values)) form.reset();
+        }, showFormErrors)}
       >
         <div className="flex items-start justify-between gap-4 border-b border-base-300 pb-4">
           <h3 className="font-bold text-lg">

@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createPreferencesSchema } from "../preferences.schema";
+import { useFormField } from "../../../components/form/useFormField";
+import { showFormErrors } from "../../../components/form/form-errors";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { dashboardIAApi, type DropoutPreferences } from "../api/dashboardIA.api";
@@ -8,14 +13,18 @@ import TeacherGroupFields from "../../auth/components/TeacherGroupFields";
 import { groupApi } from "../../group/api/group.api";
 
 export default function DropoutPreferencesForm({ initial, onSaved, submitLabel = "Enregistrer", onBack, completeOnboarding = true }: { initial: DropoutPreferences; onSaved: (createGroupNext?: boolean) => void; submitLabel?: string; onBack?: () => void; completeOnboarding?: boolean }) {
-  const [enabled, setEnabled] = useState(initial.enabled);
-  const [createGroupNext, setCreateGroupNext] = useState(true);
-  const [groupName, setGroupName] = useState("");
-  const [parcoursId, setParcoursId] = useState(0);
-  const [selectedStudents, setSelectedStudents] = useState<Record<string, boolean>>({});
+  const form = useForm({ resolver: zodResolver(createPreferencesSchema(!completeOnboarding)), defaultValues: {
+    enabled: initial.enabled, frequency: initial.frequency, minCritical: initial.minCritical ?? 1, createGroupNext: true,
+    groupName: "", parcoursId: 0, selectedStudents: {} as Record<string, boolean>,
+  } });
+  const [enabled, setEnabled] = useFormField(form, "enabled");
+  const [createGroupNext, setCreateGroupNext] = useFormField(form, "createGroupNext");
+  const [groupName, setGroupName] = useFormField(form, "groupName");
+  const [parcoursId, setParcoursId] = useFormField(form, "parcoursId");
+  const [selectedStudents, setSelectedStudents] = useFormField(form, "selectedStudents");
   const [groupCreated, setGroupCreated] = useState(false);
-  const [frequency, setFrequency] = useState<"weekly" | "monthly">(initial.frequency);
-  const [minCritical, setMinCritical] = useState<1 | 2>(initial.minCritical ?? 1);
+  const [frequency, setFrequency] = useFormField(form, "frequency");
+  const [minCritical, setMinCritical] = useFormField(form, "minCritical");
   const client = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (input: Parameters<typeof dashboardIAApi.updateDropoutPreferences>[0]) => {
@@ -65,10 +74,10 @@ export default function DropoutPreferencesForm({ initial, onSaved, submitLabel =
     </fieldset>}
   </BoxWrapper>;
 
-  return <form className={`flex flex-col gap-5 ${onBack ? "min-h-0 flex-1" : ""}`} onSubmit={(event) => {
-    event.preventDefault();
-    mutation.mutate({ enabled, frequency, minCritical, completeOnboarding: true });
-  }}>
+  return <form className={`flex flex-col gap-5 ${onBack ? "min-h-0 flex-1" : ""}`} onSubmit={form.handleSubmit((values) => {
+    if (mutation.isPending) return;
+    mutation.mutate({ enabled: values.enabled, frequency: values.frequency, minCritical: values.minCritical, completeOnboarding: true });
+  }, showFormErrors)}>
     {enabled ? <CursorGlowCard autoGlow glowColor="primary" glowSize={2.4} className="rounded-lg">{card}</CursorGlowCard> : card}
     {!completeOnboarding && <BoxWrapper className={`h-auto transition-colors ${createGroupNext ? "border-secondary/25 bg-secondary/5" : "border-base-300 bg-base-200/70"}`}>
       <div className="flex items-start gap-4">

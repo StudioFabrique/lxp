@@ -20,6 +20,11 @@ export default async function getLessonDetail(
       related120
         .select("id", "type", "order", "url", "title", "createdAt", "updatedAt")
         .include("resourceActivities")
+        .include("activitiesRead", (reads) =>
+          reads.where((read) =>
+            read.student.some((student) => student.idMdb.eq(userIdMdb ?? "")),
+          ).select("id"),
+        )
         .orderBy((row) => row.order.asc()),
     )
     .include("lessonRating", (related121) =>

@@ -1,5 +1,6 @@
 import { ChangeEvent } from "react";
-import { UseFormRegister, UseFormWatch } from "react-hook-form";
+import { UseFormRegister, UseFormWatch, FieldErrors } from "react-hook-form";
+import type { VideoFormValues } from "../../../lesson/media.schema";
 import FormInput from "../../../../components/form/FormInput";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import VideoPlayer from "../../../../components/UI/VideoPlayer";
@@ -7,9 +8,9 @@ import VideoPlayer from "../../../../components/UI/VideoPlayer";
 type Props = {
   mode: "read" | "edit" | "write";
   data: {
-    register: UseFormRegister<any>;
-    errors: any;
-    watch: UseFormWatch<any>;
+    register: UseFormRegister<VideoFormValues>;
+    errors: FieldErrors<VideoFormValues>;
+    watch: UseFormWatch<VideoFormValues>;
   };
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -20,7 +21,7 @@ export default function VideoForm(props: Props) {
   const url = props.data.watch("url");
 
   return (
-    <form className="flex flex-col gap-y-2">
+    <form className="flex flex-col gap-y-2" onSubmit={props.onSubmit}>
       <BoxWrapper>
         <FormInput
           label="Titre *"
@@ -55,7 +56,6 @@ export default function VideoForm(props: Props) {
         <button
           type="submit"
           className="btn btn-primary"
-          onClick={props.onSubmit}
         >
           Enregistrer
         </button>

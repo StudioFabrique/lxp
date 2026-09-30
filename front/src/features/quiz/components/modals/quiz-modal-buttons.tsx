@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { quizReportSchema } from "../../quiz-form.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useState } from "react";
 
 type Props = {
@@ -18,20 +23,17 @@ const QuizModalButtons = ({
   nextAction,
 }: Props) => {
   const [isReporting, setIsReporting] = useState(false);
-  const [comment, setComment] = useState("");
+  const form = useForm({ resolver: zodResolver(quizReportSchema), defaultValues: { comment: "" } });
+  const [comment, setComment] = useFormField(form, "comment");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmitReport = async () => {
-    if (comment && comment.trim() !== "") {
-      setIsSubmitting(true);
-      try {
-        await onReport(externalId, comment.trim());
-      } catch (error) {
-        console.error(error);
-        setIsSubmitting(false);
-      }
-    }
-  };
+  const handleSubmitReport = form.handleSubmit(async ({ comment }) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try { await onReport(externalId, comment); setIsReporting(false); form.reset(); }
+    catch (error) { console.error(error); }
+    finally { setIsSubmitting(false); }
+  }, showFormErrors);
 
   if (isReporting) {
     return (

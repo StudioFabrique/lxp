@@ -1,8 +1,12 @@
-import { useContext, useEffect, useId, useRef, useState } from "react";
+import { useContext, useEffect, useId, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-import { regexGeneric } from "../../../../config/constantes";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { roleFormSchema } from "../../role.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
@@ -40,18 +44,16 @@ const RoleForm = ({
   const actorRank = user?.roles[0]?.rank ?? 4;
   const defaultRoleType = Math.min(actorRank + 1, 4);
   const formId = useId();
-  const [name, setName] = useState(() => getInitialName(role, duplicateFrom));
-  const [label, setLabel] = useState(() =>
-    getInitialLabel(role, duplicateFrom),
-  );
-  const [currentRoleType, setCurrentRoleType] = useState(
-    role?.rank ?? duplicateFrom?.rank ?? defaultRoleType,
-  );
-
+  const roleForm = useForm({ resolver: zodResolver(roleFormSchema), defaultValues: {
+    name: getInitialName(role, duplicateFrom), label: getInitialLabel(role, duplicateFrom), rank: role?.rank ?? duplicateFrom?.rank ?? defaultRoleType,
+  } });
+  const [name, setName] = useFormField(roleForm, "name");
+  const [label, setLabel] = useFormField(roleForm, "label");
+  const [currentRoleType, setCurrentRoleType] = useFormField(roleForm, "rank");
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const labelInputRef = useRef<HTMLInputElement | null>(null);
-  const nameHasError = name.length > 0 && !regexGeneric.test(name);
-  const labelHasError = label.length > 0 && !regexGeneric.test(label);
+  const nameHasError = Boolean(roleForm.formState.errors.name);
+  const labelHasError = Boolean(roleForm.formState.errors.label);
 
   const finishMutation = () => {
     onRoleCreated?.();
@@ -98,24 +100,9 @@ const RoleForm = ({
     setLabel(name);
   };
 
-  const handleSubmitRole = () => {
-    const trimmedName = name.trim();
-    const trimmedLabel = label.trim();
-    if (
-      !trimmedName ||
-      !trimmedLabel ||
-      !regexGeneric.test(trimmedName) ||
-      !regexGeneric.test(trimmedLabel)
-    ) {
-      toast.error("Le formulaire n'est pas valide");
-      return;
-    }
-
-    const body = {
-      role: trimmedName,
-      label: trimmedLabel,
-      rank: currentRoleType,
-    };
+  const handleSubmitRole = roleForm.handleSubmit((values) => {
+    if (isRequestLoading) return;
+    const body = { role: values.name, label: values.label, rank: values.rank };
 
     if (role) {
       updateMutation.mutate({ id: role._id, body });
@@ -126,7 +113,7 @@ const RoleForm = ({
       ...body,
       duplicateFromId: duplicateFrom?._id,
     });
-  };
+  }, showFormErrors);
 
   useEffect(() => {
     if (role?.protection && role.protection >= 1) {
@@ -140,10 +127,7 @@ const RoleForm = ({
     <form
       autoComplete="off"
       className="grid w-full min-w-0 gap-5 md:grid-cols-2"
-      onSubmit={(event) => {
-        event.preventDefault();
-        handleSubmitRole();
-      }}
+      onSubmit={handleSubmitRole}
     >
       <div className="flex min-w-0 flex-col gap-y-1">
         <div className="flex items-center gap-2">

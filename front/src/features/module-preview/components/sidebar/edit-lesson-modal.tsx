@@ -1,5 +1,9 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { lessonDetailsSchema } from "../../assignment.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { BookOpen, Loader2, X } from "lucide-react";
-import { type FormEvent, useState } from "react";
 import { createPortal } from "react-dom";
 
 import type Lesson from "../../../../utils/interfaces/lesson";
@@ -21,28 +25,20 @@ export default function EditLessonModal({
   onClose,
   onSubmit,
 }: Props) {
-  const [title, setTitle] = useState(lesson.title);
-  const [description, setDescription] = useState(lesson.description ?? "");
-  const [modalite, setModalite] = useState(lesson.modalite ?? "distanciel");
-  const [tagId, setTagId] = useState<number | "">(
-    lesson.tag?.id ?? courseTags[0]?.id ?? "",
-  );
+  const form = useForm({ resolver: zodResolver(lessonDetailsSchema), defaultValues: { title: lesson.title, description: lesson.description ?? "", modalite: lesson.modalite ?? "distanciel", tagId: lesson.tag?.id ?? courseTags[0]?.id ?? 0 } });
+  const [title, setTitle] = useFormField(form, "title");
+  const [description, setDescription] = useFormField(form, "description");
+  const [modalite, setModalite] = useFormField(form, "modalite");
+  const [tagId, setTagId] = useFormField(form, "tagId");
   const selectedTagId = courseTags.some((tag) => tag.id === tagId)
     ? tagId
     : (courseTags[0]?.id ?? "");
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!title.trim() || !selectedTagId) return;
-
-    const success = await onSubmit({
-      title: title.trim(),
-      description: description.trim(),
-      modalite,
-      tagId: Number(selectedTagId),
-    });
-    if (success) onClose();
-  };
+  const handleSubmit = form.handleSubmit(async (values) => {
+    if (isSubmitting) return;
+    if (!courseTags.some((tag) => tag.id === values.tagId)) { form.setError("tagId", { message: "Sélectionnez un tag du cours." }); showFormErrors(form.formState.errors); return; }
+    if (await onSubmit(values)) onClose();
+  }, showFormErrors);
 
   return createPortal(
     <dialog

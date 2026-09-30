@@ -126,6 +126,7 @@ const ModuleContentSidebar = ({
             </PermissionGuard>
           )}
           <ActivityList
+            showUnreadIndicators={location.pathname.startsWith("/student/")}
             key={selectedLesson?.id}
             lessonId={selectedLesson?.id}
             isReorderingActivities={isReorderingActivities}

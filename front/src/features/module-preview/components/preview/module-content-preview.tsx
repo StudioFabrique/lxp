@@ -207,6 +207,7 @@ const ModuleContentPreview = ({
             />
           ) : (
             <StudentActivityNavigation
+              areAllActivitiesRead={computed.areAllActivitiesRead}
               modalVisibility={modalVisibility}
               isLessonCompleted={computed.isLessonCompleted}
               isFirstActivitySelected={computed.isFirstActivitySelected}

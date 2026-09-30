@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { parcoursImportSchema } from "../../parcours.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useState } from "react";
 import { Loader2, PlusCircle } from "lucide-react";
 
@@ -40,13 +45,14 @@ const ParcoursImportModal = ({
   onImport,
   embedded = false,
 }: Props) => {
-  const [formationChoice, setFormationChoice] =
-    useState<ImportFormationChoice>(initialFormationChoice);
+  const form = useForm({ resolver: zodResolver(parcoursImportSchema), defaultValues: { formationChoice: initialFormationChoice, publishCourses: false } });
+  const [formationChoice, setFormationChoice] = useFormField(form, "formationChoice");
   const [showAutomaticFormationOption, setShowAutomaticFormationOption] =
     useState(showAutomaticFormationOptionInitially);
-  const [publishCourses, setPublishCourses] = useState(false);
+  const [publishCourses, setPublishCourses] = useFormField(form, "publishCourses");
 
-  const handleImport = () => {
+  const handleImport = form.handleSubmit(({ formationChoice, publishCourses }) => {
+    if (isImporting) return;
     onImport({
       archive,
       formationId:
@@ -54,7 +60,7 @@ const ParcoursImportModal = ({
       createFormation: formationChoice === "create",
       publishCourses,
     });
-  };
+  }, showFormErrors);
 
   const content = (
     <>

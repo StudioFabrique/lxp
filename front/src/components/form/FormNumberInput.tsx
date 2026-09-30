@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
   FieldError,
   FieldPath,
@@ -27,19 +28,20 @@ const FormNumberInput = <TFieldValues extends FieldValues,>({
   min,
   helperText,
 }: FormNumberInputProps<TFieldValues>) => {
-  const errorId = `${name}-error`;
-  const helperId = `${name}-helper`;
+  const fieldId = useId();
+  const errorId = `${fieldId}-error`;
+  const helperId = `${fieldId}-helper`;
 
   return (
     <div className="flex flex-col gap-y-2 w-full">
-      <label htmlFor={name} className="text-sm font-bold">
+      <label htmlFor={fieldId} className="text-sm font-bold">
         {label}
       </label>
       <input
         {...register(name, { valueAsNumber: true })}
         className={cn("w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60", error && "input-error")}
         type="number"
-        id={name}
+        id={fieldId}
         placeholder={placeholder}
         disabled={disabled}
         min={min}

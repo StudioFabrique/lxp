@@ -1,17 +1,17 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createDatesSchema } from "../../../course-dates.schema";
+import { useFormField } from "../../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../../components/form/form-errors";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import CourseDates from "../../../interfaces/course-dates";
-import useInput from "../../../../../hooks/useInput";
-import { regexGeneric } from "../../../../../config/constantes";
-import toast from "react-hot-toast";
 import Module from "../../../../../../src/utils/interfaces/module";
-import { useEffect, useState } from "react";
-import { localeDate } from "../../../../../utils/helpers/locale-date";
+import { useMemo } from "react";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import DatePicker from "../../../../../components/UI/date-picker/date-picker";
 import { formatDateToYYYYMMDD } from "../../../../../utils/helpers/convert-date";
 
 import CourseTimeFields from "./course-time-fields";
-import { validCourseTimes } from "../../../helpers/course-times";
 import { cn } from "../../../../../utils/cn";
 
 interface DatesFormProps {
@@ -22,119 +22,19 @@ interface DatesFormProps {
 }
 
 const DatesForm = (props: DatesFormProps) => {
-  const [times, setTimes] = useState<{ startTime?: string; endTime?: string }>({});
-  const [cumulDurations, setCumulDurations] = useState<number>(0);
-  const { value: synchrone } = useInput(
-    (value) => regexGeneric.test(value),
-    "0"
-  );
-  const { value: asynchrone } = useInput(
-    (value) => regexGeneric.test(value),
-    "0"
-  );
-  const { value: startDate } = useInput(
-    (value) => regexGeneric.test(value),
-    ""
-  );
-  const { value: endDate } = useInput((value) => regexGeneric.test(value), "");
-
-  const setInputStyle = (hasError: boolean) => {
-    return cn("flex-1 input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
+  const usedDuration = (props.datesList ?? []).reduce((sum, date) => sum + Number(date.synchroneDuration) + Number(date.asynchroneDuration), 0);
+  const schema = useMemo(() => createDatesSchema(props.module.minDate, props.module.maxDate, props.module.duration, usedDuration), [props.module.minDate, props.module.maxDate, props.module.duration, usedDuration]);
+  const form = useForm({ resolver: zodResolver(schema), defaultValues: { minDate: "", maxDate: "", synchroneDuration: 0, asynchroneDuration: 0, startTime: "", endTime: "" } });
+  const [minDate, setMinDate] = useFormField(form, "minDate");
+  const [maxDate, setMaxDate] = useFormField(form, "maxDate");
+  const times = { startTime: form.watch("startTime"), endTime: form.watch("endTime") };
+  const setTimes = (next: { startTime?: string; endTime?: string }) => {
+    form.setValue("startTime", next.startTime ?? "", { shouldDirty: true });
+    form.setValue("endTime", next.endTime ?? "", { shouldDirty: true });
   };
+  const handleSubmit = form.handleSubmit((values) => { if (!props.isLoading) props.onSubmitDates(values); }, showFormErrors);
+  const setInputStyle = (hasError: boolean) => cn("flex-1 input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (formIsValid()) {
-      props.onSubmitDates({
-        ...times,
-        minDate: startDate.value,
-        maxDate: endDate.value,
-        synchroneDuration: synchrone.value,
-        asynchroneDuration: asynchrone.value,
-      });
-    }
-  };
-
-  const testDates = () => {
-    return (
-      new Date(startDate.value).getTime() <= new Date(endDate.value).getTime()
-    );
-  };
-
-  const testModuleDates = () => {
-    const tmpMinDate = new Date(startDate.value).getTime();
-    const tmpMaxDate = new Date(endDate.value).getTime();
-    const minModuleDate = new Date(props.module.minDate!).getTime();
-    const maxModuleDate = new Date(props.module.maxDate!).getTime();
-    console.log(tmpMinDate, tmpMaxDate, minModuleDate, maxModuleDate);
-    return (
-      tmpMinDate >= minModuleDate &&
-      tmpMinDate <= maxModuleDate &&
-      tmpMaxDate <= maxModuleDate
-    );
-  };
-
-  const handleChangeStartDate = (value: string) => {
-    startDate.datePicking(value);
-  };
-
-  const handleChangeEndDate = (value: string) => {
-    endDate.datePicking(value);
-  };
-
-  const formIsValid = () => {
-    if (!validCourseTimes(times.startTime, times.endTime)) {
-      toast.error("Renseignez les deux heures, avec une fin après le début.");
-      return false;
-    }
-    if (
-      !(
-        synchrone.isValid &&
-        asynchrone.isValid &&
-        startDate.isValid &&
-        endDate.isValid
-      )
-    ) {
-      toast.error("Vérifiez le format des dates et des durées du cours svp.");
-      return false;
-    }
-    if (!testDates()) {
-      toast.error(
-        "La date de fin ne doit pas être antérieure à la date de début."
-      );
-      return false;
-    } else if (!testModuleDates()) {
-      toast.error(
-        `Les dates saisies doivent se situer entre le ${localeDate(
-          props.module.minDate!
-        )} et le ${localeDate(
-          props.module.maxDate!
-        )}, ce qui correspond à la plage de dates du module.`
-      );
-      return false;
-    } else if (
-      +synchrone.value + +asynchrone.value + cumulDurations >
-      props.module.duration
-    ) {
-      toast.error(
-        "Le cumul des durées du cours ne doit pas être supérieur à la durée totale du module."
-      );
-      return false;
-    }
-    return true;
-  };
-
-  useEffect(() => {
-    if (props.datesList && props.datesList.length > 0) {
-      const duration = props.datesList.reduce((accumulator, date) => {
-        return accumulator + +date.asynchroneDuration + +date.synchroneDuration;
-      }, 0);
-      setCumulDurations(duration);
-    }
-  }, [props.datesList]);
-
-  console.log(+synchrone.value + +asynchrone.value + cumulDurations);
-  console.log(props.module);
   return (
     <form
       className="grid grid-cols-1 lg:grid-cols-2 gap-8"
@@ -149,19 +49,19 @@ const DatesForm = (props: DatesFormProps) => {
                 id="startingDate"
                 name="startingDate"
                 label="Début"
-                value={startDate.value}
+                value={minDate}
                 min={
                   props.module.minDate
                     ? formatDateToYYYYMMDD(new Date(props.module.minDate))
                     : undefined
                 }
                 max={
-                  endDate.value ||
+                  maxDate ||
                   (props.module.maxDate
                     ? formatDateToYYYYMMDD(new Date(props.module.maxDate))
                     : undefined)
                 }
-                onChange={handleChangeStartDate}
+                onChange={setMinDate}
               />
             </div>
             <div className="flex justify-between items-end gap-4">
@@ -169,9 +69,9 @@ const DatesForm = (props: DatesFormProps) => {
                 id="endingDate"
                 name="endingDate"
                 label="Fin"
-                value={endDate.value}
+                value={maxDate}
                 min={
-                  startDate.value ||
+                  minDate ||
                   (props.module.minDate
                     ? formatDateToYYYYMMDD(new Date(props.module.minDate))
                     : undefined)
@@ -181,7 +81,7 @@ const DatesForm = (props: DatesFormProps) => {
                     ? formatDateToYYYYMMDD(new Date(props.module.maxDate))
                     : undefined
                 }
-                onChange={handleChangeEndDate}
+                onChange={setMaxDate}
               />
             </div>
           </div>
@@ -196,14 +96,11 @@ const DatesForm = (props: DatesFormProps) => {
               Synchrone
             </label>
             <input
-              className={setInputStyle(synchrone.hasError)}
+              className={setInputStyle(Boolean(form.formState.errors.synchroneDuration))}
               type="number"
               id="synchrone"
-              name="synchrone"
               min={0}
-              value={synchrone.value}
-              onChange={synchrone.valueChangeHandler}
-              onBlur={synchrone.valueBlurHandler}
+              {...form.register("synchroneDuration", { valueAsNumber: true })}
             />
           </div>
           <div className="flex justify-between items-center gap-x-4">
@@ -211,14 +108,11 @@ const DatesForm = (props: DatesFormProps) => {
               Asynchrone
             </label>
             <input
-              className={setInputStyle(asynchrone.hasError)}
+              className={setInputStyle(Boolean(form.formState.errors.asynchroneDuration))}
               type="number"
               id="asynchrone"
-              name="asynchrone"
               min={0}
-              value={asynchrone.value}
-              onChange={asynchrone.valueChangeHandler}
-              onBlur={asynchrone.valueBlurHandler}
+              {...form.register("asynchroneDuration", { valueAsNumber: true })}
             />
           </div>
         </div>

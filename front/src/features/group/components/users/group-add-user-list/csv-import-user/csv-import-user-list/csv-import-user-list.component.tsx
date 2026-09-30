@@ -1,4 +1,9 @@
-import { FC, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { csvUsersSchema, type CsvUserRow } from "../../../../../../user/csv-user.schema";
+import { showFormErrors } from "../../../../../../../components/form/form-errors";
+import { FC, useState } from "react";
 import { Download, Upload } from "lucide-react";
 import { csvUsersFields } from "../../../../../../../config/csv/csv-users-fields";
 import RightSideDrawer from "../../../../../../../components/UI/right-side-drawer/right-side-drawer";
@@ -20,16 +25,16 @@ type CreateManyUsersResponse = {
 const CsvImportUserList: FC<{
   onAddUsers: (users: Array<User>) => void;
 }> = ({ onAddUsers }) => {
-  const [usersToImport, setUsersToImport] = useState<User[]>([]);
-  const [selectedUsersToUpload, setSelectedUsersToUpload] = useState<User[]>(
-    [],
-  );
+  const [usersToImport, setUsersToImport] = useState<CsvUserRow[]>([]);
+  const form = useForm<z.input<typeof csvUsersSchema>, unknown, z.output<typeof csvUsersSchema>>({ resolver: zodResolver(csvUsersSchema), defaultValues: { users: [] } });
+  const selectedUsersToUpload = form.watch("users");
+  const setSelectedUsersToUpload = (users: CsvUserRow[]) => form.setValue("users", users, { shouldDirty: true, shouldValidate: true });
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleImportCsv = (data: User[]) => {
-    const usersByEmail = new Map<string, User>();
+  const handleImportCsv = (data: CsvUserRow[]) => {
+    const usersByEmail = new Map<string, CsvUserRow>();
 
     data.forEach((user) => {
       const email = user.email?.trim();
@@ -51,24 +56,8 @@ const CsvImportUserList: FC<{
     setSelectedUsersToUpload(users);
   };
 
-  const handleSubmitToDatabase = () => {
-    if (!(selectedUsersToUpload.length > 0)) {
-      toast.error("aucun utilisateur sélectionné");
-      return;
-    }
-
-    const usersToUpload = selectedUsersToUpload.map((user) => {
-      if (user.birthDate) {
-        const [day, month, year] = (user.birthDate as unknown as string).split(
-          "/",
-        );
-        const date = `${year}-${month}-${day}`;
-        return { ...user, birthDate: new Date(date) };
-      }
-
-      return user;
-    });
-
+  const handleSubmitToDatabase = form.handleSubmit(async ({ users: usersToUpload }) => {
+    if (isLoading) return;
     const applyData = (data: CreateManyUsersResponse) => {
       handleCloseDrawer();
       onAddUsers(data.usersCreated);
@@ -86,7 +75,7 @@ const CsvImportUserList: FC<{
       toast.success(message);
     };
     setIsLoading(true);
-    userMutations
+    await userMutations
       .createMany(usersToUpload)
       .then(applyData)
       .catch((err) => {
@@ -95,10 +84,10 @@ const CsvImportUserList: FC<{
         );
       })
       .finally(() => setIsLoading(false));
-  };
+  }, showFormErrors);
 
-  const handleAddSelectedUser = (user: User) => {
-    setSelectedUsersToUpload((selectedUsersToUpload) => [
+  const handleAddSelectedUser = (user: CsvUserRow) => {
+    setSelectedUsersToUpload([
       ...selectedUsersToUpload,
       user,
     ]);
@@ -112,13 +101,13 @@ const CsvImportUserList: FC<{
     setSelectedUsersToUpload([]);
   };
 
-  const handleDeleteSelectedUser = useCallback((user: User) => {
-    setSelectedUsersToUpload((selectedUsersToUpload) =>
+  const handleDeleteSelectedUser = (user: CsvUserRow) => {
+    setSelectedUsersToUpload(
       selectedUsersToUpload.filter(
         (currentUser) => currentUser.email !== user.email,
       ),
     );
-  }, []);
+  };
 
   const handleCloseDrawer = () => {
     setDrawerOpenState(false);

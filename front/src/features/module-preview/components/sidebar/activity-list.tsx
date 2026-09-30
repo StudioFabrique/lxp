@@ -15,6 +15,7 @@ import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 type ActivityListProps = {
   readOnly?: boolean;
+  showUnreadIndicators?: boolean;
   activities?: Activity[];
   lessonId?: number;
   selectedActivity?: Activity | null;
@@ -30,6 +31,7 @@ type ActivityListProps = {
 
 export default function ActivityList({
   readOnly = false,
+  showUnreadIndicators = false,
   activities,
   lessonId,
   selectedActivity,
@@ -113,6 +115,7 @@ export default function ActivityList({
               key={activity.id}
               disabled={readOnly}
               activity={activity}
+              showUnreadIndicator={showUnreadIndicators}
               index={index}
               lessonId={lessonId}
               isSelected={selectedActivity?.id === activity.id}

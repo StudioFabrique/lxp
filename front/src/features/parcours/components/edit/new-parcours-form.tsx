@@ -1,10 +1,11 @@
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 
-import useInput from "../../../../hooks/useInput";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { newParcoursSchema } from "../../parcours.schema";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { Link } from "react-router";
-import { regexGeneric } from "../../../../config/constantes";
 import Selecter from "../../../../components/UI/selecter/selecter.component";
-import toast from "react-hot-toast";
 import { cn } from "../../../../utils/cn";
 
 type Item = {
@@ -31,10 +32,8 @@ const NewParcoursForm: FC<Props> = ({
   onCreateFormation,
   onSubmit,
 }) => {
-  const { value: title } = useInput((value) => regexGeneric.test(value));
-  const [formationId, setFormationId] = useState<number | undefined>(
-    initialFormationId,
-  );
+  const form = useForm({ resolver: zodResolver(newParcoursSchema), defaultValues: { title: "", formationId: initialFormationId ?? 0 }, mode: "onChange" });
+  const formationId = form.watch("formationId");
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,7 +45,7 @@ const NewParcoursForm: FC<Props> = ({
    * @param id number
    */
   const handleFormation = (id: number) => {
-    setFormationId(id);
+    form.setValue("formationId", id, { shouldDirty: true, shouldValidate: true });
   };
 
   /**
@@ -62,18 +61,7 @@ const NewParcoursForm: FC<Props> = ({
    * soumission du formulaire s'il est valide, affichage d'un message d'erreur dans le cas contraire
    * @param event FormEvent
    */
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    if (title.isValid) {
-      if (formationId !== undefined && formationId > 0) {
-        onSubmit({ title: title.value, formationId });
-      } else {
-        toast.error("Sélectionnez une formation");
-      }
-    } else {
-      toast.error("Donnez un titre à votre parcours");
-    }
-  };
+  const handleSubmit = form.handleSubmit(onSubmit, showFormErrors);
 
   return (
     <>
@@ -105,14 +93,13 @@ const NewParcoursForm: FC<Props> = ({
             Donner un nom au parcours
           </label>
           <input
-            ref={titleInputRef}
+            ref={(element) => { form.register("title").ref(element); titleInputRef.current = element; }}
             data-onboarding-field="parcours-title"
-            className={setInputStyle(title.hasError)}
-            name="title"
+            className={setInputStyle(Boolean(form.formState.errors.title))}
             id="title"
-            value={title.value}
-            onChange={title.valueChangeHandler}
-            onBlur={title.valueBlurHandler}
+            onChange={form.register("title").onChange}
+            onBlur={form.register("title").onBlur}
+            name="title"
             placeholder="Exemple: CDA - Promo 2023"
             disabled={!formationId}
           />
@@ -120,7 +107,7 @@ const NewParcoursForm: FC<Props> = ({
         <div className="w-full flex justify-end">
           <button
             className="btn btn-primary"
-            disabled={!formationId || !title.isValid}
+            disabled={!formationId || !form.formState.isValid}
           >
             Créer
           </button>

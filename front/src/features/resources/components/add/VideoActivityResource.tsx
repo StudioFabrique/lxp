@@ -1,10 +1,9 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { activityVideoSize } from "../../../../config/images-sizes";
-import { maxSizeError } from "../../../../utils/helpers/max-size-error";
-import { activiteMetaDataSchema } from "../../../../config/validation/lesson/activite-video";
+import { videoSchema, videoFileError, type VideoFormValues } from "../../../lesson/media.schema";
+import { useFormField } from "../../../../components/form/useFormField";
 import { Activity } from "../../../../utils/interfaces/activity";
 import ElementNotFound from "../../../../components/UI/element-not-found";
 import VideoPlayer from "../../../../components/UI/VideoPlayer";
@@ -19,50 +18,39 @@ type Props = {
 };
 
 export default function VideoActivityResource(props: Props) {
-  const maxSize = activityVideoSize;
   // Hook personnalisé pour la gestion du formulaire
+  const form = useForm<VideoFormValues>({ resolver: zodResolver(videoSchema), defaultValues: { title: "", description: "", origin: "web", url: "", file: null } });
+  const [file, setFile] = useFormField(form, "file");
   const {
     register,
     handleSubmit,
     watch,
     setValue,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(activiteMetaDataSchema),
-    defaultValues: { title: "", description: "", url: "" },
-  });
-
-  const [file, setFile] = useState<File | null>(null); // Fichier vidéo sélectionné
+  } = form;
 
   const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
     if (selectedFile) {
-      // Vérification du type de fichier
-      if (!selectedFile.type.startsWith("video/")) {
-        toast.error("Merci de choisir un fichier de type video.");
-        setFile(null);
-        return;
-      }
-      // Vérification de la taille du fichier
-      if (selectedFile.size > maxSize) {
-        toast.error(maxSizeError(maxSize));
-      }
+      const error = videoFileError(selectedFile);
+      if (error) { toast.error(error); return; }
+      setValue("origin", "file");
       setFile(selectedFile);
     }
   };
 
-  const submitForm = (data: Record<string, any>) => {
+  const submitForm = (data: VideoFormValues) => {
     const fd = new FormData();
     fd.append(
       "data",
       JSON.stringify({
         title: data.title,
         description: data.description,
-        url: file ? "" : data.url,
+        url: data.origin === "file" ? "" : data.url.trim(),
         parent: props.parent,
       }),
     );
-    if (file) fd.append("video", file);
+    if (data.origin === "file" && file) fd.append("video", file);
     props.onSubmit(fd);
   };
 
@@ -78,6 +66,7 @@ export default function VideoActivityResource(props: Props) {
     if (props.activity) {
       setValue("title", props.activity.title ?? "");
       setValue("url", props.activity.url ?? "");
+      setValue("description", props.activity.description ?? "");
     }
   }, [props.activity, setValue]);
 

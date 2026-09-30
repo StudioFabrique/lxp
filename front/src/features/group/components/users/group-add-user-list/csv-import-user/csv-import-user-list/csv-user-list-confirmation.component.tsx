@@ -1,4 +1,4 @@
-import type User from "../../../../../../../utils/interfaces/user";
+import type { CsvUserRow as User } from "../../../../../../user/csv-user.schema";
 
 type Props = {
   usersFromCsv: User[];
@@ -38,7 +38,7 @@ const CsvUserListConfirmation = ({
   }
 
   return (
-    <div className="flex min-h-full flex-col gap-5">
+    <form className="flex min-h-full flex-col gap-5" onSubmit={(event) => { event.preventDefault(); onConfirmSubmit(); }}>
       <label className="flex items-center gap-3 rounded-lg bg-base-100 p-3">
         <input
           type="checkbox"
@@ -93,15 +93,14 @@ const CsvUserListConfirmation = ({
           Annuler
         </button>
         <button
-          type="button"
+          type="submit"
           className="btn btn-primary"
           disabled={isLoading || usersToAdd.length === 0}
-          onClick={onConfirmSubmit}
         >
           {isLoading ? "Création…" : "Confirmer la création"}
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 

@@ -1,14 +1,19 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { textActivitySchema } from "../text-activity.schema";
+import { useFormField } from "../../../components/form/useFormField";
+import { showFormErrors } from "../../../components/form/form-errors";
  
 import { useCallback, useEffect, useState } from "react";
 import { resourcesApi } from "../api/resources.api";
-import { regexGeneric } from "../../../config/constantes";
 import toast from "react-hot-toast";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity } from "../../../utils/interfaces/activity";
 
 const useTextActivity = () => {
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  const form = useForm({ resolver: zodResolver(textActivitySchema), defaultValues: { title: "", content: "" } });
+  const [title, setTitle] = useFormField(form, "title");
+  const [content, setContent] = useFormField(form, "content");
   const [error, setError] = useState<string>("");
 
   const createActivity = async (
@@ -19,15 +24,15 @@ const useTextActivity = () => {
   ): Promise<boolean> => {
     // Implementation for creating an activity
     if (!id) return false;
-    if (!regexGeneric.test(title!)) {
-      toast.error("Le titre contient des caractères non autorisés.");
-      return false;
-    }
+    form.setValue("title", title ?? form.getValues("title"));
+    form.setValue("content", content ?? form.getValues("content"));
+    if (!await form.trigger()) { showFormErrors(form.formState.errors); return false; }
+    const values = textActivitySchema.parse(form.getValues());
 
     const body = {
-      title,
-      description: "déception",
-      value: content,
+      title: values.title,
+      description: "",
+      value: values.content,
       parent: "resource",
     };
 
@@ -59,7 +64,7 @@ const useTextActivity = () => {
 
   const editActivityContent = useCallback((newContent: string) => {
     setContent(newContent);
-  }, []);
+  }, [setContent]);
 
   const deleteActivity = () => {
     // Implementation for deleting an activity
@@ -100,7 +105,7 @@ const useTextActivity = () => {
         })
       );
     },
-    [editActivityContent]
+    [editActivityContent, setTitle]
   );
 
   useEffect(() => {

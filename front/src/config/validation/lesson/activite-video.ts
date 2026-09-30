@@ -4,7 +4,7 @@ import { regexGeneric, regexOptionalGeneric } from "../../constantes";
 export const activiteMetaDataSchema = z.object({
   title: z
     .string({ error: "Un titre est requis pour le nouveau module" })
-    .regex(regexGeneric, {
+    .trim().min(1, "Ce champ est obligatoire.").regex(regexGeneric, {
       message: "Le titre de la video contient des caractères invalides",
     }),
   description: z

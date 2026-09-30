@@ -1,3 +1,5 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { passwordCreationSchema } from "../auth.schema";
 /**
  *   Cette vue permet d'activer un compte utilisateur
  *   nouvellement créé.
@@ -37,6 +39,7 @@ export default function RegisterHome() {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterValues>({
+    resolver: zodResolver(passwordCreationSchema),
     defaultValues: { password: "", confirmPassword: "" },
   });
 

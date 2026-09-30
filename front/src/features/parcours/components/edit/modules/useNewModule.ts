@@ -144,7 +144,7 @@ const useNewModule = () => {
       if (!isValid) return;
 
       const formData = new FormData();
-      const values = getValues();
+      const values = moduleCreateSchema.parse(getValues());
 
       const moduleData = {
         ...values,
@@ -324,7 +324,7 @@ const useNewModule = () => {
           const data = await parcoursApi.mutations.duplicateModule(
             state.moduleToDuplicate!.id,
             {
-              duration: getValues().duration ?? 0,
+              duration: moduleCreateSchema.parse(getValues()).duration,
               contactsIds: state.currentContacts
                 .map((item) => item.id)
                 .filter((item): item is number => typeof item === "number"),
@@ -368,7 +368,7 @@ const useNewModule = () => {
       try {
         const updatedModule = {
           id: state.moduleToUpdate,
-          ...getValues(),
+          ...moduleCreateSchema.parse(getValues()),
           contactsIds: state.currentContacts
             ? state.currentContacts.map((item) => item.id)
             : [],

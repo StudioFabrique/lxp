@@ -1,3 +1,4 @@
+import { and } from "@prisma/orm-postgres/orm-client";
 import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -34,6 +35,20 @@ export default async function putFinishReadLesson(
   }
 
   return prisma.transaction(async (tx) => {
+    const { unread } = await tx.orm.public.Activity.where((activity) =>
+      and(
+        activity.lessonId.eq(lessonId),
+        activity.activitiesRead.none((read) => read.studentId.eq(student.id)),
+      ),
+    ).aggregate((aggregate) => ({ unread: aggregate.count() }));
+
+    if (unread > 0) {
+      throw Object.assign(
+        new Error("Toutes les activités de la leçon doivent être lues avant de la terminer."),
+        { statusCode: 409 },
+      );
+    }
+
     const updated = await tx.orm.public.LessonRead.where({ id: lessonRead.id })
       .update({ finishedAt: new Date().toISOString() })
       .then(requireDatabaseRow);

@@ -7,6 +7,7 @@ export interface Activity {
   description?: string;
   createdAt: string;
   updatedAt: string;
+  activitiesRead?: { id: number }[];
   resourceActivities?: ActivityResource[];
   resourceBonusActivities?: ActivityResource[];
 }

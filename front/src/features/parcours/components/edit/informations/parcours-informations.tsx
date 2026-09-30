@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
@@ -7,9 +7,6 @@ import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DatesSelecter from "../../../../../components/UI/dates-selecter/dates-selecter.component";
 
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import useInput from "../../../../../hooks/useInput";
-import { regexUrl } from "../../../../../config/constantes";
 import ContactsWithDrawer from "./contacts-with-drawer";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import TagsWithDrawer from "./tags-with-drawer";
@@ -31,7 +28,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const numericParcoursId = Number(parcoursId);
   const { data: parcours } = useParcoursQuery(numericParcoursId);
   const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
-  const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
   const [contactsToAssign, setContactsToAssign] = useState<Contact[]>([]);
 
   const parcoursStartDate = parcours?.startDate ?? "";
@@ -43,10 +39,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     updateParcoursTags,
   } = useInfosService(numericParcoursId);
   const assignContactsMutation = useAssignModuleContacts(numericParcoursId);
-  const { value: virtualClass } = useInput(
-    (value) => regexUrl.test(value),
-    parcours?.virtualClass ?? "",
-  );
   const parentTags = (parcours?.formation.tags ?? []).map((item) =>
     "tag" in item ? (item.tag as Tag) : item,
   );
@@ -120,51 +112,13 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     [updateDates],
   );
 
-  const handleVirtualClassValue = (
-    event: React.FormEvent<HTMLInputElement>,
-  ) => {
-    if (readOnly) return;
-    if (!submitVirtualClass) {
-      setSubmitVirtualClass(true);
-    }
-    virtualClass.valueChangeHandler(event);
+  const saveVirtualClass = async (url: string) => {
+    try {
+      const data = await updateParcours({ virtualClass: url });
+      if (!data.success) throw new Error(data.message);
+      toast.success(data.message);
+    } catch (error) { toast.error("Le lien vers la classe virtuelle n'a pas été mis à jour"); throw error; }
   };
-
-  // met à jour la classe virtuelle vers la bdd
-  useEffect(() => {
-    if (readOnly) return;
-    const timer = setTimeout(async () => {
-      const formIsValid = virtualClass.isValid;
-      if (formIsValid && submitVirtualClass) {
-        try {
-          const data = await updateParcours({
-            virtualClass: virtualClass.value,
-          });
-          if (data.success) {
-            toast.success(data.message);
-          } else {
-            toast.error(
-              "Le lien vers la classe virtuelle n'a pas été mis à jour",
-            );
-          }
-        } catch {
-          toast.error(
-            "Le lien vers la classe virtuelle n'a pas été mis à jour",
-          );
-        }
-        setSubmitVirtualClass(false);
-      }
-    }, autoSubmitTimer);
-
-    return () => clearTimeout(timer);
-  }, [
-    parcoursId,
-    virtualClass.value,
-    virtualClass.isValid,
-    submitVirtualClass,
-    updateParcours,
-    readOnly,
-  ]);
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -186,8 +140,8 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
               disabled={readOnly}
             />
             <VirtualClass
-              onChangeValue={handleVirtualClassValue}
-              virtualClass={virtualClass}
+              onSave={saveVirtualClass}
+              value={parcours?.virtualClass ?? ""}
               disabled={readOnly}
             />
           </div>

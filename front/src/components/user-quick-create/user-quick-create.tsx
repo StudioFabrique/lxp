@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { z } from "zod";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import FormInput from "../form/FormInput";
 import { userQuickCreateSchema } from "../../../src/config/validation/parcours-edit/user-quick-create-val";
 
 type Props = {
-  onSubmitUser: (newUser: any) => void;
+  onSubmitUser: (newUser: z.infer<typeof userQuickCreateSchema>) => void;
   onCloseDrawer: (id: string) => void;
 };
 
@@ -40,7 +40,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   };
 
   // vérifie si le formulaire est valide et le transmet les valeurs des champs au parent
-  const onSubmit = handleSubmit((data: any) => {
+  const onSubmit = handleSubmit((data: z.infer<typeof userQuickCreateSchema>) => {
     onSubmitUser(data);
     reset();
     onCloseDrawer("new-contact");

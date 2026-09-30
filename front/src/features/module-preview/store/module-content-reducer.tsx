@@ -80,6 +80,7 @@ type ModuleContentAction =
   | { type: "delete_lesson"; id: number }
   | { type: "reorder_lesson"; courseId: number; fromIndex: number; toIndex: number }
   // Activity
+  | { type: "mark_activity_as_read"; activityId: number; readId: number }
   | { type: "select_activity"; activity?: Activity }
   | { type: "select_last_activity_from_current_lesson" }
   | { type: "create_activity"; activity?: Activity }
@@ -115,6 +116,20 @@ export function moduleContentReducer(
   action: ModuleContentAction
 ): ModuleContentState {
   switch (action.type) {
+    case "mark_activity_as_read": {
+      const selectedLesson = state.selectedLesson;
+      if (!selectedLesson?.activities?.some(activity => activity.id === action.activityId)) return state;
+      const activities = selectedLesson.activities.map(activity =>
+        activity.id === action.activityId
+          ? { ...activity, activitiesRead: [{ id: action.readId }] }
+          : activity,
+      );
+      return {
+        ...state,
+        selectedLesson: { ...selectedLesson, activities },
+        selectedActivity: activities.find(activity => activity.id === state.selectedActivity?.id),
+      };
+    }
     // --- Module ---
     case "update_module_data": {
       const isChangingModule = state.module?.id !== action.module.id;

@@ -12,8 +12,8 @@ import type SuccessWithMessage from "../../../../../../../src/utils/interfaces/s
 const imageActivitySchema = z.object({
   title: z
     .string()
-    .min(1, "Le titre est obligatoire")
-    .regex(regexGeneric, {
+    .trim().min(1, "Le titre est obligatoire")
+    .trim().min(1, "Ce champ est obligatoire.").regex(regexGeneric, {
       message: "Le titre contient des caractères non autorisés",
     }),
   description: z.string().optional(),

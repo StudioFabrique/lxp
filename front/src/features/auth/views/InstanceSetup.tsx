@@ -1,4 +1,9 @@
-import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { instanceIdentitySchema } from "../../profile/schemas/instance-schema";
+import { useFormField } from "../../../components/form/useFormField";
+import { showFormErrors } from "../../../components/form/form-errors";
+import { useEffect, useState, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Building2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -20,15 +25,16 @@ const DEFAULT_LOGO_BACKGROUND = "#ffffff";
 
 export default function InstanceSetup() {
   const navigate = useNavigate();
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
   const reduceMotion = useReducedMotion();
   const [settings, setSettings] = useState<InstanceSettings | null>(null);
-  const [name, setName] = useState(DEFAULT_NAME);
-  const [website, setWebsite] = useState("");
-  const [websiteError, setWebsiteError] = useState("");
+  const form = useForm({ resolver: zodResolver(instanceIdentitySchema), defaultValues: { name: DEFAULT_NAME, website: "", color: DEFAULT_LOGO_BACKGROUND } });
+  const [name, setName] = useFormField(form, "name");
+  const [website, setWebsite] = useFormField(form, "website");
+  const websiteError = form.formState.errors.website?.message ?? "";
   const [logo, setLogo] = useState<TemporaryImage>({ file: null, url: null });
-  const [logoBackgroundColor, setLogoBackgroundColor] = useState(
-    DEFAULT_LOGO_BACKGROUND,
-  );
+  const [logoBackgroundColor, setLogoBackgroundColor] = useFormField(form, "color");
   const [isSaving, setIsSaving] = useState(false);
   const [step, setStep] = useState(1);
 
@@ -37,7 +43,7 @@ export default function InstanceSetup() {
       .getInstanceSettings()
       .then((current) => {
         if (current.setupCompleted) {
-          navigate("/admin", { replace: true });
+          navigateRef.current("/admin", { replace: true });
           return;
         }
         setSettings(current);
@@ -47,39 +53,18 @@ export default function InstanceSetup() {
       .catch(() =>
         toast.error("La configuration de l’instance est indisponible."),
       );
-  }, [navigate]);
+  }, [setName, setWebsite]);
 
-  const completeSetup = async () => {
+  const completeSetup = form.handleSubmit(async (values) => {
     if (!settings || isSaving) return;
-
-    const organizationName = name.trim();
-    if (organizationName.length < 2) {
-      toast.error("Le nom de l’organisme doit contenir au moins 2 caractères.");
-      return;
-    }
-    const organizationWebsite = website.trim();
-    if (organizationWebsite) {
-      try {
-        const parsedWebsite = new URL(organizationWebsite);
-        if (!["http:", "https:"].includes(parsedWebsite.protocol))
-          throw new Error();
-      } catch {
-        setWebsiteError(
-          "Saisissez une adresse complète commençant par http:// ou https://.",
-        );
-        return;
-      }
-    }
-    setWebsiteError("");
-
     setIsSaving(true);
     try {
       const payload = new FormData();
-      payload.append("name", organizationName);
-      payload.append("website", organizationWebsite);
+      payload.append("name", values.name);
+      payload.append("website", values.website);
       payload.append("setupCompleted", "true");
       payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
-      payload.append("color", logoBackgroundColor);
+      payload.append("color", values.color);
       if (logo.file) payload.append("image", logo.file);
 
       await profileApi.mutations.updateInstanceSettings(payload);
@@ -89,7 +74,7 @@ export default function InstanceSetup() {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, showFormErrors);
 
   return (
     <motion.div
@@ -123,10 +108,7 @@ export default function InstanceSetup() {
         id="instance-setup-form"
         className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-5"
         noValidate
-        onSubmit={(event) => {
-          event.preventDefault();
-          void completeSetup();
-        }}
+        onSubmit={completeSetup}
       >
         <label className="flex w-full flex-col gap-2 text-center">
           <span className="text-sm font-semibold text-base-content">
@@ -163,7 +145,7 @@ export default function InstanceSetup() {
                 websiteError ? "setup-website-error" : undefined
               }
               onChange={(event) => {
-                if (websiteError) setWebsiteError("");
+                form.clearErrors("website");
                 setWebsite(event.target.value);
               }}
               className={cn("input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary", websiteError && "input-error")}

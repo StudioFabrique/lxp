@@ -86,3 +86,24 @@ it("signale le mode de réorganisation à la barre latérale", () => {
   act(() => container.querySelector<HTMLButtonElement>('button[aria-label="Terminer la réorganisation des activités"]')!.click());
   expect(onChange).toHaveBeenLastCalledWith(false);
 });
+
+
+it("affiche un point uniquement pour les activités non lues et le retire après lecture", () => {
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  roots.push(root);
+  const render = (secondRead: boolean) => root.render(
+    <ActivityList
+      showUnreadIndicators
+      activities={[
+        { ...activities[0], activitiesRead: [{ id: 10 }] },
+        { ...activities[1], activitiesRead: secondRead ? [{ id: 11 }] : [] },
+      ]}
+      isLoading={false}
+    />,
+  );
+  act(() => render(false));
+  expect(container.querySelectorAll('[aria-label="Activité non lue"]')).toHaveLength(1);
+  act(() => render(true));
+  expect(container.querySelectorAll('[aria-label="Activité non lue"]')).toHaveLength(0);
+});

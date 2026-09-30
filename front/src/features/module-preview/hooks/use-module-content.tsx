@@ -111,6 +111,10 @@ const useModuleContent = () => {
     [state.selectedLesson?.lessonsRead],
   );
 
+  const areAllActivitiesRead = Boolean(
+    state.selectedLesson?.activities?.every(activity => activity.activitiesRead?.length),
+  );
+
   const isFirstActivitySelected = useMemo(() => {
     const activities = state.selectedLesson?.activities;
     if (!activities?.length || !selectedActivityId) return false;
@@ -181,8 +185,12 @@ const useModuleContent = () => {
   // Comme la clôture ci-dessous : ouvrir le suivi ne doit pas faire échouer
   // l'affichage de la leçon, ni laisser un rejet sans preneur chez l'appelant.
   const initiateLesson = useCallback(async (lessonId: number) => {
-    await modulePreviewApi.tracking.begin("lesson", lessonId).catch(() => {});
-  }, []);
+    const opened = await modulePreviewApi.tracking.begin("lesson", lessonId).catch(() => undefined);
+    // Le suivi des activités dépend de hasStartedModule, calculé à partir
+    // des lectures du module. Synchroniser cette donnée après l'ouverture
+    // permet de démarrer ce suivi dès la première leçon, sans rechargement.
+    if (opened?.id && activeModuleId.current === moduleId) await fetchModuleData();
+  }, [fetchModuleData, moduleId]);
 
   // Le suivi de contenu ne doit jamais faire échouer la complétion d'une leçon.
   const finishContent = useCallback(
@@ -203,6 +211,7 @@ const useModuleContent = () => {
   const completeLesson = useCallback(
     async (rating?: number, comment?: string) => {
       const lessonId = state.selectedLesson?.id;
+      if (!areAllActivitiesRead && !isLessonCompleted) return;
       if (state.selectedLesson && lessonId && !completionInFlight.current) {
         completionInFlight.current = true;
         try {
@@ -278,6 +287,8 @@ const useModuleContent = () => {
     },
     [
       state.selectedLesson,
+      areAllActivitiesRead,
+      isLessonCompleted,
       state.module,
       isStudent,
       queryClient,
@@ -986,6 +997,7 @@ const useModuleContent = () => {
       });
     },
     computed: {
+      areAllActivitiesRead,
       isLessonCompleted,
       isFirstActivitySelected,
       isLastActivitySelected,
