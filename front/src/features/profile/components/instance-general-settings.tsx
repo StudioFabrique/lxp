@@ -71,13 +71,17 @@ export default function InstanceGeneralSettings() {
     defaultBackgroundColor,
   );
 
+  const { reset: resetIdentity, getValues: identityValues } = identityForm;
+  const { reset: resetThemes } = themesForm;
+  const { reset: resetEmail } = emailForm;
+
   useEffect(() => {
     profileApi.queries
       .getInstanceSettings()
       .then((data) => {
-        identityForm.reset({ name: data.name, website: data.website, color: identityForm.getValues("color") });
-        themesForm.reset({ enabledThemes: data.enabledThemes });
-        emailForm.reset({ emailTemplate: data.emailTemplate });
+        resetIdentity({ name: data.name, website: data.website, color: identityValues("color") });
+        resetThemes({ enabledThemes: data.enabledThemes });
+        resetEmail({ emailTemplate: data.emailTemplate });
         setInitialSettings(data);
       })
       .catch(() =>
@@ -103,13 +107,13 @@ export default function InstanceGeneralSettings() {
       .catch(() => undefined);
 
     return () => abortController.abort();
-  }, []);
+  }, [resetIdentity, identityValues, resetThemes, resetEmail, setBackgroundColor]);
 
   const save = async (scope: "identity" | "interface" | "email") => {
     if (isSaving || isLoading) return;
     const activeForm = scope === "identity" ? identityForm : scope === "interface" ? themesForm : emailForm;
     if (!await activeForm.trigger()) { showFormErrors(activeForm.formState.errors); return; }
-    const identity = instanceIdentitySchema.parse(scope === "identity" ? identityForm.getValues() : { ...initialSettings, color: initialBackgroundColor });
+    const identity = scope === "identity" ? instanceIdentitySchema.parse(identityForm.getValues()) : { ...initialSettings, color: initialBackgroundColor };
     setIsSaving(true);
     try {
       const payload = new FormData();
@@ -143,8 +147,6 @@ export default function InstanceGeneralSettings() {
       const updatedSettings =
         await profileApi.mutations.updateInstanceSettings(payload);
       if (scope === "email") {
-        identityForm.reset({ name: updatedSettings.name, website: updatedSettings.website, color: backgroundColor });
-        themesForm.reset({ enabledThemes: updatedSettings.enabledThemes });
         setInitialSettings(updatedSettings);
         setDraftEmailTemplate(updatedSettings.emailTemplate);
         setIsEmailTemplateModalOpen(false);

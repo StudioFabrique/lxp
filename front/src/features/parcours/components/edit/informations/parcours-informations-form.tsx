@@ -57,6 +57,7 @@ const ParcoursInformationsForm: FC<Props> = ({
           title: data.title,
           description: data.description ?? "",
         });
+        if (!response.success) throw new Error(response.message);
         toast.success(response.message);
       } catch (error) {
         toast.error("Erreur lors de la sauvegarde");

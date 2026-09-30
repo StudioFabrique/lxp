@@ -3,33 +3,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { activationTokenSchema } from "../../../auth/auth.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { profileApi } from "../../api/profile.api";
-import { onboardingApi } from "../../../auth/api/onboarding.api";
+import useActivationKey from "../../../auth/hooks/useActivationKey";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
 import { Check, Copy } from "lucide-react";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import Modal from "../../../../components/UI/modal/modal";
 import { ROOT_ACCOUNT_POLICY } from "../../../auth/root-account-policy";
-
-const LOCAL_COMMAND = "npm run generate-activation-key";
-
-/**
- * Commande à exécuter sur le serveur pour régénérer la clé.
- *
- * En production, `docker compose` n'est pas utilisable : les fichiers compose
- * et le `.env` restent sur la machine de déploiement, jamais sur le serveur,
- * pour ne pas y laisser les secrets en clair. `docker exec` n'a lui besoin que
- * de l'identifiant du conteneur, que l'API se procure par son propre `hostname`
- * et sert tant qu'aucun administrateur n'existe.
- */
-const activationKeyCommand = (containerId?: string) => {
-  if (!import.meta.env.PROD) return LOCAL_COMMAND;
-  return `docker exec ${containerId ?? "<conteneur>"} ${LOCAL_COMMAND}`;
-};
 
 const PromoteToRoot = () => {
   const { handshake } = useContext(AuthContext);
@@ -37,32 +21,13 @@ const PromoteToRoot = () => {
   const form = useForm({ resolver: zodResolver(activationTokenSchema), defaultValues: { token: "" } });
   const [token, setToken] = useFormField(form, "token");
   const [isLoading, setIsLoading] = useState(false);
-  const [activationTokenTtlMinutes, setActivationTokenTtlMinutes] =
-    useState(30);
-  const [isCommandCopied, setIsCommandCopied] = useState(false);
-  const [containerId, setContainerId] = useState<string>();
-
-  const command = activationKeyCommand(containerId);
-
-  const handleCopyCommand = async () => {
-    try {
-      await navigator.clipboard.writeText(command);
-      setIsCommandCopied(true);
-      window.setTimeout(() => setIsCommandCopied(false), 2000);
-    } catch (error) {
-      console.error("Échec de la copie de la commande :", error);
-    }
-  };
+  const { command, activationTokenTtlMinutes, isCommandCopied, handleCopyCommand } = useActivationKey();
 
   const handleOpenModal = form.handleSubmit(() => setModalOpen(true), showFormErrors);
 
   const onPromote = async () => {
     if (!await form.trigger()) return;
     const normalizedToken = activationTokenSchema.parse(form.getValues()).token;
-    if (!normalizedToken) {
-      toast.error("La clé d'activation est requise.");
-      return;
-    }
 
     setIsLoading(true);
     try {
@@ -81,26 +46,6 @@ const PromoteToRoot = () => {
     }
   };
 
-  useEffect(() => {
-    let active = true;
-
-    onboardingApi
-      .getSetupStatus()
-      .then((status) => {
-        if (active) {
-          setContainerId(status.containerId);
-          setActivationTokenTtlMinutes(status.activationTokenTtlMinutes);
-        }
-      })
-      // Sans identifiant, la commande reste affichée avec un emplacement à
-      // compléter : mieux qu'une commande fausse ou pas de commande du tout.
-      .catch(() => {});
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
   return (
     <div className="flex flex-col gap-2 mt-10">
       <div className="flex items-center gap-2">
@@ -112,7 +57,7 @@ const PromoteToRoot = () => {
           <p className="text-sm text-base-content/70">
             Générez une clé sur le serveur avec la commande
             <code className="mx-1 rounded bg-base-300 px-1.5 py-0.5">
-              {activationKeyCommand()}
+              {command}
             </code>
             <button
               type="button"

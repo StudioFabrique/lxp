@@ -54,6 +54,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
           description: data.description,
           visibility: data.visibility,
         });
+        if (!response.success) throw new Error(response.message);
         if (response.success) {
           dispatch({ type: "SET_COURSE_INFOS", payload: response.data as { title: string; description: string; visibility: boolean } });
           toast.success(response.message);

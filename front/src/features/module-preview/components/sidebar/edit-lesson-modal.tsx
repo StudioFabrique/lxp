@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { lessonDetailsSchema } from "../../assignment.schema";
@@ -30,9 +31,12 @@ export default function EditLessonModal({
   const [description, setDescription] = useFormField(form, "description");
   const [modalite, setModalite] = useFormField(form, "modalite");
   const [tagId, setTagId] = useFormField(form, "tagId");
-  const selectedTagId = courseTags.some((tag) => tag.id === tagId)
-    ? tagId
-    : (courseTags[0]?.id ?? "");
+  const selectedTagId = tagId || "";
+  const firstTagId = courseTags[0]?.id ?? 0;
+  const hasSelectedTag = courseTags.some((tag) => tag.id === tagId);
+  useEffect(() => {
+    if (!hasSelectedTag) setTagId(firstTagId);
+  }, [hasSelectedTag, firstTagId, setTagId]);
 
   const handleSubmit = form.handleSubmit(async (values) => {
     if (isSubmitting) return;

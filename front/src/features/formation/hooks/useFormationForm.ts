@@ -83,7 +83,7 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
         setCurrentTags(matched);
       }
     },
-    [formationsList, allTags],
+    [formationsList, allTags, setTitle, setDescription, setCode, setLevel, setCurrentTags],
   );
 
   const handleTagSubmit = useCallback(
@@ -93,7 +93,7 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
       setCurrentTags((current) => addPendingTag(current, allTags, tagInput));
       setTagInputState("");
     },
-    [tagInput, allTags],
+    [tagInput, allTags, setCurrentTags],
   );
 
   const handleTagInputChange = useCallback(
@@ -108,12 +108,12 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
       setCurrentTags((current) => addPendingTag(current, allTags, committed));
       setTagInputState(pending);
     },
-    [allTags],
+    [allTags, setCurrentTags],
   );
 
   const handleRemoveTag = useCallback((id: number) => {
     setCurrentTags((prev) => prev.filter((t) => t.id !== id));
-  }, []);
+  }, [setCurrentTags]);
 
   const buildPayload = async (values: FormationFormValues) => {
     const newTags = values.tags.filter((tag) => !allTags.some((existing) => existing.name.toLowerCase() === tag.name.toLowerCase()));

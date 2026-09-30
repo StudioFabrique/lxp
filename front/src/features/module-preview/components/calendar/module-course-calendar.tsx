@@ -118,7 +118,7 @@ export function DatesEditor({
   const form = useForm({ resolver: zodResolver(courseDatesListSchema), defaultValues: { dates: dates.map((date) => ({ ...date })) } });
   const [draft, setDraft] = useFormField(form, "dates");
   const valid = courseDatesListSchema.safeParse({ dates: draft }).success;
-  const validDates = valid;
+  const validDates = courseDatesListSchema.safeParse({ dates: draft.map((date) => ({ ...date, startTime: undefined, endTime: undefined })) }).success;
   return (
     <form
       className="flex flex-col gap-4"

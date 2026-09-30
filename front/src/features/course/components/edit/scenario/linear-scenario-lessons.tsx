@@ -61,6 +61,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
 
   const handleUpdateLesson = form.handleSubmit(async (values) => {
     if (isLoading) return;
+    setIsLoading(true);
     try {
       const data = await courseApi.mutations.updateLesson({
         id: editedLesson!.id!,
@@ -71,6 +72,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Erreur inconnue"));
     }
+    finally { setIsLoading(false); }
   }, showFormErrors);
 
   const handleEditLesson = (lesson: Lesson) => {

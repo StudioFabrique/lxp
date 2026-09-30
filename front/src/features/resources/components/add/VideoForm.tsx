@@ -34,13 +34,15 @@ export default function VideoForm(props: Props) {
 
       <BoxWrapper>
         <span className="flex justify-between items-start gap-x-8">
-          <FormInput
-            label="URL de la vidéo *"
-            placeholder="https://www.youtube.com/..."
-            name="url"
-            register={props.data.register}
-            error={props.data.errors.url}
-          />
+          <div className="flex-1 space-y-3">
+            <label className="flex flex-col gap-1">Provenance
+              <select {...props.data.register("origin")} className="select select-bordered">
+                <option value="web">Lien externe</option><option value="file">Votre ordinateur</option>
+              </select>
+            </label>
+            {props.data.watch("origin") === "web" ? <FormInput label="URL de la vidéo *" placeholder="https://www.youtube.com/..." name="url" register={props.data.register} error={props.data.errors.url} /> :
+              <label className="flex flex-col gap-1">Fichier vidéo<input type="file" accept="video/*" onChange={props.onSetFile} />{props.data.errors.file && <span className="text-error text-xs">{props.data.errors.file.message}</span>}</label>}
+          </div>
           <VideoPlayer url={url as string} />
         </span>
       </BoxWrapper>

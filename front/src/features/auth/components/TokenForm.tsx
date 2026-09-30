@@ -1,26 +1,11 @@
+import useActivationKey from "../hooks/useActivationKey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { activationTokenSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import AuthPageWrapper from "./AuthPageWrapper";
-
-const LOCAL_COMMAND = "npm run generate-activation-key";
-
-/**
- * Commande à exécuter sur le serveur pour régénérer la clé.
- *
- * En production, `docker compose` n'est pas utilisable : les fichiers compose
- * et le `.env` restent sur la machine de déploiement, jamais sur le serveur,
- * pour ne pas y laisser les secrets en clair. `docker exec` n'a lui besoin que
- * de l'identifiant du conteneur, que l'API se procure par son propre `hostname`
- * et sert tant qu'aucun administrateur n'existe.
- */
-const activationKeyCommand = (containerId?: string) => {
-  if (!import.meta.env.PROD) return LOCAL_COMMAND;
-  return `docker exec ${containerId ?? "<conteneur>"} ${LOCAL_COMMAND}`;
-};
 
 type Props = {
   onNext: (token: string) => void;
@@ -34,33 +19,8 @@ type TokenFormValues = {
 const TokenForm = ({ onNext, onPrevious }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isCommandCopied, setIsCommandCopied] = useState(false);
   const tokenInputRef = useRef<HTMLInputElement>(null);
-  const [containerId, setContainerId] = useState<string>();
-  const [activationTokenTtlMinutes, setActivationTokenTtlMinutes] =
-    useState(30);
-
-  useEffect(() => {
-    let active = true;
-
-    onboardingApi
-      .getSetupStatus()
-      .then((status) => {
-        if (active) {
-          setContainerId(status.containerId);
-          setActivationTokenTtlMinutes(status.activationTokenTtlMinutes);
-        }
-      })
-      // Sans identifiant, la commande reste affichée avec un emplacement à
-      // compléter : mieux qu'une commande fausse ou pas de commande du tout.
-      .catch(() => {});
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const command = activationKeyCommand(containerId);
+  const { command, activationTokenTtlMinutes, isCommandCopied, handleCopyCommand } = useActivationKey();
 
   const {
     register,
@@ -73,7 +33,6 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
   });
 
   const tokenField = register("token", {
-    required: "La clé d'activation est requise.",
     onChange: () => setError(""),
   });
 
@@ -94,16 +53,6 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
       setError(message);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleCopyCommand = async () => {
-    try {
-      await navigator.clipboard.writeText(command);
-      setIsCommandCopied(true);
-      window.setTimeout(() => setIsCommandCopied(false), 2000);
-    } catch (error) {
-      console.error("Échec de la copie de la commande :", error);
     }
   };
 

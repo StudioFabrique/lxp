@@ -23,8 +23,9 @@ const useUploadResources = (
   title?: string,
 ) => {
   const form = useForm<z.infer<typeof documentsSchema>>({ resolver: zodResolver(documentsSchema), defaultValues: { files: [] } });
+  const { setValue } = form;
   const filesList = form.watch("files");
-  const setFilesList = useCallback((files: Resource[]) => form.setValue("files", files, { shouldDirty: true, shouldValidate: true }), [form.setValue]);
+  const setFilesList = useCallback((files: Resource[]) => setValue("files", files, { shouldDirty: true, shouldValidate: true }), [setValue]);
   const draft = useForm({ resolver: zodResolver(documentSchema.pick({ name: true })), defaultValues: { name: "" } });
   const [resourceName, setResourceName] = useFormField(draft, "name");
   const [isLoading, setIsLoading] = useState(false);

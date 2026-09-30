@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { requiredText, optionalWebUrl } from "../../utils/validation/fields";
-import { activityVideoSize } from "../../config/images-sizes";
+import { activityVideoSize, activityImageSize } from "../../config/images-sizes";
 import { maxSizeError } from "../../utils/helpers/max-size-error";
 import cleanIframeLink from "../../utils/helpers/clean-iframe-link";
 export const activityMetadataSchema = z.object({ title: requiredText("Le titre est requis."), description: z.string() });
@@ -31,3 +31,14 @@ export const iframeSchema = z.object({ title: requiredText("Le titre est requis.
   }
 }) });
 export type IframeFormValues = z.infer<typeof iframeSchema>;
+
+export const imageSchema = activityMetadataSchema.extend({
+  file: z.custom<File>((value) => value instanceof File).nullable(),
+  selectedImage: z.string().nullable(),
+}).superRefine(({ file, selectedImage }, context) => {
+  if (file) {
+    if (!file.type.startsWith("image/")) context.addIssue({ code: "custom", path: ["file"], message: "Sélectionnez un fichier image." });
+    if (file.size > activityImageSize) context.addIssue({ code: "custom", path: ["file"], message: maxSizeError(activityImageSize) });
+  } else if (!selectedImage || (selectedImage.includes("/") || selectedImage.includes("\\"))) context.addIssue({ code: "custom", path: ["selectedImage"], message: "Sélectionnez une image." });
+});
+export type ImageFormValues = z.infer<typeof imageSchema>;

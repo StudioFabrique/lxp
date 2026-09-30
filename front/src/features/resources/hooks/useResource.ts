@@ -76,7 +76,7 @@ export default function useResource({
       if (active) setIsLoading(false);
     });
     return () => { active = false; };
-  }, [resourceId, requestedActivityId, loadResource, reset, selectActivity]);
+  }, [resourceId, requestedActivityId, loadResource, reset, selectActivity, setFile, setTags]);
 
   const refreshActivityList = async (selectLastActivity = false) => {
     try {

@@ -33,7 +33,6 @@ const InformationAndSettings: FC<{
   isStudent?: boolean;
 }> = ({ formRef, onSaved, onDirtyChange, isStudent = false }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [itemsDirty, setItemsDirty] = useState(false);
 
   const form = useForm({ resolver: zodResolver(profileInformationSchema), defaultValues: {
       firstname: "",
@@ -47,18 +46,17 @@ const InformationAndSettings: FC<{
       hobbies: [] as Hobby[], links: [] as Link[],
     },
   });
-  const { register, handleSubmit, formState: { errors, isDirty }, reset } = form;
+  const { register, handleSubmit, formState: { errors, isDirty, isSubmitting }, reset } = form;
   const [hobbies, setHobbies] = useFormField(form, "hobbies");
   const [links, setLinks] = useFormField(form, "links");
 
   const [userData, setUserData] = useState<UserInformation>();
-  const onSubmit = (data: z.infer<typeof profileInformationSchema>) => {
+  const onSubmit = async (data: z.infer<typeof profileInformationSchema>) => {
+    if (isSubmitting) return;
     const formData = new FormData();
-    formData.append("data", JSON.stringify({ user: isStudent ? {
-      ...data,
-    } : data }));
+    formData.append("data", JSON.stringify({ user: data }));
 
-    profileApi.mutations
+    await profileApi.mutations
       .updateInformation(formData)
       .then((response) => {
         toast.success(
@@ -67,7 +65,7 @@ const InformationAndSettings: FC<{
             : "Profil sauvegardé avec succès !",
         );
         onSaved?.();
-        setItemsDirty(false);
+        reset(data);
       })
       .catch((err) => {
         const errorMessage = err?.response?.data?.message ?? "Erreur inconnue";
@@ -103,8 +101,8 @@ const InformationAndSettings: FC<{
   }, [userData, reset]);
 
   useEffect(() => {
-    onDirtyChange?.(isDirty || itemsDirty);
-  }, [isDirty, itemsDirty, onDirtyChange]);
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   if (isLoading) return <Loader />;
 
@@ -117,7 +115,7 @@ const InformationAndSettings: FC<{
       })}
     >
       <Info formProps={{ register, errors }} />
-      {isStudent && <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); setItemsDirty(true); }} onLinksChange={(items) => { setLinks(items); setItemsDirty(true); }} />}
+      {isStudent && <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); }} onLinksChange={(items) => { setLinks(items); }} />}
     </form>
   );
 };

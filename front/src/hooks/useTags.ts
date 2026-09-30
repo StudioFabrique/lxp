@@ -75,7 +75,7 @@ const useTags = (initialTags: Tag[]) => {
     (ids: number[]) => {
       setCurrentTags(initialTags.filter((item) => ids.includes(item.id)));
     },
-    [initialTags],
+    [initialTags, setCurrentTags],
   );
 
   const submitTags = async (onSubmit: (tags: Tag[]) => void | Promise<void>) => {

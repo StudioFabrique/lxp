@@ -472,7 +472,8 @@ export default function StudentLearningOnboarding() {
             </button>
           </motion.section>
         ) : (
-          <motion.div
+          <motion.form
+            onSubmit={continueToNext}
             className="flex min-h-0 flex-1 flex-col gap-3"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -526,10 +527,10 @@ export default function StudentLearningOnboarding() {
                     </button>
                   ) : (
                     <button
-                      type="button"
+                      type="submit"
                       className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
                       disabled={cannotContinue}
-                      onClick={() => void continueToNext()}
+
                     >
                       Continuer
                     </button>
@@ -754,7 +755,7 @@ export default function StudentLearningOnboarding() {
                 </div>
               ) : null}
             </OnboardingProgressPanel>
-          </motion.div>
+          </motion.form>
         )}
       </section>
     </LayoutGroup>
