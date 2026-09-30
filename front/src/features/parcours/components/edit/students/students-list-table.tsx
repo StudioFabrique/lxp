@@ -18,7 +18,9 @@ interface StudentsListTableProps {
 
 const StudentsListTable = ({ list, fieldSort, direction, sortData, emptyMessage }: StudentsListTableProps) => {
   const { id } = useParams();
-  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  // Le tableau remonte après le chargement des groupes : réutiliser le parcours
+  // fraîchement chargé évite de relancer aussitôt sa requête.
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined, 30_000);
   const formationTitle = parcours?.formation.title;
   const columns = useMemo<ColumnDef<StockFeatures, StudentWithGroup>[]>(() => [
     {

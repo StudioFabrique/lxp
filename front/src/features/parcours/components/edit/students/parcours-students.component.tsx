@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
@@ -30,8 +30,12 @@ export type GroupList = {
 
 const ParcoursStudents = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const navigationState = location.state as Record<string, unknown> | null;
+  const refreshGroupsOnReturn = navigationState?.refreshParcoursGroups === true;
   const parcoursId = Number(id);
-  const { data: persistedGroups = [], isPending: areGroupsPending, isError: areGroupsError } = useParcoursGroupsQuery(parcoursId);
+  const { data: persistedGroups = [], isPending: areGroupsPending, isFetching: areGroupsFetching, isError: areGroupsError } = useParcoursGroupsQuery(parcoursId);
   const { data: fetchedGroups = [], refetch: fetchGroups, isPending: areAvailableGroupsPending, isError: areAvailableGroupsError } =
     useStudentGroupsQuery();
   const [draftGroups, setDraftGroups] = useState<Group[] | null>(null);
@@ -50,6 +54,14 @@ const ParcoursStudents = () => {
   );
   const { data: students = [], isPending: areStudentsPending, isError: areStudentsError } = useParcoursStudentsQuery(groupIds);
   const { mutate: updateGroups } = useUpdateParcoursGroups(parcoursId);
+
+  useEffect(() => {
+    if (!refreshGroupsOnReturn || areGroupsPending || areGroupsFetching) return;
+    navigate(`${location.pathname}${location.search}`, {
+      replace: true,
+      state: { ...navigationState, refreshParcoursGroups: false },
+    });
+  }, [refreshGroupsOnReturn, areGroupsPending, areGroupsFetching, navigate, location.pathname, location.search, navigationState]);
 
   const handleDrawer = (id: string) => {
     if (fetchedGroups.length === 0) void fetchGroups();
@@ -106,29 +118,31 @@ const ParcoursStudents = () => {
           </div>
         </RightSideDrawer>
       </section>
-      {/* Affichage conditionnel selon la présence ou non de groupes */}
-      {areGroupsError ? (
-        <p role="alert">Impossible de charger les groupes du parcours.</p>
-      ) : areGroupsPending ? (
-        <LoadingSkeleton variant="rows" label="Chargement des groupes du parcours" />
-      ) : (
-        <section>
-          <BoxWrapper>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
-              <ButtonAdd
-                label="Ajouter un groupe d'apprenants"
-                outline={true}
-                onClickEvent={handleAddGroup}
-              />
-            </div>
-            {groups.length === 0 ? (
-              <p className="py-24 text-center">Aucun groupe d'apprenants ajouté.</p>
-            ) : groupIds.length > 0 && areStudentsError ? (
-              <p role="alert">Impossible de charger les apprenants.</p>
-            ) : groupIds.length > 0 && areStudentsPending ? (
-              <LoadingSkeleton variant="rows" label="Chargement des apprenants" />
-            ) : <StudentsList
+      <section>
+        <BoxWrapper>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
+            <ButtonAdd
+              label="Ajouter un groupe d'apprenants"
+              outline={true}
+              onClickEvent={handleAddGroup}
+            />
+          </div>
+          {areGroupsError ? (
+            <p role="alert">Impossible de charger les groupes du parcours.</p>
+          ) : areGroupsPending || (refreshGroupsOnReturn && areGroupsFetching) ? (
+            <LoadingSkeleton
+              variant="panel"
+              label="Chargement des groupes du parcours"
+            />
+          ) : groups.length === 0 ? (
+            <p className="py-24 text-center">Aucun groupe d'apprenants ajouté.</p>
+          ) : groupIds.length > 0 && areStudentsError ? (
+            <p role="alert">Impossible de charger les apprenants.</p>
+          ) : groupIds.length > 0 && areStudentsPending ? (
+            <LoadingSkeleton variant="rows" label="Chargement des apprenants" />
+          ) : (
+            <StudentsList
               initalList={students}
               groups={groups}
               parcoursId={parcoursId}
@@ -137,10 +151,10 @@ const ParcoursStudents = () => {
                   groups.filter((group) => group._id !== groupId),
                 )
               }
-            />}
-          </BoxWrapper>
-        </section>
-      )}
+            />
+          )}
+        </BoxWrapper>
+      </section>
     </div>
   );
 };

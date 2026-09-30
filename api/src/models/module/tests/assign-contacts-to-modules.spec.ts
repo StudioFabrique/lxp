@@ -4,6 +4,7 @@ import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 const moduleCount = jest.fn<() => Promise<{ total: number }>>();
 const contactCount = jest.fn<() => Promise<{ total: number }>>();
 const createMany = jest.fn<() => Promise<number>>();
+const existingAssignments = jest.fn<() => Promise<{ moduleId: number; contactId: number }[]>>();
 const moduleModel = createModelMock(
   { aggregate: moduleCount },
   { evaluateWhere: true },
@@ -12,7 +13,10 @@ const contactModel = createModelMock(
   { aggregate: contactCount },
   { evaluateWhere: true },
 );
-const associationModel = createModelMock({ createAndCount: createMany });
+const associationModel = createModelMock({
+  createAndCount: createMany,
+  all: existingAssignments,
+}, { evaluateWhere: true });
 const transaction = jest.fn(
   async (callback: (tx: unknown) => Promise<unknown>) =>
     callback({
@@ -36,6 +40,7 @@ const { default: assignContactsToModules } =
 describe("affectation rapide des ressources pédagogiques", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    existingAssignments.mockResolvedValue([]);
   });
 
   it("ajoute toutes les associations demandées sans doublons", async () => {
@@ -70,6 +75,39 @@ describe("affectation rapide des ressources pédagogiques", () => {
         contactIds: [7],
       }),
     ).rejects.toMatchObject({ statusCode: 400 });
+    expect(createMany).not.toHaveBeenCalled();
+  });
+
+  it("ignore les associations déjà présentes", async () => {
+    moduleCount.mockResolvedValue({ total: 2 });
+    contactCount.mockResolvedValue({ total: 1 });
+    existingAssignments.mockResolvedValue([{ moduleId: 3, contactId: 7 }]);
+    createMany.mockResolvedValue(1);
+
+    await expect(
+      assignContactsToModules({
+        parcoursId: 9,
+        moduleIds: [3, 4],
+        contactIds: [7],
+      }),
+    ).resolves.toEqual({ count: 1 });
+
+    expect(createMany).toHaveBeenCalledWith([{ moduleId: 4, contactId: 7 }]);
+  });
+
+  it("ne réinsère rien si toutes les associations existent", async () => {
+    moduleCount.mockResolvedValue({ total: 1 });
+    contactCount.mockResolvedValue({ total: 1 });
+    existingAssignments.mockResolvedValue([{ moduleId: 3, contactId: 7 }]);
+
+    await expect(
+      assignContactsToModules({
+        parcoursId: 9,
+        moduleIds: [3],
+        contactIds: [7],
+      }),
+    ).resolves.toEqual({ count: 0 });
+
     expect(createMany).not.toHaveBeenCalled();
   });
 

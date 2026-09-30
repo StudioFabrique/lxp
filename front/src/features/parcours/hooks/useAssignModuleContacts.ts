@@ -11,9 +11,9 @@ export function useAssignModuleContacts(parcoursId: number) {
   return useMutation({
     mutationFn: (data: { moduleIds: number[]; contactIds: number[] }) =>
       parcoursApi.mutations.assignModuleContacts({ parcoursId, ...data }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(data.message);
-      void queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: parcoursKeys.detail(parcoursId),
       });
       void queryClient.invalidateQueries({ queryKey: ["modules"] });

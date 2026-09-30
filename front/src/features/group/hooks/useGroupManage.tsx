@@ -5,7 +5,7 @@ import {
   useSearchParams,
 } from "react-router";
 import { useCallback, useMemo, useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type User from "../../../../src/utils/interfaces/user";
 import { groupApi } from "../api/group.api";
 import { userApi } from "../../user/api/user.api";
@@ -20,6 +20,7 @@ import {
   getApiErrorMessage,
   isConflictError,
 } from "../../../utils/helpers/api-error-message";
+import { parcoursKeys } from "../../parcours/api/parcours.keys";
 
 const mergeUsers = (currentUsers: User[], usersToAdd: User[]) => {
   const usersById = new Map(currentUsers.map((user) => [user._id, user]));
@@ -31,6 +32,7 @@ function useGroupManage() {
   const { id } = useParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [managedUsers, setManagedUsers] = useState<User[] | null>(null);
   const [searchParams] = useSearchParams();
   const fromParcours = searchParams.get("parcours");
@@ -80,7 +82,19 @@ function useGroupManage() {
 
   const handleNavigateAfterSubmit = useCallback(() => {
     if (fromParcours) {
-      navigate(`/admin/parcours/edit/${fromParcours}?step=6`);
+      void queryClient.invalidateQueries({
+        queryKey: parcoursKeys.detail(Number(fromParcours)),
+        exact: true,
+        refetchType: "none",
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["student-groups"],
+        exact: true,
+        refetchType: "none",
+      });
+      navigate(`/admin/parcours/edit/${fromParcours}?step=6`, {
+        state: { refreshParcoursGroups: true },
+      });
     } else {
       navigate("/admin/group", {
         state: {
@@ -90,7 +104,7 @@ function useGroupManage() {
         },
       });
     }
-  }, [fromParcours, navigate, id]);
+  }, [fromParcours, navigate, id, queryClient]);
 
   const mutation = useMutation({
     mutationFn: (formData: FormData) => {

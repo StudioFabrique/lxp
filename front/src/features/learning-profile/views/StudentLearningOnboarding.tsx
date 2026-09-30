@@ -2,7 +2,15 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { ArrowRight, Check, Gauge, GraduationCap, Shapes } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Gauge,
+  GraduationCap,
+  Rocket,
+  Shapes,
+  UsersRound,
+} from "lucide-react";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
@@ -395,33 +403,51 @@ export default function StudentLearningOnboarding() {
                       key={`${formation.id}-${entry.id}`}
                       className="space-y-3"
                     >
-                      <div>
-                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                          Formation
-                        </dt>
-                        <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                          {capitalizeTitle(formation.title)}
-                        </dd>
+                      <div className="flex items-center gap-3">
+                        <GraduationCap
+                          className="size-5 shrink-0 text-primary"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                            Formation
+                          </dt>
+                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                            {capitalizeTitle(formation.title)}
+                          </dd>
+                        </div>
                       </div>
-                      <div>
-                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                          Parcours
-                        </dt>
-                        <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                          {capitalizeTitle(entry.title)}
-                        </dd>
+                      <div className="flex items-center gap-3">
+                        <Rocket
+                          className="size-5 shrink-0 text-primary"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                            Parcours
+                          </dt>
+                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                            {capitalizeTitle(entry.title)}
+                          </dd>
+                        </div>
                       </div>
                     </div>
                   )),
                 )}
                 {context.groupNames.length > 0 && (
-                  <div>
-                    <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                      {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
-                    </dt>
-                    <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content sm:text-lg">
-                      {context.groupNames.map(capitalizeTitle).join(", ")}
-                    </dd>
+                  <div className="flex items-center gap-3">
+                    <UsersRound
+                      className="size-5 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    <div>
+                      <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                        {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
+                      </dt>
+                      <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content sm:text-lg">
+                        {context.groupNames.map(capitalizeTitle).join(", ")}
+                      </dd>
+                    </div>
                   </div>
                 )}
               </dl>

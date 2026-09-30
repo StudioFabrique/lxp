@@ -73,6 +73,54 @@ describe("moduleContentReducer", () => {
     expect(state.lessonIdToScroll).toBeUndefined();
   });
 
+  it("attend les activités de la nouvelle leçon avant d'afficher son contenu", () => {
+    const module = {
+      id: 2,
+      courses: [{ lessons: [{ id: 5, activities: [] }, { id: 6, activities: [] }] }],
+    } as unknown as Module & { parcours: string };
+    const selected = moduleContentReducer(
+      { ...initialModuleContentState, module },
+      { type: "select_lesson_by_id", id: 6 },
+    );
+
+    expect(selected.isSelectedLessonLoading).toBe(true);
+    const loaded = moduleContentReducer(selected, {
+      type: "select_lesson",
+      lesson: { id: 6, activities: [] } as unknown as Lesson,
+    });
+    expect(loaded.isSelectedLessonLoading).toBe(false);
+    expect(loaded.selectedLesson?.id).toBe(6);
+  });
+
+  it("écarte le texte d'une activité quittée pendant son chargement", () => {
+    const first = { id: 10, type: "text", url: "first.html" } as Activity;
+    const second = { id: 11, type: "text", url: "second.html" } as Activity;
+    const initial = {
+      ...initialModuleContentState,
+      selectedActivity: first,
+      textActivityContent: "Premier contenu",
+      loadedTextActivityKey: "10:first.html",
+    };
+    const selected = moduleContentReducer(initial, { type: "select_activity", activity: second });
+    expect(selected.textActivityContent).toBeUndefined();
+    expect(selected.loadedTextActivityKey).toBeUndefined();
+
+    const stale = moduleContentReducer(selected, {
+      type: "update_activity_content",
+      content: "Réponse tardive",
+      activityKey: "10:first.html",
+    });
+    expect(stale).toBe(selected);
+
+    const loaded = moduleContentReducer(stale, {
+      type: "update_activity_content",
+      content: "Deuxième contenu",
+      activityKey: "11:second.html",
+    });
+    expect(loaded.textActivityContent).toBe("Deuxième contenu");
+    expect(loaded.loadedTextActivityKey).toBe("11:second.html");
+  });
+
   it("passe à la première leçon du cours suivant", () => {
     const currentLesson = { id: 2, activities: [] } as unknown as Lesson;
     const nextCourseLesson = { id: 3, activities: [] } as unknown as Lesson;

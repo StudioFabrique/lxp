@@ -25,6 +25,8 @@ type StaticStateProperties = {
   selectedActivity?: Activity;
   lessonIdToScroll?: number;
   textActivityContent?: string;
+  loadedTextActivityKey?: string;
+  isSelectedLessonLoading?: boolean;
 };
 
 // Propriétés qui sont disponibles à la modification et à la lecture selon le mode (lecture, édition ou écriture)
@@ -65,6 +67,7 @@ type ModuleContentAction =
   // Lesson
   | { type: "select_lesson"; lesson?: Lesson; activityId?: number }
   | { type: "select_lesson_by_id"; id: number }
+  | { type: "finish_lesson_loading"; lessonId: number }
   | {
       type: "select_content_by_id";
       lessonId: number;
@@ -84,7 +87,7 @@ type ModuleContentAction =
   | { type: "delete_selected_activity" }
   | { type: "update_activity_title"; title: string }
   | { type: "set_activity_title_error"; error?: string }
-  | { type: "update_activity_content"; content: string }
+  | { type: "update_activity_content"; content: string; activityKey?: string }
   | { type: "update_activity_iframe_src"; src: string }
   | { type: "go_to_previous_activity" }
   | { type: "go_to_next_activity" }
@@ -123,6 +126,7 @@ export function moduleContentReducer(
           ? {
               selectedLesson: undefined,
               selectedActivity: undefined,
+              isSelectedLessonLoading: false,
               lessonIdToScroll: undefined,
             }
           : {}),
@@ -173,6 +177,9 @@ export function moduleContentReducer(
         mode: "read",
         selectedLesson: action.lesson,
         selectedActivity,
+        textActivityContent: selectedActivity?.id === state.selectedActivity?.id ? state.textActivityContent : undefined,
+        loadedTextActivityKey: selectedActivity?.id === state.selectedActivity?.id ? state.loadedTextActivityKey : undefined,
+        isSelectedLessonLoading: false,
         lessonIdToScroll:
           action.lesson?.id === state.lessonIdToScroll
             ? state.lessonIdToScroll
@@ -185,6 +192,8 @@ export function moduleContentReducer(
       const { module } = state;
 
       if (!module) return state;
+      if (state.selectedLesson?.id === action.id)
+        return { ...state, mode: "read" };
       const selectedLesson = module.courses
         .flatMap((course) => course.lessons)
         .find((lesson) => lesson.id === action.id);
@@ -193,6 +202,9 @@ export function moduleContentReducer(
         ...state,
         selectedLesson,
         selectedActivity: selectedLesson?.activities?.[0],
+        textActivityContent: undefined,
+        loadedTextActivityKey: undefined,
+        isSelectedLessonLoading: Boolean(selectedLesson && selectedLesson.id !== state.selectedLesson?.id),
         lessonIdToScroll: undefined,
         mode: "read",
       };
@@ -214,6 +226,9 @@ export function moduleContentReducer(
         ...state,
         selectedLesson,
         selectedActivity,
+        textActivityContent: selectedActivity?.id === state.selectedActivity?.id ? state.textActivityContent : undefined,
+        loadedTextActivityKey: selectedActivity?.id === state.selectedActivity?.id ? state.loadedTextActivityKey : undefined,
+        isSelectedLessonLoading: Boolean(selectedLesson && selectedLesson.id !== state.selectedLesson?.id),
         lessonIdToScroll: selectedLesson ? action.lessonId : undefined,
         mode: "read",
       };
@@ -222,6 +237,11 @@ export function moduleContentReducer(
     case "acknowledge_lesson_scroll":
       return state.lessonIdToScroll === action.lessonId
         ? { ...state, lessonIdToScroll: undefined }
+        : state;
+
+    case "finish_lesson_loading":
+      return state.selectedLesson?.id === action.lessonId
+        ? { ...state, isSelectedLessonLoading: false }
         : state;
 
     case "set_lesson_rating":
@@ -289,6 +309,10 @@ export function moduleContentReducer(
       return {
         ...state,
         selectedLesson: nextLesson,
+        selectedActivity: undefined,
+        textActivityContent: undefined,
+        loadedTextActivityKey: undefined,
+        isSelectedLessonLoading: Boolean(nextLesson),
         lessonIdToScroll: undefined,
         mode: "read",
         modalVisibility: "none",
@@ -360,13 +384,19 @@ export function moduleContentReducer(
 
     // --- Activity ---
     case "select_activity":
-      return { ...state, mode: "read", selectedActivity: action.activity };
+      return {
+        ...state,
+        mode: "read",
+        selectedActivity: action.activity,
+        textActivityContent: action.activity?.id === state.selectedActivity?.id ? state.textActivityContent : undefined,
+        loadedTextActivityKey: action.activity?.id === state.selectedActivity?.id ? state.loadedTextActivityKey : undefined,
+      };
 
     case "select_last_activity_from_current_lesson": {
       const currentActivities = state.selectedLesson?.activities;
       if (!currentActivities) return state;
       const lastActivity = currentActivities[currentActivities.length - 1];
-      return { ...state, mode: "read", selectedActivity: lastActivity };
+      return { ...state, mode: "read", selectedActivity: lastActivity, textActivityContent: undefined, loadedTextActivityKey: undefined };
     }
 
     case "create_activity": {
@@ -444,7 +474,13 @@ export function moduleContentReducer(
       return { ...state, titleError: action.error };
 
     case "update_activity_content":
-      return { ...state, textActivityContent: action.content };
+      if (action.activityKey && action.activityKey !== `${state.selectedActivity?.id}:${state.selectedActivity?.url}`)
+        return state;
+      return {
+        ...state,
+        textActivityContent: action.content,
+        loadedTextActivityKey: action.activityKey ?? state.loadedTextActivityKey,
+      };
 
     case "update_activity_iframe_src":
       if (state.mode === "read" || state.mode === "activity_type_selection")
@@ -476,7 +512,7 @@ export function moduleContentReducer(
         state.selectedLesson.activities[
           state.selectedLesson.activities.indexOf(state.selectedActivity) - 1
         ];
-      return { ...state, selectedActivity: previousActivity };
+      return { ...state, selectedActivity: previousActivity, textActivityContent: undefined, loadedTextActivityKey: undefined };
     }
 
     case "go_to_next_activity": {
@@ -486,7 +522,7 @@ export function moduleContentReducer(
         state.selectedLesson.activities[
           state.selectedLesson.activities.indexOf(state.selectedActivity) + 1
         ];
-      return { ...state, selectedActivity: nextActivity };
+      return { ...state, selectedActivity: nextActivity, textActivityContent: undefined, loadedTextActivityKey: undefined };
     }
 
     case "reorder_activity": {

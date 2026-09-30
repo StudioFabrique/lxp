@@ -28,6 +28,7 @@ export function useParcoursGroupsQuery(parcoursId: number) {
   return {
     ...query,
     isPending: parcoursQuery.isPending || (groupIds.length > 0 && query.isPending),
+    isFetching: parcoursQuery.isFetching || (groupIds.length > 0 && query.isFetching),
     isError: parcoursQuery.isError || query.isError,
   };
 }

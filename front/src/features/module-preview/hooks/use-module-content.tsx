@@ -531,25 +531,26 @@ const useModuleContent = () => {
     }
   }, []);
 
-  const fetchLessonData = useCallback(async () => {
+  useEffect(() => {
     if (!selectedLessonId) return;
+    let cancelled = false;
 
-    try {
-      const lesson = (await modulePreviewApi.queries.getLesson(
-        selectedLessonId,
-      )) as Lesson;
-      dispatch({
-        type: "select_lesson",
-        lesson,
-        activityId: requestedActivityId,
-      });
-    } catch {
-      // silently fail
-    }
+    void (async () => {
+      try {
+        const lesson = (await modulePreviewApi.queries.getLesson(selectedLessonId)) as Lesson;
+        if (!cancelled) {
+          dispatch({ type: "select_lesson", lesson, activityId: requestedActivityId });
+        }
+      } catch {
+        if (!cancelled) dispatch({ type: "finish_lesson_loading", lessonId: selectedLessonId });
+      }
 
-    if (isDiagnosticPassed.current) {
-      await initiateLesson(selectedLessonId);
-    }
+      if (!cancelled && isDiagnosticPassed.current) {
+        await initiateLesson(selectedLessonId);
+      }
+    })();
+
+    return () => { cancelled = true; };
   }, [selectedLessonId, requestedActivityId, initiateLesson]);
 
   const refreshSelectedLesson = useCallback(
@@ -582,21 +583,33 @@ const useModuleContent = () => {
     [selectedActivityId, selectedLessonId],
   );
 
-  const fetchActivityTextContent = useCallback(() => {
-    if (
-      selectedActivityType === "text" &&
-      selectedActivityUrl &&
-      state.mode === "read"
-    ) {
-      fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
-        credentials: "include",
+  const selectedTextActivityKey = selectedActivityType === "text" && selectedActivityUrl
+    ? `${selectedActivityId}:${selectedActivityUrl}`
+    : undefined;
+
+  useEffect(() => {
+    if (!selectedTextActivityKey || state.mode !== "read") return;
+    const controller = new AbortController();
+
+    void fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
+      credentials: "include",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Impossible de charger l'activité");
+        return response.text();
       })
-        .then((response) => response.text())
-        .then((content: string) => {
-          dispatch({ type: "update_activity_content", content });
-        });
-    }
-  }, [state.mode, selectedActivityType, selectedActivityUrl]);
+      .then((content) => {
+        dispatch({ type: "update_activity_content", content, activityKey: selectedTextActivityKey });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          dispatch({ type: "update_activity_content", content: "", activityKey: selectedTextActivityKey });
+        }
+      });
+
+    return () => controller.abort();
+  }, [state.mode, selectedTextActivityKey, selectedActivityUrl]);
 
   const saveTextActivity = async (
     title: string,
@@ -928,14 +941,6 @@ const useModuleContent = () => {
     void fetchModuleData();
   }, [fetchModuleData]);
 
-  useEffect(() => {
-    fetchLessonData();
-  }, [fetchLessonData]);
-
-  useEffect(() => {
-    fetchActivityTextContent();
-  }, [fetchActivityTextContent]);
-
   // If a activity is selected, select the title of the current course and set the chatbot activity name
   useEffect(() => {
     if (
@@ -988,6 +993,10 @@ const useModuleContent = () => {
       isLastLessonOfCurrentCourse,
     },
     isLoading: isLoading || isLoadingRequest,
+    isActivityContentLoading: state.mode === "read" && Boolean(
+      state.isSelectedLessonLoading ||
+      (selectedTextActivityKey && state.loadedTextActivityKey !== selectedTextActivityKey),
+    ),
     isPublishingAllCourses,
     dispatch,
     moduleActions: {

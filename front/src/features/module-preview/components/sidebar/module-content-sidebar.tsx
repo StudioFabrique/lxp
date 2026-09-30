@@ -144,7 +144,7 @@ const ModuleContentSidebar = ({
                 mode: "activity_type_selection",
               })
             }
-            isLoading={store.isLoading}
+            isLoading={Boolean(state.isSelectedLessonLoading)}
           />
         </SidebarCoursesList>
       </div>

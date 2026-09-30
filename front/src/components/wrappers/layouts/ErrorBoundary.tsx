@@ -1,4 +1,5 @@
 import { Component, ReactNode } from "react";
+import { AppErrorPage } from "./RouterErrorBoundary";
 
 type Props = {
   children: ReactNode;
@@ -21,12 +22,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.error) {
-      return (
-        <div className="p-8 text-center">
-          <h1 className="text-2xl font-bold mb-2">Une erreur est survenue</h1>
-          <p className="text-sm opacity-70">{this.state.error.message}</p>
-        </div>
-      );
+      return <AppErrorPage error={this.state.error} />;
     }
     return this.props.children;
   }

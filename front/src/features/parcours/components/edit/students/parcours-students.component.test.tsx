@@ -33,11 +33,20 @@ const assignedElsewhere = {
 };
 
 let parcoursGroups: (typeof group)[] = [];
+let areGroupsFetching = false;
+let refreshGroupsOnReturn = false;
 
 const updateGroups = vi.fn();
+const navigate = vi.fn();
 
 vi.mock("react-router", () => ({
   useParams: () => ({ id: "1" }),
+  useLocation: () => ({
+    pathname: "/admin/parcours/edit/1",
+    search: "?step=6",
+    state: refreshGroupsOnReturn ? { refreshParcoursGroups: true } : null,
+  }),
+  useNavigate: () => navigate,
 }));
 
 vi.mock("../../../../../components/UI/right-side-drawer/right-side-drawer", () => ({
@@ -67,13 +76,18 @@ vi.mock("./groups-list.component", () => ({
   ),
 }));
 
-vi.mock("./students-list", () => ({ default: () => null }));
+vi.mock("./students-list", () => ({
+  default: () => <div data-testid="students-list" />,
+}));
 vi.mock("../../../../../components/UI/button-add/button-add", () => ({
   default: () => null,
 }));
 
 vi.mock("../../../hooks/useParcoursGroupsQuery", () => ({
-  useParcoursGroupsQuery: () => ({ data: parcoursGroups }),
+  useParcoursGroupsQuery: () => ({
+    data: parcoursGroups,
+    isFetching: areGroupsFetching,
+  }),
 }));
 
 vi.mock("../../../hooks/useStudentGroupsQuery", () => ({
@@ -105,6 +119,8 @@ describe("ParcoursStudents", () => {
     vi.useRealTimers();
     vi.clearAllMocks();
     parcoursGroups = [];
+    areGroupsFetching = false;
+    refreshGroupsOnReturn = false;
   });
 
   it("ne relance pas l'autosauvegarde quand l'objet mutation change", () => {
@@ -145,5 +161,50 @@ describe("ParcoursStudents", () => {
     expect(container.textContent).not.toContain("Groupe A");
     expect(container.textContent).toContain("Groupe B");
     expect(container.textContent).not.toContain("Groupe C");
+  });
+
+  it("garde la liste montée pendant l'actualisation des groupes", () => {
+    parcoursGroups = [group];
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => root?.render(<ParcoursStudents />));
+    const list = container.querySelector('[data-testid="students-list"]');
+
+    areGroupsFetching = true;
+    act(() => root?.render(<ParcoursStudents />));
+
+    const panel = container.querySelector("section:last-child");
+    expect(panel?.textContent).toContain("Groupes d'apprenants");
+    expect(list).not.toBeNull();
+    expect(panel?.querySelector('[data-testid="students-list"]')).toBe(list);
+    expect(panel?.querySelector('[role="status"]')).toBeNull();
+  });
+
+  it("affiche le squelette au retour du formulaire de création d'un groupe", () => {
+    parcoursGroups = [group];
+    areGroupsFetching = true;
+    refreshGroupsOnReturn = true;
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => root?.render(<ParcoursStudents />));
+
+    const panel = container.querySelector("section:last-child");
+    expect(panel?.querySelector('[role="status"]')?.getAttribute("aria-label"))
+      .toBe("Chargement des groupes du parcours");
+    expect(panel?.querySelector('[data-testid="students-list"]')).toBeNull();
+    expect(navigate).not.toHaveBeenCalled();
+
+    areGroupsFetching = false;
+    act(() => root?.render(<ParcoursStudents />));
+
+    expect(panel?.querySelector('[data-testid="students-list"]')).not.toBeNull();
+    expect(navigate).toHaveBeenCalledWith("/admin/parcours/edit/1?step=6", {
+      replace: true,
+      state: { refreshParcoursGroups: false },
+    });
   });
 });

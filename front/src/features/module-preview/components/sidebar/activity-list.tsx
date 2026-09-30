@@ -69,7 +69,9 @@ export default function ActivityList({
         )}
       >
         <div className="mb-1 flex w-full items-center justify-between pb-1 mt-2 text-xs font-semibold text-base-content/60">
-          {activities && activities.length > 0 ? (
+          {isLoading ? (
+            <div className="skeleton h-4 w-24" aria-hidden="true" />
+          ) : activities && activities.length > 0 ? (
             <div className=" flex items-center gap-0.5">
               <span>Activités</span>
               <span>
@@ -100,7 +102,12 @@ export default function ActivityList({
             </button>
           )}
         </div>
-        {activities && activities.length > 0 ? (
+        {isLoading ? (
+          <div role="status" aria-label="Chargement des activités" className="w-full space-y-2">
+            <span className="sr-only">Chargement des activités…</span>
+            {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
+          </div>
+        ) : activities && activities.length > 0 ? (
           activities.map((activity, index) => (
             <ActivityItem
               key={activity.id}
@@ -114,11 +121,6 @@ export default function ActivityList({
               onSelect={() => onSelectActivity?.(activity)}
             />
           ))
-        ) : isLoading ? (
-          <div role="status" aria-label="Chargement des activités" className="w-full space-y-2">
-            <span className="sr-only">Chargement des activités…</span>
-            {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
-          </div>
         ) : null}
         {!readOnly && onClickCreateActivity && canEdit && !isReordering && (
           <PermissionGuard action="update" object="lesson">

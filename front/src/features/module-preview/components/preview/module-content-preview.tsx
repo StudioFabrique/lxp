@@ -8,7 +8,7 @@ import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeho
 import StudentActivityNavigation from "./student-activity-navigation";
 import type { ModuleContentStore } from "../../hooks/use-module-content";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
-import { useCallback } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 const ModuleContentPreview = ({
   store,
@@ -40,6 +40,22 @@ const ModuleContentPreview = ({
     textActivityContent,
     mode,
   } = state;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [previousContentHeight, setPreviousContentHeight] = useState<number>();
+  const isActivityContentLoading = store.isActivityContentLoading;
+
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    if (isActivityContentLoading || mode !== "read" || !content) return;
+
+    const measure = () => {
+      const height = content.getBoundingClientRect().height;
+      if (height > 0) setPreviousContentHeight(height);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, [isActivityContentLoading, mode]);
 
   const editTitle = useCallback(
     (title: string) => dispatch({ type: "update_activity_title", title }),
@@ -67,6 +83,31 @@ const ModuleContentPreview = ({
         Je veux me tester
       </button>
     ) : null;
+
+  if (isActivityContentLoading) {
+    return (
+      <div
+        role="status"
+        aria-label="Chargement de l’activité"
+        className={`flex flex-col gap-6 ${previousContentHeight ? "" : "min-h-[500px]"}`}
+        style={previousContentHeight ? { height: previousContentHeight } : undefined}
+      >
+        <span className="sr-only">Chargement de l’activité…</span>
+        <div className="min-h-0 flex-1 overflow-hidden rounded-lg border border-base-300 bg-base-200 p-6 sm:p-10 space-y-10">
+          <div className="skeleton h-7 w-2/3 max-w-80" aria-hidden="true" />
+          <div className="space-y-4" aria-hidden="true">
+            <div className="skeleton h-4 w-full" />
+            <div className="skeleton h-4 w-11/12" />
+            <div className="skeleton h-4 w-4/5" />
+            <div className="skeleton h-4 w-2/3" />
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <div className="skeleton h-10 w-44" aria-hidden="true" />
+        </div>
+      </div>
+    );
+  }
 
   if (
     !selectedLesson?.activities?.length &&
@@ -101,7 +142,8 @@ const ModuleContentPreview = ({
   }
 
   return (
-    <FadeWrapper>
+    <div ref={contentRef}>
+      <FadeWrapper>
       <LessonReaderAndEditor
         isLessonCompleted={computed.isLessonCompleted}
         canEdit={canEditSelectedLesson}
@@ -187,7 +229,8 @@ const ModuleContentPreview = ({
             </StudentActivityNavigation>
           ))}
       </LessonReaderAndEditor>
-    </FadeWrapper>
+      </FadeWrapper>
+    </div>
   );
 };
 
