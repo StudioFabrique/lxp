@@ -130,7 +130,7 @@ const DiagnosticQuiz = ({
         title="Évaluation initiale"
         description="Évalue tes connaissances avant de commencer le module"
       />
-      <div className="card min-h-[33rem] w-full overflow-hidden border border-base-200 bg-base-100 shadow-sm">
+      <BoxWrapper className="card h-auto min-h-[33rem] w-full gap-0 overflow-hidden border-primary/20 bg-primary/5 p-0 shadow-none">
         {!isStarted ? (
           <div
             className="relative flex h-56 shrink-0 items-end overflow-hidden bg-cover bg-center p-6 text-white sm:h-60 sm:p-8"
@@ -147,7 +147,7 @@ const DiagnosticQuiz = ({
             </h1>
           </div>
         ) : (
-          <div className="flex h-56 shrink-0 items-center gap-3 border-b border-base-200 pr-4 sm:h-60 sm:gap-8 sm:pr-8">
+          <div className="flex h-56 shrink-0 items-center gap-3 border-b border-primary/20 pr-4 sm:h-60 sm:gap-8 sm:pr-8">
             <img
               src={image}
               alt=""
@@ -252,7 +252,7 @@ const DiagnosticQuiz = ({
             ) : null}
           </motion.div>
         </AnimatePresence>
-      </div>
+      </BoxWrapper>
     </PageWrapper>
   );
 };

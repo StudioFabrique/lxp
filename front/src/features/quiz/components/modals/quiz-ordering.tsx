@@ -3,6 +3,7 @@ import { Quiz, UserAnswer } from "../../interfaces/quiz";
 import { ArrowDown, ArrowUp, GripVertical } from "lucide-react";
 import QuizModalButtons from "./quiz-modal-buttons";
 import { cn } from "../../../../utils/cn";
+import { shuffleAnswers } from "../../utils/shuffle-answers";
 
 interface Props {
   quiz: Extract<Quiz, { type: "ordering" }>;
@@ -13,9 +14,18 @@ interface Props {
 }
 
 const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
-  const [items, setItems] = useState(() =>
-    quiz.data.items.map((text: string, originalIndex: number) => ({ text, originalIndex })),
-  );
+  const [items, setItems] = useState(() => {
+    const shuffled = shuffleAnswers(
+      quiz.data.items.map((text: string, originalIndex: number) => ({ text, originalIndex })),
+    );
+    if (
+      shuffled.length > 1 &&
+      shuffled.every((item, index) => item.originalIndex === quiz.data.order[index])
+    ) {
+      [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
+    }
+    return shuffled;
+  });
   const [dragOver, setDragOver] = useState<number | null>(null);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const dragging = useRef<number | null>(null);

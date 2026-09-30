@@ -4,7 +4,6 @@ import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import {
   ArrowRight,
-  Check,
   Gauge,
   GraduationCap,
   Rocket,
@@ -710,9 +709,6 @@ export default function StudentLearningOnboarding() {
                             ?.label ?? "Non renseigné"}
                         </dd>
                       </div>
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                        <Check className="size-4" aria-hidden="true" />
-                      </span>
                     </div>
                     {context.availableFormations
                       .flatMap((item) =>
@@ -739,9 +735,6 @@ export default function StudentLearningOnboarding() {
                               )?.label ?? "Non renseigné"}
                             </dd>
                           </div>
-                          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                            <Check className="size-4" aria-hidden="true" />
-                          </span>
                         </div>
                       ))}
                     <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
@@ -767,9 +760,6 @@ export default function StudentLearningOnboarding() {
                             ))}
                         </dd>
                       </div>
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                        <Check className="size-4" aria-hidden="true" />
-                      </span>
                     </div>
                   </dl>
                 </div>

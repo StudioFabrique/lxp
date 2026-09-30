@@ -2,6 +2,7 @@ import { useState } from "react";
 import { cn } from "../../../../utils/cn";
 import { Quiz, UserAnswer } from "../../interfaces/quiz";
 import QuizModalButtons from "./quiz-modal-buttons";
+import { shuffleAnswers } from "../../utils/shuffle-answers";
 
 interface Props {
   quiz: Extract<Quiz, { type: "true_false" }>;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
+  const [choices] = useState(() => shuffleAnswers([true, false]));
   const [selected, setSelected] = useState<boolean | null>(null);
 
   const isValid = selected !== null;
@@ -29,26 +31,19 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Pro
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 w-full">
-        <button
-          className={cn(
-            "btn flex-1",
-            selected === true ? "btn-primary" : "btn-outline btn-secondary",
-          )}
-          onClick={() => setSelected(true)}
-          disabled={isAnswered}
-        >
-          VRAI
-        </button>
-        <button
-          className={cn(
-            "btn flex-1",
-            selected === false ? "btn-primary" : "btn-outline btn-secondary",
-          )}
-          onClick={() => setSelected(false)}
-          disabled={isAnswered}
-        >
-          FAUX
-        </button>
+        {choices.map((choice) => (
+          <button
+            key={String(choice)}
+            className={cn(
+              "btn flex-1",
+              selected === choice ? "btn-primary" : "btn-outline btn-secondary",
+            )}
+            onClick={() => setSelected(choice)}
+            disabled={isAnswered}
+          >
+            {choice ? "VRAI" : "FAUX"}
+          </button>
+        ))}
       </div>
       {(!isAnswered || nextAction) && (
         <QuizModalButtons

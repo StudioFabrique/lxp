@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Quiz, UserAnswer } from "../../interfaces/quiz";
 import QuizModalButtons from "./quiz-modal-buttons";
 import { cn } from "../../../../utils/cn";
+import { shuffleAnswers } from "../../utils/shuffle-answers";
 
 interface Props {
   quiz: Extract<Quiz, { type: "mcq" }>;
@@ -12,6 +13,9 @@ interface Props {
 }
 
 const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
+  const [optionIndexes] = useState(() =>
+    shuffleAnswers(quiz.data.options.map((_, index) => index)),
+  );
   const [selected, setSelected] = useState<number | null>(null);
 
   const isValid = selected !== null;
@@ -29,14 +33,14 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) =>
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {quiz.data.options.map((option: string, index: number) => (
+        {optionIndexes.map((index) => (
           <button
             key={index}
             className={cn("btn justify-start h-auto min-h-12 normal-case text-left", selected === index ? "btn-primary" : "btn-outline btn-secondary")}
             onClick={() => setSelected(index)}
             disabled={isAnswered}
           >
-            {option}
+            {quiz.data.options[index]}
           </button>
         ))}
       </div>
