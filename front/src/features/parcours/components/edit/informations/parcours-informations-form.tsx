@@ -10,6 +10,7 @@ import FormTextarea from "../../../../../../src/components/form/FormTextarea";
 import useAutoSave from "../../../../../../src/hooks/useAutoSave";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 
 type Props = {
   parcoursId?: string;
@@ -83,7 +84,7 @@ const ParcoursInformationsForm: FC<Props> = ({
             <div className="flex flex-col gap-y-4">
               <h2 className="font-bold">Formation</h2>
               <SubWrapper>
-                <p className="first-letter:uppercase">{formation.title}</p>
+                <p>{formatTitle(formation.title)}</p>
               </SubWrapper>
             </div>
             <form className="w-full flex flex-col gap-y-8 mt-8">

@@ -3,6 +3,11 @@
 @import "./themes/dark-themes.css";
 @plugin "@tailwindcss/typography";
 
+/* User-entered headings may arrive with a lowercase initial. */
+:where(h1, h2, h3, h4, h5, h6)::first-letter {
+    text-transform: uppercase;
+}
+
 @plugin "daisyui" {
     exclude: rootscrollgutter;
     themes:

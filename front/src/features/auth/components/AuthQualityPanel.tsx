@@ -60,7 +60,7 @@ export default function AuthQualityPanel({ quality, color, colorIndex, x, y, geo
       <motion.div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[15px] bg-white" initial={{ opacity: reducedMotion ? 1 : 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.2, delay: reducedMotion ? 0 : 0.15 }}>
       <div className="relative shrink-0 bg-white p-5 text-black">
         <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" onClick={onClose} aria-label="Fermer les détails"><X className="size-5" /></button>
-        <AuthQualityLogo quality={quality} color={colorIndex} />
+        <AuthQualityLogo color={colorIndex} />
         <h2 id={titleId} className="text-xl font-bold">{label}</h2>
         <p id={descriptionId} className="mt-2 text-sm">{description}</p>
       </div>

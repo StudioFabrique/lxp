@@ -13,6 +13,7 @@ import { compressImage } from "../../utils/helpers/compress-image";
 import { headerImageMaxSize } from "../../config/images-sizes";
 import FileUpload from "../UI/file-upload/FileUpload";
 import { ImageUp } from "lucide-react";
+import { formatTitle } from "../../utils/helpers/text-helpers";
 
 type Props = {
   image?: string;
@@ -92,9 +93,9 @@ const ImageHeaderMutable: FC<Props> = ({
                 <div className="w-12 h-12 text-white">{children}</div>
                 <div>
                   <h1 className="text-xl text-white">
-                    {parentTitle} {isPublished ? "" : "- Brouillon"}
+                    {formatTitle(parentTitle)} {isPublished ? "" : "- Brouillon"}
                   </h1>
-                  <h3 className="capitalise text-white">{title}</h3>
+                  <h3 className="text-white">{formatTitle(title)}</h3>
                 </div>
               </span>
               <FileUpload

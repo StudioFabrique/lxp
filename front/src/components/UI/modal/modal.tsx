@@ -2,6 +2,7 @@ import type { PropsWithChildren, ReactNode } from "react";
 import { Loader2, Minimize2, X } from "lucide-react";
 import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 import { cn } from "../../../utils/cn";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type ModalProps = {
   title?: string;
@@ -62,7 +63,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
         >
           {props.title && (
             <h3 className={cn("font-bold text-lg", props.headerActions && "mr-auto")}>
-              {props.title}
+              {formatTitle(props.title)}
             </h3>
           )}
           {props.titleTooltip && (

@@ -322,10 +322,12 @@ export default function AuthFlipTiles({ image, imageSrc, onClipPathChange }: { i
                     <img src={imageSrc || image.currentSrc || image.src} alt="" draggable={false} className="absolute max-w-none object-cover"
                       style={{ width: geometry.width, height: geometry.height, left: -x, top: -y }} />
                   </div>
-                  <div className={`auth-flip-face auth-flip-icon-face absolute inset-0 flex items-end justify-end gap-3 rounded-[15px] p-6 ${colors[color]}`}>
+                  <div className={`auth-flip-face auth-flip-icon-face absolute inset-0 flex items-end justify-end rounded-[15px] p-6 ${colors[color]}`}>
                     <span className="absolute left-6 top-6 flex items-center gap-2 text-xs font-medium opacity-80">Découvrir <ArrowUpRight className="size-4" /></span>
-                    <Icon className="size-9 shrink-0" strokeWidth={2} />
-                    <span className="pb-1 text-xl font-semibold">{label}</span>
+                    <span className="flex items-center gap-3">
+                      <Icon className="size-6 shrink-0" strokeWidth={2} />
+                      <span className="text-xl font-semibold">{label}</span>
+                    </span>
                   </div>
                 </div>}
               </button>
