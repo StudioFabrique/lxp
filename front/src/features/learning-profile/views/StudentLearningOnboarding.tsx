@@ -434,9 +434,7 @@ export default function StudentLearningOnboarding() {
                     <motion.li
                       key={tag.id}
                       initial={
-                        reduceMotion
-                          ? false
-                          : { opacity: 0, y: 8, scale: 0.94 }
+                        reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }
                       }
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{
