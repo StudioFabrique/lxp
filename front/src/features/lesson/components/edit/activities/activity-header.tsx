@@ -1,5 +1,5 @@
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
-import { type ReactNode, useRef, useEffect, useState } from "react";
+import { type ReactNode, useRef, useEffect, useLayoutEffect, useState } from "react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import type { Activity } from "../../../../../utils/interfaces/activity";
 import { cn } from "../../../../../utils/cn";
@@ -45,6 +45,29 @@ const ActivityHeader = ({
 }: Props) => {
   const [isSticky, setIsSticky] = useState(false);
   const stickyMarkerRef = useRef<HTMLDivElement>(null);
+  const titleInputRef = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    const input = titleInputRef.current;
+    if (!titleEditable || !input) return;
+
+    const resize = () => {
+      input.style.height = "auto";
+      input.style.height = `${input.scrollHeight}px`;
+    };
+    resize();
+
+    let previousWidth = input.getBoundingClientRect().width;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      if (width !== previousWidth) {
+        previousWidth = width;
+        resize();
+      }
+    });
+    observer.observe(input);
+    return () => observer.disconnect();
+  }, [title, titleEditable, isSticky]);
 
   const handleCancel = () => {
     if (!onCancel) return;
@@ -86,29 +109,51 @@ const ActivityHeader = ({
       )}
       <article
         className={
-          cn(isSticky
-            ? `sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 bg-base-200 transition-all duration-300`
-            : className)
+          cn(
+            className,
+            isSticky && "sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 bg-base-200 transition-all duration-300",
+            titleEditable && "items-start",
+          )
         }
       >
         <div className="flex gap-3 items-center min-w-0 flex-1">
           {activityType && (
-            <span className="w-6 shrink-0">
+            <span className="w-6 shrink-0 self-start mt-1.5 text-primary">
               {activityIconType(activityType)}
             </span>
           )}
-          {titleEditable ? (
+          {titleEditable && isSticky ? (
             <input
               data-onboarding-field="activity-title"
               type="text"
+              aria-label="Titre de l’activité"
+              aria-invalid={Boolean(titleError)}
               value={title}
               onChange={(e) => onEditTitle?.(e.target.value)}
-              className={cn("input input-bordered", titleClassName, "flex-1 min-w-0", titleError && "input-error text-error", inputClassName ?? "")}
+              className={cn(titleClassName, "flex-1 min-w-0 w-full truncate border-0 bg-transparent p-0 rounded-none shadow-none outline-none focus:outline-none focus:ring-0 text-primary", titleError && "text-error", inputClassName ?? "")}
+              placeholder={titlePlaceholder}
+              title={title}
+            />
+          ) : titleEditable ? (
+            <textarea
+              ref={titleInputRef}
+              data-onboarding-field="activity-title"
+              rows={1}
+              aria-label="Titre de l’activité"
+              aria-invalid={Boolean(titleError)}
+              value={title}
+              onChange={(e) => onEditTitle?.(e.target.value)}
+              className={cn(titleClassName, "flex-1 min-w-0 w-full resize-none overflow-hidden border-0 bg-transparent p-0 rounded-none shadow-none outline-none focus:outline-none focus:ring-0 text-primary", titleError && "text-error", inputClassName ?? "")}
               placeholder={titlePlaceholder}
               autoFocus={autoFocusTitle}
             />
           ) : (
-            <h1 className={titleClassName}>{formatTitle(title)}</h1>
+            <h1
+              className={cn(titleClassName, isSticky && "min-w-0 flex-1 truncate")}
+              title={isSticky ? formatTitle(title) : undefined}
+            >
+              {formatTitle(title)}
+            </h1>
           )}
         </div>
         {children ?? (

@@ -33,7 +33,11 @@ const queries = {
     content?: string,
     context?: { courseId?: number; attemptId?: number | null },
   ) => {
-    const res = await apiClient.post("/quiz/random", { content, ...context });
+    const res = await apiClient.post("/quiz/random", {
+      content,
+      courseId: context?.courseId,
+      ...(context?.attemptId != null && { attemptId: context.attemptId }),
+    });
     return res.data;
   },
 

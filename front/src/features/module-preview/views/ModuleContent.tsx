@@ -2,7 +2,8 @@ import useModuleContent from "../hooks/use-module-content";
 import useContentTracking from "../hooks/use-content-tracking";
 import ModuleContentSkeleton from "./ModuleContentSkeleton";
 import { useLocation, useNavigate } from "react-router";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
+import { calculateActivityReadTime } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
 import { AuthContext } from "../../../store/AuthProvider";
 import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contacts";
 import useDiagnosticQuiz from "../../quiz/hooks/use-diagnostic-quiz";
@@ -117,15 +118,25 @@ const ModuleContent = () => {
     isSelectedCourseAiIndexed,
   );
 
-  // Propose automatiquement un quiz aux clics sur les boutons suivant ou précédent
+  // Le quiz initial ne dispense pas du quiz rapide de l'activité en cours.
+  const estimatedReadTimeMs = useMemo(
+    () => calculateActivityReadTime(state.textActivityContent).readTimeMs,
+    [state.textActivityContent],
+  );
   const smartQuizState = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
+    estimatedReadTimeMs,
     isLessonCompleted: computed.isLessonCompleted,
-    isLastActivitySelected: computed.isLastActivitySelected,
-    isLastLessonSelected: computed.isLastLessonSelected,
-    isAnyQuizOpen: diagnosticQuiz.isOpen || quizState.isOpen,
+    isAnyQuizOpen: quizState.isOpen,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
+    onCompleteLesson: () =>
+      computed.isLessonCompleted
+        ? contentStore.lessonActions.nextLesson()
+        : dispatch({
+            type: "set_modal_visibility",
+            modalVisibility: "lessonCompletionModal",
+          }),
     aiIndexed: isSelectedCourseAiIndexed,
   });
 

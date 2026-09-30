@@ -216,14 +216,7 @@ const ModuleContentPreview = ({
                 dispatch({ type: "go_to_previous_activity" })
               }
               onNextActivity={smartQuizState.handleNextActivity}
-              onCompleteLesson={() =>
-                computed.isLessonCompleted
-                  ? lessonActions.nextLesson()
-                  : dispatch({
-                      type: "set_modal_visibility",
-                      modalVisibility: "lessonCompletionModal",
-                    })
-              }
+              onCompleteLesson={smartQuizState.handleCompleteLesson}
             >
               {quizButton}
             </StudentActivityNavigation>

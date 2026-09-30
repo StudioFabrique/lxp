@@ -187,7 +187,7 @@ const QuizModal = ({
                 <div className="modal-action">
                   {isAnswered && quiz && (
                     <button className="btn btn-primary" onClick={onNext}>
-                      {currentIndex === totalQuizzes - 1
+                      {!isStreaming && currentIndex === totalQuizzes - 1
                         ? "Terminer"
                         : "Question suivante"}
                     </button>

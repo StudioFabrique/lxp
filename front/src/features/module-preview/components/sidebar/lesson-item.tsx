@@ -245,72 +245,66 @@ const LessonItem = ({
 
                   {isOpen &&
                     createPortal(
-                      <ul
-                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-40 p-1 z-9999"
+                      <div
+                        className="menu fixed z-9999 bg-base-300/80 text-base-content rounded-lg w-60 backdrop-blur-sm border border-primary/20"
                         style={{
                           top: `${dropdownPosition.top}px`,
                           left: `${dropdownPosition.left}px`,
                         }}
                         onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling
                       >
-                        <li>
-                          <button
-                            type="button"
-                            className="flex items-center gap-2 text-sm text-base-content"
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              try {
-                                await modulePreviewApi.mutations.setLessonVisibility(
-                                  lesson.id!,
-                                  !isVisible,
-                                );
-                                setIsVisible(!isVisible);
-                                setIsOpen(false);
-                              } catch {
-                                toast.error("Impossible de modifier la visibilité de la leçon.");
-                              }
-                            }}
-                          >
-                            {isVisible ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                            <span>
-                              {isVisible
-                                ? "Rendre invisible"
-                                : "Rendre visible"}
-                            </span>
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            className="flex items-center gap-2 text-sm text-base-content"
-                            onClick={(e) => {
-                              e.stopPropagation();
+                        <button
+                          type="button"
+                          className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                              await modulePreviewApi.mutations.setLessonVisibility(
+                                lesson.id!,
+                                !isVisible,
+                              );
+                              setIsVisible(!isVisible);
                               setIsOpen(false);
-                              setIsEditingLesson(true);
-                            }}
-                          >
-                            <Edit3 className="w-4 h-4" />
-                            <span>Modifier les détails</span>
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteClick();
-                            }}
-                            className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-100"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            <span>Supprimer</span>
-                          </button>
-                        </li>
-                      </ul>,
+                            } catch {
+                              toast.error("Impossible de modifier la visibilité de la leçon.");
+                            }
+                          }}
+                        >
+                          {isVisible ? (
+                            <EyeOff className="w-4 h-4 mr-3" />
+                          ) : (
+                            <Eye className="w-4 h-4 mr-3" />
+                          )}
+                          <span>
+                            {isVisible
+                              ? "Rendre invisible"
+                              : "Rendre visible"}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsOpen(false);
+                            setIsEditingLesson(true);
+                          }}
+                        >
+                          <Edit3 className="w-4 h-4 mr-3" />
+                          <span>Modifier les détails</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick();
+                          }}
+                          className="cursor-default flex items-center w-full px-4 py-3 text-sm text-error hover:bg-error/10 transition-all last:rounded-b-lg"
+                        >
+                          <Trash2 className="w-4 h-4 mr-3" />
+                          <span>Supprimer</span>
+                        </button>
+                      </div>,
                       document.body,
                     )}
                 </PermissionGuard>

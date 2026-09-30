@@ -1,122 +1,111 @@
-import {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  useContext,
-  useMemo,
-} from "react";
+import { useState, useRef, useEffect, useCallback, useContext } from "react";
 import { Activity } from "../../../utils/interfaces/activity";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
+import { canSuggestActivityQuiz } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
 
-const MIN_TIME_MS = 10 * 1000; // 10 secondes
-const MAX_TIME_MS = 5 * 60 * 1000; // 5 minutes
+const MIN_READ_TIME_RATIO = 0.5;
+const MAX_READ_TIME_RATIO = 2;
 
 type UseSmartQuizPromptProps = {
   selectedActivity?: Activity;
+  estimatedReadTimeMs?: number;
   isLessonCompleted: boolean;
-  isLastActivitySelected: boolean;
-  isLastLessonSelected: boolean;
   isAnyQuizOpen: boolean;
   onTriggerRandomQuiz: () => void;
   onGoToNextActivity: () => void;
+  onCompleteLesson: () => void;
   aiIndexed?: boolean;
 };
 
 export default function useSmartQuizPrompt({
   selectedActivity,
+  estimatedReadTimeMs,
   isLessonCompleted,
-  isLastActivitySelected,
-  isLastLessonSelected,
   isAnyQuizOpen,
   onTriggerRandomQuiz,
   onGoToNextActivity,
+  onCompleteLesson,
   aiIndexed = true,
 }: UseSmartQuizPromptProps) {
   const ability = useContext(AbilityContext);
   const [showQuizPrompt, setShowQuizPrompt] = useState(false);
-  const [hasBypassedQuiz, setHasBypassedQuiz] = useState(false);
-
-  const activityStartTime = useRef(Date.now());
-
-  // Utilisation d'une ref pour suivre l'ID de l'activité indépendamment des re-renders
-  const currentActivityIdRef = useRef<string | number | undefined>(
-    selectedActivity?.id,
-  );
+  const [bypassedActivityId, setBypassedActivityId] = useState<number>();
+  const pendingContinuation = useRef<(() => void) | undefined>(undefined);
+  const activityStartTime = useRef(0);
+  const currentActivityIdRef = useRef<number | undefined>(undefined);
   const prevIsAnyQuizOpenRef = useRef(isAnyQuizOpen);
-
-  // Déterminer si l'utilisateur peut passer outre les règles de temps
-  const canSkipLogic = useMemo(() => {
-    const userIsAdmin = ability.can("update", "lesson");
-    return userIsAdmin || isLessonCompleted || hasBypassedQuiz;
-  }, [ability, isLessonCompleted, hasBypassedQuiz]);
 
   const handleDeclineQuiz = useCallback(() => {
     setShowQuizPrompt(false);
-    setHasBypassedQuiz(true);
-    onGoToNextActivity();
-  }, [onGoToNextActivity]);
+    setBypassedActivityId(selectedActivity?.id);
+    const continueAction = pendingContinuation.current;
+    pendingContinuation.current = undefined;
+    continueAction?.();
+  }, [selectedActivity?.id]);
 
   const handleAcceptQuiz = useCallback(() => {
     setShowQuizPrompt(false);
-    setHasBypassedQuiz(true);
+    setBypassedActivityId(selectedActivity?.id);
+    pendingContinuation.current = undefined;
     onTriggerRandomQuiz();
-  }, [onTriggerRandomQuiz]);
+  }, [selectedActivity?.id, onTriggerRandomQuiz]);
 
-  const handleNextActivity = useCallback(() => {
-    if (!aiIndexed || canSkipLogic) {
-      onGoToNextActivity();
+  const handleContinue = useCallback((onContinue: () => void) => {
+    if (isAnyQuizOpen) return;
+
+    const canSkipLogic =
+      ability.can("update", "lesson") ||
+      isLessonCompleted ||
+      (selectedActivity?.id !== undefined && bypassedActivityId === selectedActivity.id);
+
+    if (!aiIndexed || canSkipLogic || !canSuggestActivityQuiz(estimatedReadTimeMs)) {
+      onContinue();
       return;
     }
 
     const timeSpent = Date.now() - activityStartTime.current;
-    const isTooFast = timeSpent < MIN_TIME_MS;
-    const isTooSlow = timeSpent > MAX_TIME_MS;
+    const isTooFast = timeSpent < estimatedReadTimeMs * MIN_READ_TIME_RATIO;
+    const isTooSlow = timeSpent > estimatedReadTimeMs * MAX_READ_TIME_RATIO;
 
-    const isTextActivity = selectedActivity?.type === "text";
-    const isNotAtTheEnd = !isLastActivitySelected || !isLastLessonSelected;
-
-    if (isTextActivity && isNotAtTheEnd && (isTooFast || isTooSlow)) {
+    if (selectedActivity?.type === "text" && (isTooFast || isTooSlow)) {
+      pendingContinuation.current = onContinue;
       setShowQuizPrompt(true);
     } else {
-      onGoToNextActivity();
+      onContinue();
     }
-  }, [
-    canSkipLogic,
-    aiIndexed,
-    selectedActivity,
-    isLastActivitySelected,
-    isLastLessonSelected,
-    onGoToNextActivity,
-  ]);
+  }, [ability, isLessonCompleted, bypassedActivityId, aiIndexed, selectedActivity, isAnyQuizOpen, estimatedReadTimeMs]);
+
+  const handleNextActivity = useCallback(
+    () => handleContinue(onGoToNextActivity),
+    [handleContinue, onGoToNextActivity],
+  );
+
+  const handleCompleteLesson = useCallback(
+    () => handleContinue(onCompleteLesson),
+    [handleContinue, onCompleteLesson],
+  );
 
   useEffect(() => {
+    const activityChanged = currentActivityIdRef.current !== selectedActivity?.id;
     const quizJustClosed = prevIsAnyQuizOpenRef.current && !isAnyQuizOpen;
     prevIsAnyQuizOpenRef.current = isAnyQuizOpen;
 
-    if (quizJustClosed) {
-      setHasBypassedQuiz(true);
-      return;
-    }
-
-    if (!selectedActivity?.id || isAnyQuizOpen) return;
-
-    if (currentActivityIdRef.current !== selectedActivity.id) {
-      currentActivityIdRef.current = selectedActivity.id;
+    // Une fermeture de quiz ne doit pas dispenser la nouvelle activité.
+    if (activityChanged) {
+      currentActivityIdRef.current = selectedActivity?.id;
       activityStartTime.current = Date.now();
-      setHasBypassedQuiz(false);
+      setBypassedActivityId(undefined);
+      setShowQuizPrompt(false);
+      pendingContinuation.current = undefined;
+    } else if (quizJustClosed) {
+      setBypassedActivityId(selectedActivity?.id);
     }
-  }, [
-    selectedActivity?.id,
-    isAnyQuizOpen,
-    canSkipLogic,
-    handleAcceptQuiz,
-    selectedActivity?.type,
-  ]);
+  }, [selectedActivity?.id, isAnyQuizOpen]);
 
   return {
     showQuizPrompt,
     handleNextActivity,
+    handleCompleteLesson,
     handleAcceptQuiz,
     handleDeclineQuiz,
   };
