@@ -36,7 +36,7 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) =>
         {optionIndexes.map((index) => (
           <button
             key={index}
-            className={cn("btn justify-start h-auto min-h-12 normal-case text-left", selected === index ? "btn-primary" : "btn-outline btn-secondary")}
+            className={cn("btn justify-start h-auto min-h-12 normal-case text-left", selected === index ? "btn-primary" : "btn-outline btn-primary")}
             onClick={() => setSelected(index)}
             disabled={isAnswered}
           >

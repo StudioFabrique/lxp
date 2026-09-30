@@ -173,7 +173,7 @@ const QuizModal = ({
                         {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
                       </h3>
                       <div className="text-sm">
-                        <QuizMarkdown>
+                        <QuizMarkdown explanation>
                           {isCorrect
                             ? quiz.trueExplanation
                             : quiz.falseExplanation}

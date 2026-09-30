@@ -1,4 +1,12 @@
 import apiClient from "../../../lib/axios";
+import type { ExternalApiQuiz, UserAnswer } from "../interfaces/quiz";
+
+export type PreliminaryQuizProgress = {
+  attemptId: number;
+  finished: boolean;
+  questions: ExternalApiQuiz[];
+  answers: { externalId: string; isCorrect: boolean; userAnswer: UserAnswer }[];
+};
 
 export type QuizAttemptScope = {
   moduleId?: number;
@@ -9,6 +17,12 @@ export type QuizAttemptScope = {
 export type QuizAttemptOrigin = string;
 
 const queries = {
+  getPreliminaryProgress: async (moduleId: number): Promise<PreliminaryQuizProgress | null> => {
+    const res = await apiClient.get<PreliminaryQuizProgress | null>(
+      `/quiz/preliminary/progress/${moduleId}`,
+    );
+    return res.data;
+  },
   /**
    * Génère une question aléatoire à partir du contenu d'une activité.
    *

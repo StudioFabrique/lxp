@@ -74,7 +74,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
             }}
             onDragEnd={() => { dragging.current = null; setDraggingIndex(null); setDragOver(null); }}
             className={cn(
-              "flex items-center gap-2 rounded-box border border-base-300 bg-base-200 p-2 sm:gap-3 sm:p-3",
+              "flex items-center gap-2 rounded-box border border-primary/40 bg-primary/5 p-2 sm:gap-3 sm:p-3",
               !isAnswered && "cursor-grab active:cursor-grabbing",
               dragOver === index && draggingIndex !== index && "ring-2 ring-primary",
             )}

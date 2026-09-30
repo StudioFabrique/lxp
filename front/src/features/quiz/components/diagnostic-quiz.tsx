@@ -26,6 +26,7 @@ type Props = {
   isAnswered: boolean;
   isCorrect: boolean;
   isStreaming: boolean;
+  isRestoring: boolean;
   isWaitingForNext: boolean;
   showResults: boolean;
   attempts: QuizAttempt[];
@@ -47,6 +48,7 @@ const DiagnosticQuiz = ({
   isAnswered,
   isCorrect,
   isStreaming,
+  isRestoring,
   isWaitingForNext,
   showResults,
   attempts,
@@ -58,7 +60,7 @@ const DiagnosticQuiz = ({
   onReport,
 }: Props) => {
   const reduceMotion = useReducedMotion();
-  const isLoading = isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming));
+  const isLoading = isRestoring || (isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming)));
   const upcomingNumber = currentIndex + (isWaitingForNext ? 2 : 1);
   const image = normalizeImageSource(moduleImage) ?? defaultModuleImage;
   const contentKey = !isStarted
@@ -180,7 +182,13 @@ const DiagnosticQuiz = ({
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
             transition={{ duration: reduceMotion ? 0.01 : 0.22, ease: "easeOut" }}
           >
-            {!isStarted ? (
+            {isRestoring ? (
+              <div className="flex flex-col gap-4 py-4" role="status">
+                <p>Reprise du diagnostic…</p>
+                <div className="skeleton h-6 w-3/4 rounded" />
+                <div className="skeleton h-12 w-full rounded-lg" />
+              </div>
+            ) : !isStarted ? (
               <>
                 <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
                   Avant de te lancer, prends un court instant pour évaluer tes
@@ -203,6 +211,7 @@ const DiagnosticQuiz = ({
                   attempts={attempts}
                   onContinue={onContinueFromResults}
                   continueLabel="Démarrer le module"
+                  showTopContinue
                 />
               </>
             ) : isLoading ? (
@@ -242,7 +251,7 @@ const DiagnosticQuiz = ({
                       {isCorrect ? "Bonne réponse !" : "Ce n'est pas tout à fait ça."}
                     </h3>
                     <div className="text-sm text-base-content">
-                      <QuizMarkdown>
+                      <QuizMarkdown explanation>
                         {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
                       </QuizMarkdown>
                     </div>

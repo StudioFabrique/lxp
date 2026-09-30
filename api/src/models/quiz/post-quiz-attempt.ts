@@ -43,6 +43,19 @@ export default async function postQuizAttempt(
 
   if (!quiz) return null;
 
+  if (origin === "preliminary") {
+    const ongoing = await prisma.orm.public.QuizAttempt.where({
+      quizId: quiz.id,
+      studentId: student.id,
+      origin,
+      finishedAt: null,
+    })
+      .select("id", "quizId", "origin", "startedAt")
+      .orderBy((row) => row.id.desc())
+      .first();
+    if (ongoing) return ongoing;
+  }
+
   return prisma.orm.public.QuizAttempt.select(
     "id",
     "quizId",

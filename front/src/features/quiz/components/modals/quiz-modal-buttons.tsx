@@ -96,7 +96,7 @@ const QuizModalButtons = ({
         </button>
       </div>
       <button
-        className="btn btn-secondary min-w-44"
+        className="btn btn-primary min-w-44"
         onClick={onValidate}
         disabled={!isValid}
       >

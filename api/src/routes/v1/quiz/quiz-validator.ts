@@ -58,6 +58,13 @@ export const preliminaryQuizStreamValidator = [
   checkValidatorResult,
 ];
 
+export const preliminaryQuizProgressValidator = [
+  param("moduleId")
+    .isInt({ min: 1 })
+    .withMessage("L'identifiant du module doit être un entier positif."),
+  checkValidatorResult,
+];
+
 /**
  * POST /quiz/question/report
  * - externalId    : identifiant unique de la question (chaîne de caractères)

@@ -698,7 +698,7 @@ export default function StudentLearningOnboarding() {
                     </p>
                   </div>
                   <dl className="grid gap-3 sm:grid-cols-2">
-                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4">
                       <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                         <Gauge className="size-5" aria-hidden="true" />
                       </span>
@@ -717,7 +717,7 @@ export default function StudentLearningOnboarding() {
                       .map((module) => (
                         <div
                           key={module.id}
-                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4"
+                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4"
                         >
                           <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                             <GraduationCap
@@ -737,7 +737,7 @@ export default function StudentLearningOnboarding() {
                           </div>
                         </div>
                       ))}
-                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
+                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4 sm:col-span-2">
                       <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                         <Shapes className="size-5" aria-hidden="true" />
                       </span>

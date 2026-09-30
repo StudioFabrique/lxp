@@ -53,7 +53,8 @@ export class QuizRepository {
         quiz.questions.some(),
       ),
     )
-      .include("questions")
+      .include("questions", (questions) => questions.orderBy((question) => question.id.asc()))
+      .orderBy((quiz) => quiz.id.asc())
       .first();
   }
 

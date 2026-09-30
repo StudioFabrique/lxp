@@ -92,8 +92,8 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
               }}
               onDragEnd={() => { dragging.current = null; setDraggingIndex(null); setDragOver(null); }}
               className={cn(
-                "btn btn-outline btn-secondary h-auto min-h-12 w-full justify-start gap-2 normal-case text-left whitespace-normal break-words touch-manipulation",
-                selected === index && "btn-primary",
+                "btn h-auto min-h-12 w-full justify-start gap-2 normal-case text-left whitespace-normal break-words touch-manipulation",
+                selected === index ? "btn-primary" : "btn-outline btn-primary",
                 dragOver === index && draggingIndex !== index && "ring-2 ring-primary ring-offset-2 ring-offset-base-100",
               )}
             >

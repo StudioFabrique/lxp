@@ -174,6 +174,7 @@ const ModuleContent = () => {
         isAnswered={diagnosticQuiz.isAnswered}
         isCorrect={diagnosticQuiz.isCorrect}
         isStreaming={diagnosticQuiz.isStreaming}
+        isRestoring={diagnosticQuiz.isRestoring}
         isWaitingForNext={diagnosticQuiz.isWaitingForNext}
         showResults={diagnosticQuiz.showResults}
         attempts={diagnosticQuiz.attempts || []}

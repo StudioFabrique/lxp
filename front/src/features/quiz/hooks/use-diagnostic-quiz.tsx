@@ -13,6 +13,7 @@ import { quizApi } from "../api/quiz.api";
 import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import { useDemoMode } from "../../../store/DemoContext";
+import { buildDiagnosticProgress } from "../utils/diagnostic-progress";
 
 interface ModuleInfoForDiagnostic {
   id?: number;
@@ -45,11 +46,13 @@ export default function useDiagnosticQuiz(
   const [isWaitingForNext, setIsWaitingForNext] = useState(false);
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   const isFinished = useRef(false);
   // Garantit que le contournement (bypass) du diagnostic n'est déclenché
   // qu'une seule fois, même si plusieurs effets détectent l'échec.
   const hasBypassedRef = useRef(false);
+  const checkedModuleId = useRef<number | null>(null);
 
   const toastWarning = useCallback((message: string) => {
     toast.error(message, {
@@ -154,9 +157,6 @@ export default function useDiagnosticQuiz(
     setIsStreaming(true);
     setAttempts([]);
     setShowResults(false);
-    if (moduleInfo.id) {
-      attemptTracking.start("preliminary", { moduleId: moduleInfo.id });
-    }
 
     if (!moduleInfo.id || !moduleInfo.title || !moduleInfo.description) {
       console.warn(
@@ -179,6 +179,7 @@ export default function useDiagnosticQuiz(
 
       let done = false;
       let buffer = "";
+      let attemptStarted = false;
 
       while (!done) {
         const { value, done: readerDone } = await reader.read();
@@ -212,6 +213,10 @@ export default function useDiagnosticQuiz(
               const mappedQuiz = mapExternalToInternal(payload);
 
               if (mappedQuiz) {
+                if (!attemptStarted) {
+                  attemptStarted = true;
+                  await attemptTracking.start("preliminary", { moduleId: moduleInfo.id });
+                }
                 setQuizzes((prev) =>
                   prev ? [...prev, mappedQuiz] : [mappedQuiz],
                 );
@@ -323,6 +328,43 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz();
   }, [onFinishInitialQuiz]);
 
+  const restoreProgress = useCallback(async (moduleId: number) => {
+    setIsRestoring(true);
+    setIsStarted(false);
+    setQuizzes(null);
+    setAttempts([]);
+    setShowResults(false);
+    try {
+      const progress = await quizApi.queries.getPreliminaryProgress(moduleId);
+      if (checkedModuleId.current !== moduleId) return;
+      if (!progress || progress.questions.length === 0) return;
+
+      const restoredQuizzes = progress.questions
+        .map(mapExternalToInternal)
+        .filter((quiz): quiz is Quiz => quiz !== null);
+      const restored = buildDiagnosticProgress(restoredQuizzes, progress.answers);
+
+      setQuizzes(restoredQuizzes);
+      setAttempts(restored.attempts);
+      setScore(restored.score);
+      setCurrentIndex(restored.currentIndex);
+      setIsAnswered(false);
+      setIsCorrect(false);
+      setIsStarted(true);
+      setShowResults(progress.finished || restored.isComplete);
+      if (progress.finished) {
+        isFinished.current = true;
+      } else {
+        attemptTracking.restore(progress.attemptId);
+        if (restored.isComplete) attemptTracking.finish();
+      }
+    } catch (error) {
+      console.error("Impossible de restaurer le diagnostic initial :", error);
+    } finally {
+      if (checkedModuleId.current === moduleId) setIsRestoring(false);
+    }
+  }, [attemptTracking]);
+
   // Avancer automatiquement dès qu'une nouvelle question arrive pendant l'attente.
   useEffect(() => {
     if (!isWaitingForNext) return;
@@ -345,6 +387,12 @@ export default function useDiagnosticQuiz(
     if (!isModuleLoaded) return;
 
     const userIsAdmin = ability.can("update", "lesson");
+    const shouldRestore = Boolean(moduleInfo.id && checkedModuleId.current !== moduleInfo.id);
+    if (shouldRestore) {
+      checkedModuleId.current = moduleInfo.id ?? null;
+      isFinished.current = false;
+      hasBypassedRef.current = false;
+    }
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       if (aiDisabled) {
@@ -355,6 +403,9 @@ export default function useDiagnosticQuiz(
       } else {
         // Ouvrir la vue de quiz de début de module
         setIsOpen(true);
+        if (shouldRestore && moduleInfo.id) {
+          void restoreProgress(moduleInfo.id);
+        }
       }
     } else if (!isFinished.current) {
       isFinished.current = true;
@@ -366,6 +417,8 @@ export default function useDiagnosticQuiz(
     ability,
     onFinishInitialQuiz,
     aiDisabled,
+    moduleInfo.id,
+    restoreProgress,
   ]);
 
   useEffect(() => {
@@ -392,6 +445,7 @@ export default function useDiagnosticQuiz(
     isOpen,
     isStarted,
     isStreaming,
+    isRestoring,
     isWaitingForNext,
     quizzes,
     currentQuiz: quizzes ? quizzes[currentIndex] : undefined,

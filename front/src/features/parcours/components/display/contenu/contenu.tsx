@@ -126,6 +126,7 @@ const Contenu = ({ modules }: ContenuProps) => {
               />
               <ContenuDetail
                 key={selectedModule.id}
+                isStudent={isStudent}
                 canEdit={canEditModule}
                 parcoursId={Number(parcoursId)}
                 moduleId={selectedModule.id}

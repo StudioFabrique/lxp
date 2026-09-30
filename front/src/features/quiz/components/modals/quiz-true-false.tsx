@@ -36,7 +36,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Pro
             key={String(choice)}
             className={cn(
               "btn flex-1",
-              selected === choice ? "btn-primary" : "btn-outline btn-secondary",
+              selected === choice ? "btn-primary" : "btn-outline btn-primary",
             )}
             onClick={() => setSelected(choice)}
             disabled={isAnswered}
