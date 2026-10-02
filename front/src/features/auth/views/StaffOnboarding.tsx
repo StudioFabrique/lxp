@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, useNavigate, useNavigation } from "react-router";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
@@ -21,6 +21,7 @@ export default function StaffOnboarding() {
   const { user } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const navigation = useNavigation();
   const client = useQueryClient();
   const reduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
@@ -60,7 +61,25 @@ export default function StaffOnboarding() {
         </button>
       </div>
     );
-  if (!required) return <Navigate to="/admin/dashboard" replace />;
+  if (saving || navigation.state !== "idle" || !required)
+    return (
+      <>
+        <div
+          role="status"
+          className="flex min-h-64 w-full flex-1 flex-col items-center justify-center gap-4 text-center"
+        >
+          <span
+            className="loading loading-spinner loading-lg text-primary"
+            aria-hidden="true"
+          />
+          <p className="font-semibold">Préparation de votre espace…</p>
+          <p className="text-sm text-base-content/70">
+            Votre tableau de bord est en cours de chargement.
+          </p>
+        </div>
+        {!required && <Navigate to="/admin/dashboard" replace />}
+      </>
+    );
 
   const finishAdmin = async () => {
     setSaving(true);

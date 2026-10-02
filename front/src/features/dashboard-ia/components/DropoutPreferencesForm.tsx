@@ -14,7 +14,6 @@ import {
 import { ChartNoAxesCombined, Mail } from "lucide-react";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
-import CreateTeacherGroup from "../../auth/components/CreateTeacherGroup";
 import { groupApi } from "../../group/api/group.api";
 import ExistingTeacherGroups from "../../auth/components/ExistingTeacherGroups";
 
@@ -166,7 +165,12 @@ export default function DropoutPreferencesForm({
           className="btn btn-primary text-base normal-case"
           disabled={mutation.isPending}
         >
-          {submitLabel}
+          {mutation.isPending ? (
+            <>
+              <span className="loading loading-spinner loading-sm" aria-hidden="true" />
+              Enregistrement…
+            </>
+          ) : submitLabel}
         </button>
       </div>
   );
@@ -198,10 +202,7 @@ export default function DropoutPreferencesForm({
         card
       )}
       {!completeOnboarding && (
-        <div className={`grid items-stretch gap-5 ${groups.data?.length ? "sm:grid-cols-2" : ""}`}>
-          <ExistingTeacherGroups groups={groups} />
-          <CreateTeacherGroup hasGroups={Boolean(groups.data?.length)} />
-        </div>
+        <ExistingTeacherGroups groups={groups} />
       )}
       {mutation.isError && (
         <p role="alert" className="text-error">

@@ -1,11 +1,13 @@
 import { createPortal } from "react-dom";
 import { useState } from "react";
+import { ChevronRight, Users } from "lucide-react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import RightSideDrawer from "../../../components/UI/right-side-drawer/right-side-drawer";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { groupApi, type StudentGroupSummary } from "../../group/api/group.api";
 import OnboardingStudentIdentity from "./OnboardingStudentIdentity";
+import CreateTeacherGroup from "./CreateTeacherGroup";
 
 function ExistingGroup({ group }: { group: StudentGroupSummary }) {
   const [expanded, setExpanded] = useState(false);
@@ -17,24 +19,31 @@ function ExistingGroup({ group }: { group: StudentGroupSummary }) {
 
   return (
     <li className="overflow-hidden rounded-lg border border-base-300 bg-base-100">
-      <div className="flex flex-col gap-3 p-3">
-        <div className="flex items-start gap-3">
-          <div className="min-w-0 flex-1">
-            <p className="break-words font-semibold">
-              {formatTitle(group.name)} ({group.nbStudents})
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          className="btn btn-outline btn-sm self-start"
-          aria-haspopup="dialog"
-          aria-label={`Voir les apprenants de ${group.name}`}
-          onClick={() => setExpanded(true)}
-        >
-          Voir les apprenants
-        </button>
-      </div>
+      <button
+        type="button"
+        className="group flex w-full items-center gap-3 p-4 text-left transition-colors hover:bg-primary/5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+        aria-haspopup="dialog"
+        aria-label={`Voir les apprenants de ${group.name}`}
+        onClick={() => setExpanded(true)}
+      >
+        <span className="min-w-0 flex-1">
+          <span className="block break-words font-semibold">
+            {formatTitle(group.name)}
+          </span>
+          <span className="mt-0.5 block text-sm text-base-content/65">
+            {group.nbStudents === 0
+              ? "Aucun apprenant"
+              : `${group.nbStudents} apprenant${group.nbStudents > 1 ? "s" : ""}`}
+          </span>
+          <span className="mt-2 block text-xs font-semibold text-primary">
+            Voir les apprenants
+          </span>
+        </span>
+        <ChevronRight
+          className="size-4 shrink-0 text-base-content/45 transition-colors group-hover:text-primary"
+          aria-hidden="true"
+        />
+      </button>
       {expanded &&
         createPortal(
           <RightSideDrawer
@@ -91,37 +100,47 @@ export default function ExistingTeacherGroups({
 }: {
   groups: UseQueryResult<StudentGroupSummary[], Error>;
 }) {
-  if (groups.isPending)
-    return (
-      <p role="status" className="text-sm">
-        Chargement de vos groupes…
-      </p>
-    );
-  if (groups.isError)
-    return (
-      <div role="alert" className="text-sm">
-        <p>Impossible de charger vos groupes.</p>
-        <button
-          type="button"
-          className="btn btn-ghost btn-sm mt-2"
-          onClick={() => void groups.refetch()}
-        >
-          Réessayer
-        </button>
-      </div>
-    );
-  if (!groups.data.length) return null;
+  const content = groups.isPending ? (
+    <p role="status" className="text-sm">
+      Chargement de vos groupes…
+    </p>
+  ) : groups.isError ? (
+    <div role="alert" className="text-sm">
+      <p>Impossible de charger vos groupes.</p>
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm mt-2"
+        onClick={() => void groups.refetch()}
+      >
+        Réessayer
+      </button>
+    </div>
+  ) : groups.data.length ? (
+    <ul className="grid gap-3 sm:grid-cols-2">
+      {groups.data.map((group) => (
+        <ExistingGroup key={group._id} group={group} />
+      ))}
+    </ul>
+  ) : (
+    <p className="text-sm text-base-content/65">
+      Vous n’avez pas encore de groupe. Créez votre premier groupe afin que vos
+      apprenants puissent débuter leur parcours.
+    </p>
+  );
 
   return (
     <BoxWrapper className="h-auto">
-      <div>
-        <h2 className="font-semibold">Les groupes existants</h2>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <Users
+            className="size-5 shrink-0 text-secondary"
+            aria-hidden="true"
+          />
+          <h2 className="font-semibold">Vos groupes existants</h2>
+        </div>
+        <CreateTeacherGroup />
       </div>
-      <ul className="space-y-2">
-        {groups.data.map((group) => (
-          <ExistingGroup key={group._id} group={group} />
-        ))}
-      </ul>
+      {content}
     </BoxWrapper>
   );
 }

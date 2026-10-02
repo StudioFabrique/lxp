@@ -65,9 +65,10 @@ describe("préférences d'analyse du décrochage", () => {
       <DropoutPreferencesForm initial={{ enabled: false, frequency: "weekly", hasParcours: true, onboardingRequired: true }} onSaved={vi.fn()} completeOnboarding={false} />
     </QueryClientProvider>));
     await act(async () => { await new Promise((resolve) => setTimeout(resolve, 20)); });
-    expect(container.textContent).toContain("Promotion existante (1)");
+    expect(container.textContent).toContain("Promotion existante");
+    expect(container.textContent).toContain("1 apprenant");
     expect(container.textContent).not.toContain("Parcours test");
-    expect(container.textContent).toContain("Créer un nouveau groupe maintenant");
+    expect(container.textContent).toContain("Créer un nouveau groupe");
     expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(1);
     expect(getById).not.toHaveBeenCalled();
     const groupButton = container.querySelector<HTMLButtonElement>('button[aria-label="Voir les apprenants de Promotion existante"]')!;

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Users } from "lucide-react";
+import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
-import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { groupApi } from "../../group/api/group.api";
 import { createGroupSchema } from "../../group/group.schema";
 import TeacherGroupFields from "./TeacherGroupFields";
@@ -110,25 +109,13 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function CreateTeacherGroup({
-  hasGroups,
-}: {
-  hasGroups: boolean;
-}) {
+export default function CreateTeacherGroup() {
   const [open, setOpen] = useState(false);
   return (
-    <BoxWrapper className="h-auto border-secondary/25 bg-secondary/5">
-      <span className="flex size-11 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
-        <Users className="size-6" aria-hidden="true" />
-      </span>
-      <h2 className="font-semibold">
-        {hasGroups
-          ? "Créer un nouveau groupe maintenant"
-          : "Créer mon groupe maintenant"}
-      </h2>
+    <>
       <button
         type="button"
-        className="btn btn-primary mt-auto h-auto min-h-10 self-start py-2"
+        className="btn btn-primary h-auto min-h-10 min-w-0 max-w-full shrink-0 whitespace-normal py-2"
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
       >
@@ -136,6 +123,6 @@ export default function CreateTeacherGroup({
         groupe
       </button>
       {open && <CreateGroupModal onClose={() => setOpen(false)} />}
-    </BoxWrapper>
+    </>
   );
 }
