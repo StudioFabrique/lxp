@@ -259,7 +259,7 @@ const ActivityHeader = ({
             </h1>
           )}
         </div>
-        {children ?? (
+        {children ?? (onCancel ? (
           <button
             onClick={handleCancel}
             disabled={cancelDisabled}
@@ -267,7 +267,7 @@ const ActivityHeader = ({
           >
             {cancelLabel}
           </button>
-        )}
+        ) : null)}
       </article>
     </>
   );
