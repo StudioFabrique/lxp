@@ -101,21 +101,7 @@ const ModuleContentPreview = ({
     !selectedLesson?.activities?.length &&
     !["activity_type_selection", "write"].includes(mode)
   ) {
-    return (
-      <EmptyStatePlaceholder title="Aucune activité">
-        {canNavigateAsAdmin && computed.hasNextLesson && (
-          <button
-            type="button"
-            className="btn btn-primary text-base-100"
-            onClick={lessonActions.nextLesson}
-          >
-            {computed.isLastLessonOfCurrentCourse
-              ? "Cours suivant"
-              : "Leçon suivante"}
-          </button>
-        )}
-      </EmptyStatePlaceholder>
-    );
+    return <EmptyStatePlaceholder title="Aucune activité" />;
   }
 
   if (mode === "activity_type_selection") {

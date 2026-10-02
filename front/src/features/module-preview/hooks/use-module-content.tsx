@@ -37,6 +37,7 @@ import { AuthContext } from "../../../store/AuthProvider";
 import { getUserArea } from "../../../utils/helpers/user-role";
 import { parcoursKeys } from "../../parcours/api/parcours.keys";
 import type Skill from "../../../utils/interfaces/skill";
+import { readModuleContentPosition, saveModuleContentPosition } from "../helpers/module-content-position";
 
 const useModuleContent = () => {
   // Le contexte du chatbot
@@ -53,7 +54,14 @@ const useModuleContent = () => {
 
   const { moduleId } = useParams();
   const location = useLocation();
-  const stateFromUrl = location.state as {
+  // La clé de l’entrée d’historique reste identique après un rechargement.
+  // Une nouvelle navigation explicite dispose de sa propre sélection.
+  const positionStorageKey = `module-content-position:${user?._id ?? "anonymous"}:${moduleId}:${location.pathname}:${location.key}`;
+  const savedPosition = useMemo(
+    () => readModuleContentPosition(positionStorageKey),
+    [positionStorageKey],
+  );
+  const stateFromUrl = (savedPosition ?? location.state) as {
     courseId?: number;
     lessonId?: number;
     activityId?: number;
@@ -979,6 +987,20 @@ const useModuleContent = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchModuleData();
   }, [fetchModuleData]);
+
+  useEffect(() => {
+    if (
+      String(state.module?.id) !== moduleId ||
+      !selectedLessonId ||
+      state.isSelectedLessonLoading ||
+      state.mode !== "read"
+    ) return;
+
+    saveModuleContentPosition(positionStorageKey, {
+      lessonId: selectedLessonId,
+      activityId: selectedActivityId,
+    });
+  }, [moduleId, positionStorageKey, selectedLessonId, selectedActivityId, state.module?.id, state.isSelectedLessonLoading, state.mode]);
 
   // If a activity is selected, select the title of the current course and set the chatbot activity name
   useEffect(() => {

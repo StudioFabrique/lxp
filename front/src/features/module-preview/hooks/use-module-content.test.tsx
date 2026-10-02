@@ -12,7 +12,7 @@ import { modulePreviewApi } from "../api/module-preview.api";
 vi.mock("../api/module-preview.api", () => ({
   modulePreviewApi: {
     queries: { getModuleDetail: vi.fn(), getLesson: vi.fn() },
-    tracking: { finish: vi.fn(), begin: vi.fn(), heartbeat: vi.fn().mockResolvedValue({}) },
+    tracking: { finish: vi.fn(), begin: vi.fn().mockResolvedValue({}), heartbeat: vi.fn().mockResolvedValue({}) },
     mutations: { rateLesson: vi.fn(), enableCourse: vi.fn() },
   },
 }));
@@ -48,9 +48,16 @@ const makeModule = (completed: boolean) => ({
   }],
 }) as unknown as Module;
 
-async function renderExplorer(rank = 3, alreadyCompleted = false, module = makeModule(alreadyCompleted)) {
+async function renderExplorer(rank = 3, alreadyCompleted = false, module = makeModule(alreadyCompleted), options: {
+  restore?: boolean;
+  navigationState?: { lessonId?: number; activityId?: number };
+  moduleId?: number;
+  locationKey?: string;
+} = {}) {
   vi.mocked(modulePreviewApi.queries.getModuleDetail).mockResolvedValue({ data: module });
-  vi.mocked(modulePreviewApi.queries.getLesson).mockResolvedValue(module.courses[0].lessons[0]);
+  vi.mocked(modulePreviewApi.queries.getLesson).mockImplementation(async (id) =>
+    module.courses.flatMap((course) => course.lessons).find((lesson) => lesson.id === id) ?? module.courses[0].lessons[0],
+  );
   vi.mocked(modulePreviewApi.tracking.finish).mockResolvedValue({ contentRead: { finishedAt: new Date() } });
   vi.mocked(modulePreviewApi.mutations.rateLesson).mockResolvedValue({ data: { rating: 3 } });
   client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -58,19 +65,87 @@ async function renderExplorer(rank = 3, alreadyCompleted = false, module = makeM
   await act(async () => root.render(
     <QueryClientProvider client={client}>
       <AuthContext.Provider value={{ user: { roles: [{ rank }] } } as ContextType<typeof AuthContext>}>
-        <MemoryRouter initialEntries={["/student/parcours/module/1"]}>
+        <MemoryRouter initialEntries={[{
+          pathname: `/student/parcours/module/${options.moduleId ?? 1}`,
+          key: options.locationKey ?? "module-content-test",
+          state: options.navigationState,
+        }]}>
           <Routes><Route path="/student/parcours/module/:moduleId" element={<Harness />} /></Routes>
         </MemoryRouter>
       </AuthContext.Provider>
     </QueryClientProvider>,
   ));
-  await act(async () => store.dispatch({ type: "select_lesson", lesson: module.courses[0].lessons[0] }));
+  if (!options.restore) {
+    await act(async () => store.dispatch({ type: "select_lesson", lesson: module.courses[0].lessons[0] }));
+  }
 }
 
 afterEach(async () => {
   if (root) await act(async () => root.unmount());
   client?.clear();
   vi.clearAllMocks();
+  sessionStorage.clear();
+});
+
+describe("Restauration de l’activité après rechargement", () => {
+  const moduleWithActivities = () => {
+    const module = makeModule(false);
+    module.courses[0].lessons[1].activities = [201, 202].map((id) => ({
+      id, type: "image", title: `Activité ${id}`, url: "image.png",
+      order: id, createdAt: "2026-10-02", updatedAt: "2026-10-02",
+    }));
+    return module;
+  };
+
+  it("restaure la dernière activité sélectionnée plutôt que celle du lien initial", async () => {
+    const module = moduleWithActivities();
+    const options = { restore: true, navigationState: { lessonId: 100 } };
+    await renderExplorer(3, false, module, options);
+    await act(async () => store.dispatch({ type: "select_lesson_by_id", id: 101 }));
+    await act(async () => store.dispatch({ type: "select_activity", activity: module.courses[0].lessons[1].activities![1] }));
+    await act(async () => root.unmount());
+    client.clear();
+
+    await renderExplorer(3, false, module, options);
+    expect(store.state.selectedLesson?.id).toBe(101);
+    expect(store.state.selectedActivity?.id).toBe(202);
+    expect(store.state.mode).toBe("read");
+  });
+
+  it("revient à la première activité si l’activité mémorisée a été supprimée", async () => {
+    const module = moduleWithActivities();
+    await renderExplorer(3, false, module, { restore: true, navigationState: { lessonId: 101, activityId: 202 } });
+    await act(async () => root.unmount());
+    client.clear();
+    module.courses[0].lessons[1].activities!.pop();
+
+    await renderExplorer(3, false, module, { restore: true });
+    expect(store.state.selectedLesson?.id).toBe(101);
+    expect(store.state.selectedActivity?.id).toBe(201);
+  });
+
+  it("ne restaure pas la sélection d’un autre module", async () => {
+    const module = moduleWithActivities();
+    await renderExplorer(3, false, module, { restore: true, navigationState: { lessonId: 101, activityId: 202 } });
+    await act(async () => root.unmount());
+    client.clear();
+
+    await renderExplorer(3, false, { ...module, id: 2 }, { restore: true, moduleId: 2 });
+    expect(store.state.selectedLesson).toBeUndefined();
+    expect(store.state.selectedActivity).toBeUndefined();
+  });
+
+  it("respecte la sélection d’un nouveau lien vers le même module", async () => {
+    const module = moduleWithActivities();
+    await renderExplorer(3, false, module, { restore: true, navigationState: { lessonId: 101, activityId: 202 } });
+    await act(async () => root.unmount());
+    client.clear();
+
+    await renderExplorer(3, false, module, {
+      restore: true, locationKey: "new-link", navigationState: { lessonId: 101, activityId: 201 },
+    });
+    expect(store.state.selectedActivity?.id).toBe(201);
+  });
 });
 
 describe("Visibilité de tous les cours", () => {

@@ -21,6 +21,27 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+it.each([true, false])("masque la navigation dans une leçon sans activités pour le personnel (fin de cours : %s)", (isLastLessonOfCurrentCourse) => {
+  const container = document.createElement("div");
+  root = createRoot(container);
+  const store = {
+    state: { mode: "read", selectedLesson: { activities: [] } },
+    computed: { hasNextLesson: true, isLastLessonOfCurrentCourse },
+    lessonActions: { nextLesson: vi.fn() }, activityActions: {}, dispatch: vi.fn(),
+    isActivityContentLoading: false,
+  } as unknown as ComponentProps<typeof ModuleContentPreview>["store"];
+
+  act(() => root?.render(
+    <ModuleContentPreview store={store}
+      smartQuizState={{} as ComponentProps<typeof ModuleContentPreview>["smartQuizState"]}
+      quizState={{} as ComponentProps<typeof ModuleContentPreview>["quizState"]}
+      canNavigateAsAdmin canEditSelectedLesson />,
+  ));
+
+  expect(container.textContent).toContain("Aucune activité");
+  expect(container.querySelector("button")).toBeNull();
+});
+
 it.each([true, false])("garde les flèches visibles pendant la navigation et le scroll (admin : %s)", (canNavigateAsAdmin) => {
   vi.useFakeTimers();
   vi.stubGlobal("ResizeObserver", class {
