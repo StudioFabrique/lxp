@@ -5,8 +5,7 @@ import { passwordCreationSchema } from "../auth.schema";
  *   nouvellement créé.
  */
 
-import { useContext, useEffect, useState } from "react";
-import { ThemeContext } from "../../../store/ThemeProvider";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -23,13 +22,13 @@ type RegisterValues = {
 };
 
 export default function RegisterHome() {
-  const { chooseTheme } = useContext(ThemeContext);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("id") ?? "";
 
   const [error, setError] = useState("");
   const [expiredEmail, setExpiredEmail] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [roleLabel, setRoleLabel] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
@@ -45,10 +44,6 @@ export default function RegisterHome() {
   });
 
   useEffect(() => {
-    chooseTheme("classic", "light");
-  }, [chooseTheme]);
-
-  useEffect(() => {
     let active = true;
     if (!token) {
       setError("Ce lien n'est plus valide.");
@@ -59,7 +54,10 @@ export default function RegisterHome() {
     accountApi
       .checkInvitation(token)
       .then((result) => {
-        if (active) setEmail(result.email);
+        if (active) {
+          setEmail(result.email);
+          setRoleLabel(result.roleLabel);
+        }
       })
       .catch((err: unknown) => {
         if (!active) return;
@@ -112,7 +110,13 @@ export default function RegisterHome() {
   return (
     <OnboardingProgressPanel
       contentKey={
-        isChecking ? "checking" : error ? "error" : success ? "success" : "password"
+        isChecking
+          ? "checking"
+          : error
+            ? "error"
+            : success
+              ? "success"
+              : "password"
       }
       currentStep={success ? 2 : 1}
       stepCount={2}
@@ -120,7 +124,8 @@ export default function RegisterHome() {
       animateProgressOnMount
       className="min-h-[500px] flex-none lg:min-h-0 lg:flex-1"
       footer={
-        !isChecking && !error && (
+        !isChecking &&
+        !error && (
           <div className="mt-5 border-t border-base-300 pt-4">
             {success ? (
               <Link
@@ -149,7 +154,21 @@ export default function RegisterHome() {
     >
       <AuthPageWrapper
         title={success ? "Compte activé" : "Activation du compte"}
-        description={email ? <strong>{email}</strong> : undefined}
+        description={
+          email ? (
+            <>
+              <strong className="block">{email}</strong>
+              {roleLabel && (
+                <span
+                  className="badge badge-primary badge-soft"
+                  aria-label={`Rôle : ${roleLabel}`}
+                >
+                  {roleLabel}
+                </span>
+              )}
+            </>
+          ) : undefined
+        }
         variant="setup"
       >
         {isChecking ? (

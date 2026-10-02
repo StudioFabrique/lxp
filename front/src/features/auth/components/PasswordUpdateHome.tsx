@@ -1,8 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordCreationSchema } from "../auth.schema";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
-import { ThemeContext } from "../../../../src/store/ThemeProvider";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { accountApi } from "../api/account.api";
@@ -23,7 +22,6 @@ type PasswordUpdateValues = {
 };
 
 const PasswordUpdateHome = ({ message, title, description }: Props) => {
-  const { chooseTheme } = useContext(ThemeContext);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("id") ?? "";
 
@@ -40,10 +38,6 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
     resolver: zodResolver(passwordCreationSchema),
     defaultValues: { password: "", confirmPassword: "" },
   });
-
-  useEffect(() => {
-    chooseTheme("classic", "light");
-  }, [chooseTheme]);
 
   const onSubmit = async (data: PasswordUpdateValues) => {
     setIsLoading(true);

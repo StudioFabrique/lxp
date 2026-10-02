@@ -182,7 +182,7 @@ configure_development_env() {
   echo
   echo "Configuration des services de développement"
   echo
-  prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
+  prompt_env_value "UNSPLASH_ACCESS_KEY (Optionnel)" "Clé d'accès Unsplash" false "$file"
   configure_development_mailer "$file"
   configure_development_password "$file"
 }

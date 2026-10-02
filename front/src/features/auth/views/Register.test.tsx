@@ -4,6 +4,9 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { accountApi } from "../api/account.api";
 import Register from "./Register";
+import PasswordUpdateHome from "../components/PasswordUpdateHome";
+import ThemeToggle from "../../../components/buttons/ThemeToggle";
+import { ThemeProvider } from "../../../store/ThemeProvider";
 
 vi.mock("../api/account.api", () => ({
   accountApi: {
@@ -90,6 +93,7 @@ it("termine la progression et garde la confirmation dans le panneau après activ
     success: true,
     message: "Lien valide.",
     email: "invitee@example.fr",
+    roleLabel: "Formateur",
   });
   vi.mocked(accountApi.activateAccount).mockResolvedValue({
     success: true,
@@ -125,12 +129,59 @@ it("affiche le formulaire lorsque le lien est valide", async () => {
     success: true,
     message: "Lien valide.",
     email: "invitee@example.fr",
+    roleLabel: "Formateur",
   });
 
   await render();
   expect(container.querySelectorAll('input[type="password"]')).toHaveLength(2);
   expect(container.querySelector("header strong")?.textContent).toBe("invitee@example.fr");
+  expect(container.querySelector('header .badge[aria-label="Rôle : Formateur"]')?.textContent).toBe("Formateur");
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
   expect(container.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow")).toBe("50");
   expect(container.querySelector('button[type="submit"]')?.getAttribute("form")).toBe("account-activation-form");
 });
+
+for (const page of ["activation", "réinitialisation"]) {
+  it(`conserve le thème choisi et permet la bascule sur l’écran de ${page}`, async () => {
+    localStorage.setItem("activeTheme", "dark");
+    localStorage.setItem("lightTheme", "classic");
+    localStorage.setItem("darkTheme", "classic-dark");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ enabledThemes: ["classic", "classic-dark"] }),
+    }));
+    vi.mocked(accountApi.checkInvitation).mockResolvedValue({
+      success: true,
+      message: "Lien valide.",
+      email: "invitee@example.fr",
+      roleLabel: "Formateur",
+    });
+
+    try {
+      await act(async () => {
+        root.render(
+          <ThemeProvider>
+            <MemoryRouter initialEntries={["/register?id=lien"]}>
+              <ThemeToggle />
+              {page === "activation" ? <Register /> : <PasswordUpdateHome message="Mot de passe mis à jour." />}
+            </MemoryRouter>
+          </ThemeProvider>,
+        );
+      });
+      expect(document.documentElement.dataset.theme).toBe("classic-dark");
+
+      for (const expectedTheme of ["classic", "classic-dark"]) {
+        await act(async () => {
+          container.querySelector<HTMLInputElement>("#mode-toggle")?.click();
+        });
+        expect(document.documentElement.dataset.theme).toBe(expectedTheme);
+      }
+    } finally {
+      act(() => root.unmount());
+      root = createRoot(container);
+      vi.unstubAllGlobals();
+      localStorage.clear();
+      document.documentElement.removeAttribute("data-theme");
+    }
+  });
+}
