@@ -39,7 +39,9 @@ export default function LastParcours({
   const usesFullWidthLayout = isTeacher && displayedFormations.length === 1;
   const gridClassName = usesFullWidthLayout
     ? "grid-cols-1"
-    : "lg:grid-cols-2 xl:grid-cols-3";
+    : isTeacher && displayedFormations.length === 2
+      ? "lg:grid-cols-2"
+      : "lg:grid-cols-2 xl:grid-cols-3";
   const [searchParams, setSearchParams] = useSearchParams();
   const [formationModal, setFormationModal] = useState<{
     isOpen: boolean;
@@ -143,8 +145,8 @@ export default function LastParcours({
         )}
       </div>
 
-      <div className={cn("mt-4 grid gap-x-6 gap-y-2", sideContent && "2xl:grid-cols-[minmax(0,1fr)_20rem]")}>
-        <div className="contents">
+      <div className={cn("mt-4 grid items-start gap-x-6 gap-y-2", sideContent && "2xl:grid-cols-[minmax(0,1fr)_20rem]")}>
+        <div className="min-w-0">
           {isLoading ? (
             <div className={cn("grid gap-5", gridClassName)}>
               {[0, 1, 2].map((item) => (

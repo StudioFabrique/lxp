@@ -98,7 +98,8 @@ describe("LastParcours", () => {
     };
     const markup = renderDashboardList(2, [formation, secondFormation]);
 
-    expect(markup).toContain("lg:grid-cols-2 xl:grid-cols-3");
+    expect(markup).toContain("lg:grid-cols-2");
+    expect(markup).not.toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
   });
 
