@@ -21,9 +21,9 @@ export default function GroupAiAlerts() {
     <CursorGlowCard
       glowColor={alerts.length ? "error" : "success"}
       glowSize={2}
-      className="w-full self-start rounded-lg 2xl:w-80 2xl:shrink-0"
+      className="w-full self-stretch rounded-lg"
     >
-      <BoxWrapper className={`relative z-10 h-auto gap-3 p-4 ${alerts.length ? "border-error/25 bg-error/5" : "border-success/25 bg-success/5"}`} aria-label="Alertes de groupe">
+      <BoxWrapper className={`relative z-10 gap-3 p-4 ${alerts.length ? "border-error/25 bg-error/5" : "border-success/25 bg-success/5"}`} aria-label="Alertes de groupe">
       <h2 className="font-bold">Alertes</h2>
       {isPending ? (
         <p className="text-sm">Chargement des alertes…</p>

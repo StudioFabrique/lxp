@@ -34,7 +34,7 @@ const CsvImportUser: FC<Props> = ({ onParseCsv, fields }) => {
         }
 
         if (result.data.length === 0) {
-          showFileError("Le fichier CSV ne contient aucun étudiant");
+          showFileError("Le fichier CSV ne contient aucun apprenant");
           return;
         }
 

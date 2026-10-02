@@ -22,4 +22,13 @@ export default interface Group {
   formation?: string;
   formationId?: number;
   parcoursId?: number;
+  teachers?: Array<{
+    _id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    isActive: boolean;
+    isCreator: boolean;
+    parcours: Array<{ id: number; title: string }>;
+  }>;
 }

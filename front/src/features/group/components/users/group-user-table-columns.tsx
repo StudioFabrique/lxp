@@ -6,7 +6,7 @@ import UserStatusToggle from "../../../user/components/UserStatusToggle";
 import { personSelectionColumn } from "../../../../components/table/person-selection-column";
 
 const selectionColumn = personSelectionColumn<User>(
-  "Sélectionner tous les étudiants affichés",
+  "Sélectionner tous les apprenants affichés",
 );
 
 const identityColumns: ColumnDef<StockFeatures, User>[] = [

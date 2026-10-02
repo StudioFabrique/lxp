@@ -1,19 +1,21 @@
+import { useId } from "react";
+import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createPreferencesSchema } from "../preferences.schema";
+import { dropoutPreferencesSchema } from "../preferences.schema";
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   dashboardIAApi,
   type DropoutPreferences,
 } from "../api/dashboardIA.api";
-import { ChartNoAxesCombined, Mail, Users } from "lucide-react";
+import { ChartNoAxesCombined, Mail } from "lucide-react";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
-import TeacherGroupFields from "../../auth/components/TeacherGroupFields";
+import CreateTeacherGroup from "../../auth/components/CreateTeacherGroup";
 import { groupApi } from "../../group/api/group.api";
+import ExistingTeacherGroups from "../../auth/components/ExistingTeacherGroups";
 
 export default function DropoutPreferencesForm({
   initial,
@@ -21,62 +23,35 @@ export default function DropoutPreferencesForm({
   submitLabel = "Enregistrer",
   onBack,
   completeOnboarding = true,
+  footerContainer,
 }: {
   initial: DropoutPreferences;
-  onSaved: (createGroupNext?: boolean) => void;
+  onSaved: () => void;
   submitLabel?: string;
   onBack?: () => void;
   completeOnboarding?: boolean;
+  footerContainer?: HTMLElement | null;
 }) {
+  const formId = useId();
+  const groups = useQuery({
+    queryKey: ["onboarding-student-groups"],
+    queryFn: groupApi.queries.getStudentGroups,
+    enabled: !completeOnboarding,
+  });
   const form = useForm({
-    resolver: zodResolver(createPreferencesSchema(!completeOnboarding)),
+    resolver: zodResolver(dropoutPreferencesSchema),
     defaultValues: {
       enabled: initial.enabled,
       frequency: initial.frequency,
       minCritical: initial.minCritical ?? 1,
-      createGroupNext: true,
-      groupName: "",
-      parcoursId: 0,
-      selectedStudents: {} as Record<string, boolean>,
     },
   });
   const [enabled, setEnabled] = useFormField(form, "enabled");
-  const [createGroupNext, setCreateGroupNext] = useFormField(
-    form,
-    "createGroupNext",
-  );
-  const [groupName, setGroupName] = useFormField(form, "groupName");
-  const [parcoursId, setParcoursId] = useFormField(form, "parcoursId");
-  const [selectedStudents, setSelectedStudents] = useFormField(
-    form,
-    "selectedStudents",
-  );
-  const [groupCreated, setGroupCreated] = useState(false);
   const [frequency, setFrequency] = useFormField(form, "frequency");
   const [minCritical, setMinCritical] = useFormField(form, "minCritical");
   const client = useQueryClient();
   const mutation = useMutation({
-    mutationFn: async (
-      input: Parameters<typeof dashboardIAApi.updateDropoutPreferences>[0],
-    ) => {
-      if (!completeOnboarding && createGroupNext && !groupCreated) {
-        const formData = new FormData();
-        formData.append(
-          "data",
-          JSON.stringify({
-            group: { name: groupName.trim(), desc: "" },
-            parcoursId,
-            users: Object.entries(selectedStudents).map(([id, isActive]) => ({
-              _id: id,
-              isActive,
-            })),
-          }),
-        );
-        await groupApi.mutations.create(formData);
-        setGroupCreated(true);
-      }
-      return dashboardIAApi.updateDropoutPreferences(input);
-    },
+    mutationFn: (input: Parameters<typeof dashboardIAApi.updateDropoutPreferences>[0]) => dashboardIAApi.updateDropoutPreferences(input),
     onSuccess: (value) => {
       client.setQueryData(["dropout-preferences"], value);
       onSaved();
@@ -165,8 +140,38 @@ export default function DropoutPreferencesForm({
     </BoxWrapper>
   );
 
+  const actions = (
+      <div
+        className={
+          onBack
+            ? "mt-auto flex items-center justify-between gap-3 border-t border-base-300 pt-4"
+            : "flex justify-end"
+        }
+      >
+        {onBack && (
+          <button
+            type="button"
+            className="btn btn-ghost text-base normal-case"
+            disabled={mutation.isPending}
+            onClick={onBack}
+          >
+            Précédent
+          </button>
+        )}
+        <button
+          type="submit"
+          form={formId}
+          className="btn btn-primary text-base normal-case"
+          disabled={mutation.isPending}
+        >
+          {submitLabel}
+        </button>
+      </div>
+  );
+
   return (
     <form
+      id={formId}
       className={`flex flex-col gap-5 ${onBack ? "min-h-0 flex-1" : ""}`}
       onSubmit={form.handleSubmit((values) => {
         if (mutation.isPending) return;
@@ -191,76 +196,18 @@ export default function DropoutPreferencesForm({
         card
       )}
       {!completeOnboarding && (
-        <BoxWrapper
-          className={`h-auto transition-colors ${createGroupNext ? "border-secondary/25 bg-secondary/5" : "border-base-300 bg-base-200/70"}`}
-        >
-          <div className="flex items-start gap-4">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
-              <Users className="size-6" aria-hidden="true" />
-            </span>
-            <label className="flex flex-1 cursor-pointer items-start gap-3">
-              <span className="flex-1">
-                <span className="block font-semibold">
-                  Créer mon groupe maintenant
-                </span>
-                <span className="mt-1 block text-sm text-base-content/65">
-                  Nommez votre groupe et ajoutez vos apprenants. Vous pourrez
-                  aussi le créer plus tard.
-                </span>
-              </span>
-              <input
-                type="checkbox"
-                className="checkbox checkbox-primary mt-2 shrink-0"
-                checked={createGroupNext}
-                onChange={(event) => setCreateGroupNext(event.target.checked)}
-              />
-            </label>
-          </div>
-          {createGroupNext && (
-            <TeacherGroupFields
-              name={groupName}
-              setName={setGroupName}
-              parcoursId={parcoursId}
-              setParcoursId={setParcoursId}
-              selected={selectedStudents}
-              setSelected={setSelectedStudents}
-            />
-          )}
-        </BoxWrapper>
+        <div className={`grid items-stretch gap-5 ${groups.data?.length ? "sm:grid-cols-2" : ""}`}>
+          <ExistingTeacherGroups groups={groups} />
+          <CreateTeacherGroup hasGroups={Boolean(groups.data?.length)} />
+        </div>
       )}
       {mutation.isError && (
         <p role="alert" className="text-error">
-          Impossible de créer le groupe ou d’enregistrer les paramètres.
+          Impossible d’enregistrer les paramètres.
         </p>
       )}
-      <div
-        className={
-          onBack
-            ? "mt-auto flex items-center justify-between gap-3 border-t border-base-300 pt-4"
-            : "flex justify-end"
-        }
-      >
-        {onBack && (
-          <button
-            type="button"
-            className="btn btn-ghost text-base normal-case"
-            disabled={mutation.isPending}
-            onClick={onBack}
-          >
-            Précédent
-          </button>
-        )}
-        <button
-          type="submit"
-          className="btn btn-primary text-base normal-case"
-          disabled={
-            mutation.isPending ||
-            (!completeOnboarding && createGroupNext && !groupName.trim())
-          }
-        >
-          {submitLabel}
-        </button>
-      </div>
+      {footerContainer ? createPortal(actions, footerContainer) : actions}
+
     </form>
   );
 }

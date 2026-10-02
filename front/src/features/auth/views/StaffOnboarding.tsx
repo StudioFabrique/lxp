@@ -25,6 +25,9 @@ export default function StaffOnboarding() {
   const reduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [footerContainer, setFooterContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
   const admin = user?.roles?.[0]?.rank === 1;
   const adminStatus = useQuery({
     queryKey: ["staff-onboarding"],
@@ -161,7 +164,9 @@ export default function StaffOnboarding() {
                       {admin ? "Terminer" : "Continuer"}
                     </button>
                   </div>
-                ) : undefined
+                ) : (
+                  <div ref={setFooterContainer} />
+                )
               }
             >
               {step === 1 ? (
@@ -169,7 +174,9 @@ export default function StaffOnboarding() {
               ) : (
                 <div className="flex flex-1 flex-col gap-5">
                   <div>
-                    <h1 className="text-2xl font-bold">Suivi des apprenants</h1>
+                    <h1 className="text-2xl font-bold">
+                      Suivi de vos apprenants
+                    </h1>
                     <p className="mt-2 text-sm text-base-content/70">
                       Repérez les groupes qui pourraient avoir besoin d’un
                       accompagnement. Choisissez les alertes et les
@@ -179,6 +186,7 @@ export default function StaffOnboarding() {
                   {teacherStatus.data && (
                     <DropoutPreferencesForm
                       initial={teacherStatus.data}
+                      footerContainer={footerContainer}
                       onSaved={teacherCompleted}
                       onBack={() => setStep(1)}
                       submitLabel="Terminer"

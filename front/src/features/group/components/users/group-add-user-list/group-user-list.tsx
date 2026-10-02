@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
-import { Trash2 } from "lucide-react";
+import { GraduationCap, Trash2 } from "lucide-react";
 import type User from "../../../../../utils/interfaces/user";
 import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 import MultiCriteriaSearch from "../../../../../components/UI/multi-criteria-search";
@@ -13,7 +13,6 @@ import {
   getStoredItemsPerPage,
   storeItemsPerPage,
 } from "../../../../../components/table/pagination-storage";
-import { cn } from "../../../../../utils/cn";
 
 const compareValues = (left: unknown, right: unknown) =>
   String(left ?? "").localeCompare(String(right ?? ""), "fr", {
@@ -109,16 +108,15 @@ const GroupUserList = ({
 
   return (
     <BoxWrapper
-      className={
-        cn(displayedUsers.length > 0 || isSearching ? "px-10" : "")
-      }
       unstyled={displayedUsers.length === 0 && !isSearching}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold">Étudiants</h2>
+          <h2 className="text-lg font-bold flex gap-2">
+            <GraduationCap /> Apprenants
+          </h2>
           <p className="text-sm text-base-content/65">
-            {usersToAdd.length} étudiant(s) dans le groupe
+            {usersToAdd.length} apprenant(s) dans le groupe
           </p>
         </div>
 
@@ -138,18 +136,18 @@ const GroupUserList = ({
             <MultiCriteriaSearch
               value={filter ?? ""}
               onChange={(value) => setFilter(value || undefined)}
-              placeholder="Rechercher un étudiant par nom, prénom ou email"
+              placeholder="Rechercher un apprenant par nom, prénom ou email"
               criteria={["prénom", "nom", "email"]}
               actions={
                 selectedUserIds.length > 0 && (
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm whitespace-nowrap text-error"
-                  onClick={handleDeleteSelectedUsers}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Retirer la sélection
-                </button>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm whitespace-nowrap text-error"
+                    onClick={handleDeleteSelectedUsers}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Retirer la sélection
+                  </button>
                 )
               }
             />
@@ -167,8 +165,8 @@ const GroupUserList = ({
         setSorting={setSorting}
         emptyMessage={
           isSearching
-            ? "Aucun étudiant disponible pour cette recherche"
-            : "Aucun étudiant disponible"
+            ? "Aucun apprenant disponible pour cette recherche"
+            : "Aucun apprenant disponible"
         }
       />
 
@@ -177,7 +175,7 @@ const GroupUserList = ({
           currentPage={displayedPage}
           maxPage={maxPage}
           itemsPerPage={itemsPerPage}
-          leftText={`Étudiants : ${filteredUsers.length}`}
+          leftText={`Apprenants : ${filteredUsers.length}`}
           onSetCurrentPage={setCurrentPage}
           onSetItemsPerPage={handleSetItemsPerPage}
           onSetPreviousPage={() =>

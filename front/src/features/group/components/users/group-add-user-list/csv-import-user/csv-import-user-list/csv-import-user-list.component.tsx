@@ -73,8 +73,8 @@ const CsvImportUserList: FC<{
 
         // L'API détaille ce qui a été créé et ce qui a été écarté (adresses déjà
         // enregistrées, lignes sans email). Un fichier entièrement composé de
-        // doublons affichait auparavant « étudiants enregistrés ».
-        const message = data.message ?? "étudiants enregistrés";
+        // doublons affichait auparavant « apprenants enregistrés ».
+        const message = data.message ?? "apprenants enregistrés";
 
         if (data.createdCount === 0) {
           toast(message, { icon: "ℹ️" });
@@ -89,7 +89,7 @@ const CsvImportUserList: FC<{
         .then(applyData)
         .catch((err) => {
           toast.error(
-            getApiErrorMessage(err, "L'import des étudiants a échoué."),
+            getApiErrorMessage(err, "L'import des apprenants a échoué."),
           );
         })
         .finally(() => setIsLoading(false));
@@ -144,14 +144,14 @@ const CsvImportUserList: FC<{
         onClick={() => setDrawerOpenState(true)}
       >
         <Upload className="h-5 w-5" />
-        Importer une liste d'étudiants
+        Importer une liste d’apprenants
       </button>
 
       <RightSideDrawer
         title={
           isConfirmingImport
-            ? "Confirmer la création des étudiants"
-            : "Importer une liste d'étudiants"
+            ? "Confirmer la création des apprenants"
+            : "Importer une liste d’apprenants"
         }
         id="add-user"
         visible={false}

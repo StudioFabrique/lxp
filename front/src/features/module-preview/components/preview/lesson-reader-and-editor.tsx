@@ -179,7 +179,7 @@ const LessonReaderAndEditor = ({
               autoFocusTitle={mode === "write"}
               titleError={textActivityTitleError}
               onEditTitle={onEditTitle}
-              className="font-semibold flex justify-between items-center mb-6"
+              className="font-semibold flex justify-between items-center mb-4"
               titleClassName="text-2xl font-bold flex-1"
               cancelLabel="Annuler"
               cancelClassName="btn btn-sm btn-error text-base-100"
@@ -210,7 +210,7 @@ const LessonReaderAndEditor = ({
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
           {activityType === "text" ? (
-            <div className="mt-4">
+            <div className={mode === "read" ? "mt-4" : undefined}>
               <TiptapActivity
                 key={`tiptap-${mode}`}
                 mode={mode}

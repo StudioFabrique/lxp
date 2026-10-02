@@ -1,5 +1,7 @@
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { type ReactNode, useRef, useEffect, useLayoutEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { ArrowUp } from "lucide-react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import type { Activity } from "../../../../../utils/interfaces/activity";
 import { cn } from "../../../../../utils/cn";
@@ -75,6 +77,13 @@ const ActivityHeader = ({
     setIsSticky(false);
   };
 
+  const handleScrollToTop = () => {
+    stickyMarkerRef.current?.parentElement?.scrollIntoView({
+      block: "start",
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     if (!enableSticky || !stickyMarkerRef.current) return;
 
@@ -101,6 +110,18 @@ const ActivityHeader = ({
 
   return (
     <>
+      {enableSticky && isSticky && createPortal(
+        <button
+          type="button"
+          aria-label="Revenir au début de l’activité"
+          title="Revenir au début de l’activité"
+          onClick={handleScrollToTop}
+          className="fixed top-6 right-9 z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-primary-content shadow-md transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+        >
+          <ArrowUp className="h-5 w-5" aria-hidden="true" />
+        </button>,
+        document.body,
+      )}
       {enableSticky && (
         <div
           ref={stickyMarkerRef}

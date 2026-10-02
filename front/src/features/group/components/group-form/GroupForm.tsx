@@ -10,9 +10,12 @@ import Header from "../../../../../src/components/headers/Header";
 import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import type { GroupFormValues } from "../../group.schema";
 import { cn } from "../../../../utils/cn";
+import type Group from "../../../../utils/interfaces/group";
+import GroupTeachers from "./GroupTeachers";
 
 type Props = {
   form: UseFormReturn<GroupFormValues>;
+  existingGroup?: Group;
   onSubmitForm: (data: GroupFormValues) => void;
   isLoading: boolean;
   isEditing: boolean;
@@ -23,6 +26,7 @@ type Props = {
 
 const GroupForm = ({
   form,
+  existingGroup,
   onSubmitForm,
   isLoading,
   isEditing,
@@ -44,7 +48,7 @@ const GroupForm = ({
       >
         <Header
           title={isEditing ? "Modifier un groupe" : "Créer un groupe"}
-          description="Renseignez les informations du groupe et choisissez les étudiants qui le composent"
+          description="Renseignez les informations du groupe et choisissez les apprenants qui le composent"
         >
           <div className="flex gap-2">
             <Link to={cancelTo} className="btn btn-outline md:w-32 normal-case">
@@ -75,6 +79,7 @@ const GroupForm = ({
             <FromParcoursWarning parcoursId={Number(fromParcours)} />
           )}
         </div>
+        {isEditing && <GroupTeachers group={existingGroup} />}
       </PageWrapper>
       {children}
     </FormProvider>
