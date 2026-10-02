@@ -18,6 +18,8 @@ interface ModuleInfoForDiagnostic {
   id?: number;
   title?: string;
   description?: string;
+  quizInstructions?: string;
+  hasQuizContent: boolean;
 }
 
 export default function useDiagnosticQuiz(
@@ -27,6 +29,13 @@ export default function useDiagnosticQuiz(
   onFinishInitialQuiz: () => void,
 ) {
   const ability = useContext(AbilityContext);
+  const canOfferDiagnostic = Boolean(
+    moduleInfo.id &&
+    moduleInfo.hasQuizContent &&
+    moduleInfo.title?.trim() &&
+    moduleInfo.description?.trim() &&
+    moduleInfo.quizInstructions?.trim(),
+  );
   // Voir `use-course-quiz` : la disponibilité de l'IA est une donnée
   // d'exécution, servie par le serveur et mise en cache par `DemoProvider`.
   const { aiDisabled } = useDemoMode();
@@ -90,6 +99,14 @@ export default function useDiagnosticQuiz(
 
 
   const onLoadPreliminaryQuizzes = useCallback(async () => {
+    if (!canOfferDiagnostic) {
+      setIsOpen(false);
+      if (!isFinished.current) {
+        isFinished.current = true;
+        onFinishInitialQuiz();
+      }
+      return;
+    }
     if (aiDisabled) {
       console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
       setIsOpen(false);
@@ -108,21 +125,9 @@ export default function useDiagnosticQuiz(
     setAttempts([]);
     setShowResults(false);
 
-    if (!moduleInfo.id || !moduleInfo.title || !moduleInfo.description) {
-      console.warn(
-        "Module info (title, description, teacher_instructions) is required to load preliminary quizzes from the API.",
-      );
-      setIsStreaming(false);
-      toastWarning(
-        "Impossible de charger le diagnostic initial : informations du module manquantes.",
-      );
-      setIsOpen(false);
-      return;
-    }
-
     try {
       const stream = await quizApi.queries.streamPreliminaryQuiz(
-        moduleInfo.id,
+        moduleInfo.id!,
       );
       const reader = stream.getReader();
       const decoder = new TextDecoder("utf-8");
@@ -201,6 +206,7 @@ export default function useDiagnosticQuiz(
     attemptTracking,
     aiDisabled,
     bypassDiagnostic,
+    canOfferDiagnostic,
   ]);
 
   const onStartQuiz = useCallback(() => {
@@ -344,7 +350,16 @@ export default function useDiagnosticQuiz(
       hasBypassedRef.current = false;
     }
 
-    if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
+    if (!canOfferDiagnostic) {
+      // Un devoir seul, un contenu non indexé ou des consignes manquantes
+      // ne permettent pas de proposer un diagnostic.
+      // Continuer sans signaler une panne IA ni tenter de restaurer un quiz.
+      setIsOpen(false);
+      if (!isFinished.current) {
+        isFinished.current = true;
+        onFinishInitialQuiz();
+      }
+    } else if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       if (aiDisabled) {
         // Si les fonctionnalités IA sont désactivées pour l'instance,
         // le diagnostic est passé sans afficher le bouton.
@@ -368,6 +383,7 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz,
     aiDisabled,
     moduleInfo.id,
+    canOfferDiagnostic,
     restoreProgress,
   ]);
 

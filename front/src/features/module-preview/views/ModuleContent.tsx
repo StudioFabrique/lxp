@@ -111,6 +111,10 @@ const ModuleContent = () => {
       id: state.module?.id,
       title: state.module?.title,
       description: state.module?.description,
+      quizInstructions: state.module?.quizInstructions,
+      hasQuizContent: Boolean(state.module?.courses.some(
+        (course) => course.aiIndexed !== false && course.lessons.length > 0,
+      )),
     },
     moduleActions.onFinishInitialQuiz,
   );

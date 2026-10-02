@@ -62,7 +62,8 @@ const UserFormInformations = ({
           type="text"
           value={firstname}
           onChange={(e) => onFirstname(e.target.value)}
-          autoComplete="off"
+          name="firstname"
+          autoComplete="given-name"
           disabled={disabled}
         />
       </span>
@@ -73,7 +74,8 @@ const UserFormInformations = ({
           type="text"
           value={lastname}
           onChange={(e) => onLastname(e.target.value)}
-          autoComplete="off"
+          name="lastname"
+          autoComplete="family-name"
           disabled={disabled}
         />
       </span>
@@ -84,7 +86,8 @@ const UserFormInformations = ({
           type="text"
           value={nickname}
           onChange={(e) => onNickname(e.target.value)}
-          autoComplete="off"
+          name="nickname"
+          autoComplete="nickname"
           disabled={disabled}
         />
       </span>
@@ -95,7 +98,8 @@ const UserFormInformations = ({
           type="text"
           value={email}
           onChange={(e) => onEmail(e.target.value)}
-          autoComplete="off"
+          name="email"
+          autoComplete="email"
           disabled={disabled}
           aria-invalid={emailError}
           aria-describedby={emailMessage ? "user-email-error" : undefined}

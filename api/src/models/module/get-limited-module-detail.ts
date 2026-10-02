@@ -1,4 +1,4 @@
-import { all, and } from "@prisma/orm-postgres/orm-client";
+import { all, and, or } from "@prisma/orm-postgres/orm-client";
 
 import {
   calculateCourseProgress,
@@ -22,6 +22,7 @@ export default async function getLimitedModuleDetail(
       "id",
       "title",
       "description",
+      "quizInstructions",
       "image",
       "duration",
       "minDate",
@@ -52,10 +53,13 @@ export default async function getLimitedModuleDetail(
             and(
               course.visibility.eq(true),
               course.isPublished.eq(true),
-              course.lessons.some((lesson) =>
-                and(
-                  lesson.visibility.eq(true),
-                  lesson.activities.some((activity) => activity.id.gt(0)),
+              or(
+                course.assignment.some((assignment) => assignment.id.gt(0)),
+                course.lessons.some((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
                 ),
               ),
             ),
@@ -142,6 +146,7 @@ export default async function getLimitedModuleDetail(
     id: module.id,
     title: module.title,
     description: module.description,
+    quizInstructions: module.quizInstructions,
     image: module.image
       ? Buffer.from(module.image as any).toString("base64")
       : null,

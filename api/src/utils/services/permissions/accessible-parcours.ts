@@ -1,4 +1,4 @@
-import { and } from "@prisma/orm-postgres/orm-client";
+import { and, or } from "@prisma/orm-postgres/orm-client";
 
 import { prisma } from "../../db.ts";
 import { type IRole } from "../../interfaces/db/role.ts";
@@ -140,10 +140,13 @@ export async function isLearnerContentAvailable(
               and(
                 course.isPublished.eq(true),
                 course.visibility.eq(true),
-                course.lessons.some((lesson) =>
-                  and(
-                    lesson.visibility.eq(true),
-                    lesson.activities.some((activity) => activity.id.gt(0)),
+                or(
+                  course.assignment.some((assignment) => assignment.id.gt(0)),
+                  course.lessons.some((lesson) =>
+                    and(
+                      lesson.visibility.eq(true),
+                      lesson.activities.some((activity) => activity.id.gt(0)),
+                    ),
                   ),
                 ),
               ),
@@ -165,10 +168,13 @@ export async function isLearnerContentAvailable(
             and(
               course.isPublished.eq(true),
               course.visibility.eq(true),
-              course.lessons.some((lesson) =>
-                and(
-                  lesson.visibility.eq(true),
-                  lesson.activities.some((activity) => activity.id.gt(0)),
+              or(
+                course.assignment.some((assignment) => assignment.id.gt(0)),
+                course.lessons.some((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
                 ),
               ),
             ),
@@ -184,10 +190,13 @@ export async function isLearnerContentAvailable(
           row.id.eq(contentId),
           row.isPublished.eq(true),
           row.visibility.eq(true),
-          row.lessons.some((lesson) =>
-            and(
-              lesson.visibility.eq(true),
-              lesson.activities.some((activity) => activity.id.gt(0)),
+          or(
+            row.assignment.some((assignment) => assignment.id.gt(0)),
+            row.lessons.some((lesson) =>
+              and(
+                lesson.visibility.eq(true),
+                lesson.activities.some((activity) => activity.id.gt(0)),
+              ),
             ),
           ),
           row.module.some((module) =>

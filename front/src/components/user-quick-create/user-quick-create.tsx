@@ -50,12 +50,13 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
 
   return (
     <div className="flex flex-col">
-      <form className="flex flex-col gap-y-4" onSubmit={onSubmit}>
+      <form className="flex flex-col gap-y-4" onSubmit={onSubmit} autoComplete="on">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <BoxWrapper>
             <FormInput
               label="Prénom *"
               name="firstname"
+              autoComplete="given-name"
               placeholder="Jean"
               register={register}
               error={errors.firstname}
@@ -64,6 +65,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Nom *"
               name="lastname"
+              autoComplete="family-name"
               placeholder="Dupont"
               register={register}
               error={errors.lastname}
@@ -72,6 +74,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Pseudo"
               name="nickname"
+              autoComplete="nickname"
               placeholder="jean64"
               register={register}
               error={errors.nickname}
@@ -80,6 +83,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Email *"
               name="email"
+              autoComplete="email"
               type="email"
               placeholder="email@exemple.com"
               register={register}
@@ -90,6 +94,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Adresse"
               name="address"
+              autoComplete="street-address"
               placeholder="2 place royale"
               register={register}
               error={errors.address}
@@ -98,6 +103,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Ville"
               name="city"
+              autoComplete="address-level2"
               placeholder="Paris"
               register={register}
               error={errors.city}
@@ -106,6 +112,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Code Postal"
               name="postCode"
+              autoComplete="postal-code"
               placeholder="75000"
               register={register}
               error={errors.postCode}
@@ -114,6 +121,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <FormInput
               label="Numéro de téléphone"
               name="phoneNumber"
+              autoComplete="tel"
               placeholder="01 02 03 04 05"
               register={register}
               error={errors.phoneNumber}

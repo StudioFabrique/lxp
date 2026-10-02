@@ -119,7 +119,7 @@ const UserForm = ({
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <PageWrapper as="form" onSubmit={handleSubmit} autoComplete="off" data-recommended-tour="user-form">
+    <PageWrapper as="form" onSubmit={handleSubmit} autoComplete="on" data-recommended-tour="user-form">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={

@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ComponentPropsWithoutRef } from "react";
 import {
   FieldError,
   FieldPath,
@@ -15,6 +15,7 @@ interface FormInputProps<TFieldValues extends FieldValues> {
   placeholder?: string;
   disabled?: boolean;
   type?: string;
+  autoComplete?: ComponentPropsWithoutRef<"input">["autoComplete"];
 }
 
 const FormInput = <TFieldValues extends FieldValues,>({
@@ -25,6 +26,7 @@ const FormInput = <TFieldValues extends FieldValues,>({
   placeholder,
   disabled,
   type = "text",
+  autoComplete,
 }: FormInputProps<TFieldValues>) => {
   const fieldId = useId();
   return (
@@ -36,6 +38,7 @@ const FormInput = <TFieldValues extends FieldValues,>({
         {...register(name)}
         className={cn("w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60", error && "input-error")}
         type={type}
+        autoComplete={autoComplete}
         id={fieldId}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${fieldId}-error` : undefined}
