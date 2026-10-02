@@ -90,6 +90,7 @@ const LessonReaderAndEditor = ({
   children,
 }: PropsWithChildren<Props>) => {
   const [headerSticky, setHeaderSticky] = useState(false);
+  const lessonRating = selectedLesson?.lessonRating?.[0]?.rating;
 
   const hasOwnEditorHeader =
     canEdit &&
@@ -139,10 +140,10 @@ const LessonReaderAndEditor = ({
       )}
 
       <div className="flex flex-col gap-5">
-        {isLessonCompleted && selectedLesson?.lessonRating[0]?.rating && onRateActivity && (
+        {isLessonCompleted && lessonRating && onRateActivity && (
           <div className="w-full flex justify-end items-center">
             <RatingPanelButton
-              note={selectedLesson.lessonRating[0].rating}
+              note={lessonRating}
               onRateContent={onRateActivity}
             />
           </div>

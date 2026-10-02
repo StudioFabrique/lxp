@@ -15,6 +15,23 @@ const props = {
   onClose: vi.fn(), onBack: vi.fn(), onRefreshActivity: vi.fn(), onSaveActivity: vi.fn(),
 } satisfies Omit<ComponentProps<typeof LessonReaderAndEditor>, "activityType">;
 describe("Éditeurs communs des activités", () => {
+  it.each([undefined, []])("affiche une leçon terminée sans évaluations (%j)", (lessonRating) => {
+    const html = renderToStaticMarkup(
+      <LessonReaderAndEditor {...props} mode="read" activityType="image"
+        isLessonCompleted
+        selectedLesson={{ id: 9, lessonRating } as unknown as ComponentProps<typeof LessonReaderAndEditor>["selectedLesson"]} />,
+    );
+    expect(html).toContain("data-activity-preview");
+    expect(html).not.toContain("Évaluer ce contenu");
+  });
+  it("conserve le bouton d’évaluation quand la leçon terminée possède une note", () => {
+    const html = renderToStaticMarkup(
+      <LessonReaderAndEditor {...props} mode="read" activityType="image"
+        isLessonCompleted
+        selectedLesson={{ id: 9, lessonRating: [{ rating: 4 }] } as ComponentProps<typeof LessonReaderAndEditor>["selectedLesson"]} />,
+    );
+    expect(html).toContain("Évaluer ce contenu");
+  });
   it("conserve le header monté pendant le chargement d’une autre activité", () => {
     const container = document.createElement("div");
     const root = createRoot(container);
