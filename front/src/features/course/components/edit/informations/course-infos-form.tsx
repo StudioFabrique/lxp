@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCourseDispatch } from "../../../store/CourseContext";
@@ -20,50 +20,68 @@ interface CourseInfosFormProps {
 
 const CourseInfosForm = (props: CourseInfosFormProps) => {
   const dispatch = useCourseDispatch();
-  const [visibility, setVisibility] = useState<boolean | null>(
-    props.visibility,
-  );
 
   const defaultValues = useMemo(
     () => ({
       title: props.courseTitle,
       description: props.courseDescription ?? "",
+      visibility: props.visibility,
     }),
-    [props.courseTitle, props.courseDescription],
+    [props.courseTitle, props.courseDescription, props.visibility],
   );
 
   const {
+    reset,
     register,
     watch,
     handleSubmit: rhfHandleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({
     defaultValues,
     resolver: zodResolver(infosCourseSchema),
   });
 
+  void dirtyFields;
+  useEffect(() => {
+    reset(defaultValues, { keepDirtyValues: true });
+  }, [defaultValues, reset]);
+  const visibility = watch("visibility");
+
   const saveCourse = useCallback(
-    async (data: { title: string; description?: string }) => {
+    async (data: {
+      title: string;
+      description?: string;
+      visibility: boolean;
+    }) => {
       try {
         const response = await courseApi.mutations.updateInfos({
           id: props.courseId,
           title: data.title,
           description: data.description,
-          visibility: visibility === undefined || !visibility ? false : true,
+          visibility: data.visibility,
         });
+        if (!response.success) throw new Error(response.message);
         if (response.success) {
-          dispatch({ type: "SET_COURSE_INFOS", payload: response.data as { title: string; description: string; visibility: boolean } });
+          dispatch({
+            type: "SET_COURSE_INFOS",
+            payload: response.data as {
+              title: string;
+              description: string;
+              visibility: boolean;
+            },
+          });
           toast.success(response.message);
         }
       } catch (err: unknown) {
         toast.error(getApiErrorMessage(err, "Erreur inconnue"));
+        throw err;
       }
     },
-    [dispatch, props.courseId, visibility],
+    [dispatch, props.courseId],
   );
 
-  const onSave = useCallback(() => {
-    rhfHandleSubmit(saveCourse, (errs) => {
+  const onSave = useCallback(async () => {
+    await rhfHandleSubmit(saveCourse, (errs) => {
       const firstError = Object.values(errs)[0];
       if (firstError?.message) toast.error(firstError.message);
     })();
@@ -71,13 +89,15 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
 
   useAutoSave(watch, onSave);
 
-  const handleChangeVisibility = () => {
-    setVisibility((prevState) => !prevState);
-  };
-
   return (
     <>
-      <form className="w-full flex flex-col gap-y-8">
+      <form
+        className="w-full flex flex-col gap-y-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void onSave().catch(() => undefined);
+        }}
+      >
         <div className="flex flex-col gap-y-4">
           <FormInput
             label="Titre du cours *"
@@ -103,8 +123,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             <input
               type="checkbox"
               className="toggle toggle-primary"
-              checked={visibility ? visibility : false}
-              onChange={handleChangeVisibility}
+              {...register("visibility")}
             />
             <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
           </label>

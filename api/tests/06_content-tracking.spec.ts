@@ -21,6 +21,7 @@ describe("Suivi de consultation des contenus", () => {
   let cookie: string[];
   let studentId: number;
   let lessonId: number;
+  const activityIds: number[] = [];
   let coursePublication: { id: number; isPublished: boolean; visibility: boolean | null };
   let enrollment: Enrollment;
 
@@ -79,14 +80,17 @@ describe("Suivi de consultation des contenus", () => {
       visibility: true,
     });
     lessonId = lesson.id;
-    await prisma.orm.public.Activity.create({
-      title: "Activité de suivi",
-      type: "text",
-      order: 1,
-      url: "",
-      lessonId,
-      authorId: admin!.id,
-    });
+    for (const order of [1, 2]) {
+      const activity = await prisma.orm.public.Activity.create({
+        title: "Activité de suivi",
+        type: "text",
+        order,
+        url: "",
+        lessonId,
+        authorId: admin!.id,
+      });
+      activityIds.push(activity.id);
+    }
   });
 
   afterAll(async () => {
@@ -95,6 +99,9 @@ describe("Suivi de consultation des contenus", () => {
     await prisma.orm.public.LessonRead.where({ lessonId })
       .deleteAndCount()
       .then((count) => ({ count }));
+    await prisma.orm.public.ActivityRead.where((read) =>
+      read.activity.some((activity) => activity.lessonId.eq(lessonId)),
+    ).deleteAndCount();
     await prisma.orm.public.Activity.where({ lessonId })
       .deleteAndCount()
       .then((count) => ({ count }));
@@ -171,7 +178,48 @@ describe("Suivi de consultation des contenus", () => {
     expect(read!.readTimeMs).toBeLessThan(HEARTBEAT_INTERVAL_MS);
   });
 
-  it("marque la leçon comme terminée", async () => {
+  it("ignore les lectures d'un autre apprenant", async () => {
+    const otherStudent = await prisma.orm.public.Student.create({ idMdb: `other-reader-${lessonId}` });
+    try {
+      for (const activityId of activityIds) {
+        await prisma.orm.public.ActivityRead.create({ activityId, studentId: otherStudent.id });
+      }
+      await request(app)
+        .put(`/v1/content-read/lesson/${lessonId}/finish`)
+        .set("Cookie", cookie)
+        .expect(409);
+      const lesson = await request(app).get(`/v1/lesson/${lessonId}`).set("Cookie", cookie).expect(200);
+      expect(lesson.body.activities.every((activity: { activitiesRead: unknown[] }) =>
+        activity.activitiesRead.length === 0,
+      )).toBe(true);
+    } finally {
+      await prisma.orm.public.ActivityRead.where({ studentId: otherStudent.id }).deleteAndCount();
+      await prisma.orm.public.Student.where({ id: otherStudent.id }).delete();
+    }
+  });
+
+  it("refuse de terminer une leçon dont des activités sont non lues", async () => {
+    const finish = () => request(app)
+      .put(`/v1/content-read/lesson/${lessonId}/finish`)
+      .set("Cookie", cookie);
+    await finish().expect(409);
+    await request(app)
+      .post(`/v1/content-read/activity/${activityIds[0]}/begin`)
+      .set("Cookie", cookie)
+      .expect(201);
+    await finish().expect(409);
+    const read = await prisma.orm.public.LessonRead.where({ lessonId, studentId }).first();
+    expect(read!.finishedAt).toBeNull();
+    const lesson = await request(app).get(`/v1/lesson/${lessonId}`).set("Cookie", cookie).expect(200);
+    expect(lesson.body.activities[0].activitiesRead).toHaveLength(1);
+    expect(lesson.body.activities[1].activitiesRead).toHaveLength(0);
+  });
+
+  it("marque la leçon comme terminée après lecture de toutes ses activités", async () => {
+    await request(app)
+      .post(`/v1/content-read/activity/${activityIds[1]}/begin`)
+      .set("Cookie", cookie)
+      .expect(201);
     await request(app)
       .put(`/v1/content-read/lesson/${lessonId}/finish`)
       .set("Cookie", cookie)

@@ -4,10 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import VideoPlayer from "../../../../../components/UI/VideoPlayer";
 import { toast } from "react-hot-toast";
 
-import { maxSizeError } from "../../../../../utils/helpers/max-size-error";
 import { activityVideoSize } from "../../../../../config/images-sizes";
+import {
+  videoSchema,
+  videoFileError,
+  type VideoFormValues,
+} from "../../../media.schema";
+import { useFormField } from "../../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../../components/form/form-errors";
 import { Loader2 } from "lucide-react";
-import { activiteMetaDataSchema } from "../../../lesson.schema";
 import FormTextarea from "../../../../../components/form/FormTextarea";
 import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
 import ActivityHeader from "./activity-header";
@@ -26,13 +31,6 @@ interface VideoEditorProps {
   }) => void;
 }
 
-const maxSize = activityVideoSize;
-
-type VideoFormData = {
-  title: string;
-  description?: string;
-};
-
 export default function VideoEditor({
   propVideo = "",
   loading,
@@ -41,11 +39,21 @@ export default function VideoEditor({
   onCancel,
   onSubmit,
 }: VideoEditorProps) {
-  const [origin, setOrigin] = useState("web");
   const [video, setVideo] = useState<string>(propVideo);
-  const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string>(propVideo);
 
+  const form = useForm<VideoFormValues>({
+    resolver: zodResolver(videoSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      origin: "web",
+      url: propVideo,
+      file: null,
+    },
+  });
+  const [origin, setOrigin] = useFormField(form, "origin");
+  const [, setFile] = useFormField(form, "file");
+  const [url, setUrl] = useFormField(form, "url");
   const {
     register,
     watch,
@@ -53,32 +61,17 @@ export default function VideoEditor({
     formState: { errors },
     reset,
     setValue,
-  } = useForm<VideoFormData>({
-    resolver: zodResolver(activiteMetaDataSchema),
-    defaultValues: { title: "", description: "" },
-  });
-
-  const isValidUrl = (urlString: string): boolean => {
-    try {
-      new URL(urlString);
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  } = form;
 
   const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
-    setOrigin(event.currentTarget.value);
+    setOrigin(event.currentTarget.value as "web" | "file");
   };
 
   const handleSelectFile = (selectedFile: File) => {
-    if (!selectedFile.type.startsWith("video/")) {
-      toast.error("Merci de choisir un fichier de type video.");
-      setFile(null);
+    const error = videoFileError(selectedFile);
+    if (error) {
+      toast.error(error);
       return;
-    }
-    if (selectedFile.size > maxSize) {
-      toast.error(maxSizeError(maxSize));
     }
     setFile(selectedFile);
     setVideo(URL.createObjectURL(selectedFile));
@@ -86,7 +79,7 @@ export default function VideoEditor({
 
   const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
     setUrl(event.currentTarget.value);
-    setVideo(url);
+    setVideo(event.currentTarget.value);
   };
 
   const handleSelectExternalSource = useCallback(() => {
@@ -94,28 +87,30 @@ export default function VideoEditor({
   }, [url]);
 
   const handleSubmit = rhfHandleSubmit((formData) => {
-    if (origin === "web" && !isValidUrl(url)) {
-      toast.error("L'URL de la vidéo n'est pas valide.");
-      return;
-    }
     onSubmit({
       title: formData.title,
       description: formData.description ?? null,
-      videoValue: file ? "" : video,
-      fileValue: file,
+      videoValue: formData.origin === "file" ? "" : formData.url.trim(),
+      fileValue: formData.origin === "file" ? formData.file : null,
     });
-  });
+  }, showFormErrors);
 
   useEffect(() => {
-    reset({ title: title ?? "", description: description ?? "" });
-  }, [title, description, reset]);
+    reset({
+      title: title ?? "",
+      description: description ?? "",
+      origin: "web",
+      url: propVideo,
+      file: null,
+    });
+  }, [title, description, propVideo, reset]);
 
   useEffect(() => {
     handleSelectExternalSource();
   }, [handleSelectExternalSource, url]);
 
   return (
-    <main className="w-full flex flex-col gap-y-4">
+    <form className="w-full flex flex-col gap-y-4" onSubmit={handleSubmit}>
       <ActivityHeader
         title={watch("title") ?? ""}
         activityType="video"
@@ -130,14 +125,14 @@ export default function VideoEditor({
       />
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
         <article>
-          <form className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-2">
             <FormTextarea
               label="Description"
               name="description"
               register={register}
               error={errors.description}
             />
-          </form>
+          </div>
         </article>
         <article className="flex flex-col gap-y-4 justify-center">
           <span className="flex items-center justify-between">
@@ -151,16 +146,16 @@ export default function VideoEditor({
               value={origin}
               onChange={handleOnChangeOrigin}
             >
-              <option value="fileSystem">Votre ordinateur</option>
+              <option value="file">Votre ordinateur</option>
               <option value="web">Un lien externe</option>
             </select>
           </span>
           <span>
-            {origin === "fileSystem" ? (
+            {origin === "file" ? (
               <FileUpload
                 compact
                 fileType="video"
-                maxSize={maxSize}
+                maxSize={activityVideoSize}
                 buttonLabel="Sélectionner une vidéo"
                 onFileSelect={handleSelectFile}
               />
@@ -190,7 +185,7 @@ export default function VideoEditor({
         <button
           className="btn btn-primary flex items-center gap-x-2"
           disabled={loading}
-          onClick={handleSubmit}
+          type="submit"
         >
           {loading ? (
             <span className="flex items-center gap-x-2">
@@ -202,6 +197,6 @@ export default function VideoEditor({
           )}
         </button>
       </section>
-    </main>
+    </form>
   );
 }

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { recoverySchema } from "../auth.schema";
+import { useFormField } from "../../../components/form/useFormField";
 import { accountApi } from "../api/account.api";
 
 export type AccountRecoveryMode = "reset" | "activation";
@@ -19,20 +22,19 @@ type ApiError = {
   };
 };
 
-const emailSchema = z
-  .string()
-  .min(1, "L'adresse email est obligatoire")
-  .email("Adresse email invalide.");
-
 export function useResetPassword({
   initialEmail = "",
   initialMode = "reset",
   initialRetryAfterSeconds = 0,
 }: UseResetPasswordOptions = {}) {
-  const [email, setEmail] = useState(initialEmail);
+  const form = useForm({
+    resolver: zodResolver(recoverySchema),
+    defaultValues: { email: initialEmail },
+  });
+  const [email, setEmail] = useFormField(form, "email");
   const [mode, setMode] = useState<AccountRecoveryMode>(initialMode);
   const [error, setError] = useState("");
-  const [fieldError, setFieldError] = useState("");
+  const fieldError = form.formState.errors.email?.message ?? "";
   const [isLoading, setIsLoading] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -53,49 +55,38 @@ export function useResetPassword({
   const changeMode = (nextMode: AccountRecoveryMode) => {
     setMode(nextMode);
     setError("");
-    setFieldError("");
+    form.clearErrors("email");
     setRequestSent(false);
     setSuccessMessage("");
     setRetryAfterSeconds(0);
   };
 
-  const handleCheckEmail = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setError("");
-    setFieldError("");
+  const handleCheckEmail = form.handleSubmit(
+    async ({ email: normalizedEmail }) => {
+      if (isLoading || retryAfterSeconds > 0) return;
+      setError("");
+      setIsLoading(true);
+      try {
+        const data =
+          mode === "activation"
+            ? await accountApi.resendActivation(normalizedEmail)
+            : await accountApi.checkEmail(normalizedEmail);
 
-    const normalizedEmail = email.trim();
-    const result = emailSchema.safeParse(normalizedEmail);
-    if (!result.success) {
-      setFieldError(
-        result.error.issues[0]?.message ?? "Adresse email invalide.",
-      );
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const data =
-        mode === "activation"
-          ? await accountApi.resendActivation(normalizedEmail)
-          : await accountApi.checkEmail(normalizedEmail);
-
-      if (data.success) {
-        setSuccessMessage(data.message);
-        setRequestSent(true);
+        if (data.success) {
+          setSuccessMessage(data.message);
+          setRequestSent(true);
+        }
+      } catch (err: unknown) {
+        const apiError = err as ApiError;
+        setError(
+          apiError.response?.data?.message ?? "Une erreur est survenue.",
+        );
+        setRetryAfterSeconds(apiError.response?.data?.retryAfterSeconds ?? 0);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err: unknown) {
-      const apiError = err as ApiError;
-      setError(
-        apiError.response?.data?.message ?? "Une erreur est survenue.",
-      );
-      setRetryAfterSeconds(
-        apiError.response?.data?.retryAfterSeconds ?? 0,
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  );
 
   return {
     email,

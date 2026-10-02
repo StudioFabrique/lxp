@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
-import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import type Contact from "../../../../../utils/interfaces/contact";
 import type Skill from "../../../../../utils/interfaces/skill";
@@ -68,12 +67,35 @@ export default function ModuleGrid({
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [highlightedModuleId, modules]);
 
-  if (modules.length === 0) {
-    return isLoading ? (
-      <LoadingSkeleton variant="cards" label="Chargement des modules associés" />
-    ) : (
-      <EmptyStatePlaceholder title={emptyMessage} />
+  if (isLoading && modules.length === 0) {
+    return (
+      <section
+        role="status"
+        aria-label="Chargement des modules associés"
+        className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
+      >
+        <span className="sr-only">Chargement des modules associés…</span>
+        {Array.from({ length: 3 }, (_, index) => (
+          <div
+            key={index}
+            aria-hidden="true"
+            className="overflow-hidden rounded-box border border-base-300 bg-base-100"
+          >
+            <div className="skeleton h-24 w-full rounded-none" />
+            <div className="space-y-3 p-4">
+              <div className="skeleton h-5 w-2/3" />
+              <div className="skeleton h-4 w-1/3" />
+              <div className="skeleton mt-5 h-10 w-full" />
+              <div className="skeleton h-10 w-4/5" />
+            </div>
+          </div>
+        ))}
+      </section>
     );
+  }
+
+  if (modules.length === 0) {
+    return <EmptyStatePlaceholder title={emptyMessage} />;
   }
 
   return (

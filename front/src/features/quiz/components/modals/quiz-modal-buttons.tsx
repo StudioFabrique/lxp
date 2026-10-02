@@ -1,8 +1,14 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { quizReportSchema } from "../../quiz-form.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useState } from "react";
 
 type Props = {
   externalId: string;
   isValid: boolean;
+  isAnswered?: boolean;
   onValidate: () => void;
   onReport: (externalId: string, comment: string) => Promise<void>;
   nextAction?: { label: string; onClick: () => void };
@@ -11,35 +17,32 @@ type Props = {
 const QuizModalButtons = ({
   externalId,
   isValid,
+  isAnswered = false,
   onValidate,
   onReport,
   nextAction,
 }: Props) => {
   const [isReporting, setIsReporting] = useState(false);
-  const [comment, setComment] = useState("");
+  const form = useForm({
+    resolver: zodResolver(quizReportSchema),
+    defaultValues: { comment: "" },
+  });
+  const [comment, setComment] = useFormField(form, "comment");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmitReport = async () => {
-    if (comment && comment.trim() !== "") {
-      setIsSubmitting(true);
-      try {
-        await onReport(externalId, comment.trim());
-      } catch (error) {
-        console.error(error);
-        setIsSubmitting(false);
-      }
+  const handleSubmitReport = form.handleSubmit(async ({ comment }) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onReport(externalId, comment);
+      setIsReporting(false);
+      form.reset();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  if (nextAction) {
-    return (
-      <div className="mt-4 flex justify-end">
-        <button className="btn btn-primary min-w-44" onClick={nextAction.onClick}>
-          {nextAction.label}
-        </button>
-      </div>
-    );
-  }
+  }, showFormErrors);
 
   if (isReporting) {
     return (
@@ -51,7 +54,7 @@ const QuizModalButtons = ({
         </label>
         <textarea
           className="textarea w-full text-sm bg-base-100 focus:outline-none resize-none"
-          placeholder="Ex: Il manque une réponse"
+          placeholder="Ex. : la question n'est pas compréhensible, la réponse attendue est incorrecte ou le sujet n'est pas abordé dans le cours."
           rows={3}
           draggable={false}
           value={comment}
@@ -95,13 +98,24 @@ const QuizModalButtons = ({
           Signaler un problème
         </button>
       </div>
-      <button
-        className="btn btn-secondary min-w-44"
-        onClick={onValidate}
-        disabled={!isValid}
-      >
-        Valider ma réponse
-      </button>
+      {nextAction ? (
+        <button
+          className="btn btn-primary min-w-44"
+          onClick={nextAction.onClick}
+        >
+          {nextAction.label}
+        </button>
+      ) : (
+        !isAnswered && (
+          <button
+            className="btn btn-primary min-w-44"
+            onClick={onValidate}
+            disabled={!isValid}
+          >
+            Valider ma réponse
+          </button>
+        )
+      )}
     </div>
   );
 };

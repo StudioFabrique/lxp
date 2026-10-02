@@ -1,3 +1,4 @@
+import { assignmentFormSchema } from "../../assignment.schema";
 import type { AssignmentFormValue } from "../../interfaces/assignment";
 
 export const emptyAssignmentForm = (): AssignmentFormValue => ({
@@ -20,23 +21,5 @@ export function assignmentDateForInput(value?: string) {
 }
 
 export function assignmentFormIsValid(value: AssignmentFormValue) {
-  if (!value.required) return true;
-  if (!value.dueAt || !value.instructions.trim() || value.maxScore <= 0) {
-    return false;
-  }
-  if (
-    value.criteria.some(
-      (criterion) => !criterion.label.trim() || criterion.weight <= 0,
-    )
-  ) {
-    return false;
-  }
-  if (value.criteria.length > 0) {
-    const total = value.criteria.reduce(
-      (sum, criterion) => sum + criterion.weight,
-      0,
-    );
-    return Math.abs(total - value.maxScore) < 0.001;
-  }
-  return true;
+  return assignmentFormSchema.safeParse(value).success;
 }

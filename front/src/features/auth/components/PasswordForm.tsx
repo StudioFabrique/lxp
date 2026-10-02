@@ -60,20 +60,13 @@ const PasswordForm = <T extends FieldValues>({
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Mot de passe"
-            {...register(passwordFieldName, {
-              required: "Le mot de passe est requis.",
-              pattern: {
-                value:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*])(?=.{12,})/,
-                message:
-                  "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
-              },
-            })}
+            {...register(passwordFieldName)}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
           />
           <button
             type="button"
             className="btn btn-sm btn-ghost absolute right-1 top-1/2 -translate-y-1/2"
+            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
             onClick={() => setShowPassword((prev) => !prev)}
           >
             {showPassword ? (
@@ -127,12 +120,7 @@ const PasswordForm = <T extends FieldValues>({
         <input
           type={showPassword ? "text" : "password"}
           placeholder="Confirmer le mot de passe"
-          {...register(confirmPasswordFieldName, {
-            required: "La confirmation du mot de passe est requise.",
-            validate: (value, formValues) =>
-              value === formValues[passwordFieldName] ||
-              "Les mots de passe ne correspondent pas.",
-          })}
+          {...register(confirmPasswordFieldName)}
           className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
         />
         {errorConfirm && (

@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FormEvent, ReactNode, useMemo } from "react";
-import toast from "react-hot-toast";
+import React, { ReactNode } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import type { LessonFormValues } from "../../../../module-preview/components/sidebar/lesson-form.types";
 
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import LessonTags from "./lesson-tag";
@@ -9,47 +9,21 @@ import { cn } from "../../../../../utils/cn";
 
 interface LessonFormProps {
   children: ReactNode;
-  title: unknown;
-  description: unknown;
+  form: UseFormReturn<LessonFormValues>;
   mode: string;
   tag: Tag | null;
   tags: Tag[];
   isLoading: boolean;
   onSetTag: (value: Tag) => void;
-  onSubmitLesson: () => void;
+  onSubmitLesson: (event: React.FormEvent<HTMLFormElement>) => void | Promise<void>;
   onSetMode: (value: string) => void;
 }
 
 const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
   (props, ref) => {
-    const { title, description } = props as any;
-
-    const fields = useMemo(() => {
-      return [title, description];
-    }, [title, description]);
-
-    const setInputStyle = (hasError: boolean) => {
-      return cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
-    };
-
-    const setAreaStyle = (hasError: boolean) => {
-      return cn("textarea textarea-sm textarea-bordered focus:outline-none w-full", hasError && "textarea-error text-error");
-    };
-
-    const formIsValid = title.isValid && description.isValid && props.tag;
-
-    const handleSubmitForm = (event: FormEvent) => {
-      if (!props.tag) {
-        toast.error("Veuillez choisir un tag pour la leçon svp");
-      }
-      event.preventDefault();
-      if (formIsValid) {
-        props.onSubmitLesson();
-      } else {
-        fields.forEach((field: any) => field.isSubmitted());
-      }
-    };
-
+    const { register, formState: { errors } } = props.form;
+    const setInputStyle = (hasError: boolean) => cn("input input-sm input-bordered focus:outline-none w-full", hasError && "input-error text-error");
+    const setAreaStyle = (hasError: boolean) => cn("textarea textarea-sm textarea-bordered focus:outline-none w-full", hasError && "textarea-error text-error");
     const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
       props.onSetMode(event.currentTarget.value);
     };
@@ -57,21 +31,18 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
     return (
       <form
         className="w-full flex flex-col gap-y-8"
-        onSubmit={handleSubmitForm}
+        onSubmit={props.onSubmitLesson}
       >
         <div className="flex flex-col gap-y-4">
           <label className="font-bold" htmlFor="title">
             Titre du contenu *
           </label>
           <input
-            className={setInputStyle(title.hasError)}
-            ref={ref}
+            className={setInputStyle(Boolean(errors.title))}
+            {...register("title")}
+            ref={(element) => { register("title").ref(element); if (typeof ref === "function") ref(element); else if (ref) ref.current = element; }}
             id="title"
-            name="title"
             type="text"
-            value={title.value}
-            onChange={title.valueChangeHandler}
-            onBlur={title.valueBlurHandler}
             placeholder="Exemple: Introduction au HTML"
           />
         </div>
@@ -81,13 +52,10 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
             Description <span className="font-normal opacity-60">(optionnelle)</span>
           </label>
           <textarea
-            className={setAreaStyle(description.hasError)}
+            className={setAreaStyle(Boolean(errors.description))}
             id="description"
-            name="description"
             rows={5}
-            value={description.value}
-            onChange={description.textAreaChangeHandler}
-            onBlur={description.valueBlurHandler}
+            {...register("description")}
           />
         </div>
 

@@ -7,14 +7,14 @@ import { getExpandedTileBounds, getVisibleAuthTiles } from "./auth-tile-grid";
 const preferences = vi.hoisted(() => ({ reducedMotion: false }));
 vi.mock("motion/react", async () => {
   const React = await import("react");
-  function MockMotionDiv({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { initial?: unknown; animate?: unknown; exit?: unknown; transition?: { duration?: number }; onAnimationComplete?: () => void }) {
+  function MockMotionDiv({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { initial?: unknown; animate?: unknown; exit?: unknown; transition?: { duration?: number }; onAnimationComplete?: (definition: unknown) => void }) {
     const { initial, animate, exit, transition, onAnimationComplete, ...htmlProps } = props;
-    void initial; void animate; void exit;
+    void initial; void exit;
     React.useEffect(() => {
       if (!onAnimationComplete) return;
-      const timer = setTimeout(onAnimationComplete, (transition?.duration ?? 0) * 1000);
+      const timer = setTimeout(() => onAnimationComplete(animate), (transition?.duration ?? 0) * 1000);
       return () => clearTimeout(timer);
-    }, [onAnimationComplete, transition]);
+    }, [onAnimationComplete, transition, animate]);
     return React.createElement("div", htmlProps, children);
   }
   return {
@@ -239,6 +239,53 @@ describe("auth flip tiles", () => {
     expect(container.querySelectorAll('[role="dialog"] li')).toHaveLength(3);
     act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
     expect(container.querySelector('[role="dialog"]')).toBeNull();
+  });
+
+  it("moves to the next quality from the panel and wraps to the first", () => {
+    preferences.reducedMotion = true;
+    act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
+    act(() => container.querySelector<HTMLButtonElement>(".auth-tile-button")!.click());
+
+    const title = () => container.querySelector('[role="dialog"] h2')?.textContent;
+    const next = () => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label^="Qualité suivante"]')!;
+    expect(title()).toBe("Accessible");
+    expect(next().getAttribute("aria-label")).toBe("Qualité suivante : Novatrice");
+
+    for (const expected of ["Novatrice", "Dynamique", "Réactive", "Intuitive", "Adaptative", "Accessible"]) {
+      act(() => next().click());
+      act(() => vi.runOnlyPendingTimers());
+      expect(title()).toBe(expected);
+    }
+  });
+
+  it("reveals the background while the panel turns", () => {
+    act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
+    act(() => vi.advanceTimersByTime(800));
+    act(() => container.querySelector<HTMLButtonElement>(".auth-tile-button")!.click());
+    expect(image.style.clipPath).toContain("M150 180h610v510h-610Z");
+
+    act(() => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label^="Qualité suivante"]')!.click());
+    expect(image.style.clipPath).not.toContain("M150 180h610v510h-610Z");
+    expect(container.querySelector('[role="dialog"]')?.className).toContain("bg-transparent");
+    act(() => vi.advanceTimersByTime(300));
+    expect(image.style.clipPath).toContain("M150 180h610v510h-610Z");
+    expect(container.querySelector('[role="dialog"]')?.className).toContain("bg-base-100");
+  });
+
+  it("keeps the next quality and color on the collapsed tile", () => {
+    preferences.reducedMotion = true;
+    act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
+    const tile = container.querySelector<HTMLButtonElement>(".auth-tile-button")!;
+    act(() => tile.click());
+    act(() => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label^="Qualité suivante"]')!.click());
+    expect(container.querySelector('[role="dialog"] .bg-secondary')).not.toBeNull();
+    act(() => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label="Fermer les détails"]')!.click());
+
+    expect(tile.textContent).toContain("Novatrice");
+    expect(tile.querySelector(".auth-flip-icon-face")?.className).toContain("bg-secondary");
+    act(() => tile.click());
+    expect(container.querySelector('[role="dialog"] h2')?.textContent).toBe("Novatrice");
+    expect(container.querySelector('[role="dialog"] .bg-secondary')).not.toBeNull();
   });
 
   it("keeps the card visible after hover ends before returning to the photo", () => {

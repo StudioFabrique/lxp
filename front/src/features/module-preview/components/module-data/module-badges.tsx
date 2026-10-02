@@ -9,7 +9,7 @@ export default function ModuleBadges({ skills }: { skills: Skill[] }) {
     <ul aria-label="Badges du module" className="flex flex-wrap gap-5 py-3">
       {badges.map((skill) => (
         <li key={skill.id}>
-          <SkillBadge skill={skill} />
+          <SkillBadge skill={skill} size="small" />
         </li>
       ))}
     </ul>

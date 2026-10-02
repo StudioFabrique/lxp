@@ -1,5 +1,6 @@
+import type { ResourceFormValues } from "../../resource.schema";
 import { ChangeEvent, useState } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 import FormInput from "../../../../components/form/FormInput";
 import FormTextarea from "../../../../components/form/FormTextarea";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
@@ -17,8 +18,8 @@ import {
 type Props = {
   mode: "create" | "update";
   data: {
-    register: UseFormRegister<any>;
-    errors: any;
+    register: UseFormRegister<ResourceFormValues>;
+    errors: FieldErrors<ResourceFormValues>;
   };
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;

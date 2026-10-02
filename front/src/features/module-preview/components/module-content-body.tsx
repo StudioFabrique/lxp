@@ -8,6 +8,7 @@ import CourseAssignmentView from "./assignment/course-assignment";
 import ModuleCourseCalendar from "./calendar/module-course-calendar";
 import ModuleData from "./module-data/module-data";
 import ModuleContentPreview from "./preview/module-content-preview";
+import NextCourseButton from "./sidebar/next-course-button";
 
 type ModuleContentBodyProps = {
   module: Module & { parcours: string };
@@ -21,6 +22,7 @@ type ModuleContentBodyProps = {
   canEditSelectedLesson: boolean;
   canNavigateAsAdmin: boolean;
   isStaff: boolean;
+  onSelectAssignment: (courseId?: number) => void;
 };
 
 export default function ModuleContentBody({
@@ -35,6 +37,7 @@ export default function ModuleContentBody({
   canEditSelectedLesson,
   canNavigateAsAdmin,
   isStaff,
+  onSelectAssignment,
 }: ModuleContentBodyProps) {
   if (calendar) {
     return <ModuleCourseCalendar module={module} store={calendar} />;
@@ -52,7 +55,21 @@ export default function ModuleContentBody({
   }
 
   if (!store.state.selectedLesson) {
-    return <ModuleData moduleData={module} />;
+    return (
+      <ModuleData
+        moduleData={module}
+        nextCourseAction={!selectedAssignmentCourseId && (
+          <NextCourseButton
+            courses={module.courses}
+            onSelectLesson={(lesson) => {
+              onSelectAssignment(undefined);
+              if (lesson.id) store.dispatch({ type: "select_lesson_by_id", id: lesson.id });
+            }}
+            onSelectAssignment={onSelectAssignment}
+          />
+        )}
+      />
+    );
   }
 
   return (

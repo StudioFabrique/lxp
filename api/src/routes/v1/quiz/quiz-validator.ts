@@ -33,7 +33,7 @@ export const randomQuizValidator = [
     .withMessage("Le contenu ne peut pas dépasser 50 000 caractères.")
     .trim(),
   body("courseId").optional().isInt({ min: 1 }),
-  body("attemptId").optional().isInt({ min: 1 }),
+  body("attemptId").optional({ values: "null" }).isInt({ min: 1 }),
   checkValidatorResult,
 ];
 
@@ -53,6 +53,13 @@ export const preliminaryQuizStreamValidator = [
   body("moduleId")
     .notEmpty()
     .withMessage("L'identifiant du module est requis.")
+    .isInt({ min: 1 })
+    .withMessage("L'identifiant du module doit être un entier positif."),
+  checkValidatorResult,
+];
+
+export const preliminaryQuizProgressValidator = [
+  param("moduleId")
     .isInt({ min: 1 })
     .withMessage("L'identifiant du module doit être un entier positif."),
   checkValidatorResult,

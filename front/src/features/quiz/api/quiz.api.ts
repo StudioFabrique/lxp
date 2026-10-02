@@ -1,4 +1,12 @@
 import apiClient from "../../../lib/axios";
+import type { ExternalApiQuiz, UserAnswer } from "../interfaces/quiz";
+
+export type PreliminaryQuizProgress = {
+  attemptId: number;
+  finished: boolean;
+  questions: ExternalApiQuiz[];
+  answers: { externalId: string; isCorrect: boolean; userAnswer: UserAnswer }[];
+};
 
 export type QuizAttemptScope = {
   moduleId?: number;
@@ -9,6 +17,12 @@ export type QuizAttemptScope = {
 export type QuizAttemptOrigin = string;
 
 const queries = {
+  getPreliminaryProgress: async (moduleId: number): Promise<PreliminaryQuizProgress | null> => {
+    const res = await apiClient.get<PreliminaryQuizProgress | null>(
+      `/quiz/preliminary/progress/${moduleId}`,
+    );
+    return res.data;
+  },
   /**
    * Génère une question aléatoire à partir du contenu d'une activité.
    *
@@ -19,7 +33,11 @@ const queries = {
     content?: string,
     context?: { courseId?: number; attemptId?: number | null },
   ) => {
-    const res = await apiClient.post("/quiz/random", { content, ...context });
+    const res = await apiClient.post("/quiz/random", {
+      content,
+      courseId: context?.courseId,
+      ...(context?.attemptId != null && { attemptId: context.attemptId }),
+    });
     return res.data;
   },
 
@@ -44,10 +62,12 @@ const queries = {
   /** Quiz de fin de cours, servi en flux comme le diagnostique. */
   streamEndingQuiz: async (
     courseId: number,
+    signal?: AbortSignal,
   ): Promise<ReadableStream<Uint8Array>> => {
     const res = await apiClient({
       method: "get",
       url: `/quiz/course/ending/stream/${courseId}`,
+      signal,
       responseType: "stream",
       adapter: "fetch",
     });

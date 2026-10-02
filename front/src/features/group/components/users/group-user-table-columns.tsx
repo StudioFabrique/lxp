@@ -1,4 +1,4 @@
-import { formatTitle, toTitleCase } from "../../../../utils/helpers/text-helpers";
+import { toTitleCase } from "../../../../utils/helpers/text-helpers";
 import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
@@ -6,7 +6,7 @@ import UserStatusToggle from "../../../user/components/UserStatusToggle";
 import { personSelectionColumn } from "../../../../components/table/person-selection-column";
 
 const selectionColumn = personSelectionColumn<User>(
-  "Sélectionner tous les étudiants affichés",
+  "Sélectionner tous les apprenants affichés",
 );
 
 const identityColumns: ColumnDef<StockFeatures, User>[] = [
@@ -50,11 +50,6 @@ export const getGroupStudentColumns = ({
 }): ColumnDef<StockFeatures, User>[] => [
   selectionColumn,
   ...identityColumns,
-  {
-    accessorKey: "formation",
-    header: "Formation",
-    cell: ({ getValue }) => formatTitle(getValue() as string | undefined) || "ND",
-  },
   {
     id: "status",
     header: "Statut",

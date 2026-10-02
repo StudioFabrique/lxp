@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { parcoursImportSchema } from "../../parcours.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useState } from "react";
 import { Loader2, PlusCircle } from "lucide-react";
 
@@ -40,21 +45,37 @@ const ParcoursImportModal = ({
   onImport,
   embedded = false,
 }: Props) => {
-  const [formationChoice, setFormationChoice] =
-    useState<ImportFormationChoice>(initialFormationChoice);
+  const form = useForm({
+    resolver: zodResolver(parcoursImportSchema),
+    defaultValues: {
+      formationChoice: initialFormationChoice,
+      publishCourses: false,
+    },
+  });
+  const [formationChoice, setFormationChoice] = useFormField(
+    form,
+    "formationChoice",
+  );
   const [showAutomaticFormationOption, setShowAutomaticFormationOption] =
     useState(showAutomaticFormationOptionInitially);
-  const [publishCourses, setPublishCourses] = useState(false);
+  const [publishCourses, setPublishCourses] = useFormField(
+    form,
+    "publishCourses",
+  );
 
-  const handleImport = () => {
-    onImport({
-      archive,
-      formationId:
-        typeof formationChoice === "number" ? formationChoice : undefined,
-      createFormation: formationChoice === "create",
-      publishCourses,
-    });
-  };
+  const handleImport = form.handleSubmit(
+    ({ formationChoice, publishCourses }) => {
+      if (isImporting) return;
+      onImport({
+        archive,
+        formationId:
+          typeof formationChoice === "number" ? formationChoice : undefined,
+        createFormation: formationChoice === "create",
+        publishCourses,
+      });
+    },
+    showFormErrors,
+  );
 
   const content = (
     <>
@@ -75,17 +96,12 @@ const ParcoursImportModal = ({
             type="checkbox"
             className="toggle toggle-primary"
             checked={publishCourses}
-            onChange={(event) =>
-              setPublishCourses(event.currentTarget.checked)
-            }
+            onChange={(event) => setPublishCourses(event.currentTarget.checked)}
           />
         </label>
         <div>
           <div className="mb-2 flex items-center justify-between gap-4">
-            <label
-              className="text-sm font-semibold"
-              htmlFor="import-formation"
-            >
+            <label className="text-sm font-semibold" htmlFor="import-formation">
               Formation de destination
             </label>
             <button
@@ -122,25 +138,37 @@ const ParcoursImportModal = ({
             ) : null}
             {formations.map((formation) => (
               <option key={formation.id} value={formation.id}>
-                <span className="inline-block first-letter:uppercase">{formation.title}</span>
+                <span className="inline-block first-letter:uppercase">
+                  {formation.title}
+                </span>
               </option>
             ))}
           </select>
           {formationChoice === "create" ? (
             <p className="mt-2 text-xs text-base-content/60">
-              Le nom, les informations et les tags de la formation seront
-              repris automatiquement depuis l’archive. Si le nom existe déjà,
-              il sera numéroté automatiquement.
+              Le nom, les informations et les tags de la formation seront repris
+              automatiquement depuis l’archive. Si le nom existe déjà, il sera
+              numéroté automatiquement.
             </p>
           ) : null}
         </div>
       </div>
       {embedded ? (
         <div className="modal-action">
-          <button type="button" className="btn btn-outline btn-primary" onClick={onCancel} disabled={isImporting}>
+          <button
+            type="button"
+            className="btn btn-outline btn-primary"
+            onClick={onCancel}
+            disabled={isImporting}
+          >
             Retour
           </button>
-          <button type="button" className="btn btn-warning" onClick={handleImport} disabled={isImporting || formationChoice === undefined}>
+          <button
+            type="button"
+            className="btn btn-warning"
+            onClick={handleImport}
+            disabled={isImporting || formationChoice === undefined}
+          >
             {isImporting ? <Loader2 className="animate-spin" /> : null}
             Importer le parcours
           </button>

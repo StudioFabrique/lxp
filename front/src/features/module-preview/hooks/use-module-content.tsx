@@ -111,6 +111,10 @@ const useModuleContent = () => {
     [state.selectedLesson?.lessonsRead],
   );
 
+  const areAllActivitiesRead = Boolean(
+    state.selectedLesson?.activities?.every(activity => activity.activitiesRead?.length),
+  );
+
   const isFirstActivitySelected = useMemo(() => {
     const activities = state.selectedLesson?.activities;
     if (!activities?.length || !selectedActivityId) return false;
@@ -181,8 +185,12 @@ const useModuleContent = () => {
   // Comme la clôture ci-dessous : ouvrir le suivi ne doit pas faire échouer
   // l'affichage de la leçon, ni laisser un rejet sans preneur chez l'appelant.
   const initiateLesson = useCallback(async (lessonId: number) => {
-    await modulePreviewApi.tracking.begin("lesson", lessonId).catch(() => {});
-  }, []);
+    const opened = await modulePreviewApi.tracking.begin("lesson", lessonId).catch(() => undefined);
+    // Le suivi des activités dépend de hasStartedModule, calculé à partir
+    // des lectures du module. Synchroniser cette donnée après l'ouverture
+    // permet de démarrer ce suivi dès la première leçon, sans rechargement.
+    if (opened?.id && activeModuleId.current === moduleId) await fetchModuleData();
+  }, [fetchModuleData, moduleId]);
 
   // Le suivi de contenu ne doit jamais faire échouer la complétion d'une leçon.
   const finishContent = useCallback(
@@ -201,8 +209,9 @@ const useModuleContent = () => {
   }, [selectedLessonId, initiateLesson]);
 
   const completeLesson = useCallback(
-    async (rating: number) => {
+    async (rating?: number, comment?: string) => {
       const lessonId = state.selectedLesson?.id;
+      if (!areAllActivitiesRead && !isLessonCompleted) return;
       if (state.selectedLesson && lessonId && !completionInFlight.current) {
         completionInFlight.current = true;
         try {
@@ -221,17 +230,19 @@ const useModuleContent = () => {
             lessonRead,
           });
           // La note ne conditionne pas l'obtention des compétences.
-          try {
-            const { data: lessonRating } =
-              (await modulePreviewApi.mutations.rateLesson(lessonId, rating)) as {
-                data: LessonRating;
-              };
-            if (activeModuleId.current !== String(state.module?.id)) return;
-            dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
-          } catch {
-            toast.error(
-              "La leçon est terminée, mais votre évaluation n'a pas pu être enregistrée.",
-            );
+          if (rating !== undefined) {
+            try {
+              const { data: lessonRating } =
+                (await modulePreviewApi.mutations.rateLesson(lessonId, rating, comment)) as {
+                  data: LessonRating;
+                };
+              if (activeModuleId.current !== String(state.module?.id)) return;
+              dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
+            } catch {
+              toast.error(
+                "La leçon est terminée, mais votre évaluation n'a pas pu être enregistrée.",
+              );
+            }
           }
 
           if (state.module?.id) {
@@ -276,6 +287,8 @@ const useModuleContent = () => {
     },
     [
       state.selectedLesson,
+      areAllActivitiesRead,
+      isLessonCompleted,
       state.module,
       isStudent,
       queryClient,
@@ -531,25 +544,26 @@ const useModuleContent = () => {
     }
   }, []);
 
-  const fetchLessonData = useCallback(async () => {
+  useEffect(() => {
     if (!selectedLessonId) return;
+    let cancelled = false;
 
-    try {
-      const lesson = (await modulePreviewApi.queries.getLesson(
-        selectedLessonId,
-      )) as Lesson;
-      dispatch({
-        type: "select_lesson",
-        lesson,
-        activityId: requestedActivityId,
-      });
-    } catch {
-      // silently fail
-    }
+    void (async () => {
+      try {
+        const lesson = (await modulePreviewApi.queries.getLesson(selectedLessonId)) as Lesson;
+        if (!cancelled) {
+          dispatch({ type: "select_lesson", lesson, activityId: requestedActivityId });
+        }
+      } catch {
+        if (!cancelled) dispatch({ type: "finish_lesson_loading", lessonId: selectedLessonId });
+      }
 
-    if (isDiagnosticPassed.current) {
-      await initiateLesson(selectedLessonId);
-    }
+      if (!cancelled && isDiagnosticPassed.current) {
+        await initiateLesson(selectedLessonId);
+      }
+    })();
+
+    return () => { cancelled = true; };
   }, [selectedLessonId, requestedActivityId, initiateLesson]);
 
   const refreshSelectedLesson = useCallback(
@@ -582,21 +596,33 @@ const useModuleContent = () => {
     [selectedActivityId, selectedLessonId],
   );
 
-  const fetchActivityTextContent = useCallback(() => {
-    if (
-      selectedActivityType === "text" &&
-      selectedActivityUrl &&
-      state.mode === "read"
-    ) {
-      fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
-        credentials: "include",
+  const selectedTextActivityKey = selectedActivityType === "text" && selectedActivityUrl
+    ? `${selectedActivityId}:${selectedActivityUrl}`
+    : undefined;
+
+  useEffect(() => {
+    if (!selectedTextActivityKey || state.mode !== "read") return;
+    const controller = new AbortController();
+
+    void fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
+      credentials: "include",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Impossible de charger l'activité");
+        return response.text();
       })
-        .then((response) => response.text())
-        .then((content: string) => {
-          dispatch({ type: "update_activity_content", content });
-        });
-    }
-  }, [state.mode, selectedActivityType, selectedActivityUrl]);
+      .then((content) => {
+        dispatch({ type: "update_activity_content", content, activityKey: selectedTextActivityKey });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          dispatch({ type: "update_activity_content", content: "", activityKey: selectedTextActivityKey });
+        }
+      });
+
+    return () => controller.abort();
+  }, [state.mode, selectedTextActivityKey, selectedActivityUrl]);
 
   const saveTextActivity = async (
     title: string,
@@ -928,14 +954,6 @@ const useModuleContent = () => {
     void fetchModuleData();
   }, [fetchModuleData]);
 
-  useEffect(() => {
-    fetchLessonData();
-  }, [fetchLessonData]);
-
-  useEffect(() => {
-    fetchActivityTextContent();
-  }, [fetchActivityTextContent]);
-
   // If a activity is selected, select the title of the current course and set the chatbot activity name
   useEffect(() => {
     if (
@@ -979,6 +997,7 @@ const useModuleContent = () => {
       });
     },
     computed: {
+      areAllActivitiesRead,
       isLessonCompleted,
       isFirstActivitySelected,
       isLastActivitySelected,
@@ -988,6 +1007,10 @@ const useModuleContent = () => {
       isLastLessonOfCurrentCourse,
     },
     isLoading: isLoading || isLoadingRequest,
+    isActivityContentLoading: state.mode === "read" && Boolean(
+      state.isSelectedLessonLoading ||
+      (selectedTextActivityKey && state.loadedTextActivityKey !== selectedTextActivityKey),
+    ),
     isPublishingAllCourses,
     dispatch,
     moduleActions: {

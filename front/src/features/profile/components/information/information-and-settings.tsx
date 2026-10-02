@@ -1,9 +1,10 @@
+import { useFormField } from "../../../../components/form/useFormField";
 import { FC, Ref, useEffect, useState } from "react";
 import Info from "./info";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { informationSchema } from "../../schemas/info-schema";
+import { profileInformationSchema } from "../../schemas/info-schema";
 import { profileApi } from "../../api/profile.api";
 import Loader from "../../../../components/loaders/Loader";
 import ProfileItemsEditor from "./ProfileItemsEditor";
@@ -32,17 +33,9 @@ const InformationAndSettings: FC<{
   isStudent?: boolean;
 }> = ({ formRef, onSaved, onDirtyChange, isStudent = false }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
-  const [links, setLinks] = useState<Link[]>([]);
-  const [itemsDirty, setItemsDirty] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty },
-    reset,
-  } = useForm({
-    resolver: zodResolver(informationSchema),
+  const form = useForm({
+    resolver: zodResolver(profileInformationSchema),
     defaultValues: {
       firstname: "",
       lastname: "",
@@ -52,19 +45,26 @@ const InformationAndSettings: FC<{
       city: "",
       postCode: "",
       phoneNumber: "",
+      hobbies: [] as Hobby[],
+      links: [] as Link[],
     },
   });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isSubmitting },
+    reset,
+  } = form;
+  const [hobbies, setHobbies] = useFormField(form, "hobbies");
+  const [links, setLinks] = useFormField(form, "links");
 
   const [userData, setUserData] = useState<UserInformation>();
-  const onSubmit = (data: z.infer<typeof informationSchema>) => {
+  const onSubmit = async (data: z.infer<typeof profileInformationSchema>) => {
+    if (isSubmitting) return;
     const formData = new FormData();
-    formData.append("data", JSON.stringify({ user: isStudent ? {
-      ...data,
-      hobbies,
-      links,
-    } : data }));
+    formData.append("data", JSON.stringify({ user: data }));
 
-    profileApi.mutations
+    await profileApi.mutations
       .updateInformation(formData)
       .then((response) => {
         toast.success(
@@ -73,7 +73,7 @@ const InformationAndSettings: FC<{
             : "Profil sauvegardé avec succès !",
         );
         onSaved?.();
-        setItemsDirty(false);
+        reset(data);
       })
       .catch((err) => {
         const errorMessage = err?.response?.data?.message ?? "Erreur inconnue";
@@ -103,15 +103,15 @@ const InformationAndSettings: FC<{
         city: userData.city ?? "",
         postCode: userData.postCode ?? "",
         phoneNumber: userData.phoneNumber ?? "",
+        hobbies: userData.hobbies ?? [],
+        links: userData.links ?? [],
       });
-      setHobbies(userData.hobbies ?? []);
-      setLinks(userData.links ?? []);
     }
   }, [userData, reset]);
 
   useEffect(() => {
-    onDirtyChange?.(isDirty || itemsDirty);
-  }, [isDirty, itemsDirty, onDirtyChange]);
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   if (isLoading) return <Loader />;
 
@@ -124,7 +124,18 @@ const InformationAndSettings: FC<{
       })}
     >
       <Info formProps={{ register, errors }} />
-      {isStudent && <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); setItemsDirty(true); }} onLinksChange={(items) => { setLinks(items); setItemsDirty(true); }} />}
+      {isStudent && (
+        <ProfileItemsEditor
+          hobbies={hobbies}
+          links={links}
+          onHobbiesChange={(items) => {
+            setHobbies(items);
+          }}
+          onLinksChange={(items) => {
+            setLinks(items);
+          }}
+        />
+      )}
     </form>
   );
 };

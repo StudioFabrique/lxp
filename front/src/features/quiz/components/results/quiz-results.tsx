@@ -7,6 +7,7 @@ interface QuizResultsProps {
   attempts: QuizAttempt[];
   onContinue: () => void;
   continueLabel?: string;
+  showTopContinue?: boolean;
 }
 
 const QuizResults = ({
@@ -14,6 +15,7 @@ const QuizResults = ({
   attempts,
   onContinue,
   continueLabel = "Continuer",
+  showTopContinue = false,
 }: QuizResultsProps) => {
   const total = attempts.length;
   const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
@@ -45,6 +47,13 @@ const QuizResults = ({
 
   return (
     <div className="flex flex-col gap-8 mt-2">
+      {showTopContinue && (
+        <div className="flex justify-end">
+          <button className="btn btn-primary" onClick={onContinue}>
+            {continueLabel}
+          </button>
+        </div>
+      )}
       {/* Score global */}
       <div className="flex flex-col items-center gap-2 p-6 bg-base-200 rounded-box">
         <div className={cn("text-5xl font-bold", scoreColor)}>

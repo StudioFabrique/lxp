@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { chatbotWindowSize } from "./use-chatbot-ui";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import useCourseQuiz from "../../quiz/hooks/use-course-quiz";
+import { canSuggestActivityQuiz } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
 
 const CHATBOT_REMAINING_TIME = 10 * 60000;
 
@@ -28,10 +29,7 @@ export default function useChatbotQuiz(
   const triggerType = useMemo((): TimerTriggerType => {
     if (!isQuizSuggestionEnabled) return "disabled";
 
-    if (
-      currentActivity?.readTimeMs &&
-      currentActivity?.readTimeMs * 2 < 2 * 60 * 1000
-    )
+    if (!canSuggestActivityQuiz(currentActivity?.readTimeMs))
       return "disabled";
 
     if (currentActivity && !hasMessageBeenShown) {

@@ -28,10 +28,6 @@ const Account: FC<{
     newPass: string;
     confirmNewPass: string;
   }) => {
-    if (data.newPass !== data.confirmNewPass) {
-      toast.error("Les mot des passes ne correspondent pas");
-      return;
-    }
     profileApi.mutations
       .updatePassword({ oldPass: data.oldPass, newPass: data.newPass })
       .then(() =>

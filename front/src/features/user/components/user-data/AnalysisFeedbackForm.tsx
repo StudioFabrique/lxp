@@ -1,4 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { analysisFeedbackSchema } from "../../feedback.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { MessageSquareText } from "lucide-react";
@@ -27,12 +32,14 @@ export default function AnalysisFeedbackForm({
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [verdict, setVerdict] = useState<AnalysisFeedbackInput["verdict"] | "">(
-    "",
-  );
-  const [comment, setComment] = useState("");
-  const [actionTaken, setActionTaken] = useState("");
-  const [outcome, setOutcome] = useState<PredictionOutcome | "">("");
+  const form = useForm({
+    resolver: zodResolver(analysisFeedbackSchema),
+    defaultValues: { verdict: "", comment: "", actionTaken: "", outcome: "" },
+  });
+  const [verdict, setVerdict] = useFormField(form, "verdict");
+  const [comment, setComment] = useFormField(form, "comment");
+  const [actionTaken, setActionTaken] = useFormField(form, "actionTaken");
+  const [outcome, setOutcome] = useFormField(form, "outcome");
   const mutation = useMutation({
     mutationFn: (input: AnalysisFeedbackInput) =>
       indicatorsApi.mutations.saveAnalysisFeedback(
@@ -48,21 +55,19 @@ export default function AnalysisFeedbackForm({
       });
     },
   });
-  if (!prediction.analysisId || hasExistingFeedback || hasSubmitted) return null;
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    if (!verdict) return;
+  if (!prediction.analysisId || hasExistingFeedback || hasSubmitted)
+    return null;
+  const submit = form.handleSubmit((values) => {
+    if (mutation.isPending) return;
     mutation.mutate({
-      verdict,
-      comment,
-      actionTaken,
-      ...(outcome
-        ? {
-            observedOutcome: outcome,
-          }
+      verdict: values.verdict as AnalysisFeedbackInput["verdict"],
+      comment: values.comment,
+      actionTaken: values.actionTaken,
+      ...(values.outcome
+        ? { observedOutcome: values.outcome as PredictionOutcome }
         : {}),
     });
-  };
+  }, showFormErrors);
   const resetForm = () => {
     mutation.reset();
     setVerdict("");

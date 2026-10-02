@@ -1,11 +1,10 @@
-import { useCallback, useContext, useRef, useState } from "react";
+import { mapExternalToInternal } from "../utils/map-external-quiz";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import {
-  ExternalApiQuiz,
   ExternalApiStreamPayload,
-  Pair,
   Quiz,
   QuizAttempt,
   UserAnswer,
@@ -39,6 +38,12 @@ export default function useCourseQuiz(
   const [showResults, setShowResults] = useState(false);
   const [isReplacing, setIsReplacing] = useState(false);
   const additionalQuizCount = useRef(0);
+  const endingQuizController = useRef<AbortController | null>(null);
+  const isEndingQuiz = useRef(false);
+
+  useEffect(() => () => {
+    endingQuizController.current?.abort();
+  }, []);
   const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
 
   const toastWarning = (message: string) => {
@@ -56,62 +61,17 @@ export default function useCourseQuiz(
     });
   };
 
-  const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
-    const base = {
-      id: external.id,
-      question: external.prompt,
-      trueExplanation: external.explanation_correct,
-      falseExplanation: external.explanation_wrong,
-    };
-
-    switch (external.type) {
-      case "mcq":
-        return {
-          ...base,
-          type: "mcq",
-          data: {
-            options: external.choices,
-            answerIndex: external.answer_key,
-          },
-        };
-
-      case "true_false":
-        return {
-          ...base,
-          type: "true_false",
-          data: { answer: external.answer_key },
-        };
-
-      case "matching": {
-        const pairs: Pair[] = external.pairs;
-        return {
-          ...base,
-          type: "matching",
-          data: { pairs },
-        };
-      }
-
-      case "ordering":
-        return {
-          ...base,
-          type: "ordering",
-          data: {
-            items: external.ordering_items,
-            order: external.ordering_answer,
-          },
-        };
-      default:
-        return null;
-    }
-  };
 
   const onLoadQuizzes = async () => {
+    // Un second clic ne doit pas ouvrir un deuxième flux dans la même série.
+    if (endingQuizController.current) return;
     if (!aiIndexed) {
       toastWarning(
         "Les quiz IA sont désactivés pour ce cours dupliqué tant que son contenu n'a pas été réindexé.",
       );
       return;
     }
+    isEndingQuiz.current = true;
     setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
@@ -145,8 +105,11 @@ export default function useCourseQuiz(
       return;
     }
 
+    const controller = new AbortController();
+    endingQuizController.current = controller;
     try {
-      const stream = await quizApi.queries.streamEndingQuiz(courseId);
+      const stream = await quizApi.queries.streamEndingQuiz(courseId, controller.signal);
+      if (controller.signal.aborted) return;
       const reader = stream.getReader();
       const decoder = new TextDecoder("utf-8");
 
@@ -155,10 +118,13 @@ export default function useCourseQuiz(
 
       while (!done) {
         const { value, done: readerDone } = await reader.read();
+        if (controller.signal.aborted) return;
         done = readerDone;
 
-        if (value) {
-          buffer += decoder.decode(value, { stream: true });
+        if (value || readerDone) {
+          buffer += decoder.decode(value, { stream: !readerDone });
+          // Le dernier événement peut ne pas se terminer par un saut de ligne.
+          if (readerDone) buffer += "\n";
           const lines = buffer.split("\n");
 
           buffer = lines.pop() || "";
@@ -175,9 +141,6 @@ export default function useCourseQuiz(
               const payload = JSON.parse(cleanLine) as ExternalApiStreamPayload;
 
               if ("event" in payload) {
-                console.log(
-                  `Stream IA terminé : ${payload.total_questions} questions.`,
-                );
                 done = true;
                 break;
               }
@@ -186,7 +149,9 @@ export default function useCourseQuiz(
 
               if (mappedQuiz) {
                 setQuizzes((prev) =>
-                  prev ? [...prev, mappedQuiz] : [mappedQuiz],
+                  prev?.some((quiz) => quiz.id === mappedQuiz.id)
+                    ? prev
+                    : [...(prev || []), mappedQuiz],
                 );
               }
             } catch (e) {
@@ -199,7 +164,9 @@ export default function useCourseQuiz(
           }
         }
       }
+      await reader.cancel();
     } catch (error) {
+      if (controller.signal.aborted) return;
       console.error("Erreur lors de la récupération du stream:", error);
       if (isAiServerError(error)) {
         setAiUnavailable(true);
@@ -209,7 +176,10 @@ export default function useCourseQuiz(
         toastWarning("Une erreur est survenue lors du chargement des quiz.");
       }
     } finally {
-      setIsStreaming(false);
+      if (endingQuizController.current === controller) {
+        endingQuizController.current = null;
+        setIsStreaming(false);
+      }
     }
   };
 
@@ -229,6 +199,7 @@ export default function useCourseQuiz(
       }
 
       if (!isAppending) {
+        isEndingQuiz.current = false;
         setIsOpen(true);
         setQuizzes([]);
         setCurrentIndex(0);
@@ -273,6 +244,9 @@ export default function useCourseQuiz(
   );
 
   const onCloseQuizzes = () => {
+    endingQuizController.current?.abort();
+    endingQuizController.current = null;
+    setIsStreaming(false);
     setIsOpen(false);
     setQuizzes(null);
     setScore(0);
@@ -283,9 +257,9 @@ export default function useCourseQuiz(
   };
 
   const onAnswerQuiz = (correct: boolean, userAnswer: UserAnswer) => {
+    if (isAnswered || !currentQuiz) return;
     setIsCorrect(correct);
     setIsAnswered(true);
-    const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
     if (currentQuiz) {
       setAttempts((prev) => [
         ...prev,
@@ -295,14 +269,12 @@ export default function useCourseQuiz(
     }
     if (correct) {
       setScore((prev) => prev + 1);
-    } else if (!aiUnavailable && additionalQuizCount.current < 2) {
+    } else if (
+      !isEndingQuiz.current && activityContent?.trim() &&
+      !aiUnavailable && additionalQuizCount.current < 2
+    ) {
       additionalQuizCount.current += 1;
       onTriggerRandomQuiz(true);
-    } else {
-      // Plus de quiz disponible (serveur IA indisponible ou limite atteinte) :
-      // on affiche directement les résultats plutôt que de bloquer l'étudiant.
-      setShowResults(true);
-      attemptTracking.finish();
     }
   };
 
@@ -312,9 +284,8 @@ export default function useCourseQuiz(
       setIsAnswered(false);
       setIsCorrect(false);
     } else if (isStreaming) {
-      setCurrentIndex((prev) => prev + 1);
-      setIsAnswered(false);
-      setIsCorrect(false);
+      // Garde le retour sur la réponse visible pendant l'arrivée de la suite.
+      return;
     } else {
       setShowResults(true);
       attemptTracking.finish();

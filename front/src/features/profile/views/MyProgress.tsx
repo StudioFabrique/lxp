@@ -44,6 +44,9 @@ export default function MyProgress() {
   const requestedParcoursId = Number(searchParams.get("parcoursId"));
   const selectedParcours =
     parcours.find((item) => item.id === requestedParcoursId) ?? parcours[0];
+  const canEditLearningProfile =
+    learningContext?.hasAvailableContent &&
+    learningContext.profile.status === "completed";
 
   return (
     <PageWrapper className="gap-8">
@@ -51,12 +54,12 @@ export default function MyProgress() {
         title="Mon avancement"
         description="Suivez la progression de vos modules, vos accomplissements et vos badges de compétences."
         icon={ChartNoAxesCombined}
-      >{learningContext?.hasAvailableContent && (
+      >{canEditLearningProfile && (
         <button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>
           Mes préférences et niveaux
         </button>
       )}</Header>
-      {learningContext?.hasAvailableContent && settingsOpen && (
+      {canEditLearningProfile && settingsOpen && (
         <StudentProfile onClose={() => setSettingsOpen(false)} />
       )}
       {parcours.length > 1 && (

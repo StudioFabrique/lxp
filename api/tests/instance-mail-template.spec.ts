@@ -48,7 +48,7 @@ describe("identité de l’instance dans les e-mails", () => {
       emailTemplate: "contrast",
     });
 
-    expect(html).toContain('padding:18px 0 18px 32px');
+    expect(html).toContain("padding:18px 0 18px 32px");
     expect(html).toContain('href="https://step.eco"');
     expect((html ?? "").indexOf("Bienvenue parmi nous !")).toBeLessThan(
       (html ?? "").indexOf("https://step.eco"),
@@ -62,7 +62,9 @@ describe("identité de l’instance dans les e-mails", () => {
 
     expect(html).not.toContain("cid:instance-logo");
     expect(html).not.toContain("padding:24px 32px 30px");
-    expect(html).toContain("border-top:1px solid #e6eaee;border-radius:12px 12px 0 0");
+    expect(html).toContain(
+      "border-top:1px solid #e6eaee;border-radius:12px 12px 0 0",
+    );
     expect(html).toContain("<strong>STEP</strong></td>");
     expect(html).toContain('src="cid:andria-footer-light"');
   });
@@ -74,7 +76,7 @@ describe("identité de l’instance dans les e-mails", () => {
 
     expect(html).toContain("Bienvenue parmi nous !");
     expect(html).toContain("Votre compte est prêt.");
-    expect(html).not.toContain("Bonjour,");
+    expect(html).not.toContain("Bonjour");
     expect(html).toContain("Adresse e-mail : <strong>user@test.fr</strong>");
   });
 
@@ -119,8 +121,8 @@ describe("identité de l’instance dans les e-mails", () => {
     });
 
     expect(html).toContain('bgcolor="#92bbea"');
-    expect(html).toContain('background-color:#92bbea');
-    expect(html).toContain('color:#17202a');
+    expect(html).toContain("background-color:#92bbea");
+    expect(html).toContain("color:#17202a");
   });
 
   test("n'ajoute pas un second logo ANDRIA sous le mail d'initialisation root", () => {

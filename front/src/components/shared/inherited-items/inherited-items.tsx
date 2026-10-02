@@ -5,6 +5,7 @@ import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../../UI/button-add/button-add";
 import SubBoxWrapper from "../../wrappers/SubBoxWrapper";
 import { cn } from "../../../utils/cn";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 interface InheritedItemsProps {
   visibleList?: boolean;
@@ -112,7 +113,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           <h2
             className={cn(props.titleSize !== "large" ? sizeClass : sizeClass + " font-bold", "p-2")}
           >
-            {props.title}
+            {formatTitle(props.title)}
           </h2>
         ) : null}
         <ButtonAdd

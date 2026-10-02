@@ -64,7 +64,7 @@ export default function MenuBar({
       hidden={shouldHide}
       className={cn("self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out flex-wrap min-w-max", isSticky
           ? `sticky ${
-              headerSticky ? "top-20" : "top-4"
+              headerSticky ? "top-[62px]" : "top-4"
             } z-50 shadow-xl shadow-base-content/10 rounded-2xl border border-base-300 h-fit bg-base-100/95 backdrop-blur-md`
           : "border-b border-base-300")}
     >

@@ -1,8 +1,23 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFormField } from "../../../components/form/useFormField";
+import { showFormErrors } from "../../../components/form/form-errors";
+import {
+  onboardingStepSchema,
+  type OnboardingValues,
+} from "../onboarding.schema";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { ArrowRight, Check, Gauge, GraduationCap, Shapes } from "lucide-react";
+import {
+  ArrowRight,
+  Gauge,
+  GraduationCap,
+  Rocket,
+  Shapes,
+  UsersRound,
+} from "lucide-react";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
@@ -12,8 +27,6 @@ import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
 import { profileApi } from "../../profile/api/profile.api";
 import ThemeSelectionStep from "../ThemeSelectionStep";
-import type Hobby from "../../user/interfaces/hobby";
-import type { Link } from "../../user/interfaces/link";
 import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
 import {
   levelOptions,
@@ -29,11 +42,6 @@ import {
   learningProfileApi,
   learningProfileKey,
 } from "../learning-profile.api";
-import type {
-  FormationLevel,
-  LearningPace,
-  LearningPreference,
-} from "../types";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
 type OnboardingStep = {
@@ -61,22 +69,6 @@ export default function StudentLearningOnboarding() {
   });
   const context = query.data;
   const [index, setIndex] = useState(0);
-  const [pace, setPace] = useState<LearningPace | null>(null);
-  const [preferences, setPreferences] = useState<LearningPreference[]>([]);
-  const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
-  const [saving, setSaving] = useState(false);
-  const [started, setStarted] = useState(false);
-  const [introFinished, setIntroFinished] = useState(false);
-  const [welcomeStarted, setWelcomeStarted] = useState(false);
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
-  const [links, setLinks] = useState<Link[]>([]);
-  const [profileInformation, setProfileInformation] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
-  const [profileItemsChanged, setProfileItemsChanged] = useState(false);
-  const contentScrollRef = useRef<HTMLDivElement>(null);
-
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
     if (!context.availableFormations.length) return [];
@@ -84,13 +76,12 @@ export default function StudentLearningOnboarding() {
 
     if (context.onboardingMode === "initial") {
       onboardingSteps.push({ key: "theme", label: "Apparence", kind: "theme" });
+      onboardingSteps.push({
+        key: "learning",
+        label: "Votre façon d’apprendre",
+        kind: "learning",
+      });
     }
-
-    onboardingSteps.push({
-      key: "learning",
-      label: "Votre façon d’apprendre",
-      kind: "learning",
-    });
 
     for (const formation of context.availableFormations) {
       for (const parcours of formation.parcours) {
@@ -106,15 +97,47 @@ export default function StudentLearningOnboarding() {
         }
       }
     }
-    onboardingSteps.push({
-      key: "profile",
-      label: "À propos de vous",
-      kind: "profile",
-    });
-
-    onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
+    if (context.onboardingMode === "initial") {
+      onboardingSteps.push({
+        key: "profile",
+        label: "À propos de vous",
+        kind: "profile",
+      });
+      onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
+    }
     return onboardingSteps;
   }, [context]);
+
+  const activeStep = steps[index];
+  const schema = onboardingStepSchema(
+    activeStep?.kind ?? "theme",
+    activeStep?.moduleId,
+  );
+  const form = useForm<OnboardingValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      pace: null,
+      preferences: [],
+      levels: {},
+      hobbies: [],
+      links: [],
+    },
+  });
+  const [pace, setPace] = useFormField(form, "pace");
+  const [preferences, setPreferences] = useFormField(form, "preferences");
+  const [levels, setLevels] = useFormField(form, "levels");
+  const [saving, setSaving] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [introFinished, setIntroFinished] = useState(false);
+  const [welcomeStarted, setWelcomeStarted] = useState(false);
+  const [hobbies, setHobbies] = useFormField(form, "hobbies");
+  const [links, setLinks] = useFormField(form, "links");
+  const [profileInformation, setProfileInformation] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+  const [profileItemsChanged, setProfileItemsChanged] = useState(false);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     profileApi.queries
@@ -125,7 +148,7 @@ export default function StudentLearningOnboarding() {
         setLinks(data.links ?? []);
       })
       .catch(() => undefined);
-  }, []);
+  }, [setHobbies, setLinks]);
 
   useEffect(() => {
     if (!context || started) return;
@@ -163,7 +186,7 @@ export default function StudentLearningOnboarding() {
         currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
       });
     }
-  }, [context, started, steps]);
+  }, [context, started, steps, setPace, setPreferences, setLevels]);
 
   useEffect(() => {
     if (
@@ -265,28 +288,25 @@ export default function StudentLearningOnboarding() {
     ) ?? formation?.parcours[0];
   const module = parcours?.modules.find((item) => item.id === step.moduleId);
 
-  const continueToNext = async () => {
-    if (step.kind === "learning" && !pace) {
-      toast.error("Choisissez un rythme pour continuer.");
-      return;
-    }
-    if (step.kind === "learning" && preferences.length === 0) {
-      toast.error("Choisissez au moins une préférence.");
-      return;
-    }
-    if (step.kind === "module" && step.moduleId && !levels[step.moduleId]) {
-      toast.error("Choisissez un niveau pour continuer.");
-      return;
-    }
+  const completeOnboarding = async () => {
+    await learningProfileApi.update({ action: "confirm" });
+    await queryClient.invalidateQueries({ queryKey: learningProfileKey });
+    toast.success("Votre profil d’apprentissage est prêt.");
+    navigate("/student/dashboard", { replace: true });
+  };
 
+  const continueToNext = form.handleSubmit(async (values) => {
     setSaving(true);
     try {
       if (step.kind === "learning" && pace)
-        await learningProfileApi.update({ pace, preferences });
+        await learningProfileApi.update({
+          pace: values.pace!,
+          preferences: values.preferences,
+        });
       if (step.kind === "module" && step.moduleId) {
         await learningProfileApi.updateModule(
           step.moduleId,
-          levels[step.moduleId]!,
+          values.levels[step.moduleId]!,
         );
       }
       const next = steps[index + 1];
@@ -299,7 +319,11 @@ export default function StudentLearningOnboarding() {
         payload.append(
           "data",
           JSON.stringify({
-            user: { ...profileInformation, hobbies, links },
+            user: {
+              ...profileInformation,
+              hobbies: values.hobbies,
+              links: values.links,
+            },
           }),
         );
         await profileApi.mutations.updateInformation(payload);
@@ -308,27 +332,26 @@ export default function StudentLearningOnboarding() {
       if (next) {
         await learningProfileApi.update({ currentStep: next.key });
         setIndex(index + 1);
+      } else if (context.onboardingMode === "additional") {
+        await completeOnboarding();
       }
     } catch {
       toast.error("Cette étape n’a pas pu être enregistrée.");
     } finally {
       setSaving(false);
     }
-  };
+  }, showFormErrors);
 
-  const confirm = async () => {
+  const confirm = form.handleSubmit(async () => {
     setSaving(true);
     try {
-      await learningProfileApi.update({ action: "confirm" });
-      await queryClient.invalidateQueries({ queryKey: learningProfileKey });
-      toast.success("Votre profil d’apprentissage est prêt.");
-      navigate("/student/dashboard", { replace: true });
+      await completeOnboarding();
     } catch {
       toast.error("Vérifiez que toutes les réponses ont été enregistrées.");
     } finally {
       setSaving(false);
     }
-  };
+  }, showFormErrors);
 
   return (
     <LayoutGroup>
@@ -395,33 +418,51 @@ export default function StudentLearningOnboarding() {
                       key={`${formation.id}-${entry.id}`}
                       className="space-y-3"
                     >
-                      <div>
-                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                          Formation
-                        </dt>
-                        <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                          {capitalizeTitle(formation.title)}
-                        </dd>
+                      <div className="flex items-center gap-3">
+                        <GraduationCap
+                          className="size-5 shrink-0 text-primary"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                            Formation
+                          </dt>
+                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                            {capitalizeTitle(formation.title)}
+                          </dd>
+                        </div>
                       </div>
-                      <div>
-                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                          Parcours
-                        </dt>
-                        <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                          {capitalizeTitle(entry.title)}
-                        </dd>
+                      <div className="flex items-center gap-3">
+                        <Rocket
+                          className="size-5 shrink-0 text-primary"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                            Parcours
+                          </dt>
+                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                            {capitalizeTitle(entry.title)}
+                          </dd>
+                        </div>
                       </div>
                     </div>
                   )),
                 )}
                 {context.groupNames.length > 0 && (
-                  <div>
-                    <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                      {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
-                    </dt>
-                    <dd className="mt-0.5 pl-2 text-base font-semibold leading-snug text-base-content sm:text-lg">
-                      {context.groupNames.map(capitalizeTitle).join(", ")}
-                    </dd>
+                  <div className="flex items-center gap-3">
+                    <UsersRound
+                      className="size-5 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    <div>
+                      <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                        {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
+                      </dt>
+                      <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content sm:text-lg">
+                        {context.groupNames.map(capitalizeTitle).join(", ")}
+                      </dd>
+                    </div>
                   </div>
                 )}
               </dl>
@@ -434,9 +475,7 @@ export default function StudentLearningOnboarding() {
                     <motion.li
                       key={tag.id}
                       initial={
-                        reduceMotion
-                          ? false
-                          : { opacity: 0, y: 8, scale: 0.94 }
+                        reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }
                       }
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{
@@ -460,7 +499,8 @@ export default function StudentLearningOnboarding() {
             </button>
           </motion.section>
         ) : (
-          <motion.div
+          <motion.form
+            onSubmit={continueToNext}
             className="flex min-h-0 flex-1 flex-col gap-3"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -514,10 +554,9 @@ export default function StudentLearningOnboarding() {
                     </button>
                   ) : (
                     <button
-                      type="button"
+                      type="submit"
                       className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
                       disabled={cannotContinue}
-                      onClick={() => void continueToNext()}
                     >
                       Continuer
                     </button>
@@ -675,7 +714,7 @@ export default function StudentLearningOnboarding() {
                     </p>
                   </div>
                   <dl className="grid gap-3 sm:grid-cols-2">
-                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4">
                       <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                         <Gauge className="size-5" aria-hidden="true" />
                       </span>
@@ -686,9 +725,6 @@ export default function StudentLearningOnboarding() {
                             ?.label ?? "Non renseigné"}
                         </dd>
                       </div>
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                        <Check className="size-4" aria-hidden="true" />
-                      </span>
                     </div>
                     {context.availableFormations
                       .flatMap((item) =>
@@ -697,7 +733,7 @@ export default function StudentLearningOnboarding() {
                       .map((module) => (
                         <div
                           key={module.id}
-                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4"
+                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4"
                         >
                           <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                             <GraduationCap
@@ -715,12 +751,9 @@ export default function StudentLearningOnboarding() {
                               )?.label ?? "Non renseigné"}
                             </dd>
                           </div>
-                          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                            <Check className="size-4" aria-hidden="true" />
-                          </span>
                         </div>
                       ))}
-                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
+                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4 sm:col-span-2">
                       <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
                         <Shapes className="size-5" aria-hidden="true" />
                       </span>
@@ -743,15 +776,12 @@ export default function StudentLearningOnboarding() {
                             ))}
                         </dd>
                       </div>
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
-                        <Check className="size-4" aria-hidden="true" />
-                      </span>
                     </div>
                   </dl>
                 </div>
               ) : null}
             </OnboardingProgressPanel>
-          </motion.div>
+          </motion.form>
         )}
       </section>
     </LayoutGroup>

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import SearchResultIndice from "./search-result-indice";
 import type { SearchResultsData } from "./search-result.types";
+import { formatTitle } from "../../utils/helpers/text-helpers";
 
 const SearchResults: FC<{ data: SearchResultsData }> = ({ data }) => {
   return (
@@ -8,7 +9,7 @@ const SearchResults: FC<{ data: SearchResultsData }> = ({ data }) => {
       {Object.entries(data).map(([resultTitle, searchResult]) => (
         <div key={resultTitle}>
           <h1 className="first-letter:uppercase font-bold text-xl">
-            {resultTitle}
+            {formatTitle(resultTitle)}
           </h1>
           <SearchResultIndice searchResult={searchResult.hits.hits} />
         </div>

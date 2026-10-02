@@ -4,24 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { lessonApi } from "../../../../api/lesson.api";
 import { useParams } from "react-router";
 import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
-import { regexGeneric } from "../../../../../../config/constantes";
-import { z } from "zod";
+import { imageSchema, type ImageFormValues } from "../../../../media.schema";
+import { useFormField } from "../../../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../../../components/form/form-errors";
+import { getApiErrorMessage } from "../../../../../../utils/helpers/api-error-message";
 import toast from "react-hot-toast";
 import type SuccessWithMessage from "../../../../../../../src/utils/interfaces/success-with-message";
-
-const imageActivitySchema = z.object({
-  title: z
-    .string()
-    .min(1, "Le titre est obligatoire")
-    .regex(regexGeneric, {
-      message: "Le titre contient des caractères non autorisés",
-    }),
-  description: z.string().optional(),
-});
-
-type ImageActivityFormData = z.infer<typeof imageActivitySchema> & {
-  url?: string;
-};
 
 const useEditImageActivity = (
   activity: Activity | undefined,
@@ -31,6 +19,15 @@ const useEditImageActivity = (
   parentId?: number,
   onSaved?: () => void | Promise<void>,
 ) => {
+  const form = useForm<ImageFormValues>({
+    resolver: zodResolver(imageSchema),
+    defaultValues: {
+      title: activity?.title ?? "",
+      description: activity?.description ?? "",
+      file: null,
+      selectedImage: activity?.url ?? null,
+    },
+  });
   const {
     register,
     watch,
@@ -38,33 +35,28 @@ const useEditImageActivity = (
     formState: { errors },
     setValue,
     reset,
-  } = useForm<ImageActivityFormData>({
-    resolver: zodResolver(imageActivitySchema),
-    defaultValues: { title: "", description: "" },
-  });
+  } = form;
 
-  const [image, setImage] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useFormField(form, "file");
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { lessonId, resourceId } = useParams();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useFormField(form, "selectedImage");
 
-  const handleSubmit = rhfHandleSubmit((formValues) => {
-    if (!activity && !file && !selectedImage) {
-      toast.error("Veuillez sélectionner une image");
-      return;
-    }
-    const dataToSend: Record<string, unknown> = { ...formValues };
-    if (!file && selectedImage) {
-      dataToSend.url = selectedImage;
-    }
+  const handleSubmit = rhfHandleSubmit(async (formValues) => {
+    if (isLoading) return;
+    const dataToSend = {
+      title: formValues.title,
+      description: formValues.description,
+      ...(!formValues.file && formValues.selectedImage
+        ? { url: formValues.selectedImage }
+        : {}),
+    };
     const formData = new FormData();
     formData.append("data", JSON.stringify(dataToSend));
-    if (file) {
-      formData.append("image", file);
+    if (formValues.file) {
+      formData.append("image", formValues.file);
     }
     if (onSubmit) onSubmit(formData);
     else {
@@ -76,7 +68,7 @@ const useEditImageActivity = (
         toast.error("Impossible d'identifier le parent de l'image.");
         return;
       }
-      lessonApi.mutations
+      await lessonApi.mutations
         .upsertImageActivity(id, parent, formData, activity ? "put" : "post")
         .then(async (data: SuccessWithMessage) => {
           if (data.success) {
@@ -85,52 +77,34 @@ const useEditImageActivity = (
             else onCancel(false);
           }
         })
-        .catch((err: any) => {
-          setError(
-            err.response?.data?.message ||
-              err.message ||
-              "Une erreur est survenue"
-          );
-        })
+        .catch((err: unknown) =>
+          toast.error(getApiErrorMessage(err, "Une erreur est survenue")),
+        )
         .finally(() => setIsLoading(false));
     }
-  });
+  }, showFormErrors);
 
   useEffect(() => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageString = reader.result as string;
-        setImage(imageString);
-        setSelectedImage(null);
-      };
-      reader.readAsDataURL(file);
-    }
-  }, [file]);
-
-  useEffect(() => {
-    if (activity) {
-      setValue("title", activity.title ?? "");
-      setValue("description", activity.description ?? "");
-    }
-  }, [activity, setValue]);
+    reset({
+      title: activity?.title ?? "",
+      description: activity?.description ?? "",
+      file: null,
+      selectedImage: activity?.url ?? null,
+    });
+  }, [activity, reset]);
 
   useEffect(() => {
     const ecouteur = new BroadcastChannel("clipboardChannel");
 
     const handleMessage = (event: MessageEvent) => {
+      if (typeof event.data !== "string") return;
       setSelectedImage(event.data);
       setFile(null);
-      setImage(null);
       setShowDialog(false);
     };
     ecouteur.addEventListener("message", handleMessage);
     return () => ecouteur.close();
-  }, []);
-
-  useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
+  }, [setSelectedImage, setFile]);
 
   return {
     register,
@@ -138,8 +112,6 @@ const useEditImageActivity = (
     handleSubmit,
     errors,
     setValue,
-    image,
-    setImage,
     file,
     isLoading,
     reset,

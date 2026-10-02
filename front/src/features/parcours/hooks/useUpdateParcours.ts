@@ -14,15 +14,20 @@ export function useUpdateParcours(id: number) {
   return useMutation({
     mutationFn: (payload: UpdateParcoursPayload) =>
       parcoursApi.mutations.updateParcours(id, payload),
-    onSuccess: (response: UpdateParcoursResponse) => {
+    onSuccess: async (response: UpdateParcoursResponse, payload) => {
       queryClient.setQueryData<Parcours>(parcoursKeys.detail(id), (current) =>
         current ? { ...current, ...response.parcours } : current,
       );
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         predicate: (query) =>
           query.queryKey[0] === parcoursKeys.all[0] &&
           typeof query.queryKey[1] === "object",
       });
+      if (payload.contactIds !== undefined) {
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(id),
+        });
+      }
     },
   });
 }

@@ -2,7 +2,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type User from "../../../../../../utils/interfaces/user";
+import type { CsvUserRow as User } from "../../../../../user/csv-user.schema";
 import CsvImportUser from "./csv-import.component";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean })

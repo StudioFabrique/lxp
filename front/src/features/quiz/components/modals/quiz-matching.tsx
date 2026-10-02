@@ -1,3 +1,4 @@
+import { isQuizPairs } from "../../utils/map-external-quiz";
 import { useRef, useState } from "react";
 import { GripVertical } from "lucide-react";
 import { Pair, Quiz, UserAnswer } from "../../interfaces/quiz";
@@ -23,7 +24,9 @@ const shuffledPositions = (length: number) => {
 };
 
 const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
-  const [positions, setPositions] = useState(() => shuffledPositions(quiz.data.pairs.length));
+  const validPairs = isQuizPairs(quiz.data?.pairs);
+  const pairs = validPairs ? quiz.data.pairs : [];
+  const [positions, setPositions] = useState(() => shuffledPositions(pairs.length));
   const [selected, setSelected] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState<number | null>(null);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -47,28 +50,38 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
   };
 
   const handleValidate = () => {
+    if (!validPairs) return;
     const answers = Object.fromEntries(
-      positions.map((position, index) => [index, quiz.data.pairs[position].right]),
+      positions.map((position, index) => [index, pairs[position].right]),
     ) as Record<number, string>;
-    const isCorrect = quiz.data.pairs.every(
+    const isCorrect = pairs.every(
       (pair: Pair, index: number) => answers[index] === pair.right,
     );
     onAnswer(isCorrect, { type: "matching", answers });
     setSelected(null);
   };
 
+  if (!validPairs) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p role="alert">Cette question est incomplète. Vous pouvez la signaler.</p>
+        <QuizModalButtons isValid={false} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-base-content/70">Glissez les réponses pour les échanger, ou sélectionnez-en deux.</p>
       <div className="flex flex-col gap-2">
-        {quiz.data.pairs.map((pair: Pair, index: number) => (
+        {pairs.map((pair: Pair, index: number) => (
           <div key={index} className="grid grid-cols-2 items-stretch gap-3 rounded-box border border-base-300 bg-base-200 p-2.5">
             <div className="flex min-w-0 items-center font-medium break-words">{pair.left}</div>
             <button
               type="button"
               draggable={!isAnswered}
               disabled={isAnswered}
-              aria-label={`Réponse associée à ${pair.left} : ${quiz.data.pairs[positions[index]].right}. Sélectionner pour échanger.`}
+              aria-label={`Réponse associée à ${pair.left} : ${pairs[positions[index]].right}. Sélectionner pour échanger.`}
               aria-pressed={selected === index}
               onClick={() => handleSelect(index)}
               onDragStart={(event) => {
@@ -92,18 +105,18 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
               }}
               onDragEnd={() => { dragging.current = null; setDraggingIndex(null); setDragOver(null); }}
               className={cn(
-                "btn btn-outline btn-secondary h-auto min-h-12 w-full justify-start gap-2 normal-case text-left whitespace-normal break-words touch-manipulation",
-                selected === index && "btn-primary",
+                "btn h-auto min-h-12 w-full justify-start gap-2 normal-case text-left whitespace-normal break-words touch-manipulation",
+                selected === index ? "btn-primary" : "btn-outline btn-primary",
                 dragOver === index && draggingIndex !== index && "ring-2 ring-primary ring-offset-2 ring-offset-base-100",
               )}
             >
               <GripVertical size={18} className="shrink-0 opacity-60" aria-hidden="true" />
-              <span className="min-w-0">{quiz.data.pairs[positions[index]].right}</span>
+              <span className="min-w-0">{pairs[positions[index]].right}</span>
             </button>
           </div>
         ))}
       </div>
-      {(!isAnswered || nextAction) && <QuizModalButtons isValid={positions.length === quiz.data.pairs.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />}
+      <QuizModalButtons isAnswered={isAnswered} isValid={positions.length === pairs.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />
     </div>
   );
 };

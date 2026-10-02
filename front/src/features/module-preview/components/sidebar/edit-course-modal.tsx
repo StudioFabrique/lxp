@@ -1,6 +1,10 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { courseDetailsSchema } from "../../assignment.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useQuery } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
-import { FormEvent, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { modulePreviewApi } from "../../api/module-preview.api";
@@ -28,30 +32,36 @@ export default function EditCourseModal({
   onClose,
   onSubmit,
 }: Props) {
-  const [title, setTitle] = useState(course.title);
-  const [description, setDescription] = useState(course.description ?? "");
-  const [visibility, setVisibility] = useState(course.visibility ?? true);
-  const [selectedTagIds, setSelectedTagIds] = useState(
-    (course.tags ?? []).map((tag) => tag.id),
-  );
-  const [assignment, setAssignment] = useState(() =>
-    course.assignment
-      ? {
-          required: true,
-          dueAt: assignmentDateForInput(course.assignment.dueAt),
-          maxScore: course.assignment.maxScore,
-          rubricVisible: course.assignment.rubricVisible,
-          instructions: course.assignment.instructions,
-          criteria: course.assignment.criteria.map((criterion) => ({
-            key: String(criterion.id),
-            label: criterion.label,
-            weight: criterion.weight,
-          })),
-          files: [],
-          removeFileIds: [],
-        }
-      : emptyAssignmentForm(),
-  );
+  const form = useForm({
+    resolver: zodResolver(courseDetailsSchema),
+    defaultValues: {
+      title: course.title,
+      description: course.description ?? "",
+      visibility: course.visibility ?? true,
+      tagIds: (course.tags ?? []).map((tag) => tag.id),
+      assignment: course.assignment
+        ? {
+            required: true,
+            dueAt: assignmentDateForInput(course.assignment.dueAt),
+            maxScore: course.assignment.maxScore,
+            rubricVisible: course.assignment.rubricVisible,
+            instructions: course.assignment.instructions,
+            criteria: course.assignment.criteria.map((criterion) => ({
+              key: String(criterion.id),
+              label: criterion.label,
+              weight: criterion.weight,
+            })),
+            files: [],
+            removeFileIds: [],
+          }
+        : emptyAssignmentForm(),
+    },
+  });
+  const [title, setTitle] = useFormField(form, "title");
+  const [description, setDescription] = useFormField(form, "description");
+  const [visibility, setVisibility] = useFormField(form, "visibility");
+  const [selectedTagIds, setSelectedTagIds] = useFormField(form, "tagIds");
+  const [assignment, setAssignment] = useFormField(form, "assignment");
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags", "course-edit"],
@@ -70,18 +80,11 @@ export default function EditCourseModal({
     );
   };
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!title.trim() || selectedTagIds.length === 0) return;
-    const success = await onSubmit({
-      title: title.trim(),
-      description: description.trim(),
-      visibility,
-      tagIds: selectedTagIds,
-      assignment,
-    });
+  const handleSubmit = form.handleSubmit(async (values) => {
+    if (isSubmitting) return;
+    const success = await onSubmit(values);
     if (success) onClose();
-  };
+  }, showFormErrors);
 
   return createPortal(
     <dialog className="modal modal-open z-[100]">
@@ -89,7 +92,9 @@ export default function EditCourseModal({
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
             <h3 className="text-lg font-bold">Modifier le cours</h3>
-            <p className="text-sm text-base-content/60 first-letter:uppercase">{course.title}</p>
+            <p className="text-sm text-base-content/60 first-letter:uppercase">
+              {course.title}
+            </p>
           </div>
           <button
             type="button"

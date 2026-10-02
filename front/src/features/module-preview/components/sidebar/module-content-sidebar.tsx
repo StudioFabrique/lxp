@@ -126,6 +126,7 @@ const ModuleContentSidebar = ({
             </PermissionGuard>
           )}
           <ActivityList
+            showUnreadIndicators={location.pathname.startsWith("/student/")}
             key={selectedLesson?.id}
             lessonId={selectedLesson?.id}
             isReorderingActivities={isReorderingActivities}
@@ -144,7 +145,7 @@ const ModuleContentSidebar = ({
                 mode: "activity_type_selection",
               })
             }
-            isLoading={store.isLoading}
+            isLoading={Boolean(state.isSelectedLessonLoading)}
           />
         </SidebarCoursesList>
       </div>

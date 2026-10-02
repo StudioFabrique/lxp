@@ -1,22 +1,19 @@
 import { useContext, useState } from "react";
-import { useRouteError, isRouteErrorResponse, Link } from "react-router";
+import { useRouteError, isRouteErrorResponse } from "react-router";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { Copy, Check, AlertTriangle } from "lucide-react";
 
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 
-const RouterErrorBoundary = () => {
-  const error = useRouteError();
+export const AppErrorPage = ({ error }: { error: unknown }) => {
   const { theme } = useContext(ThemeContext);
   const [isCopied, setIsCopied] = useState(false);
-
-  console.error("Erreur de routage capturée :", error);
 
   let statusCode = "";
   let title = "Une erreur inattendue est survenue";
   let message =
-    "Nous sommes désolés, mais un problème technique empêche l'affichage de cette page.";
+    "Nous sommes désolés, un problème technique empêche l'affichage de cette page.";
 
   if (isRouteErrorResponse(error)) {
     statusCode = error.status.toString();
@@ -36,8 +33,6 @@ const RouterErrorBoundary = () => {
       message =
         "Le service est temporairement indisponible. Veuillez réessayer ultérieurement.";
     }
-  } else if (error instanceof Error) {
-    message = error.message;
   }
 
   // Préparation de la chaîne de caractères technique pour l'affichage et la copie
@@ -45,7 +40,7 @@ const RouterErrorBoundary = () => {
     ? `[${error.status}] ${error.statusText}\n${JSON.stringify(error.data, null, 2)}`
     : error instanceof Error
       ? error.stack || error.message
-      : JSON.stringify(error, null, 2);
+      : (JSON.stringify(error, null, 2) ?? String(error));
 
   // Fonction de copie dans le presse-papiers
   const handleCopy = async () => {
@@ -133,17 +128,19 @@ const RouterErrorBoundary = () => {
             >
               Actualiser la page
             </button>
-            <Link
-              to="/"
+            <a
+              href="/"
               className="btn btn-primary btn-sm h-10 w-full sm:w-auto sm:px-6"
             >
               Retour à l'accueil
-            </Link>
+            </a>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const RouterErrorBoundary = () => <AppErrorPage error={useRouteError()} />;
 
 export default RouterErrorBoundary;

@@ -1,3 +1,5 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { passwordCreationSchema } from "../auth.schema";
 import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { ThemeContext } from "../../../../src/store/ThemeProvider";
@@ -35,6 +37,7 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
     handleSubmit,
     formState: { errors },
   } = useForm<PasswordUpdateValues>({
+    resolver: zodResolver(passwordCreationSchema),
     defaultValues: { password: "", confirmPassword: "" },
   });
 

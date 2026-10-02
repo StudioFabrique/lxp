@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import {
   FieldError,
   FieldPath,
@@ -27,9 +27,10 @@ const FormPasswordInput = <TFieldValues extends FieldValues,>({
 }: FormPasswordInputProps<TFieldValues>) => {
   const [visible, setVisible] = useState(false);
 
+  const fieldId = useId();
   return (
     <div className="flex flex-col gap-y-2 w-full">
-      <label htmlFor={name} className="text-sm font-bold">
+      <label htmlFor={fieldId} className="text-sm font-bold">
         {label}
       </label>
       <div className="relative">
@@ -37,7 +38,9 @@ const FormPasswordInput = <TFieldValues extends FieldValues,>({
           {...register(name)}
           className={cn("w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60", error && "input-error")}
           type={visible ? "text" : "password"}
-          id={name}
+          id={fieldId}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${fieldId}-error` : undefined}
           placeholder={placeholder}
           disabled={disabled}
         />
@@ -45,12 +48,13 @@ const FormPasswordInput = <TFieldValues extends FieldValues,>({
           type="button"
           onClick={() => setVisible((prev) => !prev)}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-base-content"
-          tabIndex={-1}
+          disabled={disabled}
+          aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
         >
           {visible ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
-      {error && <p className="text-error text-xs">{error.message}</p>}
+      {error && <p id={`${fieldId}-error`} role="alert" className="text-error text-xs">{error.message}</p>}
     </div>
   );
 };

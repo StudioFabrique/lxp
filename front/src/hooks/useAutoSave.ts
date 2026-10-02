@@ -1,33 +1,33 @@
 import { useEffect, useRef } from "react";
-import { UseFormWatch } from "react-hook-form";
+import type { FieldValues, UseFormWatch } from "react-hook-form";
 import { autoSubmitTimer } from "../config/auto-submit-timer";
 
-const useAutoSave = (
-  watch: UseFormWatch<any>,
-  onSave: () => void,
-) => {
-  const isDirty = useRef(false);
-
+export default function useAutoSave<T extends FieldValues>(watch: UseFormWatch<T>, onSave: () => Promise<void>, enabled = true) {
+  const revision = useRef(0);
+  const savedRevision = useRef(0);
+  const running = useRef(false);
+  const saveRef = useRef(onSave);
+  saveRef.current = onSave;
   useEffect(() => {
-    const subscription = watch(() => {
-      isDirty.current = true;
+    const subscription = watch((_values, event) => {
+      if (event.name) revision.current += 1;
     });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [watch]);
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isDirty.current) {
-        isDirty.current = false;
-        onSave();
-      }
+    if (!enabled) return;
+    let active = true;
+    const timer = setInterval(async () => {
+      if (running.current || revision.current === savedRevision.current) return;
+      const current = revision.current;
+      running.current = true;
+      try {
+        await saveRef.current();
+        if (active) savedRevision.current = current;
+      } catch {
+        // La modification reste en attente pour une nouvelle tentative.
+      } finally { running.current = false; }
     }, autoSubmitTimer);
-
-    return () => clearInterval(interval);
-  }, [onSave]);
-};
-
-export default useAutoSave;
+    return () => { active = false; clearInterval(timer); };
+  }, [enabled]);
+}

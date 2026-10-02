@@ -1,8 +1,8 @@
 const ModuleContentSkeleton = () => {
   return (
-    <div className="px-8 p-4">
+    <div>
       {/* Header Skeleton */}
-      <div className="w-full h-48 relative skeleton bg-base-200 rounded-lg">
+      <div className="w-full h-80 relative skeleton bg-base-200 rounded-lg">
         <div className="absolute bottom-5 left-5 space-y-2">
           <div className="h-4 w-32 skeleton bg-base-300" />
           <div className="h-6 w-64 skeleton bg-base-300" />

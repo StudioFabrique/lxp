@@ -1,130 +1,84 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-
-import { formatDateToYYYYMMDD } from "../../../../src/utils/helpers/convert-date";
+import { useEffect, useId } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { formatDateToYYYYMMDD } from "../../../utils/helpers/convert-date";
 import DatePicker from "../date-picker/date-picker";
-import useInput from "../../../hooks/useInput";
-import { regexGeneric } from "../../../config/constantes";
-import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import { dateRangeSchema } from "./dates.schema";
+import { useFormField } from "../../form/useFormField";
+import useAutoSave from "../../../hooks/useAutoSave";
 
+type Dates = z.infer<typeof dateRangeSchema>;
 type Props = {
-  onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
+  onSubmitDates: (dates: Dates) => void | Promise<void>;
   label?: string;
   startDateProp?: string;
   endDateProp?: string;
   disabled?: boolean;
 };
-
-const DatesSelecter: FC<Props> = ({
+const defaults = (start: string, end: string): Dates => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const fallback = formatDateToYYYYMMDD(tomorrow);
+  return {
+    startDate: start ? formatDateToYYYYMMDD(new Date(start)) : fallback,
+    endDate: end ? formatDateToYYYYMMDD(new Date(end)) : fallback,
+  };
+};
+export default function DatesSelecter({
   startDateProp = "",
   endDateProp = "",
   label = "",
   onSubmitDates,
   disabled = false,
-}) => {
-  const tommorowDate = new Date(new Date().setDate(new Date().getDate() + 1));
-
-  const { value: startDate } = useInput(
-    (value) => regexGeneric.test(value),
-    startDateProp
-      ? formatDateToYYYYMMDD(new Date(startDateProp))
-      : formatDateToYYYYMMDD(tommorowDate),
-  );
-  const { value: endDate } = useInput(
-    (value) => regexGeneric.test(value),
-    endDateProp
-      ? formatDateToYYYYMMDD(new Date(endDateProp))
-      : formatDateToYYYYMMDD(tommorowDate),
-  );
-  const [error, setError] = useState(false);
-  const [submit, setSubmit] = useState<boolean>(false);
-
-  const dates = useMemo(() => {
-    return {
-      startDate: startDate.value,
-      endDate: endDate.value,
-    };
-  }, [startDate.value, endDate.value]);
-
+}: Props) {
+  const id = useId();
+  const form = useForm<Dates>({
+    resolver: zodResolver(dateRangeSchema),
+    defaultValues: defaults(startDateProp, endDateProp),
+    mode: "onChange",
+  });
+  const [startDate, setStartDate] = useFormField(form, "startDate");
+  const [endDate, setEndDate] = useFormField(form, "endDate");
+  const {
+    reset,
+    formState: { errors, dirtyFields },
+  } = form;
+  void dirtyFields;
   useEffect(() => {
-    if (disabled) return;
-    const timer = setTimeout(() => {
-      if (submit) {
-        const sDate = new Date(startDate.value).getTime();
-        const eDate = new Date(endDate.value).getTime();
-
-        if (startDate.isValid && endDate.isValid) {
-          setError(false);
-          if (sDate < eDate) {
-            onSubmitDates(dates);
-            setSubmit(false);
-          } else {
-            setError(true);
-            setSubmit(false);
-          }
-        }
-      }
-    }, autoSubmitTimer);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [
-    dates,
-    startDate.isValid,
-    startDate.value,
-    submit,
-    endDate.isValid,
-    endDate.value,
-    onSubmitDates,
-    disabled,
-  ]);
-
-  const handleChangeStartDate = useCallback(
-    (value: string) => {
-      if (disabled) return;
-      startDate.datePicking(value);
-      setSubmit(true);
-    },
-    [disabled, startDate],
-  );
-
-  const handleChangeEndDate = useCallback(
-    (value: string) => {
-      if (disabled) return;
-      endDate.datePicking(value);
-      setSubmit(true);
-    },
-    [disabled, endDate],
-  );
+    reset(defaults(startDateProp, endDateProp), { keepDirtyValues: true });
+  }, [startDateProp, endDateProp, reset]);
+  const save = async () => {
+    if (!(await form.trigger())) throw new Error("Dates invalides");
+    await onSubmitDates(dateRangeSchema.parse(form.getValues()));
+  };
+  useAutoSave(form.watch, save, !disabled);
   return (
     <div className="flex flex-col gap-y-4">
       <h3 className="font-bold">{label}</h3>
-      <div className="flex flex-col gap-y-4">
-        <DatePicker
-          id="date1"
-          name="startingDate"
-          label="Début"
-          value={dates.startDate}
-          max={dates.endDate}
-          onChange={handleChangeStartDate}
-          disabled={disabled}
-        />
-        <DatePicker
-          id="date2"
-          name="endingDate"
-          label="Fin"
-          value={dates.endDate}
-          min={dates.startDate}
-          onChange={handleChangeEndDate}
-          disabled={disabled}
-        />
-      </div>
-      {error ? (
+      <DatePicker
+        id={`${id}-start`}
+        name="startDate"
+        label="Début"
+        value={startDate}
+        max={endDate}
+        onChange={setStartDate}
+        disabled={disabled}
+      />
+      <DatePicker
+        id={`${id}-end`}
+        name="endDate"
+        label="Fin"
+        value={endDate}
+        min={startDate}
+        onChange={setEndDate}
+        disabled={disabled}
+      />
+      {(errors.startDate || errors.endDate) && (
         <p className="text-error text-xs mt-4 text-center font-bold">
-          La date de début doit être inférieure à la date de fin
+          {errors.startDate?.message ?? errors.endDate?.message}
         </p>
-      ) : null}
+      )}
     </div>
   );
-};
-
-export default DatesSelecter;
+}

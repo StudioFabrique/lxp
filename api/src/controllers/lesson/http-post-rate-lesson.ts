@@ -15,9 +15,9 @@ export default async function httpPostRateLesson(
 
   try {
     const { lessonId } = req.params;
-    const { rate }: { rate: number } = req.body;
+    const { rate, comment }: { rate: number; comment?: string } = req.body;
 
-    const response = await postRateLesson(+lessonId, userId, rate);
+    const response = await postRateLesson(+lessonId, userId, rate, comment);
 
     if (!response) {
       return res.status(404).json({

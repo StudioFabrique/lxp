@@ -13,7 +13,18 @@ type StudentsQuery = {
   excludedUserIds: string[];
 };
 
+export type StudentGroupSummary = {
+  _id: string;
+  name: string;
+  formation: string;
+  nbStudents: number;
+};
+
 const queries = {
+  getStudentGroups: async (): Promise<StudentGroupSummary[]> => {
+    const res = await apiClient.get<{ data: StudentGroupSummary[] }>("/group/student");
+    return res.data.data;
+  },
   getById: async (id: string): Promise<Group> => {
     const res = await apiClient.get<{ data: Group }>(`/group/${id}`);
     return res.data.data;

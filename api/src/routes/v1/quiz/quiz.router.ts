@@ -2,12 +2,14 @@ import { Router } from "express";
 import httpPostRequestRandomQuiz from "../../../controllers/quiz/http-post-request-random-quiz.ts";
 import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-ending-course-quiz-stream.ts";
 import httpPostPreliminaryQuizStream from "../../../controllers/quiz/http-post-preliminary-quiz-stream.ts";
+import httpGetPreliminaryQuizProgress from "../../../controllers/quiz/http-get-preliminary-quiz-progress.ts";
 import {
   endingCourseQuizStreamValidator,
   finishQuizAttemptValidator,
   postQuizAnswerValidator,
   postQuizAttemptValidator,
   preliminaryQuizStreamValidator,
+  preliminaryQuizProgressValidator,
   randomQuizValidator,
   reportQuizQuestionValidator,
 } from "./quiz-validator.ts";
@@ -46,6 +48,13 @@ quizRouter.post(
   checkPermissions("quiz", "write"),
   preliminaryQuizStreamValidator,
   httpPostPreliminaryQuizStream,
+);
+
+quizRouter.get(
+  "/preliminary/progress/:moduleId",
+  checkPermissions("quiz", "read"),
+  preliminaryQuizProgressValidator,
+  httpGetPreliminaryQuizProgress,
 );
 
 quizRouter.post(
