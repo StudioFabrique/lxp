@@ -72,7 +72,7 @@ const AdminDashboard = () => {
           parcours={parcours}
           isLoading={isParcoursLoading}
           showQuickActions={!isTeacher}
-          sideContent={isTeacher ? <GroupAiAlerts /> : null}
+          sideContent={isTeacher && parcours.some((formation) => formation.parcours.length > 0) ? <GroupAiAlerts /> : null}
         />
         <LastModules modules={modules} isLoading={isModulesLoading} />
         <article className="flex w-full flex-col gap-6 xl:flex-row">
