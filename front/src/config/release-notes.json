@@ -1,5 +1,33 @@
 [
   {
+    "version": "0.9.3",
+    "status": "Beta",
+    "branch": "release/0.9.3",
+    "summary": "Améliorations UI et fonctionnalités",
+    "changes": [
+      {
+        "title": "Onboarding & groupes",
+        "description": "Afficher groupes, présenter les apprenants lors de l'onboarding équipe pédagogique",
+        "icon": "graduation"
+      },
+      {
+        "title": "Dates, CSV & images",
+        "description": "Harmoniser validation ainsi que l'importation CSV et images",
+        "icon": "layout"
+      },
+      {
+        "title": "Évaluation & quiz",
+        "description": "Enrichir évaluation, fiabiliser quiz et navigation",
+        "icon": "shield"
+      },
+      {
+        "title": "Fiabiliser parcours",
+        "description": "Fiabiliser parcours, améliorer états interface",
+        "icon": "shield"
+      }
+    ]
+  },
+  {
     "version": "0.9.2",
     "status": "Beta",
     "branch": "release/0.9.2",
@@ -103,34 +131,6 @@
         "title": "Profil apprenant",
         "icon": "user",
         "description": "Un accueil guidé facilite la découverte du profil d’apprentissage."
-      }
-    ]
-  },
-  {
-    "version": "0.8.1",
-    "status": "Beta",
-    "commit": "7b40397b42c6c9177d5b723076fbdaaf39756d5f",
-    "summary": "Le profil et l’accès aux comptes deviennent plus clairs.",
-    "changes": [
-      {
-        "title": "Profil réorganisé",
-        "icon": "user",
-        "description": "Un menu donne accès aux pages du profil."
-      },
-      {
-        "title": "Comptes sécurisés",
-        "icon": "shield",
-        "description": "L’activation et la réinitialisation du mot de passe sont fiabilisées."
-      },
-      {
-        "title": "Rôles corrigés",
-        "icon": "users",
-        "description": "Changer un rôle ne crée plus de profil apprenant en double."
-      },
-      {
-        "title": "Calendrier cohérent",
-        "icon": "calendar",
-        "description": "Le calendrier suit le thème actif."
       }
     ]
   }
