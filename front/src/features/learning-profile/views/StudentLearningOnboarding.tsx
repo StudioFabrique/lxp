@@ -18,7 +18,7 @@ import {
   Shapes,
   UsersRound,
 } from "lucide-react";
-import { LayoutGroup, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -501,21 +501,38 @@ export default function StudentLearningOnboarding() {
         ) : (
           <motion.form
             onSubmit={continueToNext}
-            className="flex min-h-0 flex-1 flex-col gap-3"
+            className="flex min-h-0 flex-1 flex-col"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.45 }}
           >
-            {parcours ? (
-              <header className="px-5 py-3 pr-24 sm:px-6 sm:pr-28">
-                <h2 className="mt-1 text-2xl font-extrabold leading-tight text-base-content first-letter:uppercase sm:text-3xl">
-                  {capitalizeTitle(parcours.title)}
-                </h2>
-                <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
-                  {capitalizeTitle(formation.title)}
-                </p>
-              </header>
-            ) : null}
+            <AnimatePresence initial={false}>
+              {parcours && moduleNumber === 0 ? (
+                <motion.header
+                  key="course-heading"
+                  className="shrink-0 overflow-hidden"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{
+                    height: {
+                      duration: reduceMotion ? 0 : 0.5,
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                    opacity: { duration: reduceMotion ? 0 : 0.2 },
+                  }}
+                >
+                  <div className="px-5 pt-3 pb-6 pr-24 sm:px-6 sm:pr-28">
+                    <h2 className="mt-1 text-2xl font-extrabold leading-tight text-base-content first-letter:uppercase sm:text-3xl">
+                      {capitalizeTitle(parcours.title)}
+                    </h2>
+                    <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
+                      {capitalizeTitle(formation.title)}
+                    </p>
+                  </div>
+                </motion.header>
+              ) : null}
+            </AnimatePresence>
 
             <OnboardingProgressPanel
               contentKey={step.key}

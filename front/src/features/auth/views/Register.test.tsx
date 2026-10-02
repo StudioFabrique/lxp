@@ -26,6 +26,7 @@ beforeEach(() => {
   document.body.appendChild(container);
   root = createRoot(container);
   vi.mocked(accountApi.checkInvitation).mockReset();
+  vi.mocked(accountApi.activateAccount).mockReset();
 });
 
 afterEach(() => {
@@ -44,6 +45,9 @@ const render = async () => {
         </Routes>
       </MemoryRouter>,
     );
+  });
+  await vi.waitFor(() => {
+    expect(container.querySelector('[aria-label="Vérification du lien"]')).toBeNull();
   });
 };
 
@@ -81,6 +85,41 @@ it("ne propose pas le renvoi pour un lien invalide", async () => {
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
 });
 
+it("termine la progression et garde la confirmation dans le panneau après activation", async () => {
+  vi.mocked(accountApi.checkInvitation).mockResolvedValue({
+    success: true,
+    message: "Lien valide.",
+    email: "invitee@example.fr",
+  });
+  vi.mocked(accountApi.activateAccount).mockResolvedValue({
+    success: true,
+    message: "Compte activé.",
+  });
+  await render();
+
+  for (const input of container.querySelectorAll<HTMLInputElement>('input[type="password"]')) {
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, "Password@1234");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+  await act(async () => {
+    container.querySelector<HTMLButtonElement>('button[type="submit"]')?.click();
+  });
+
+  expect(accountApi.activateAccount).toHaveBeenCalledWith("lien", "Password@1234");
+  expect(container.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow")).toBe("100");
+  await vi.waitFor(() => {
+    expect(container.textContent).toContain("Votre compte a été activé avec succès.");
+  });
+  const panel = container.querySelector('[role="progressbar"]')?.parentElement;
+  expect(panel?.querySelector(".lucide-mail-check")).not.toBeNull();
+  const login = panel?.querySelector<HTMLAnchorElement>('a[href="/login"]');
+  expect(login?.textContent).toContain("Retour à la page de connexion");
+  await act(async () => login?.click());
+  expect(container.textContent).toBe("connexion");
+});
+
 it("affiche le formulaire lorsque le lien est valide", async () => {
   vi.mocked(accountApi.checkInvitation).mockResolvedValue({
     success: true,
@@ -92,4 +131,6 @@ it("affiche le formulaire lorsque le lien est valide", async () => {
   expect(container.querySelectorAll('input[type="password"]')).toHaveLength(2);
   expect(container.querySelector("header strong")?.textContent).toBe("invitee@example.fr");
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
+  expect(container.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow")).toBe("50");
+  expect(container.querySelector('button[type="submit"]')?.getAttribute("form")).toBe("account-activation-form");
 });

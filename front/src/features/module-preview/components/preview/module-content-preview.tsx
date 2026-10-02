@@ -8,7 +8,7 @@ import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeho
 import StudentActivityNavigation from "./student-activity-navigation";
 import type { ModuleContentStore } from "../../hooks/use-module-content";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const ModuleContentPreview = ({
   store,
@@ -42,7 +42,48 @@ const ModuleContentPreview = ({
   } = state;
   const contentRef = useRef<HTMLDivElement>(null);
   const [previousContentHeight, setPreviousContentHeight] = useState<number>();
+  const [fadeScrollButtonsOnly, setFadeScrollButtonsOnly] = useState(false);
+  const [hideScrollButtons, setHideScrollButtons] = useState(false);
   const isActivityContentLoading = store.isActivityContentLoading;
+
+  useEffect(() => {
+    if (!fadeScrollButtonsOnly || isActivityContentLoading) return;
+
+    const scrollTarget = document.getElementById("main-scroll-container") ?? window;
+    const finishAutomaticScroll = () => {
+      setHideScrollButtons(false);
+      // Réafficher les boutons en fondu avant de rétablir l’animation élastique.
+      timeout = window.setTimeout(() => setFadeScrollButtonsOnly(false), 250);
+    };
+    // Garder les boutons masqués pendant le chargement et le scroll automatique.
+    let timeout = window.setTimeout(finishAutomaticScroll, 1500);
+    const onScroll = () => {
+      setHideScrollButtons(true);
+      window.clearTimeout(timeout);
+      timeout = window.setTimeout(finishAutomaticScroll, 200);
+    };
+    scrollTarget.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(timeout);
+      scrollTarget.removeEventListener("scroll", onScroll);
+    };
+  }, [fadeScrollButtonsOnly, isActivityContentLoading, selectedActivity?.id]);
+
+  const handleNextActivity = () => {
+    setFadeScrollButtonsOnly(true);
+    setHideScrollButtons(true);
+    if (canNavigateAsAdmin) {
+      dispatch({ type: "go_to_next_activity" });
+    } else {
+      smartQuizState.handleNextActivity();
+    }
+  };
+
+  const handlePreviousActivity = () => {
+    setFadeScrollButtonsOnly(false);
+    setHideScrollButtons(false);
+    dispatch({ type: "go_to_previous_activity" });
+  };
 
   useLayoutEffect(() => {
     const content = contentRef.current;
@@ -165,6 +206,8 @@ const ModuleContentPreview = ({
         selectedLesson={selectedLesson}
         showDeleteModal={modalVisibility === "deletionModal"}
         isLoading={isLoading}
+        fadeScrollButtonsOnly={fadeScrollButtonsOnly}
+        hideScrollButtons={hideScrollButtons}
         onOpenDeleteModal={() =>
           dispatch({
             type: "set_modal_visibility",
@@ -199,10 +242,8 @@ const ModuleContentPreview = ({
               isLastActivitySelected={computed.isLastActivitySelected}
               isLastLessonOfCurrentCourse={computed.isLastLessonOfCurrentCourse}
               hasNextLesson={computed.hasNextLesson}
-              onPreviousActivity={() =>
-                dispatch({ type: "go_to_previous_activity" })
-              }
-              onNextActivity={() => dispatch({ type: "go_to_next_activity" })}
+              onPreviousActivity={handlePreviousActivity}
+              onNextActivity={handleNextActivity}
               onNextLesson={lessonActions.nextLesson}
             />
           ) : (
@@ -213,10 +254,8 @@ const ModuleContentPreview = ({
               isFirstActivitySelected={computed.isFirstActivitySelected}
               isLastActivitySelected={computed.isLastActivitySelected}
               isLastLessonSelected={computed.isLastLessonSelected}
-              onPreviousActivity={() =>
-                dispatch({ type: "go_to_previous_activity" })
-              }
-              onNextActivity={smartQuizState.handleNextActivity}
+              onPreviousActivity={handlePreviousActivity}
+              onNextActivity={handleNextActivity}
               onCompleteLesson={smartQuizState.handleCompleteLesson}
             >
               {quizButton}

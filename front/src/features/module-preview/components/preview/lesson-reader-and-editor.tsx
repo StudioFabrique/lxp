@@ -33,6 +33,8 @@ type Props = {
   iframeActivitySrc?: string;
   showDeleteModal: boolean;
   isLoading?: boolean;
+  fadeScrollButtonsOnly?: boolean;
+  hideScrollButtons?: boolean;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
   onEditIframeSrc: (src: string) => void;
@@ -67,6 +69,8 @@ const LessonReaderAndEditor = ({
   textActivityContent,
   showDeleteModal,
   isLoading,
+  fadeScrollButtonsOnly,
+  hideScrollButtons,
   onEditContent,
   onEditTitle,
   onEditIframeSrc,
@@ -187,6 +191,8 @@ const LessonReaderAndEditor = ({
               onCancel={mode === "write" ? onBack : onClose}
               enableSticky
               onStickyChange={setHeaderSticky}
+              fadeScrollButtonsOnly={fadeScrollButtonsOnly}
+              hideScrollButtons={hideScrollButtons}
             />
           ) : !hasOwnEditorHeader ? (
             <ActivityHeader
@@ -195,6 +201,8 @@ const LessonReaderAndEditor = ({
               className="font-semibold text-primary flex justify-between items-center mb-6"
               titleClassName="text-2xl font-bold first-letter:uppercase"
               enableSticky
+              fadeScrollButtonsOnly={fadeScrollButtonsOnly}
+              hideScrollButtons={hideScrollButtons}
             >
               {selectedActivity && canEdit && (
                 <ActivityActionsMenu

@@ -28,9 +28,10 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const isStaffOnboarding = pathname === "/staff/onboarding";
   const isOnboarding = isStudentOnboarding || isStaffOnboarding;
   const isInstanceSetup = pathname === "/instance-setup";
+  const isAccountActivation = pathname === "/register";
   const isAdminInit = pathname === "/init";
   const hasSetupLayout = isAdminInit || pathname === "/confirm-email" || setupStyle;
-  const isOnboardingLayout = isOnboarding || isInstanceSetup || hasSetupLayout;
+  const isOnboardingLayout = isOnboarding || isInstanceSetup || isAccountActivation || hasSetupLayout;
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
   const shouldLoadBranding = showOrganizationName || isOnboarding;
@@ -113,7 +114,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           <div
             className={cn("relative mx-auto flex h-full min-h-0 flex-col", isOnboarding
                 ? "w-full max-w-2xl"
-                : isInstanceSetup || hasSetupLayout
+                : isInstanceSetup || isAccountActivation || hasSetupLayout
                   ? "w-full max-w-xl"
                   : "w-100")}
           >

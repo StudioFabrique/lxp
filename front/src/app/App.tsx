@@ -12,6 +12,7 @@ import ErrorBoundary from "../components/wrappers/layouts/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 import { AbilityProvider } from "../rbac/AbilityProvider";
 import { VisualPreferencesProvider } from "../store/VisualPreferences";
+import NavigationFeedback from "../components/navigation/NavigationFeedback";
 
 function App() {
   useEffect(() => {
@@ -32,6 +33,7 @@ function App() {
               <AuthProvider>
                 <AbilityProvider>
                   <ErrorBoundary>
+                    <NavigationFeedback router={router} />
                     <RouterProvider router={router} />
                   </ErrorBoundary>
                 </AbilityProvider>

@@ -1,7 +1,8 @@
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { type ReactNode, useRef, useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import type { Activity } from "../../../../../utils/interfaces/activity";
 import { cn } from "../../../../../utils/cn";
@@ -24,6 +25,8 @@ type Props = {
   inputClassName?: string;
   enableSticky?: boolean;
   onStickyChange?: (isSticky: boolean) => void;
+  fadeScrollButtonsOnly?: boolean;
+  hideScrollButtons?: boolean;
 };
 
 const ActivityHeader = ({
@@ -44,8 +47,14 @@ const ActivityHeader = ({
   inputClassName,
   enableSticky = false,
   onStickyChange,
+  fadeScrollButtonsOnly = false,
+  hideScrollButtons = false,
 }: Props) => {
   const [isSticky, setIsSticky] = useState(false);
+  const [isAtPageBottom, setIsAtPageBottom] = useState(false);
+  const [isAtActivityTop, setIsAtActivityTop] = useState(true);
+  const reduceMotion = useReducedMotion();
+  const skipScaleAnimation = reduceMotion || fadeScrollButtonsOnly;
   const stickyMarkerRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -78,11 +87,57 @@ const ActivityHeader = ({
   };
 
   const handleScrollToTop = () => {
+    if (isAtActivityTop) {
+      const scrollContainer = document.getElementById("main-scroll-container");
+      (scrollContainer ?? window).scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     stickyMarkerRef.current?.parentElement?.scrollIntoView({
       block: "start",
       behavior: "smooth",
     });
   };
+
+  const handleScrollToBottom = () => {
+    const scrollContainer = document.getElementById("main-scroll-container");
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: scrollContainer.scrollHeight, behavior: "smooth" });
+      return;
+    }
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (!enableSticky) return;
+
+    const scrollContainer = document.getElementById("main-scroll-container");
+    const scrollTarget = scrollContainer ?? window;
+    const updateBottomPosition = () => {
+      const scrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY;
+      const viewportHeight = scrollContainer ? scrollContainer.clientHeight : window.innerHeight;
+      const contentHeight = scrollContainer ? scrollContainer.scrollHeight : document.documentElement.scrollHeight;
+      setIsAtPageBottom(scrollTop + viewportHeight >= contentHeight - 2);
+      const activityTop = stickyMarkerRef.current?.parentElement?.getBoundingClientRect().top;
+      const viewportTop = scrollContainer?.getBoundingClientRect().top ?? 0;
+      setIsAtActivityTop(activityTop === undefined || activityTop >= viewportTop - 2);
+    };
+
+    updateBottomPosition();
+    scrollTarget.addEventListener("scroll", updateBottomPosition, { passive: true });
+    window.addEventListener("resize", updateBottomPosition);
+
+    const resizeObserver = new ResizeObserver(updateBottomPosition);
+    resizeObserver.observe(scrollContainer ?? document.documentElement);
+    if (scrollContainer?.firstElementChild) {
+      resizeObserver.observe(scrollContainer.firstElementChild);
+    }
+
+    return () => {
+      scrollTarget.removeEventListener("scroll", updateBottomPosition);
+      window.removeEventListener("resize", updateBottomPosition);
+      resizeObserver.disconnect();
+    };
+  }, [enableSticky]);
 
   useEffect(() => {
     if (!enableSticky || !stickyMarkerRef.current) return;
@@ -110,16 +165,43 @@ const ActivityHeader = ({
 
   return (
     <>
-      {enableSticky && isSticky && createPortal(
-        <button
-          type="button"
-          aria-label="Revenir au début de l’activité"
-          title="Revenir au début de l’activité"
-          onClick={handleScrollToTop}
-          className="fixed top-6 right-9 z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-primary-content shadow-md transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-        >
-          <ArrowUp className="h-5 w-5" aria-hidden="true" />
-        </button>,
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence custom={skipScaleAnimation}>
+          {enableSticky && isSticky && !hideScrollButtons && [
+            { key: "top", label: isAtActivityTop ? "Revenir en haut de la page" : "Revenir au début de l’activité", Icon: ArrowUp, position: "top-6" },
+            { key: "bottom", label: "Aller en bas de la page", Icon: ArrowDown, position: "bottom-32" },
+          ].filter(({ key }) => key === "top" || !isAtPageBottom).map(({ key, label, Icon, position }) => (
+            <motion.button
+              key={`scroll-to-activity-${key}`}
+              type="button"
+              aria-label={label}
+              title={label}
+              onClick={key === "top" ? handleScrollToTop : handleScrollToBottom}
+              initial={{ opacity: 0, scale: skipScaleAnimation ? 1 : 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit="hidden"
+              variants={{
+                hidden: (fadeOnly: boolean) => ({
+                  opacity: 0,
+                  scale: fadeOnly ? 1 : 0,
+                  pointerEvents: "none",
+                  transition: { duration: 0.2, ease: "easeOut" },
+                }),
+              }}
+              transition={{
+                opacity: { duration: 0.15 },
+                scale: skipScaleAnimation
+                  ? { duration: 0 }
+                  : { type: "spring", stiffness: 320, damping: 16, mass: 0.7 },
+              }}
+              whileHover={reduceMotion ? undefined : { scale: 1.05 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.95 }}
+              className={cn("fixed right-9 z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-primary-content shadow-md transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary", position)}
+            >
+              <Icon className="h-5 w-5" aria-hidden="true" />
+            </motion.button>
+          ))}
+        </AnimatePresence>,
         document.body,
       )}
       {enableSticky && (

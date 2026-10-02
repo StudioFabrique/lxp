@@ -103,6 +103,7 @@ describe("StudentLearningOnboarding", () => {
     expect(container.textContent).not.toContain("Quel rythme");
     expect(container.textContent).not.toContain("Souhaitez-vous en dire");
     expect(container.querySelector('input[name="level-1"]')).toBeNull();
+    expect(container.querySelector("form > header")).toBeNull();
 
     await answerModule(2);
     expect(learningProfileApi.updateModule).toHaveBeenCalledWith(2, "beginner");
@@ -134,5 +135,8 @@ describe("StudentLearningOnboarding", () => {
     await render(makeContext("initial", step));
     expect(container.textContent).toContain(text);
     expect(container.querySelector("[data-progress]")?.getAttribute("data-progress")).toMatch(/\/7$/);
+    await vi.waitFor(() => {
+      expect(container.querySelector("form > header") !== null).toBe(step === "learning");
+    });
   });
 });

@@ -15,6 +15,7 @@ import { accountApi } from "../api/account.api";
 import PasswordUpdateError from "../components/PasswordUpdateError";
 import PasswordForm from "../components/PasswordForm";
 import AuthPageWrapper from "../components/AuthPageWrapper";
+import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
 type RegisterValues = {
   password: string;
@@ -109,67 +110,90 @@ export default function RegisterHome() {
   };
 
   return (
-    <AuthPageWrapper
-      title={success ? "Compte activé" : "Activation du compte"}
-      description={email ? <strong>{email}</strong> : undefined}
+    <OnboardingProgressPanel
+      contentKey={
+        isChecking ? "checking" : error ? "error" : success ? "success" : "password"
+      }
+      currentStep={success ? 2 : 1}
+      stepCount={2}
+      progressLabel="Progression de l’activation du compte"
+      animateProgressOnMount
+      className="min-h-[500px] flex-none lg:min-h-0 lg:flex-1"
+      footer={
+        !isChecking && !error && (
+          <div className="mt-5 border-t border-base-300 pt-4">
+            {success ? (
+              <Link
+                className="btn btn-primary w-full rounded-lg text-base normal-case text-base-100"
+                to="/login"
+              >
+                Retour à la page de connexion
+              </Link>
+            ) : (
+              <button
+                type="submit"
+                form="account-activation-form"
+                disabled={isLoading}
+                className="btn btn-primary w-full"
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  "Valider"
+                )}
+              </button>
+            )}
+          </div>
+        )
+      }
     >
-      {isChecking ? (
-        <div
-          role="status"
-          aria-label="Vérification du lien"
-          className="space-y-3"
-        >
-          <span className="sr-only">Vérification du lien…</span>
-          <div className="skeleton h-8 w-2/3" />
-          <div className="skeleton h-4 w-full" />
-        </div>
-      ) : error.length > 0 ? (
-        <div className="flex flex-col gap-4">
-          <PasswordUpdateError error={error} url="/login" />
-          {expiredEmail !== null && (
-            <Link
-              className="btn btn-primary w-full"
-              to="/reset-password"
-              state={{ mode: "activation", email: expiredEmail }}
-            >
-              Renvoyer un lien d'activation
-            </Link>
-          )}
-        </div>
-      ) : success ? (
-        <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
-          <MailCheck className="h-8 w-8" aria-hidden="true" />
-          <p className="text-sm text-base-content/70">
-            Votre compte a été activé avec succès.
-          </p>
-          <Link
-            className="btn btn-primary mt-auto w-full rounded-lg text-base normal-case text-base-100"
-            to="/"
+      <AuthPageWrapper
+        title={success ? "Compte activé" : "Activation du compte"}
+        description={email ? <strong>{email}</strong> : undefined}
+        variant="setup"
+      >
+        {isChecking ? (
+          <div
+            role="status"
+            aria-label="Vérification du lien"
+            className="space-y-3"
           >
-            Retour à la page de connexion
-          </Link>
-        </div>
-      ) : (
-        <section>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-3"
-          >
-            <PasswordForm register={register} watch={watch} errors={errors} />
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="mt-2 btn btn-primary w-full"
+            <span className="sr-only">Vérification du lien…</span>
+            <div className="skeleton h-8 w-2/3" />
+            <div className="skeleton h-4 w-full" />
+          </div>
+        ) : error.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            <PasswordUpdateError error={error} url="/login" />
+            {expiredEmail !== null && (
+              <Link
+                className="btn btn-primary w-full"
+                to="/reset-password"
+                state={{ mode: "activation", email: expiredEmail }}
+              >
+                Renvoyer un lien d'activation
+              </Link>
+            )}
+          </div>
+        ) : success ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
+            <MailCheck className="h-8 w-8" aria-hidden="true" />
+            <p className="text-sm text-base-content/70">
+              Votre compte a été activé avec succès.
+            </p>
+          </div>
+        ) : (
+          <section>
+            <form
+              id="account-activation-form"
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col gap-3"
             >
-              {isLoading ? (
-                <span className="loading loading-spinner loading-sm"></span>
-              ) : (
-                "Valider"
-              )}
-            </button>
-          </form>
-        </section>
-      )}
-    </AuthPageWrapper>
+              <PasswordForm register={register} watch={watch} errors={errors} />
+            </form>
+          </section>
+        )}
+      </AuthPageWrapper>
+    </OnboardingProgressPanel>
   );
 }
