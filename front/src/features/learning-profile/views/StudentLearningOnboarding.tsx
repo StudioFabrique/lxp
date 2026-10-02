@@ -430,7 +430,7 @@ export default function StudentLearningOnboarding() {
         )}
         {showIntro ? null : showWelcome ? (
           <motion.section
-            className={`flex w-full flex-1 flex-col text-center ${isAdditional ? "justify-center overflow-y-auto py-6" : ""}`}
+            className={`flex w-full flex-1 flex-col text-center ${isAdditional ? "mb-[clamp(1rem,6vh,3rem)] overflow-y-auto py-5" : ""}`}
             initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.5 }}
@@ -458,87 +458,91 @@ export default function StudentLearningOnboarding() {
                   ? `${additionalWelcome.description} Indiquez votre niveau dans les nouveaux modules pour adapter votre apprentissage.`
                   : "Votre parcours commence ici. Personnalisez votre expérience d'apprentissage."}
               </p>
-              <dl className="mx-auto mt-5 flex w-fit max-w-full flex-col gap-3 text-left sm:mt-6 sm:gap-4">
-                {welcomeFormations.flatMap((formation) =>
-                  formation.parcours.map((entry) => (
-                    <div
-                      key={`${formation.id}-${entry.id}`}
-                      className="space-y-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <GraduationCap
-                          className="size-5 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
-                        <div>
-                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                            Formation
-                          </dt>
-                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                            {capitalizeTitle(formation.title)}
-                          </dd>
+            </div>
+            <div className={isAdditional ? "flex flex-1 flex-col justify-center" : ""}>
+              <div className="mx-auto w-full max-w-md">
+                <dl className={`mx-auto flex w-fit max-w-full flex-col gap-3 text-left ${isAdditional ? "mt-4 sm:mt-5 sm:gap-3" : "mt-5 sm:mt-6 sm:gap-4"}`}>
+                  {welcomeFormations.flatMap((formation) =>
+                    formation.parcours.map((entry) => (
+                      <div
+                        key={`${formation.id}-${entry.id}`}
+                        className="space-y-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <GraduationCap
+                            className="size-5 shrink-0 text-primary"
+                            aria-hidden="true"
+                          />
+                          <div>
+                            <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                              Formation
+                            </dt>
+                            <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                              {capitalizeTitle(formation.title)}
+                            </dd>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Rocket
+                            className="size-5 shrink-0 text-primary"
+                            aria-hidden="true"
+                          />
+                          <div>
+                            <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                              Parcours
+                            </dt>
+                            <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
+                              {capitalizeTitle(entry.title)}
+                            </dd>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Rocket
-                          className="size-5 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
-                        <div>
-                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                            Parcours
-                          </dt>
-                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                            {capitalizeTitle(entry.title)}
-                          </dd>
-                        </div>
+                    )),
+                  )}
+                  {context.groupNames.length > 0 && (
+                    <div className="flex items-center gap-3">
+                      <UsersRound
+                        className="size-5 shrink-0 text-primary"
+                        aria-hidden="true"
+                      />
+                      <div>
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
+                          {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
+                        </dt>
+                        <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content sm:text-lg">
+                          {context.groupNames.map(capitalizeTitle).join(", ")}
+                        </dd>
                       </div>
                     </div>
-                  )),
+                  )}
+                </dl>
+                {welcomeTags.length > 0 && (
+                  <ul
+                    aria-label="Tags du parcours"
+                    className={`flex flex-wrap justify-center gap-2 ${isAdditional ? "mt-4 sm:mt-5" : "mt-5 sm:mt-6"}`}
+                  >
+                    {welcomeTags.map((tag, tagIndex) => (
+                      <motion.li
+                        key={tag.id}
+                        initial={
+                          reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }
+                        }
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{
+                          duration: reduceMotion ? 0 : 0.3,
+                          delay: reduceMotion ? 0 : 0.35 + tagIndex * 0.12,
+                        }}
+                      >
+                        <TagItem tag={tag} noIcon compact />
+                      </motion.li>
+                    ))}
+                  </ul>
                 )}
-                {context.groupNames.length > 0 && (
-                  <div className="flex items-center gap-3">
-                    <UsersRound
-                      className="size-5 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                        {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
-                      </dt>
-                      <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content sm:text-lg">
-                        {context.groupNames.map(capitalizeTitle).join(", ")}
-                      </dd>
-                    </div>
-                  </div>
-                )}
-              </dl>
-              {welcomeTags.length > 0 && (
-                <ul
-                  aria-label="Tags du parcours"
-                  className="mt-5 flex flex-wrap justify-center gap-2 sm:mt-6"
-                >
-                  {welcomeTags.map((tag, tagIndex) => (
-                    <motion.li
-                      key={tag.id}
-                      initial={
-                        reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }
-                      }
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{
-                        duration: reduceMotion ? 0 : 0.3,
-                        delay: reduceMotion ? 0 : 0.35 + tagIndex * 0.12,
-                      }}
-                    >
-                      <TagItem tag={tag} noIcon compact />
-                    </motion.li>
-                  ))}
-                </ul>
-              )}
+              </div>
             </div>
             <button
               type="button"
-              className="btn btn-primary mx-auto mt-5 w-full max-w-xs gap-2 rounded-lg sm:mt-6 sm:min-h-12 sm:max-w-sm sm:text-base"
+              className="btn btn-primary mx-auto mt-5 shrink-0 w-full max-w-xs gap-2 rounded-lg sm:mt-6 sm:min-h-12 sm:max-w-sm sm:text-base"
               disabled={saving}
               onClick={() => void begin()}
             >
