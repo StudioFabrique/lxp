@@ -17,6 +17,7 @@ import Video from "../../../lesson/components/edit/activities/video";
 import ImageActivityEditor from "../../../lesson/components/edit/activities/image/image-activity-editor";
 import ResourcePreview from "../../../lesson/components/edit/activities/resources/preview/resource-preview";
 import ResourceUpload from "../../../lesson/components/edit/activities/resources/resource-upload";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -218,7 +219,7 @@ const LessonReaderAndEditor = ({
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
           {activityType === "text" ? (
-            <div className={mode === "read" ? "mt-4" : undefined}>
+            <div className={cn(mode === "read" ? "mt-4" : undefined)}>
               <TiptapActivity
                 key={`tiptap-${mode}`}
                 mode={mode}

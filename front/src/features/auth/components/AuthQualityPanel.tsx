@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import AuthQualityLogo from "./AuthQualityLogo";
 import { platformQualities } from "./auth-platform-qualities";
 import { getExpandedTileBounds, tileHeight, tileWidth, type Geometry } from "./auth-tile-grid";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   quality: number;
@@ -56,7 +57,7 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
       role="dialog"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
-      className={`pointer-events-auto absolute z-20 ${turning ? "bg-transparent" : "bg-base-100"}`}
+      className={cn("pointer-events-auto absolute z-20", turning ? "bg-transparent" : "bg-base-100")}
       initial={{ left: x, top: y, width: tileWidth, height: tileHeight, opacity: 0.85 }}
       animate={{ left, top, width, height, opacity: 1 }}
       exit={{ left: x, top: y, width: tileWidth, height: tileHeight, opacity: 0 }}
@@ -111,7 +112,7 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
               </div>
               <p id={descriptionId} className="mt-2 text-sm">{description}</p>
             </div>
-            <div className={`min-h-0 flex-1 overflow-y-auto rounded-t-[15px] p-5 ${colors[activeColorIndex]}`}>
+            <div className={cn("min-h-0 flex-1 overflow-y-auto rounded-t-[15px] p-5", colors[activeColorIndex])}>
               {showDetails && <motion.div className="flex min-h-full flex-col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reducedMotion ? 0 : 0.25 }}>
                 <h3 className="mb-3 text-sm font-semibold">Les fonctionnalités clés</h3>
                 <ul className="space-y-2">{features.map((feature) => <li key={feature} className="flex gap-3 text-sm leading-5"><Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" /><span>{feature}</span></li>)}</ul>

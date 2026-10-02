@@ -2,6 +2,7 @@ import useAutosave from "./hooks/use-autosave";
 import { useState } from "react";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../../../components/tiptap-editor/tiptapEditor";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
@@ -82,7 +83,7 @@ const TiptapActivity = ({
       />
 
       <div
-        className={`w-full rounded-lg p-4 bg-base-200 ${mode !== "read" ? "pt-0" : ""}`}
+        className={cn("w-full rounded-lg p-4 bg-base-200", mode !== "read" ? "pt-0" : "")}
         data-onboarding-field="activity-content"
         data-onboarding-valid={hasContent ? "true" : "false"}
       >

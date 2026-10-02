@@ -186,9 +186,9 @@ const ParcoursView = () => {
                 : `/student/mon-avancement?parcoursId=${id}`
             }
             className={
-              learningContext.data.onboardingRequired && !demoMode
+              cn(learningContext.data.onboardingRequired && !demoMode
                 ? "btn btn-primary"
-                : "btn btn-outline btn-primary"
+                : "btn btn-outline btn-primary")
             }
           >
             {learningContext.data.onboardingRequired && !demoMode ? (

@@ -20,6 +20,7 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import { dashboardIAApi, type DropoutStudent } from "../api/dashboardIA.api";
 import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { groupAnalysisNameLines } from "../helpers/group-analysis-name";
+import { cn } from "../../../utils/cn";
 
 const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
 
@@ -53,7 +54,7 @@ function Indicator({
   return (
     <div className="flex w-full min-w-0 flex-col items-center gap-2 text-center">
       <div
-        className={`radial-progress ${color}`}
+        className={cn("radial-progress", color)}
         style={
           {
             "--value": percent ?? 0,
@@ -126,11 +127,9 @@ function StudentAnalysis({
           <div className="flex flex-wrap items-center gap-3">
             {!editing && (
               <span
-                className={`inline-flex size-8 shrink-0 items-center justify-center rounded-lg border ${
-                  disabled
+                className={cn("inline-flex size-8 shrink-0 items-center justify-center rounded-lg border", disabled
                     ? "border-warning/50 bg-warning/20 text-warning"
-                    : "border-base-300 bg-base-100 text-base-content/60"
-                }`}
+                    : "border-base-300 bg-base-100 text-base-content/60")}
                 title={disabled ? "Alertes désactivées" : "Alertes activées"}
                 role="img"
                 aria-label={
@@ -164,7 +163,7 @@ function StudentAnalysis({
                 type="button"
                 aria-pressed={disabled}
                 aria-label={`${disabled ? "Réactiver" : "Désactiver"} l’alerte pour ${toTitleCase(student.name)}`}
-                className={`btn btn-sm inline-flex h-9 w-44 items-center justify-center gap-2 normal-case ${disabled ? "btn-error btn-soft" : "btn-outline"}`}
+                className={cn("btn btn-sm inline-flex h-9 w-44 items-center justify-center gap-2 normal-case", disabled ? "btn-error btn-soft" : "btn-outline")}
                 onClick={onToggle}
               >
                 <BellOff className="size-4 shrink-0" aria-hidden="true" />

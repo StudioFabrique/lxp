@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { createBrowserRouter } from "react-router";
 import { useVisualPreferences } from "../../store/VisualPreferences";
 import "./navigation-feedback.css";
+import { cn } from "../../utils/cn";
 
 type NavigationRouter = Pick<ReturnType<typeof createBrowserRouter>, "state" | "subscribe">;
 type Phase = "idle" | "loading" | "complete";
@@ -111,7 +112,7 @@ export default function NavigationFeedback({ router }: { router: NavigationRoute
       <div className="navigation-progress" data-phase={phase} data-animated={animations} aria-hidden="true">
         <div className="navigation-progress-bar" />
       </div>
-      <div role="status" aria-live="polite" aria-atomic="true" className={showMessage ? "navigation-status" : "sr-only"}>
+      <div role="status" aria-live="polite" aria-atomic="true" className={cn(showMessage ? "navigation-status" : "sr-only")}>
         {showMessage ? "Chargement de la page…" : ""}
       </div>
     </>

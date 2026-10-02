@@ -16,6 +16,7 @@ import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
 import { groupApi } from "../../group/api/group.api";
 import ExistingTeacherGroups from "../../auth/components/ExistingTeacherGroups";
+import { cn } from "../../../utils/cn";
 
 export default function DropoutPreferencesForm({
   initial,
@@ -60,11 +61,11 @@ export default function DropoutPreferencesForm({
   });
   const card = (
     <BoxWrapper
-      className={`relative z-10 h-auto rounded-lg transition-colors ${enabled ? "border-primary/25 bg-primary/5" : "border-base-300 bg-base-200/70"}`}
+      className={cn("relative z-10 h-auto rounded-lg transition-colors", enabled ? "border-primary/25 bg-primary/5" : "border-base-300 bg-base-200/70")}
     >
       <label className="flex cursor-pointer items-start gap-4">
         <span
-          className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${enabled ? "bg-primary/10 text-primary" : "bg-base-300 text-base-content/40"}`}
+          className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", enabled ? "bg-primary/10 text-primary" : "bg-base-300 text-base-content/40")}
         >
           <ChartNoAxesCombined className="size-6" aria-hidden="true" />
         </span>
@@ -73,7 +74,7 @@ export default function DropoutPreferencesForm({
             Activer l’analyse automatique du décrochage
           </span>
           <span
-            className={`mt-1 block text-sm ${enabled ? "text-base-content/70" : "text-base-content/45"}`}
+            className={cn("mt-1 block text-sm", enabled ? "text-base-content/70" : "text-base-content/45")}
           >
             Vous recevrez un récapitulatif uniquement lorsqu’un de vos groupes
             présente un cas critique.
@@ -99,7 +100,7 @@ export default function DropoutPreferencesForm({
             {(["weekly", "monthly"] as const).map((value) => (
               <label
                 key={value}
-                className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors ${frequency === value ? "border-primary/50 bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/30"}`}
+                className={cn("flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors", frequency === value ? "border-primary/50 bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/30")}
               >
                 <input
                   type="radio"
@@ -123,7 +124,7 @@ export default function DropoutPreferencesForm({
             {([1, 2] as const).map((value) => (
               <label
                 key={value}
-                className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors ${minCritical === value ? "border-primary/50 bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/30"}`}
+                className={cn("flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors", minCritical === value ? "border-primary/50 bg-primary/10" : "border-base-300 bg-base-100 hover:border-primary/30")}
               >
                 <input
                   type="radio"
@@ -144,9 +145,9 @@ export default function DropoutPreferencesForm({
   const actions = (
       <div
         className={
-          onBack
+          cn(onBack
             ? "mt-auto flex items-center justify-between gap-3 border-t border-base-300 pt-4"
-            : "flex justify-end"
+            : "flex justify-end")
         }
       >
         {onBack && (
@@ -178,7 +179,7 @@ export default function DropoutPreferencesForm({
   return (
     <form
       id={formId}
-      className={`flex flex-col gap-5 ${onBack ? "min-h-0 flex-1" : ""}`}
+      className={cn("flex flex-col gap-5", onBack ? "min-h-0 flex-1" : "")}
       onSubmit={form.handleSubmit((values) => {
         if (mutation.isPending) return;
         mutation.mutate({

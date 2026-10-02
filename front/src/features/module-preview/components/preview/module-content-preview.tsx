@@ -9,6 +9,7 @@ import StudentActivityNavigation from "./student-activity-navigation";
 import type { ModuleContentStore } from "../../hooks/use-module-content";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { cn } from "../../../../utils/cn";
 
 const ModuleContentPreview = ({
   store,
@@ -130,7 +131,7 @@ const ModuleContentPreview = ({
       <div
         role="status"
         aria-label="Chargement de l’activité"
-        className={`flex flex-col gap-6 ${previousContentHeight ? "" : "min-h-[500px]"}`}
+        className={cn("flex flex-col gap-6", previousContentHeight ? "" : "min-h-[500px]")}
         style={previousContentHeight ? { height: previousContentHeight } : undefined}
       >
         <span className="sr-only">Chargement de l’activité…</span>

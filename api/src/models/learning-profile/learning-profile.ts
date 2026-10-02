@@ -16,6 +16,7 @@ export type AvailableFormation = {
   parcours: Array<{
     id: number;
     title: string;
+    groupNames: string[];
     tags: Array<{ id: number; name: string; color: string }>;
     modules: Array<{
       id: number;
@@ -28,10 +29,13 @@ export type AvailableFormation = {
 export async function resolveAvailableFormations(
   userIdMdb: string,
 ): Promise<AvailableFormation[]> {
-  const groups = await Group.find({ users: userIdMdb }).select("_id");
+  const groups = await Group.find({ users: userIdMdb }).select("_id name");
   if (groups.length === 0) return [];
 
   const groupIds = groups.map((group) => group.id as string);
+  const groupNamesById = new Map(
+    groups.map((group) => [group.id as string, group.name]),
+  );
   const parcours = await prisma.orm.public.Parcours.where((row) =>
     and(
       row.isPublished.eq(true),
@@ -45,6 +49,9 @@ export async function resolveAvailableFormations(
   )
     .select("id", "title", "formationId")
     .include("formation", (formation) => formation.select("id", "title"))
+    .include("groups", (links) =>
+      links.include("group", (group) => group.select("idMdb")),
+    )
     .include("tags", (tags) =>
       tags.include("tag", (tag) => tag.select("id", "name", "color")),
     )
@@ -72,6 +79,9 @@ export async function resolveAvailableFormations(
     existing.parcours.push({
       id: item.id,
       title: item.title,
+      groupNames: item.groups
+        .map((link) => groupNamesById.get(link.group?.idMdb ?? ""))
+        .filter((name): name is string => Boolean(name)),
       tags: item.tags
         .map((link) => link.tag)
         .filter(

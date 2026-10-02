@@ -56,7 +56,7 @@ export default function SortableLessonItem({ courseId, lessonId, lessonTitle, en
       "opacity-40": isDragging,
     })}>
       {isDraggedOver && <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 -top-2 z-10 h-1 rounded-full bg-primary" />}
-      <div inert={enabled} className={enabled ? "pointer-events-none" : undefined}>{children}</div>
+      <div inert={enabled} className={cn(enabled ? "pointer-events-none" : undefined)}>{children}</div>
     </div>
   );
 }

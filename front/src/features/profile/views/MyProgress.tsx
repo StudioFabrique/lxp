@@ -16,6 +16,7 @@ import {
 import type Parcours from "../../../utils/interfaces/parcours";
 import Journal from "../components/journal/journal";
 import Awards from "../components/awards/awards";
+import { cn } from "../../../utils/cn";
 
 async function loadParcoursProgress(): Promise<Parcours[]> {
   const parcours = await parcoursApi.queries.getAll(true);
@@ -115,7 +116,7 @@ export default function MyProgress() {
                   return (
                     <li
                       key={module.id}
-                      className={`rounded-lg bg-base-100 p-4 ${isEmpty ? "opacity-60" : ""}`}
+                      className={cn("rounded-lg bg-base-100 p-4", isEmpty ? "opacity-60" : "")}
                     >
                       <div className="mb-3 flex items-start justify-between gap-3">
                         {isEmpty ? (

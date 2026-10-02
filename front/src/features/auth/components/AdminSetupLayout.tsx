@@ -34,9 +34,9 @@ export default function AdminSetupLayout({
             ease: [0.22, 1, 0.36, 1],
           }}
           className={
-            isWelcome
+            cn(isWelcome
               ? "mb-12 mt-[clamp(5rem,15vh,10rem)] flex flex-col items-center gap-2 text-center"
-              : "mb-10 mt-0 flex flex-col items-center gap-2 text-center"
+              : "mb-10 mt-0 flex flex-col items-center gap-2 text-center")
           }
         >
           <img

@@ -13,11 +13,15 @@ import toast from "react-hot-toast";
 import {
   LoaderCircle,
   ArrowRight,
-  GraduationCap,
   Rocket,
   UsersRound,
 } from "lucide-react";
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "motion/react";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -27,10 +31,7 @@ import ProfileItemsEditor from "../../profile/components/information/ProfileItem
 import { profileApi } from "../../profile/api/profile.api";
 import ThemeSelectionStep from "../ThemeSelectionStep";
 import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
-import {
-  paceOptions,
-  preferenceOptions,
-} from "../learning-choice-options";
+import { paceOptions, preferenceOptions } from "../learning-choice-options";
 import {
   LevelChoiceButtons,
   PreferenceCards,
@@ -41,6 +42,7 @@ import {
   learningProfileKey,
 } from "../learning-profile.api";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
+import { cn } from "../../../utils/cn";
 
 type OnboardingStep = {
   key: string;
@@ -188,7 +190,10 @@ export default function StudentLearningOnboarding() {
       context.onboardingMode === "additional" &&
       steps.some((step) => step.key === savedStep);
     if (resumingAdditional) setWelcomeStarted(true);
-    if (resumingAdditional || (context.onboardingMode === "initial" && savedStep)) {
+    if (
+      resumingAdditional ||
+      (context.onboardingMode === "initial" && savedStep)
+    ) {
       void learningProfileApi.update({
         action: "start",
         currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
@@ -260,39 +265,62 @@ export default function StudentLearningOnboarding() {
         }))
         .filter((formation) => formation.parcours.length > 0)
     : context.availableFormations;
-  const pendingParcours = welcomeFormations.flatMap((formation) => formation.parcours);
+  const pendingParcours = welcomeFormations.flatMap(
+    (formation) => formation.parcours,
+  );
+  const welcomeGroupNames = Array.from(new Set(
+    pendingParcours.some((entry) => entry.groupNames !== undefined)
+      ? pendingParcours.flatMap((entry) => entry.groupNames ?? [])
+      : context.groupNames,
+  ));
   // An assessed module identifies a parcours the student has already started.
   const newParcoursCount = pendingParcours.filter((entry) =>
     entry.modules.every((module) => !module.assessment),
   ).length;
   const addedModuleCount = pendingParcours
     .filter((entry) => entry.modules.some((module) => module.assessment))
-    .reduce((count, entry) => count + entry.modules.filter((module) => !module.assessment).length, 0);
-  const additionalWelcome = newParcoursCount === 0
-    ? {
-        title: addedModuleCount > 1
-          ? "De nouveaux modules vous attendent"
-          : "Un nouveau module vous attend",
-        description: addedModuleCount > 1
-          ? "De nouveaux modules ont été ajoutés à vos parcours."
-          : "Un nouveau module a été ajouté à votre parcours.",
-        button: addedModuleCount > 1 ? "Découvrir les modules" : "Découvrir le module",
-      }
-    : addedModuleCount > 0
+    .reduce(
+      (count, entry) =>
+        count + entry.modules.filter((module) => !module.assessment).length,
+      0,
+    );
+  const additionalWelcome =
+    newParcoursCount === 0
       ? {
-          title: "De nouveaux contenus vous attendent",
-          description: "Vous avez été ajouté à de nouveaux parcours et de nouveaux modules sont disponibles dans vos parcours actuels.",
-          button: "Découvrir les nouveautés",
+          title:
+            addedModuleCount > 1
+              ? "De nouveaux modules vous attendent"
+              : "Un nouveau module vous attend",
+          description:
+            addedModuleCount > 1
+              ? "De nouveaux modules ont été ajoutés à vos parcours."
+              : "Un nouveau module a été ajouté à votre parcours.",
+          button:
+            addedModuleCount > 1
+              ? "Découvrir les modules"
+              : "Découvrir le module",
         }
-      : {
-          title: newParcoursCount > 1
-            ? "De nouveaux parcours vous attendent"
-            : "Un nouveau parcours vous attend",
-          description: newParcoursCount > 1
-            ? "Vous avez été ajouté à de nouveaux parcours."
-            : "Vous avez été ajouté à un nouveau parcours.",
-          button: newParcoursCount > 1 ? "Découvrir mes parcours" : "Découvrir mon parcours",
-        };
+      : addedModuleCount > 0
+        ? {
+            title: "De nouveaux contenus vous attendent",
+            description:
+              "Vous avez été ajouté à de nouveaux parcours et de nouveaux modules sont disponibles dans vos parcours actuels.",
+            button: "Découvrir les nouveautés",
+          }
+        : {
+            title:
+              newParcoursCount > 1
+                ? "De nouveaux parcours vous attendent"
+                : "Un nouveau parcours vous attend",
+            description:
+              newParcoursCount > 1
+                ? "Vous avez été ajouté à de nouveaux parcours."
+                : "Vous avez été ajouté à un nouveau parcours.",
+            button:
+              newParcoursCount > 1
+                ? "Découvrir mes parcours"
+                : "Découvrir mon parcours",
+          };
   const welcomeTags = Array.from(
     new Map(
       welcomeFormations.flatMap((formation) =>
@@ -404,11 +432,11 @@ export default function StudentLearningOnboarding() {
               ease: [0.22, 1, 0.36, 1],
             }}
             className={
-              showIntro
+              cn(showIntro
                 ? "my-auto flex flex-col items-center gap-2 text-center"
                 : showWelcome
                   ? "mb-5 mt-[clamp(2.5rem,7vh,6rem)] flex flex-col items-center gap-2 text-center"
-                  : "mb-3 flex flex-col items-center gap-2 text-center"
+                  : "mb-3 flex flex-col items-center gap-2 text-center")
             }
           >
             <motion.img
@@ -430,28 +458,28 @@ export default function StudentLearningOnboarding() {
         )}
         {showIntro ? null : showWelcome ? (
           <motion.section
-            className={`flex w-full flex-1 flex-col text-center ${isAdditional ? "mb-[clamp(1rem,6vh,3rem)] overflow-y-auto py-5" : ""}`}
+            className={cn("flex w-full flex-1 flex-col text-center", isAdditional ? "mb-[clamp(1rem,6vh,3rem)] overflow-y-auto py-5" : "")}
             initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.5 }}
           >
             <div className="mx-auto w-full max-w-md">
               <h1 className="text-2xl font-bold text-base-content sm:text-3xl">
-                {isAdditional
-                  ? additionalWelcome.title
-                  : (
-                    <>
-                      Bienvenue sur{" "}
-                      <span
-                        style={{
-                          color:
-                            "color-mix(in oklab, var(--color-primary) 15%, var(--color-base-content))",
-                        }}
-                      >
-                        ANDRIA
-                      </span>
-                    </>
-                  )}
+                {isAdditional ? (
+                  additionalWelcome.title
+                ) : (
+                  <>
+                    Bienvenue sur{" "}
+                    <span
+                      style={{
+                        color:
+                          "color-mix(in oklab, var(--color-primary) 15%, var(--color-base-content))",
+                      }}
+                    >
+                      ANDRIA
+                    </span>
+                  </>
+                )}
               </h1>
               <p className="mt-2 text-sm leading-5 text-base-content/70 sm:text-base sm:leading-6">
                 {isAdditional
@@ -459,58 +487,41 @@ export default function StudentLearningOnboarding() {
                   : "Votre parcours commence ici. Personnalisez votre expérience d'apprentissage."}
               </p>
             </div>
-            <div className={isAdditional ? "flex flex-1 flex-col justify-center" : ""}>
+            <div
+              className={
+                cn(isAdditional ? "flex flex-1 flex-col justify-center" : "")
+              }
+            >
               <div className="mx-auto w-full max-w-md">
-                <dl className={`mx-auto flex w-fit max-w-full flex-col gap-3 text-left ${isAdditional ? "mt-4 sm:mt-5 sm:gap-3" : "mt-5 sm:mt-6 sm:gap-4"}`}>
-                  {welcomeFormations.flatMap((formation) =>
-                    formation.parcours.map((entry) => (
-                      <div
-                        key={`${formation.id}-${entry.id}`}
-                        className="space-y-3"
-                      >
-                        <div className="flex items-center gap-3">
-                          <GraduationCap
-                            className="size-5 shrink-0 text-primary"
-                            aria-hidden="true"
-                          />
-                          <div>
-                            <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                              Formation
-                            </dt>
-                            <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                              {capitalizeTitle(formation.title)}
-                            </dd>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Rocket
-                            className="size-5 shrink-0 text-primary"
-                            aria-hidden="true"
-                          />
-                          <div>
-                            <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                              Parcours
-                            </dt>
-                            <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                              {capitalizeTitle(entry.title)}
-                            </dd>
-                          </div>
-                        </div>
-                      </div>
-                    )),
-                  )}
-                  {context.groupNames.length > 0 && (
-                    <div className="flex items-center gap-3">
-                      <UsersRound
-                        className="size-5 shrink-0 text-primary"
-                        aria-hidden="true"
-                      />
-                      <div>
-                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                          {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
-                        </dt>
-                        <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content sm:text-lg">
-                          {context.groupNames.map(capitalizeTitle).join(", ")}
+                <dl className="mx-auto mt-5 flex w-full flex-col gap-4 text-left">
+                  <div className="flex items-start gap-3">
+                    <Rocket className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                    <div className="min-w-0 flex-1">
+                      <dt className="text-base font-medium text-base-content/60">Vos parcours</dt>
+                      <dd className="mt-2">
+                        <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos parcours">
+                          {pendingParcours.map((entry) => (
+                            <li key={entry.id} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
+                              <span className="break-words">{capitalizeTitle(entry.title)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  </div>
+                  {welcomeGroupNames.length > 0 && (
+                    <div className="flex items-start gap-3">
+                      <UsersRound className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div className="min-w-0 flex-1">
+                        <dt className="text-base font-medium text-base-content/60">Vos groupes</dt>
+                        <dd className="mt-2">
+                          <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos groupes">
+                            {welcomeGroupNames.map((name) => (
+                              <li key={name} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
+                                <span className="break-words">{capitalizeTitle(name)}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </dd>
                       </div>
                     </div>
@@ -519,13 +530,15 @@ export default function StudentLearningOnboarding() {
                 {welcomeTags.length > 0 && (
                   <ul
                     aria-label="Tags du parcours"
-                    className={`flex flex-wrap justify-center gap-2 ${isAdditional ? "mt-4 sm:mt-5" : "mt-5 sm:mt-6"}`}
+                    className={cn("flex flex-wrap justify-center gap-2", isAdditional ? "mt-4 sm:mt-5" : "mt-5 sm:mt-6")}
                   >
                     {welcomeTags.map((tag, tagIndex) => (
                       <motion.li
                         key={tag.id}
                         initial={
-                          reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }
+                          reduceMotion
+                            ? false
+                            : { opacity: 0, y: 8, scale: 0.94 }
                         }
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{
@@ -546,9 +559,7 @@ export default function StudentLearningOnboarding() {
               disabled={saving}
               onClick={() => void begin()}
             >
-              {isAdditional
-                ? additionalWelcome.button
-                : "Commencer"}
+              {isAdditional ? additionalWelcome.button : "Commencer"}
               <ArrowRight className="size-4" aria-hidden="true" />
             </button>
           </motion.section>
@@ -632,15 +643,12 @@ export default function StudentLearningOnboarding() {
                   aria-labelledby="learning-pace-title"
                 >
                   <div>
-                    <h1
-                      id="learning-pace-title"
-                      className="text-2xl font-bold"
-                    >
+                    <h1 id="learning-pace-title" className="text-2xl font-bold">
                       Quel rythme préférez-vous ?
                     </h1>
                     <p className="mt-2 text-sm leading-5 text-base-content/65">
-                      Choisissez la proposition qui vous convient. Vous
-                      pourrez la modifier plus tard.
+                      Choisissez la proposition qui vous convient. Vous pourrez
+                      la modifier plus tard.
                     </p>
                   </div>
                   <SingleChoiceCards
@@ -666,8 +674,8 @@ export default function StudentLearningOnboarding() {
                       Quelles méthodes vous aident à apprendre ?
                     </h1>
                     <p className="mt-2 text-sm leading-5 text-base-content/70">
-                      Choisissez les approches qui vous aident à comprendre
-                      et à progresser.
+                      Choisissez les approches qui vous aident à comprendre et à
+                      progresser.
                     </p>
                   </div>
                   <PreferenceCards
@@ -764,7 +772,6 @@ export default function StudentLearningOnboarding() {
               ) : null}
 
               {step.kind === "theme" ? <ThemeSelectionStep /> : null}
-
             </OnboardingProgressPanel>
           </motion.form>
         )}

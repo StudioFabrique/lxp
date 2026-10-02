@@ -37,11 +37,11 @@ export default function LastParcours({
   const isTeacher = isTeacherUser(user);
   const displayedFormations = parcours.slice(0, 6);
   const usesFullWidthLayout = isTeacher && displayedFormations.length === 1;
-  const gridClassName = usesFullWidthLayout
+  const gridClassName = cn(usesFullWidthLayout
     ? "grid-cols-1"
     : isTeacher && displayedFormations.length === 2
       ? "lg:grid-cols-2"
-      : "lg:grid-cols-2 xl:grid-cols-3";
+      : "lg:grid-cols-2 xl:grid-cols-3");
   const [searchParams, setSearchParams] = useSearchParams();
   const [formationModal, setFormationModal] = useState<{
     isOpen: boolean;

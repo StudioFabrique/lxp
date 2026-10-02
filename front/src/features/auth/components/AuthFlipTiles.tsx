@@ -11,6 +11,7 @@ import {
   tileHeight,
   type Geometry,
 } from "./auth-tile-grid";
+import { cn } from "../../../utils/cn";
 
 const colors = [
   "bg-[#1e40af] text-white",
@@ -489,7 +490,7 @@ export default function AuthFlipTiles({
               <button
                 key={`${x}-${y}`}
                 type="button"
-                className={`auth-tile-button pointer-events-auto absolute cursor-pointer disabled:pointer-events-none disabled:cursor-default rounded-[15px] border-0 bg-transparent p-0 text-left [perspective:1200px] focus-visible:outline-4 focus-visible:-outline-offset-4 focus-visible:outline-primary ${hiddenSource ? "pointer-events-none opacity-0" : ""}`}
+                className={cn("auth-tile-button pointer-events-auto absolute cursor-pointer disabled:pointer-events-none disabled:cursor-default rounded-[15px] border-0 bg-transparent p-0 text-left [perspective:1200px] focus-visible:outline-4 focus-visible:-outline-offset-4 focus-visible:outline-primary", hiddenSource ? "pointer-events-none opacity-0" : "")}
                 style={{
                   left: x,
                   top: y,
@@ -526,7 +527,7 @@ export default function AuthFlipTiles({
               >
                 {active && !hiddenSource && (
                   <div
-                    className={`auth-flip-tile relative size-full ${selected ? "[animation-play-state:paused]" : ""} ${reducedMotion || (revealedColors.includes(color) && (color === hovered || color === focused)) ? "auth-tile-revealed" : revealedColors.includes(color) && heldTiles.some((tile) => tile.color === color) ? "auth-tile-returning" : ""}`}
+                    className={cn("auth-flip-tile relative size-full", selected ? "[animation-play-state:paused]" : "", reducedMotion || (revealedColors.includes(color) && (color === hovered || color === focused)) ? "auth-tile-revealed" : revealedColors.includes(color) && heldTiles.some((tile) => tile.color === color) ? "auth-tile-returning" : "")}
                     aria-hidden="true"
                   >
                     <div className="auth-flip-face absolute inset-0 overflow-hidden rounded-[15px]">
@@ -544,7 +545,7 @@ export default function AuthFlipTiles({
                       />
                     </div>
                     <div
-                      className={`auth-flip-face auth-flip-icon-face absolute inset-0 flex items-end justify-end rounded-[15px] p-6 ${colors[tileColor]}`}
+                      className={cn("auth-flip-face auth-flip-icon-face absolute inset-0 flex items-end justify-end rounded-[15px] p-6", colors[tileColor])}
                     >
                       <span className="absolute left-6 top-6 flex items-center gap-2 text-xs font-medium opacity-80">
                         Découvrir <ArrowUpRight className="size-4" />

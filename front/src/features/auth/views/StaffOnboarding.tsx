@@ -16,6 +16,7 @@ import DropoutPreferencesForm from "../../dashboard-ia/components/DropoutPrefere
 import { dashboardIAApi } from "../../dashboard-ia/api/dashboardIA.api";
 import { staffOnboardingApi } from "../api/staff-onboarding.api";
 import Loader from "../../../components/loaders/Loader";
+import { cn } from "../../../utils/cn";
 
 export default function StaffOnboarding() {
   const { user } = useContext(AuthContext);
@@ -107,9 +108,9 @@ export default function StaffOnboarding() {
             ease: [0.22, 1, 0.36, 1],
           }}
           className={
-            isWelcome
+            cn(isWelcome
               ? "mb-12 mt-[clamp(5rem,15vh,10rem)] flex flex-col items-center gap-2 text-center"
-              : "mb-10 mt-0 flex flex-col items-center gap-2 text-center"
+              : "mb-10 mt-0 flex flex-col items-center gap-2 text-center")
           }
         >
           <img
@@ -138,7 +139,7 @@ export default function StaffOnboarding() {
             </div>
             <button
               type="button"
-              className={`btn btn-primary mx-auto mt-9 w-full gap-2 rounded-lg ${admin ? "max-w-md" : "max-w-xs"}`}
+              className={cn("btn btn-primary mx-auto mt-9 w-full gap-2 rounded-lg", admin ? "max-w-md" : "max-w-xs")}
               onClick={() => setStep(1)}
             >
               Commencer <ArrowRight className="size-4" />

@@ -105,8 +105,8 @@ describe("StudentLearningOnboarding", () => {
     context.availableFormations[0].parcours[0].modules = context.availableFormations[0].parcours[0].modules.slice(1);
     await render(context);
     expect(container.textContent).toContain("Vous avez été ajouté à un nouveau parcours");
-    expect(container.textContent).toContain("Formation");
-    expect(container.textContent).toContain("Parcours");
+    expect(container.textContent).toContain("Vos parcours");
+    expect(container.textContent).toContain("Vos groupes");
     expect(container.textContent).toContain("Groupe design");
     expect(container.textContent).not.toContain("Ancien parcours");
     expect(container.querySelector("[data-progress]")).toBeNull();
@@ -122,6 +122,30 @@ describe("StudentLearningOnboarding", () => {
     });
     expect(container.textContent).toContain("Un nouveau parcours vous attend");
     expect(container.querySelector("[data-progress]")).toBeNull();
+  });
+
+  it("affiche les parcours puis les groupes sans répéter les groupes partagés", async () => {
+    const context = makeContext("additional");
+    context.groupNames = ["groupe design", "groupe accueil", "groupe réception"];
+    context.availableFormations[0].parcours[0].groupNames = ["groupe design"];
+    context.availableFormations[0].parcours.push({
+      id: 3, title: "Autre parcours design", tags: [], groupNames: ["groupe design", "groupe création"],
+      modules: [{ id: 5, title: "Création", courses: [], assessment: null }],
+    });
+    context.availableFormations.push({
+      id: 2, title: "Hôtellerie", parcours: [{
+        id: 2, title: "Réception", tags: [],
+        groupNames: ["groupe accueil", "groupe réception"],
+        modules: [{ id: 4, title: "Accueil", courses: [], assessment: null }],
+      }],
+    });
+    await render(context);
+    expect(Array.from(container.querySelectorAll("dl dt"), (item) => item.textContent))
+      .toEqual(["Vos parcours", "Vos groupes"]);
+    expect(Array.from(container.querySelectorAll('ul[aria-label="Vos parcours"] li'), (item) => item.querySelector("span.break-words")?.textContent))
+      .toEqual(["Parcours", "Autre parcours design", "Réception"]);
+    expect(Array.from(container.querySelectorAll('ul[aria-label="Vos groupes"] li'), (item) => item.querySelector("span.break-words")?.textContent))
+      .toEqual(["Groupe design", "Groupe création", "Groupe accueil", "Groupe réception"]);
   });
 
   it.each([1, 2])("annonce %i module(s) ajouté(s) à un parcours déjà évalué", async (count) => {
