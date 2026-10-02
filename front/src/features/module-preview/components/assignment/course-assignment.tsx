@@ -34,6 +34,7 @@ import {
 } from "./assignment-score-color";
 import AssignmentLinkPreviews from "./assignment-link-previews";
 import { cn } from "../../../../utils/cn";
+import { toTitleCase } from "../../../../utils/helpers/text-helpers";
 
 type Props = {
   course: Course;
@@ -405,8 +406,8 @@ function MissingStudents({
             [student.firstname, student.lastname].filter(Boolean).join(" ") ||
             "Étudiant";
           return (
-            <li key={student.id} className="uppercase">
-              {name}
+            <li key={student.id}>
+              {toTitleCase(name)}
             </li>
           );
         })}
