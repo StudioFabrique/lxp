@@ -84,6 +84,7 @@ export default function AssignContactsToModulesModal({
             <label className="flex cursor-pointer items-center gap-3 rounded-lg bg-base-200/60 px-3 py-3 font-medium">
               <input
                 type="checkbox"
+                disabled={isSubmitting}
                 className="checkbox checkbox-primary checkbox-sm"
                 checked={allModulesSelected}
                 onChange={(event) =>
@@ -108,6 +109,7 @@ export default function AssignContactsToModulesModal({
                 >
                   <input
                     type="checkbox"
+                    disabled={isSubmitting}
                     className="checkbox checkbox-primary checkbox-sm"
                     checked={selectedModuleIds.includes(module.id)}
                     onChange={() => toggleModule(module.id)}

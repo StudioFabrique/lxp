@@ -1,8 +1,9 @@
-import { act } from "react";
+import { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import DropoutPreferencesForm from "./DropoutPreferencesForm";
+import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
 const update = vi.hoisted(() => vi.fn());
 const createGroup = vi.hoisted(() => vi.fn());
@@ -32,7 +33,7 @@ describe("préférences d'analyse du décrochage", () => {
       <DropoutPreferencesForm initial={{ enabled: false, frequency: "weekly", hasParcours: true, onboardingRequired: true }} onSaved={onSaved} completeOnboarding={false} />
     </QueryClientProvider>));
     await act(async () => container.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!.click());
-    const input = document.querySelector<HTMLInputElement>('input[placeholder="Ex. Promotion 2026"]')!;
+    const input = document.querySelector<HTMLInputElement>(`input[placeholder="Ex. Promotion ${new Date().getFullYear()}"]`)!;
     await act(async () => {
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "Promotion test");
       input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -92,6 +93,38 @@ describe("préférences d'analyse du décrochage", () => {
       await act(async () => footer.querySelector<HTMLButtonElement>('button[type="submit"]')!.click());
       expect(update).toHaveBeenCalledOnce();
     } finally { footer.remove(); }
+  });
+
+  it("retire les anciennes actions dès le retour à l’étape précédente", async () => {
+    function Onboarding() {
+      const [step, setStep] = useState(2);
+      const [footer, setFooter] = useState<HTMLDivElement | null>(null);
+      return (
+        <OnboardingProgressPanel
+          contentKey={String(step)} currentStep={step} stepCount={2}
+          progressLabel="Progression"
+          footer={step === 2 ? <div ref={setFooter} /> : <div><button>Précédent</button><button>Continuer</button></div>}
+        >
+          {step === 2 ? (
+            <DropoutPreferencesForm
+              initial={{ enabled: false, frequency: "weekly", hasParcours: true, onboardingRequired: true }}
+              onSaved={vi.fn()} onBack={() => setStep(1)}
+              completeOnboarding={false} footerContainer={footer} submitLabel="Terminer"
+            />
+          ) : <p>Apparence</p>}
+        </OnboardingProgressPanel>
+      );
+    }
+    await act(async () => root.render(
+      <QueryClientProvider client={new QueryClient()}><Onboarding /></QueryClientProvider>,
+    ));
+    await act(async () => Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Précédent")!.click());
+    // The old form still exists during its exit animation, but its actions must disappear.
+    expect(container.querySelector("form")).not.toBeNull();
+    expect(Array.from(container.querySelectorAll("button")).filter((button) => button.textContent === "Précédent")).toHaveLength(1);
+    expect(container.textContent).not.toContain("Terminer");
+    expect(container.textContent).toContain("Continuer");
+    expect(update).not.toHaveBeenCalled();
   });
 
   it("superpose le choix des apprenants sans l’imbriquer dans le formulaire de création", async () => {

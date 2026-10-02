@@ -1,5 +1,6 @@
 import { useId } from "react";
 import { createPortal } from "react-dom";
+import { useIsPresent } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { dropoutPreferencesSchema } from "../preferences.schema";
@@ -33,6 +34,7 @@ export default function DropoutPreferencesForm({
   footerContainer?: HTMLElement | null;
 }) {
   const formId = useId();
+  const isPresent = useIsPresent();
   const groups = useQuery({
     queryKey: ["onboarding-student-groups"],
     queryFn: groupApi.queries.getStudentGroups,
@@ -206,7 +208,8 @@ export default function DropoutPreferencesForm({
           Impossible d’enregistrer les paramètres.
         </p>
       )}
-      {footerContainer ? createPortal(actions, footerContainer) : actions}
+      {/* Exit animations retain the form after the next step's footer appears. */}
+      {isPresent && (footerContainer ? createPortal(actions, footerContainer) : actions)}
 
     </form>
   );

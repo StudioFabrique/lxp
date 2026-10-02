@@ -105,7 +105,7 @@ const ParcoursInformationsForm: FC<Props> = ({
                   name="title"
                   register={register}
                   error={errors.title}
-                  placeholder="Ex : CDA - Promo 2023"
+                  placeholder={`Ex : CDA - Promo ${new Date().getFullYear()}`}
                   disabled={readOnly}
                 />
 

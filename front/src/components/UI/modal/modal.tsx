@@ -38,6 +38,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             {props.leftLabel && (
               <button
                 className="btn btn-outline btn-primary"
+                disabled={isSubmitting}
                 onClick={props.onLeftClick}
               >
                 {props.leftLabel}
@@ -77,6 +78,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             <button
               type="button"
               className="btn btn-sm btn-ghost ml-auto gap-2"
+              disabled={isSubmitting}
               onClick={props.onLeftClick}
             >
               <X className="size-4" />
@@ -99,6 +101,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             {props.onLeftClick && !props.closeButtonAtTop && (
               <button
                 className="btn btn-outline btn-primary"
+                disabled={isSubmitting}
                 onClick={props.onLeftClick}
               >
                 {props.leftLabel}

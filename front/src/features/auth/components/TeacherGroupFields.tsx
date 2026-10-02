@@ -71,7 +71,7 @@ export default function TeacherGroupFields({
           className="input input-bordered w-full"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          placeholder="Ex. Promotion 2026"
+          placeholder={`Ex. Promotion ${new Date().getFullYear()}`}
           maxLength={100}
           required
         />
