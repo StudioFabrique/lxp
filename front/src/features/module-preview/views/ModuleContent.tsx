@@ -52,7 +52,6 @@ const ModuleContent = () => {
     computed,
     dispatch,
     moduleActions,
-    scrollTopRef,
   } = contentStore;
 
   const [calendarModuleId, setCalendarModuleId] = useState<number | null>(null);
@@ -242,7 +241,6 @@ const ModuleContent = () => {
                   />
                 </RoleRankGuard>
               }
-              progressRef={scrollTopRef}
               isSidebarCollapsed={state.isPanelClosed}
               isContentSelected={Boolean(
                 state.selectedLesson || selectedAssignmentCourseId,

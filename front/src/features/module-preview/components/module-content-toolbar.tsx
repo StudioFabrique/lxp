@@ -19,7 +19,6 @@ import Modal from "../../../components/UI/modal/modal";
 
 type ModuleContentToolbarProps = {
   progress: React.ReactNode;
-  progressRef: React.RefObject<HTMLDivElement | null>;
   isSidebarCollapsed: boolean;
   isContentSelected: boolean;
   showCompletionBadge?: boolean;
@@ -46,7 +45,6 @@ const actionClassName = "btn border-secondary/20";
 
 export default function ModuleContentToolbar({
   progress,
-  progressRef,
   isSidebarCollapsed,
   isContentSelected,
   showCompletionBadge = false,
@@ -154,7 +152,6 @@ export default function ModuleContentToolbar({
       )}
 
       <div
-        ref={progressRef}
         className="flex h-10 min-w-0 flex-1 items-center rounded-lg border border-secondary/20 bg-secondary/20 px-2"
       >
         {progress}

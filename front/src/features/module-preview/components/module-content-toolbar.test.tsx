@@ -1,4 +1,4 @@
-import { act, createRef, type ComponentProps, type ReactNode } from "react";
+import { act, type ComponentProps, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ModuleContentToolbar from "./module-content-toolbar";
@@ -21,7 +21,6 @@ const renderToolbar = (
   roots.push(root);
   const props: ComponentProps<typeof ModuleContentToolbar> = {
     progress: <span>Progression</span>,
-    progressRef: createRef<HTMLDivElement>(),
     isSidebarCollapsed: false,
     isContentSelected: true,
     canPlanCourses: true,

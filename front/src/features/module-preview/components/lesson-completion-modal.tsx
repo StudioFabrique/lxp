@@ -61,7 +61,7 @@ const LessonCompletionModal = ({
     setIsCompleting(true);
     try {
       await onRateAndComplete();
-      onClickMinimizeButton();
+      setShowButton(true);
     } finally {
       setIsCompleting(false);
     }

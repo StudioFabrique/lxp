@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import ModuleContentPreview from "./module-content-preview";
 
 vi.mock("./lesson-reader-and-editor", () => ({
-  default: ({ fadeScrollButtonsOnly, hideScrollButtons, children }: PropsWithChildren<{ fadeScrollButtonsOnly: boolean; hideScrollButtons: boolean }>) => (
+  default: ({ fadeScrollButtonsOnly = false, hideScrollButtons = false, children }: PropsWithChildren<{ fadeScrollButtonsOnly?: boolean; hideScrollButtons?: boolean }>) => (
     <div data-fade-only={String(fadeScrollButtonsOnly)} data-buttons-hidden={String(hideScrollButtons)}>{children}</div>
   ),
 }));
@@ -21,7 +21,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-it.each([true, false])("limite le fondu à la navigation suivante (admin : %s)", (canNavigateAsAdmin) => {
+it.each([true, false])("garde les flèches visibles pendant la navigation et le scroll (admin : %s)", (canNavigateAsAdmin) => {
   vi.useFakeTimers();
   vi.stubGlobal("ResizeObserver", class {
     observe = vi.fn();
@@ -57,39 +57,28 @@ it.each([true, false])("limite le fondu à la navigation suivante (admin : %s)",
   const buttonsHidden = () => scrollContainer.querySelector("[data-buttons-hidden]")?.getAttribute("data-buttons-hidden");
 
   render();
-  expect(fadeOnly()).toBe("false");
+  const reader = scrollContainer.querySelector("[data-buttons-hidden]");
   expect(buttonsHidden()).toBe("false");
   act(() => findButton("Activité suivante").click());
-  expect(fadeOnly()).toBe("true");
-  expect(buttonsHidden()).toBe("true");
   if (canNavigateAsAdmin) expect(dispatch).toHaveBeenCalledWith({ type: "go_to_next_activity" });
   else expect(nextStudentActivity).toHaveBeenCalledOnce();
 
   store.isActivityContentLoading = true;
   render();
-  act(() => vi.advanceTimersByTime(2000));
+  expect(scrollContainer.querySelector("[data-buttons-hidden]")).toBe(reader);
+  expect(buttonsHidden()).toBe("false");
+
   store.isActivityContentLoading = false;
   store.state.selectedActivity = { ...store.state.selectedActivity!, id: 2 };
   render();
-  expect(fadeOnly()).toBe("true");
-  expect(buttonsHidden()).toBe("true");
+  expect(scrollContainer.querySelector("[data-buttons-hidden]")).toBe(reader);
   act(() => scrollContainer.dispatchEvent(new Event("scroll")));
-  act(() => vi.advanceTimersByTime(199));
-  expect(fadeOnly()).toBe("true");
-  expect(buttonsHidden()).toBe("true");
-  // Traverser plusieurs seuils pendant la remontée ne réaffiche pas les boutons.
-  act(() => scrollContainer.dispatchEvent(new Event("scroll")));
-  act(() => vi.advanceTimersByTime(199));
-  expect(buttonsHidden()).toBe("true");
-  act(() => vi.advanceTimersByTime(1));
+  act(() => vi.advanceTimersByTime(2000));
   expect(buttonsHidden()).toBe("false");
-  expect(fadeOnly()).toBe("true");
-  act(() => vi.advanceTimersByTime(250));
   expect(fadeOnly()).toBe("false");
 
-  act(() => findButton("Activité suivante").click());
-  expect(fadeOnly()).toBe("true");
   act(() => findButton("Activité précédente").click());
-  expect(fadeOnly()).toBe("false");
+  expect(dispatch).toHaveBeenCalledWith({ type: "go_to_previous_activity" });
+  expect(scrollContainer.querySelector("[data-buttons-hidden]")).toBe(reader);
   expect(buttonsHidden()).toBe("false");
 });

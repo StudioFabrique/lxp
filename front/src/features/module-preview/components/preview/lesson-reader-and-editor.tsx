@@ -10,6 +10,7 @@ import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
 import ActivityPreview from "./activity-preview";
+import ActivityContentSkeleton from "./activity-content-skeleton";
 import IframeActivity from "./iframe-activity";
 import { ActivitySelectMode } from "../../store/module-content-reducer";
 import Modal from "../../../../components/UI/modal/modal";
@@ -34,6 +35,7 @@ type Props = {
   iframeActivitySrc?: string;
   showDeleteModal: boolean;
   isLoading?: boolean;
+  isActivityContentLoading?: boolean;
   fadeScrollButtonsOnly?: boolean;
   hideScrollButtons?: boolean;
   onEditTitle: (title: string) => void;
@@ -70,6 +72,7 @@ const LessonReaderAndEditor = ({
   textActivityContent,
   showDeleteModal,
   isLoading,
+  isActivityContentLoading = false,
   fadeScrollButtonsOnly,
   hideScrollButtons,
   onEditContent,
@@ -211,14 +214,16 @@ const LessonReaderAndEditor = ({
                   permissionSubject={parent}
                   onEditActivity={onEditActivity}
                   onOpenDeleteModal={onOpenDeleteModal}
-                  disabled={mode !== "read"}
+                  disabled={mode !== "read" || isActivityContentLoading}
                 />
               )}
             </ActivityHeader>
           ) : null}
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
-          {activityType === "text" ? (
+          {isActivityContentLoading ? (
+            <ActivityContentSkeleton />
+          ) : activityType === "text" ? (
             <div className={cn(mode === "read" ? "mt-4" : undefined)}>
               <TiptapActivity
                 key={`tiptap-${mode}`}
@@ -285,7 +290,11 @@ const LessonReaderAndEditor = ({
         </div>
 
         {/* Boutons de navigation */}
-        <div className="flex justify-end items-center">{children}</div>
+        <div className="flex justify-end items-center">
+          {isActivityContentLoading ? (
+            <div className="skeleton h-10 w-44" aria-hidden="true" />
+          ) : children}
+        </div>
       </div>
     </>
   );

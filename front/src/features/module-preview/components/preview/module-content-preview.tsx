@@ -8,8 +8,7 @@ import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeho
 import StudentActivityNavigation from "./student-activity-navigation";
 import type { ModuleContentStore } from "../../hooks/use-module-content";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { cn } from "../../../../utils/cn";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 const ModuleContentPreview = ({
   store,
@@ -43,36 +42,9 @@ const ModuleContentPreview = ({
   } = state;
   const contentRef = useRef<HTMLDivElement>(null);
   const [previousContentHeight, setPreviousContentHeight] = useState<number>();
-  const [fadeScrollButtonsOnly, setFadeScrollButtonsOnly] = useState(false);
-  const [hideScrollButtons, setHideScrollButtons] = useState(false);
   const isActivityContentLoading = store.isActivityContentLoading;
 
-  useEffect(() => {
-    if (!fadeScrollButtonsOnly || isActivityContentLoading) return;
-
-    const scrollTarget = document.getElementById("main-scroll-container") ?? window;
-    const finishAutomaticScroll = () => {
-      setHideScrollButtons(false);
-      // Réafficher les boutons en fondu avant de rétablir l’animation élastique.
-      timeout = window.setTimeout(() => setFadeScrollButtonsOnly(false), 250);
-    };
-    // Garder les boutons masqués pendant le chargement et le scroll automatique.
-    let timeout = window.setTimeout(finishAutomaticScroll, 1500);
-    const onScroll = () => {
-      setHideScrollButtons(true);
-      window.clearTimeout(timeout);
-      timeout = window.setTimeout(finishAutomaticScroll, 200);
-    };
-    scrollTarget.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.clearTimeout(timeout);
-      scrollTarget.removeEventListener("scroll", onScroll);
-    };
-  }, [fadeScrollButtonsOnly, isActivityContentLoading, selectedActivity?.id]);
-
   const handleNextActivity = () => {
-    setFadeScrollButtonsOnly(true);
-    setHideScrollButtons(true);
     if (canNavigateAsAdmin) {
       dispatch({ type: "go_to_next_activity" });
     } else {
@@ -81,8 +53,6 @@ const ModuleContentPreview = ({
   };
 
   const handlePreviousActivity = () => {
-    setFadeScrollButtonsOnly(false);
-    setHideScrollButtons(false);
     dispatch({ type: "go_to_previous_activity" });
   };
 
@@ -126,32 +96,8 @@ const ModuleContentPreview = ({
       </button>
     ) : null;
 
-  if (isActivityContentLoading) {
-    return (
-      <div
-        role="status"
-        aria-label="Chargement de l’activité"
-        className={cn("flex flex-col gap-6", previousContentHeight ? "" : "min-h-[500px]")}
-        style={previousContentHeight ? { height: previousContentHeight } : undefined}
-      >
-        <span className="sr-only">Chargement de l’activité…</span>
-        <div className="min-h-0 flex-1 overflow-hidden rounded-lg border border-base-300 bg-base-200 p-6 sm:p-10 space-y-10">
-          <div className="skeleton h-7 w-2/3 max-w-80" aria-hidden="true" />
-          <div className="space-y-4" aria-hidden="true">
-            <div className="skeleton h-4 w-full" />
-            <div className="skeleton h-4 w-11/12" />
-            <div className="skeleton h-4 w-4/5" />
-            <div className="skeleton h-4 w-2/3" />
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <div className="skeleton h-10 w-44" aria-hidden="true" />
-        </div>
-      </div>
-    );
-  }
-
   if (
+    !isActivityContentLoading &&
     !selectedLesson?.activities?.length &&
     !["activity_type_selection", "write"].includes(mode)
   ) {
@@ -184,7 +130,10 @@ const ModuleContentPreview = ({
   }
 
   return (
-    <div ref={contentRef}>
+    <div
+      ref={contentRef}
+      style={isActivityContentLoading ? { minHeight: previousContentHeight ?? 500 } : undefined}
+    >
       <FadeWrapper>
       <LessonReaderAndEditor
         isLessonCompleted={computed.isLessonCompleted}
@@ -207,8 +156,7 @@ const ModuleContentPreview = ({
         selectedLesson={selectedLesson}
         showDeleteModal={modalVisibility === "deletionModal"}
         isLoading={isLoading}
-        fadeScrollButtonsOnly={fadeScrollButtonsOnly}
-        hideScrollButtons={hideScrollButtons}
+        isActivityContentLoading={isActivityContentLoading}
         onOpenDeleteModal={() =>
           dispatch({
             type: "set_modal_visibility",

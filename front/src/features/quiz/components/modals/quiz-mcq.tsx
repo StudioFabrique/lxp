@@ -26,7 +26,6 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) =>
         type: "mcq",
         selectedIndex: selected,
       });
-      setSelected(null);
     }
   };
 
@@ -36,11 +35,25 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) =>
         {optionIndexes.map((index) => (
           <button
             key={index}
-            className={cn("btn justify-start h-auto min-h-12 normal-case text-left", selected === index ? "btn-primary" : "btn-outline btn-primary")}
+            className={cn(
+              "btn justify-start h-auto min-h-12 normal-case text-left",
+              selected === index ? "btn-primary" : "btn-outline btn-primary",
+              isAnswered && "disabled:text-base-content",
+              isAnswered && index === quiz.data.answerIndex &&
+                "border-2 border-success bg-success/10 text-base-content disabled:border-success disabled:bg-success/10",
+              isAnswered && selected === index && index !== quiz.data.answerIndex &&
+                "border-2 border-error bg-error/10 text-base-content disabled:border-error disabled:bg-error/10",
+            )}
             onClick={() => setSelected(index)}
             disabled={isAnswered}
           >
             {quiz.data.options[index]}
+            {isAnswered && index === quiz.data.answerIndex && (
+              <span className="badge badge-success ml-auto shrink-0">Bonne réponse</span>
+            )}
+            {isAnswered && selected === index && index !== quiz.data.answerIndex && (
+              <span className="badge badge-error ml-auto shrink-0">Votre réponse</span>
+            )}
           </button>
         ))}
       </div>
