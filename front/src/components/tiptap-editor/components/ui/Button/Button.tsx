@@ -16,6 +16,14 @@ export type ButtonProps = {
   buttonSize?: ButtonSize;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
+const variantClasses: Record<ButtonVariant, string> = {
+  primary: "btn-primary",
+  secondary: "btn-ghost",
+  tertiary: "btn-soft btn-neutral",
+  quaternary: "btn-outline",
+  ghost: "btn-ghost text-base-content/60",
+};
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -31,53 +39,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const buttonClassName = cn(
-      "flex group items-center justify-center border border-transparent gap-2 text-sm font-semibold rounded-md disabled:opacity-50 whitespace-nowrap",
-
-      variant === "primary" &&
-        cn(
-          "text-white bg-black border-black dark:text-black dark:bg-white dark:border-white",
-          !disabled &&
-            !active &&
-            "hover:bg-neutral-800 active:bg-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-300",
-          active && cn("bg-neutral-900 dark:bg-neutral-300", activeClassname),
-        ),
-
-      variant === "secondary" &&
-        cn(
-          "text-neutral-900 dark:text-white",
-          !disabled &&
-            !active &&
-            "hover:bg-neutral-100 active:bg-neutral-200 dark:hover:bg-neutral-900 dark:active:bg-neutral-800",
-          active && "bg-neutral-200 dark:bg-neutral-800",
-        ),
-
-      variant === "tertiary" &&
-        cn(
-          "bg-neutral-50 text-neutral-900 dark:bg-neutral-900 dark:text-white dark:border-neutral-900",
-          !disabled &&
-            !active &&
-            "hover:bg-neutral-100 active:bg-neutral-200 dark:hover:bg-neutral-800 dark:active:bg-neutral-700",
-          active && cn("bg-neutral-200 dark:bg-neutral-800", activeClassname),
-        ),
-
-      variant === "ghost" &&
-        cn(
-          "bg-transparent border-transparent text-base-content/60",
-          !disabled &&
-            !active &&
-            "hover:bg-base-200 hover:text-base-content active:bg-base-300",
-          active &&
-            cn(
-              "bg-primary/10 text-primary",
-              activeClassname,
-            ),
-        ),
-
+      "btn h-auto min-h-0 gap-2 rounded-md text-sm font-semibold normal-case disabled:opacity-50 whitespace-nowrap",
+      variantClasses[variant],
       buttonSize === "medium" && "py-2 px-3",
       buttonSize === "small" && "py-1 px-2",
-      buttonSize === "icon" && "w-8 h-8",
-      buttonSize === "iconSmall" && "w-6 h-6",
-
+      buttonSize === "icon" && "w-8 h-8 p-0",
+      buttonSize === "iconSmall" && "w-6 h-6 p-0",
+      active && "btn-active",
+      active && activeClassname,
       className,
     );
 

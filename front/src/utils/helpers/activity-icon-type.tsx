@@ -1,23 +1,24 @@
 import { FileSpreadsheet, Image, MonitorPlay, Text, Video } from "lucide-react";
+import { iconSizeStyle } from "../icon-size-style";
 import type { Activity } from "../interfaces/activity";
 
 const activityIconType = (type: Activity["type"], size?: number) => {
-  const iconSize = size ? `w-${size} h-${size}` : "w-5 h-5";
+  const style = iconSizeStyle(size || 5);
 
   switch (type) {
     case "text":
-      return <Text className={iconSize} />;
+      return <Text style={style} />;
     case "video":
-      return <Video className={iconSize} />;
+      return <Video style={style} />;
     case "image":
-      return <Image className={iconSize} />;
+      return <Image style={style} />;
     case "iframe":
-      return <MonitorPlay className={iconSize} />;
+      return <MonitorPlay style={style} />;
     case "file":
     case "resource":
-      return <FileSpreadsheet className={iconSize} />;
+      return <FileSpreadsheet style={style} />;
     default:
-      return <FileSpreadsheet className={iconSize} />;
+      return <FileSpreadsheet style={style} />;
   }
 };
 

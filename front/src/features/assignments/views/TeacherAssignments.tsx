@@ -214,7 +214,7 @@ export default function TeacherAssignments() {
                 moreItemsLabel={(count) =>
                   `Afficher plus d’étudiants (${count})`
                 }
-                overflowTitle={`Autres étudiants — ${assignment.course.title}`}
+                overflowTitle={`Autres étudiants du cours « ${assignment.course.title} »`}
               />
             );
           })}

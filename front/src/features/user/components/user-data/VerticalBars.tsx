@@ -1,6 +1,4 @@
-import { useContext, useEffect, useState } from "react";
 import Chart from "react-apexcharts";
-import { ThemeContext } from "../../../../store/ThemeProvider";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface VerticalChartsProps {
@@ -29,8 +27,7 @@ export default function VerticalBars({
     category.length > 10 ? category.slice(0, 10) + "..." : category,
   );
 
-  const { theme } = useContext(ThemeContext);
-  const [color, setColor] = useState(theme === "dark" ? "white" : "black");
+  const color = "var(--color-base-content)";
 
   const options = {
     chart: {
@@ -64,7 +61,7 @@ export default function VerticalBars({
             {
               from: 0,
               to: warning,
-              color: "#FFA500", // Orange
+              color: "var(--color-warning)",
             },
           ],
         },
@@ -73,9 +70,7 @@ export default function VerticalBars({
     grid: { show: grid },
   };
 
-  useEffect(() => {
-    setColor(theme === "dark" ? "white" : "black");
-  }, [theme]);
+
 
   return (
     <div className="app">

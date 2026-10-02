@@ -105,8 +105,11 @@ describe("StudentLearningOnboarding", () => {
     context.availableFormations[0].parcours[0].modules = context.availableFormations[0].parcours[0].modules.slice(1);
     await render(context);
     expect(container.textContent).toContain("Vous avez été ajouté à un nouveau parcours");
-    expect(container.textContent).toContain("Vos parcours");
-    expect(container.textContent).toContain("Vos groupes");
+    expect(Array.from(container.querySelectorAll("dl dt"), (item) => item.textContent))
+      .toEqual(["Formation", "Parcours", "Groupe"]);
+    expect(Array.from(container.querySelectorAll("dl dd"), (item) => item.textContent))
+      .toEqual(["Formation", "Parcours", "Groupe design"]);
+    expect(container.querySelector("dl ul")).toBeNull();
     expect(container.textContent).toContain("Groupe design");
     expect(container.textContent).not.toContain("Ancien parcours");
     expect(container.querySelector("[data-progress]")).toBeNull();
@@ -224,6 +227,31 @@ describe("StudentLearningOnboarding", () => {
     expect(learningProfileApi.update).not.toHaveBeenCalledWith({ action: "confirm" });
     await answerModule(3);
     expect(container.textContent).toBe("Tableau de bord");
+  });
+
+  it("actualise les parcours déjà en cache avant de revenir au dashboard", async () => {
+    const previousParcours = [{ id: 1, title: "Ancien parcours" }];
+    const availableParcours = [...previousParcours, { id: 2, title: "Nouveau parcours" }];
+    const keys = [["parcours-as-student"], ["parcours", { asStudent: true }]];
+    const fetchParcours = vi.fn().mockResolvedValue(previousParcours);
+    for (const queryKey of keys) {
+      await queryClient.fetchQuery({ queryKey, queryFn: fetchParcours, staleTime: Infinity });
+    }
+    queryClient.setQueryData(["parcours", { asStudent: false }], previousParcours);
+    await render(makeContext("additional", "module:3"));
+    fetchParcours.mockClear();
+    fetchParcours.mockResolvedValue(availableParcours);
+
+    await answerModule(3);
+
+    expect(container.textContent).toBe("Tableau de bord");
+    expect(fetchParcours).toHaveBeenCalledTimes(2);
+    for (const queryKey of keys) {
+      expect(queryClient.getQueryData(queryKey)).toEqual(availableParcours);
+      expect(queryClient.getQueryState(queryKey)?.isInvalidated).toBe(false);
+    }
+    expect(queryClient.getQueryData(["parcours", { asStudent: false }])).toEqual(previousParcours);
+    expect(queryClient.getQueryState(["parcours", { asStudent: false }])?.isInvalidated).toBe(false);
   });
 
   it("valide et enregistre séparément le rythme puis les méthodes", async () => {

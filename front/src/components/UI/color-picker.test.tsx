@@ -60,8 +60,8 @@ describe("ColorPicker", () => {
     const trigger = container.querySelector<HTMLElement>(
       '[role="button"][aria-label="Couleur de fond du logo"]',
     );
-    expect(trigger?.style.backgroundColor).toBe("rgb(255, 255, 255)");
-    expect(trigger?.style.borderColor).toBe("rgb(203, 213, 225)");
+    expect(trigger?.style.backgroundColor).toBe("var(--color-base-100)");
+    expect(trigger?.style.borderColor).toBe("var(--color-base-300)");
     expect(menu?.className).toContain("sm:left-full");
     expect(menu?.textContent).toContain("Choisir une couleur de fond");
     expect(menu?.querySelector(".grid-cols-4")?.children).toHaveLength(8);

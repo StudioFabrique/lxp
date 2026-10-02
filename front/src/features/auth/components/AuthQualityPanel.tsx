@@ -73,7 +73,7 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={activeQuality}
-            className="flex h-full min-h-0 flex-col overflow-hidden rounded-[15px] bg-white"
+            className="flex h-full min-h-0 flex-col overflow-hidden rounded-[15px] bg-base-100"
             style={{ backfaceVisibility: "hidden" }}
             initial={reducedMotion ? { opacity: 0 } : { rotateY: 90, opacity: 0 }}
             animate={{ rotateY: 0, opacity: 1 }}
@@ -87,15 +87,15 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
               }
             }}
           >
-            <div className="relative shrink-0 bg-white p-5 text-black">
-              <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" onClick={() => onClose(activeQuality, activeColorIndex)} aria-label="Fermer les détails"><X className="size-5" /></button>
+            <div className="relative shrink-0 bg-base-100 p-5 text-base-content">
+              <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-base-content transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={() => onClose(activeQuality, activeColorIndex)} aria-label="Fermer les détails"><X className="size-5" /></button>
               <AuthQualityLogo color={activeColorIndex} />
               <div className="flex items-center justify-between gap-3">
                 <h2 id={titleId} className="text-xl font-bold">{label}</h2>
                 <button
                   ref={nextButton}
                   type="button"
-                  className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-default"
+                  className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-base-content transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default"
                   aria-label={`Qualité suivante : ${platformQualities[(activeQuality + 1) % platformQualities.length].label}`}
                   disabled={turning}
                   onClick={() => {

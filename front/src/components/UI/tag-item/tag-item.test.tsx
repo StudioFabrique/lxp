@@ -12,7 +12,7 @@ describe("TagItem", () => {
     expect(markup).toContain("#tourisme");
     expect(markup).not.toContain("<button");
     expect(markup).toContain("color-mix(in srgb");
-    expect(markup).toContain("color:#17202a");
+    expect(markup).toContain("color:var(--color-base-content)");
   });
 
   it("conserve un bouton quand une action est fournie", () => {

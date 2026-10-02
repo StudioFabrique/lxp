@@ -1,21 +1,10 @@
-import {
-  LoaderCircle,
-  LockKeyhole,
-  Plus,
-  Shield,
-  UserRound,
-  X,
-} from "lucide-react";
-
+import { LoaderCircle, LockKeyhole, Plus, X } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import RightSideDrawer from "../../../../components/UI/right-side-drawer/right-side-drawer";
-import type {
-  PermissionItem,
-  PermissionTypes,
-  RoleCounts,
-} from "../../api/role.api";
+import type { PermissionItem, PermissionTypes, RoleCounts } from "../../api/role.api";
 import useRoleEdit from "../../hooks/useRoleEdit";
 import LoadingSkeleton from "../../../../components/loaders/LoadingSkeleton";
+import { PermissionIcon } from "./PermissionIcon";
 
 type RolePermissionsDrawerProps = {
   role: RoleCounts;
@@ -64,13 +53,6 @@ const sortPermissions = (items: PermissionItem[] | undefined) =>
       "fr",
       { sensitivity: "base" },
     ),
-  );
-
-const PermissionIcon = ({ isRole }: { isRole?: boolean }) =>
-  isRole ? (
-    <UserRound className="size-4 text-info" />
-  ) : (
-    <Shield className="size-4 text-warning" />
   );
 
 export default function RolePermissionsDrawer({

@@ -61,7 +61,7 @@ const ColorPicker = ({
         }
         style={
           compact
-            ? { backgroundColor: "#ffffff", borderColor: "#cbd5e1" }
+            ? { backgroundColor: "var(--color-base-100)", borderColor: "var(--color-base-300)" }
             : undefined
         }
       >
@@ -73,7 +73,7 @@ const ColorPicker = ({
           }
           style={{
             backgroundColor: selectedColor,
-            ...(compact ? { borderColor: "#cbd5e1" } : {}),
+            ...(compact ? { borderColor: "var(--color-base-300)" } : {}),
           }}
         />
         {!compact && (

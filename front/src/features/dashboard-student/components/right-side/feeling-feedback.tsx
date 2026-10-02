@@ -91,7 +91,7 @@ const FeelingFeedback = () => {
             />
             <button
               type="button"
-              className="btn btn-xs self-end btn-primary text-white"
+              className="btn btn-xs self-end btn-primary text-primary-content"
               onClick={handleSubmitFeedback}
             >
               Envoyer

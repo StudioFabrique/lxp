@@ -78,7 +78,7 @@ const SelectableCard = ({
 
   return (
     <div
-      className={cn("card shadow-sm border transition-all duration-200 hover:shadow-md", isSelected ? "border-primary ring-1 ring-primary" : "border-base-200", error ? "bg-error/10" : "bg-base-300", className, "w-full overflow-hidden")}
+      className={cn("card w-full overflow-hidden shadow-sm border transition-all duration-200 hover:shadow-md", isSelected ? "border-primary ring-1 ring-primary" : "border-base-200", error ? "bg-error/10" : "bg-base-300", className)}
     >
       <div className="card-body p-4">
         <div className="flex justify-between items-center w-full gap-4">

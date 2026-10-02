@@ -135,6 +135,13 @@ export default async function getLimitedModuleDetail(
   if (!module) {
     throw { message: "Le module n'existe pas.", statusCode: 404 };
   }
+  const preliminaryQuiz = await prisma.orm.public.Quiz.where((quiz) =>
+    and(
+      quiz.moduleId.eq(module.id),
+      quiz.type.eq("preliminary"),
+      quiz.questions.some(),
+    ),
+  ).select("id").first();
   const skillAchievements = await loadSkillAchievements(userMongoId, {
     skillIds: module.bonusSkills.map(({ bonusSkillId }) => bonusSkillId),
   });
@@ -147,6 +154,7 @@ export default async function getLimitedModuleDetail(
     title: module.title,
     description: module.description,
     quizInstructions: module.quizInstructions,
+    hasPreliminaryQuiz: Boolean(preliminaryQuiz),
     image: module.image
       ? Buffer.from(module.image as any).toString("base64")
       : null,

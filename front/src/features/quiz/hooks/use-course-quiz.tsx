@@ -50,13 +50,14 @@ export default function useCourseQuiz(
     toast.error(message, {
       icon: <Info />,
       style: {
-        border: "1px solid #EA580C",
+        border: "1px solid var(--color-warning)",
         padding: "16px",
-        color: "#EA580C",
+        background: "var(--color-base-100)",
+        color: "var(--color-base-content)",
       },
       iconTheme: {
-        primary: "#EA580C",
-        secondary: "#FFEDD5",
+        primary: "var(--color-warning)",
+        secondary: "var(--color-warning-content)",
       },
     });
   };

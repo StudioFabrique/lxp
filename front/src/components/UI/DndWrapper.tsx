@@ -1,13 +1,8 @@
 // Import des types et composants nécessaires
-import { ReactNode, useEffect, useId, useRef, useState } from "react";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
-  draggable,
-  dropTargetForElements,
-  monitorForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { ReactNode, useEffect, useId } from "react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { DndHandlers } from "../../utils/interfaces/dnd";
-import { cn } from "../../utils/cn";
+import { SortableItem } from "./SortableItem";
 
 /**
  * Interface définissant les props du composant DndWrapper
@@ -19,55 +14,6 @@ interface DndWrapperProps<T> extends DndHandlers {
   isLoading: boolean;
   renderItem: (item: T, index: number) => ReactNode; // Fonction de rendu pour chaque élément
   getItemId?: (item: T, index: number) => string | number;
-}
-
-interface SortableItemProps {
-  contextId: string;
-  index: number;
-  disabled: boolean;
-  children: ReactNode;
-}
-
-function SortableItem({
-  contextId,
-  index,
-  disabled,
-  children,
-}: SortableItemProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDraggedOver, setIsDraggedOver] = useState(false);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element || disabled) return;
-
-    return combine(
-      draggable({
-        element,
-        getInitialData: () => ({ contextId, index }),
-        onDragStart: () => setIsDragging(true),
-        onDrop: () => setIsDragging(false),
-      }),
-      dropTargetForElements({
-        element,
-        getData: () => ({ contextId, index }),
-        canDrop: ({ source }) => source.data.contextId === contextId,
-        onDragEnter: () => setIsDraggedOver(true),
-        onDragLeave: () => setIsDraggedOver(false),
-        onDrop: () => setIsDraggedOver(false),
-      }),
-    );
-  }, [contextId, disabled, index]);
-
-  return (
-    <div
-      ref={ref}
-      className={cn(isDragging ? "opacity-30" : "opacity-100", isDraggedOver ? "border-t-2 border-primary" : "border-t-2 border-transparent")}
-    >
-      {children}
-    </div>
-  );
 }
 
 /**

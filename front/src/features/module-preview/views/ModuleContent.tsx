@@ -112,6 +112,7 @@ const ModuleContent = () => {
       title: state.module?.title,
       description: state.module?.description,
       quizInstructions: state.module?.quizInstructions,
+      hasPreliminaryQuiz: state.module?.hasPreliminaryQuiz,
       hasQuizContent: Boolean(state.module?.courses.some(
         (course) => course.aiIndexed !== false && course.lessons.length > 0,
       )),

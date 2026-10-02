@@ -157,7 +157,7 @@ const ModuleTimelineDateModal = ({
               </form>
               <button
                 onClick={handleSubmit}
-                className="btn btn-primary text-white"
+                className="btn btn-primary text-primary-content"
                 disabled={!!error}
               >
                 Sauvegarder

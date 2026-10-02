@@ -1,4 +1,12 @@
 import { HelpCircle } from "lucide-react";
+import { cn } from "../../../utils/cn";
+
+const tooltipPositions = {
+  right: "tooltip-right",
+  left: "tooltip-left",
+  top: "tooltip-top",
+  bottom: "tooltip-bottom",
+};
 
 type QuestionMarkTooltipProps = {
   tooltipValue?: string;
@@ -11,7 +19,7 @@ const QuestionMarkTooltip = ({
   tooltipValue,
   tooltipPosition = "right",
 }: QuestionMarkTooltipProps) => {
-  const position = "tooltip tooltip-" + tooltipPosition;
+  const position = cn("tooltip", tooltipPositions[tooltipPosition]);
 
   return (
     <div className={position} data-tip={tooltipValue}>

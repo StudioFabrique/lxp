@@ -52,7 +52,7 @@ const OnboardingWelcome = ({ layout, children }: Props) => {
         closeButtonAction: "skip",
         dismissKeyAction: "close",
         overlayClickAction: false,
-        overlayColor: "rgba(2, 6, 23, 0.72)",
+        overlayColor: "color-mix(in srgb, var(--color-neutral) 72%, transparent)",
         primaryColor: "var(--color-primary)",
         backgroundColor: "var(--color-base-100)",
         textColor: "var(--color-base-content)",

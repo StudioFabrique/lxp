@@ -1,61 +1,11 @@
-import {
-  ChevronDown,
-  Heading1,
-  Heading2,
-  Heading3,
-  List,
-  ListOrdered,
-  ListTodo,
-  LoaderCircle,
-  Pilcrow,
-  Plus,
-  TextAlignCenter,
-  TextAlignEnd,
-  TextAlignJustify,
-  TextAlignStart,
-  type LucideIcon,
-} from "lucide-react";
+import { ChevronDown, LoaderCircle } from "lucide-react";
 import { PropsWithChildren, useMemo } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { ToolbarButton } from "../ui/Toolbar";
 import { Surface } from "../ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "../ui/Dropdown";
-import { cn } from "../../../../utils/cn";
-
-const pickerIcons = {
-  Heading1,
-  Heading2,
-  Heading3,
-  List,
-  ListOrdered,
-  ListTodo,
-  Pilcrow,
-  Plus,
-  TextAlignCenter,
-  TextAlignEnd,
-  TextAlignJustify,
-  TextAlignStart,
-} satisfies Record<string, LucideIcon>;
-
-type ContentTypeIconName = keyof typeof pickerIcons;
-
-const PickerIcon = ({
-  name,
-  className,
-}: {
-  name: ContentTypeIconName;
-  className?: string;
-}) => {
-  const IconComponent = pickerIcons[name];
-
-  return (
-    <IconComponent
-      aria-hidden="true"
-      className={cn("h-4 w-4 antialiased", className ?? "")}
-      strokeWidth={2}
-    />
-  );
-};
+import { type ContentTypeIconName } from "./ContentTypePicker.types";
+import { PickerIcon } from "./PickerIcon";
 
 export type ContentTypePickerOption = {
   label: string;
@@ -86,6 +36,7 @@ export type ContentTypePickerProps = {
 const isOption = (
   option: ContentTypePickerOption | ContentTypePickerCategory,
 ): option is ContentTypePickerOption => option.type === "option";
+
 const isCategory = (
   option: ContentTypePickerOption | ContentTypePickerCategory,
 ): option is ContentTypePickerCategory => option.type === "category";

@@ -11,7 +11,7 @@ const QuizRequestModal = ({ isOpen, onAcceptQuiz, onDeclineQuiz }: Props) => {
     <div className="modal modal-open">
       <div className="modal-box">
         <div className="flex items-center">
-          <Lightbulb className="inline mr-2 text-yellow-500" />
+          <Lightbulb className="inline mr-2 text-warning" />
           <h3 className="font-bold text-lg">
             Je t'ai préparé un quiz rapide !
           </h3>

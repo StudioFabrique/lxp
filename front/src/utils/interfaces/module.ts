@@ -9,6 +9,7 @@ export default interface Module {
   title: string;
   description: string;
   quizInstructions?: string;
+  hasPreliminaryQuiz?: boolean;
   contacts: Array<Contact>;
   bonusSkills: Array<Skill>;
   duration: number;

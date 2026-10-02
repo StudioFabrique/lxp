@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import {
   LoaderCircle,
   ArrowRight,
+  GraduationCap,
   Rocket,
   UsersRound,
 } from "lucide-react";
@@ -370,6 +371,18 @@ export default function StudentLearningOnboarding() {
 
   const completeOnboarding = async () => {
     await learningProfileApi.update({ action: "confirm" });
+    // Refresh cached lists before the learning context can redirect to the dashboard.
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ["parcours-as-student"],
+        refetchType: "all",
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["parcours", { asStudent: true }],
+        exact: true,
+        refetchType: "all",
+      }),
+    ]);
     await queryClient.invalidateQueries({ queryKey: learningProfileKey });
     toast.success("Votre profil d’apprentissage est prêt.");
     navigate("/student/dashboard", { replace: true });
@@ -493,40 +506,74 @@ export default function StudentLearningOnboarding() {
               }
             >
               <div className="mx-auto w-full max-w-md">
-                <dl className="mx-auto mt-5 flex w-full flex-col gap-4 text-left">
-                  <div className="flex items-start gap-3">
-                    <Rocket className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-                    <div className="min-w-0 flex-1">
-                      <dt className="text-base font-medium text-base-content/60">Vos parcours</dt>
-                      <dd className="mt-2">
-                        <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos parcours">
-                          {pendingParcours.map((entry) => (
-                            <li key={entry.id} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
-                              <span className="break-words">{capitalizeTitle(entry.title)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </dd>
+                {pendingParcours.length === 1 ? (
+                  <dl className="mx-auto mt-5 flex w-fit max-w-full flex-col gap-3 text-left sm:mt-6 sm:gap-4">
+                    <div className="flex items-center gap-3">
+                      <GraduationCap className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">Formation</dt>
+                        <dd className="mt-0.5 break-words text-base font-semibold leading-snug text-base-content sm:text-lg">
+                          {capitalizeTitle(welcomeFormations[0].title)}
+                        </dd>
+                      </div>
                     </div>
-                  </div>
-                  {welcomeGroupNames.length > 0 && (
+                    <div className="flex items-center gap-3">
+                      <Rocket className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">Parcours</dt>
+                        <dd className="mt-0.5 break-words text-base font-semibold leading-snug text-base-content sm:text-lg">
+                          {capitalizeTitle(pendingParcours[0].title)}
+                        </dd>
+                      </div>
+                    </div>
+                    {welcomeGroupNames.map((name) => (
+                      <div key={name} className="flex items-center gap-3">
+                        <UsersRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                        <div className="min-w-0">
+                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">Groupe</dt>
+                          <dd className="mt-0.5 break-words text-base font-semibold leading-snug text-base-content sm:text-lg">
+                            {capitalizeTitle(name)}
+                          </dd>
+                        </div>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <dl className="mx-auto mt-5 flex w-full flex-col gap-4 text-left">
                     <div className="flex items-start gap-3">
-                      <UsersRound className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <Rocket className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
                       <div className="min-w-0 flex-1">
-                        <dt className="text-base font-medium text-base-content/60">Vos groupes</dt>
+                        <dt className="text-base font-medium text-base-content/60">Vos parcours</dt>
                         <dd className="mt-2">
-                          <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos groupes">
-                            {welcomeGroupNames.map((name) => (
-                              <li key={name} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
-                                <span className="break-words">{capitalizeTitle(name)}</span>
+                          <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos parcours">
+                            {pendingParcours.map((entry) => (
+                              <li key={entry.id} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
+                                <span className="break-words">{capitalizeTitle(entry.title)}</span>
                               </li>
                             ))}
                           </ul>
                         </dd>
                       </div>
                     </div>
-                  )}
-                </dl>
+                    {welcomeGroupNames.length > 0 && (
+                      <div className="flex items-start gap-3">
+                        <UsersRound className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                        <div className="min-w-0 flex-1">
+                          <dt className="text-base font-medium text-base-content/60">Vos groupes</dt>
+                          <dd className="mt-2">
+                            <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos groupes">
+                              {welcomeGroupNames.map((name) => (
+                                <li key={name} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
+                                  <span className="break-words">{capitalizeTitle(name)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </dd>
+                        </div>
+                      </div>
+                    )}
+                  </dl>
+                )}
                 {welcomeTags.length > 0 && (
                   <ul
                     aria-label="Tags du parcours"

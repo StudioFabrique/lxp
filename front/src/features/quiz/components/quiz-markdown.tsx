@@ -38,7 +38,7 @@ const QuizMarkdown = ({ children, explanation = false }: Props) => (
 
         // Code inline : fond semi-transparent pour fonctionner sur tout fond
         code: ({ children }) => (
-          <code className="font-mono text-[0.85em] bg-black/10 rounded px-1 py-0.5">
+          <code className="font-mono text-[0.85em] bg-base-300 rounded px-1 py-0.5">
             {children}
           </code>
         ),

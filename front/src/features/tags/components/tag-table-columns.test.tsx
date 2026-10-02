@@ -26,7 +26,7 @@ describe("getTagColumns", () => {
     );
 
     expect(markup).toContain("#Design");
-    expect(markup).toContain("background-color:rgb(12, 34, 56)");
+    expect(markup).toContain("background-color:color-mix(in srgb, rgb(12, 34, 56)");
   });
 
   it("masque les actions d'un tag qui appartient à une autre équipe", () => {

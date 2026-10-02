@@ -65,7 +65,7 @@ export const LinkEditorPanel = ({
       className={cn("flex flex-col p-2", TIPTAP_MENU_BAR_COLORS.background, TIPTAP_MENU_BAR_COLORS.text)}
     >
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
-        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/80 cursor-text">
+        <label className="flex items-center gap-2 p-2 rounded-lg bg-base-200/80 cursor-text">
           <Icon name="Link" className="flex-none" />
           <input
             type="url"
