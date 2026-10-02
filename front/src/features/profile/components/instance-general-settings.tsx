@@ -8,7 +8,7 @@ import {
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Eye, Loader2, Plus, X } from "lucide-react";
+import { Eye, LoaderCircle, Plus, X } from "lucide-react";
 import toast from "react-hot-toast";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
@@ -357,7 +357,7 @@ export default function InstanceGeneralSettings() {
                 className="btn btn-primary min-w-32 normal-case"
                 disabled={isLoading || isSaving}
               >
-                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {isSaving ? "Sauvegarde…" : "Sauvegarder"}
               </button>
             </div>
@@ -568,7 +568,7 @@ export default function InstanceGeneralSettings() {
                 className="btn btn-primary min-w-32 normal-case"
                 disabled={isLoading || isSaving}
               >
-                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {isSaving ? "Sauvegarde…" : "Sauvegarder"}
               </button>
             </div>

@@ -1,9 +1,9 @@
+import { LoaderCircle } from "lucide-react";
 import { useMemo } from "react";
 import Course from "../../../../../src/utils/interfaces/course";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import TableActionsModal from "../../../../components/table/TableActionsModal";
 import { ModalCourseType } from "./course-item";
-import { cn } from "../../../../utils/cn";
 
 type CourseActionsModalProps = {
   modalType?: ModalCourseType;
@@ -63,9 +63,11 @@ const CourseActionsModal = ({
       descList={lesson ? [lesson.title] : [course.title]}
     >
       <button
-        className={cn("btn btn-primary btn-md", isModalLoading && "loading")}
+        className="btn btn-primary btn-md"
         onClick={onConfirm}
+        disabled={isModalLoading}
       >
+        {isModalLoading && <LoaderCircle className="size-5 animate-spin" />}
         Confirmer
       </button>
     </TableActionsModal>

@@ -169,7 +169,7 @@ const ParcoursView = () => {
                   onClick={() => exportParcoursMutation.mutate()}
                 >
                   {exportParcoursMutation.isPending ? (
-                    <LoaderCircle className="animate-spin" />
+                    <LoaderCircle className="size-5 animate-spin" />
                   ) : (
                     <Download />
                   )}

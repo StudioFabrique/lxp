@@ -6,7 +6,7 @@ import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Check, Plus, Search, Trash2, X } from "lucide-react";
+import { LoaderCircle, BookOpen, Check, Plus, Search, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -483,7 +483,7 @@ export default function CreateCourseDetailsModal({
             }
           >
             {isSubmitting && (
-              <span className="loading loading-spinner loading-sm" />
+              <LoaderCircle className="size-4 animate-spin" />
             )}
             Créer le cours
           </button>

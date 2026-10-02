@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { lessonDetailsSchema } from "../../assignment.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
-import { BookOpen, Loader2, X } from "lucide-react";
+import { BookOpen, LoaderCircle, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import type Lesson from "../../../../utils/interfaces/lesson";
@@ -177,7 +177,7 @@ export default function EditLessonModal({
             className="btn btn-primary"
             disabled={!title.trim() || !selectedTagId || isSubmitting}
           >
-            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSubmitting && <LoaderCircle className="h-4 w-4 animate-spin" />}
             Enregistrer
           </button>
         </div>

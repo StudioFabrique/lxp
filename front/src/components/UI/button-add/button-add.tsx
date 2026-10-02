@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { FC } from "react";
 import { cn } from "../../../utils/cn";
 
@@ -27,7 +28,7 @@ const ButtonAdd: FC<Props> = ({
       onClick={onClickEvent}
       type={type}
     >
-      {loading ? <div className="loading loading-spinner loading-sm" /> : null}
+      {loading ? <LoaderCircle className="size-4 animate-spin" /> : null}
       {label}
     </button>
   );

@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import ImageFileUpload, {
@@ -165,7 +166,7 @@ export default function ModuleForm({
           disabled={isSubmitting}
         >
           {isSubmitting && (
-            <span className="loading loading-spinner loading-sm" />
+            <LoaderCircle className="size-4 animate-spin" />
           )}
           {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
         </button>

@@ -70,6 +70,8 @@ const useModuleContent = () => {
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isPublishingAllCourses, setIsPublishingAllCourses] = useState(false);
+  const [isUpdatingCourseVisibility, setIsUpdatingCourseVisibility] = useState(false);
+  const courseVisibilityInFlight = useRef(false);
 
   const [state, dispatch] = useReducer(
     moduleContentReducer,
@@ -343,6 +345,30 @@ const useModuleContent = () => {
     },
     [fetchModuleData],
   );
+
+  const toggleAllCoursesVisibility = useCallback(async (visibility: boolean) => {
+    const courses = state.module?.courses ?? [];
+    if (courses.length === 0 || courseVisibilityInFlight.current) return;
+
+    courseVisibilityInFlight.current = true;
+    setIsUpdatingCourseVisibility(true);
+    try {
+      const results = await Promise.allSettled(
+        courses
+          .filter((course) => Boolean(course.visibility) !== visibility)
+          .map((course) => modulePreviewApi.mutations.enableCourse(course.id, visibility)),
+      );
+      await fetchModuleData();
+      if (results.some((result) => result.status === "rejected" || !result.value.success)) {
+        toast.error("Impossible de modifier la visibilité de tous les cours");
+      } else {
+        toast.success(visibility ? "Tous les cours sont visibles" : "Tous les cours sont invisibles");
+      }
+    } finally {
+      courseVisibilityInFlight.current = false;
+      setIsUpdatingCourseVisibility(false);
+    }
+  }, [fetchModuleData, state.module?.courses]);
 
   const publishCourse = useCallback(
     async (courseId: number) => {
@@ -1012,6 +1038,7 @@ const useModuleContent = () => {
       (selectedTextActivityKey && state.loadedTextActivityKey !== selectedTextActivityKey),
     ),
     isPublishingAllCourses,
+    isUpdatingCourseVisibility,
     dispatch,
     moduleActions: {
       fetchModuleData,
@@ -1019,6 +1046,7 @@ const useModuleContent = () => {
     },
     courseActions: {
       enableCourse,
+      toggleAllCoursesVisibility,
       publishCourse,
       publishAllCourses,
       deleteCourse,

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { MailCheck } from "lucide-react";
+import { LoaderCircle, MailCheck } from "lucide-react";
 import { accountApi } from "../api/account.api";
 import PasswordUpdateError from "../components/PasswordUpdateError";
 import PasswordForm from "../components/PasswordForm";
@@ -142,7 +142,7 @@ export default function RegisterHome() {
                 className="btn btn-primary w-full"
               >
                 {isLoading ? (
-                  <span className="loading loading-spinner loading-sm" />
+                  <LoaderCircle className="size-4 animate-spin" />
                 ) : (
                   "Valider"
                 )}

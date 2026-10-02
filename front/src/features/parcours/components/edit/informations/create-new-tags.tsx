@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import useTags from "../../../../../hooks/useTags";
 import TagsList from "../../../../../components/tags/TagsList";
 import AddTag from "../../../../../components/UI/add-tag";
@@ -101,7 +102,7 @@ function CreateNewTag(props: Props) {
               onClick={handleSubmitNewTags}
               disabled={!canSubmit || isPending}
             >
-              {isPending && <span className="loading loading-spinner loading-sm" />}
+              {isPending && <LoaderCircle className="size-4 animate-spin" />}
               Créer les nouveaux tags
             </button>
           </div>

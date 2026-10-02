@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { LoaderCircle, Trash2 } from "lucide-react";
 import AddTag from "../../../components/UI/add-tag";
 import TagsList from "../../../components/tags/TagsList";
 import { cn } from "../../../utils/cn";
@@ -141,7 +141,7 @@ const FormationForm = ({
               onClick={onDelete}
             >
               {isDeleting ? (
-                <Loader2 className="animate-spin" />
+                <LoaderCircle className="size-5 animate-spin" />
               ) : (
                 <Trash2 className="size-4" />
               )}
@@ -169,7 +169,7 @@ const FormationForm = ({
         >
           {isPending ? (
             <span className="flex items-center gap-x-2">
-              <Loader2 className="animate-spin" />
+              <LoaderCircle className="size-5 animate-spin" />
               <p>Sauvegarde en cours...</p>
             </span>
           ) : (

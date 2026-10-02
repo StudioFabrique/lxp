@@ -1,7 +1,7 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Upload } from "lucide-react";
+import { LoaderCircle, Upload } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -212,7 +212,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
               onClick={() => archiveInputRef.current?.click()}
             >
               {isImporting ? (
-                <Loader2 className="size-4 animate-spin" />
+                <LoaderCircle className="size-4 animate-spin" />
               ) : (
                 <Upload className="size-4" />
               )}

@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { PlusCircle, RefreshCw } from "lucide-react";
+import { LoaderCircle, PlusCircle, RefreshCw } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import type Role from "../../../utils/interfaces/role";
@@ -270,7 +270,7 @@ const UserHome = () => {
                 className="btn btn-sm btn-ghost disabled:bg-transparent"
                 aria-label="Rafraîchir la liste des utilisateurs"
               >
-                <RefreshCw className={cn(isLoading ? "animate-spin" : "")} />
+                {isLoading ? <LoaderCircle className="size-5 animate-spin" /> : <RefreshCw />}
               </button>
               <PermissionGuard object="user" action="delete">
                 <TableActionsButtons<User>
@@ -345,10 +345,11 @@ const UserHome = () => {
         error={deleteError}
       >
         <button
-          className={cn("btn btn-error btn-md", isDeleting && "loading")}
+          className="btn btn-error btn-md"
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >
+          {isDeleting && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>

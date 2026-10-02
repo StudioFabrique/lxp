@@ -1,7 +1,7 @@
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { useContext, useEffect, useState, type PropsWithChildren } from "react";
-import { Sun, Moon, LogOut } from "lucide-react";
+import { LoaderCircle, Sun, Moon, LogOut } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { AuthContext } from "../../../store/AuthProvider";
 import { useAuthBackground } from "../hooks/useAuthBackground";
@@ -138,7 +138,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               {pathname === "/login" && (isLoading || isLoggedIn) && (
                 <div className="absolute inset-0 z-20 flex items-start justify-center bg-base-100/90 pt-36" role="status" aria-live="polite">
                   <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-base-content">
-                    <span className="loading loading-spinner loading-md text-primary" aria-hidden="true" />
+                    <LoaderCircle className="size-5 animate-spin text-primary" aria-hidden="true" />
                     <span className="font-medium">Connexion en cours…</span>
                   </div>
                 </div>

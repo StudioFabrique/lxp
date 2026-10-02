@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordCreationSchema } from "../auth.schema";
 import { useState } from "react";
@@ -78,7 +79,7 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
             className="btn btn-primary w-full mt-2"
           >
             {isLoading ? (
-              <span className="loading loading-spinner loading-sm"></span>
+              <LoaderCircle className="size-4 animate-spin" />
             ) : (
               "Valider"
             )}

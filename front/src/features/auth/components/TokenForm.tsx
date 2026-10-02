@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { activationTokenSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { LoaderCircle, Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import AuthPageWrapper from "./AuthPageWrapper";
 
@@ -160,7 +160,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
           >
             {isLoading ? (
               <>
-                <span className="loading loading-spinner loading-sm"></span>
+                <LoaderCircle className="size-4 animate-spin" />
                 Vérification...
               </>
             ) : (

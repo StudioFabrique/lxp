@@ -4,7 +4,7 @@ import { courseDetailsSchema } from "../../assignment.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
 import { useQuery } from "@tanstack/react-query";
-import { Check, X } from "lucide-react";
+import { LoaderCircle, Check, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import { modulePreviewApi } from "../../api/module-preview.api";
@@ -198,7 +198,7 @@ export default function EditCourseModal({
             }
           >
             {isSubmitting && (
-              <span className="loading loading-spinner loading-sm" />
+              <LoaderCircle className="size-4 animate-spin" />
             )}
             Enregistrer
           </button>

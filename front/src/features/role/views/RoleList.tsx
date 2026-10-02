@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
@@ -321,7 +321,7 @@ const RoleList = () => {
             onClick={handleConfirmDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? <span className="loading loading-spinner" /> : null}
+            {isDeleting ? <LoaderCircle className="size-5 animate-spin" /> : null}
             Supprimer
           </button>
         </TableActionsModal>

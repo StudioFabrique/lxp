@@ -54,6 +54,11 @@ describe("validation des formulaires", () => {
     const draft = { pace: null, preferences: [], levels: {}, hobbies: [], links: [] };
     expect(onboardingStepSchema("theme").safeParse(draft).success).toBe(true);
     expect(onboardingStepSchema("learning").safeParse(draft).success).toBe(false);
+    expect(onboardingStepSchema("pace").safeParse(draft).success).toBe(false);
+    expect(onboardingStepSchema("preferences").safeParse(draft).success).toBe(false);
+    expect(onboardingStepSchema("pace").safeParse({ ...draft, pace: "standard" }).success).toBe(true);
+    expect(onboardingStepSchema("preferences").safeParse({ ...draft, preferences: ["step_by_step"] }).success).toBe(true);
+    expect(onboardingStepSchema("summary").safeParse({ ...draft, pace: "standard" }).success).toBe(false);
     expect(onboardingStepSchema("module", 12).safeParse(draft).success).toBe(false);
     expect(onboardingStepSchema("module", 12).safeParse({ ...draft, levels: { "12": "beginner" } }).success).toBe(true);
   });

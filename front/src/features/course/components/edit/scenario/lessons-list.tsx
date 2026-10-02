@@ -3,7 +3,7 @@ import { useCourseDispatch } from "../../../store/CourseContext";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import LessonItem from "./lesson-item";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, LoaderCircle } from "lucide-react";
 import { DndWrapper } from "../../../../../components/UI/DndWrapper";
 
 interface LessonsListProps {
@@ -32,7 +32,7 @@ const LessonsList = (props: LessonsListProps) => {
             <span className="flex items-center gap-x-2">
               <p>Contenu de cours</p>
               {props.loading ? (
-                <Loader2 className="w-4 h-4 text-primary animate animate-spin" />
+                <LoaderCircle className="w-4 h-4 text-primary animate animate-spin" />
               ) : null}
               {props.success ? (
                 <CheckCircle className="w-4 h-4 text-success" />

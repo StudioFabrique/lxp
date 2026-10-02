@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 import Contact from "../../../../../../src/utils/interfaces/contact";
-import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
+import { sortArray } from "../../../../../utils/helpers/sort-array";
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import UserQuickCreate from "../../../../../../src/components/user-quick-create/user-quick-create";
@@ -36,24 +36,20 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   const [selectedContactIds, setSelectedContactIds] = useState<Set<number>>(
     () => new Set(),
   );
-  const selectableContacts = useMemo(
-    () =>
-      (props.list ?? []).map((contact) =>
-        contact.id !== undefined && selectedContactIds.has(contact.id)
-          ? { ...contact, isSelected: true }
-          : contact,
-      ),
-    [props.list, selectedContactIds],
+  const [direction, setDirection] = useState(true);
+  const fieldSort = "lastname";
+  const list = useMemo(
+    () => sortArray(
+      (props.list ?? []).map((contact) => ({
+        ...contact,
+        isSelected: contact.id !== undefined && selectedContactIds.has(contact.id),
+      })),
+      fieldSort,
+      direction,
+    ),
+    [props.list, selectedContactIds, direction],
   );
-  const {
-    allChecked,
-    list,
-    fieldSort,
-    direction,
-    setAllChecked,
-    handleRowCheck,
-    sortData,
-  } = useEagerLoadingList(selectableContacts, "lastname");
+  const allChecked = list.length > 0 && list.every((contact) => contact.isSelected);
   const queryClient = useQueryClient();
 
   const { mutate: createTeacher } = useMutation({
@@ -94,8 +90,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
       });
       return nextIds;
     });
-    setAllChecked((prevState) => !prevState);
-  }, [allChecked, list, setAllChecked]);
+  }, [allChecked, list]);
 
   const handleContactCheck = useCallback(
     (contact: Contact) => {
@@ -107,9 +102,8 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         else nextIds.add(contact.id!);
         return nextIds;
       });
-      handleRowCheck(contact.id);
     },
-    [handleRowCheck],
+    [],
   );
 
   const table = useMemo(() => {
@@ -122,13 +116,14 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                 className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
                 type="checkbox"
                 checked={allChecked}
+                aria-label="Sélectionner tous les contacts"
                 onChange={handleAllChecked}
               />
             </th>
             <th
               className="cursor-pointer"
               onClick={() => {
-                sortData("lastname");
+                setDirection((previous) => !previous);
               }}
             >
               <div className="flex items-center gap-x-2">
@@ -156,6 +151,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                     checked={
                       item.isSelected !== undefined ? item.isSelected : false
                     }
+                    aria-label={`Sélectionner ${getContactFullName(item)}`}
                     onChange={() => handleContactCheck(item)}
                   />
                 </td>
@@ -172,14 +168,13 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     handleAllChecked,
     handleContactCheck,
     list,
-    sortData,
   ]);
 
   const handleAddContacts = () => {
     if (list) {
       const contacts = list
         .filter((item) => item.isSelected)
-        .map((item) => item.id);
+        .map((item) => item.id!);
       props.onAddItems!(contacts);
       props.onCloseDrawer!("add-contacts");
     }

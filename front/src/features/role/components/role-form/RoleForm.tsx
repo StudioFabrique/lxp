@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { useContext, useEffect, useId, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -192,7 +193,7 @@ const RoleForm = ({
         >
           {role ? "Enregistrer" : duplicateFrom ? "Dupliquer" : "Créer"}
           {isRequestLoading ? (
-            <span className="loading loading-spinner" />
+            <LoaderCircle className="size-5 animate-spin" />
           ) : null}
         </button>
       </div>

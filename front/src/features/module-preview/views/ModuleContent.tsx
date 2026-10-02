@@ -254,6 +254,10 @@ const ModuleContent = () => {
                 (course) => !course.isPublished,
               )}
               isPublishingAll={contentStore.isPublishingAllCourses}
+              showCourseVisibility={state.module.courses.length > 0}
+              areAllCoursesVisible={state.module.courses.every((course) => course.visibility)}
+              isUpdatingCourseVisibility={contentStore.isUpdatingCourseVisibility}
+              onToggleCourseVisibility={contentStore.courseActions.toggleAllCoursesVisibility}
               onToggleSidebar={handleToggleSidebar}
               onToggleCalendar={handleToggleCalendar}
               onToggleCourseReordering={handleToggleCourseReordering}

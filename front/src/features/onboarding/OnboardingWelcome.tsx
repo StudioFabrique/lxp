@@ -1,5 +1,5 @@
 import { useContext, useState, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { Joyride } from "react-joyride";
 
 import Header from "../../components/headers/Header";
@@ -125,7 +125,7 @@ const OnboardingWelcome = ({ layout, children }: Props) => {
             data-onboarding="welcome-start"
           >
             {isSaving && (
-              <span className="loading loading-spinner loading-sm" />
+              <LoaderCircle className="size-4 animate-spin" />
             )}
             Regarder le tutoriel
           </button>

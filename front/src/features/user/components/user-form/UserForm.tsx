@@ -2,7 +2,7 @@ import { showFormErrors } from "../../../../components/form/form-errors";
 import { useEffect } from "react";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
 import { useUserForm } from "./useUserForm";
 import UserFormInformations from "./UserFormInformations";
@@ -142,7 +142,7 @@ const UserForm = ({
         >
           {isLoading ? (
             <span className="flex items-center gap-x-2">
-              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
               <p>Sauvegarde en cours...</p>
             </span>
           ) : (

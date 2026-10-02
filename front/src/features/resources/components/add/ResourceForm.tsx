@@ -4,7 +4,7 @@ import { UseFormRegister, FieldErrors } from "react-hook-form";
 import FormInput from "../../../../components/form/FormInput";
 import FormTextarea from "../../../../components/form/FormTextarea";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
-import { HelpCircle, Loader } from "lucide-react";
+import { HelpCircle, LoaderCircle } from "lucide-react";
 import TagsList from "../../../../components/tags/TagsList";
 import useImageUpload from "../../../../hooks/use-image-upload";
 import FormUploadImage from "../../../../components/UI/form-upload-image";
@@ -151,7 +151,7 @@ export default function ResourceForm({
             >
               {isLoading ? (
                 <>
-                  <Loader className="animate-spin" />
+                  <LoaderCircle className="size-5 animate-spin" />
                   <p>Envoi...</p>
                 </>
               ) : mode === "create" ? (

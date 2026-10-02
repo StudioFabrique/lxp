@@ -1,4 +1,4 @@
-import { Loader } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 
 type Props = {
   onCancel: (value: boolean) => void;
@@ -52,7 +52,7 @@ function ResourcesAction({
           >
             {isLoading ? (
               <span className="flex items-center gap-x-2">
-                <Loader className="animate-spin" /> <p>En cours...</p>
+                <LoaderCircle className="size-5 animate-spin" /> <p>En cours...</p>
               </span>
             ) : (
               "Téléverser"

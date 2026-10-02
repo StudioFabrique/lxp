@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import {
   type AccountRecoveryMode,
@@ -88,7 +89,7 @@ const ResetPasswordHome = () => {
         >
           {isLoading ? (
             <>
-              <span className="loading loading-spinner loading-sm"></span>
+              <LoaderCircle className="size-4 animate-spin" />
               Envoi en cours...
             </>
           ) : retryAfterSeconds > 0 ? (

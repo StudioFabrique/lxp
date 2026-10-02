@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useNavigation } from "react-router";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
-import { ArrowRight } from "lucide-react";
+import { LoaderCircle, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
@@ -68,8 +68,8 @@ export default function StaffOnboarding() {
           role="status"
           className="flex min-h-64 w-full flex-1 flex-col items-center justify-center gap-4 text-center"
         >
-          <span
-            className="loading loading-spinner loading-lg text-primary"
+          <LoaderCircle
+            className="size-8 animate-spin text-primary"
             aria-hidden="true"
           />
           <p className="font-semibold">Préparation de votre espace…</p>

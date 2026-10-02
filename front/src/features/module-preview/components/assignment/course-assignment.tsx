@@ -404,7 +404,11 @@ function MissingStudents({
           const name =
             [student.firstname, student.lastname].filter(Boolean).join(" ") ||
             "Étudiant";
-          return <li key={student.id}>{name}</li>;
+          return (
+            <li key={student.id} className="uppercase">
+              {name}
+            </li>
+          );
         })}
       </ul>
     </section>

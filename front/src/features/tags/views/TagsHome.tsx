@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import type { TagRow } from "../api/tag.api";
 import { useTagActions } from "../hooks/useTagActions";
@@ -234,10 +234,11 @@ const TagsHome = () => {
         descList={tagToDelete ? [tagToDelete.name] : undefined}
       >
         <button
-          className={cn("btn btn-error btn-md", isDeleting && "loading")}
+          className="btn btn-error btn-md"
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >
+          {isDeleting && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>

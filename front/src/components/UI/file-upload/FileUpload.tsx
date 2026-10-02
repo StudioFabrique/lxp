@@ -1,4 +1,4 @@
-import { FileCheck2, Loader2, Pencil, Upload } from "lucide-react";
+import { FileCheck2, LoaderCircle, Pencil, Upload } from "lucide-react";
 import { ReactNode, useId, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { maxSizeError } from "../../../utils/helpers/max-size-error";
@@ -142,7 +142,7 @@ export default function FileUpload({
           )}
         >
           {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <LoaderCircle className="h-4 w-4 animate-spin" />
           ) : fileName && !preserveButtonLabel ? (
             compact ? (
               <Pencil className="h-4 w-4" />

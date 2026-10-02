@@ -5,7 +5,7 @@ import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useEffect, useState, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { Building2, Loader2 } from "lucide-react";
+import { Building2, LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
@@ -132,7 +132,7 @@ export default function InstanceSetup() {
                 disabled={!settings || isSaving}
                 className="btn btn-primary rounded-lg text-base normal-case text-base-100"
               >
-                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {isSaving ? "Configuration…" : "Configurer mon espace"}
               </button>
             </div>

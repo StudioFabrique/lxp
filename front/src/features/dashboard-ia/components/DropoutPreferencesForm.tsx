@@ -11,7 +11,7 @@ import {
   dashboardIAApi,
   type DropoutPreferences,
 } from "../api/dashboardIA.api";
-import { ChartNoAxesCombined, Mail } from "lucide-react";
+import { LoaderCircle, ChartNoAxesCombined, Mail } from "lucide-react";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
 import { groupApi } from "../../group/api/group.api";
@@ -167,7 +167,7 @@ export default function DropoutPreferencesForm({
         >
           {mutation.isPending ? (
             <>
-              <span className="loading loading-spinner loading-sm" aria-hidden="true" />
+              <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
               Enregistrement…
             </>
           ) : submitLabel}

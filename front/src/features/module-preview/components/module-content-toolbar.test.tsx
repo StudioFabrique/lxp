@@ -31,6 +31,10 @@ const renderToolbar = (
     isReorderingCourses: false,
     showPublishAll: true,
     isPublishingAll: false,
+    showCourseVisibility: true,
+    areAllCoursesVisible: false,
+    isUpdatingCourseVisibility: false,
+    onToggleCourseVisibility: vi.fn(),
     onToggleSidebar: vi.fn(),
     onToggleCalendar: vi.fn(),
     onToggleCourseReordering: vi.fn(),
@@ -48,6 +52,25 @@ afterEach(() => {
 });
 
 describe("ModuleContentToolbar", () => {
+  it.each([false, true])("demande confirmation avant de changer la visibilité (visible : %s)", async (visible) => {
+    const container = document.createElement("div");
+    const onToggleCourseVisibility = vi.fn().mockResolvedValue(undefined);
+    renderToolbar(container, { areAllCoursesVisible: visible, onToggleCourseVisibility });
+    const label = visible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles";
+    act(() => container.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`)?.click());
+    expect(onToggleCourseVisibility).not.toHaveBeenCalled();
+    expect(container.querySelector("dialog")?.textContent).toContain(
+      visible ? "Êtes-vous sûr de rendre invisibles tous les cours ?" : "Êtes-vous sûr de rendre visibles tous les cours ?",
+    );
+    act(() => Array.from(container.querySelectorAll("dialog button")).find((button) => button.textContent === "Annuler")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    expect(container.querySelector("dialog")).toBeNull();
+    expect(onToggleCourseVisibility).not.toHaveBeenCalled();
+    act(() => container.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`)?.click());
+    await act(async () => Array.from(container.querySelectorAll<HTMLButtonElement>("dialog button")).find((button) => button.textContent === "Confirmer")?.click());
+    expect(onToggleCourseVisibility).toHaveBeenCalledWith(!visible);
+    expect(container.querySelector("dialog")).toBeNull();
+  });
+
   it("affiche les actions disponibles dans un ordre stable", () => {
     const container = document.createElement("div");
     renderToolbar(container);
@@ -58,6 +81,7 @@ describe("ModuleContentToolbar", () => {
     expect(labels).toEqual([
       "Réduire le panneau",
       "Réorganiser les cours",
+      "Rendre tous les cours visibles",
       "Calendrier",
       "Tout publier",
       "Tout réduire",
@@ -70,6 +94,7 @@ describe("ModuleContentToolbar", () => {
       canPlanCourses: false,
       canReorderCourses: false,
       showPublishAll: false,
+      showCourseVisibility: false,
       isContentSelected: false,
     });
 

@@ -1,5 +1,5 @@
 import { toTitleCase } from "../../../utils/helpers/text-helpers";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import Header from "../../../components/headers/Header";
 import { Quiz, QuizAttempt, UserAnswer } from "../interfaces/quiz";
 import QuizMatching from "./modals/quiz-matching";
@@ -226,7 +226,7 @@ const DiagnosticQuiz = ({
                   ))}
                 </div>
                 <div className="mt-2 flex items-center gap-2 text-sm text-base-content/50">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
                   <span>Génération de la prochaine question…</span>
                 </div>
               </>

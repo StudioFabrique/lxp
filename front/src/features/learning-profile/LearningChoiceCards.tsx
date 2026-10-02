@@ -93,7 +93,7 @@ export function LevelChoiceButtons({
   const selectedOption = levelOptions.find((option) => option.value === value);
 
   return (
-    <div className="min-h-16">
+    <div className="min-h-18">
       <div
         className="flex flex-wrap gap-2"
         role="radiogroup"
@@ -103,7 +103,7 @@ export function LevelChoiceButtons({
           <label
             key={option.value}
             className={cn(
-              "btn btn-sm h-auto min-h-9 cursor-pointer px-3 normal-case focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary",
+              "btn h-auto min-h-11 cursor-pointer px-4 text-sm normal-case focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary",
               value === option.value
                 ? "btn-primary focus-within:ring-primary-content"
                 : "btn-outline border-base-300 bg-base-100",

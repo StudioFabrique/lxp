@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Eye, MessageSquareText } from "lucide-react";
+import { LoaderCircle, Eye, MessageSquareText } from "lucide-react";
 import Modal from "../../../../components/UI/modal/modal";
 import { indicatorsApi } from "../../api/indicators.api";
 import PredictionPanel from "./PredictionPanel";
@@ -123,7 +123,7 @@ export default function AnalysisHistory({
             >
               {history.isFetchingNextPage ? (
                 <>
-                  <span className="loading loading-spinner loading-xs" />{" "}
+                  <LoaderCircle className="size-3 animate-spin" />{" "}
                   Chargement…
                 </>
               ) : (

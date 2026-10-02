@@ -339,7 +339,7 @@ export default function CourseList({
                           : "Rendre visible",
                         icon:
                           pendingLessonVisibilityId === lesson.id ? (
-                            <LoaderCircle className="animate-spin" />
+                            <LoaderCircle className="size-5 animate-spin" />
                           ) : lesson.visibility ? (
                             <EyeOff />
                           ) : (

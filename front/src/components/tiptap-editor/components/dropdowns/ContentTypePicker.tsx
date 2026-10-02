@@ -6,7 +6,7 @@ import {
   List,
   ListOrdered,
   ListTodo,
-  Loader,
+  LoaderCircle,
   Pilcrow,
   Plus,
   TextAlignCenter,
@@ -112,7 +112,7 @@ export const ContentTypePicker = ({
           active={activeItem?.id !== "paragraph" && !!activeItem?.type}
         >
           {isLoading ? (
-            <Loader
+            <LoaderCircle
               aria-hidden="true"
               className="h-4 w-4 animate-spin"
               strokeWidth={2}

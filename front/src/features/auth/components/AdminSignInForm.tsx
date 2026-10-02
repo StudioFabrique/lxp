@@ -3,7 +3,7 @@ import { adminCreationSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
 import { useContext, useState } from "react";
 import { createPortal } from "react-dom";
-import { Mail, RotateCcw } from "lucide-react";
+import { LoaderCircle, Mail, RotateCcw } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
@@ -219,7 +219,7 @@ const AdminSignInForm = ({
         >
           {isLoading ? (
             <>
-              <span className="loading loading-spinner loading-sm"></span>
+              <LoaderCircle className="size-4 animate-spin" />
               Création...
             </>
           ) : mode === "additional" ? (

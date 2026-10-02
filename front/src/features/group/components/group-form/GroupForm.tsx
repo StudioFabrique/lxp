@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { FormProvider, type UseFormReturn } from "react-hook-form";
 import { Link } from "react-router";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 
 import Informations from "./GroupFormInformations";
 import Details from "./GroupFormDetails";
@@ -61,7 +61,7 @@ const GroupForm = ({
               disabled={isLoading}
               data-recommended-tour="group-save"
             >
-              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
               {isLoading ? "Sauvegarde…" : "Sauvegarder"}
             </button>
           </div>

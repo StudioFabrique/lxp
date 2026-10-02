@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
 import { Link, useNavigate } from "react-router";
-import { GraduationCap, Users } from "lucide-react";
+import { LoaderCircle, GraduationCap, Users } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -215,7 +215,7 @@ const DemoEntry = () => {
               <p className="mt-2 text-sm text-base-content/70">{description}</p>
               <span className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
                 {pending === profile && (
-                  <span className="loading loading-spinner loading-xs" />
+                  <LoaderCircle className="size-3 animate-spin" />
                 )}
                 Entrer dans la démonstration
               </span>

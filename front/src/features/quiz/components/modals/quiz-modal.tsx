@@ -5,7 +5,7 @@ import QuizOrdering from "./quiz-ordering";
 import QuizTrueFalse from "./quiz-true-false";
 import QuizResults from "../results/quiz-results";
 import QuizMarkdown from "../quiz-markdown";
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 
 interface QuizModalProps {
@@ -107,7 +107,7 @@ const QuizModal = ({
                 : ""}
             </span>
             {isStreaming && (
-              <span className="loading loading-spinner loading-sm text-primary ml-2"></span>
+              <LoaderCircle className="size-4 animate-spin text-primary ml-2" />
             )}
           </h3>
           <button className="btn btn-sm btn-circle btn-ghost" onClick={onClose}>

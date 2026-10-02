@@ -13,7 +13,7 @@ vi.mock("../api/module-preview.api", () => ({
   modulePreviewApi: {
     queries: { getModuleDetail: vi.fn(), getLesson: vi.fn() },
     tracking: { finish: vi.fn(), begin: vi.fn(), heartbeat: vi.fn().mockResolvedValue({}) },
-    mutations: { rateLesson: vi.fn() },
+    mutations: { rateLesson: vi.fn(), enableCourse: vi.fn() },
   },
 }));
 
@@ -71,6 +71,42 @@ afterEach(async () => {
   if (root) await act(async () => root.unmount());
   client?.clear();
   vi.clearAllMocks();
+});
+
+describe("Visibilité de tous les cours", () => {
+  it.each([false, true])("modifie seulement les cours concernés puis recharge le module (%s)", async (visibility) => {
+    const module = makeModule(false);
+    module.courses = [
+      { ...module.courses[0], visibility: true },
+      { ...module.courses[0], id: 11, visibility: false },
+    ];
+    await renderExplorer(2, false, module);
+    vi.mocked(modulePreviewApi.mutations.enableCourse).mockResolvedValue({ success: true, message: "OK" });
+    const updatedModule = { ...module, courses: module.courses.map((course) => ({ ...course, visibility })) };
+    vi.mocked(modulePreviewApi.queries.getModuleDetail).mockResolvedValue({ data: updatedModule });
+    await act(async () => store.courseActions.toggleAllCoursesVisibility(visibility));
+    expect(modulePreviewApi.mutations.enableCourse).toHaveBeenCalledExactlyOnceWith(visibility ? 11 : 10, visibility);
+    expect(store.state.module?.courses.every((course) => course.visibility === visibility)).toBe(true);
+    expect(store.isUpdatingCourseVisibility).toBe(false);
+  });
+
+  it("recharge les résultats après un échec partiel", async () => {
+    const module = makeModule(false);
+    module.courses = [
+      { ...module.courses[0], visibility: false },
+      { ...module.courses[0], id: 11, visibility: false },
+    ];
+    await renderExplorer(2, false, module);
+    vi.mocked(modulePreviewApi.mutations.enableCourse)
+      .mockResolvedValueOnce({ success: true, message: "OK" })
+      .mockRejectedValueOnce(new Error("Échec"));
+    vi.mocked(modulePreviewApi.queries.getModuleDetail).mockResolvedValue({ data: {
+      ...module, courses: [{ ...module.courses[0], visibility: true }, module.courses[1]],
+    } });
+    await act(async () => store.courseActions.toggleAllCoursesVisibility(true));
+    expect(store.state.module?.courses.map((course) => course.visibility)).toEqual([true, false]);
+    expect(store.isUpdatingCourseVisibility).toBe(false);
+  });
 });
 
 describe("Complétion du module", () => {

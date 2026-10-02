@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +75,7 @@ const Login = () => {
         >
           {isLoading ? (
             <>
-              <span className="loading loading-spinner loading-sm"></span>
+              <LoaderCircle className="size-4 animate-spin" />
               Connexion...
             </>
           ) : (

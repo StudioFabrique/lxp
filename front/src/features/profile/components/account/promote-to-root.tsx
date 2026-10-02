@@ -10,7 +10,7 @@ import { AuthContext } from "../../../../store/AuthProvider";
 import { profileApi } from "../../api/profile.api";
 import useActivationKey from "../../../auth/hooks/useActivationKey";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
-import { Check, Copy } from "lucide-react";
+import { LoaderCircle, Check, Copy } from "lucide-react";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import Modal from "../../../../components/UI/modal/modal";
 import { ROOT_ACCOUNT_POLICY } from "../../../auth/root-account-policy";
@@ -106,7 +106,7 @@ const PromoteToRoot = () => {
           />
           <button type="submit" disabled={isLoading} className="btn w-fit">
             {isLoading ? (
-              <span className="loading loading-spinner loading-sm" />
+              <LoaderCircle className="size-4 animate-spin" />
             ) : null}
             Devenir root
           </button>

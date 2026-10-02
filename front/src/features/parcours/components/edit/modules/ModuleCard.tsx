@@ -52,7 +52,7 @@ export default function ModuleCard({
       id={`parcours-module-${module.id}`}
       data-highlighted={highlighted || undefined}
       className={cn(
-        "scroll-m-6 rounded-box transition-shadow duration-500",
+        "h-full scroll-m-6 rounded-box transition-shadow duration-500",
         highlighted && "module-card-highlight",
       )}
     >

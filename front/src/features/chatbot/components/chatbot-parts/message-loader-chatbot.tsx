@@ -1,4 +1,4 @@
-import { BotMessageSquare } from "lucide-react";
+import { LoaderCircle, BotMessageSquare } from "lucide-react";
 
 export default function MessageLoaderChatbot() {
   return (
@@ -8,7 +8,7 @@ export default function MessageLoaderChatbot() {
       </div>
       <div className="chat-header text-xs opacity-50 mb-1">Assistant</div>
       <div className="chat-bubble chat-bubble-base-200 bg-base-100 text-base-content border border-base-300 shadow-sm flex items-center h-10">
-        <span className="loading loading-dots loading-sm text-primary"></span>
+        <LoaderCircle className="size-4 animate-spin text-primary" />
       </div>
     </div>
   );

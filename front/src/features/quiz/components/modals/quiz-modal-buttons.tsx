@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { quizReportSchema } from "../../quiz-form.schema";
@@ -79,7 +80,7 @@ const QuizModalButtons = ({
             onClick={handleSubmitReport}
           >
             {isSubmitting && (
-              <span className="loading loading-spinner loading-xs"></span>
+              <LoaderCircle className="size-3 animate-spin" />
             )}
             Envoyer le signalement
           </button>

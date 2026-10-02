@@ -100,7 +100,7 @@ export default function ModuleGrid({
 
   return (
     <>
-      <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+      <section className="grid auto-rows-fr gap-5 lg:grid-cols-2 xl:grid-cols-3">
         {modules.map((module) => (
           <ModuleCard
             key={module.id}

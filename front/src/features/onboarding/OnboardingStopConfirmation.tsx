@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 
 type Props = {
   isSaving: boolean;
@@ -56,7 +56,7 @@ const OnboardingStopConfirmation = ({
           onClick={onConfirm}
           disabled={isSaving}
         >
-          {isSaving && <span className="loading loading-spinner loading-xs" />}
+          {isSaving && <LoaderCircle className="size-3 animate-spin" />}
           Arrêter
         </button>
       </div>

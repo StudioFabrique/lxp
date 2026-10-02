@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import Group from "../../../utils/interfaces/group";
 import { useGroupActions } from "../hooks/useGroupActions";
@@ -219,10 +219,11 @@ const GroupList = () => {
         descList={groupToDelete ? [groupToDelete.name] : undefined}
       >
         <button
-          className={cn("btn btn-error btn-md", isDeleting && "loading")}
+          className="btn btn-error btn-md"
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >
+          {isDeleting && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>
