@@ -1,10 +1,16 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { lessonDetailsSchema } from "../../../../module-preview/assignment.schema";
+import { useFormField } from "../../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../../components/form/form-errors";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
-import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
+import {
+  useCourseSelector,
+  useCourseDispatch,
+} from "../../../store/CourseContext";
 
-import useInput from "../../../../../hooks/useInput";
-import { regexGeneric, regexOptionalGeneric } from "../../../../../config/constantes";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import LessonForm from "./lesson-form";
 import Tag from "../../../../../../src/utils/interfaces/tag";
@@ -25,31 +31,36 @@ interface LinearScenarioLessonsProps {
 const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   const { courseId } = useParams();
   const dispatch = useCourseDispatch();
-  const { value: title, newProps: newTitle } = useInput((value) =>
-    regexGeneric.test(value)
-  );
-  const { value: description, newProps: newDescription } = useInput((value) =>
-    regexOptionalGeneric.test(value)
-  );
-  const [mode, setMode] = useState<string>("hybride");
-  const [tag, setTag] = useState<Tag | null>(null);
-  const tagsList = useCourseSelector(
-    (state) => state.course?.tags
-  ) as Tag[];
+  const form = useForm({
+    resolver: zodResolver(lessonDetailsSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      modalite: "hybride",
+      tagId: 0,
+    },
+  });
+  const [mode, setMode] = useFormField(form, "modalite");
+  const tagId = form.watch("tagId");
+  const newTitle = (value: string) => form.setValue("title", value);
+  const newDescription = (value: string) =>
+    form.setValue("description", value ?? "");
+  const setTag = (value: Tag | null) =>
+    form.setValue("tagId", value?.id ?? 0, { shouldDirty: true });
+  const tagsList = useCourseSelector((state) => state.course?.tags) as Tag[];
+  const tag = tagsList?.find((item) => item.id === tagId) ?? null;
   const [isLoading, setIsLoading] = useState(false);
   const [editionMode, setEditionMode] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
   const [editedLesson, setEditedLesson] = useState<Lesson | null>(null);
   const [lessonToDelete, setLessonToDelete] = useState<number | null>(null);
 
-  const handleSubmitLesson = async () => {
+  const handleSubmitLesson = form.handleSubmit(async (values) => {
+    if (isLoading) return;
     setIsLoading(true);
     try {
       const data = await courseApi.mutations.addLesson(courseId!, {
-        tagId: tag?.id,
-        title: title.value,
-        description: description.value,
-        modalite: mode,
+        ...values,
       });
       dispatch({ type: "NEW_LESSON", payload: data });
       handleResetForm();
@@ -57,23 +68,24 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
       toast.error(getApiErrorMessage(err, "Erreur inconnue"));
     }
     setIsLoading(false);
-  };
+  }, showFormErrors);
 
-  const handleUpdateLesson = async () => {
+  const handleUpdateLesson = form.handleSubmit(async (values) => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
       const data = await courseApi.mutations.updateLesson({
         id: editedLesson!.id!,
-        title: title.value,
-        description: description.value,
-        tagId: tag!.id,
-        modalite: mode,
+        ...values,
       });
       dispatch({ type: "UPDATE_LESSON", payload: data });
       handleResetForm();
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Erreur inconnue"));
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, showFormErrors);
 
   const handleEditLesson = (lesson: Lesson) => {
     setEditedLesson(lesson);
@@ -92,7 +104,10 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     try {
       const data = await courseApi.mutations.deleteLesson(lessonToDelete!);
       if (data.success) {
-        dispatch({ type: "DELETE_LESSON", payload: lessonToDelete ?? undefined });
+        dispatch({
+          type: "DELETE_LESSON",
+          payload: lessonToDelete ?? undefined,
+        });
         toast.success(data.message);
         setLessonToDelete(null);
       }
@@ -102,8 +117,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   };
 
   const handleResetForm = () => {
-    title.reset();
-    description.reset();
+    form.reset();
     newTitle("");
     newDescription("");
     setTag(null);
@@ -124,8 +138,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
         {editionMode ? (
           <LessonForm
             ref={formRef}
-            title={title}
-            description={description}
+            form={form}
             mode={mode}
             tag={tag}
             isLoading={isLoading}
@@ -156,8 +169,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
         ) : (
           <LessonForm
             ref={formRef}
-            title={title}
-            description={description}
+            form={form}
             mode={mode}
             tag={tag}
             isLoading={isLoading}

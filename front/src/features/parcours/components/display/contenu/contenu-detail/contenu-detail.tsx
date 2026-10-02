@@ -17,12 +17,14 @@ import toast from "react-hot-toast";
 import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
 import { parcoursApi } from "../../../../api/parcours.api";
 import LoadingSkeleton from "../../../../../../components/loaders/LoadingSkeleton";
+import CardProgress from "../card-progress";
 
 const ContenuDetail: FC<{
   canEdit?: boolean;
+  isStudent?: boolean;
   parcoursId: number;
   moduleId: number;
-}> = ({ canEdit, parcoursId, moduleId }) => {
+}> = ({ canEdit, isStudent = false, parcoursId, moduleId }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const currentRoute = pathname.split("/").slice(1) ?? [];
@@ -76,7 +78,12 @@ const ContenuDetail: FC<{
             navigate(`/${currentRoute[0]}/parcours/module/${moduleId}`, {
               state: {
                 lessonId:
-                  course.lessons.length > 0 ? course.lessons[0].id : null,
+                  (isStudent
+                    ? course.lessons.find(
+                        (lesson) =>
+                          !lesson.lessonsRead?.some((read) => read.finishedAt),
+                      )?.id
+                    : undefined) ?? course.lessons[0]?.id ?? null,
               },
             })
           }
@@ -135,6 +142,12 @@ const ContenuDetail: FC<{
               )}
             </div>
           ) : null}
+          {isStudent && (
+            <CardProgress
+              progress={course.stats?.progress}
+              label={`Progression du cours ${formatTitle(course.title)}`}
+            />
+          )}
         </div>
       ))
     ) : isLoading ? (

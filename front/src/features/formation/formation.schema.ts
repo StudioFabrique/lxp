@@ -1,12 +1,16 @@
 import { z } from "zod";
-
+import {
+  requiredText,
+  optionalText,
+  tagSchema,
+} from "../../utils/validation/fields";
 export const formationSchema = z.object({
-  title: z
-    .string({ error: "Un titre est requis pour la formation." })
-    .min(1, "Le titre est requis."),
-  description: z.string().optional(),
-  level: z
-    .string({ error: "Le niveau de la formation est requis." })
-    .min(1, "Le niveau est requis."),
-  code: z.string().optional(),
+  title: requiredText("Le titre est requis."),
+  description: optionalText,
+  code: optionalText,
+  level: z.string().regex(/^[1-8]$/, "Sélectionnez un niveau entre 1 et 8."),
+  tags: z
+    .array(tagSchema)
+    .min(1, "Au moins un tag est requis pour enregistrer la formation."),
 });
+export type FormationFormValues = z.infer<typeof formationSchema>;

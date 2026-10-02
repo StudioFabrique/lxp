@@ -1,9 +1,11 @@
-import { FC, FormEvent, useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import Badge from "../../../interfaces/badge";
-import useInput from "../../../../../hooks/useInput";
-import { regexGeneric } from "../../../../../config/constantes";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { descriptionFormSchema } from "../../../parcours.schema";
+import { showFormErrors } from "../../../../../components/form/form-errors";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
 import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import BadgeList from "./badge/badge-list.component";
@@ -18,12 +20,11 @@ type Props = {
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | null>(null);
 
-  const { value: description } = useInput(
-    (value) => regexGeneric.test(value),
-    skill?.description || ""
-  );
-
-  const [error, setError] = useState(false);
+  const form = useForm({
+    resolver: zodResolver(descriptionFormSchema),
+    defaultValues: { description: skill?.description ?? "" },
+  });
+  const error = Boolean(form.formState.errors.description);
 
   /**
    * ferme le drawer lorsqu'on click sur le bouton annuler
@@ -32,12 +33,11 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const handleCancel = () => {
     onCloseDrawer(skill ? "update-skill" : "badge-drawer");
     if (!skill) {
-      description.reset();
+      form.reset();
     }
   };
 
   // test la validité du formulaire
-  const formIsValid = description.isValid;
 
   // définit le style du champ du formulaire en fonction de sa validité
   const style = "textarea focus:outline-none bg-secondary/20";
@@ -54,24 +54,16 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
    * soumet la nouvelle compétence, reset le formulaire et ferme le drawer
    * @param event FormEvent
    */
-  const handleSubmit = (event: FormEvent) => {
-    setError(false);
-    event.preventDefault();
-    if (formIsValid) {
-      onSubmit({
-        id: skill?.id,
-        description: description.value,
-        badge: badge?.image,
-        isBonus: skill?.isBonus,
-      });
-      description.reset();
-      onCloseDrawer("badge-drawer");
-    } else {
-      setError(true);
-    }
-  };
-
-  console.log({ skill });
+  const handleSubmit = form.handleSubmit((values) => {
+    onSubmit({
+      id: skill?.id,
+      description: values.description,
+      badge: badge?.image,
+      isBonus: skill?.isBonus,
+    });
+    form.reset();
+    onCloseDrawer("badge-drawer");
+  }, showFormErrors);
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -81,9 +73,8 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
             <label htmlFor="description">Description de la compétence *</label>
             <textarea
               className={textareaStyle}
-              value={description.value}
-              onChange={description.textAreaChangeHandler}
-              onBlur={description.valueBlurHandler}
+              id="description"
+              {...form.register("description")}
             />
           </div>
         </BoxWrapper>

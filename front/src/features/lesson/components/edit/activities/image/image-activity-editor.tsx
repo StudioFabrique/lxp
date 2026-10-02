@@ -108,7 +108,7 @@ export default function ImageActivityEditor({
             </div>
           </span>
           <div className="flex justify-end items-center gap-x-2">
-            <button className="btn btn-secondary" onClick={() => reset()}>
+            <button type="button" className="btn btn-secondary" onClick={() => reset()}>
               Réinitialiser
             </button>
             <SubmitButton

@@ -51,7 +51,7 @@ export const getGroupColumns = (
   },
   {
     accessorKey: "nbStudents",
-    header: "Nombre d'étudiants",
+    header: "Nombre d’apprenants",
   },
   {
     id: "actions",

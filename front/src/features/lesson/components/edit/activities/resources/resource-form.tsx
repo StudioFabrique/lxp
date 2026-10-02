@@ -10,10 +10,10 @@ function ResourceForm({ value, onChange, onFileChange }: props) {
   return (
     <span className="h-full flex flex-col gap-y-2">
       <h2 className="text-lg font-bold">Ressources</h2>
-      <form className="flex flex-col justify-around h-full gap-y-4">
+      <div className="flex flex-col justify-around h-full gap-y-4">
         <span className="flex flex-col gap-y-4">
           <label htmlFor="name" className="text-sm font-bold">
-            Nom du lien *
+            Nom de la ressource *
           </label>
           <input
             id="name"
@@ -32,7 +32,7 @@ function ResourceForm({ value, onChange, onFileChange }: props) {
           onFileSelect={onFileChange}
           disabled={!value || value.length === 0}
         />
-      </form>
+      </div>
     </span>
   );
 }

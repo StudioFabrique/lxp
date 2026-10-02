@@ -91,7 +91,7 @@ describe("CsvImportUserList", () => {
     expect(getButton(container!, "Importer")).toBeUndefined();
 
     act(() => {
-      getButton(container!, "Importer une liste d'étudiants")?.click();
+      getButton(container!, "Importer une liste d’apprenants")?.click();
     });
 
     expect(getButton(container!, "Télécharger le modèle")).toBeDefined();
@@ -123,7 +123,7 @@ describe("CsvImportUserList", () => {
     });
 
     act(() => {
-      getButton(container!, "Importer une liste d'étudiants")?.click();
+      getButton(container!, "Importer une liste d’apprenants")?.click();
     });
     act(() => {
       getButton(container!, "Importer")?.click();

@@ -7,7 +7,7 @@ import { profileApi } from "../../profile/api/profile.api";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { buildRecommendedActions } from "../components/build-recommended-actions";
 
-const defaultTitle = "Bonjour, {firstname} !";
+const defaultTitle = "Bonjour {firstname} !";
 const adminDescription =
   "Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants";
 const teacherDescription =

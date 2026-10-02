@@ -7,6 +7,7 @@ import JSZip from "jszip";
 import { z } from "zod";
 
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
+import { slugify } from "../../helpers/slugify.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import type { ParcoursImportOptions } from "../../controllers/parcours/parcours-import-options.ts";
@@ -1012,6 +1013,11 @@ export async function importParcoursArchive(
             moduleId: createdModule.id,
             tags: (relation) =>
               relation.create(courseTagIds.map((tagId) => ({ tagId }))),
+          });
+          // Le watcher IA ignore les cours sans slug. Attribuer une identité
+          // propre à l'import déclenche leur ingestion au commit de la transaction.
+          await tx.orm.public.Course.where({ id: createdCourse.id }).update({
+            courseSlug: `${slugify(course.title) || "cours"}-${createdCourse.id}`,
           });
           for (const quiz of course.quizzes)
             await createQuiz(tx, quiz, { courseId: createdCourse.id });

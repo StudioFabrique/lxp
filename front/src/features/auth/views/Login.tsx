@@ -1,7 +1,9 @@
 import { useContext, useState } from "react";
-import { regexMail, regexPassword } from "../../../config/constantes";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "../auth.schema";
+import { showFormErrors } from "../../../components/form/form-errors";
 import { Link } from "react-router";
-import useInput from "../../../hooks/useInput";
 import { AuthContext } from "../../../store/AuthProvider";
 import PasswordVisibilityToggle from "../components/PasswordVisibilityToggle";
 import AuthPageWrapper from "../components/AuthPageWrapper";
@@ -16,30 +18,15 @@ const Login = () => {
   } = useContext(AuthContext);
   const [submittedEmail, setSubmittedEmail] = useState("");
 
-  const handleSubmit = (email: string, password: string) => {
-    login(email, password);
-  };
-
   const [inputType, setInputType] = useState("password");
-
-  const { value: email } = useInput((value: string) =>
-    regexMail.test(value.trim()),
-  );
-  const { value: password } = useInput((value: string) =>
-    regexPassword.test(value.trim()),
-  );
-
-  let formIsValid = false;
-  formIsValid = email.isValid && password.isValid;
-
-  const submitHandler = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (formIsValid) {
-      const normalizedEmail = email.value.trim();
-      setSubmittedEmail(normalizedEmail);
-      handleSubmit(normalizedEmail, password.value.trim());
-    }
-  };
+  const { register, handleSubmit } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+  const submitHandler = handleSubmit((values) => {
+    setSubmittedEmail(values.email);
+    login(values.email, values.password);
+  }, showFormErrors);
 
   const handlePasswordVisibility = () => {
     setInputType((prev) => (prev === "password" ? "text" : "password"));
@@ -51,12 +38,9 @@ const Login = () => {
         {/* Champ email */}
         <div className="form-control w-full">
           <input
-            name="email"
             type="email"
             autoComplete="email"
-            value={email.value}
-            onChange={email.valueChangeHandler}
-            onBlur={email.valueBlurHandler}
+            {...register("email")}
             placeholder="Adresse mail"
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
@@ -65,12 +49,9 @@ const Login = () => {
         {/* Champ mot de passe */}
         <div className="form-control w-full relative">
           <input
-            name="password"
             type={inputType}
             autoComplete="current-password"
-            value={password.value}
-            onChange={password.valueChangeHandler}
-            onBlur={password.valueBlurHandler}
+            {...register("password")}
             placeholder="Mot de passe"
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
           />

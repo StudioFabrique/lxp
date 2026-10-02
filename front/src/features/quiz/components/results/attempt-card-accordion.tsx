@@ -73,7 +73,7 @@ const AttemptCardAccordion = ({
         )}
         {/* Explication */}
         <div className="text-sm italic text-base-content/50 pt-5">
-          <QuizMarkdown>
+          <QuizMarkdown explanation>
             {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
           </QuizMarkdown>
         </div>

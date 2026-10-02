@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
+import { formatTitle } from "../../utils/helpers/text-helpers";
 
 interface HeaderProps {
   title: ReactNode;
@@ -67,7 +68,7 @@ const Header = ({
               classname,
             )}
           >
-            {title}
+            {typeof title === "string" ? formatTitle(title) : title}
           </h2>
           <p
             className={cn(

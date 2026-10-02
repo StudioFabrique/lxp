@@ -56,10 +56,26 @@ export default async function assignContactsToModules(
       };
     }
 
-    return tx.orm.public.ContactsOnModule.createAndCount(
-      uniqueModuleIds.flatMap((moduleId) =>
-        uniqueContactIds.map((contactId) => ({ moduleId, contactId })),
+    const existing = await tx.orm.public.ContactsOnModule.where((row) =>
+      and(
+        row.moduleId.in(uniqueModuleIds),
+        row.contactId.in(uniqueContactIds),
       ),
-    ).then((count) => ({ count }));
+    )
+      .select("moduleId", "contactId")
+      .all();
+    const existingPairs = new Set(
+      existing.map(({ moduleId, contactId }) => `${moduleId}:${contactId}`),
+    );
+    const missing = uniqueModuleIds.flatMap((moduleId) =>
+      uniqueContactIds
+        .filter((contactId) => !existingPairs.has(`${moduleId}:${contactId}`))
+        .map((contactId) => ({ moduleId, contactId })),
+    );
+
+    if (missing.length === 0) return { count: 0 };
+    return tx.orm.public.ContactsOnModule.createAndCount(missing).then(
+      (count) => ({ count }),
+    );
   });
 }

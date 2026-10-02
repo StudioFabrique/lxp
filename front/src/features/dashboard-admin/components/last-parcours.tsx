@@ -143,8 +143,8 @@ export default function LastParcours({
         )}
       </div>
 
-      <div className="mt-4 flex flex-col gap-6 2xl:flex-row">
-        <div className="min-w-0 flex-1">
+      <div className={cn("mt-4 grid gap-x-6 gap-y-2", sideContent && "2xl:grid-cols-[minmax(0,1fr)_20rem]")}>
+        <div className="contents">
           {isLoading ? (
             <div className={cn("grid gap-5", gridClassName)}>
               {[0, 1, 2].map((item) => (
@@ -189,7 +189,7 @@ export default function LastParcours({
             </div>
           )}
         </div>
-        {sideContent}
+        {sideContent && <div className="mt-4 flex min-w-0 2xl:col-start-2 2xl:row-start-1 2xl:mt-0">{sideContent}</div>}
       </div>
       {formationModal.isOpen || searchParams.get("createFormation") === "true" ? (
         <FormationModal formationId={formationModal.formationId} onClose={closeFormationModal} />

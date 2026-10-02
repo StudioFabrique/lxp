@@ -80,6 +80,11 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           <NotSelectedContacts />
         </InheritedItems>
       ) : null}
+      {(submit || props.loading) && (
+        <p className="mt-2 text-sm text-base-content/70" role="status">
+          Enregistrement des ressources pédagogiques en cours…
+        </p>
+      )}
     </>
   );
 };

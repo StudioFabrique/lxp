@@ -1,4 +1,9 @@
- 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { feelingFeedbackSchema } from "../../../user/feedback.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
+
 import { ChangeEvent, useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -14,25 +19,31 @@ const FeelingFeedback = () => {
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
 
-  const [currentProgressValue, setCurrentProgressValue] = useState<number>(3);
+  const form = useForm({
+    resolver: zodResolver(feelingFeedbackSchema),
+    defaultValues: { feelingLevel: 3, comment: "" },
+  });
+  const [currentProgressValue, setCurrentProgressValue] = useFormField(
+    form,
+    "feelingLevel",
+  );
 
-  const [commentValue, setCommentValue] = useState<string>("");
+  const [commentValue, setCommentValue] = useFormField(form, "comment");
 
-  const handleSubmitFeedback = () => {
+  const handleSubmitFeedback = form.handleSubmit((values) => {
     if (!socket) {
       toast("problème socket");
       return;
     }
 
     socket.emit("receive-student-feedback", {
-      feelingLevel: currentProgressValue,
-      comment: commentValue,
+      ...values,
     });
 
     toast("feedback envoyé !");
 
     setFeedbackSent(true);
-  };
+  }, showFormErrors);
 
   const { isLoading } = useQuery({
     queryKey: ["own-feedback"],
@@ -41,9 +52,7 @@ const FeelingFeedback = () => {
       const lastFeedback = data.data;
       if (lastFeedback) {
         const feedbackDate = new Date(lastFeedback.feedbackAt);
-        if (
-          isSameDate(new Date(), feedbackDate)
-        ) {
+        if (isSameDate(new Date(), feedbackDate)) {
           setFeedbackSent(true);
           setCurrentProgressValue(lastFeedback.feelingLevel);
         }

@@ -30,7 +30,7 @@ export default function AppLoadingSkeleton() {
             <div className="skeleton size-7 rounded-lg" />
             <div className="space-y-2"><div className="skeleton h-5 w-40" /><div className="skeleton h-3 w-52 max-w-[45vw]" /></div>
           </div>
-          <div className="space-y-5 rounded-lg border border-base-300 bg-base-200 p-5">
+          <div className="flex min-h-80 flex-col justify-between gap-5 rounded-lg border border-base-300 bg-base-200 p-5">
             <div className="skeleton h-10 w-full rounded-lg" />
             <div className="skeleton h-5 w-2/3 rounded-lg" />
             <div className="skeleton h-12 w-full rounded-lg" />

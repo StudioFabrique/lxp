@@ -58,6 +58,14 @@ export const parentIdValidator = [
 ];
 
 export const lessonRateValidator = [
+  body("comment")
+    .optional()
+    .isString()
+    .withMessage("Le commentaire doit être une chaîne de caractères")
+    .bail()
+    .trim()
+    .isLength({ max: 2000 })
+    .withMessage("Le commentaire ne peut pas dépasser 2000 caractères"),
   body("rate")
     .notEmpty()
     .withMessage("La note est obligatoire")

@@ -44,7 +44,10 @@ describe("Affectation des ressources pédagogiques aux modules", () => {
     vi.clearAllMocks();
   });
 
-  const renderWithModules = async (modules: { id: number; contacts: typeof contact[] }[]) => {
+  const renderWithModules = async (
+    modules: { id: number; contacts: typeof contact[] }[],
+    loading = false,
+  ) => {
     mockUseParcoursQuery.mockReturnValue({
       data: { contacts: [contact], modules },
     });
@@ -58,7 +61,7 @@ describe("Affectation des ressources pédagogiques aux modules", () => {
                 path="/admin/parcours/edit/:id"
                 element={
                   <ContactsWithDrawer
-                    loading={false}
+                    loading={loading}
                     onSubmit={vi.fn()}
                     onAssignToModules={vi.fn()}
                   />
@@ -88,5 +91,13 @@ describe("Affectation des ressources pédagogiques aux modules", () => {
     ]);
 
     expect(container.textContent).toContain("Affecter à plusieurs modules");
+  });
+
+  it("indique que l'ajout est encore en cours", async () => {
+    await renderWithModules([{ id: 10, contacts: [] }], true);
+
+    expect(container.querySelector('[role="status"]')?.textContent).toContain(
+      "Enregistrement des ressources pédagogiques en cours",
+    );
   });
 });

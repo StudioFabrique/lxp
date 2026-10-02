@@ -5,6 +5,7 @@ import { getMonth } from "../../../helpers/date-helpers";
 import { ArrowRightCircle, CalendarOffIcon, LockKeyhole } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
+import CardProgress from "./card-progress";
 
 type Props = {
   module: Module;
@@ -77,7 +78,7 @@ const ContenuItem = ({
       </div>
 
       <div
-        className={cn("flex min-h-20 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg p-4 shadow-sm transition-colors select-none", isSelected
+        className={cn("relative flex min-h-20 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg p-4 shadow-sm transition-colors select-none", isSelected
             ? "bg-primary text-primary-content shadow-md"
             : "bg-base-100 text-base-content group-hover:bg-base-200", isLocked && "opacity-60")}
       >
@@ -105,6 +106,13 @@ const ContenuItem = ({
         >
           <ArrowRightCircle />
         </Link>}
+        {isStudent && (
+          <CardProgress
+            progress={module.stats?.progress}
+            label={`Progression du module ${formatTitle(module.title)}`}
+            selected={isSelected}
+          />
+        )}
       </div>
     </div>
   );

@@ -4,9 +4,11 @@ import { cn } from "../../../utils/cn";
 
 type ProgressBarProps = {
   courses: Course[];
+  selectedLessonId?: number;
+  onSelectLesson: (lessonId: number) => void;
 };
 
-const ProgressBar = ({ courses }: ProgressBarProps) => {
+const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarProps) => {
   if (!(courses.length > 0)) return null;
 
   return (
@@ -21,9 +23,17 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
         >
           <div className="flex gap-x-2 h-full items-center px-1 py-[0.5px] rounded-lg">
             {course.lessons.map((lesson) => (
-              <span
+              <button
                 key={lesson.id}
-                className={cn("h-[70%] w-full rounded-lg", lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
+                type="button"
+                title={`${course.title} — ${lesson.title}`}
+                aria-label={`Ouvrir la leçon : ${lesson.title} (${course.title})`}
+                aria-current={lesson.id === selectedLessonId ? "step" : undefined}
+                disabled={lesson.id === undefined}
+                onClick={() => {
+                  if (lesson.id !== undefined) onSelectLesson(lesson.id);
+                }}
+                className={cn("h-[70%] w-full rounded-lg cursor-pointer transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default", lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
                     ? "bg-primary"
                     : "bg-primary/20")}
               />

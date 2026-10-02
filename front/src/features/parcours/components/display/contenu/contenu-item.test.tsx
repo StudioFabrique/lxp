@@ -26,6 +26,16 @@ const renderItem = (module: Module, isStudent = true) => renderToStaticMarkup(
 );
 
 describe("Module dans l'aperçu du parcours", () => {
+  it("affiche la progression API uniquement pour l'étudiant", () => {
+    const module = {
+      ...moduleData([{} as Module["courses"][number]]),
+      stats: { progress: 37 },
+    };
+
+    expect(renderItem(module)).toContain('aria-valuenow="37"');
+    expect(renderItem(module, false)).not.toContain('role="progressbar"');
+  });
+
   it("affiche un cadenas sans lien quand le module est vide", () => {
     const markup = renderItem(moduleData([]));
 

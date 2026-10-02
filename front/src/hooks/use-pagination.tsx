@@ -171,9 +171,9 @@ const usePagination = (
       .catch(() => {});
   };
 
-  const handleSearch = (searchTerm: string) => {
-    setUrlComplement(searchTerm.length > 0 ? `&searchTerm=${searchTerm}` : "");
-  };
+  const handleSearch = useCallback((searchTerm: string) => {
+    setUrlComplement(searchTerm.length > 0 ? `&searchTerm=${searchTerm}` : null);
+  }, []);
 
   useEffect(() => {
     getList();

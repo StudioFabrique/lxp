@@ -23,11 +23,15 @@ function CurrentSearch() {
 let root: Root | undefined;
 let container: HTMLDivElement | undefined;
 
-function mockProgressQuery(data: unknown, hasAvailableContent: boolean) {
+function mockProgressQuery(
+  data: unknown,
+  hasAvailableContent: boolean,
+  status: "not_started" | "in_progress" | "completed" = "completed",
+) {
   vi.mocked(useQuery).mockImplementation(({ queryKey }) =>
     queryKey[0] === "my-progress"
       ? { data, isLoading: false, isError: false } as never
-      : { data: { hasAvailableContent } } as never,
+      : { data: { hasAvailableContent, profile: { status } } } as never,
   );
 }
 
@@ -107,3 +111,22 @@ it("masque les préférences et niveaux quand aucun contenu n'est rattaché", ()
   expect(container.textContent).toContain("Aucun parcours disponible.");
   expect(container.textContent).not.toContain("Mes préférences et niveaux");
 });
+
+it.each(["not_started", "in_progress"] as const)(
+  "masque les préférences et niveaux tant que l'onboarding n'est pas terminé (%s)",
+  (status) => {
+    mockProgressQuery([{ id: 1, title: "Parcours A", modules: [] }], true, status);
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => root?.render(
+      <MemoryRouter initialEntries={["/student/mon-avancement"]}>
+        <MyProgress />
+      </MemoryRouter>,
+    ));
+
+    expect(container.textContent).toContain("Parcours A");
+    expect(container.textContent).not.toContain("Mes préférences et niveaux");
+  },
+);

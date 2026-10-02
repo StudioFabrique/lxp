@@ -1,9 +1,12 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useContext, useState, type Dispatch, type SetStateAction } from "react";
+import { createPortal } from "react-dom";
+import { OnboardingOverlayContext } from "./onboarding-overlay-context";
 import { useQuery } from "@tanstack/react-query";
 import RightSideDrawer from "../../../components/UI/right-side-drawer/right-side-drawer";
 import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
 import { groupApi } from "../../group/api/group.api";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import OnboardingStudentIdentity from "./OnboardingStudentIdentity";
 
 type Props = {
   name: string;
@@ -22,6 +25,7 @@ export default function TeacherGroupFields({
   selected,
   setSelected,
 }: Props) {
+  const overlayContainer = useContext(OnboardingOverlayContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [search, setSearch] = useState("");
   const parcours = useQuery({
@@ -104,7 +108,7 @@ export default function TeacherGroupFields({
           Choisir des apprenants
         </button>
       </div>
-      <RightSideDrawer
+      {drawerOpen && createPortal(<div className="fixed inset-0 z-50"><RightSideDrawer
         title="Choisir les apprenants"
         id="teacher-onboarding-students"
         visible={false}
@@ -159,9 +163,7 @@ export default function TeacherGroupFields({
                       })
                     }
                   />
-                  <span>
-                    {student.firstname} {student.lastname}
-                  </span>
+                  <OnboardingStudentIdentity student={student} />
                 </label>
               ))}
             </div>
@@ -178,7 +180,7 @@ export default function TeacherGroupFields({
             Valider la sélection ({count})
           </button>
         </div>
-      </RightSideDrawer>
+      </RightSideDrawer></div>, overlayContainer ?? document.body)}
     </div>
   );
 }

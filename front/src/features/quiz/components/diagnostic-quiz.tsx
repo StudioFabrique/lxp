@@ -1,5 +1,6 @@
 import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { Loader2 } from "lucide-react";
+import Header from "../../../components/headers/Header";
 import { Quiz, QuizAttempt, UserAnswer } from "../interfaces/quiz";
 import QuizMatching from "./modals/quiz-matching";
 import QuizMcq from "./modals/quiz-mcq";
@@ -25,6 +26,7 @@ type Props = {
   isAnswered: boolean;
   isCorrect: boolean;
   isStreaming: boolean;
+  isRestoring: boolean;
   isWaitingForNext: boolean;
   showResults: boolean;
   attempts: QuizAttempt[];
@@ -46,6 +48,7 @@ const DiagnosticQuiz = ({
   isAnswered,
   isCorrect,
   isStreaming,
+  isRestoring,
   isWaitingForNext,
   showResults,
   attempts,
@@ -57,8 +60,9 @@ const DiagnosticQuiz = ({
   onReport,
 }: Props) => {
   const reduceMotion = useReducedMotion();
-  const isLoading = isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming));
+  const isLoading = isRestoring || (isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming)));
   const upcomingNumber = currentIndex + (isWaitingForNext ? 2 : 1);
+  const image = normalizeImageSource(moduleImage) ?? defaultModuleImage;
   const contentKey = !isStarted
     ? "intro"
     : showResults
@@ -124,34 +128,48 @@ const DiagnosticQuiz = ({
 
   return (
     <PageWrapper>
-      <div className="card min-h-[32rem] w-full overflow-hidden border border-base-200 bg-base-100 shadow-sm">
-        <div
-          className={cn(
-            "relative shrink-0 overflow-hidden bg-cover bg-center",
-            isStarted ? "h-40 sm:h-44" : "h-48 sm:h-60",
-          )}
-          style={{
-            backgroundImage: bgImageGradient(
-              normalizeImageSource(moduleImage) ?? defaultModuleImage,
-            ),
-          }}
-        >
-          <div className="absolute inset-0 bg-neutral/50" />
-          <div className="absolute bottom-0 left-0 p-6 text-white sm:p-8">
-            <h1 className="mt-2 text-2xl font-bold sm:text-3xl">
+      <Header
+        title="Évaluation initiale"
+        description="Évalue tes connaissances avant de commencer le module"
+      />
+      <BoxWrapper className="card h-auto min-h-[33rem] w-full gap-0 overflow-hidden border-primary/20 bg-primary/5 p-0 shadow-none">
+        {!isStarted ? (
+          <div
+            className="relative flex h-56 shrink-0 items-end overflow-hidden bg-cover bg-center p-6 text-white sm:h-60 sm:p-8"
+            style={{ backgroundImage: bgImageGradient(image) }}
+          >
+            <div className="absolute inset-0 bg-neutral/50" />
+            <h1 className="relative text-2xl font-bold sm:text-3xl">
               Test de connaissances sur le module{" "}
               {moduleTitle && (
-                <span
-                  style={{
-                    color: "color-mix(in srgb, var(--color-secondary) 55%, white)",
-                  }}
-                >
+                <span style={{ color: "color-mix(in srgb, var(--color-secondary) 55%, white)" }}>
                   {toTitleCase(moduleTitle)}
                 </span>
               )}
             </h1>
           </div>
-        </div>
+        ) : (
+          <div className="flex h-56 shrink-0 items-center gap-3 border-b border-primary/20 pr-4 sm:h-60 sm:gap-8 sm:pr-8">
+            <img
+              src={image}
+              alt=""
+              className="h-full w-20 shrink-0 rounded-br-3xl object-cover sm:w-56"
+            />
+            <div className="min-w-0 py-4">
+              <h1 className="text-base font-bold sm:text-3xl">
+                Test de connaissances sur le module{" "}
+                {moduleTitle && (
+                  <span className="text-secondary">{toTitleCase(moduleTitle)}</span>
+                )}
+              </h1>
+              <p className="mt-3 text-sm font-bold text-primary sm:text-lg">
+                {showResults
+                  ? "Résultats du diagnostic"
+                  : `Diagnostic initial : Évaluons vos acquis (${isLoading ? upcomingNumber : currentIndex + 1} / ${totalQuizzes || "…"})`}
+              </p>
+            </div>
+          </div>
+        )}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={contentKey}
@@ -164,7 +182,13 @@ const DiagnosticQuiz = ({
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
             transition={{ duration: reduceMotion ? 0.01 : 0.22, ease: "easeOut" }}
           >
-            {!isStarted ? (
+            {isRestoring ? (
+              <div className="flex flex-col gap-4 py-4" role="status">
+                <p>Reprise du diagnostic…</p>
+                <div className="skeleton h-6 w-3/4 rounded" />
+                <div className="skeleton h-12 w-full rounded-lg" />
+              </div>
+            ) : !isStarted ? (
               <>
                 <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
                   Avant de te lancer, prends un court instant pour évaluer tes
@@ -182,22 +206,16 @@ const DiagnosticQuiz = ({
               </>
             ) : showResults ? (
               <>
-                <h2 className="border-b border-base-200 pb-4 text-lg font-bold text-primary">
-                  Résultats du diagnostic
-                </h2>
                 <QuizResults
                   score={score}
                   attempts={attempts}
                   onContinue={onContinueFromResults}
                   continueLabel="Démarrer le module"
+                  showTopContinue
                 />
               </>
             ) : isLoading ? (
               <>
-                <h2 className="border-b border-base-200 pb-4 text-lg font-bold text-primary">
-                  Diagnostic initial : Évaluons vos acquis ({upcomingNumber} /{" "}
-                  {totalQuizzes || "…"})
-                </h2>
                 <div className="flex flex-col gap-4 py-4">
                   <div className="skeleton h-6 w-3/4 rounded" />
                   <div className="skeleton h-4 w-1/2 rounded" />
@@ -214,10 +232,6 @@ const DiagnosticQuiz = ({
               </>
             ) : quiz ? (
               <>
-                <h2 className="border-b border-base-200 pb-4 text-lg font-bold text-primary">
-                  Diagnostic initial : Évaluons vos acquis ({currentIndex + 1} /{" "}
-                  {totalQuizzes})
-                </h2>
                 <div className="flex flex-col gap-4">
                   <div className="text-xl font-medium">
                     <QuizMarkdown>{quiz.question}</QuizMarkdown>
@@ -237,7 +251,7 @@ const DiagnosticQuiz = ({
                       {isCorrect ? "Bonne réponse !" : "Ce n'est pas tout à fait ça."}
                     </h3>
                     <div className="text-sm text-base-content">
-                      <QuizMarkdown>
+                      <QuizMarkdown explanation>
                         {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
                       </QuizMarkdown>
                     </div>
@@ -247,7 +261,7 @@ const DiagnosticQuiz = ({
             ) : null}
           </motion.div>
         </AnimatePresence>
-      </div>
+      </BoxWrapper>
     </PageWrapper>
   );
 };

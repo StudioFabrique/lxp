@@ -11,8 +11,6 @@ import Contact from "../../../../../../src/utils/interfaces/contact";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import VirtualClass from "../../../../../../src/components/virtual-class";
-import useInput from "../../../../../hooks/useInput";
-import { regexUrl } from "../../../../../config/constantes";
 import ContactsWithDrawer from "../../../../../../src/components/shared/inherited-items/contacts-with-drawer";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import CourseTags from "./course-tags";
@@ -47,13 +45,9 @@ const CourseInfos = () => {
   const visibility = useCourseSelector(
     (state) => state.course?.visibility
   ) as boolean;
-  const { value: virtualClass } = useInput(
-    (value) => regexUrl.test(value),
-    useCourseSelector((state) => state.course?.virtualClass as string)
-  );
+  const virtualClass = useCourseSelector((state) => state.course?.virtualClass) ?? "";
   const [submitTags, setSubmitTags] = useState<boolean>(false);
   const [submitContacts, setSubmitContacts] = useState<boolean>(false);
-  const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
 
   const handleUpdateTags = (tags: Tag[]) => {
     setSubmitTags(true);
@@ -63,15 +57,6 @@ const CourseInfos = () => {
   const handleUpdateContacts = (contacts: Contact[]) => {
     setSubmitContacts(true);
     dispatch({ type: "SET_COURSE_CONTACTS", payload: contacts });
-  };
-
-  const handleChangeVirtualClass = (
-    event: React.FormEvent<HTMLInputElement>
-  ) => {
-    if (!submitVirtualClass) {
-      setSubmitVirtualClass(true);
-    }
-    virtualClass.valueChangeHandler(event);
   };
 
   useEffect(() => {
@@ -113,32 +98,14 @@ const CourseInfos = () => {
     return () => clearTimeout(timer);
   }, [courseId, currentContacts, submitContacts]);
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (virtualClass.isValid && submitVirtualClass) {
-        try {
-          const data = await courseApi.mutations.updateVirtualClass(
-            courseId!,
-            virtualClass.value,
-          );
-          if (data.success) {
-            toast.success(data.message);
-            dispatch({ type: "SET_COURSE_VIRTUAL_CLASS", payload: virtualClass.value });
-          }
-        } catch (err: any) {
-          toast.error(err?.response?.data?.message ?? "Erreur inconnue");
-        }
-        setSubmitVirtualClass(false);
-      }
-    }, autoSubmitTimer);
-    return () => clearTimeout(timer);
-  }, [
-    courseId,
-    dispatch,
-    submitVirtualClass,
-    virtualClass.isValid,
-    virtualClass.value,
-  ]);
+  const saveVirtualClass = async (url: string) => {
+    try {
+      const data = await courseApi.mutations.updateVirtualClass(courseId!, url);
+      if (!data.success) throw new Error(data.message);
+      dispatch({ type: "SET_COURSE_VIRTUAL_CLASS", payload: url });
+      toast.success(data.message);
+    } catch (error) { toast.error("Le lien vers la classe virtuelle n'a pas été mis à jour"); throw error; }
+  };
 
   return (
     <div className="w-full flex flex-col gap-y-8">
@@ -182,8 +149,8 @@ const CourseInfos = () => {
       </div>
       <BoxWrapper>
         <VirtualClass
-          onChangeValue={handleChangeVirtualClass}
-          virtualClass={virtualClass}
+          onSave={saveVirtualClass}
+          value={virtualClass}
         />
       </BoxWrapper>
     </div>

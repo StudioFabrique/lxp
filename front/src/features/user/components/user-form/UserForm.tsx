@@ -1,3 +1,4 @@
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { useEffect } from "react";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
@@ -49,6 +50,7 @@ const UserForm = ({
   cancelTo,
 }: Props) => {
   const {
+    form,
     email,
     setEmail,
     emailError,
@@ -90,8 +92,6 @@ const UserForm = ({
     setRoleId,
     sendEmail,
     setSendEmail,
-    formIsValid,
-    buildUserData,
   } = useUserForm(user, initialSendEmail);
 
   useEffect(() => {
@@ -110,25 +110,16 @@ const UserForm = ({
       ? emailConflict.message
       : null;
 
-  const handleSubmit = () => {
-    if (!formIsValid) {
-      validateEmail();
-      toast.error(
-        "Certains champs du formulaire sont manquants ou mal remplis.",
-      );
-      return;
-    }
-    if (!roleId || roleId.length < 1) {
-      toast.error("Veuillez choisir un rôle svp ...");
-      return;
-    }
-    onSubmitForm(buildUserData(), file);
-  };
+  const handleSubmit = form.handleSubmit((values) => {
+    if (fieldsDisabled || isLoading) return;
+    if (!values.roleId) { form.setError("roleId", { message: "Veuillez choisir un rôle." }); toast.error("Veuillez choisir un rôle."); return; }
+    onSubmitForm(values, file);
+  }, (errors) => { validateEmail(); showFormErrors(errors); });
 
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <PageWrapper as="form" autoComplete="off" data-recommended-tour="user-form">
+    <PageWrapper as="form" onSubmit={handleSubmit} autoComplete="off" data-recommended-tour="user-form">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
@@ -144,8 +135,7 @@ const UserForm = ({
           Annuler
         </Link>
         <button
-          onClick={handleSubmit}
-          type="button"
+          type="submit"
           className="btn btn-primary normal-case"
           disabled={disabled}
           data-recommended-tour="user-save"

@@ -5,20 +5,26 @@ import { adminRoutes } from "./router.admin";
 import { studentRoutes } from "./router.student";
 import AccessDenied from "../components/guards/AccessDenied";
 import DefaultRedirect from "../components/guards/DefaultRedirect";
+import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 
 export const router = createBrowserRouter([
-  ...demoRoutes,
-  ...authRoutes,
-  ...adminRoutes,
-  ...studentRoutes,
   {
-    path: "/access-denied",
-    element: <AccessDenied />,
-    HydrateFallback: () => null,
-  },
-  {
-    path: "*",
-    element: <DefaultRedirect />,
-    HydrateFallback: () => null,
+    errorElement: <RouterErrorBoundary />,
+    children: [
+      ...demoRoutes,
+      ...authRoutes,
+      ...adminRoutes,
+      ...studentRoutes,
+      {
+        path: "/access-denied",
+        element: <AccessDenied />,
+        HydrateFallback: () => null,
+      },
+      {
+        path: "*",
+        element: <DefaultRedirect />,
+        HydrateFallback: () => null,
+      },
+    ],
   },
 ]);

@@ -22,10 +22,7 @@ import {
   withSelectedModuleAssociations,
 } from "./useNewModuleReducer";
 import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
-import type {
-  ModuleData,
-  SourceModule,
-} from "../../../interfaces/new-module";
+import type { ModuleData, SourceModule } from "../../../interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import { parcoursApi } from "../../../api/parcours.api";
@@ -124,28 +121,52 @@ const useNewModule = () => {
     }
   }, [id]);
 
-  const runModuleSubmission = async (submission: () => Promise<void>) => {
+  const runModuleSubmission = async (
+    submission: (values: ModuleCreateFormValues) => Promise<void>,
+  ) => {
     if (isModuleSubmissionRunning.current) return;
 
     isModuleSubmissionRunning.current = true;
     setIsSubmittingModule(true);
     try {
-      await submission();
+      if (!(await trigger(undefined, { shouldFocus: true }))) return;
+      await submission(moduleCreateSchema.parse(getValues()));
     } finally {
       isModuleSubmissionRunning.current = false;
       setIsSubmittingModule(false);
     }
   };
 
+  const moduleFormData = (data: object) => {
+    const payload = new FormData();
+    payload.append("module", JSON.stringify(data));
+    if (moduleImageFile) payload.append("image", moduleImageFile);
+    return payload;
+  };
+
+  const refreshModules = () =>
+    Promise.all([
+      getParcoursModules(),
+      queryClient.invalidateQueries({ queryKey: parcoursKeys.detail(+id!) }),
+    ]);
+
+  const finishCreation = async (module: ModuleData) => {
+    reset();
+    dispatch({
+      type: "MODULE_CREATED",
+      payload: withSelectedModuleAssociations(module, {
+        contacts: state.currentContacts,
+        skills: state.currentSkills,
+      }),
+    });
+    await refreshModules();
+    highlightModule(module.id);
+    setModuleImageFile(null);
+  };
+
   const handleSubmitNewModule = async (e: React.FormEvent) => {
     e.preventDefault();
-    await runModuleSubmission(async () => {
-      const isValid = await trigger(undefined, { shouldFocus: true });
-      if (!isValid) return;
-
-      const formData = new FormData();
-      const values = getValues();
-
+    await runModuleSubmission(async (values) => {
       const moduleData = {
         ...values,
         formationId: state.parcours?.formationId,
@@ -155,28 +176,12 @@ const useNewModule = () => {
         skills: state.currentSkills.map((item) => item.id),
       };
 
-      formData.append("module", JSON.stringify(moduleData));
-      if (moduleImageFile) formData.append("image", moduleImageFile);
+      const formData = moduleFormData(moduleData);
 
       try {
         const data = await parcoursApi.mutations.createModule(formData);
         emitOnboardingEvent({ type: "module_created", id: data.data.id });
-        reset();
-        dispatch({
-          type: "MODULE_CREATED",
-          payload: withSelectedModuleAssociations(data.data, {
-            contacts: state.currentContacts,
-            skills: state.currentSkills,
-          }),
-        });
-        await Promise.all([
-          getParcoursModules(),
-          queryClient.invalidateQueries({
-            queryKey: parcoursKeys.detail(+id!),
-          }),
-        ]);
-        highlightModule(data.data.id);
-        setModuleImageFile(null);
+        await finishCreation(data.data);
       } catch (error) {
         toast.error(
           getApiErrorMessage(error, "Erreur lors de la création du module"),
@@ -288,31 +293,31 @@ const useNewModule = () => {
     (drawer as HTMLDialogElement).click();
   };
 
-  const handleUpdateModule = useCallback((moduleToUpdate: ModuleData) => {
-    setModuleImageFile(null);
-    dispatch({
-      type: "UPDATE_MODULE",
-      payload: {
-        id: moduleToUpdate.id,
-        contacts: moduleToUpdate.contacts,
-        skills: moduleToUpdate.skills,
-        duration: moduleToUpdate.duration ? +moduleToUpdate.duration : 1,
-      },
-    });
-    reset({
-      title: moduleToUpdate.title,
-      description: moduleToUpdate.description,
-      duration: moduleToUpdate.duration,
-      quizInstructions: moduleToUpdate.quizInstructions,
-    });
-  }, [reset]);
+  const handleUpdateModule = useCallback(
+    (moduleToUpdate: ModuleData) => {
+      setModuleImageFile(null);
+      dispatch({
+        type: "UPDATE_MODULE",
+        payload: {
+          id: moduleToUpdate.id,
+          contacts: moduleToUpdate.contacts,
+          skills: moduleToUpdate.skills,
+          duration: moduleToUpdate.duration ? +moduleToUpdate.duration : 1,
+        },
+      });
+      reset({
+        title: moduleToUpdate.title,
+        description: moduleToUpdate.description,
+        duration: moduleToUpdate.duration,
+        quizInstructions: moduleToUpdate.quizInstructions,
+      });
+    },
+    [reset],
+  );
 
   const handleSubmitDuplicateModule = async (e: React.FormEvent) => {
     e.preventDefault();
-    await runModuleSubmission(async () => {
-      const isValid = await trigger(undefined, { shouldFocus: true });
-      if (!isValid) return;
-
+    await runModuleSubmission(async (values) => {
       const isEmptyObject = (obj: unknown) =>
         obj == null ||
         (typeof obj === "object" &&
@@ -324,7 +329,7 @@ const useNewModule = () => {
           const data = await parcoursApi.mutations.duplicateModule(
             state.moduleToDuplicate!.id,
             {
-              duration: getValues().duration ?? 0,
+              duration: values.duration,
               contactsIds: state.currentContacts
                 .map((item) => item.id)
                 .filter((item): item is number => typeof item === "number"),
@@ -334,22 +339,8 @@ const useNewModule = () => {
               parcoursId: +id!,
             },
           );
-          reset();
-          dispatch({
-            type: "MODULE_CREATED",
-            payload: withSelectedModuleAssociations(data.response, {
-              contacts: state.currentContacts,
-              skills: state.currentSkills,
-            }),
-          });
-          await Promise.all([
-            getParcoursModules(),
-            queryClient.invalidateQueries({
-              queryKey: parcoursKeys.detail(+id!),
-            }),
-          ]);
+          await finishCreation(data.response);
           toast.success(data.message);
-          highlightModule(data.response.id);
         }
       } catch (error) {
         toast.error(
@@ -361,14 +352,11 @@ const useNewModule = () => {
 
   const handleSubmitUpdateModule = async (e: React.FormEvent) => {
     e.preventDefault();
-    await runModuleSubmission(async () => {
-      const isValid = await trigger(undefined, { shouldFocus: true });
-      if (!isValid) return;
-
+    await runModuleSubmission(async (values) => {
       try {
         const updatedModule = {
           id: state.moduleToUpdate,
-          ...getValues(),
+          ...values,
           contactsIds: state.currentContacts
             ? state.currentContacts.map((item) => item.id)
             : [],
@@ -376,9 +364,7 @@ const useNewModule = () => {
             ? state.currentSkills.map((item) => item.id)
             : [],
         };
-        const formData = new FormData();
-        formData.append("module", JSON.stringify(updatedModule));
-        if (moduleImageFile) formData.append("image", moduleImageFile);
+        const formData = moduleFormData(updatedModule);
         const data = await parcoursApi.mutations.updateModule(formData);
         if (data.success) {
           dispatch({
@@ -389,12 +375,7 @@ const useNewModule = () => {
             }),
           });
           toast.success(data.message);
-          await Promise.all([
-            getParcoursModules(),
-            queryClient.invalidateQueries({
-              queryKey: parcoursKeys.detail(+id!),
-            }),
-          ]);
+          await refreshModules();
           reset();
           highlightModule(data.response.id);
           setModuleImageFile(null);

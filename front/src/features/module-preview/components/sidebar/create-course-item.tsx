@@ -1,6 +1,11 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { courseTitleSchema } from "../../assignment.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import { Check, Import, Plus } from "lucide-react";
 import { Link } from "react-router";
-import { FormEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
@@ -28,15 +33,18 @@ const CreateCourseItem = ({
   const [showTitleInput, setShowTitleInput] = useState(false);
   const [showDetailsForm, setShowDetailsForm] = useState(openDetailsOnMount);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [title, setTitle] = useState("");
+  const form = useForm({
+    resolver: zodResolver(courseTitleSchema),
+    defaultValues: { title: "" },
+  });
+  const [title, setTitle] = useFormField(form, "title");
   const validationButtonRef = useRef<HTMLButtonElement>(null);
 
-  const handleOpenDetails = (event: FormEvent) => {
-    event.preventDefault();
+  const handleOpenDetails = form.handleSubmit(() => {
     if (!title.trim()) return;
     emitOnboardingEvent({ type: "course_form_opened" });
     setShowDetailsForm(true);
-  };
+  }, showFormErrors);
 
   const handleCreate = async (values: CreateCourseFormValues) => {
     setIsSubmitting(true);
@@ -69,7 +77,10 @@ const CreateCourseItem = ({
       )}
       <motion.div
         data-onboarding="course-create"
-        className={cn("flex w-full flex-col gap-4 rounded-xl", showTitleInput && "bg-success")}
+        className={cn(
+          "flex w-full flex-col gap-4 rounded-xl",
+          showTitleInput && "bg-success",
+        )}
         initial={{ scale: 0.95, padding: 0 }}
         animate={{
           scale: 1,

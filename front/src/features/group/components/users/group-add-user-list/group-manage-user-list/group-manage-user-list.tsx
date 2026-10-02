@@ -94,11 +94,11 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers, onCreateStudent }: Props)
         }}
       >
         <UserPlus className="h-5 w-5" />
-        Ajouter des étudiants
+        Ajouter des apprenants
       </button>
 
       <RightSideDrawer
-        title="Ajouter des étudiants au groupe"
+        title="Ajouter des apprenants au groupe"
         id="add-user-to-group"
         visible={false}
         isOpen={isOpen}
@@ -113,7 +113,7 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers, onCreateStudent }: Props)
                 onClick={onCreateStudent}
               >
                 <UserRoundPlus className="h-5 w-5" />
-                Créer un nouvel étudiant
+                Créer un nouvel apprenant
               </button>
             </div>
           </PermissionGuard>
@@ -139,21 +139,21 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers, onCreateStudent }: Props)
             emptyPlaceholderWithBorder={false}
             emptyMessage={
               searchValue
-                ? "Aucun étudiant disponible pour cette recherche"
-                : "Aucun étudiant disponible"
+                ? "Aucun apprenant disponible pour cette recherche"
+                : "Aucun apprenant disponible"
             }
           />
 
           {data.length > 0 ? (
             <TablePagination
-              leftText={`Étudiants disponibles : ${totalItems}`}
+              leftText={`Apprenants disponibles : ${totalItems}`}
               {...pagination}
             />
           ) : null}
 
           <div className="mt-auto flex items-center justify-between border-t border-base-300 pt-4">
             <span className="text-sm text-base-content/70">
-              {selectedUsers.size} étudiant(s) sélectionné(s)
+              {selectedUsers.size} apprenant(s) sélectionné(s)
             </span>
             <div className="flex gap-2">
               <button

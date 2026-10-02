@@ -3,6 +3,7 @@ import { Quiz, UserAnswer } from "../../interfaces/quiz";
 import { ArrowDown, ArrowUp, GripVertical } from "lucide-react";
 import QuizModalButtons from "./quiz-modal-buttons";
 import { cn } from "../../../../utils/cn";
+import { shuffleAnswers } from "../../utils/shuffle-answers";
 
 interface Props {
   quiz: Extract<Quiz, { type: "ordering" }>;
@@ -13,9 +14,18 @@ interface Props {
 }
 
 const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Props) => {
-  const [items, setItems] = useState(() =>
-    quiz.data.items.map((text: string, originalIndex: number) => ({ text, originalIndex })),
-  );
+  const [items, setItems] = useState(() => {
+    const shuffled = shuffleAnswers(
+      quiz.data.items.map((text: string, originalIndex: number) => ({ text, originalIndex })),
+    );
+    if (
+      shuffled.length > 1 &&
+      shuffled.every((item, index) => item.originalIndex === quiz.data.order[index])
+    ) {
+      [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
+    }
+    return shuffled;
+  });
   const [dragOver, setDragOver] = useState<number | null>(null);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const dragging = useRef<number | null>(null);
@@ -64,7 +74,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
             }}
             onDragEnd={() => { dragging.current = null; setDraggingIndex(null); setDragOver(null); }}
             className={cn(
-              "flex items-center gap-2 rounded-box border border-base-300 bg-base-200 p-2 sm:gap-3 sm:p-3",
+              "flex items-center gap-2 rounded-box border border-primary/40 bg-primary/5 p-2 sm:gap-3 sm:p-3",
               !isAnswered && "cursor-grab active:cursor-grabbing",
               dragOver === index && draggingIndex !== index && "ring-2 ring-primary",
             )}
@@ -79,7 +89,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
           </li>
         ))}
       </ul>
-      {(!isAnswered || nextAction) && <QuizModalButtons isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />}
+      <QuizModalButtons isAnswered={isAnswered} isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />
     </div>
   );
 };

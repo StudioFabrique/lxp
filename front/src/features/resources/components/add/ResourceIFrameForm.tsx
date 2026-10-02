@@ -1,4 +1,5 @@
-import { UseFormRegister } from "react-hook-form";
+import type { IframeFormValues } from "../../../lesson/media.schema";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 import FormInput from "../../../../components/form/FormInput";
 import ResourceIFramePreview from "./ResourceIFramePreview";
 
@@ -8,8 +9,8 @@ type Props = {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   data: {
-    register: UseFormRegister<any>;
-    errors: any;
+    register: UseFormRegister<IframeFormValues>;
+    errors: FieldErrors<IframeFormValues>;
   };
   onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCancel: () => void;

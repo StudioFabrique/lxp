@@ -18,7 +18,7 @@ const ActivityActionsMenu = ({
   permissionSubject = "lesson",
 }: ActivityActionsMenuProps) => {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex self-start shrink-0 items-center gap-1">
       {["text", "iframe", "image", "video", "resource"].includes(
         activity.type,
       ) && (

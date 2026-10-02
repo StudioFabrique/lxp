@@ -72,7 +72,7 @@ export default function OnboardingProgressPanel({
       </div>
       <div
         ref={contentRef}
-        className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-2", contentClassName)}
+        className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-2 pb-5", contentClassName)}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -87,7 +87,7 @@ export default function OnboardingProgressPanel({
           </motion.div>
         </AnimatePresence>
       </div>
-      {footer}
+      {footer && <div className="shrink-0">{footer}</div>}
     </section>
   );
 }

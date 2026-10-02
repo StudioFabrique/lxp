@@ -10,6 +10,7 @@ import { cn } from "../../../../utils/cn";
 
 type ActivityItemProps = {
   disabled?: boolean;
+  showUnreadIndicator?: boolean;
   activity: Activity;
   index: number;
   lessonId?: number;
@@ -21,6 +22,7 @@ type ActivityItemProps = {
 
 export default function ActivityItem({
   disabled = false,
+  showUnreadIndicator = false,
   activity,
   index,
   lessonId,
@@ -76,6 +78,14 @@ export default function ActivityItem({
       >
         {formatTitle(activity.title)}
       </span>
+      {showUnreadIndicator && !activity.activitiesRead?.length && (
+        <span
+          className="size-1.5 shrink-0 rounded-full bg-primary/60"
+          role="img"
+          aria-label="Activité non lue"
+          title="Activité non lue"
+        />
+      )}
       {isReordering && (
         <GripVertical aria-hidden="true" className="w-4 ml-auto shrink-0" />
       )}

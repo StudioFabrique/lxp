@@ -43,9 +43,9 @@ function CreateNewTag(props: Props) {
   };
 
   const {
+    submitTags,
     tag,
     currentTags,
-    getTagsWithPendingInput,
     handleCheckTags,
     handleOnChange,
     handleRemoveTag,
@@ -63,20 +63,10 @@ function CreateNewTag(props: Props) {
     handleCheckTags().length > 0 ||
     (pendingName.length > 0 && !pendingNameExists);
 
-  const handleSubmitNewTags = async () => {
-    const tmpTags = handleCheckTags(getTagsWithPendingInput());
-
-    if (!tmpTags || tmpTags.length === 0) {
-      toast("Aucun nouveau tag à créer");
-      return;
-    }
-
-    const payload = {
-      tags: tmpTags.map((item) => ({ name: item.name, color: item.color })),
-    };
-
-    createTags(payload);
-  };
+  const handleSubmitNewTags = () => submitTags((tags) => {
+    if (isPending) return;
+    createTags({ tags: tags.map(({ name, color }) => ({ name, color })) });
+  });
 
   const showNoTagMessage =
     pendingNameExists ||

@@ -1,9 +1,9 @@
-import { HTMLAttributes, PropsWithChildren } from "react";
+import { HTMLAttributes, PropsWithChildren, useId, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useReward } from "react-rewards";
 import { useVisualPreferences } from "../../store/VisualPreferences";
 
 const thumbsRewardProperties = {
-  id: "thumb-up",
   type: "emoji",
   config: {
     emoji: ["🎉", "👍", "⭐", "🌟"],
@@ -25,7 +25,6 @@ const thumbsRewardProperties = {
 // };
 
 const starsRewardProperties = (starCount: number = 5) => ({
-  id: "thumb-up",
   type: "emoji",
   config: {
     emoji: ["⭐", starCount > 2 ? ["🥳", "☺️"] : ["😭", "😭"]],
@@ -39,7 +38,6 @@ const starsRewardProperties = (starCount: number = 5) => ({
 });
 
 const confettiRewardProperties = {
-  id: "thumb-up",
   type: "confetti",
   config: {
     startVelocity: 15,
@@ -50,7 +48,6 @@ const confettiRewardProperties = {
 };
 
 const balloonsRewardProperties = {
-  id: "thumb-up",
   type: "balloons",
   config: undefined,
 };
@@ -92,25 +89,40 @@ const FeedbacksButton = <TFunc extends () => void>({
 }: PropsWithChildren<FeedbackButtonProps<TFunc>>) => {
   const { confetti } = useVisualPreferences();
   const rewardProperties = getRewardProperties(feedbackType, elementCount);
+  const rewardId = useId();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const originRef = useRef<HTMLSpanElement>(null);
 
   const { reward, isAnimating } = useReward(
-    rewardProperties.id,
+    rewardId,
     rewardProperties.type as "emoji" | "confetti" | "balloons",
-    rewardProperties.config,
+    { ...rewardProperties.config, position: "absolute" },
   );
 
   const handleClick = () => {
-    if (showFeedback && confetti) reward();
+    if (showFeedback && confetti && buttonRef.current && originRef.current) {
+      const { left, top, width } = buttonRef.current.getBoundingClientRect();
+      originRef.current.style.left = `${left + width / 2}px`;
+      originRef.current.style.top = `${top}px`;
+      reward();
+    }
     onClick();
   };
 
   return (
     <div className="relative">
-      <span
-        id={rewardProperties.id}
-        className="absolute -translate-x-1/2 bottom-full"
-      />
+      {/* Keep particles outside scrollable containers, including modal boxes. */}
+      {typeof document !== "undefined" && createPortal(
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[1000] overflow-hidden"
+        >
+          <span id={rewardId} ref={originRef} className="absolute size-0" />
+        </div>,
+        document.body,
+      )}
       <button
+        ref={buttonRef}
         {...{ className }}
         disabled={isAnimating || disabled}
         onClick={handleClick}

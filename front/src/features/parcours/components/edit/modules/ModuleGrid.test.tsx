@@ -64,8 +64,10 @@ describe("ModuleGrid", () => {
       />,
     );
 
-    expect(renderEmptyGrid(true)).toContain('aria-label="Chargement des modules associés"');
-    expect(renderEmptyGrid(true)).not.toContain("Aucun module trouvé");
+    const loadingMarkup = renderEmptyGrid(true);
+    expect(loadingMarkup).toContain('aria-label="Chargement des modules associés"');
+    expect(loadingMarkup.match(/skeleton h-24 w-full rounded-none/g)).toHaveLength(3);
+    expect(loadingMarkup).not.toContain("Aucun module trouvé");
     expect(renderEmptyGrid(false)).toContain("Aucun module trouvé");
   });
 

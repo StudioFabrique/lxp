@@ -11,6 +11,7 @@ const GroupEdit = () => {
 
   const {
     form,
+    existingGroup,
     isEditing,
     usersToAdd,
     isLoading,
@@ -24,6 +25,7 @@ const GroupEdit = () => {
     <>
       <GroupForm
         form={form}
+        existingGroup={existingGroup}
         isEditing={isEditing}
         onSubmitForm={onSubmit}
         isLoading={isLoading}

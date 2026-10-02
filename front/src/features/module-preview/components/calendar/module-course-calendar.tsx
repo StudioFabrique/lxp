@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { courseDatesListSchema } from "../../../course/course-dates.schema";
+import { useFormField } from "../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../components/form/form-errors";
 import * as Popover from "@radix-ui/react-popover";
 import { Plus, Trash2, X } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
@@ -14,7 +19,6 @@ import {
 import DatePicker from "../../../../components/UI/date-picker/date-picker";
 
 import CourseTimeFields from "../../../course/components/edit/calendar/course-time-fields";
-import { validCourseTimes } from "../../../course/helpers/course-times";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import {
   calendarColor,
@@ -111,23 +115,25 @@ export function DatesEditor({
   onSave: (dates: CourseDates[]) => Promise<boolean>;
   onDelete: () => void;
 }) {
-  const [draft, setDraft] = useState(() => dates.map((date) => ({ ...date })));
-  const validDates = draft.every(
-    (date) =>
-      date.minDate &&
-      date.maxDate &&
-      dateInputValue(date.minDate) <= dateInputValue(date.maxDate),
-  );
-  const valid =
-    validDates &&
-    draft.every((date) => validCourseTimes(date.startTime, date.endTime));
+  const form = useForm({
+    resolver: zodResolver(courseDatesListSchema),
+    defaultValues: { dates: dates.map((date) => ({ ...date })) },
+  });
+  const [draft, setDraft] = useFormField(form, "dates");
+  const valid = courseDatesListSchema.safeParse({ dates: draft }).success;
+  const validDates = courseDatesListSchema.safeParse({
+    dates: draft.map((date) => ({
+      ...date,
+      startTime: undefined,
+      endTime: undefined,
+    })),
+  }).success;
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        if (valid) await onSave(draft);
-      }}
+      onSubmit={form.handleSubmit(async ({ dates }) => {
+        if (!isSaving) await onSave(dates);
+      }, showFormErrors)}
     >
       <div className="max-h-[50vh] space-y-4 overflow-y-auto">
         {draft.map((date, index) => (

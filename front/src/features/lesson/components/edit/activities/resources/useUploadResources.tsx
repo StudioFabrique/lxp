@@ -1,26 +1,22 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { lessonApi } from "../../../../api/lesson.api";
 import toast from "react-hot-toast";
-import { regexGeneric } from "../../../../../../config/constantes";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import type { AxiosProgressEvent } from "axios";
+import {
+  documentSchema,
+  documentsSchema,
+  type DocumentValues,
+} from "../../../../document.schema";
+import { useFormField } from "../../../../../../components/form/useFormField";
+import { showFormErrors } from "../../../../../../components/form/form-errors";
+import { getApiErrorMessage } from "../../../../../../utils/helpers/api-error-message";
 import { useParams } from "react-router";
 
-export type Resource = {
-  name: string;
-  file: File;
-  hasError: boolean;
-};
-
-export const allowedMimeTypes = [
-  "application/pdf",
-  "application/vnd.ms-powerpoint",
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  "text/plain",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "text/markdown",
-];
+export type Resource = DocumentValues;
+export { allowedMimeTypes } from "../../../../document.schema";
 
 const useUploadResources = (
   onCancel: (value: boolean) => void,
@@ -30,8 +26,22 @@ const useUploadResources = (
   onSaved?: () => void | Promise<void>,
   title?: string,
 ) => {
-  const [filesList, setFilesList] = useState<Resource[] | null>(null);
-  const [resourceName, setResourceName] = useState("");
+  const form = useForm<z.infer<typeof documentsSchema>>({
+    resolver: zodResolver(documentsSchema),
+    defaultValues: { files: [] },
+  });
+  const { setValue } = form;
+  const filesList = form.watch("files");
+  const setFilesList = useCallback(
+    (files: Resource[]) =>
+      setValue("files", files, { shouldDirty: true, shouldValidate: true }),
+    [setValue],
+  );
+  const draft = useForm({
+    resolver: zodResolver(documentSchema.pick({ name: true })),
+    defaultValues: { name: "" },
+  });
+  const [resourceName, setResourceName] = useFormField(draft, "name");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -44,76 +54,51 @@ const useUploadResources = (
   else if (id === null && parent === "lesson" && lessonId)
     id = parseInt(lessonId);
 
-  const [hasError, setHasError] = useState(false);
-
-  const filesNumber = useMemo(
-    () => filesList?.length ?? 0,
-    [filesList?.length],
-  );
+  const hasError =
+    filesList.length > 0 &&
+    !documentsSchema.safeParse({ files: filesList }).success;
+  const filesNumber = filesList.length;
 
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
 
   const handleFileChange = (selectedFile: File) => {
-    let error = !regexGeneric.test(resourceName);
-
-    if (allowedMimeTypes.includes(selectedFile.type)) {
-      filesList?.forEach((file) => {
-        if (file.file.name === selectedFile.name) {
-          error = true;
-          toast.error("Ce fichier se trouve déjà dans la liste");
-        }
-      });
-      const resource = [
-        ...(filesList ?? []),
-        {
-          name: resourceName,
-          file: selectedFile,
-          hasError: error,
-        },
-      ];
-      setFilesList(resource as Resource[]);
-      setResourceName("");
-    } else {
-      toast.error(
-        "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
-      );
+    const result = documentSchema.safeParse({
+      name: resourceName,
+      file: selectedFile,
+      hasError: false,
+    });
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
       return;
     }
+    if (filesList.some(({ file }) => file.name === selectedFile.name)) {
+      toast.error("Ce fichier se trouve déjà dans la liste");
+      return;
+    }
+    setFilesList([...filesList, result.data]);
+    draft.reset({ name: "" });
   };
 
   const handleRemoveResource = (index: number) => {
-    setFilesList(filesList!.filter((_, i) => i !== index));
+    setFilesList(filesList.filter((_, i) => i !== index));
   };
 
   const resetFilesList = useCallback(() => {
-    setFilesList(null);
+    setFilesList([]);
     setResourceName("");
-  }, []);
+  }, [setFilesList, setResourceName]);
 
-  const handleSubmit = () => {
+  const handleSubmit = form.handleSubmit(async ({ files }) => {
+    if (isLoading) return;
     const controller = new AbortController();
     setAbortController(controller);
-
     const formData = new FormData();
-
-    filesList?.forEach((file) => {
-      if (regexGeneric.test(file.name)) {
-        formData.append("files", file.file);
-      } else {
-        toast.error("Le nom de la ressource n'est pas valide");
-        return;
-      }
-    });
-
-    let resources: { label: string; filename: string }[] = [];
-    for (const item of filesList!) {
-      resources = [
-        ...resources,
-        { label: item.name, filename: item.file.name },
-      ];
-    }
-
+    files.forEach(({ file }) => formData.append("files", file));
+    const resources = files.map(({ name, file }) => ({
+      label: name,
+      filename: file.name,
+    }));
     formData.append("data", JSON.stringify({ resources, parent, title }));
 
     if (id === null) {
@@ -123,13 +108,18 @@ const useUploadResources = (
 
     setIsLoading(true);
     setUploadProgress(0);
-    lessonApi.mutations
-      .uploadResources(id, formData, controller.signal, (progressEvent: any) => {
-        const progress = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total,
-        );
-        setUploadProgress(progress);
-      })
+    await lessonApi.mutations
+      .uploadResources(
+        id,
+        formData,
+        controller.signal,
+        (progressEvent: AxiosProgressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1),
+          );
+          setUploadProgress(progress);
+        },
+      )
       .then((data: { success: boolean; message: string }) => {
         if (!data.success) return;
         toast.success(data.message);
@@ -139,15 +129,11 @@ const useUploadResources = (
         onCancel(false);
         onSubmit?.();
       })
-      .catch((err: any) => {
-        toast.error(
-          err.response?.data?.message ||
-            err.message ||
-            "Une erreur est survenue",
-        );
-      })
+      .catch((err: unknown) =>
+        toast.error(getApiErrorMessage(err, "Une erreur est survenue")),
+      )
       .finally(() => setIsLoading(false));
-  };
+  }, showFormErrors);
 
   const handleReorder = (
     newList: {
@@ -166,13 +152,6 @@ const useUploadResources = (
       onCancel(false);
     }
   }, [abortController, onCancel, resetFilesList]);
-
-  useEffect(() => {
-    setHasError(false);
-    filesList?.forEach((file) => {
-      if (file.hasError) setHasError(true);
-    });
-  }, [filesList]);
 
   return {
     resourceName,
