@@ -1,0 +1,4 @@
+html,body{background:var(--embed-page-background);width:100%;height:100%;overflow:hidden}#root{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:top left}.scene{display:none}.identity .brand-svg .ink,.identity .brand-svg .plate{fill:var(--embed-logo-color)!important}.identity .brand-svg .inverse{fill:var(--color-base-100)!important}.identity{color:var(--embed-logo-color)}
+
+/* Theme previews keep their changing surfaces, with the current tile's accent. */
+#theme-product{--color-primary:var(--embed-logo-color)!important;--color-primary-content:var(--embed-content-color,var(--color-base-100))!important}

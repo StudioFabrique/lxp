@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=1920, height=1080"/>
+  <title>ANDRIA LXP : du contenu à l’accompagnement</title>
+  <script src="assets/gsap.min.js"></script>
+  <script src="assets/MorphSVGPlugin.min.js"></script>
+  <style>{{STYLE}}</style>
+</head>
+<body>
+<div id="root" data-theme="aurora" data-composition-id="main" data-start="0" data-duration="25" data-width="1920" data-height="1080">
+  <div class="atmosphere" aria-hidden="true"><div class="orb orb-one" data-layout-allow-overflow></div><div class="orb orb-two" data-layout-allow-overflow></div><div class="floor-grid" data-layout-allow-overflow></div></div>
+  <div class="topline"><span class="wordmark">ANDRIA <span class="separator" aria-hidden="true"></span> LXP</span><span>LA FORMATION EN MOUVEMENT</span></div>
+  <div class="bottomline"><span>Du contenu à l’accompagnement</span><span>Données de démonstration</span></div>
+  <div class="progress-track" aria-hidden="true"><div id="film-progress"></div></div>
+
+  <section class="clip intro" id="intro" data-start="0" data-duration="2.4" data-track-index="1">
+    <div class="intro-layout">
+      <div class="intro-copy"><p class="eyebrow">LA PLATEFORME DE FORMATION</p><h1><span>La formation</span><span class="accent">prend vie.</span></h1><div class="intro-rule"></div><p class="intro-note">Contenus riches. Suivi humain.</p></div>
+      <div class="logo-stage"><div id="intro-logo">{{INTRO_LOGO}}</div><div class="logo-caption">ANDRIA LXP</div></div>
+    </div>
+  </section>
+
+  <section class="clip hierarchy" id="hierarchy" data-start="2.4" data-duration="6.34" data-track-index="2">
+    <div class="scene-title"><p class="eyebrow">01 / STRUCTURER</p><h2>Chaque niveau compte.</h2></div>
+    <div class="hierarchy-layout">
+      <div class="hierarchy-index">
+        <div class="level-label" id="label-0"><b>01</b><span>Organisme de formation</span></div>
+        <div class="level-label" id="label-1"><b>02</b><span>Parcours</span></div>
+        <div class="level-label" id="label-2"><b>03</b><span>Module</span></div>
+        <div class="level-label" id="label-3"><b>04</b><span>Cours</span></div>
+        <div class="level-label" id="label-4"><b>05</b><span>Leçon</span></div>
+        <div class="level-label" id="label-5"><b>06</b><span>Activités</span></div>
+      </div>
+      <div class="depth-stage">
+        <div id="pedagogical-world" class="depth-world" data-layout-allow-overflow>
+          <article class="level-card" id="level-0"><span class="level-number">01</span><div><small>ORGANISME DE FORMATION</small><h3>Institut Horizon</h3><p>Un espace pour votre pédagogie</p></div><span class="card-corner" aria-hidden="true">↘</span></article>
+          <article class="level-card" id="level-1"><span class="level-number">02</span><div><small>PARCOURS</small><h3>Développeur web</h3><p>Une progression structurée</p></div><span class="card-corner" aria-hidden="true">↘</span></article>
+          <article class="level-card" id="level-2"><span class="level-number">03</span><div><small>MODULE</small><h3>Construire une interface</h3><p>Les compétences à acquérir</p></div><span class="card-corner" aria-hidden="true">↘</span></article>
+          <article class="level-card" id="level-3"><span class="level-number">04</span><div><small>COURS</small><h3>Les bases du HTML</h3><p>Comprendre et pratiquer</p></div><span class="card-corner" aria-hidden="true">↘</span></article>
+          <article class="level-card" id="level-4"><span class="level-number">05</span><div><small>LEÇON</small><h3>La structure d’une page</h3><p>Un objectif, plusieurs activités</p></div><span class="card-corner" aria-hidden="true">↘</span></article>
+          <article class="level-card leaf" id="level-5"><span class="level-number">06</span><div><small>ACTIVITÉS</small><h3>Lire. Voir. Explorer.</h3><p>Texte, médias et ressources</p></div><span class="card-corner" aria-hidden="true">↗</span></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="clip activities" id="activities" data-start="8.74" data-duration="5.46" data-track-index="3">
+    <div class="scene-title"><p class="eyebrow">02 / CRÉER</p><h2>Le contenu prend forme.</h2></div>
+    <div class="activity-layout">
+      <div class="activity-palette">
+        <p class="palette-title">Ajouter une activité</p>
+        <div class="activity-type selected"><span class="type-icon">T</span><div><b>Texte</b><small>Éditeur Tiptap</small></div></div>
+        <div class="activity-type"><span class="type-icon">▧</span><b>Image</b></div>
+        <div class="activity-type"><span class="type-icon">▷</span><b>Vidéo</b></div>
+        <div class="activity-type"><span class="type-icon">⌘</span><div><b>Contenu intégré</b><small>iframe</small></div></div>
+        <div class="activity-type"><span class="type-icon">↗</span><b>Ressource</b></div>
+        <div class="activity-type"><span class="type-icon">↓</span><b>Fichier</b></div>
+      </div>
+      <div class="editor-stage">
+        <div id="editor-window" class="window" data-theme="ocean">
+          <div class="window-header"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Leçon / La structure d’une page / Texte</span><span class="badge">Tiptap</span></div>
+          <div class="toolbar"><span class="tool">H₁</span><span class="toolbar-divider" aria-hidden="true"></span><span class="tool tool-bold">B</span><span class="tool tool-italic">I</span><span class="tool">U</span><span class="toolbar-divider" aria-hidden="true"></span><span class="tool">☷</span><span class="tool">☑</span><span class="tool">↗</span><span class="toolbar-divider" aria-hidden="true"></span><span class="tool" id="image-tool">▧</span><span class="tool" id="table-tool">▦</span><span class="tool" id="code-tool">&lt;/&gt;</span><span class="toolbar-spacer"></span><span class="saved-text">Contenu pédagogique</span></div>
+          <div class="editor-document">
+            <p class="doc-kicker">LEÇON 01</p><h3 id="doc-heading">Construire sa première page</h3>
+            <p id="doc-paragraph">Une page <strong>bien structurée</strong> rend le contenu accessible.</p>
+            <div class="doc-columns">
+              <div><div class="check-list" id="doc-list"><p><span>✓</span> Définir un titre</p><p><span>✓</span> Organiser les sections</p><p><span>✓</span> Ajouter des ressources</p></div><table id="doc-table"><thead><tr><th>Balise</th><th>Rôle</th></tr></thead><tbody><tr><td>&lt;h1&gt;</td><td>Titre principal</td></tr><tr><td>&lt;p&gt;</td><td>Paragraphe</td></tr></tbody></table></div>
+              <div class="doc-media" id="doc-image"><img src="assets/parcours.webp" alt="Visuel pédagogique du parcours"/><span>Image redimensionnable</span></div>
+            </div>
+            <pre id="doc-code"><code>&lt;main&gt;
+  &lt;h1&gt;Ma première page&lt;/h1&gt;
+&lt;/main&gt;</code><span>HTML</span></pre>
+          </div>
+        </div>
+        <div class="editor-capabilities"><span>Titres &amp; mise en forme</span><span>Listes &amp; tableaux</span><span>Images &amp; code</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="clip themes" id="themes" data-start="14.2" data-duration="3.27" data-track-index="4">
+    <div class="scene-title"><p class="eyebrow">03 / PERSONNALISER</p><h2>Une plateforme. Vos couleurs.</h2></div>
+    <div class="theme-layout">
+      <div class="theme-list"><div id="theme-ocean" class="theme-option" data-theme="ocean"><div class="swatches"><i></i><i></i><i></i></div><b>Océan</b><span>Clair</span></div><div id="theme-sage" class="theme-option" data-theme="sage"><div class="swatches"><i></i><i></i><i></i></div><b>Forêt</b><span>Clair</span></div><div id="theme-aurora" class="theme-option" data-theme="aurora"><div class="swatches"><i></i><i></i><i></i></div><b>Aurore</b><span>Sombre</span></div></div>
+      <div class="dashboard-stage">
+        <div class="dashboard window" id="theme-dashboard" data-theme="ocean">
+          <aside class="sidebar"><span class="sidebar-brand">ANDRIA</span><span class="nav-active">Tableau de bord</span><span>Mes parcours</span><span>Calendrier</span><span>Ressources</span><span class="sidebar-bottom">Mon profil</span></aside>
+          <div class="dashboard-main"><div class="dashboard-greeting"><div><p class="doc-kicker">ESPACE APPRENANT</p><h3>Bonjour Camille</h3></div><span class="avatar">C</span></div><div class="dashboard-cards"><article class="card"><small>MON PARCOURS</small><h4>Développeur web</h4><p>Construire une interface</p><div class="meter"><i></i></div><span>Progression : 68 %</span></article><article class="card mood-mini"><small>HUMEUR DU JOUR</small><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><p>Comment vous sentez-vous ?</p></article></div><article class="card next-lesson"><span class="play-icon">▷</span><div><small>REPRENDRE MA LEÇON</small><h4>La structure d’une page</h4><p>Les bases du HTML</p></div><span class="button">Continuer →</span></article></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="clip care" id="care" data-start="17.47" data-duration="5.46" data-track-index="5">
+    <div class="scene-title"><p class="eyebrow">04 / ACCOMPAGNER</p><h2>Voir les signaux. Garder le lien.</h2></div>
+    <div class="care-layout">
+      <article class="alert-panel window" id="alert-panel"><div class="care-panel-title"><span class="alert-symbol">!</span><div><p class="doc-kicker">ANALYSE DU DÉCROCHAGE</p><h3>Développeur web</h3></div><span class="critical-badge">1 cas critique</span></div><div class="student-row"><div class="avatar">C</div><div><h4>Camille</h4><p>Apprenante</p></div><span class="critical-badge">Critique</span></div><div class="indicators"><div><small>Réussite</small><strong>42 %</strong><div class="meter"><i style="width:42%"></i></div></div><div><small>Connexions</small><strong>4 j / 30 j</strong><div class="meter"><i style="width:13%"></i></div></div><div><small>Inactivité</small><strong>8 jours</strong><div class="meter warning-meter"><i style="width:65%"></i></div></div></div><div class="alert-review"><span class="button" id="review-pending">Prendre en compte l’alerte</span><span class="review-success" id="review-success">✓ Alerte prise en compte</span></div><div class="contact-card"><span class="avatar small-avatar">E</span><div><small>CONTACT PÉDAGOGIQUE</small><b>Équipe pédagogique</b></div><span class="contact-action">Contacter ↗</span></div></article>
+      <div class="feedback-area"><article class="feedback-panel window" id="feedback-panel"><div class="feedback-heading"><div><p class="doc-kicker">HUMEUR DU JOUR</p><h3>Comment vous sentez-vous aujourd’hui ?</h3></div><svg id="mood-svg" viewBox="0 0 120 120" role="img" aria-label="Humeur météo, de l’orage au soleil"><path id="mood-shape" d="M28 74 C8 74 8 45 26 42 C29 18 59 17 68 36 C87 30 107 45 105 63 C105 70 100 74 93 74 Z"/><path id="mood-detail" d="M63 61 L47 85 L61 85 L53 106 L79 78 L65 78 Z"/><path id="mood-rays" d="M60 5V15 M60 105V115 M5 60H15 M105 60H115 M21 21L28 28 M92 92L99 99 M21 99L28 92 M92 28L99 21"/></svg></div><div class="mood-track"><i id="mood-progress"></i><span id="mood-knob"></span></div><p class="student-feedback" id="student-feedback">« Je bloque sur la dernière leçon. »</p><div class="feedback-footer"><span>Camille</span><span>Feedback apprenant</span></div></article><article class="teacher-note" id="teacher-note"><p class="doc-kicker">ÉQUIPE PÉDAGOGIQUE</p><h4>Feedback pris en compte</h4><p>Note interne de review</p><div class="note-content">Proposer un point sur la leçon et adapter l’accompagnement.</div><span class="note-confirmation">✓ Vu par l’équipe pédagogique</span></article></div>
+    </div>
+  </section>
+
+  <section class="clip outro" id="outro" data-start="22.93" data-duration="2.07" data-track-index="6"><div class="outro-content"><div id="outro-logo">{{OUTRO_LOGO}}</div><h2><span>Former.</span> <span>Créer.</span> <span class="accent">Accompagner.</span></h2><p>ANDRIA LXP</p><div class="outro-rule"></div></div></section>
+
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="25" data-track-index="10" data-volume="0.32" data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0,&quot;v&quot;:0},{&quot;t&quot;:0.4,&quot;v&quot;:0.32},{&quot;t&quot;:23,&quot;v&quot;:0.32},{&quot;t&quot;:25,&quot;v&quot;:0}]}]}"></audio>
+  <audio id="sfx-logo" src="assets/impact.ogg" data-start="0.15" data-duration="0.19" data-track-index="11" data-volume="0.5"></audio>
+  <audio id="sfx-hierarchy" src="assets/slide.ogg" data-start="2.4" data-duration="0.6" data-track-index="12" data-volume="0.45"></audio>
+  <audio id="sfx-editor" src="assets/impact.ogg" data-start="8.74" data-duration="0.19" data-track-index="13" data-volume="0.5"></audio>
+  <audio id="sfx-theme1" src="assets/click.ogg" data-start="15.29" data-duration="0.01" data-track-index="14" data-volume="0.5"></audio>
+  <audio id="sfx-theme2" src="assets/click.ogg" data-start="16.38" data-duration="0.01" data-track-index="15" data-volume="0.5"></audio>
+  <audio id="sfx-alert" src="assets/impact.ogg" data-start="17.47" data-duration="0.19" data-track-index="16" data-volume="0.45"></audio>
+  <audio id="sfx-review" src="assets/click.ogg" data-start="20.19" data-duration="0.01" data-track-index="17" data-volume="0.5"></audio>
+  <audio id="sfx-outro" src="assets/bell.ogg" data-start="22.93" data-duration="1.48" data-track-index="18" data-volume="0.3"></audio>
+</div>
+<script>{{MOTION}}</script>
+</body>
+</html>

@@ -12,12 +12,8 @@ import {
   type Geometry,
 } from "./auth-tile-grid";
 import { cn } from "../../../utils/cn";
+import { authTileClasses as colors } from "./auth-tile-colors";
 
-const colors = [
-  "bg-[#1e40af] text-white",
-  "bg-secondary text-secondary-content",
-  "bg-accent text-accent-content",
-];
 type Tile = { x: number; y: number; quality: number; color: number };
 const revealDuration = 980;
 const currentTime = () => Date.now();

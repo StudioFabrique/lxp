@@ -128,9 +128,9 @@ describe("auth flip tiles", () => {
     expect(image.style.clipPath).toContain("M150 180h610v510h-610Z");
     expect(image.style.clipPath).not.toContain("M150 440h300v250h-300Z");
     expect(container.querySelectorAll("[data-auth-photo-fade] img")).toHaveLength(4);
-    expect(container.querySelectorAll('[role="dialog"] figure img')).toHaveLength(0);
+    expect(container.querySelectorAll('[role="dialog"] iframe')).toHaveLength(0);
     act(() => vi.advanceTimersByTime(350));
-    expect(container.querySelectorAll('[role="dialog"] figure img')).toHaveLength(1);
+    expect(container.querySelectorAll('[role="dialog"] iframe')).toHaveLength(1);
     const other = buttons[1].querySelector(".auth-flip-tile");
     const otherLabel = buttons[1].textContent;
     expect(other?.className).toContain("animation-play-state:paused");
@@ -231,12 +231,13 @@ describe("auth flip tiles", () => {
     act(() => vi.advanceTimersByTime(20000));
     expect(container.textContent).toContain("Adaptative");
     act(() => button.click());
-    expect(container.querySelector('[role="dialog"] h2')?.textContent).toBe("Adaptative");
+    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Adaptative");
     expect(container.querySelector('[role="dialog"] h3')).toBeNull();
     act(() => vi.advanceTimersByTime(349));
     expect(container.querySelector('[role="dialog"] h3')).toBeNull();
     act(() => vi.advanceTimersByTime(1));
-    expect(container.querySelectorAll('[role="dialog"] li')).toHaveLength(3);
+    expect(container.querySelectorAll('[role="dialog"] iframe')).toHaveLength(1);
+    expect(container.querySelector('[role="dialog"] iframe')?.getAttribute("title")).toContain("Adaptative");
     act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
     expect(container.querySelector('[role="dialog"]')).toBeNull();
   });
@@ -246,7 +247,7 @@ describe("auth flip tiles", () => {
     act(() => root.render(<AuthFlipTiles image={image} onClipPathChange={onClipPathChange} />));
     act(() => container.querySelector<HTMLButtonElement>(".auth-tile-button")!.click());
 
-    const title = () => container.querySelector('[role="dialog"] h2')?.textContent;
+    const title = () => container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent;
     const next = () => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label^="Qualité suivante"]')!;
     expect(title()).toBe("Accessible");
     expect(next().getAttribute("aria-label")).toBe("Qualité suivante : Novatrice");
@@ -284,7 +285,7 @@ describe("auth flip tiles", () => {
     expect(tile.textContent).toContain("Novatrice");
     expect(tile.querySelector(".auth-flip-icon-face")?.className).toContain("bg-secondary");
     act(() => tile.click());
-    expect(container.querySelector('[role="dialog"] h2')?.textContent).toBe("Novatrice");
+    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Novatrice");
     expect(container.querySelector('[role="dialog"] .bg-secondary')).not.toBeNull();
   });
 
@@ -362,7 +363,7 @@ describe("auth flip tiles", () => {
     const dialog = container.querySelector('[role="dialog"]');
     act(() => root.render(<AuthFlipTiles image={image} imageSrc="/dark.jpg" onClipPathChange={onClipPathChange} />));
     expect(container.querySelector('[role="dialog"]')).toBe(dialog);
-    expect(container.querySelector('[role="dialog"] h2')?.textContent).toBe("Adaptative");
+    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Adaptative");
     act(() => (container.querySelector('[role="dialog"] button[aria-label="Fermer les détails"]') as HTMLButtonElement).click());
     expect(container.querySelector(".auth-flip-face img")?.getAttribute("src")).toBe("/dark.jpg");
   });

@@ -1,7 +1,8 @@
-import { useEffect, useId, useRef, useState } from "react";
-import { ArrowRight, Check, X } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { ArrowRight, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import AuthQualityLogo from "./AuthQualityLogo";
+import AuthQualityVideo from "./AuthQualityVideo";
 import { platformQualities } from "./auth-platform-qualities";
 import { getExpandedTileBounds, tileHeight, tileWidth, type Geometry } from "./auth-tile-grid";
 import { cn } from "../../../utils/cn";
@@ -28,10 +29,20 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
   const [turning, setTurning] = useState(false);
   const titleId = useId();
   const descriptionId = useId();
-  const { label, description, features, screenshot, screenshotAlt } = platformQualities[activeQuality];
+  const { label, description } = platformQualities[activeQuality];
   const { left, top, width, height } = getExpandedTileBounds(geometry);
 
   useEffect(() => { onCloseRef.current = () => onClose(activeQuality, activeColorIndex); }, [onClose, activeQuality, activeColorIndex]);
+
+  const showNextQuality = useCallback(() => {
+    if (turning) return;
+    if (!reducedMotion) {
+      setTurning(true);
+      onTurnChange(true);
+    }
+    setActiveQuality(current => (current + 1) % platformQualities.length);
+    setActiveColorIndex(current => (current + 1) % colors.length);
+  }, [turning, reducedMotion, onTurnChange, colors.length]);
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -57,7 +68,8 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
       role="dialog"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
-      className={cn("pointer-events-auto absolute z-20", turning ? "bg-transparent" : "bg-base-100")}
+      data-auth-quality-player
+      className={cn("auth-quality-panel pointer-events-auto absolute z-20", turning ? "bg-transparent" : "bg-base-100")}
       initial={{ left: x, top: y, width: tileWidth, height: tileHeight, opacity: 0.85 }}
       animate={{ left, top, width, height, opacity: 1 }}
       exit={{ left: x, top: y, width: tileWidth, height: tileHeight, opacity: 0 }}
@@ -87,38 +99,27 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
               }
             }}
           >
-            <div className="relative shrink-0 bg-base-100 p-5 text-base-content">
+            <div className="auth-quality-header relative shrink-0 bg-base-100 p-5 text-base-content">
               <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-base-content transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={() => onClose(activeQuality, activeColorIndex)} aria-label="Fermer les détails"><X className="size-5" /></button>
-              <AuthQualityLogo color={activeColorIndex} />
-              <div className="flex items-center justify-between gap-3">
-                <h2 id={titleId} className="text-xl font-bold">{label}</h2>
-                <button
-                  ref={nextButton}
-                  type="button"
-                  className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-base-content transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default"
-                  aria-label={`Qualité suivante : ${platformQualities[(activeQuality + 1) % platformQualities.length].label}`}
-                  disabled={turning}
-                  onClick={() => {
-                    if (!reducedMotion) {
-                      setTurning(true);
-                      onTurnChange(true);
-                    }
-                    setActiveQuality((current) => (current + 1) % platformQualities.length);
-                    setActiveColorIndex((current) => (current + 1) % colors.length);
-                  }}
-                >
-                  <ArrowRight className="size-5" aria-hidden="true" />
-                </button>
-              </div>
-              <p id={descriptionId} className="mt-2 text-sm">{description}</p>
+              <button
+                ref={nextButton}
+                type="button"
+                className="auth-quality-next flex cursor-pointer items-center gap-4 rounded-xl border border-transparent p-3 text-left text-base-content transition-colors hover:border-base-300 hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default"
+                aria-label={`Qualité suivante : ${platformQualities[(activeQuality + 1) % platformQualities.length].label}`}
+                disabled={turning}
+                onClick={showNextQuality}
+              >
+                <AuthQualityLogo color={activeColorIndex} />
+                <span className="auth-quality-heading min-w-0">
+                  <span id={titleId} role="heading" aria-level={2} className="block text-xl font-bold">{label}</span>
+                  <span id={descriptionId} className="mt-1 block text-sm">{description}</span>
+                </span>
+                <ArrowRight className="size-5 shrink-0" aria-hidden="true" />
+              </button>
             </div>
-            <div className={cn("min-h-0 flex-1 overflow-y-auto rounded-t-[15px] p-5", colors[activeColorIndex])}>
-              {showDetails && <motion.div className="flex min-h-full flex-col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reducedMotion ? 0 : 0.25 }}>
-                <h3 className="mb-3 text-sm font-semibold">Les fonctionnalités clés</h3>
-                <ul className="space-y-2">{features.map((feature) => <li key={feature} className="flex gap-3 text-sm leading-5"><Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" /><span>{feature}</span></li>)}</ul>
-                <figure className="mt-auto w-full pt-4">
-                  <img src={screenshot} alt={screenshotAlt} loading="eager" className="aspect-[22/7] w-full rounded-xl object-cover object-top" />
-                </figure>
+            <div className={cn("auth-quality-media min-h-0 flex-1 overflow-hidden rounded-t-[15px] p-3", colors[activeColorIndex])}>
+              {showDetails && <motion.div className="h-full min-h-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reducedMotion ? 0 : 0.25 }}>
+                <AuthQualityVideo quality={activeQuality} label={label} colorIndex={activeColorIndex} reducedMotion={reducedMotion} onEnded={showNextQuality} />
               </motion.div>}
             </div>
           </motion.div>

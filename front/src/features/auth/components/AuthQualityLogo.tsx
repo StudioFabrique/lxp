@@ -1,4 +1,5 @@
 import logoSvg from "../../../assets/andria-logo/logo-lightmode.svg?raw";
+import { authTileColors } from "./auth-tile-colors";
 
 // Keep the original logo geometry while tinting all of its dark shapes.
 const paths = [...logoSvg.matchAll(/<path\b([^>]+)\/?\s*>/g)].map(([, attributes]) => ({
@@ -6,18 +7,16 @@ const paths = [...logoSvg.matchAll(/<path\b([^>]+)\/?\s*>/g)].map(([, attributes
   fill: attributes.match(/\bfill="([^"]+)"/)?.[1],
   evenodd: attributes.includes('fill-rule="evenodd"'),
 }));
-const tileColors = ["#1e40af", "var(--color-secondary)", "var(--color-accent)"];
-const logoColor = (tileColor: string, amount: number) => `color-mix(in srgb, ${tileColor} ${amount}%, #0F172A)`;
 
 export default function AuthQualityLogo({ color = 0 }: { color?: number }) {
-  const tileColor = color % tileColors.length;
+  const tileColor = color % authTileColors.length;
   return (
     <svg
       viewBox="0 0 241 78"
       className="mb-5 block h-auto w-32"
       role="img"
       aria-label="ANDRIA"
-      style={{ color: tileColor === 0 ? tileColors[0] : logoColor(tileColors[tileColor], 45) }}
+      style={{ color: authTileColors[tileColor] }}
     >
       {paths.map((path, index) => (
         <path
