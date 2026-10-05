@@ -76,6 +76,7 @@ prompt_env_value() {
   label="$2"
   secret="${3:-false}"
   file="$4"
+  optional="${5:-false}"
   current_value=$(read_env_value "$key" "$file")
 
   while true; do
@@ -93,7 +94,7 @@ prompt_env_value() {
     fi
 
     value="${entered_value:-$current_value}"
-    if [ -n "$value" ]; then
+    if [ -n "$value" ] || [ "$optional" = true ]; then
       write_env_value "$key" "$value" "$file"
       return
     fi
@@ -182,7 +183,7 @@ configure_development_env() {
   echo
   echo "Configuration des services de développement"
   echo
-  prompt_env_value "UNSPLASH_ACCESS_KEY (Optionnel)" "Clé d'accès Unsplash" false "$file"
+  prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash (optionnel)" false "$file" true
   configure_development_mailer "$file"
   configure_development_password "$file"
 }
