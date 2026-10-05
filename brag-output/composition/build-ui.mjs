@@ -28,6 +28,9 @@ if (themes.length !== 3) throw new Error('Expected ocean, sage and aurora defini
 const source = `@import "tailwindcss" source(none);
 @plugin "daisyui" { include: button, list, badge; themes: false; }
 @source "../../brag-output/composition/assets/ui-fragments.json";
+@source "../../brag-output/composition/assets/relationship-fragments.json";
+@source "../../brag-output/composition/assets/sidebar-fragments.json";
+@source "../../brag-output/composition/assets/chatbot-launcher.html";
 ${themes.join('\n')}`;
 const result = await postcss([tailwind({base:front})]).process(source, {from:path.join(front,'src/index.css'),to:path.join(here,'assets/lxp.css')});
 // Interactive browser-clock transitions are replaced by the film's seekable GSAP timeline.

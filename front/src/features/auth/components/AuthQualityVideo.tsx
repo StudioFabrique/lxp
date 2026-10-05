@@ -19,6 +19,12 @@ const presentationTopics: readonly string[] = [
   "Planning et prévention du décrochage",
   "Tableaux de bord, contenus et calendrier",
   "Progression et profil d’apprentissage",
+  "Groupes, promotions et parcours",
+  "Formateurs et groupes associés",
+  "Tags et contenus reliés",
+  "Alertes email et disponibilité des contenus",
+  "Identité, thèmes et emails de l’instance",
+  "Accomplissements, félicitations et journal",
 ];
 
 /** Plays the actual Hyperframes scenes, ending on their original opening logo. */
@@ -57,7 +63,7 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
       setLoaded(true);
       setState(result.data.state);
       if (result.data.state === "ready") send("initialize");
-      if (result.data.state === "playing") {
+      if (result.data.state === "playing" || result.data.state === "outro") {
         playedRef.current = true;
         if (completionTimer.current) clearTimeout(completionTimer.current);
         completionTimer.current = null;
@@ -120,6 +126,7 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
 
   const failed = state === "error";
   const finished = state === "ended";
+  const canReplay = finished || state === "outro";
   const playing = state === "playing";
   return (
     <figure ref={playerRef} className={cn("auth-quality-video relative flex h-full min-h-0 flex-col gap-3", fullscreen && "bg-base-100 text-base-content")}>
@@ -139,9 +146,9 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
       <figcaption className="flex shrink-0 items-center justify-between gap-3 text-xs">
         <span aria-live="polite">{finished ? (!reducedMotion && onEnded ? "La suite arrive…" : "Présentation terminée") : presentationTopics[quality] ?? label}</span>
         <div className="flex items-center gap-1">
-          {!failed && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded} onClick={() => send(finished ? "replay" : playing ? "pause" : "play")}>
-            {finished ? <RotateCcw className="size-4" aria-hidden="true" /> : playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
-            {finished ? "Revoir" : playing ? "Pause" : "Lire"}
+          {!failed && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded} onClick={() => send(canReplay ? "replay" : playing ? "pause" : "play")}>
+            {canReplay ? <RotateCcw className="size-4" aria-hidden="true" /> : playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
+            {canReplay ? "Rejouer" : playing ? "Pause" : "Lire"}
           </button>}
           <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded || failed} aria-label={fullscreen ? "Quitter le plein écran" : "Plein écran"} onClick={() => void toggleFullscreen()}>
             {fullscreen ? <Minimize className="size-4" aria-hidden="true" /> : <Maximize className="size-4" aria-hidden="true" />}

@@ -1,6 +1,6 @@
 # Présentation ANDRIA LXP
 
-Version actuelle : **1 min 36,5**, 1920 × 1080, sans audio. Voir `brag-plan.md` pour le déroulé et les composants repris.
+Version actuelle : **3 min 00,5**, 1920 × 1080, sans audio. Voir `brag-plan.md` pour le déroulé et les composants repris.
 
 Ouvrir `composition/` dans Hyperframes. Les retouches précédentes sont archivées dans `revisions/user-edit-20261005/`. Les MP4 dans `composition/renders/` sont conservés ; ils ne comprennent pas ces dernières retouches. La version actuelle est visible dans le Studio et dans les tuiles de connexion.
 
@@ -58,3 +58,40 @@ Le dashboard est présenté sans cadre global, comme le `PageWrapper` du LXP. Le
 La fin du dashboard reprend la bulle d’aide native à sa propre échelle, avec le texte original. Un seul clignement bref utilise deux masques SVG centrés sur les yeux natifs, sans déplacer ni tourner leurs tracés. Les cartes se construisent avec un décalage de 350 ms.
 
 Les pauses finales des scènes éditeur, évaluation, devoirs, organisation, progression, accompagnement et consommation IA sont raccourcies par `compactTime`, sans accélérer les mouvements. `sourceSceneClocks` garde les coordonnées temporelles du montage pour les interactions et les halos ; les métadonnées HTML portent les temps de présentation. L’avatar de la scène chatbot reprend le salut et le clignement du lanceur. La prise en compte de l’alerte utilise les couleurs `success` et affiche sa confirmation.
+
+
+Trois nouvelles séquences de 16 secondes sont intégrées aux qualités Collective,
+Coordonnée et Organisée : `groups` (96,5 s), `trainers` (112,5 s) et `tags` (128,5 s).
+Elles reprennent les promotions octobre/janvier du même parcours. Les fixtures
+`relationship-fixtures.tsx` pré-rendent les vrais composants `GroupTeachers`,
+`TagItem` et `CursorGlowCard` avec des données fictives. Pour les reconstruire :
+
+```sh
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-relationship-fixtures.mjs
+```
+
+Cette commande s’exécute depuis `composition/`, puis `build-ui.mjs` actualise les
+styles nécessaires. Les trois nouvelles qualités rejoignent la rotation des
+douze tuiles. Le lecteur conserve l’animation de construction par blocs du logo
+final et propose Rejouer dès le début de celle-ci. La sélection de texte dans la
+scène assistant utilise un curseur de texte et un surlignage progressif avant
+l’apparition du bouton Demander à l’IA. Tous ces comportements restent hors ligne.
+
+
+Les séquences Connectée (`emails`, 144,5 s, 18 s) et Personnalisable (`instance`,
+162,5 s, 18 s) montrent les récapitulatifs hebdomadaires/mensuels avec un seuil
+critique, l’annonce d’une formation disponible, puis l’identité de l’organisme,
+les thèmes accessibles et les six modèles email. Les paramètres de l’instance
+sont identifiés comme une fonction de superadministration. Les données et emails
+sont des exemples statiques ; aucun envoi, appel IA ou changement de configuration
+n’est déclenché par le lecteur.
+
+
+La dernière qualité Encourageante utilise `accomplishments` (180,5 s, 16 s).
+L’équipe pédagogique félicite un cours terminé, Camille reçoit le message
+et les confettis, puis ouvre son journal. Le journal est pré-rendu depuis
+`JournalTimeline` avec des données fictives. Les 40 particules au clic reprennent
+la configuration du bouton de feedback ; la pluie de confettis côté apprenant
+est déterministe et pilotée par GSAP pour conserver les seeks et le replay.
+Aucun événement Socket.IO ni félicitation réelle n’est envoyé.
+La composition complète dure 196,5 secondes.

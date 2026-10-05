@@ -1,5 +1,5 @@
 {
-  "sourceSha256": "72079f9e1e7f66247ddaae33b95a761d35c280d41e11831fa12bab664c538573",
+  "sourceSha256": "0ca6987ca98efa5f6a351d6f66d1624cc41410241c088ff3763fd4f9e3fa5da2",
   "sequences": [
     [
       {
@@ -71,6 +71,48 @@
         "id": "progression",
         "start": 53.0,
         "duration": 5.0
+      }
+    ],
+    [
+      {
+        "id": "groups",
+        "start": 96.5,
+        "duration": 16.0
+      }
+    ],
+    [
+      {
+        "id": "trainers",
+        "start": 112.5,
+        "duration": 16.0
+      }
+    ],
+    [
+      {
+        "id": "tags",
+        "start": 128.5,
+        "duration": 16.0
+      }
+    ],
+    [
+      {
+        "id": "emails",
+        "start": 144.5,
+        "duration": 18.0
+      }
+    ],
+    [
+      {
+        "id": "instance",
+        "start": 162.5,
+        "duration": 18.0
+      }
+    ],
+    [
+      {
+        "id": "accomplishments",
+        "start": 180.5,
+        "duration": 16.0
       }
     ]
   ],

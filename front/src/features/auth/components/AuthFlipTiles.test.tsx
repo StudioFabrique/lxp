@@ -227,17 +227,17 @@ describe("auth flip tiles", () => {
     expect(container.querySelector(".auth-tile-revealed")).toBeNull();
     act(() => vi.advanceTimersByTime(980));
     expect(container.querySelector(".auth-tile-revealed")).not.toBeNull();
-    expect(container.textContent).toContain("Adaptative");
+    expect(container.textContent).toContain("Encourageante");
     act(() => vi.advanceTimersByTime(20000));
-    expect(container.textContent).toContain("Adaptative");
+    expect(container.textContent).toContain("Encourageante");
     act(() => button.click());
-    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Adaptative");
+    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Encourageante");
     expect(container.querySelector('[role="dialog"] h3')).toBeNull();
     act(() => vi.advanceTimersByTime(349));
     expect(container.querySelector('[role="dialog"] h3')).toBeNull();
     act(() => vi.advanceTimersByTime(1));
     expect(container.querySelectorAll('[role="dialog"] iframe')).toHaveLength(1);
-    expect(container.querySelector('[role="dialog"] iframe')?.getAttribute("title")).toContain("Adaptative");
+    expect(container.querySelector('[role="dialog"] iframe')?.getAttribute("title")).toContain("Encourageante");
     act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
     expect(container.querySelector('[role="dialog"]')).toBeNull();
   });
@@ -252,7 +252,7 @@ describe("auth flip tiles", () => {
     expect(title()).toBe("Accessible");
     expect(next().getAttribute("aria-label")).toBe("Qualité suivante : Novatrice");
 
-    for (const expected of ["Novatrice", "Dynamique", "Réactive", "Intuitive", "Adaptative", "Accessible"]) {
+    for (const expected of ["Novatrice", "Dynamique", "Réactive", "Intuitive", "Adaptative", "Collective", "Coordonnée", "Organisée", "Connectée", "Personnalisable", "Encourageante", "Accessible"]) {
       act(() => next().click());
       act(() => vi.runOnlyPendingTimers());
       expect(title()).toBe(expected);
@@ -363,7 +363,7 @@ describe("auth flip tiles", () => {
     const dialog = container.querySelector('[role="dialog"]');
     act(() => root.render(<AuthFlipTiles image={image} imageSrc="/dark.jpg" onClipPathChange={onClipPathChange} />));
     expect(container.querySelector('[role="dialog"]')).toBe(dialog);
-    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Adaptative");
+    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Encourageante");
     act(() => (container.querySelector('[role="dialog"] button[aria-label="Fermer les détails"]') as HTMLButtonElement).click());
     expect(container.querySelector(".auth-flip-face img")?.getAttribute("src")).toBe("/dark.jpg");
   });

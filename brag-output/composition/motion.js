@@ -49,8 +49,8 @@ tl.fromTo('.activity-choice',{opacity:0,x:-18},{opacity:1,x:0,duration:.35,stagg
 reveal('#editor-checks',22.0);reveal('#editor-table',23.1);reveal('#editor-code',24.3);
 tl.fromTo('#author .feature-pill',{opacity:0,y:18},{opacity:1,y:0,duration:.45,stagger:.09},25);
 reveal('.reading-panel',30.1,{x:-45});reveal('.chat-panel',30.35,{x:100,rotationY:-5});
-tl.to('#selected-passage',{backgroundColor:'var(--color-base-300)',duration:.6},31.0);
-reveal('#ask-selection',31.3);reveal('.chat-context',32.1);reveal('#chat-question',33.0);reveal('#chat-answer',34.0);
+
+reveal('.chat-context',33.05);reveal('#chat-question',33.25);reveal('#chat-answer',34.0);
 reveal('#chat-quiz',38.0,{y:0});
 tl.fromTo('#assistant .feature-pill',{opacity:0,y:15},{opacity:1,y:0,duration:.4,stagger:.1},38.5);
 reveal('.quiz-panel',42.1,{rotationY:6});reveal('.assessment-side',42.25,{x:70});
@@ -193,7 +193,7 @@ cursorScene('structure',[
   [10.65,'#face-4 .list-row:nth-child(3)',{x:1360,y:688}],
 ]);
 cursorScene('author',[[1.0,'.editor-tools >span:nth-of-type(5)'],[2.1,'.editor-tools >span:nth-of-type(6)'],[3.3,'.editor-tools >span:nth-of-type(7)']]);
-cursorScene('assistant',[[1.4,'#ask-selection'],[3.0,'.chat-input',null,'focus'],[7.0,'.chat-source strong',null,'focus'],[9.0,'#chat-quiz .product-button']]);
+cursorScene('assistant',[[2.9,'#ask-selection'],[3.0,'.chat-input',null,'focus'],[7.0,'.chat-source strong',null,'focus'],[9.0,'#chat-quiz .product-button']]);
 cursorScene('assess',[[2.0,'#answer-1']]);
 cursorScene('assignments',[[1.3,'.file-row',null,'focus'],[3.1,'#correction .score',null,'focus'],[5.0,'#correction .submission-status',null,'focus']]);
 cursorScene('organize',[[1.3,'.calendar-tabs b',null,'focus'],[2.4,'.calendar-day:nth-child(2) .calendar-event'],[4.3,'.operation-bottom .product-row',null,'focus'],[6.0,'.operation-bottom .fixture-glow:last-child .product-row',null,'focus']]);
@@ -249,6 +249,111 @@ tl.fromTo('.dashboard-caption',{opacity:0,y:14},{opacity:1,y:0,duration:.5},102)
 cursorScene('dashboards',[[1.8,'#dashboard-nav-student li:first-child',null,'focus'],[4.1,'#dash-resume .dashboard-resume',null,'focus'],[6.6,'#dash-paths .product-row',null,'focus'],[8.8,'#dashboard-nav-admin li:first-child',null,'focus'],[10.5,'#dash-actions .product-row',null,'focus'],[12.0,'#dash-alerts small',null,'focus'],[14.0,'#dash-feedback .product-button',null,'focus']]);
 window.__timelines.main=tl;
 
+
+
+// Shared examples explain relationships using real LXP presentation fixtures.
+Object.assign(sourceSceneClocks,{groups:{start:115,duration:16},trainers:{start:131,duration:16},tags:{start:147,duration:16}});
+for(const [id,start] of [['groups',115],['trainers',131],['tags',147]]){
+  tl.fromTo('#'+id+' .scene-heading,#'+id+' .relationship-subtitle',{opacity:0,y:18},{opacity:1,y:0,duration:.55,ease:'power2.out'},start);
+  tl.fromTo('#'+id+' .relationship-stage',{z:-80,rotationY:-3,rotationX:2},{z:0,rotationY:0,rotationX:0,duration:1.1,ease:'power2.out'},start+.15);
+  tl.fromTo('#'+id+' .relationship-card',{opacity:0,y:24,z:-65},{opacity:1,y:0,z:0,duration:.65,stagger:.18,ease:'power2.out'},start+.15);
+  tl.fromTo('#'+id+' .relationship-caption',{opacity:0,y:10},{opacity:1,y:0,duration:.45,ease:'power2.out'},start+10);
+}
+tl.set('#group-january',{opacity:0},115);
+tl.set('#group-choice-october',{backgroundColor:'var(--color-base-300)'},115);
+for(const [at,previous,next] of [[118.05,'october','january'],[123.05,'january','october']]){
+  tl.to('#group-'+previous,{opacity:0,z:-16,duration:.3,ease:'sine.inOut'},at);
+  tl.fromTo('#group-'+next,{opacity:0,z:25},{opacity:1,z:0,duration:.45,ease:'power2.out',immediateRender:false},at+.08);
+  tl.to('#group-choice-'+previous,{backgroundColor:'var(--color-base-100)',duration:.25},at);
+  tl.to('#group-choice-'+next,{backgroundColor:'var(--color-base-300)',duration:.25},at);
+}
+tl.set('#team-group .relationship-native-teachers ul,#team-january,#team-saved',{opacity:0},131);
+tl.to('#team-save',{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.35},134.15);
+tl.fromTo('#team-saved',{opacity:0,y:8},{opacity:1,y:0,duration:.4,ease:'power2.out',immediateRender:false},134.15);
+tl.fromTo('#team-group .relationship-native-teachers ul',{opacity:0,y:12},{opacity:1,y:0,duration:.55,ease:'power2.out',immediateRender:false},134.25);
+tl.fromTo('#team-january',{opacity:0,y:14},{opacity:1,y:0,duration:.55,ease:'power2.out',immediateRender:false},137.5);
+tl.to('#team-group .fixture-glow',{borderColor:'var(--color-success)',duration:.4},134.25);
+tl.set('#tags .relationship-content-tag',{opacity:0},147);
+tl.fromTo('#tags .relationship-content-tag',{opacity:0,scale:.95,y:8},{opacity:1,scale:1,y:0,duration:.4,stagger:.3,ease:'power2.out',immediateRender:false},150.2);
+tl.to('#tag-choice',{boxShadow:'0 0 0 3px color-mix(in srgb,var(--color-primary) 35%,transparent)',duration:.25},150.15);
+cursorScene('groups',[[3,'#group-choice-january'],[8,'#group-choice-october']]);
+cursorScene('trainers',[[3.1,'#team-save']]);
+cursorScene('tags',[[3.1,'#tag-choice']]);
+
+// Drag an I-beam over the passage before offering the contextual AI action.
+const selectionScene=document.getElementById('assistant');
+const selectionDisplay=selectionScene.style.display,selectionVisibility=selectionScene.style.visibility;
+selectionScene.style.display='block';selectionScene.style.visibility='hidden';
+const selectionWidth=document.getElementById('selected-passage').offsetWidth;
+selectionScene.style.display=selectionDisplay;selectionScene.style.visibility=selectionVisibility;
+tl.set('.selection-highlight',{scaleX:0},26);
+tl.set('.selection-cursor',{opacity:0,x:0},26);
+tl.set('#ask-selection',{opacity:0},26);
+tl.to('.selection-cursor',{opacity:1,duration:.18},27);
+tl.fromTo('.selection-highlight',{scaleX:0},{scaleX:1,duration:.95,ease:'sine.inOut',immediateRender:false},27.15);
+tl.fromTo('.selection-cursor',{x:0},{x:selectionWidth,duration:.95,ease:'sine.inOut',immediateRender:false},27.15);
+tl.to('.selection-cursor',{opacity:0,duration:.2},28.1);
+tl.fromTo('#ask-selection',{opacity:0,y:10,scale:.98},{opacity:1,y:0,scale:1,duration:.4,ease:'power2.out',immediateRender:false},28.1);
+
+
+// Email preferences and administration are demonstrated without sending mail.
+Object.assign(sourceSceneClocks,{emails:{start:163,duration:18},instance:{start:181,duration:18}});
+for(const [id,start] of [['emails',163],['instance',181]]){
+  tl.fromTo('#'+id+' .scene-heading,#'+id+' .relationship-subtitle',{opacity:0,y:18},{opacity:1,y:0,duration:.55,ease:'power2.out'},start);
+  tl.fromTo('#'+id+' .relationship-stage',{z:-80,rotationY:-3,rotationX:2},{z:0,rotationY:0,rotationX:0,duration:1.1,ease:'power2.out'},start+.15);
+  tl.fromTo('#'+id+' .relationship-card,#'+id+' #instance-preview',{opacity:0,y:24,z:-65},{opacity:1,y:0,z:0,duration:.65,stagger:.18,ease:'power2.out'},start+.15);
+  tl.fromTo('#'+id+' .relationship-caption',{opacity:0,y:10},{opacity:1,y:0,duration:.45,ease:'power2.out'},start+12);
+}
+tl.set('#email-summary,#email-availability',{opacity:0},163);
+tl.to('#email-waiting',{opacity:0,duration:.25},167.1);
+tl.fromTo('#email-summary',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},167.2);
+tl.to('#email-summary-choice',{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.35},167.15);
+tl.to('#email-summary',{opacity:0,y:-8,duration:.3},173.1);
+tl.fromTo('#email-availability',{opacity:0,y:14},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},173.2);
+tl.set('#instance-brand-custom,#instance-website,#instance-email-sample',{opacity:0},181);
+tl.to('.instance-brand-default',{opacity:0,duration:.25},184.15);
+tl.fromTo('#instance-brand-custom,#instance-website',{opacity:0,y:8},{opacity:1,y:0,duration:.45,ease:'power2.out',immediateRender:false},184.2);
+const instanceBaseTokens=(name)=>Object.fromEntries(['base-100','base-200','base-300','base-content'].map(token=>['--color-'+token,themeTokens[name]['--color-'+token]]));
+tl.to('#instance-preview',{...instanceBaseTokens('aurora'),duration:.65,ease:'sine.inOut'},187.15);
+tl.to('#instance-aurora',{backgroundColor:'var(--color-base-300)',duration:.25},187.15);
+tl.to('#instance-preview',{...instanceBaseTokens('ocean'),duration:.65,ease:'sine.inOut'},189.15);
+tl.to('#instance-ocean',{backgroundColor:'var(--color-base-300)',duration:.25},189.15);
+tl.fromTo('#instance-email-sample',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},192.2);
+tl.to('#instance-banner',{backgroundColor:'var(--color-base-300)',borderColor:'var(--color-primary)',duration:.25},192.15);
+tl.set('#instance .relationship-stage',{rotationY:0},199);
+cursorScene('emails',[[4.1,'#email-summary-choice'],[10.1,'#email-availability-choice']]);
+cursorScene('instance',[[3.1,'#instance-identity-save'],[6.1,'#instance-aurora'],[8.1,'#instance-ocean'],[11.1,'#instance-banner']]);
+
+
+// Celebrate a real course accomplishment, then open its journal history.
+Object.assign(sourceSceneClocks,{accomplishments:{start:199,duration:16}});
+tl.fromTo('#accomplishments .scene-heading,#accomplishments .relationship-subtitle',{opacity:0,y:18},{opacity:1,y:0,duration:.55,ease:'power2.out'},199);
+tl.fromTo('#accomplishments .relationship-stage',{z:-80,rotationY:-3,rotationX:2},{z:0,rotationY:0,rotationX:0,duration:1.1,ease:'power2.out'},199.15);
+tl.fromTo('#accomplishments .relationship-card',{opacity:0,y:24,z:-65},{opacity:1,y:0,z:0,duration:.65,stagger:.18,ease:'power2.out'},199.15);
+tl.set('#accomplishment-sent,#accomplishment-toast,#accomplishment-journal',{opacity:0},199);
+tl.fromTo('#accomplishment-sent',{opacity:0,y:8},{opacity:1,y:0,duration:.4,ease:'power2.out',immediateRender:false},202.2);
+tl.fromTo('#accomplishment-toast',{opacity:0,y:14,z:20},{opacity:1,y:0,z:0,duration:.45,ease:'power2.out',immediateRender:false},202.3);
+tl.to('#accomplishment-congratulate',{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.35},202.2);
+tl.to('#accomplishment-overview',{opacity:0,y:-12,duration:.3},207.15);
+tl.fromTo('#accomplishment-journal',{opacity:0,y:18,z:-25},{opacity:1,y:0,z:0,duration:.5,ease:'power2.out',immediateRender:false},207.25);
+tl.to('#accomplishment-toast',{opacity:0,y:8,duration:.25},206.75);
+tl.fromTo('#accomplishments .relationship-caption',{opacity:0,y:10},{opacity:1,y:0,duration:.45,ease:'power2.out'},208);
+cursorScene('accomplishments',[[3.1,'#accomplishment-congratulate'],[8.1,'#accomplishment-open-journal']]);
+// Fixed particle indices replace browser-clock physics so Studio seeks/replay
+// reproduce the local feedback burst and the learner's full-screen confetti.
+const celebrationPoint=cursorPaths.get('accomplishments')[0].to;
+document.querySelectorAll('#accomplishments .accomplishment-confetti').forEach((particle,i)=>{
+  const burst=i<40,j=burst?i:i-40,phase=j*2.3999632297;
+  const x=burst?celebrationPoint.x:1020+(j*127%760);
+  const y=burst?celebrationPoint.y:245-(j*31%160);
+  const dx=burst?Math.cos(phase)*(65+(j*29%190)):Math.sin(phase)*110;
+  const peak=burst?y-100-(j*13%140):y+175;
+  const at=202.13+(j%7)*.035+(burst?0:.18);
+  tl.fromTo(particle,{x,y,opacity:0,rotation:j*19,rotationX:0,scale:.7},{x:x+dx*.55,y:peak,opacity:1,rotation:j*19+100,rotationX:170,scale:1,duration:burst?.6:.8,ease:burst?'power2.out':'sine.in',immediateRender:false},at);
+  tl.to(particle,{x:x+dx,y:burst?y+130:890,rotation:j*19+360,rotationX:540,duration:burst?1.3:2.3,ease:'power1.in'},at+(burst?.6:.8));
+  tl.to(particle,{opacity:0,duration:.35},at+(burst?1.55:2.75));
+});
+tl.set('#accomplishments .relationship-stage',{rotationY:0},215);
 
 // Only retained clicks create visible outcomes: quiz preview and event detail.
 tl.fromTo('#chat-quiz-preview',{opacity:0,y:8},{opacity:1,y:0,duration:.45,ease:'power3.out'},35.1);
@@ -350,6 +455,7 @@ tl.to('#risk-panel .alert-group>strong,#risk-panel .risk-badge',{color:'var(--co
 tl.to('#risk-panel .risk-badge',{borderColor:'var(--color-success)',duration:.4},75.2);
 tl.to('#risk-panel .alert-state-pending',{opacity:0,duration:.15},75.2);
 tl.to('#risk-panel .alert-state-resolved',{opacity:1,duration:.2},75.2);
+tl.set('#tags .relationship-stage',{rotationY:0},163);
 const idleCuts=[[23.5, 26], [44, 46], [51, 53], [59.5, 62], [67, 69], [80.5, 85], [90, 93]];
 const compactTime=(time)=>time-idleCuts.reduce((sum,[start,end])=>sum+(time>start?Math.max(0,Math.min(time,end)-start):0),0);
 const authoredTweens=tl.getChildren(false,true,true).map(tween=>({tween,start:tween.startTime(),end:tween.startTime()+tween.totalDuration()}));

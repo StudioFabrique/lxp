@@ -6,7 +6,8 @@
   const allScenes = [...document.querySelectorAll('section.scene')];
   const params = new URLSearchParams(location.search);
   const quality = params.get('quality') ?? '0';
-  const sequence = sequences[/^[0-5]$/.test(quality) ? Number(quality) : 0];
+  const qualityIndex = Number(quality);
+  const sequence = sequences[/^(0|[1-9]\d*)$/.test(quality) && Number.isSafeInteger(qualityIndex) && qualityIndex < sequences.length ? qualityIndex : 0];
   const clips = [...sequence, opening];
   const duration = clips.reduce((total, clip) => total + clip.duration, 0);
   let elapsed = 0;
@@ -14,6 +15,7 @@
   let frame = 0;
   let playing = false;
   let initialized = false;
+  let showingOutro = false;
   const notify = state => parent.postMessage({channel, state}, '*');
   const fit = () => {
     const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
@@ -29,10 +31,17 @@
       if (local < clip.duration || clip === clips[clips.length - 1]) break;
       local -= clip.duration;
     }
-    // Hold the settled opening pose, before its authored exit fade.
-    const offset = active.id === opening.id ? Math.min(local, 2.1) : Math.min(local, active.duration - .001);
-    timeline.totalTime(active.start + offset, true);
+    // Expose the scene before seeking so the masked block reveal is measured
+    // in its visible layout, then hold the clean logo before its exit fade.
+    const outro = active.id === opening.id;
+    // Skip the empty lead-in, retaining the block construction itself.
+    const offset = outro ? Math.min(local + .08, 2.1) : Math.min(local, active.duration - .001);
     for (const scene of allScenes) scene.style.display = scene.id === active.id ? 'block' : 'none';
+    timeline.totalTime(active.start + offset, true);
+    if (outro !== showingOutro) {
+      showingOutro = outro;
+      if (playing) notify(outro ? 'outro' : 'playing');
+    }
   };
   const pause = (state='paused') => {
     playing = false;lastFrame = null;cancelAnimationFrame(frame);notify(elapsed >= duration ? 'ended' : state);
@@ -47,7 +56,7 @@
   const play = () => {
     if (playing) return;
     if (elapsed >= duration) elapsed = 0;
-    playing = true;lastFrame = null;notify('playing');frame = requestAnimationFrame(tick);
+    playing = true;lastFrame = null;notify(elapsed >= duration - opening.duration ? 'outro' : 'playing');frame = requestAnimationFrame(tick);
   };
   const tint = (value, contentColor, backgroundColor, textColor) => {
     const valid = color => typeof color === 'string' && color.length < 120 && CSS.supports('color',color);

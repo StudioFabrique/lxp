@@ -38,7 +38,34 @@ describe("login Hyperframes presentation", () => {
     expect(post).toHaveBeenLastCalledWith(expect.objectContaining({ action: "pause" }), window.location.origin);
     notify("ended");
     expect(container.textContent).toContain("Présentation terminée");
-    expect(container.querySelector("button")?.textContent).toBe("Revoir");
+    expect(container.querySelector("button")?.textContent).toBe("Rejouer");
+    act(() => container.querySelector<HTMLButtonElement>("button")!.click());
+    expect(post).toHaveBeenLastCalledWith(expect.objectContaining({ action: "replay" }), window.location.origin);
+  });
+
+  it.each([
+    [6, "Collective", "Groupes, promotions et parcours"],
+    [7, "Coordonnée", "Formateurs et groupes associés"],
+    [8, "Organisée", "Tags et contenus reliés"],
+    [9, "Connectée", "Alertes email et disponibilité des contenus"],
+    [10, "Personnalisable", "Identité, thèmes et emails de l’instance"],
+    [11, "Encourageante", "Accomplissements, félicitations et journal"],
+  ] as const)("opens the new sequence %s with its topic", (quality, label, topic) => {
+    act(() => root.render(<AuthQualityVideo quality={quality} label={label} colorIndex={0} reducedMotion={false} />));
+    expect(frame().getAttribute("src")).toBe(`/presentations/andria/index.html?quality=${quality}`);
+    expect(frame().getAttribute("title")).toContain(label);
+    expect(container.querySelector("figcaption")?.textContent).toContain(topic);
+  });
+
+  it("offers replay as soon as the ending logo starts", () => {
+    const onEnded = vi.fn();
+    act(() => root.render(<AuthQualityVideo quality={6} label="Collective" colorIndex={0} reducedMotion={false} onEnded={onEnded} />));
+    const post = vi.spyOn(frame().contentWindow!, "postMessage");
+    notify("playing");
+    notify("outro");
+    expect(container.querySelector("button")?.textContent).toBe("Rejouer");
+    act(() => vi.advanceTimersByTime(1200));
+    expect(onEnded).not.toHaveBeenCalled();
     act(() => container.querySelector<HTMLButtonElement>("button")!.click());
     expect(post).toHaveBeenLastCalledWith(expect.objectContaining({ action: "replay" }), window.location.origin);
   });
