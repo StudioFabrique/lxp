@@ -15,6 +15,7 @@ import {
 import { AuthContext } from "../../../store/AuthProvider";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { getUserCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
+import GroupUserCreationProgress from "../../group/components/GroupUserCreationProgress";
 
 const UserAdd = () => {
   const navigate = useNavigate();
@@ -103,6 +104,7 @@ const UserAdd = () => {
         requiredRoleRank={safeReturnTo ? 3 : undefined}
         initialSendEmail={initialSendEmail}
         cancelTo={safeReturnTo ?? undefined}
+        groupCreationContext={safeReturnTo ? (invitation) => <GroupUserCreationProgress returnTo={safeReturnTo} action={invitation} /> : undefined}
       />
       {tutorialRole ? (
         <RecommendedActionTour

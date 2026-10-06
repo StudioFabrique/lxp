@@ -79,6 +79,7 @@ export default function RoleCard({
       label="Rôle"
       title={role.label}
       titleIcon={<RoleIcon className="size-5 text-primary" />}
+      titleRowClassName="mt-2"
       labelAccessory={
         role.protection >= 1 ? (
           <span

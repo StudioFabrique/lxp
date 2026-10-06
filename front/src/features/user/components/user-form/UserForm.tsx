@@ -1,5 +1,5 @@
 import { showFormErrors } from "../../../../components/form/form-errors";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
@@ -8,6 +8,8 @@ import { useUserForm } from "./useUserForm";
 import UserFormInformations from "./UserFormInformations";
 import UserFormContact from "./UserFormContact";
 import UserFormTypeUser from "./UserFormTypeUser";
+import UserInvitationCard from "./UserInvitationCard";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import UserFormPresentation from "./UserFormPresentation";
 import UserFormCertifications from "./UserFormCertifications";
 import Header from "../../../../../src/components/headers/Header";
@@ -37,6 +39,7 @@ type Props = {
   requiredRoleRank?: number;
   initialSendEmail?: boolean;
   cancelTo?: string;
+  groupCreationContext?: (invitation: ReactNode) => ReactNode;
 };
 
 const UserForm = ({
@@ -51,6 +54,7 @@ const UserForm = ({
   requiredRoleRank,
   initialSendEmail = false,
   cancelTo,
+  groupCreationContext,
 }: Props) => {
   const {
     form,
@@ -139,7 +143,7 @@ const UserForm = ({
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <PageWrapper as="form" onSubmit={handleSubmit} autoComplete="on" data-recommended-tour="user-form">
+    <PageWrapper as="form" className="@container min-w-0" onSubmit={handleSubmit} autoComplete="on" data-recommended-tour="user-form">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
@@ -170,9 +174,10 @@ const UserForm = ({
           )}
         </button>
       </Header>
+      {groupCreationContext?.(!editMode ? <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact /> : null)}
       <div className="flex flex-col gap-y-5">
-        <div className="grid grid-cols-3 gap-x-5">
-          <div data-recommended-tour="user-informations">
+        <div className="grid grid-cols-1 gap-5 @min-[40rem]:grid-cols-2 @min-[64rem]:grid-cols-3">
+          <div className="min-w-0" data-recommended-tour="user-informations">
             <UserFormInformations
               lastname={lastname}
               lastnameError={lastnameError}
@@ -209,13 +214,16 @@ const UserForm = ({
             disabled={disabled}
           />
           <div
-            className="grid grid-rows-1 gap-y-5"
-            data-recommended-tour="user-role"
+            className="flex min-w-0 flex-col gap-5 @min-[40rem]:col-span-2 @min-[64rem]:col-span-1"
           >
+            {!editMode && !groupCreationContext && (
+              <BoxWrapper className="h-auto shrink-0">
+                <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact />
+              </BoxWrapper>
+            )}
+            <div className="min-w-0 flex-1" data-recommended-tour="user-role">
             <UserFormTypeUser
               roleId={roleId}
-              sendEmail={sendEmail}
-              onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
               roles={roleOptions.roles}
               isLoading={roleOptions.isLoading}
@@ -224,13 +232,13 @@ const UserForm = ({
               onRefresh={() => void roleOptions.refetch()}
               studentOnly={requiredRoleRank === 3}
               error={form.formState.errors.roleId?.message}
-              editMode={editMode}
               disabled={disabled}
             />
+            </div>
           </div>
         </div>
         {editMode && (
-          <div className="grid grid-cols-3 gap-x-5">
+          <div className="grid grid-cols-1 gap-5 @min-[64rem]:grid-cols-3">
             <ItemsAdder
               styleOptions={{
                 label: "Centre d'intérêts",
@@ -259,7 +267,7 @@ const UserForm = ({
                 return true;
               }}
             />
-            <div className="col-span-2">
+            <div className="min-w-0 @min-[64rem]:col-span-2">
               <UserFormPresentation
                 description={description}
                 onDescription={setDescription}
@@ -268,8 +276,8 @@ const UserForm = ({
             </div>
           </div>
         )}
-        <div className="grid grid-cols-3 gap-x-5">
-          <div className={cn(editMode ? "col-span-2" : "col-span-3")}>
+        <div className="grid grid-cols-1 gap-5 @min-[64rem]:grid-cols-3">
+          <div className={cn("min-w-0", editMode ? "@min-[64rem]:col-span-2" : "@min-[64rem]:col-span-3")}>
             <UserFormCertifications
               graduations={graduations}
               setGraduations={setGraduations}

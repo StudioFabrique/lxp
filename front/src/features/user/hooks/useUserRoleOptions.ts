@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { queries } from "../api/user.api";
@@ -10,9 +10,12 @@ export function useUserRoleOptions(requiredRoleRank?: number) {
     queryKey: ["permission-roles"],
     queryFn: queries.roles,
   });
-  const roles = (query.data?.data ?? []).filter(
-    (role) => role.rank > actorRank &&
-      (requiredRoleRank === undefined || role.rank === requiredRoleRank),
+  const roles = useMemo(
+    () => (query.data?.data ?? []).filter(
+      (role) => role.rank > actorRank &&
+        (requiredRoleRank === undefined || role.rank === requiredRoleRank),
+    ),
+    [actorRank, query.data, requiredRoleRank],
   );
 
   return { ...query, roles };

@@ -7,10 +7,7 @@ import RoleRadioCard from "../../../role/components/RoleRadioCard";
 
 type Props = {
   roleId: string | null;
-  sendEmail: boolean;
-  onSetSendEmail: (v: boolean) => void;
   onSetRoleId: (v: string | null) => void;
-  editMode?: boolean;
   disabled?: boolean;
   roles: Role[];
   isLoading: boolean;
@@ -23,10 +20,7 @@ type Props = {
 
 const UserFormTypeUser = ({
   roleId,
-  sendEmail,
-  onSetSendEmail,
   onSetRoleId,
-  editMode,
   disabled,
   roles,
   isLoading,
@@ -105,28 +99,6 @@ const UserFormTypeUser = ({
               {roles.length === 0 ? <p className="text-sm text-base-content/70">Aucun rôle disponible. Vérifiez les rôles et vos droits, puis actualisez la liste.</p> : null}
             </div>
             {error ? <p id={`${fieldId}-error`} className="text-sm text-error" role="alert">{error}</p> : null}
-            {!editMode && (
-              <>
-                <div className="divider" />
-                <label
-                  className="flex place-items-center gap-x-2"
-                  htmlFor={`${fieldId}-send-email`}
-                  data-recommended-tour="user-invitation"
-                >
-                  <input
-                    id={`${fieldId}-send-email`}
-                    className="checkbox checkbox-primary"
-                    type="checkbox"
-                    name="emailSent"
-                    checked={sendEmail}
-                    disabled={disabled}
-                    onChange={() => onSetSendEmail(!sendEmail)}
-                    disabled={disabled}
-                  />
-                  Envoyer un mail d'invitation
-                </label>
-              </>
-            )}
           </div>
         )}
       </div>

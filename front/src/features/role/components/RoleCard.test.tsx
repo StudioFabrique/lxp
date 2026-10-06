@@ -48,6 +48,7 @@ describe("RoleCard", () => {
     expect(title?.textContent).toBe("Équipe pédagogique");
     expect(title?.classList.contains("truncate")).toBe(false);
     expect(title?.parentElement?.classList.contains("row-start-2")).toBe(false);
+    expect(title?.parentElement?.classList.contains("mt-2")).toBe(true);
     expect(title?.previousElementSibling?.querySelector("svg")?.classList.contains("lucide-users-round")).toBe(true);
     const actions = container.querySelector('button[aria-label="Dupliquer le rôle Équipe pédagogique"]')?.parentElement?.parentElement;
     expect(actions?.parentElement?.classList.contains("flex")).toBe(true);

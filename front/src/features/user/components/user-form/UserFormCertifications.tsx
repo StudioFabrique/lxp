@@ -94,14 +94,14 @@ const UserFormCertifications = ({
   };
 
   return (
-    <BoxWrapper>
+    <BoxWrapper className="@container">
       <div
         className={cn(
-          "grid gap-x-10",
-          graduations.length > 0 && "md:grid-cols-2",
+          "grid grid-cols-1 gap-5 @min-[40rem]:gap-x-10",
+          graduations.length > 0 && "@min-[40rem]:grid-cols-2",
         )}
       >
-        <div className="flex flex-col justify-between">
+        <div className="flex min-w-0 flex-col justify-between">
           <div className="flex flex-col justify-between gap-y-3">
             <h2 className="font-bold text-xl">Certifications</h2>
             <span className="flex flex-col gap-y-2">

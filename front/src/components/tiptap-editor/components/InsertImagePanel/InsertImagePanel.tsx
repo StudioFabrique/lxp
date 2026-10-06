@@ -52,11 +52,11 @@ export const InsertImagePanel = ({
         <legend className="mb-2 text-xs font-medium text-base-content/70">Largeur dans le contenu</legend>
         <div className="grid grid-cols-3 gap-2">
           {sizes.map(({ value, label, width }) => (
-            <label key={value} className={cn(
+            <label key={value} htmlFor={`${id}-${value}`} className={cn(
               "btn h-auto min-h-0 flex-col gap-1 rounded-lg px-2 py-2 font-medium has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
               selectedSize === value ? "btn-primary" : "btn-soft",
             )}>
-              <input type="radio" value={value} className="sr-only" {...register("size")} />
+              <input id={`${id}-${value}`} type="radio" value={value} className="sr-only" {...register("size")} />
               <span>{label}</span>
               <span className="text-xs opacity-70">{width}</span>
             </label>

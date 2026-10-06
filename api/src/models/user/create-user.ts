@@ -53,8 +53,14 @@ export async function sendActivationInvitation(
   }
 }
 
+type CreateUserData = Pick<IUser,
+  "email" | "firstname" | "lastname" | "nickname" | "description" |
+  "address" | "city" | "postCode" | "birthDate" | "phoneNumber" |
+  "avatar" | "invitationSent"
+>;
+
 export default async function createUser(
-  user: IUser,
+  user: CreateUserData,
   roleId: string,
   actorRank: number,
   options: { studentOnly?: boolean } = {},
