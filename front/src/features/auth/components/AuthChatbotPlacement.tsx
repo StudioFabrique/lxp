@@ -365,6 +365,23 @@ export default function AuthChatbotPlacement({
             );
         }
       }
+      // Without a previous location (first dialogue shown), enter from the left edge rolling instead of popping in.
+      if (!previous && !reducedMotion) {
+        const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
+        host.animate?.(
+          [
+            { transform: `translateX(${-(target.left + host.offsetWidth + 20)}px)` },
+            { transform: "translateX(0px)" },
+          ],
+          { duration: 900, easing },
+        );
+        host
+          .querySelector<HTMLElement>(chatbotAvatarSelector)
+          ?.animate?.(
+            [{ transform: "rotate(-360deg)" }, { transform: "rotate(0deg)" }],
+            { duration: 900, easing },
+          );
+      }
       if (handoffScale.current !== null) {
         host.querySelector<HTMLElement>(chatbotAvatarSelector)?.style.removeProperty("transform");
         handoffScale.current = null;

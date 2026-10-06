@@ -23,13 +23,15 @@ await unlink(path.join(here,'assets/ui-fixtures.cjs')).catch(error => {
 const postcss = requireFront('postcss');
 const tailwind = requireFront('@tailwindcss/postcss');
 const appCss = await readFile(path.join(front,'src/index.css'),'utf8');
-const themes = [...appCss.matchAll(/@plugin "daisyui\/theme"\s*\{[^}]+\}/g)].map(match => match[0]).filter(block => /name:\s*"(ocean|sage|aurora)"/.test(block));
-if (themes.length !== 3) throw new Error('Expected ocean, sage and aurora definitions in the LXP stylesheet.');
+const themes = [...appCss.matchAll(/@plugin "daisyui\/theme"\s*\{[^}]+\}/g)].map(match => match[0]).filter(block => /name:\s*"(classic|ocean|linen|sage|classic-dark|aurora|ember|abyss)"/.test(block));
+// The film themes plus every theme enabled by default, shown by the instance settings.
+if (themes.length !== 8) throw new Error('Expected the eight default theme definitions in the LXP stylesheet.');
 const source = `@import "tailwindcss" source(none);
-@plugin "daisyui" { include: button, list, badge, range, textarea; themes: false; }
+@plugin "daisyui" { include: button, list, badge, range, textarea, modal, input; themes: false; }
 @source "../../brag-output/composition/assets/ui-fragments.json";
 @source "../../brag-output/composition/assets/relationship-fragments.json";
 @source "../../brag-output/composition/assets/care-fragments.json";
+@source "../../brag-output/composition/assets/instance-fragments.json";
 @source "../../brag-output/composition/assets/sidebar-fragments.json";
 @source "../../brag-output/composition/assets/chatbot-launcher.html";
 ${themes.join('\n')}`;

@@ -1,5 +1,6 @@
 import AuthChatbotProvider from "./AuthChatbotProvider";
 import AuthLogoCaption from "./AuthLogoCaption";
+import AuthHeaderSpacer from "./AuthHeaderSpacer";
 import { motion, useReducedMotion } from "motion/react";
 import AuthAnimatedLogo from "./AuthAnimatedLogo";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
@@ -8,6 +9,7 @@ import { useContext, useEffect, useMemo, useRef, useState, type PropsWithChildre
 import { LoaderCircle, Sun, Moon, LogOut } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { AuthContext } from "../../../store/AuthProvider";
+import { useDemoMode } from "../../../store/DemoContext";
 import { useAuthBackground } from "../hooks/useAuthBackground";
 import LoginRightColumn from "./LoginRightColumn";
 import LoginGuard from "../../../components/guards/LoginGuard";
@@ -33,7 +35,9 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
     setIntroAvatar: rect => { chatbotPosition.current.introAvatar = rect; },
   }), []);
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { isLoggedIn, isLoading, logout } = useContext(AuthContext);
+  const { isLoggedIn, isLoading, isAppInitialized, logout } = useContext(AuthContext);
+  const { isConfigLoaded } = useDemoMode();
+  const isSessionLoading = !(isAppInitialized && isConfigLoaded);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const [headerActionHost, setHeaderActionHost] = useState<HTMLDivElement | null>(null);
@@ -142,7 +146,9 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               <div
                 className={cn("flex select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
               >
-                {pathname === "/login" ? (
+                {isSessionLoading ? (
+                  <AuthHeaderSpacer />
+                ) : pathname === "/login" ? (
                   <div className="mt-20"><AuthAnimatedLogo /></div>
                 ) : (
                   <img
@@ -151,7 +157,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                     alt="logo ANDRIA"
                   />
                 )}
-                {pathname === "/login" ? <AuthLogoCaption /> : (
+                {isSessionLoading ? null : pathname === "/login" ? <AuthLogoCaption /> : (
                   <span className="mt-2 max-w-xs text-center text-xs font-semibold text-base-content">
                     Apprentissage Numérique & Développement Renforcé par Intelligence Artificielle
                   </span>

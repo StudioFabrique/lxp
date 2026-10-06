@@ -119,5 +119,32 @@ HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-ui.mjs
 La scène `dashboards` commence par la sidebar compacte en verre liquide (une
 plaque par couche de profondeur, sans jointure), qui se pose comme une plaque
 puis s’étend avant de retrouver l’apparence réelle ; les cartes du tableau de
-bord se posent ensuite une à une et le chatbot arrive en dernier.
+bord se posent ensuite une à une, vues sous l’angle de la pyramide des niveaux,
+puis l’interface se redresse face au lecteur et le chatbot arrive en dernier.
+La scène `care` s’ouvre sous ce même angle avant de se redresser ; son curseur
+d’humeur glisse en continu (`step` rendu continu pour l’animation seulement).
 La suite de la scène est resserrée d’environ 10 % pour conserver ses 13 s.
+
+La scène `instance` reprend la vraie page « Paramètres de l’instance »
+(`Header`, `InstanceGeneralSettings`, `EmailTemplateSettings` et sa fenêtre de
+choix), pré-rendue par `composition/instance-fixture.tsx` puis
+`build-instance-fixture.mjs`. Les points de rupture responsive sont figés sur la
+mise en page bureau pour les tuiles étroites ; le logo de démonstration est un
+monogramme local. Les huit thèmes activés par défaut sont compilés.
+
+La scène `emails` montre deux étapes numérotées : l’équipe pédagogique active
+un récapitulatif hebdomadaire, puis une formation devenue disponible envoie un
+e-mail à Camille. Chaque e-mail part du bouton et se pose à côté.
+
+Le lecteur des tuiles avance la timeline sans rappels (`totalTime(t, true)`) :
+les valeurs de formulaire (curseur, textes saisis, libellés) sont donc animées
+par des tweens de propriétés, jamais par `onUpdate`.
+
+Les scènes `instance` et `accomplishments` se construisent elles aussi sous
+l’angle de la pyramide avant de se redresser. Dans `instance`, limitée à
+l’essentiel (thèmes et template d’e-mail), appliquer un thème soulève la carte
+choisie en 3D ; le choix du template s’affiche en plaques superposées comme la
+pyramide : la page, la vraie fenêtre de choix, puis l’aperçu du template choisi. Dans `accomplishments`, féliciter projette des confettis qui tournent
+sur trois axes et en profondeur, un jeton vole en arc jusqu’à l’apprenant, sa
+médaille fait deux tours, puis une pluie de confettis 3D tombe ; tout est
+déterministe (indices fixes) pour les retours en arrière et le lecteur.

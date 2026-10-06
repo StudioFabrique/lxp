@@ -288,25 +288,6 @@ for(const [id,start] of [['emails',163],['instance',181]]){
   tl.fromTo('#'+id+' .relationship-card,#'+id+' #instance-preview',{opacity:0,y:24,z:-65},{opacity:1,y:0,z:0,duration:.65,stagger:.18,ease:'power2.out'},start+.15);
   tl.fromTo('#'+id+' .relationship-caption',{opacity:0,y:10},{opacity:1,y:0,duration:.45,ease:'power2.out'},start+12);
 }
-tl.set('#email-summary,#email-availability',{opacity:0},163);
-tl.to('#email-waiting',{opacity:0,duration:.25},167.1);
-tl.fromTo('#email-summary',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},167.2);
-tl.to('#email-summary-choice',{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.35},167.15);
-tl.to('#email-summary',{opacity:0,y:-8,duration:.3},173.1);
-tl.fromTo('#email-availability',{opacity:0,y:14},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},173.2);
-tl.set('#instance-brand-custom,#instance-website,#instance-email-sample',{opacity:0},181);
-tl.to('.instance-brand-default',{opacity:0,duration:.25},184.15);
-tl.fromTo('#instance-brand-custom,#instance-website',{opacity:0,y:8},{opacity:1,y:0,duration:.45,ease:'power2.out',immediateRender:false},184.2);
-const instanceBaseTokens=(name)=>Object.fromEntries(['base-100','base-200','base-300','base-content'].map(token=>['--color-'+token,themeTokens[name]['--color-'+token]]));
-tl.to('#instance-preview',{...instanceBaseTokens('aurora'),duration:.65,ease:'sine.inOut'},187.15);
-tl.to('#instance-aurora',{backgroundColor:'var(--color-base-300)',duration:.25},187.15);
-tl.to('#instance-preview',{...instanceBaseTokens('ocean'),duration:.65,ease:'sine.inOut'},189.15);
-tl.to('#instance-ocean',{backgroundColor:'var(--color-base-300)',duration:.25},189.15);
-tl.fromTo('#instance-email-sample',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},192.2);
-tl.to('#instance-banner',{backgroundColor:'var(--color-base-300)',borderColor:'var(--color-primary)',duration:.25},192.15);
-tl.set('#instance .relationship-stage',{rotationY:0},199);
-cursorScene('emails',[[4.1,'#email-summary-choice'],[10.1,'#email-availability-choice']]);
-cursorScene('instance',[[3.1,'#instance-identity-save'],[6.1,'#instance-aurora'],[8.1,'#instance-ocean'],[11.1,'#instance-banner']]);
 
 
 // Celebrate a real course accomplishment, then open its journal history.
@@ -441,7 +422,7 @@ window.__timelines.main=tl;
 
 // Shared stacking, in presentation time, as in the pedagogical levels: each
 // panel lands from the front with a slight in-plane turn, then stays flat.
-const sceneStages=[['author','.editor-layout'],['assistant','.assistant-layout'],['assess','.assessment-layout'],['assignments','.two-panels'],['organize','.operations'],['progression','.progression-layout'],['steering','.steering-layout'],['personalize','.theme-layout'],['groups','.relationship-stage'],['trainers','.relationship-stage'],['tags','.relationship-stage'],['emails','.relationship-stage'],['instance','.relationship-stage'],['accomplishments','.relationship-stage']];
+const sceneStages=[['author','.editor-layout'],['assistant','.assistant-layout'],['assess','.assessment-layout'],['assignments','.two-panels'],['organize','.operations'],['progression','.progression-layout'],['steering','.steering-layout'],['personalize','.theme-layout'],['groups','.relationship-stage'],['trainers','.relationship-stage'],['tags','.relationship-stage']];
 sceneStages.forEach(([id,selector])=>{
   const scene=document.getElementById(id),stage=scene?.querySelector(selector);
   if(!stage)return;
@@ -457,7 +438,7 @@ sceneStages.forEach(([id,selector])=>{
   }
   panels.forEach((panel,index)=>{
     const turn=index%2?3:-3;
-    tl.fromTo(panel,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},start+.15+index*.16);
+    tl.fromTo(panel,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn,rotationX:0,rotationY:0},{opacity:1,z:0,y:0,x:0,rotation:0,rotationX:0,rotationY:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},start+.15+index*.16);
     tl.set(panel,{opacity:0},start-.01);
   });
   tl.set(stage,{rotationX:0,rotationY:0,rotation:0},start);
@@ -465,15 +446,25 @@ sceneStages.forEach(([id,selector])=>{
   tl.set(stage,{opacity:1,z:0},start-.01);
 });
 
-// Care, rebuilt around the genuine FeelingFeedback card (presentation time).
-// The learner shares a rainy mood and a comment, the team acknowledges the
-// alert, then the same 3D icon morphs to the sun.
+// The tile player seeks with suppressed callbacks, so form values are driven by
+// tweens on properties: a proxy setter writes the text on every render.
+const textProxy=(write)=>{let value=0;return {get n(){return value;},set n(next){value=next;write(next);}};};
+const typeInto=(element,text,from,to)=>{
+  const proxy=textProxy(n=>{element.value=text.slice(0,Math.round(n));});
+  tl.set(proxy,{n:0},from-.02);
+  tl.fromTo(proxy,{n:0},{n:text.length,duration:to-from,ease:'none',immediateRender:false},from);
+};
+// Care, around the genuine FeelingFeedback card (presentation time). It lands
+// on the plane of the stacked levels, its icon turning in relief, then faces
+// the reader: the mood slides to rain, a comment is sent, the team acknowledges
+// the alert and the same 3D icon morphs to the sun.
 {
-  const scene=document.getElementById('care'),S=Number(scene.dataset.start);
+  const scene=document.getElementById('care'),S=Number(scene.dataset.start),D=Number(scene.dataset.duration);
   const inner=scene.querySelector('.scene-inner'),icon=document.getElementById('feeling-3d');
   const range=document.getElementById('feeling-range'),comment=document.getElementById('feeling-comment');
   const form=document.getElementById('feeling-form'),levels=[1,2,3,4,5].map(n=>icon.getAttribute('data-level-'+n));
-  // Measure controls at rest, in scene coordinates, with the scene laid out but unpainted.
+  // The drag is shown continuously; the component itself keeps its 1 to 5 scale.
+  range.step='any';
   const display=scene.style.display,visibility=scene.style.visibility;
   scene.style.display='block';scene.style.visibility='hidden';
   const root=document.getElementById('root').getBoundingClientRect(),unit=1920/root.width;
@@ -484,67 +475,69 @@ sceneStages.forEach(([id,selector])=>{
   const shift=(point)=>({x:point.x+centred,y:point.y});
   const points={from:shift(thumb(3)),to:shift(thumb(2)),comment:shift(at(comment,.3,.5)),send:shift(at(document.getElementById('feeling-send'))),review:at(document.getElementById('review-button'),.6,.55)};
   scene.style.display=display;scene.style.visibility=visibility;
-  const pointer='#care .scene-pointer',ring='#care .scene-click';
-  const tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
+  const pointer='#care .scene-pointer',ring='#care .scene-click',tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
   const click=(point,time)=>{
     tl.to(pointer,{scale:.92,duration:.1},time);tl.to(pointer,{scale:1,duration:.16},time+.1);
     tl.fromTo(ring,{x:point.x-22,y:point.y-22,scale:.35,opacity:.6},{x:point.x-22,y:point.y-22,scale:1.4,opacity:0,duration:.45,immediateRender:false},time);
   };
-  // Form values follow the scene clock, so every seek shows the same state.
-  const text='Je bloque sur la dernière leçon.',clock={p:0};
-  tl.fromTo(clock,{p:0},{p:1,duration:Number(scene.dataset.duration),ease:'none',immediateRender:false,onUpdate:()=>{
-    const t=tl.time()-S;
-    range.value=String(t<2.3?3:2);
-    comment.value=text.slice(0,Math.round(Math.min(1,Math.max(0,(t-3.5)/1.1))*text.length));
-    icon.setAttribute('aria-label',t<2.3?'Ressenti : nuageux avec éclaircies':t<9.4?'Ressenti : pluie':'Ressenti : soleil');
-  }},S);
-  // 1. The genuine card arrives in depth, centred, its icon turning in relief.
-  tl.fromTo('#feeling-card',{opacity:0,x:centred-12,z:480,y:-18,rotation:-4},{opacity:1,x:centred,z:0,y:0,rotation:0,duration:.85,ease:'back.out(1.25)',immediateRender:false},S+.3);
+  const T={flatten:1.3,press:2.8,drag:2.9,dragEnd:3.5,comment:4.2,typing:4.3,typed:5.3,send:5.8,slide:6.4,alert:6.6,review:8.2,sun:9.2};
+  // The thumb value itself is tweened, so the range really slides on every seek.
+  tl.set(range,{value:3},S-.02);
+  tl.fromTo(range,{value:3},{value:2,duration:T.dragEnd-T.drag,ease:'power2.inOut',immediateRender:false},S+T.drag);
+  typeInto(comment,'Je bloque sur la dernière leçon.',S+T.typing,S+T.typed);
+  const mood=textProxy(n=>icon.setAttribute('aria-label',['Ressenti : nuageux avec éclaircies','Ressenti : pluie','Ressenti : soleil'][Math.round(n)]));
+  tl.set(mood,{n:0},S-.02);tl.set(mood,{n:1},S+T.drag+.3);tl.set(mood,{n:2},S+T.sun);
+  // 1. Same view as the stacked levels: the card lands, its icon turns in relief.
+  tl.set('.care-stage',{rotationX:54,rotation:-12,scale:.82,y:30,opacity:1},S-.01);
+  tl.fromTo('.care-stage',{rotationX:54,rotation:-12,scale:.82,y:30},{rotationX:50,rotation:-8,scale:.84,y:30,duration:T.flatten,ease:'sine.inOut',immediateRender:false},S);
+  tl.to('.care-stage',{rotationX:0,rotation:0,scale:1,y:0,duration:1,ease:'power3.inOut'},S+T.flatten);
   tl.set('#feeling-card',{opacity:0},0);
-  tl.fromTo(icon,{transformPerspective:320,rotationY:-180,scale:.6},{rotationY:0,scale:1,duration:1,ease:'power3.out',immediateRender:false},S+.6);
-  // 2. The learner drags the range to the rainy mood: the icon morphs and lifts out.
-  tl.fromTo(pointer,{opacity:0,...tip({x:points.from.x+70,y:points.from.y+60}),scale:1},{opacity:1,...tip(points.from),duration:.5,ease:'power2.inOut',immediateRender:false},S+1.4);
-  click(points.from,S+1.95);
-  tl.to(pointer,{...tip(points.to),duration:.45,ease:'power2.inOut'},S+2.05);
-  tl.to('#feeling-card .feeling-path',{morphSVG:levels[1],duration:.7,ease:'power2.inOut'},S+2.25);
-  tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1,ease:'power2.inOut',immediateRender:false},S+2.2);
-  tl.to(icon,{scale:1.9,z:70,duration:.5,ease:'power2.out'},S+2.2);
-  tl.to(icon,{scale:1,z:0,duration:.55,ease:'power2.in'},S+2.7);
+  tl.fromTo('#feeling-card',{opacity:0,x:centred-12,z:480,y:-18,rotation:-4},{opacity:1,x:centred,z:0,y:0,rotation:0,duration:.85,ease:'back.out(1.25)',immediateRender:false},S+.2);
+  tl.fromTo(icon,{transformPerspective:320,rotationY:-180,scale:.6,z:0},{rotationY:0,scale:1,z:0,duration:1.1,ease:'power3.out',immediateRender:false},S+.5);
+  // 2. The thumb really slides to the rainy mood: the icon morphs and lifts out.
+  tl.fromTo(pointer,{opacity:0,...tip({x:points.from.x+70,y:points.from.y+60}),scale:1},{opacity:1,...tip(points.from),duration:.5,ease:'power2.inOut',immediateRender:false},S+T.press-.5);
+  tl.to(pointer,{scale:.92,duration:.1},S+T.press);
+  tl.to(pointer,{...tip(points.to),duration:T.dragEnd-T.drag,ease:'power2.inOut'},S+T.drag);
+  tl.to(pointer,{scale:1,duration:.16},S+T.dragEnd);
+  tl.to('#feeling-card .feeling-path',{morphSVG:levels[1],duration:.7,ease:'power2.inOut'},S+T.drag+.2);
+  tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1.05,ease:'power2.inOut',immediateRender:false},S+T.drag+.15);
+  tl.to(icon,{scale:1.9,z:70,duration:.5,ease:'power2.out'},S+T.drag+.15);
+  tl.to(icon,{scale:1,z:0,duration:.55,ease:'power2.in'},S+T.drag+.65);
   // 3. A comment, then Envoyer: as in the LXP, the form closes and a toast confirms.
-  tl.to(pointer,{...tip(points.comment),duration:.5,ease:'power2.inOut'},S+2.9);
-  click(points.comment,S+3.4);
-  tl.to(pointer,{...tip(points.send),duration:.5,ease:'power2.inOut'},S+4.7);
-  click(points.send,S+5.2);
-  tl.to(pointer,{opacity:0,duration:.25},S+5.5);
-  tl.fromTo(form,{height:formHeight,opacity:1},{height:0,opacity:0,duration:.45,ease:'power2.inOut',immediateRender:false},S+5.35);
-  tl.fromTo('#care-toast',{opacity:0,xPercent:-50,y:-14},{opacity:1,xPercent:-50,y:0,duration:.35,ease:'power2.out',immediateRender:false},S+5.4);
+  tl.to(pointer,{...tip(points.comment),duration:.5,ease:'power2.inOut'},S+T.comment-.5);
+  click(points.comment,S+T.comment);
+  tl.to(pointer,{...tip(points.send),duration:.45,ease:'power2.inOut'},S+T.send-.45);
+  click(points.send,S+T.send);
+  tl.to(pointer,{opacity:0,duration:.25},S+T.send+.3);
+  tl.fromTo(form,{height:formHeight,opacity:1},{height:0,opacity:0,duration:.45,ease:'power2.inOut',immediateRender:false},S+T.send+.15);
   tl.set('#care-toast',{opacity:0,xPercent:-50},0);
-  tl.to('#care-toast',{opacity:0,y:-10,duration:.3},S+6.6);
-  // 4. The learner card steps back in depth while the team alert comes forward.
-  tl.to('#feeling-card',{x:-60,z:-320,opacity:.35,duration:.9,ease:'power3.inOut'},S+5.9);
+  tl.fromTo('#care-toast',{opacity:0,xPercent:-50,y:-14},{opacity:1,xPercent:-50,y:0,duration:.35,ease:'power2.out',immediateRender:false},S+T.send+.2);
+  tl.to('#care-toast',{opacity:0,y:-10,duration:.3},S+T.send+1.2);
+  // 4. The learner card slides aside, flat; the team alert lands next to it.
+  tl.to('#feeling-card',{x:0,duration:.8,ease:'power3.inOut'},S+T.slide);
   tl.set('#risk-panel',{opacity:0},0);
-  tl.fromTo('#risk-panel',{opacity:0,x:9,z:480,y:-18,rotation:3},{opacity:1,x:0,z:0,y:0,rotation:0,duration:.85,ease:'back.out(1.25)',immediateRender:false},S+6.0);
-  tl.fromTo(pointer,{opacity:0,...tip({x:points.review.x+90,y:points.review.y+80})},{opacity:1,...tip(points.review),duration:.5,ease:'power2.inOut',immediateRender:false},S+7.3);
-  click(points.review,S+7.8);
-  tl.to(pointer,{opacity:0,duration:.25},S+8.15);
-  tl.to('.alert-ack-idle',{opacity:0,duration:.15},S+7.85);
-  tl.to('.alert-ack-confirmed',{opacity:1,duration:.2},S+7.85);
-  tl.to('#risk-panel .fixture-glow>div:first-child>span',{backgroundColor:'color-mix(in srgb,var(--color-success) 40%,transparent)',duration:.4,ease:'sine.inOut'},S+7.85);
-  tl.to('#risk-panel .alert-group',{borderColor:'color-mix(in srgb,var(--color-success) 30%,transparent)',duration:.4},S+7.85);
-  tl.to('#risk-panel .alert-group>strong,#risk-panel .risk-badge',{color:'var(--color-success)',duration:.4},S+7.85);
-  tl.to('#risk-panel .risk-badge',{borderColor:'var(--color-success)',duration:.4},S+7.85);
-  tl.to('#risk-panel .alert-state-pending',{opacity:0,duration:.15},S+7.85);
-  tl.to('#risk-panel .alert-state-resolved',{opacity:1,duration:.2},S+7.85);
-  // 5. Supported, the learner comes back to the front and the rain turns to sun.
-  tl.to('#feeling-card',{x:0,z:0,opacity:1,duration:.9,ease:'power3.inOut'},S+8.5);
-  tl.to('#feeling-card .feeling-path',{morphSVG:levels[4],duration:.8,ease:'power2.inOut'},S+9.45);
-  tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1.1,ease:'power2.inOut',immediateRender:false},S+9.4);
-  tl.to(icon,{scale:2,z:80,duration:.55,ease:'power2.out'},S+9.4);
-  tl.to(icon,{scale:1,z:0,duration:.6,ease:'power2.in'},S+9.95);
-  tl.fromTo('#care .care-caption',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},S+9.6);
+  tl.fromTo('#risk-panel',{opacity:0,x:9,z:480,y:-18,rotation:3,rotationX:0,rotationY:0},{opacity:1,x:0,z:0,y:0,rotation:0,rotationX:0,rotationY:0,duration:.85,ease:'back.out(1.25)',immediateRender:false},S+T.alert);
+  tl.fromTo(pointer,{opacity:0,...tip({x:points.review.x+90,y:points.review.y+80})},{opacity:1,...tip(points.review),duration:.5,ease:'power2.inOut',immediateRender:false},S+T.review-.5);
+  click(points.review,S+T.review);
+  tl.to(pointer,{opacity:0,duration:.25},S+T.review+.35);
+  const ack=S+T.review+.05;
+  tl.to('.alert-ack-idle',{opacity:0,duration:.15},ack);
+  tl.to('.alert-ack-confirmed',{opacity:1,duration:.2},ack);
+  tl.to('#risk-panel .fixture-glow>div:first-child>span',{backgroundColor:'color-mix(in srgb,var(--color-success) 40%,transparent)',duration:.4,ease:'sine.inOut'},ack);
+  tl.to('#risk-panel .alert-group',{borderColor:'color-mix(in srgb,var(--color-success) 30%,transparent)',duration:.4},ack);
+  tl.to('#risk-panel .alert-group>strong,#risk-panel .risk-badge',{color:'var(--color-success)',duration:.4},ack);
+  tl.to('#risk-panel .risk-badge',{borderColor:'var(--color-success)',duration:.4},ack);
+  tl.to('#risk-panel .alert-state-pending',{opacity:0,duration:.15},ack);
+  tl.to('#risk-panel .alert-state-resolved',{opacity:1,duration:.2},ack);
+  // 5. Supported, the rain turns to sun with the same relief and spin.
+  tl.to('#feeling-card .feeling-path',{morphSVG:levels[4],duration:.8,ease:'power2.inOut'},S+T.sun+.05);
+  tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1.1,ease:'power2.inOut',immediateRender:false},S+T.sun);
+  tl.to(icon,{scale:2,z:80,duration:.55,ease:'power2.out'},S+T.sun);
+  tl.to(icon,{scale:1,z:0,duration:.6,ease:'power2.in'},S+T.sun+.55);
   tl.set('#care .care-caption',{opacity:0},0);
+  tl.fromTo('#care .care-caption',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},S+T.sun+.4);
+  tl.to('.care-stage',{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
 }
-
 // Dashboards, built like a product reveal: the compact sidebar lands as liquid
 // glass, unfolds, then the board settles and the chatbot arrives last.
 {
@@ -574,13 +567,211 @@ sceneStages.forEach(([id,selector])=>{
   tl.fromTo(solid,{opacity:0},{opacity:1,duration:1.1,ease:'sine.inOut',immediateRender:false},map(S+1.95));
   // The glass pane follows the real expansion, then leaves the genuine sidebar.
   const expansion=tl.getChildren(false,true,false).find(t=>t.targets?.().some(target=>target.classList?.contains('sidebar-surface-middle'))&&t.vars.scaleX===1);
+  if(expansion){
+    tl.set('.sidebar-solid-pane',{opacity:0},0);
+    tl.to('.sidebar-solid-pane',{opacity:1,duration:.2},expansion.startTime()+expansion.duration());
+  }
   if(expansion)tl.fromTo('.sidebar-glass-pane',{width:104},{width:340,duration:expansion.duration(),ease:expansion.vars.ease,immediateRender:false},expansion.startTime());
   tl.to('.sidebar-glass',{opacity:0,duration:1.1,ease:'sine.inOut'},map(S+1.95));
   // 3. The board settles in depth after the sidebar.
-  tl.fromTo('.dashboard-board',{opacity:0},{opacity:1,duration:.3,ease:'sine.out',immediateRender:false},map(S+1.35));
+  tl.fromTo('.dashboard-board',{opacity:0,z:0,rotationY:0},{opacity:1,z:0,rotationY:0,duration:.3,ease:'sine.out',immediateRender:false},map(S+1.35));
+  tl.set('.dashboard-board',{z:0,rotationY:0},S-.01);
   tl.set('.dashboard-board',{opacity:0},0);
   // 4. The chatbot arrives once the cards are in place, before its greeting.
   tl.fromTo('#dashboard-chatbot>button',{opacity:0,x:110,y:40,scale:.4,rotation:-28},{opacity:1,x:0,y:0,scale:1,rotation:0,duration:.8,ease:'back.out(1.7)',immediateRender:false},map(S+3.4));
   tl.set('#dashboard-chatbot>button',{opacity:0},0);
+  // Seen from the angle of the stacked levels while the sidebar lands and unfolds
+  // and the cards stack one by one, then the interface faces the reader.
+  const flatten=map(S+2.95)+.75;
+  tl.fromTo('.dashboard-stage',{rotationX:54,rotation:-12,scale:.95,x:110,y:20},{rotationX:48,rotation:-6,scale:.97,x:90,y:20,duration:flatten-S,ease:'sine.inOut',immediateRender:false},S);
+  tl.set('.dashboard-stage',{rotationX:54,rotation:-12,scale:.95,x:110,y:20},S-.01);
+  tl.to('.dashboard-stage',{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1.05,ease:'power3.inOut'},flatten);
+}
+
+// Instance settings, from the genuine superadministration page (presentation
+// time), kept to its essentials: themes, then the e-mail template. Choosing a
+// template is shown as stacked plates, like the pedagogical levels: the page,
+// the genuine selection dialog above it, and the chosen preview above that.
+{
+  const scene=document.getElementById('instance'),S=Number(scene.dataset.start),D=Number(scene.dataset.duration);
+  const page=scene.querySelector('.instance-page'),inner=scene.querySelector('.scene-inner');
+  const templateName=scene.querySelector('.instance-template-name');
+  const modal=document.getElementById('instance-template-modal'),box=modal.querySelector('.modal-box');
+  const display=scene.style.display,visibility=scene.style.visibility;
+  scene.style.display='block';scene.style.visibility='hidden';
+  const root=document.getElementById('root').getBoundingClientRect(),unit=1920/root.width,base=inner.getBoundingClientRect();
+  const at=(id,fx=.5,fy=.55)=>{const r=document.getElementById(id).getBoundingClientRect();return {x:(r.left-base.left+r.width*fx)*unit,y:(r.top-base.top+r.height*fy)*unit};};
+  const points={aurora:at('instance-aurora',.4),ocean:at('instance-ocean',.4),edit:at('instance-edit-template')};
+  scene.style.display=display;scene.style.visibility=visibility;
+  const pointer='#instance .scene-pointer',ring='#instance .scene-click',tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
+  const moveClick=(point,time,from)=>{
+    if(from)tl.fromTo(pointer,{opacity:0,...tip(from),scale:1},{opacity:1,...tip(point),duration:.5,ease:'power2.inOut',immediateRender:false},time-.5);
+    else tl.to(pointer,{...tip(point),duration:.5,ease:'power2.inOut'},time-.5);
+    tl.to(pointer,{scale:.92,duration:.1},time);tl.to(pointer,{scale:1,duration:.16},time+.1);
+    tl.fromTo(ring,{x:point.x-22,y:point.y-22,scale:.35,opacity:.6},{x:point.x-22,y:point.y-22,scale:1.4,opacity:0,duration:.45,immediateRender:false},time);
+  };
+  const T={flatten:1.2,aurora:3.0,ocean:4.9,edit:6.6,lift:7.0,choose:9.6,apply:12.6,settle:13.2};
+  const levels={rotationX:54,rotation:-12,scale:.62,x:30,y:30};
+  // 1. Header, themes and template land as plates, seen from the levels angle.
+  const blocks=[page.children[0],...[...page.children[1].firstElementChild.children].filter(block=>getComputedStyle(block).display!=='none'),page.children[2]];
+  blocks.forEach((block,index)=>{
+    const turn=index%2?3:-3;
+    tl.set(block,{opacity:0},S-.01);
+    tl.fromTo(block,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},S+.15+index*.18);
+  });
+  tl.set(page,{...levels},S-.01);
+  tl.fromTo(page,{...levels},{...levels,rotationX:50,rotation:-8,duration:T.flatten,ease:'sine.inOut',immediateRender:false},S);
+  tl.to(page,{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1,ease:'power3.inOut'},S+T.flatten);
+  // 2. A theme card applies its theme to the whole interface, as chooseTheme does.
+  const tokens=(theme)=>({...themeTokens[theme]});
+  tl.set(page,{...tokens('ocean')},S-.01);
+  const applyTheme=(card,point,theme,time,from)=>{
+    moveClick(point,time,from);
+    tl.to(card,{transformPerspective:700,z:60,scale:1.08,rotationX:-8,duration:.3,ease:'power2.out'},time);
+    tl.to(card,{z:0,scale:1,rotationX:0,duration:.5,ease:'back.out(1.6)'},time+.45);
+    tl.to(page,{...tokens(theme),duration:.5,ease:'sine.inOut'},time+.1);
+  };
+  applyTheme('#instance-aurora',points.aurora,'aurora',S+T.aurora,{x:points.aurora.x+90,y:points.aurora.y+80});
+  applyTheme('#instance-ocean',points.ocean,'ocean',S+T.ocean);
+  moveClick(points.edit,S+T.edit);
+  tl.to(pointer,{opacity:0,duration:.25},S+T.edit+.3);
+  // 3. Template choice as stacked plates: page, dialog, chosen preview.
+  tl.set(modal,{autoAlpha:0,z:0},0);
+  tl.set('#instance .template-plate',{autoAlpha:0,z:0},0);
+  tl.to(page,{...levels,scale:.56,y:230,duration:1,ease:'power3.inOut'},S+T.lift);
+  tl.to(modal,{autoAlpha:1,duration:.3},S+T.lift+.7);
+  tl.fromTo(modal,{z:0},{z:190,duration:.9,ease:'back.out(1.2)',immediateRender:false},S+T.lift+.7);
+  tl.to('#instance .template-plate',{autoAlpha:1,duration:.3},S+T.lift+1.3);
+  tl.fromTo('#instance .template-plate',{z:190},{z:380,duration:.9,ease:'back.out(1.2)',immediateRender:false},S+T.lift+1.3);
+  tl.to(page,{rotation:-6,rotationX:50,duration:T.apply-T.lift-1,ease:'sine.inOut'},S+T.lift+1);
+  // The selection moves from Classique to Bannière; the top preview follows.
+  const chosen=S+T.choose;
+  tl.set('#plate-contrast',{opacity:0},S-.01);tl.set('#plate-minimal',{opacity:1},S-.01);
+  tl.set('#instance-banner',{borderColor:'var(--color-base-300)',boxShadow:'none'},S-.01);
+  tl.to('#instance-banner',{borderColor:'var(--color-primary)',boxShadow:'0 0 0 2px color-mix(in srgb,var(--color-primary) 20%,transparent)',duration:.25},chosen);
+  tl.to('#instance-banner>span:last-child>span',{backgroundColor:'var(--color-primary)',color:'var(--color-primary-content)',duration:.25},chosen);
+  tl.to('#instance-classic',{borderColor:'var(--color-base-300)',boxShadow:'none',duration:.25},chosen);
+  tl.to('#instance-classic>span:last-child>span',{backgroundColor:'var(--color-base-200)',color:'transparent',duration:.25},chosen);
+  tl.to('#plate-minimal',{opacity:0,rotationY:-90,duration:.35,ease:'power2.in'},chosen+.05);
+  tl.fromTo('#plate-contrast',{opacity:0,rotationY:90},{opacity:1,rotationY:0,duration:.45,ease:'power2.out',immediateRender:false},chosen+.4);
+  // 4. Applied: the plates fold back onto the page, which faces the reader again.
+  tl.to('#instance .template-plate',{z:0,autoAlpha:0,duration:.6,ease:'power2.in'},S+T.apply);
+  tl.to(modal,{z:0,autoAlpha:0,duration:.6,ease:'power2.in'},S+T.apply+.15);
+  tl.to(page,{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1,ease:'power3.inOut'},S+T.settle);
+  const chosenName=textProxy(n=>{templateName.textContent=n>.5?'Bannière':'Classique';});
+  tl.set(chosenName,{n:0},S-.02);tl.set(chosenName,{n:1},S+T.apply+.3);
+  tl.to(page,{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
+  tl.set(page,{opacity:1},S-.01);
+}
+// Emails, in two numbered steps (presentation time): each trigger card lands,
+// one click, and the e-mail it sends flies into place beside it.
+{
+  const scene=document.getElementById('emails'),S=Number(scene.dataset.start),D=Number(scene.dataset.duration);
+  const inner=scene.querySelector('.scene-inner');
+  const display=scene.style.display,visibility=scene.style.visibility;
+  scene.style.display='block';scene.style.visibility='hidden';
+  const root=document.getElementById('root').getBoundingClientRect(),unit=1920/root.width,base=inner.getBoundingClientRect();
+  const at=(id,fx=.5,fy=.55)=>{const r=document.getElementById(id).getBoundingClientRect();return {x:(r.left-base.left+r.width*fx)*unit,y:(r.top-base.top+r.height*fy)*unit};};
+  const points={weekly:at('email-weekly'),summary:at('email-summary-choice'),available:at('email-availability-choice')};
+  scene.style.display=display;scene.style.visibility=visibility;
+  const pointer='#emails .scene-pointer',ring='#emails .scene-click',tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
+  const moveClick=(point,time,from)=>{
+    if(from)tl.fromTo(pointer,{opacity:0,...tip(from),scale:1},{opacity:1,...tip(point),duration:.5,ease:'power2.inOut',immediateRender:false},time-.5);
+    else tl.to(pointer,{...tip(point),duration:.5,ease:'power2.inOut'},time-.5);
+    tl.to(pointer,{scale:.92,duration:.1},time);tl.to(pointer,{scale:1,duration:.16},time+.1);
+    tl.fromTo(ring,{x:point.x-22,y:point.y-22,scale:.35,opacity:.6},{x:point.x-22,y:point.y-22,scale:1.4,opacity:0,duration:.45,immediateRender:false},time);
+  };
+  const land=(target,time,turn)=>{
+    tl.set(target,{opacity:0},S-.01);
+    tl.fromTo(target,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},time);
+  };
+  const step=(id,trigger,button,mail,t0,clicks)=>{
+    land('#'+id+' .mail-step-label',S+t0,-2);
+    land('#'+id+' .mail-trigger',S+t0+.15,-3);
+    clicks.forEach(([point,time],index)=>moveClick(point,S+time,index===0?{x:point.x+90,y:point.y+80}:null));
+    const sent=S+clicks[clicks.length-1][1]+.05;
+    tl.set('#'+button+' .mail-done',{display:'none'},S-.01);tl.set('#'+button+' .mail-idle',{display:'inline'},S-.01);
+    tl.set('#'+button+' .mail-idle',{display:'none'},sent);tl.set('#'+button+' .mail-done',{display:'inline'},sent);
+    tl.fromTo('#'+button,{backgroundColor:'var(--color-primary)'},{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.3,immediateRender:false},sent);
+    // The arrow draws, then the e-mail flies out of the trigger and lands like a plate.
+    tl.set('#'+id+' .mail-arrow',{scaleX:0,transformOrigin:'left center'},S-.01);
+    tl.to('#'+id+' .mail-arrow',{scaleX:1,duration:.45,ease:'power2.out'},sent+.1);
+    tl.set('#'+mail,{opacity:0},S-.01);
+    tl.fromTo('#'+mail,{opacity:0,x:-520,y:20,z:300,scale:.35,rotation:-10},{opacity:1,x:0,y:0,z:0,scale:1,rotation:0,duration:1.1,ease:'back.out(1.15)',immediateRender:false},sent+.25);
+    return sent;
+  };
+  const teamSent=step('mail-step-team','mail-trigger','email-summary-choice','mail-team',.2,[[points.weekly,1.7],[points.summary,3.1]]);
+  // The first step steps back a little while the learners' step comes in.
+  tl.to('#mail-step-team',{opacity:.55,duration:.5},teamSent+3.2);
+  step('mail-step-learner','mail-trigger','email-availability-choice','mail-learner',7.4,[[points.available,9.2]]);
+  tl.to('#mail-step-team',{opacity:1,duration:.5},S+12.6);
+  tl.to(pointer,{opacity:0,duration:.25},S+9.6);
+  tl.set('#mail-step-team',{opacity:1},S-.01);
+  tl.to('#emails .mail-stage',{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
+  tl.set('#emails .mail-stage',{opacity:1},S-.01);
+}
+
+// Accomplishments (presentation time): the two cards stack under the angle of
+// the levels, then face the reader. Congratulating bursts 3D confetti from the
+// button, a token arcs to the learner, the medal turns in relief, confetti rains.
+{
+  const scene=document.getElementById('accomplishments'),S=Number(scene.dataset.start),D=Number(scene.dataset.duration);
+  const stage=scene.querySelector('.accomplishment-stage'),cards=[...stage.children];
+  const inScene=(tween)=>tween.targets?.().some(target=>target instanceof Element&&scene.contains(target));
+  for(const tween of tl.getChildren(false,true,false).filter(inScene)){
+    const targets=tween.targets();
+    const own=targets.filter(target=>cards.includes(target)||target===stage||target.classList?.contains('accomplishment-confetti'));
+    if(own.length)tween.kill(own);
+  }
+  // Where the click and the learner's medal sit once the stage faces the reader.
+  const display=scene.style.display,visibility=scene.style.visibility;
+  scene.style.display='block';scene.style.visibility='hidden';
+  const root=document.getElementById('root').getBoundingClientRect(),unit=1920/root.width,base=scene.querySelector('.scene-inner').getBoundingClientRect();
+  const centre=(element)=>{const r=element.getBoundingClientRect();return {x:(r.left-base.left+r.width/2)*unit,y:(r.top-base.top+r.height/2)*unit};};
+  const button=centre(document.getElementById('accomplishment-congratulate')),medal=centre(scene.querySelector('.accomplishment-medallion'));
+  scene.style.display=display;scene.style.visibility=visibility;
+  const click=S+3.13;
+  tl.set(stage,{rotationX:54,rotation:-12,scale:.9,x:60,y:30},S-.01);
+  tl.fromTo(stage,{rotationX:54,rotation:-12,scale:.9,x:60,y:30},{rotationX:50,rotation:-8,scale:.92,x:50,y:30,duration:1.3,ease:'sine.inOut',immediateRender:false},S);
+  tl.to(stage,{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1,ease:'power3.inOut'},S+1.3);
+  cards.forEach((card,index)=>{
+    const turn=index%2?3:-3;
+    tl.set(card,{opacity:0},S-.01);
+    tl.fromTo(card,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn,rotationX:0,rotationY:0},{opacity:1,z:0,y:0,x:0,rotation:0,rotationX:0,rotationY:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},S+.15+index*.2);
+  });
+  // The completed course pops toward the viewer under the click.
+  tl.to('#accomplishment-team .accomplishment-feedback',{transformPerspective:800,z:50,scale:1.03,duration:.25,ease:'power2.out'},click);
+  tl.to('#accomplishment-team .accomplishment-feedback',{z:0,scale:1,duration:.5,ease:'back.out(1.6)'},click+.3);
+  // A token carries the congratulations in a 3D arc to the learner.
+  const token='#accomplishments .cheer-token';
+  tl.set(token,{opacity:0,x:button.x-28,y:button.y-28,z:0,scale:.5},S-.01);
+  tl.to(token,{opacity:1,scale:1,duration:.15},click+.05);
+  tl.to(token,{keyframes:[{x:(button.x+medal.x)/2-28,y:Math.min(button.y,medal.y)-230,z:260,rotationY:180,scale:1.4,duration:.45,ease:'power2.out'},{x:medal.x-28,y:medal.y-28,z:0,rotationY:360,scale:.6,duration:.45,ease:'power2.in'}]},click+.1);
+  tl.to(token,{opacity:0,duration:.12},click+1.0);
+  // The medal answers by turning twice in relief.
+  tl.fromTo('#accomplishments .accomplishment-medallion',{transformPerspective:600,rotationY:0,z:0,scale:1},{rotationY:720,z:90,scale:1.25,duration:1.1,ease:'power3.out',immediateRender:false},click+1.0);
+  tl.to('#accomplishments .accomplishment-medallion',{z:0,scale:1,duration:.5,ease:'back.out(1.6)'},click+2.1);
+  // 3D confetti: each piece tumbles on three axes; some fly toward the camera.
+  const colours=['var(--color-primary)','var(--color-secondary)','var(--color-accent)','var(--color-success)','var(--color-warning)'];
+  scene.querySelectorAll('.accomplishment-confetti').forEach((piece,i)=>{
+    const burst=i<40,j=burst?i:i-40,phase=j*2.3999632297,depth=((j*37)%11)/10;
+    piece.style.background=colours[j%colours.length];
+    const origin=burst?button:{x:medal.x-380+((j*127)%760),y:120+((j*53)%120)};
+    const start=burst?click+.02+(j%6)*.02:click+1.05+(j%9)*.07;
+    const spinX=360*(2+j%3),spinY=360*(1+(j*7)%3),spinZ=(j%2?1:-1)*(180+(j*41)%360);
+    tl.set(piece,{opacity:0},S-.01);
+    if(burst){
+      const reach=140+(j*29)%260,up=180+(j*13)%220,z=-200+depth*700;
+      tl.fromTo(piece,{opacity:1,x:origin.x,y:origin.y,z:0,rotationX:0,rotationY:0,rotation:j*19,scale:.6},{x:origin.x+Math.cos(phase)*reach,y:origin.y-up,z,rotationX:spinX*.5,rotationY:spinY*.5,rotation:j*19+spinZ*.5,scale:1,duration:.7,ease:'power3.out',immediateRender:false},start);
+      tl.to(piece,{x:origin.x+Math.cos(phase)*reach*1.35,y:origin.y+220,z:z*.6,rotationX:spinX,rotationY:spinY,rotation:j*19+spinZ,duration:1.5,ease:'power1.in'},start+.7);
+      tl.to(piece,{opacity:0,duration:.3},start+1.9);
+    }else{
+      const drift=Math.sin(phase)*140,z=-300+depth*600;
+      tl.fromTo(piece,{opacity:1,x:origin.x,y:origin.y-120,z,rotationX:0,rotationY:0,rotation:j*23,scale:.9},{x:origin.x+drift,y:960,z,rotationX:spinX,rotationY:spinY,rotation:j*23+spinZ,duration:2.6+depth,ease:'sine.in',immediateRender:false},start);
+      tl.to(piece,{opacity:0,duration:.35},start+2.4+depth);
+    }
+  });
+  tl.to(stage,{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
+  tl.set(stage,{opacity:1},S-.01);
 }
 window.__timelines.main=tl;
