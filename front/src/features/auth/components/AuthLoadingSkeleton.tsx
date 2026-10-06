@@ -2,10 +2,16 @@ import AndriaLogoLight from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDark from "../../../assets/andria-logo/logo-darkmode.svg";
 import { useContext } from "react";
 import { ThemeContext } from "../../../store/ThemeProvider";
+import { useLocation } from "react-router";
+import AuthIntroLoading from "./AuthIntroLoading";
 
 /** Auth layout placeholder before its lazy route and session check finish. */
 export default function AuthLoadingSkeleton() {
   const { theme } = useContext(ThemeContext);
+  const { pathname } = useLocation();
+  if (["/init", "/student/onboarding", "/staff/onboarding"].includes(pathname)) {
+    return <div className="flex min-h-dvh bg-base-100"><AuthIntroLoading /></div>;
+  }
   return (
     <div role="status" aria-label="Chargement de la connexion" className="grid min-h-dvh grid-cols-1 bg-base-100 py-12 lg:grid-cols-2">
       <span className="sr-only">Chargement de la connexion…</span>

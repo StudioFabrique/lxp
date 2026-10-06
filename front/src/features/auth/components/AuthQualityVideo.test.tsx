@@ -25,7 +25,7 @@ describe("login Hyperframes presentation", () => {
     vi.restoreAllMocks();
   });
 
-  it("plays the matching scenes and offers replay after the ANDRIA ending", () => {
+  it("plays the matching scenes and offers replay after the final feature", () => {
     act(() => root.render(<AuthQualityVideo quality={3} label="Réactive" colorIndex={1} reducedMotion={false} />));
     expect(frame().getAttribute("src")).toContain("quality=3");
     expect(container.querySelector("figcaption")?.textContent).toContain("Planning et prévention du décrochage");
@@ -57,15 +57,15 @@ describe("login Hyperframes presentation", () => {
     expect(container.querySelector("figcaption")?.textContent).toContain(topic);
   });
 
-  it("offers replay as soon as the ending logo starts", () => {
+  it("offers replay when the final feature ends", () => {
     const onEnded = vi.fn();
     act(() => root.render(<AuthQualityVideo quality={6} label="Collective" colorIndex={0} reducedMotion={false} onEnded={onEnded} />));
     const post = vi.spyOn(frame().contentWindow!, "postMessage");
     notify("playing");
-    notify("outro");
+    notify("ended");
     expect(container.querySelector("button")?.textContent).toBe("Rejouer");
     act(() => vi.advanceTimersByTime(1200));
-    expect(onEnded).not.toHaveBeenCalled();
+    expect(onEnded).toHaveBeenCalledOnce();
     act(() => container.querySelector<HTMLButtonElement>("button")!.click());
     expect(post).toHaveBeenLastCalledWith(expect.objectContaining({ action: "replay" }), window.location.origin);
   });
@@ -165,7 +165,7 @@ describe("login Hyperframes presentation", () => {
     expect(onEnded).toHaveBeenCalledOnce();
   });
 
-  it("keeps the logo still instead of advancing with reduced motion", () => {
+  it("keeps the final feature still instead of advancing with reduced motion", () => {
     const onEnded = vi.fn();
     act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion onEnded={onEnded} />));
     notify("ended");

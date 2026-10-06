@@ -2,3 +2,9 @@ html,body{background:var(--embed-page-background);width:100%;height:100%;overflo
 
 /* Theme previews keep their changing surfaces, with the current tile's accent. */
 #theme-product{--color-primary:var(--embed-logo-color)!important;--color-primary-content:var(--embed-content-color,var(--color-base-100))!important}
+
+/* Compact crop of the original pixel reveal, without the film caption. */
+#root[data-logo-only] .identity p{display:none}
+
+/* The welcome avatar keeps only its colored circle, without launcher shadows. */
+#root[data-chatbot-only] #dashboard-chatbot>button{box-shadow:none!important;filter:none!important;transition:none!important}

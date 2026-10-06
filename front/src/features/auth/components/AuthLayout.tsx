@@ -1,6 +1,10 @@
+import AuthChatbotProvider from "./AuthChatbotProvider";
+import AuthLogoCaption from "./AuthLogoCaption";
+import { motion, useReducedMotion } from "motion/react";
+import AuthAnimatedLogo from "./AuthAnimatedLogo";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { useContext, useEffect, useState, type PropsWithChildren } from "react";
+import { useContext, useEffect, useMemo, useRef, useState, type PropsWithChildren } from "react";
 import { LoaderCircle, Sun, Moon, LogOut } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -14,16 +18,27 @@ import { cn } from "../../../utils/cn";
 import ReleaseNotesModal from "../../../components/UI/ReleaseNotesModal";
 import { currentRelease } from "../../../config/release-notes";
 import { AuthHeaderActionContext } from "./AuthHeaderActionContext";
+import { AuthIntroContext } from "./AuthIntroContext";
+import { AuthChatbotTransitionContext, type ChatbotMemory, type ChatbotMemoryAccess } from "./AuthChatbotTransitionContext";
 
 const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupStyle?: boolean }>) => {
+  const reduceMotion = useReducedMotion();
+  const chatbotPosition = useRef<ChatbotMemory>({ position: null, gesture: null });
+  const chatbotMemory = useMemo<ChatbotMemoryAccess>(() => ({
+    getPosition: () => chatbotPosition.current.position,
+    setPosition: position => { chatbotPosition.current.position = position; },
+    getGesture: () => chatbotPosition.current.gesture,
+    setGesture: gesture => { chatbotPosition.current.gesture = gesture; },
+  }), []);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { isLoggedIn, isLoading, logout } = useContext(AuthContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const [headerActionHost, setHeaderActionHost] = useState<HTMLDivElement | null>(null);
+  const { pathname } = useLocation();
+  const [introActive, setIntroActive] = useState(() => pathname === "/init" || pathname === "/student/onboarding" || pathname === "/staff/onboarding");
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const isStudentOnboarding = pathname === "/student/onboarding";
   const isStaffOnboarding = pathname === "/staff/onboarding";
   const isOnboarding = isStudentOnboarding || isStaffOnboarding;
@@ -32,6 +47,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const isAdminInit = pathname === "/init";
   const hasSetupLayout = isAdminInit || pathname === "/confirm-email" || setupStyle;
   const isOnboardingLayout = isOnboarding || isInstanceSetup || isAccountActivation || hasSetupLayout;
+  const fullIntro = introActive && (isAdminInit || isOnboarding) && !reduceMotion;
   const showOrganizationName =
     pathname === "/login" || pathname === "/reset-password";
   const shouldLoadBranding = showOrganizationName || isOnboarding;
@@ -77,8 +93,10 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
 
   return (
     <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isOnboardingLayout ? "py-4 lg:items-center lg:py-0" : "py-12")}>
-      <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
-        <div className={cn("relative flex flex-col items-center px-8 w-full h-full", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}>
+      <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full overflow-x-clip", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
+        <div
+          className={cn("relative flex flex-col items-center px-8 w-full h-full transition-transform duration-1100 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none", fullIntro ? "lg:translate-x-1/2" : "lg:translate-x-0", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}
+        >
           <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
             <div ref={setHeaderActionHost} className="contents" />
             {isOnboardingLayout && isLoggedIn && (
@@ -122,19 +140,29 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               <div
                 className={cn("flex select-none flex-col items-center gap-2", isAdminInit ? "mb-10" : "mb-8")}
               >
-                <img
-                  className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
-                  src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
-                  alt="logo ANDRIA"
-                />
-                <span className="mt-2 max-w-xs text-center text-xs font-semibold text-base-content">
-                  Apprentissage Numérique & Développement Renforcé par
-                  Intelligence Artificielle
-                </span>
+                {pathname === "/login" ? (
+                  <div className="mt-20"><AuthAnimatedLogo /></div>
+                ) : (
+                  <img
+                    className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
+                    src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
+                    alt="logo ANDRIA"
+                  />
+                )}
+                {pathname === "/login" ? <AuthLogoCaption /> : (
+                  <span className="mt-2 max-w-xs text-center text-xs font-semibold text-base-content">
+                    Apprentissage Numérique & Développement Renforcé par Intelligence Artificielle
+                  </span>
+                )}
               </div>
             )}
 
-            <div className="relative flex min-h-0 w-full flex-1 flex-col">
+            <motion.div
+              className="relative flex min-h-0 w-full flex-1 flex-col"
+              initial={pathname === "/login" && !reduceMotion ? { opacity: 0, y: 24 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : 0.15 }}
+            >
               {pathname === "/login" && (isLoading || isLoggedIn) && (
                 <div className="absolute inset-0 z-20 flex items-start justify-center bg-base-100/90 pt-36" role="status" aria-live="polite">
                   <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-base-content">
@@ -144,9 +172,13 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 </div>
               )}
               <AuthHeaderActionContext value={headerActionHost}>
-                {children ?? <LoginGuard />}
+                <AuthIntroContext value={setIntroActive}>
+                  <AuthChatbotTransitionContext value={chatbotMemory}>
+                  <AuthChatbotProvider>{children ?? <LoginGuard />}</AuthChatbotProvider>
+                  </AuthChatbotTransitionContext>
+                </AuthIntroContext>
               </AuthHeaderActionContext>
-            </div>
+            </motion.div>
 
             {isOnboarding && (
               <div className="absolute inset-x-0 top-full mt-2 flex min-h-8 select-none items-center justify-center gap-4" aria-label="Partenaires de la plateforme">
@@ -197,7 +229,16 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
         </div>
 
         {/* Colonne Droite */}
-        <LoginRightColumn background={background} isFailed={isFailed} alignTop={isOnboardingLayout} />
+        <motion.div
+          className="hidden min-w-0 overflow-hidden lg:block"
+          initial={false}
+          animate={{ opacity: fullIntro ? 0 : 1, x: fullIntro ? "100%" : "0%" }}
+          transition={{ duration: reduceMotion || fullIntro ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}
+          inert={fullIntro}
+          aria-hidden={fullIntro || undefined}
+        >
+          <LoginRightColumn background={background} isFailed={isFailed} alignTop={isOnboardingLayout} />
+        </motion.div>
       </div>
       {showReleaseNotes && (
         <ReleaseNotesModal onClose={() => setShowReleaseNotes(false)} />

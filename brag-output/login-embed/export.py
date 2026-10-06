@@ -31,5 +31,14 @@ html=html.replace('<title>ANDRIA LXP — Présentation produit</title>','<title>
 (OUT/'index.html').write_text(html)
 for name,target in [('lxp.css','theme.css'),('gsap.min.js','gsap.min.js'),('MorphSVGPlugin.min.js','MorphSVGPlugin.min.js')]:shutil.copyfile(SOURCE/'assets'/name,OUT/target)
 (OUT/'player.js').write_text('const sequences='+json.dumps(sequences)+';\nconst opening='+json.dumps(intro)+';\n'+(HERE/'player.js').read_text())
+# Small brand frames reuse the original SVG geometry without parsing the film,
+# theme bundle, dashboard fixtures or unrelated GSAP tweens at startup.
+source_html=(SOURCE/'index.html').read_text()
+identity=re.search(r'<section\b[^>]*\bid="identity"[^>]*>.*?</section>',source_html,re.S).group()
+chatbot_svg=re.search(r'id="dashboard-chatbot".*?(<svg\b.*?</svg>)',source_html,re.S).group(1)
+brand_body=identity+'<section id="dashboards" class="scene"><div id="dashboard-chatbot"><button type="button" tabindex="-1">'+chatbot_svg+'</button></div></section>'
+(OUT/'brand.html').write_text('<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Animation ANDRIA</title><link rel="stylesheet" href="brand.css"><script src="gsap.min.js"></script></head><body><div id="root">'+brand_body+'</div><script src="brand-timeline.js"></script><script src="player.js"></script></body></html>')
+(OUT/'brand.css').write_text((HERE/'brand.css').read_text()+'\n'+(HERE/'player.css').read_text())
+shutil.copyfile(HERE/'brand-timeline.js',OUT/'brand-timeline.js')
 (OUT/'manifest.json').write_text(json.dumps({'sourceSha256':hashlib.sha256((SOURCE/'index.html').read_bytes()).hexdigest(),'sequences':sequences,'opening':intro},indent=2)+'\n')
 print('Exported current Hyperframes edit to',OUT.relative_to(PROJECT))

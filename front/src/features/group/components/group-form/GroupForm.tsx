@@ -12,6 +12,7 @@ import type { GroupFormValues } from "../../group.schema";
 import { cn } from "../../../../utils/cn";
 import type Group from "../../../../utils/interfaces/group";
 import GroupTeachers from "./GroupTeachers";
+import GroupCreationTeachers from "./GroupCreationTeachers";
 
 type Props = {
   form: UseFormReturn<GroupFormValues>;
@@ -79,7 +80,7 @@ const GroupForm = ({
             <FromParcoursWarning parcoursId={Number(fromParcours)} />
           )}
         </div>
-        {isEditing && <GroupTeachers group={existingGroup} />}
+        {isEditing ? <GroupTeachers group={existingGroup} /> : <GroupCreationTeachers />}
       </PageWrapper>
       {children}
     </FormProvider>

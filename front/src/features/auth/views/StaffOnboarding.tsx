@@ -1,13 +1,13 @@
+import AuthOnboardingBrand from "../components/AuthOnboardingBrand";
+import AuthOnboardingChatbot from "../components/AuthOnboardingChatbot";
+import { useAuthIntro } from "../hooks/useAuthIntro";
 import { useContext, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useNavigation } from "react-router";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { LoaderCircle, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
-import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
-import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { AuthContext } from "../../../store/AuthProvider";
-import { ThemeContext } from "../../../store/ThemeProvider";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 import ReleaseNotesCard from "../../../components/UI/ReleaseNotesCard";
 import WelcomeActions from "../components/WelcomeActions";
@@ -15,12 +15,11 @@ import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
 import DropoutPreferencesForm from "../../dashboard-ia/components/DropoutPreferencesForm";
 import { dashboardIAApi } from "../../dashboard-ia/api/dashboardIA.api";
 import { staffOnboardingApi } from "../api/staff-onboarding.api";
-import Loader from "../../../components/loaders/Loader";
+import AuthIntroLoading from "../components/AuthIntroLoading";
 import { cn } from "../../../utils/cn";
 
 export default function StaffOnboarding() {
   const { user } = useContext(AuthContext);
-  const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const navigation = useNavigation();
   const client = useQueryClient();
@@ -45,8 +44,10 @@ export default function StaffOnboarding() {
     ? adminStatus.data?.required
     : teacherStatus.data?.onboardingRequired;
 
+  const showIntro = useAuthIntro(step === 0 && required === true);
+
   if (admin ? adminStatus.isPending : teacherStatus.isPending)
-    return <Loader />;
+    return <AuthIntroLoading />;
   if (admin ? adminStatus.isError : teacherStatus.isError)
     return (
       <div role="alert" className="m-auto flex flex-col items-center gap-3">
@@ -101,49 +102,32 @@ export default function StaffOnboarding() {
   return (
     <LayoutGroup>
       <div className="flex min-h-0 w-full flex-1 flex-col">
-        <motion.div
-          layout
-          transition={{
-            duration: reduceMotion ? 0 : 0.55,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className={
-            cn(isWelcome
-              ? "mb-12 mt-[clamp(5rem,15vh,10rem)] flex flex-col items-center gap-2 text-center"
-              : "mb-10 mt-0 flex flex-col items-center gap-2 text-center")
-          }
-        >
-          <img
-            className="h-auto w-56"
-            src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
-            alt="logo ANDRIA"
-          />
-          <span className="mt-2 max-w-xs text-xs font-semibold text-base-content">
-            Apprentissage Numérique &amp; Développement Renforcé par
-            Intelligence Artificielle
-          </span>
-        </motion.div>
-        {isWelcome ? (
+        <AuthOnboardingBrand
+          intro={showIntro}
+          className={cn(!showIntro && (isWelcome ? "mb-12 mt-[clamp(5rem,15vh,10rem)]" : "mb-10"))}
+        />
+        {showIntro ? null : isWelcome ? (
           <motion.section
             className="flex w-full flex-1 flex-col text-center"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="mx-auto max-w-md">
               <h1 className="text-2xl font-bold">Bienvenue sur ANDRIA</h1>
-              <p className="mt-5 text-sm leading-6 text-base-content/70">
-                {admin
+              <AuthOnboardingChatbot introduction={false} compact message={admin
                   ? "Préparez votre espace d’administration en choisissant votre thème. Vous pourrez le modifier plus tard depuis votre profil."
-                  : "Personnalisez votre espace et choisissez si vous souhaitez activer l’analyse automatique du décrochage pour vos parcours."}
-              </p>
+                  : "Personnalisez votre espace et choisissez si vous souhaitez activer l’analyse automatique du décrochage pour vos parcours."} />
             </div>
-            <button
+            <motion.button
+              initial={reduceMotion ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
               type="button"
               className={cn("btn btn-primary mx-auto mt-9 w-full gap-2 rounded-lg", admin ? "max-w-md" : "max-w-xs")}
               onClick={() => setStep(1)}
             >
               Commencer <ArrowRight className="size-4" />
-            </button>
+            </motion.button>
             {admin ? (
               <div className="mx-auto w-full max-w-md">
                 <WelcomeActions />
@@ -197,11 +181,7 @@ export default function StaffOnboarding() {
                     <h1 className="text-2xl font-bold">
                       Suivi de vos apprenants
                     </h1>
-                    <p className="mt-2 text-sm text-base-content/70">
-                      Repérez les groupes qui pourraient avoir besoin d’un
-                      accompagnement. Choisissez les alertes et les
-                      récapitulatifs que vous souhaitez recevoir.
-                    </p>
+                    <AuthOnboardingChatbot introduction={false} compact message="Repérez les groupes qui pourraient avoir besoin d’un accompagnement. Choisissez les alertes et les récapitulatifs que vous souhaitez recevoir." />
                   </div>
                   {teacherStatus.data && (
                     <DropoutPreferencesForm

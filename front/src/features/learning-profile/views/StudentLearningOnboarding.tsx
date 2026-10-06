@@ -1,3 +1,6 @@
+import AuthOnboardingBrand from "../../auth/components/AuthOnboardingBrand";
+import AuthOnboardingChatbot from "../../auth/components/AuthOnboardingChatbot";
+import { useAuthIntro } from "../../auth/hooks/useAuthIntro";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFormField } from "../../../components/form/useFormField";
@@ -6,7 +9,7 @@ import {
   onboardingStepSchema,
   type OnboardingValues,
 } from "../onboarding.schema";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
@@ -23,15 +26,12 @@ import {
   motion,
   useReducedMotion,
 } from "motion/react";
-import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
-import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { ThemeContext } from "../../../store/ThemeProvider";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
 import { profileApi } from "../../profile/api/profile.api";
 import ThemeSelectionStep from "../ThemeSelectionStep";
-import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
+import AuthIntroLoading from "../../auth/components/AuthIntroLoading";
 import { paceOptions, preferenceOptions } from "../learning-choice-options";
 import {
   LevelChoiceButtons,
@@ -60,7 +60,6 @@ const availablePreferenceValues = new Set(
 );
 
 export default function StudentLearningOnboarding() {
-  const { theme } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -133,8 +132,11 @@ export default function StudentLearningOnboarding() {
   const [levels, setLevels] = useFormField(form, "levels");
   const [saving, setSaving] = useState(false);
   const [started, setStarted] = useState(false);
-  const [introFinished, setIntroFinished] = useState(false);
   const [welcomeStarted, setWelcomeStarted] = useState(false);
+  const showIntro = useAuthIntro(
+    context?.onboardingMode === "initial" && context.onboardingRequired &&
+    !context.profile.currentStep && !welcomeStarted,
+  );
   const [hobbies, setHobbies] = useFormField(form, "hobbies");
   const [links, setLinks] = useFormField(form, "links");
   const [profileInformation, setProfileInformation] = useState<Record<
@@ -202,28 +204,13 @@ export default function StudentLearningOnboarding() {
     }
   }, [context, started, steps, setPace, setPreferences, setLevels]);
 
-  useEffect(() => {
-    if (
-      reduceMotion ||
-      context?.onboardingMode !== "initial" ||
-      !context.onboardingRequired ||
-      context.profile.currentStep
-    )
-      return;
-    const timer = window.setTimeout(() => setIntroFinished(true), 900);
-    return () => window.clearTimeout(timer);
-  }, [
-    context?.onboardingMode,
-    context?.onboardingRequired,
-    context?.profile.currentStep,
-    reduceMotion,
-  ]);
+
 
   useEffect(() => {
     if (contentScrollRef.current) contentScrollRef.current.scrollTop = 0;
   }, [index]);
 
-  if (query.isLoading) return <LearningChoiceCardsPlaceholder />;
+  if (query.isLoading) return <AuthIntroLoading />;
   if (query.isError) {
     return (
       <AuthPageWrapper title="Personnalisons votre parcours">
@@ -245,12 +232,6 @@ export default function StudentLearningOnboarding() {
     return <Navigate to="/student/dashboard" replace />;
   }
 
-  const showIntro =
-    context.onboardingMode === "initial" &&
-    !context.profile.currentStep &&
-    !welcomeStarted &&
-    !reduceMotion &&
-    !introFinished;
   const isAdditional = context.onboardingMode === "additional";
   const showWelcome =
     !welcomeStarted &&
@@ -438,43 +419,17 @@ export default function StudentLearningOnboarding() {
     <LayoutGroup>
       <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-4 pb-[9px]">
         {context.onboardingMode === "initial" && (
-          <motion.div
-            layout
-            transition={{
-              duration: reduceMotion ? 0 : 0.9,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className={
-              cn(showIntro
-                ? "my-auto flex flex-col items-center gap-2 text-center"
-                : showWelcome
-                  ? "mb-5 mt-[clamp(2.5rem,7vh,6rem)] flex flex-col items-center gap-2 text-center"
-                  : "mb-3 flex flex-col items-center gap-2 text-center")
-            }
-          >
-            <motion.img
-              className="h-auto w-56"
-              src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
-              alt="logo ANDRIA"
-              initial={reduceMotion ? false : { opacity: 0, scale: 0.82 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: reduceMotion ? 0 : 5,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            />
-            <span className="mt-2 max-w-xs text-xs font-semibold text-base-content">
-              Apprentissage Numérique &amp; Développement Renforcé par
-              Intelligence Artificielle
-            </span>
-          </motion.div>
+          <AuthOnboardingBrand
+            intro={showIntro}
+            className={cn(!showIntro && (showWelcome ? "mb-5 mt-[clamp(2.5rem,7vh,6rem)]" : "mb-3"))}
+          />
         )}
         {showIntro ? null : showWelcome ? (
           <motion.section
             className={cn("flex w-full flex-1 flex-col text-center", isAdditional ? "mb-[clamp(1rem,6vh,3rem)] overflow-y-auto py-5" : "")}
             initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.5 }}
+            transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="mx-auto w-full max-w-md">
               <h1 className="text-2xl font-bold text-base-content sm:text-3xl">
@@ -494,11 +449,9 @@ export default function StudentLearningOnboarding() {
                   </>
                 )}
               </h1>
-              <p className="mt-2 text-sm leading-5 text-base-content/70 sm:text-base sm:leading-6">
-                {isAdditional
+              <AuthOnboardingChatbot introduction={false} compact message={isAdditional
                   ? `${additionalWelcome.description} Indiquez votre niveau dans les nouveaux modules pour adapter votre apprentissage.`
-                  : "Votre parcours commence ici. Personnalisez votre expérience d'apprentissage."}
-              </p>
+                  : "Votre parcours commence ici. Personnalisez votre expérience d'apprentissage."} />
             </div>
             <div
               className={
@@ -693,10 +646,7 @@ export default function StudentLearningOnboarding() {
                     <h1 id="learning-pace-title" className="text-2xl font-bold">
                       Quel rythme préférez-vous ?
                     </h1>
-                    <p className="mt-2 text-sm leading-5 text-base-content/65">
-                      Choisissez la proposition qui vous convient. Vous pourrez
-                      la modifier plus tard.
-                    </p>
+                    <AuthOnboardingChatbot introduction={false} compact message="Choisissez la proposition qui vous convient. Vous pourrez la modifier plus tard." />
                   </div>
                   <SingleChoiceCards
                     name="pace"
@@ -720,10 +670,7 @@ export default function StudentLearningOnboarding() {
                     >
                       Quelles méthodes vous aident à apprendre ?
                     </h1>
-                    <p className="mt-2 text-sm leading-5 text-base-content/70">
-                      Choisissez les approches qui vous aident à comprendre et à
-                      progresser.
-                    </p>
+                    <AuthOnboardingChatbot introduction={false} compact message="Choisissez les approches qui vous aident à comprendre et à progresser." />
                   </div>
                   <PreferenceCards
                     value={preferences}
@@ -797,12 +744,7 @@ export default function StudentLearningOnboarding() {
                   <h1 className="text-2xl font-bold">
                     Souhaitez-vous en dire un peu plus ?
                   </h1>
-                  <p className="flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                    <span>
-                      Cette étape est entièrement facultative. Vous pouvez la
-                      passer sans rien renseigner.
-                    </span>
-                  </p>
+                  <AuthOnboardingChatbot introduction={false} compact message="Cette étape est entièrement facultative. Vous pouvez la passer sans rien renseigner." />
                   <ProfileItemsEditor
                     hobbies={hobbies}
                     links={links}

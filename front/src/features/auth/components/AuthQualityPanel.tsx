@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, Minimize, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import AuthQualityLogo from "./AuthQualityLogo";
 import AuthQualityVideo from "./AuthQualityVideo";
@@ -20,6 +20,13 @@ type Props = {
 };
 
 export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, geometry, reducedMotion, onClose, onTurnChange }: Props) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [fullscreen, setFullscreen] = useState(false);
+  useEffect(() => {
+    const update = () => setFullscreen(document.fullscreenElement === panelRef.current);
+    document.addEventListener("fullscreenchange", update);
+    return () => document.removeEventListener("fullscreenchange", update);
+  }, []);
   const closeButton = useRef<HTMLButtonElement>(null);
   const nextButton = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(() => onClose(quality, colorIndex));
@@ -54,7 +61,7 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
     const previousFocus = document.activeElement as HTMLElement | null;
     closeButton.current?.focus({ preventScroll: true });
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCloseRef.current();
+      if (event.key === "Escape" && !document.fullscreenElement) onCloseRef.current();
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
@@ -65,6 +72,7 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
 
   return (
     <motion.div
+      ref={panelRef}
       role="dialog"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
@@ -100,7 +108,12 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
             }}
           >
             <div className="auth-quality-header relative shrink-0 bg-base-100 p-5 text-base-content">
-              <button ref={closeButton} type="button" className="absolute right-3 top-3 flex size-8 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-base-content transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={() => onClose(activeQuality, activeColorIndex)} aria-label="Fermer les détails"><X className="size-5" /></button>
+              <button ref={closeButton} type="button"
+                className={cn("btn btn-ghost btn-sm absolute right-3 top-3 text-base-content", !fullscreen && "btn-circle")}
+                onClick={() => { if (fullscreen) void document.exitFullscreen(); else onClose(activeQuality, activeColorIndex); }}
+                aria-label={fullscreen ? "Quitter le plein écran" : "Fermer les détails"}>
+                {fullscreen ? <><Minimize className="size-4" aria-hidden="true" />Réduire</> : <X className="size-5" aria-hidden="true" />}
+              </button>
               <button
                 ref={nextButton}
                 type="button"

@@ -1,4 +1,5 @@
 import type { PropsWithChildren, ReactNode } from "react";
+import AuthOnboardingChatbot from "./AuthOnboardingChatbot";
 
 type Props = PropsWithChildren<{
   title: ReactNode;
@@ -31,9 +32,7 @@ const AuthPageWrapper = ({
             {titleAccessory}
           </div>
           {description && (
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-base-content/65">
-              {description}
-            </p>
+            <AuthOnboardingChatbot key={typeof description === "string" ? description : undefined} introduction={false} compact message={description} />
           )}
         </header>
         {children}

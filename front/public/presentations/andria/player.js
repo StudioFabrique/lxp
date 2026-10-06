@@ -3,14 +3,20 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
 /* Only local, authored scenes. No network, API, active IA or Studio dependency. */
 (() => {
   const channel = 'andria-auth-presentation';
-  const timeline = window.__timelines?.main;
+  let timeline = window.__timelines?.main;
   const root = document.getElementById('root');
   const allScenes = [...document.querySelectorAll('section.scene')];
   const params = new URLSearchParams(location.search);
   const quality = params.get('quality') ?? '0';
   const qualityIndex = Number(quality);
   const sequence = sequences[/^(0|[1-9]\d*)$/.test(quality) && Number.isSafeInteger(qualityIndex) && qualityIndex < sequences.length ? qualityIndex : 0];
-  const clips = [...sequence, opening];
+  const logoOnly = params.get('mode') === 'logo';
+  const chatbotOnly = params.get('mode') === 'chatbot';
+  const dashboard = sequences.flat().find(clip => clip.id === 'dashboards');
+  const chatbotClip = dashboard && {id: dashboard.id, start: dashboard.start + dashboard.duration - 2.4, duration: 2.4};
+  if (logoOnly) root.dataset.logoOnly = 'true';
+  if (chatbotOnly) root.dataset.chatbotOnly = 'true';
+  const clips = logoOnly ? [opening] : chatbotOnly && chatbotClip ? [chatbotClip] : sequence;
   const duration = clips.reduce((total, clip) => total + clip.duration, 0);
   let elapsed = 0;
   let lastFrame = null;
@@ -18,12 +24,27 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   let playing = false;
   let initialized = false;
   let showingOutro = false;
+  let activeSceneId = null;
   const notify = state => parent.postMessage({channel, state}, '*');
   const fit = () => {
-    const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
-    root.style.transform = `scale(${scale})`;
-    root.style.left = `${(innerWidth - 1920 * scale) / 2}px`;
-    root.style.top = `${(innerHeight - 1080 * scale) / 2}px`;
+    if (chatbotOnly) {
+      // Crop the existing launcher from the final dashboard greeting.
+      const scale = Math.min(innerWidth / 320, innerHeight / 320);
+      root.style.zoom = String(scale);
+      root.style.transform = 'none';
+      root.style.left = `${innerWidth / (2 * scale) - 1390}px`;
+      root.style.top = `${innerHeight / (2 * scale) - 610}px`;
+      return;
+    }
+    const scale = Math.min(innerWidth / (logoOnly ? 900 : 1920), innerHeight / (logoOnly ? 280 : 1080));
+    // Render text and nested 3D cards at the viewport's resolution instead of
+    // shrinking already rasterized layers. Zoom also scales positioned offsets.
+    const useZoom = CSS.supports('zoom', '1');
+    root.style.zoom = useZoom ? String(scale) : '1';
+    root.style.transform = useZoom ? 'none' : `scale(${scale})`;
+    const offsetScale = useZoom ? scale : 1;
+    root.style.left = `${(innerWidth - 1920 * scale) / (2 * offsetScale)}px`;
+    root.style.top = `${(innerHeight - 1080 * scale) / (2 * offsetScale)}px`;
   };
   const paint = () => {
     let local = elapsed;
@@ -38,7 +59,10 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     const outro = active.id === opening.id;
     // Skip the empty lead-in, retaining the block construction itself.
     const offset = outro ? Math.min(local + .08, 2.1) : Math.min(local, active.duration - .001);
-    for (const scene of allScenes) scene.style.display = scene.id === active.id ? 'block' : 'none';
+    if (activeSceneId !== active.id) {
+      for (const scene of allScenes) scene.style.display = scene.id === active.id ? 'block' : 'none';
+      activeSceneId = active.id;
+    }
     timeline.totalTime(active.start + offset, true);
     if (outro !== showingOutro) {
       showingOutro = outro;
@@ -58,7 +82,7 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   const play = () => {
     if (playing) return;
     if (elapsed >= duration) elapsed = 0;
-    playing = true;lastFrame = null;notify(elapsed >= duration - opening.duration ? 'outro' : 'playing');frame = requestAnimationFrame(tick);
+    playing = true;lastFrame = null;notify(logoOnly ? 'outro' : 'playing');frame = requestAnimationFrame(tick);
   };
   const tint = (value, contentColor, backgroundColor, textColor) => {
     const valid = color => typeof color === 'string' && color.length < 120 && CSS.supports('color',color);
@@ -85,15 +109,26 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   };
   window.addEventListener('message',event => {
     if (event.source !== parent || !event.data || typeof event.data !== 'object' || event.data.channel !== channel) return;
-    const {action,color,contentColor,backgroundColor,textColor,autoplay} = event.data;
+    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme} = event.data;
+    if (colorScheme === 'light' || colorScheme === 'dark') document.documentElement.style.colorScheme = colorScheme;
     if (action === 'initialize') {
       tint(color,contentColor,backgroundColor,textColor);
       // Reveal only after the parent palette and selected scene are painted.
       if (!initialized) { initialized = true; elapsed = autoplay === true ? 0 : duration;paint();root.style.visibility = 'visible';autoplay === true ? play() : pause('ended'); }
     } else if (action === 'color') tint(color,contentColor,backgroundColor,textColor);
     else if (action === 'play') play();
-    else if (action === 'pause') pause();
-    else if (action === 'replay') {elapsed = 0;play();}
+    else if (action === 'pause') {
+      if (logoOnly) {elapsed = duration;paint();}
+      pause();
+    }
+    else if (action === 'replay') {
+      if (chatbotOnly && ['wave','nod','look','double-blink'].includes(gesture) && window.__createBrandTimeline) {
+        timeline.totalTime(0, true);
+        timeline.kill();
+        timeline = window.__createBrandTimeline(gesture);
+      }
+      elapsed = 0;paint();play();
+    }
   });
   window.addEventListener('resize',fit);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});

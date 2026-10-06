@@ -27,7 +27,7 @@ const presentationTopics: readonly string[] = [
   "Accomplissements, félicitations et journal",
 ];
 
-/** Plays the actual Hyperframes scenes, ending on their original opening logo. */
+/** Plays the actual Hyperframes feature scenes. */
 export default function AuthQualityVideo({ quality, label, colorIndex, reducedMotion, onEnded }: Props) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<HTMLElement>(null);
@@ -63,7 +63,7 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
       setLoaded(true);
       setState(result.data.state);
       if (result.data.state === "ready") send("initialize");
-      if (result.data.state === "playing" || result.data.state === "outro") {
+      if (result.data.state === "playing") {
         playedRef.current = true;
         if (completionTimer.current) clearTimeout(completionTimer.current);
         completionTimer.current = null;
@@ -126,7 +126,7 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
 
   const failed = state === "error";
   const finished = state === "ended";
-  const canReplay = finished || state === "outro";
+  const canReplay = finished;
   const playing = state === "playing";
   return (
     <figure ref={playerRef} className={cn("auth-quality-video relative flex h-full min-h-0 flex-col gap-3", fullscreen && "bg-base-100 text-base-content")}>
@@ -150,10 +150,10 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
             {canReplay ? <RotateCcw className="size-4" aria-hidden="true" /> : playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
             {canReplay ? "Rejouer" : playing ? "Pause" : "Lire"}
           </button>}
-          <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded || failed} aria-label={fullscreen ? "Quitter le plein écran" : "Plein écran"} onClick={() => void toggleFullscreen()}>
+          {!(fullscreen && document.fullscreenElement?.hasAttribute("data-auth-quality-player")) && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded || failed} aria-label={fullscreen ? "Quitter le plein écran" : "Plein écran"} onClick={() => void toggleFullscreen()}>
             {fullscreen ? <Minimize className="size-4" aria-hidden="true" /> : <Maximize className="size-4" aria-hidden="true" />}
             <span className="hidden sm:inline">{fullscreen ? "Réduire" : "Plein écran"}</span>
-          </button>
+          </button>}
         </div>
       </figcaption>
       {fullscreenError && <p role="alert" className="text-xs">Le plein écran est indisponible dans ce navigateur. Vous pouvez poursuivre la lecture ici.</p>}

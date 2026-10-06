@@ -38,6 +38,7 @@ export default function OnboardingProgressPanel({
 
   return (
     <section
+      data-onboarding-panel
       className={cn(
         "relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl border p-5 sm:p-7",
         theme === "dark"

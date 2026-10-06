@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { ThemeContext } from "../../store/ThemeProvider";
 import { themeLabels } from "../../config/themes";
 import { cn } from "../../utils/cn";
+import AuthOnboardingChatbot from "../auth/components/AuthOnboardingChatbot";
 
 export default function ThemeSelectionStep() {
   const { chooseTheme, availableLightThemes, availableDarkThemes } =
@@ -15,9 +16,7 @@ export default function ThemeSelectionStep() {
     <div className="space-y-4 px-1 py-1">
       <div>
         <h1 className="text-2xl font-bold">Choisissez votre thème</h1>
-        <p className="mt-2 flex items-end text-sm leading-5 text-base-content/65">
-          Vous pourrez toujours les modifier depuis votre profil.
-        </p>
+        <AuthOnboardingChatbot introduction={false} compact message="Vous pourrez toujours les modifier depuis votre profil." />
       </div>
       {(
         [

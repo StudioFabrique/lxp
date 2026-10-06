@@ -104,7 +104,7 @@ describe("StudentLearningOnboarding", () => {
     });
     context.availableFormations[0].parcours[0].modules = context.availableFormations[0].parcours[0].modules.slice(1);
     await render(context);
-    expect(container.textContent).toContain("Vous avez été ajouté à un nouveau parcours");
+    expect(document.body.textContent).toContain("Vous avez été ajouté à un nouveau parcours");
     expect(Array.from(container.querySelectorAll("dl dt"), (item) => item.textContent))
       .toEqual(["Formation", "Parcours", "Groupe"]);
     expect(Array.from(container.querySelectorAll("dl dd"), (item) => item.textContent))
@@ -155,7 +155,7 @@ describe("StudentLearningOnboarding", () => {
     const context = makeContext("additional");
     context.availableFormations[0].parcours[0].modules = context.availableFormations[0].parcours[0].modules.slice(0, count + 1);
     await render(context);
-    expect(container.textContent).toContain(count === 1
+    expect(document.body.textContent).toContain(count === 1
       ? "Un nouveau module a été ajouté à votre parcours."
       : "De nouveaux modules ont été ajoutés à vos parcours.");
     expect(container.textContent).not.toContain("Vous avez été ajouté à un nouveau parcours");
@@ -174,7 +174,7 @@ describe("StudentLearningOnboarding", () => {
     });
     await render(context);
     expect(container.textContent).toContain("De nouveaux contenus vous attendent");
-    expect(container.textContent).toContain("de nouveaux modules sont disponibles dans vos parcours actuels");
+    expect(document.body.textContent).toContain("de nouveaux modules sont disponibles dans vos parcours actuels");
     expect(container.textContent).toContain("Nouveau parcours");
   });
 

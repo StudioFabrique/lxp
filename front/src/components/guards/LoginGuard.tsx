@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
-import Loader from "../loaders/Loader";
+import AuthIntroLoading from "../../features/auth/components/AuthIntroLoading";
 import LoginLoadingSkeleton from "../../features/auth/components/LoginLoadingSkeleton";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
 import { useDemoMode } from "../../store/DemoContext";
@@ -51,10 +51,8 @@ const LoginGuard = () => {
   }, [isLoggedIn]);
 
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked)) {
-    if (location.pathname !== "/init") return <LoginLoadingSkeleton />;
-    return (
-      <Loader variant="rows" label="Vérification de l'instance" className="my-10" />
-    );
+    if (location.pathname === "/init" || isStudentOnboardingRoute || isStaffOnboardingRoute) return <AuthIntroLoading />;
+    return <LoginLoadingSkeleton />;
   }
 
   if (isLoggedIn && user && isInstanceSetupRoute) {
