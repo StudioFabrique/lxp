@@ -20,6 +20,7 @@ export default function AuthChatbotAvatar({ gesture, compact, replaySignal, intr
   return (
     <button
       ref={buttonRef}
+      data-chatbot-avatar
       type="button"
       className={cn("shrink-0 border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary", introduction ? "cursor-pointer" : "cursor-grab touch-none active:cursor-grabbing")}
       aria-label={introduction ? "Rejouer le salut du chatbot ANDRIA" : "Afficher les questions d’aide du chatbot ANDRIA"}

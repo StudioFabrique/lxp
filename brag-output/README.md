@@ -47,7 +47,7 @@ Le nouvel export MP4 attend la revue de cette timeline, conformément au workflo
 
 Les sources actuelles reprennent les retouches enregistrées dans Studio. `presentation.py` reste le générateur historique : ne pas le relancer sur ces sources. Après une retouche Studio, réconcilier les sources avant `build.py`, puis lancer `python3 brag-output/login-embed/export.py` depuis la racine.
 
-Dernières retouches : logo continu révélé par un masque de cases animé sans traits visibles, sept niveaux pédagogiques en 14 secondes avec transitions 3D, icône Rocket pour Parcours, morphing des humeurs avec curseur et profondeur, calendrier sans Timeline, suggestion de quiz dans le flux du chatbot, curseurs contextuels sur les scènes interactives.
+Dernières retouches : logo continu révélé par un masque de cases animé sans traits visibles, sept niveaux pédagogiques en 19 secondes (rythme ralenti ; les scènes suivantes commencent 5 s plus tard que les temps cités plus bas), ouverts par une pyramide 3D des niveaux (3,2 à 6,8 s) et un rail en escalier qui matérialise l’imbrication, puis parcourus carte par carte : chaque carte enfant sort de la ligne cliquée, les parents reculent en pile derrière elle et le niveau courant du rail s’avance en 3D sur une couche de verre, icône Rocket pour Parcours, morphing des humeurs avec curseur et profondeur, calendrier sans Timeline, suggestion de quiz dans le flux du chatbot, curseurs contextuels sur les scènes interactives.
 
 La scène `dashboards` construit les espaces apprenant et pédagogique pendant 13 secondes : sidebar réelle pré-rendue via `SidebarItem` et `sidebarItems`, passage compact/complet, caméra continue sans rebonds, cartes dévoilées progressivement. Les badges DaisyUI indiquent les rôles avec les icônes Lucide du LXP. Les clics superflus ont été retirés ; les clics du chatbot et du calendrier ouvrent des aperçus. La hiérarchie comporte six clics sur la droite, avec des lignes différentes et de courts déplacements locaux.
 
@@ -94,4 +94,30 @@ et les confettis, puis ouvre son journal. Le journal est pré-rendu depuis
 la configuration du bouton de feedback ; la pluie de confettis côté apprenant
 est déterministe et pilotée par GSAP pour conserver les seeks et le replay.
 Aucun événement Socket.IO ni félicitation réelle n’est envoyé.
-La composition complète dure 196,5 secondes.
+La composition complète dure 201,5 secondes.
+
+Toutes les scènes produit reprennent l’empilement de la séquence des niveaux :
+chaque panneau se pose depuis l’avant avec une légère rotation dans le plan,
+puis reste parfaitement à plat (aucune inclinaison pendant la lecture). Les
+éléments secondaires (pastilles de fonctionnalités, sous-titres, descriptions
+de lignes, notes) sont masqués en CSS ; les cibles des curseurs restent visibles.
+
+Les badges de rôle en haut des scènes sont masqués ; ceux des cartes restent.
+
+La scène `care` est reconstruite autour du vrai composant `FeelingFeedback`,
+pré-rendu hors ligne par `composition/care-fixture.tsx` (cache de requête
+pré-rempli, aucune session ni socket). Son icône `FeelingLevel` est extrudée en
+10 couches SVG et se transforme (MorphSVG) de « nuageux » à « pluie » quand
+l’apprenant déplace le curseur, puis à « soleil » après la prise en compte de
+l’alerte par l’équipe. Pour reconstruire la fixture depuis `composition/` :
+
+```sh
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-care-fixture.mjs
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-ui.mjs
+```
+
+La scène `dashboards` commence par la sidebar compacte en verre liquide (une
+plaque par couche de profondeur, sans jointure), qui se pose comme une plaque
+puis s’étend avant de retrouver l’apparence réelle ; les cartes du tableau de
+bord se posent ensuite une à une et le chatbot arrive en dernier.
+La suite de la scène est resserrée d’environ 10 % pour conserver ses 13 s.

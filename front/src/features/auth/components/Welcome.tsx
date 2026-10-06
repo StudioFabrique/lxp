@@ -27,6 +27,7 @@ const Welcome = ({ onNext }: Props) => {
       <div className="mx-auto mt-5 w-full max-w-xl">
         <AuthOnboardingChatbot
           introduction={false}
+          compact
           delay={1.1}
           message="Configurez votre plateforme en créant le premier compte. Il vous permettra de gérer les paramètres de l’instance et les accès à ANDRIA."
         />

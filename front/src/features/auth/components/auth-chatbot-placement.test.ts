@@ -18,7 +18,7 @@ describe("emplacement aléatoire du dialogue dans la page", () => {
     for (const random of [0, 0.2, 0.5, 0.8, 0.99]) {
       const point = chooseChatbotPlacement(viewport, size, [obstacle], random);
       expect(point).not.toBeNull();
-      expect(point!.top < 64 || point!.top >= 716).toBe(true);
+      expect(point!.top < 184 || point!.top >= 716).toBe(true);
       expect(point!.left + size.width).toBeLessThanOrEqual(1580);
       expect(point!.top + size.height).toBeLessThanOrEqual(880);
     }
@@ -35,6 +35,29 @@ describe("emplacement aléatoire du dialogue dans la page", () => {
       expect(point?.left).toBe(170);
       expect([220, 330, 440, 550, 660]).toContain(point?.top);
     }
+  });
+
+  it("trouve l’espace libre sous les actions même entre deux ancrages fixes", () => {
+    // Accueil : titre et cartes d’action, dont l’icône décorative dépasse de 27 px.
+    const area = { left: 122, top: 384, width: 576, height: 430 };
+    const obstacles = [
+      { left: 122, top: 384, width: 576, height: 252 },
+      { left: 373, top: 551, width: 112, height: 112 },
+    ];
+    const point = chooseChatbotPlacement(viewport, { width: 420, height: 134 }, obstacles, 0.5, area);
+    // Centré dans la bande libre sous les actions (679 à 814).
+    expect(point).toEqual({ left: 200, top: 679.5 });
+  });
+
+  it("se centre au milieu de l’espace vide entre deux contenus", () => {
+    const area = { left: 72, top: 85, width: 576, height: 600 };
+    const obstacles = [
+      { left: 109, top: 235, width: 502, height: 52 },
+      { left: 109, top: 576, width: 502, height: 40 },
+    ];
+    const point = chooseChatbotPlacement(viewport, { width: 420, height: 100 }, obstacles, 0.5, area);
+    // Bande libre de 303 à 560 : le dialogue en occupe le milieu.
+    expect(point).toEqual({ left: 150, top: 381.5 });
   });
 
   it("choisit un autre point à l’étape suivante, même avec le même tirage", () => {

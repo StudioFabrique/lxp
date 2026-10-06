@@ -10,6 +10,8 @@
     --text-xs--line-height: calc(1 / 0.75);
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
+    --text-base: 1rem;
+    --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
@@ -536,6 +538,111 @@
       grid-row-start: 1;
     }
   }
+  @layer daisyui.l1.l2.l3 {
+    .range {
+      appearance: none;
+      webkit-appearance: none;
+      --range-thumb: var(--color-base-100);
+      --range-thumb-size: calc(var(--size-selector, 0.25rem) * 6);
+      --range-progress: currentColor;
+      --range-fill: 1;
+      --range-p: 0.25rem;
+      --range-bg: currentColor;
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .range {
+        --range-bg: color-mix(in oklab, currentColor 10%, #0000);
+      }
+    }
+    .range {
+      --range-fill-x: calc(
+      (var(--range-dir, 1) * -100cqw) - (var(--range-dir, 1) * var(--range-thumb-size) / 2)
+    );
+      --range-fill-y: 0;
+      --range-fill-spread: calc(100cqw * var(--range-fill));
+      cursor: pointer;
+      overflow: hidden;
+      background-color: transparent;
+      vertical-align: middle;
+      width: clamp(3rem, 20rem, 100%);
+      --radius-selector-max: calc(
+      var(--radius-selector) + var(--radius-selector) + var(--radius-selector)
+    );
+      border-radius: calc(var(--radius-selector) + min(var(--range-p), var(--radius-selector-max)));
+      border: none;
+      height: var(--range-thumb-size);
+    }
+    [dir="rtl"] .range {
+      --range-dir: -1;
+    }
+    .range:focus {
+      outline: none;
+    }
+    .range:focus-visible {
+      outline: 2px solid;
+      outline-offset: 2px;
+    }
+    .range::-webkit-slider-runnable-track {
+      width: 100%;
+      background-color: var(--range-bg);
+      border-radius: var(--radius-selector);
+      height: calc(var(--range-thumb-size) * 0.5);
+    }
+    @media (forced-colors: active) {
+      .range::-webkit-slider-runnable-track {
+        border: 1px solid;
+      }
+      .range::-moz-range-track {
+        border: 1px solid;
+      }
+    }
+    .range::-moz-range-track {
+      width: 100%;
+      background-color: var(--range-bg);
+      border-radius: var(--radius-selector);
+      height: calc(var(--range-thumb-size) * 0.5);
+    }
+    .range::-webkit-slider-thumb {
+      position: relative;
+      box-sizing: border-box;
+      border-radius: calc(var(--radius-selector) + min(var(--range-p), var(--radius-selector-max)));
+      background-color: var(--range-thumb);
+      height: var(--range-thumb-size);
+      width: var(--range-thumb-size);
+      border: var(--range-p) solid;
+      appearance: none;
+      webkit-appearance: none;
+      inset-block-start: 50%;
+      color: var(--range-progress);
+      transform: translateY(-50%);
+      box-shadow: 0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) inset, 0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset, 0 1px currentColor, 0 0 0 2rem var(--range-thumb) inset, var(--range-fill-x) var(--range-fill-y) 0 var(--range-fill-spread);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .range::-webkit-slider-thumb {
+        box-shadow: 0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) inset, 0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset, 0 1px color-mix(in oklab, currentColor calc(var(--depth) * 10%), #0000), 0 0 0 2rem var(--range-thumb) inset, var(--range-fill-x) var(--range-fill-y) 0 var(--range-fill-spread);
+      }
+    }
+    .range::-moz-range-thumb {
+      position: relative;
+      box-sizing: border-box;
+      border-radius: calc(var(--radius-selector) + min(var(--range-p), var(--radius-selector-max)));
+      background-color: currentColor;
+      height: var(--range-thumb-size);
+      width: var(--range-thumb-size);
+      border: var(--range-p) solid;
+      color: var(--range-progress);
+      box-shadow: 0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) inset, 0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset, 0 1px currentColor, 0 0 0 2rem var(--range-thumb) inset, var(--range-fill-x) var(--range-fill-y) 0 var(--range-fill-spread);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .range::-moz-range-thumb {
+        box-shadow: 0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) inset, 0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset, 0 1px color-mix(in oklab, currentColor calc(var(--depth) * 10%), #0000), 0 0 0 2rem var(--range-thumb) inset, var(--range-fill-x) var(--range-fill-y) 0 var(--range-fill-spread);
+      }
+    }
+    .range:disabled {
+      cursor: not-allowed;
+      opacity: 30%;
+    }
+  }
   .absolute {
     position: absolute;
   }
@@ -566,6 +673,134 @@
   .left-\[-2\.3rem\] {
     left: -2.3rem;
   }
+  @layer daisyui.l1.l2.l3 {
+    .textarea {
+      min-height: calc(0.25rem * 20);
+      flex-shrink: 1;
+      appearance: none;
+      border-radius: var(--radius-field);
+      background-color: var(--color-base-100);
+      padding-inline: calc(0.25rem * 3);
+      padding-block: calc(0.25rem * 2);
+      vertical-align: middle;
+      --input-color: var(--color-base-content);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .textarea {
+        --input-color: color-mix(in oklab, var(--color-base-content) 20%, #0000);
+      }
+    }
+    .textarea {
+      width: clamp(3rem, 20rem, 100%);
+      font-size: max(var(--font-size, 0rem), var(--font-size-min, 0.875rem));
+      touch-action: manipulation;
+      border: var(--border) solid var(--input-color, #0000);
+      box-shadow: 0 1px var(--input-color) inset, 0 -1px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset;
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .textarea {
+        box-shadow: 0 1px color-mix(in oklab, var(--input-color) calc(var(--depth) * 10%), #0000) inset, 0 -1px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset;
+      }
+    }
+    .textarea textarea {
+      appearance: none;
+      background-color: transparent;
+      border: none;
+    }
+    .textarea textarea::placeholder {
+      color: var(--color-base-content);
+      opacity: 50%;
+    }
+    .textarea textarea:focus, .textarea textarea:focus-within {
+      --tw-outline-style: none;
+      outline-style: none;
+      @media (forced-colors: active) {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+      }
+    }
+    .textarea:focus {
+      --input-color: var(--color-base-content);
+      box-shadow: 0 1px var(--input-color);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .textarea:focus {
+        box-shadow: 0 1px color-mix(in oklab, var(--input-color) calc(var(--depth) * 10%), #0000);
+      }
+    }
+    .textarea:focus {
+      outline: 2px solid var(--input-color);
+      outline-offset: 2px;
+      isolation: isolate;
+    }
+    @media (pointer: coarse) {
+      @supports (-webkit-touch-callout: none) {
+        .textarea:focus {
+          --font-size: 1rem;
+        }
+      }
+    }
+    .textarea:focus-within {
+      --input-color: var(--color-base-content);
+      box-shadow: 0 1px var(--input-color);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .textarea:focus-within {
+        box-shadow: 0 1px color-mix(in oklab, var(--input-color) calc(var(--depth) * 10%), #0000);
+      }
+    }
+    .textarea:focus-within {
+      outline: 2px solid var(--input-color);
+      outline-offset: 2px;
+      isolation: isolate;
+    }
+    @media (pointer: coarse) {
+      @supports (-webkit-touch-callout: none) {
+        .textarea:focus-within {
+          --font-size: 1rem;
+        }
+      }
+    }
+    .textarea:has( > textarea[disabled]) {
+      cursor: not-allowed;
+      border-color: var(--color-base-200);
+      background-color: var(--color-base-200);
+      color: var(--color-base-content);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .textarea:has( > textarea[disabled]) {
+        color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+      }
+    }
+    .textarea:has( > textarea[disabled]) {
+      box-shadow: none;
+    }
+    .textarea:has( > textarea[disabled])::placeholder, .textarea:has( > textarea[disabled])  ::placeholder {
+      color: var(--color-base-content);
+      opacity: 20%;
+    }
+    .textarea:is(:disabled, [disabled]) {
+      cursor: not-allowed;
+      border-color: var(--color-base-200);
+      background-color: var(--color-base-200);
+      color: var(--color-base-content);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .textarea:is(:disabled, [disabled]) {
+        color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+      }
+    }
+    .textarea:is(:disabled, [disabled]) {
+      box-shadow: none;
+    }
+    .textarea:is(:disabled, [disabled])::placeholder, .textarea:is(:disabled, [disabled])  ::placeholder {
+      color: var(--color-base-content);
+      opacity: 20%;
+    }
+    .textarea:has( > textarea[disabled]) > textarea[disabled] {
+      cursor: not-allowed;
+    }
+  }
   .z-10 {
     z-index: 10;
   }
@@ -577,6 +812,9 @@
   }
   .mx-auto {
     margin-inline: auto;
+  }
+  .my-2 {
+    margin-block: calc(var(--spacing) * 2);
   }
   .mt-1 {
     margin-top: var(--spacing);
@@ -716,6 +954,9 @@
   .cursor-pointer {
     cursor: pointer;
   }
+  .resize-none {
+    resize: none;
+  }
   .flex-col {
     flex-direction: column;
   }
@@ -754,6 +995,9 @@
   }
   .self-center {
     align-self: center;
+  }
+  .self-end {
+    align-self: flex-end;
   }
   .justify-self-end {
     justify-self: flex-end;
@@ -932,6 +1176,10 @@
   .text-left {
     text-align: left;
   }
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
+  }
   .text-lg {
     font-size: var(--text-lg);
     line-height: var(--tw-leading, var(--text-lg--line-height));
@@ -970,6 +1218,12 @@
   }
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+  @layer daisyui.l1.l2 {
+    .range-primary {
+      color: var(--color-primary);
+      --range-thumb: var(--color-primary-content);
+    }
   }
   .text-\(--sidebar-active-content\) {
     color: var(--sidebar-active-content);
@@ -1078,10 +1332,20 @@
       --btn-p: 0.75rem;
       --size: calc(var(--size-field, 0.25rem) * 8);
     }
+    .btn-xs {
+      --fontsize: 0.6875rem;
+      --btn-p: 0.5rem;
+      --size: calc(var(--size-field, 0.25rem) * 6);
+    }
   }
   .select-none {
     -webkit-user-select: none;
     user-select: none;
+  }
+  @layer daisyui.l1.l2 {
+    .range-xs {
+      --range-thumb-size: calc(var(--size-selector, 0.25rem) * 4);
+    }
   }
   .ring-inset {
     --tw-ring-inset: inset;

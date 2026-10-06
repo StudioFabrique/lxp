@@ -23,12 +23,14 @@ import { AuthChatbotTransitionContext, type ChatbotMemory, type ChatbotMemoryAcc
 
 const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupStyle?: boolean }>) => {
   const reduceMotion = useReducedMotion();
-  const chatbotPosition = useRef<ChatbotMemory>({ position: null, gesture: null });
+  const chatbotPosition = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: null });
   const chatbotMemory = useMemo<ChatbotMemoryAccess>(() => ({
     getPosition: () => chatbotPosition.current.position,
     setPosition: position => { chatbotPosition.current.position = position; },
     getGesture: () => chatbotPosition.current.gesture,
     setGesture: gesture => { chatbotPosition.current.gesture = gesture; },
+    getIntroAvatar: () => chatbotPosition.current.introAvatar,
+    setIntroAvatar: rect => { chatbotPosition.current.introAvatar = rect; },
   }), []);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { isLoggedIn, isLoading, logout } = useContext(AuthContext);

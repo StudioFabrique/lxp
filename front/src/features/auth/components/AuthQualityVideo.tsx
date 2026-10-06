@@ -128,6 +128,8 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
   const finished = state === "ended";
   const canReplay = finished;
   const playing = state === "playing";
+  // Position of this feature in the tour of all presentations, when it is one of them.
+  const step = Number.isInteger(quality) && quality >= 0 && quality < presentationTopics.length ? quality + 1 : null;
   return (
     <figure ref={playerRef} className={cn("auth-quality-video relative flex h-full min-h-0 flex-col gap-3", fullscreen && "bg-base-100 text-base-content")}>
       <span ref={colorRef} aria-hidden="true" className="pointer-events-none absolute invisible" style={{ color: authTileColors[colorIndex % authTileColors.length], outlineColor: authTileContentColors[colorIndex % authTileContentColors.length], backgroundColor: "var(--color-base-100)", borderColor: "var(--color-base-content)" }} />
@@ -144,7 +146,14 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
         {failed && <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-base-100 p-4 text-center text-base-content"><p role="alert" className="text-sm">La présentation n’a pas pu démarrer.</p><button type="button" className="btn btn-sm btn-outline" onClick={() => { setLoaded(false); setState("ready"); setAttempt(current => current + 1); }}>Réessayer</button></div>}
       </div>
       <figcaption className="flex shrink-0 items-center justify-between gap-3 text-xs">
-        <span aria-live="polite">{finished ? (!reducedMotion && onEnded ? "La suite arrive…" : "Présentation terminée") : presentationTopics[quality] ?? label}</span>
+        <span className="flex min-w-0 items-center gap-2" aria-live="polite">
+          {!finished && step !== null && <>
+            {/* Inverted tile colours keep the step readable on the tile background. */}
+            <span aria-hidden="true" className="badge badge-sm shrink-0 border-0 font-semibold tabular-nums" style={{ backgroundColor: authTileContentColors[colorIndex % authTileContentColors.length], color: authTileColors[colorIndex % authTileColors.length] }}>{step}/{presentationTopics.length}</span>
+            <span className="sr-only">{`Étape ${step} sur ${presentationTopics.length} : `}</span>
+          </>}
+          <span className="truncate">{finished ? (!reducedMotion && onEnded ? "La suite arrive…" : "Présentation terminée") : presentationTopics[quality] ?? label}</span>
+        </span>
         <div className="flex items-center gap-1">
           {!failed && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded} onClick={() => send(canReplay ? "replay" : playing ? "pause" : "play")}>
             {canReplay ? <RotateCcw className="size-4" aria-hidden="true" /> : playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}

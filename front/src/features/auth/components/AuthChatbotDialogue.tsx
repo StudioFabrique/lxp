@@ -39,6 +39,8 @@ export default function AuthChatbotDialogue({
   const menuId = useId();
   const avatarRef = useRef<HTMLButtonElement>(null);
   const memory = useContext(AuthChatbotTransitionContext);
+  // A dialogue taking over from a previous one moves from there rather than entering again.
+  const [continued] = useState(() => !introduction && (memory?.getPosition() != null || memory?.getIntroAvatar() != null));
   const [gesture, setGesture] = useState(() => chooseChatbotGesture(memory?.getGesture() ?? null, Math.random()));
   useLayoutEffect(() => {
     if (stepId === undefined) return;
@@ -62,7 +64,7 @@ export default function AuthChatbotDialogue({
     <motion.div
       data-chatbot-position="right"
       className="mx-auto mt-3 flex max-w-full items-center justify-end gap-3 text-sm"
-      initial={reducedMotion ? false : { opacity: 0, x: introduction ? "100vw" : 24 }}
+      initial={reducedMotion || continued ? false : { opacity: 0, x: introduction ? "100vw" : 24 }}
       animate={{ opacity: 1, x: 0, y: 0 }}
       transition={{ duration: reducedMotion ? 0 : 0.85, delay: reducedMotion ? 0 : delay, ease: [0.22, 1, 0.36, 1] }}
     >

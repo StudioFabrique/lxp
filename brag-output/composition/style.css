@@ -27,6 +27,23 @@
 .rail-line{height:566px}
 .hierarchy-camera{perspective:1500px}
 .hierarchy-face{transform-style:preserve-3d;backface-visibility:hidden}
+/* Each level steps 30px right; the rail follows the diagonal between icon centres. */
+.hierarchy-rail{perspective:none}
+.hierarchy-stop{transform-origin:50% 50%}
+.rail-line{height:598px;transform-origin:top center;transform:rotate(-17.5deg)}
+/* Overview: nested levels as a 3D ziggurat, the organisation as its base. */
+#level-stack{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;pointer-events:none}
+.level-plate{position:absolute;display:flex;align-items:flex-end;gap:14px;padding:12px 20px;border:1px solid var(--color-base-300);border-radius:18px;background:var(--color-base-200);color:var(--color-base-content);font-size:27px;box-shadow:0 9px 0 var(--color-base-300),0 30px 50px color-mix(in srgb,var(--color-neutral) 10%,transparent);backface-visibility:hidden}
+.level-plate>span{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:var(--color-primary);color:var(--color-primary-content)}
+.level-plate svg{width:22px;height:22px}
+.level-plate b{font-weight:700;line-height:44px;white-space:nowrap}
+#plate-0{width:700px;height:500px;left:-350px;top:-250px}
+#plate-1{width:620px;height:438px;left:-310px;top:-219px}
+#plate-2{width:540px;height:376px;left:-270px;top:-188px}
+#plate-3{width:460px;height:314px;left:-230px;top:-157px}
+#plate-4{width:380px;height:252px;left:-190px;top:-126px}
+#plate-5{width:300px;height:190px;left:-150px;top:-95px}
+#plate-6{width:220px;height:128px;left:-110px;top:-64px;background:color-mix(in srgb,var(--color-primary) 12%,var(--color-base-100));border-color:var(--color-primary)}
 
 /* Keep the quiz suggestion in the conversation flow, below course sources. */
 .chat-content{display:flex;flex-direction:column;gap:12px;padding:16px 26px}
@@ -317,3 +334,54 @@
 
 #accomplishment-sent{color:var(--color-base-content)}#accomplishment-sent svg{color:var(--color-success)}
 .accomplishment-completed{display:inline-flex;flex-direction:row;align-items:center}.accomplishment-completed svg{width:22px;height:22px;flex:none}
+/* The overview caption explains nesting, then gives way to the drill-down caption. */
+.hierarchy-caption{display:grid}
+.hierarchy-caption>span{grid-area:1/1}
+.hierarchy-face .fixture-glow{background:var(--color-base-200)}
+/* Current level: the stop itself lifts toward the viewer on a glass layer
+   sized by CSS to its icon and label, so it stays aligned at any player scale. */
+.hierarchy-stop{width:max-content;transform-style:preserve-3d}
+.stop-glass{position:absolute;inset:1px -30px 1px -16px;z-index:-1;border-radius:22px;opacity:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 32%,color-mix(in srgb,var(--color-base-100) 75%,transparent) 50%,transparent 68%) -160% 0/220% 100% no-repeat,
+    radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--color-base-100) 95%,transparent),transparent 60%),
+    linear-gradient(140deg,color-mix(in srgb,var(--color-base-100) 70%,transparent),color-mix(in srgb,var(--color-primary) 12%,var(--color-base-100)) 100%);
+  border:1px solid color-mix(in srgb,var(--color-primary) 16%,transparent);
+  box-shadow:inset 0 1px 1px color-mix(in srgb,var(--color-base-100) 100%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--color-base-100) 45%,transparent),inset 0 -8px 16px -10px color-mix(in srgb,var(--color-primary) 22%,transparent),0 14px 30px -14px color-mix(in srgb,var(--color-primary) 45%,transparent),0 2px 6px color-mix(in srgb,var(--color-neutral) 8%,transparent);
+  backdrop-filter:blur(16px) saturate(1.6);-webkit-backdrop-filter:blur(16px) saturate(1.6)}
+/* Essentials only: each scene keeps its heading, its main panels and the action
+   shown by the pointer; secondary pills, notes and descriptions are left out. */
+#author .feature-strip,#assistant .feature-strip,.quiz-types,.reading-code,.mini-tags,#care .care-note,#care .metrics,.relationship-subtitle,.scene .product-row small,.relationship-muted,.relationship-tag-explanation,.email-subject-line,#team-group p.text-sm{display:none}
+/* Shared 3D camera, as in the pedagogical levels scene. */
+.editor-layout,.assistant-layout,.assessment-layout,.two-panels,.operations,.progression-layout,.care-grid,.steering-layout,.theme-layout,.relationship-stage{transform-style:preserve-3d}
+/* Role badges stay on the cards only. */
+.presentation-roles{display:none}
+/* Care: the genuine FeelingFeedback card, built in 3D next to the team alert. */
+.care-stage{position:absolute;left:108px;right:108px;top:210px;height:700px;transform-style:preserve-3d}
+.care-card{position:absolute;left:0;top:20px;width:988px;transform-style:preserve-3d}
+.care-card>.badge{margin-bottom:16px}
+.feeling-zoom{zoom:1.9;width:520px}
+.feeling-form{display:flex;flex-direction:column;gap:1rem;overflow:hidden}
+.feeling-form textarea{min-height:4.5rem}
+.feeling-3d{position:relative;display:inline-block;flex:none;width:calc(var(--spacing,.25rem)*10);height:calc(var(--spacing,.25rem)*10);transform-style:preserve-3d}
+.feeling-layer{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transform:translateZ(calc(var(--depth) * -.8px));color:color-mix(in srgb,var(--color-primary) calc(100% - var(--depth) * 6%),var(--color-neutral))}
+.feeling-layer:last-child{filter:drop-shadow(0 1px 1px color-mix(in srgb,var(--color-base-100) 80%,transparent))}
+.care-toast{position:absolute;left:50%;top:-24px;padding:12px 22px;border-radius:12px;background:var(--color-base-100);color:var(--color-base-content);font-size:22px;box-shadow:0 12px 30px color-mix(in srgb,var(--color-neutral) 16%,transparent);opacity:0;white-space:nowrap}
+#care #risk-panel{position:absolute;left:auto;right:0;top:60px;width:660px;transform-style:preserve-3d}
+#care #risk-panel .fixture-glow{height:auto}
+.care-caption{position:absolute;left:108px;right:108px;bottom:64px;margin:0;text-align:center;font-size:25px}
+/* Liquid glass sidebar: three layers share the segment classes of the real
+   sidebar, so its compact and expanded shapes stay exact; their depth gives
+   the glass a thickness when the sidebar turns in 3D. */
+.sidebar-glass{filter:none}
+.sidebar-glass i{border:0;background:linear-gradient(to bottom,color-mix(in srgb,var(--color-base-100) 55%,transparent),color-mix(in srgb,var(--sidebar-bg,var(--color-primary)) 42%,transparent) 14%,color-mix(in srgb,var(--sidebar-bg,var(--color-primary)) 58%,transparent) 100%);backdrop-filter:blur(18px) saturate(1.8);-webkit-backdrop-filter:blur(18px) saturate(1.8)}
+.sidebar-glass i.sidebar-surface-left{border-left:1px solid color-mix(in srgb,var(--color-base-100) 70%,transparent)}
+.sidebar-glass i.sidebar-surface-right{border-right:1px solid color-mix(in srgb,var(--color-base-100) 45%,transparent)}
+.sidebar-glass i{border-top:1px solid color-mix(in srgb,var(--color-base-100) 85%,transparent);border-bottom:1px solid color-mix(in srgb,var(--sidebar-bg,var(--color-primary)) 70%,transparent)}
+.sidebar-glass-back{transform:translateZ(-18px)}
+.sidebar-glass-back i{background:color-mix(in srgb,var(--sidebar-bg,var(--color-primary)) 70%,transparent);backdrop-filter:none}
+.sidebar-glass-mid{transform:translateZ(-9px)}
+.sidebar-glass-mid i{background:color-mix(in srgb,var(--sidebar-bg,var(--color-primary)) 50%,transparent);backdrop-filter:none}
+.sidebar-glass-front{transform:translateZ(1px)}
+.sidebar-glass-front i{background:linear-gradient(to bottom,color-mix(in srgb,var(--color-base-100) 30%,transparent),transparent 18%,transparent 82%,color-mix(in srgb,var(--color-base-100) 12%,transparent))}
+/* One glass pane per depth layer: no seams between the sidebar segments. */
+.sidebar-glass i.sidebar-glass-pane{left:0;width:104px;border-radius:18px;border:1px solid color-mix(in srgb,var(--color-base-100) 55%,transparent)}

@@ -57,6 +57,15 @@ describe("login Hyperframes presentation", () => {
     expect(container.querySelector("figcaption")?.textContent).toContain(topic);
   });
 
+  it("shows the position of the feature in the tour before its topic", () => {
+    act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} />));
+    const caption = container.querySelector("figcaption")!;
+    expect(caption.querySelector(".badge")?.textContent).toBe("1/12");
+    expect(caption.textContent).toContain("Étape 1 sur 12 : Parcours pédagogiques et thèmes");
+    notify("ended");
+    expect(caption.querySelector(".badge")).toBeNull();
+  });
+
   it("offers replay when the final feature ends", () => {
     const onEnded = vi.fn();
     act(() => root.render(<AuthQualityVideo quality={6} label="Collective" colorIndex={0} reducedMotion={false} onEnded={onEnded} />));

@@ -1,117 +1,117 @@
 {
-  "sourceSha256": "0ca6987ca98efa5f6a351d6f66d1624cc41410241c088ff3763fd4f9e3fa5da2",
+  "sourceSha256": "e2fcd389990688d75255c3d8922c71c7638b7ec242775823e3aa2c762a14f118",
   "sequences": [
     [
       {
         "id": "structure",
         "start": 3.0,
-        "duration": 14.0
+        "duration": 19.0
       },
       {
         "id": "personalize",
-        "start": 74.5,
+        "start": 79.5,
         "duration": 6.0
       }
     ],
     [
       {
         "id": "assistant",
-        "start": 23.5,
+        "start": 28.5,
         "duration": 12.0
       },
       {
         "id": "steering",
-        "start": 69.5,
+        "start": 74.5,
         "duration": 5.0
       }
     ],
     [
       {
         "id": "author",
-        "start": 17.0,
+        "start": 22.0,
         "duration": 6.5
       },
       {
         "id": "assess",
-        "start": 35.5,
+        "start": 40.5,
         "duration": 6.0
       }
     ],
     [
       {
         "id": "organize",
-        "start": 46.5,
+        "start": 51.5,
         "duration": 6.5
       },
       {
         "id": "care",
-        "start": 58.0,
+        "start": 63.0,
         "duration": 11.5
       }
     ],
     [
       {
         "id": "dashboards",
-        "start": 80.5,
+        "start": 85.5,
         "duration": 13.0
       },
       {
         "id": "structure",
         "start": 3.0,
-        "duration": 14.0
+        "duration": 19.0
       },
       {
         "id": "organize",
-        "start": 46.5,
+        "start": 51.5,
         "duration": 6.5
       }
     ],
     [
       {
         "id": "progression",
-        "start": 53.0,
+        "start": 58.0,
         "duration": 5.0
       }
     ],
     [
       {
         "id": "groups",
-        "start": 96.5,
+        "start": 101.5,
         "duration": 16.0
       }
     ],
     [
       {
         "id": "trainers",
-        "start": 112.5,
+        "start": 117.5,
         "duration": 16.0
       }
     ],
     [
       {
         "id": "tags",
-        "start": 128.5,
+        "start": 133.5,
         "duration": 16.0
       }
     ],
     [
       {
         "id": "emails",
-        "start": 144.5,
+        "start": 149.5,
         "duration": 18.0
       }
     ],
     [
       {
         "id": "instance",
-        "start": 162.5,
+        "start": 167.5,
         "duration": 18.0
       }
     ],
     [
       {
         "id": "accomplishments",
-        "start": 180.5,
+        "start": 185.5,
         "duration": 16.0
       }
     ]

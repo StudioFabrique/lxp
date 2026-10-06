@@ -16,6 +16,7 @@ const scenes = [ ['structure',3],['author',21],['assistant',30],['assess',42],['
 for (const [id,start] of scenes) {
   tl.fromTo(`#${id} .scene-heading`,{y:24,opacity:0},{y:0,opacity:1,duration:.6,ease:'power3.out'},start);
 }
+const levelsForRail=['0','formation','1','2','3','4','5'];
 const reveal=(selector,start,extra={})=>tl.fromTo(selector,{opacity:0,y:35,...extra},{opacity:1,y:0,x:0,z:0,rotationX:0,rotationY:0,scale:1,duration:.75,ease:'power3.out'},start);
 // Original SVG geometry and the creator's expanded ANDRIA caption.
 document.querySelectorAll('#intro-logo .logo-pixel').forEach((pixel,index)=>{
@@ -27,23 +28,59 @@ reveal('#identity p',.6);
 tl.to('#identity .identity',{opacity:0,y:-18,duration:.3},2.7);
 // Seven nested entities, with native cards carried through a depth transition.
 reveal('.hierarchy-rail',3.15);
-tl.fromTo('.rail-line i',{scaleY:0},{scaleY:1,duration:11.5,ease:'none'},3.4);
-const levels=['0','formation','1','2','3','4','5'];
+// Overview first: the seven levels land as a nested 3D stack while each rail
+// stop flips into its own indentation, then the stack folds into the first card.
+const plateDrop=[3.35,3.55,3.75,3.95,4.15,4.35,4.55];
+tl.fromTo('#level-stack',{rotationX:70,rotation:-40,scale:.62,x:-60,y:40},{rotationX:54,rotation:-12,scale:.8,x:-150,y:30,duration:1.6,ease:'power3.out'},3.2);
+tl.to('#level-stack',{rotationX:46,rotation:-4,x:-150,y:70,duration:1.4,ease:'sine.inOut'},4.8);
+plateDrop.forEach((time,index)=>{
+  const turn=index%2?24:-24;
+  tl.fromTo('#plate-'+index,{opacity:0,z:index*60+520,rotation:turn,x:turn*3},{opacity:1,z:index*60,rotation:0,x:0,duration:.75,ease:'back.out(1.3)'},time);
+  tl.fromTo('#rail-'+levelsForRail[index],{x:0,rotationY:-75,opacity:0,transformPerspective:900},{x:index*30,rotationY:0,opacity:1,duration:.75,ease:'back.out(1.5)'},time);
+  tl.fromTo('#rail-'+levelsForRail[index]+'>span',{scale:1,borderColor:'var(--color-base-300)'},{scale:1.14,borderColor:'var(--color-primary)',duration:.22,yoyo:true,repeat:1,ease:'sine.inOut'},time+.45);
+});
+// Exploded view: the stack opens in depth while it turns.
+tl.to('.level-plate',{z:(index)=>index*74,duration:.8,ease:'power2.inOut',stagger:.04},5.3);
+tl.to('.level-plate',{z:0,opacity:0,duration:.45,ease:'power2.in',stagger:{each:.05,from:'end'}},6.15);
+tl.to('#level-stack',{rotationX:0,rotation:0,x:0,y:0,scale:1.05,duration:.65,ease:'power2.in'},6.15);
+tl.fromTo('.rail-line i',{scaleY:0},{scaleY:1,duration:8.1,ease:'none'},6.8);
+const levels=levelsForRail;
 const selectedRows={'0':2,'formation':4,'1':2,'2':3,'3':2,'4':3};
-const steps=[3.4,5.2,7.0,8.8,10.6,12.4,14.2];
+const steps=[6.8,8.15,9.5,10.85,12.2,13.55,14.9];
+// Each child card grows out of the clicked row; parents recede into a deck
+// behind it, so the nesting stays visible while the drill-down continues.
+const rowOrigins={'0':'50% 290px','formation':'50% 566px','1':'50% 290px','2':'50% 428px','3':'50% 290px','4':'50% 428px'};
 levels.forEach((level,index)=>{
   const start=steps[index];
-  tl.fromTo('#face-'+level,{opacity:0,x:180,z:-260,rotationY:-16,rotationX:4},{opacity:1,x:0,z:0,rotationY:0,rotationX:0,duration:.6,ease:'power3.out'},start);
+  const parent=levels[index-1];
+  const entrance=index===0?{opacity:0,y:-40,z:-340,rotationX:40,rotation:-12,scale:.75}:{opacity:0,scale:.32,rotationX:22,y:0,z:0,transformOrigin:rowOrigins[parent]};
+  tl.fromTo('#face-'+level,entrance,{x:0,y:0,z:0,rotationY:0,rotationX:0,rotation:0,scale:1,duration:.6,ease:'expo.out'},start);
+  tl.to('#face-'+level,{opacity:1,duration:index===0?.55:.18,ease:'power1.out'},start);
   tl.to('#rail-'+level+'>span',{backgroundColor:'var(--color-primary)',color:'var(--color-primary-content)',duration:.25},start);
-  tl.fromTo('#rail-'+level+' b',{x:0},{x:14,duration:.3,ease:'power3.out'},start);
+    // Focus: lift and tilt the stop in 3D, fade its glass in and sweep a sheen.
+  tl.fromTo('#rail-'+level+' .stop-glass',{opacity:0,scale:.9,backgroundPosition:'-160% 0, 0 0'},{opacity:1,scale:1,duration:.45,ease:'power3.out'},start);
+  tl.to('#rail-'+level+' .stop-glass',{backgroundPosition:'260% 0, 0 0',duration:.9,ease:'power2.inOut'},start+.1);
+  // Per-stop perspective keeps the tilt centred on the stop, whatever its rail position.
+  tl.to('#rail-'+level,{transformPerspective:1400,scale:1.04,rotationY:-4,rotationX:1.5,duration:.55,ease:'back.out(1.4)'},start);
+  if(index>0){
+    tl.to('#rail-'+parent+' .stop-glass',{opacity:0,scale:.94,duration:.35,ease:'power2.out'},start);
+    tl.to('#rail-'+parent,{scale:1,rotationY:0,rotationX:0,duration:.45,ease:'power2.out'},start);
+  }
   if(index<6){
-    tl.to('#face-'+level+' .list-row:nth-child('+selectedRows[level]+')',{backgroundColor:'var(--color-base-300)',x:7,scale:1.015,duration:.25},steps[index+1]-.9);
-    tl.to('#face-'+level,{opacity:0,x:-65,z:200,rotationY:12,rotationX:-3,duration:.35,ease:'power2.in'},steps[index+1]-.4);
+    const next=steps[index+1];
+    tl.to('#face-'+level+' .list-row:nth-child('+selectedRows[level]+')',{backgroundColor:'var(--color-base-300)',x:7,scale:1.015,duration:.25},next-.75);
+    // First step back: the parent stays readable just above the child card.
+    tl.to('#face-'+level,{transformOrigin:'50% 0%',y:-58,z:-220,rotationX:10,scale:.94,opacity:.3,duration:.4,ease:'power3.inOut'},next-.1);
+    // Second step back: the grandparent fades into the distance.
+    if(index<5) tl.to('#face-'+level,{y:-104,z:-440,rotationX:14,scale:.88,opacity:0,duration:.5,ease:'power2.inOut'},steps[index+2]-.25);
   }
 });
-reveal('.hierarchy-caption',3.7);
+reveal('#hierarchy-caption-intro',3.6);
+tl.to('#hierarchy-caption-intro',{opacity:0,y:-12,duration:.3},6.3);
+reveal('#hierarchy-caption-text',6.9);
 // The final activity card opens directly into the editor.
-tl.to('#face-5',{scale:1.06,z:50,duration:1.0,ease:'power2.inOut'},15.4);
+tl.to('#face-5',{scale:1.06,z:50,duration:1.0,ease:'power2.inOut'},15.8);
+tl.to('#face-4',{opacity:0,z:-520,duration:.8,ease:'power2.in'},15.8);
 reveal('.palette',21.05,{x:-40});reveal('.editor-surface',21.15,{rotationY:7,z:-100});
 tl.fromTo('.activity-choice',{opacity:0,x:-18},{opacity:1,x:0,duration:.35,stagger:.08},21.2);
 reveal('#editor-checks',22.0);reveal('#editor-table',23.1);reveal('#editor-code',24.3);
@@ -65,20 +102,6 @@ reveal('#organize .operation-bottom',59.0);
 reveal('.progression-layout',66.1);
 tl.fromTo('#progression .product-progress i',{scaleX:0},{scaleX:1,duration:1.1,stagger:.2,ease:'power2.out'},66.8);
 reveal('#progression .profile-choices',68.0);
-reveal('#mood-panel',73.1,{x:-70});reveal('#risk-panel',75.0,{z:-100});reveal('#support-panel',78.0,{x:70});
-tl.to('#feedback-send',{opacity:0,duration:.2},75.4);reveal('#feedback-sent',75.5);
-tl.fromTo('#care .care-flow i',{scaleX:0,transformOrigin:'left'},{scaleX:1,duration:.7,stagger:1.8},75);
-reveal('#care .care-flow',73.5);reveal('#care .care-note',81.0);
-tl.to('#review-button',{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.4},79.2);
-reveal('#review-saved',81.4);
-// Genuine continuous icon morph, shown as a range of possible daily moods.
-const cloud='M28 74 C8 74 8 45 26 42 C29 18 59 17 68 36 C87 30 107 45 105 63 C105 70 100 74 93 74 Z';
-const sun='M91 60 C91 77 77 91 60 91 C43 91 29 77 29 60 C29 43 43 29 60 29 C77 29 91 43 91 60 Z';
-tl.set('#mood-rays',{opacity:0},0);
-tl.to('#mood-detail',{morphSVG:'M34 85 L27 103 M59 85 L52 103 M84 85 L77 103',duration:.8,ease:'power2.inOut'},74.2);
-tl.to('#mood-shape',{morphSVG:sun,duration:1.2,ease:'power2.inOut'},76.1);
-tl.to('#mood-detail',{opacity:0,duration:.7},76.1);
-tl.fromTo('#mood-rays',{opacity:0,rotation:-22,svgOrigin:'60 60',scale:.8},{opacity:1,rotation:0,scale:1,duration:.8},76.5);
 reveal('.usage-panel',89.1,{rotationY:6});reveal('.steering-right',89.5,{x:65});
 tl.fromTo('#steering .product-progress i',{scaleX:0},{scaleX:1,duration:1.1,stagger:.3,ease:'power3.out'},90);
 // Theme values are read from the actual compiled DaisyUI themes.
@@ -104,42 +127,6 @@ tl.to('#theme-product',{...themeTokens.aurora,duration:.65},101.0);
   tl.fromTo(selector+' .logo-settled',{opacity:0},{opacity:1,duration:.22,ease:'power2.inOut'},start+1.1);
   tl.to(selector+' > .brand-svg:not(.logo-settled)',{opacity:0,duration:.22},start+1.1);
 });
-// Use the rendered mood controls as the single source of click coordinates.
-const moodPanel=document.getElementById('mood-panel'),moodScene=document.getElementById('care');
-const moodDisplay=moodScene.style.display,moodVisibility=moodScene.style.visibility;
-moodScene.style.display='block';moodScene.style.visibility='hidden';
-const moodCenter=moodPanel.querySelector('.mood-center'),moodCenterTransform=moodCenter.style.transform;
-moodCenter.style.transform='none';
-const moodTarget=(selector)=>{
-  const icon=moodPanel.querySelector(selector);
-  // SVGElement has no offset metrics: its HTML scale bar is the offset parent.
-  const bar=moodPanel.querySelector('.mood-scale');
-  let bx=0,by=0,parent=bar;
-  while(parent&&parent!==moodPanel){bx+=parent.offsetLeft||0;by+=parent.offsetTop||0;parent=parent.offsetParent;}
-  const rect=icon.getBoundingClientRect(),barRect=bar.getBoundingClientRect();
-  return {x:bx+rect.left-barRect.left+rect.width/2,y:by+rect.top-barRect.top+rect.height/2};
-};
-const moodRain=moodTarget('.mood-scale svg:nth-child(2)'),moodSun=moodTarget('.mood-scale svg:nth-child(5)');
-moodCenter.style.transform=moodCenterTransform;
-moodScene.style.display=moodDisplay;moodScene.style.visibility=moodVisibility;
-// A simulated pointer selects the rainy mood, then the sun. All positions and
-// 3D reactions are authored on the same seekable clock as the icon morph.
-tl.fromTo('#mood-pointer',{opacity:0,x:moodRain.x+80,y:moodRain.y+65,z:42},{opacity:1,x:moodRain.x-3*34/28,y:moodRain.y-2*42/36,z:42,duration:.7,ease:'power2.inOut'},73.45);
-tl.to('#mood-panel',{rotationY:-5,rotationX:3,z:18,duration:.7,ease:'sine.inOut'},73.45);
-tl.to('#mood-pointer',{scale:.94,duration:.12},74.15);
-tl.to('#mood-pointer',{scale:1,duration:.18},74.28);
-tl.fromTo('#mood-click',{x:moodRain.x-22,y:moodRain.y-22,scale:.35,opacity:.7},{x:moodRain.x-22,y:moodRain.y-22,scale:1.6,opacity:0,duration:.6,immediateRender:false},74.15);
-tl.fromTo('#mood-icon',{rotationY:-18,rotationX:8,z:20},{rotationY:14,rotationX:-5,z:44,duration:.8,ease:'power2.inOut'},74.2);
-tl.to('#mood-pointer',{x:moodSun.x-3*34/28,y:moodSun.y-2*42/36,duration:1.15,ease:'power2.inOut'},74.95);
-tl.to('#mood-panel',{rotationY:5,rotationX:-2,z:24,duration:1.15,ease:'sine.inOut'},74.95);
-tl.to('#mood-pointer',{scale:.94,duration:.12},76.1);
-tl.to('#mood-pointer',{scale:1,duration:.18},76.22);
-tl.fromTo('#mood-click',{x:moodSun.x-22,y:moodSun.y-22,scale:.35,opacity:.7},{x:moodSun.x-22,y:moodSun.y-22,scale:1.6,opacity:0,duration:.6,immediateRender:false},76.1);
-tl.to('#mood-icon',{rotationY:-16,rotationX:6,z:54,scale:1.08,duration:.6,ease:'power2.inOut'},76.1);
-tl.to('#mood-icon',{rotationY:0,rotationX:0,z:0,scale:1,duration:.7,ease:'power2.out'},76.7);
-tl.to('#mood-pointer',{x:moodSun.x+40,y:moodSun.y+65,opacity:0,duration:.65,ease:'power2.in'},77.4);
-tl.to('#mood-panel',{rotationY:0,rotationX:0,z:0,duration:.85,ease:'power2.out'},77.4);
-
 window.__timelines=window.__timelines||{};
 window.__timelines.main=tl;
 tl.fromTo("#intro-logo-2", {rotationY:-12,scale:.96}, {rotationY:0,scale:1,duration:1.1,ease:'power3.out'}, 116);
@@ -185,12 +172,12 @@ const cursorScene=(id,actions)=>{
   });
 };
 cursorScene('structure',[
-  [1.65,'#face-0 .list-row:nth-child(2)',{x:1360,y:550}],
-  [3.45,'#face-formation .list-row:nth-child(4)',{x:1360,y:826}],
-  [5.25,'#face-1 .list-row:nth-child(2)',{x:1360,y:550}],
-  [7.05,'#face-2 .list-row:nth-child(3)',{x:1360,y:688}],
-  [8.85,'#face-3 .list-row:nth-child(2)',{x:1360,y:550}],
-  [10.65,'#face-4 .list-row:nth-child(3)',{x:1360,y:688}],
+  [4.7,'#face-0 .list-row:nth-child(2)',{x:1360,y:550}],
+  [6.05,'#face-formation .list-row:nth-child(4)',{x:1360,y:826}],
+  [7.4,'#face-1 .list-row:nth-child(2)',{x:1360,y:550}],
+  [8.75,'#face-2 .list-row:nth-child(3)',{x:1360,y:688}],
+  [10.1,'#face-3 .list-row:nth-child(2)',{x:1360,y:550}],
+  [11.45,'#face-4 .list-row:nth-child(3)',{x:1360,y:688}],
 ]);
 cursorScene('author',[[1.0,'.editor-tools >span:nth-of-type(5)'],[2.1,'.editor-tools >span:nth-of-type(6)'],[3.3,'.editor-tools >span:nth-of-type(7)']]);
 cursorScene('assistant',[[2.9,'#ask-selection'],[3.0,'.chat-input',null,'focus'],[7.0,'.chat-source strong',null,'focus'],[9.0,'#chat-quiz .product-button']]);
@@ -198,7 +185,6 @@ cursorScene('assess',[[2.0,'#answer-1']]);
 cursorScene('assignments',[[1.3,'.file-row',null,'focus'],[3.1,'#correction .score',null,'focus'],[5.0,'#correction .submission-status',null,'focus']]);
 cursorScene('organize',[[1.3,'.calendar-tabs b',null,'focus'],[2.4,'.calendar-day:nth-child(2) .calendar-event'],[4.3,'.operation-bottom .product-row',null,'focus'],[6.0,'.operation-bottom .fixture-glow:last-child .product-row',null,'focus']]);
 cursorScene('progression',[[1.1,'.resume-lesson',null,'focus'],[2.8,'.profile-choices',null,'focus'],[4.3,'.profile-choices .feature-pill',null,'focus']]);
-cursorScene('care',[[6.1,'#review-button'],[8.4,'#support-panel .comment-field',null,'focus'],[10.0,'#review-saved',null,'focus']]);
 cursorScene('steering',[[1.3,'.usage-total',null,'focus'],[3.0,'.usage-row',null,'focus'],[5.0,'.steering-right .product-row',null,'focus']]);
 cursorScene('personalize',[[1.8,'#choice-sage'],[3.8,'#choice-aurora']]);
 // Complete registration after all interactions have joined the root timeline.
@@ -220,16 +206,15 @@ tl.to('.dashboard-navigation a>span:first-of-type,.dashboard-profile>.avatar',{x
 tl.to('.sidebar-surface-middle',{scaleX:1,duration:.8,ease:'sine.inOut'},100.1);
 tl.to('.sidebar-surface-right',{x:236,duration:.8,ease:'sine.inOut'},100.1);
 tl.to('.sidebar-active-surface,.sidebar-profile-divider',{scaleX:1,duration:.8,ease:'sine.inOut'},100.1);
-tl.to('.floating-sidebar',{rotationY:-1.5,duration:.8,ease:'power2.inOut'},100.1);
 tl.to('.sidebar-identity',{scale:1,duration:.8,ease:'sine.inOut'},100.1);
 tl.to('.sidebar-layout>small,.dashboard-navigation a>span:last-child,.dashboard-profile>div',{opacity:1,x:0,duration:.4,ease:'sine.inOut'},100.9);
-tl.to('.floating-sidebar',{rotationY:1.5,rotationX:.5,z:72,duration:5.3,ease:'sine.inOut'},101.2);
-tl.to('.floating-sidebar',{rotationY:0,rotationX:0,z:65,duration:.8,ease:'sine.inOut'},107.1);
 tl.fromTo('.dashboard-board',{opacity:0,z:-55,rotationY:2},{opacity:1,z:0,rotationY:0,duration:.6,ease:'power2.out'},100.35);
 // One continuous camera advance: no repeated push-pull as cards appear.
-tl.to('.dashboard-board',{z:45,rotationY:-.8,duration:6,ease:'sine.inOut'},101.0);
+// Cards land like the level plates: from the front, turning slightly in plane.
+let dashboardDrop=0;
 const buildDashboard=(selector,time)=>{
-  tl.fromTo(selector,{opacity:0,y:8,z:-20,rotationX:0},{opacity:1,y:0,z:0,rotationX:0,duration:.6,ease:'sine.out'},time);
+  const turn=dashboardDrop++%2?3:-3;
+  tl.fromTo(selector,{opacity:0,z:420,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.75,ease:'back.out(1.25)'},time);
 };
 buildDashboard('#dashboard-student .dashboard-header',100.55);
 buildDashboard('#dash-resume',100.9);buildDashboard('#dash-calendar',101.25);
@@ -244,7 +229,6 @@ tl.to('#dashboard-nav-admin',{opacity:1,duration:.6,ease:'sine.inOut'},104);
 buildDashboard('#dashboard-teacher .dashboard-header',104);
 buildDashboard('#dash-actions',104.1);buildDashboard('#dash-alerts',104.45);
 buildDashboard('#dash-latest',104.8);buildDashboard('#dash-feedback',105.15);
-tl.to('.dashboard-board',{z:0,rotationY:0,duration:.75,ease:'power2.out'},107.2);
 tl.fromTo('.dashboard-caption',{opacity:0,y:14},{opacity:1,y:0,duration:.5},102);
 cursorScene('dashboards',[[1.8,'#dashboard-nav-student li:first-child',null,'focus'],[4.1,'#dash-resume .dashboard-resume',null,'focus'],[6.6,'#dash-paths .product-row',null,'focus'],[8.8,'#dashboard-nav-admin li:first-child',null,'focus'],[10.5,'#dash-actions .product-row',null,'focus'],[12.0,'#dash-alerts small',null,'focus'],[14.0,'#dash-feedback .product-button',null,'focus']]);
 window.__timelines.main=tl;
@@ -373,18 +357,6 @@ const glowLayout=(card)=>{
   }
   return {x,y,scale,width:card.clientWidth,height:card.clientHeight};
 };
-// The mood pointer is local to its 3D card; share that authored path too.
-{
-  const scene=document.getElementById('care'),display=scene.style.display,visibility=scene.style.visibility;
-  scene.style.display='block';scene.style.visibility='hidden';
-  const box=glowLayout(document.getElementById('mood-panel'));
-  scene.style.display=display;scene.style.visibility=visibility;
-  const local=(x,y)=>({x:box.x+x,y:box.y+y});
-  const paths=cursorPaths.get('care')||[];
-  paths.push({click:70.15,travel:.7,from:local(moodRain.x+80,moodRain.y+65),to:local(moodRain.x,moodRain.y)});
-  paths.push({click:72.1,travel:1.15,from:local(moodRain.x,moodRain.y),to:local(moodSun.x,moodSun.y)});
-  cursorPaths.set('care',paths);
-}
 const pointerEase=gsap.parseEase('power2.inOut');
 document.querySelectorAll('.fixture-glow,.native-card>.group').forEach((card,index)=>{
   const glow=card.querySelector(':scope>div:first-child>span');if(!glow)return;
@@ -445,16 +417,7 @@ tl.to('#assistant-avatar',{rotation:-6,y:-1.5,duration:.35,ease:'sine.inOut'},30
 tl.to('#assistant-avatar',{rotation:0,y:0,duration:.4,ease:'sine.inOut'},30.55);
 tl.fromTo('#assistant-eye-shutter-left,#assistant-eye-shutter-right',{attr:{y:12,height:4}},{attr:{y:13.98,height:.04},duration:.1,ease:'power1.inOut',immediateRender:false},30.65);
 tl.fromTo('#assistant-eye-shutter-left,#assistant-eye-shutter-right',{attr:{y:13.98,height:.04}},{attr:{y:12,height:4},duration:.14,ease:'power1.out',immediateRender:false},30.8);
-tl.to('.alert-ack-idle',{opacity:0,duration:.15},75.2);
-tl.to('.alert-ack-confirmed',{opacity:1,duration:.2},75.2);
 // Remove idle tails without speeding up motion, clicks or readable content.
-// Acknowledging the alert clears the outstanding count and turns its glow green.
-tl.to('#risk-panel .fixture-glow>div:first-child>span',{backgroundColor:'color-mix(in srgb,var(--color-success) 40%,transparent)',duration:.4,ease:'sine.inOut'},75.2);
-tl.to('#risk-panel .alert-group',{borderColor:'color-mix(in srgb,var(--color-success) 30%,transparent)',duration:.4},75.2);
-tl.to('#risk-panel .alert-group>strong,#risk-panel .risk-badge',{color:'var(--color-success)',duration:.4},75.2);
-tl.to('#risk-panel .risk-badge',{borderColor:'var(--color-success)',duration:.4},75.2);
-tl.to('#risk-panel .alert-state-pending',{opacity:0,duration:.15},75.2);
-tl.to('#risk-panel .alert-state-resolved',{opacity:1,duration:.2},75.2);
 tl.set('#tags .relationship-stage',{rotationY:0},163);
 const idleCuts=[[23.5, 26], [44, 46], [51, 53], [59.5, 62], [67, 69], [80.5, 85], [90, 93]];
 const compactTime=(time)=>time-idleCuts.reduce((sum,[start,end])=>sum+(time>start?Math.max(0,Math.min(time,end)-start):0),0);
@@ -462,5 +425,162 @@ const authoredTweens=tl.getChildren(false,true,true).map(tween=>({tween,start:tw
 for(const {tween,start,end} of authoredTweens){
   tween.totalDuration(Math.max(0,compactTime(end)-compactTime(start)));
   tween.startTime(compactTime(start));
+}
+// Slower pedagogical levels: the scene lasts 19 s instead of 14 s, every
+// movement and pointer stretched alike; the following scenes start 5 s later.
+{
+  const structure=document.getElementById('structure'),from=3,before=14,after=19,ratio=after/before;
+  for(const tween of tl.getChildren(false,true,false)){
+    const inside=tween.targets?.().some(target=>target instanceof Element&&structure.contains(target));
+    const start=tween.startTime();
+    if(inside&&start>=from){tween.totalDuration(tween.totalDuration()*ratio);tween.startTime(from+(start-from)*ratio);}
+    else if(!inside&&start>=from+before)tween.startTime(start+after-before);
+  }
+}
+window.__timelines.main=tl;
+
+// Shared stacking, in presentation time, as in the pedagogical levels: each
+// panel lands from the front with a slight in-plane turn, then stays flat.
+const sceneStages=[['author','.editor-layout'],['assistant','.assistant-layout'],['assess','.assessment-layout'],['assignments','.two-panels'],['organize','.operations'],['progression','.progression-layout'],['steering','.steering-layout'],['personalize','.theme-layout'],['groups','.relationship-stage'],['trainers','.relationship-stage'],['tags','.relationship-stage'],['emails','.relationship-stage'],['instance','.relationship-stage'],['accomplishments','.relationship-stage']];
+sceneStages.forEach(([id,selector])=>{
+  const scene=document.getElementById(id),stage=scene?.querySelector(selector);
+  if(!stage)return;
+  const start=Number(scene.dataset.start),duration=Number(scene.dataset.duration);
+  const panels=[...stage.children].filter(element=>getComputedStyle(element).display!=='none');
+  // The landing replaces each panel's former entrance, so nothing ends tilted.
+  for(const tween of tl.getChildren(false,true,false)){
+    const time=tween.startTime();
+    if(time<start-.1||time>start+1.6)continue;
+    // Only the panels lose their former entrance; other targets of a shared tween keep it.
+    const own=tween.targets?.().filter(target=>panels.includes(target))||[];
+    if(own.length)tween.kill(own);
+  }
+  panels.forEach((panel,index)=>{
+    const turn=index%2?3:-3;
+    tl.fromTo(panel,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},start+.15+index*.16);
+    tl.set(panel,{opacity:0},start-.01);
+  });
+  tl.set(stage,{rotationX:0,rotationY:0,rotation:0},start);
+  tl.to(stage,{opacity:0,z:-80,duration:.4,ease:'power2.in'},start+duration-.4);
+  tl.set(stage,{opacity:1,z:0},start-.01);
+});
+
+// Care, rebuilt around the genuine FeelingFeedback card (presentation time).
+// The learner shares a rainy mood and a comment, the team acknowledges the
+// alert, then the same 3D icon morphs to the sun.
+{
+  const scene=document.getElementById('care'),S=Number(scene.dataset.start);
+  const inner=scene.querySelector('.scene-inner'),icon=document.getElementById('feeling-3d');
+  const range=document.getElementById('feeling-range'),comment=document.getElementById('feeling-comment');
+  const form=document.getElementById('feeling-form'),levels=[1,2,3,4,5].map(n=>icon.getAttribute('data-level-'+n));
+  // Measure controls at rest, in scene coordinates, with the scene laid out but unpainted.
+  const display=scene.style.display,visibility=scene.style.visibility;
+  scene.style.display='block';scene.style.visibility='hidden';
+  const root=document.getElementById('root').getBoundingClientRect(),unit=1920/root.width;
+  const base=inner.getBoundingClientRect();
+  const at=(element,fx=.5,fy=.5)=>{const r=element.getBoundingClientRect();return {x:(r.left-base.left+r.width*fx)*unit,y:(r.top-base.top+r.height*fy)*unit};};
+  const thumb=(value)=>{const r=range.getBoundingClientRect(),size=r.height;return {x:(r.left-base.left+size/2+(r.width-size)*(value-1)/4)*unit,y:(r.top-base.top+r.height/2)*unit};};
+  const centred=358,formHeight=form.offsetHeight;
+  const shift=(point)=>({x:point.x+centred,y:point.y});
+  const points={from:shift(thumb(3)),to:shift(thumb(2)),comment:shift(at(comment,.3,.5)),send:shift(at(document.getElementById('feeling-send'))),review:at(document.getElementById('review-button'),.6,.55)};
+  scene.style.display=display;scene.style.visibility=visibility;
+  const pointer='#care .scene-pointer',ring='#care .scene-click';
+  const tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
+  const click=(point,time)=>{
+    tl.to(pointer,{scale:.92,duration:.1},time);tl.to(pointer,{scale:1,duration:.16},time+.1);
+    tl.fromTo(ring,{x:point.x-22,y:point.y-22,scale:.35,opacity:.6},{x:point.x-22,y:point.y-22,scale:1.4,opacity:0,duration:.45,immediateRender:false},time);
+  };
+  // Form values follow the scene clock, so every seek shows the same state.
+  const text='Je bloque sur la dernière leçon.',clock={p:0};
+  tl.fromTo(clock,{p:0},{p:1,duration:Number(scene.dataset.duration),ease:'none',immediateRender:false,onUpdate:()=>{
+    const t=tl.time()-S;
+    range.value=String(t<2.3?3:2);
+    comment.value=text.slice(0,Math.round(Math.min(1,Math.max(0,(t-3.5)/1.1))*text.length));
+    icon.setAttribute('aria-label',t<2.3?'Ressenti : nuageux avec éclaircies':t<9.4?'Ressenti : pluie':'Ressenti : soleil');
+  }},S);
+  // 1. The genuine card arrives in depth, centred, its icon turning in relief.
+  tl.fromTo('#feeling-card',{opacity:0,x:centred-12,z:480,y:-18,rotation:-4},{opacity:1,x:centred,z:0,y:0,rotation:0,duration:.85,ease:'back.out(1.25)',immediateRender:false},S+.3);
+  tl.set('#feeling-card',{opacity:0},0);
+  tl.fromTo(icon,{transformPerspective:320,rotationY:-180,scale:.6},{rotationY:0,scale:1,duration:1,ease:'power3.out',immediateRender:false},S+.6);
+  // 2. The learner drags the range to the rainy mood: the icon morphs and lifts out.
+  tl.fromTo(pointer,{opacity:0,...tip({x:points.from.x+70,y:points.from.y+60}),scale:1},{opacity:1,...tip(points.from),duration:.5,ease:'power2.inOut',immediateRender:false},S+1.4);
+  click(points.from,S+1.95);
+  tl.to(pointer,{...tip(points.to),duration:.45,ease:'power2.inOut'},S+2.05);
+  tl.to('#feeling-card .feeling-path',{morphSVG:levels[1],duration:.7,ease:'power2.inOut'},S+2.25);
+  tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1,ease:'power2.inOut',immediateRender:false},S+2.2);
+  tl.to(icon,{scale:1.9,z:70,duration:.5,ease:'power2.out'},S+2.2);
+  tl.to(icon,{scale:1,z:0,duration:.55,ease:'power2.in'},S+2.7);
+  // 3. A comment, then Envoyer: as in the LXP, the form closes and a toast confirms.
+  tl.to(pointer,{...tip(points.comment),duration:.5,ease:'power2.inOut'},S+2.9);
+  click(points.comment,S+3.4);
+  tl.to(pointer,{...tip(points.send),duration:.5,ease:'power2.inOut'},S+4.7);
+  click(points.send,S+5.2);
+  tl.to(pointer,{opacity:0,duration:.25},S+5.5);
+  tl.fromTo(form,{height:formHeight,opacity:1},{height:0,opacity:0,duration:.45,ease:'power2.inOut',immediateRender:false},S+5.35);
+  tl.fromTo('#care-toast',{opacity:0,xPercent:-50,y:-14},{opacity:1,xPercent:-50,y:0,duration:.35,ease:'power2.out',immediateRender:false},S+5.4);
+  tl.set('#care-toast',{opacity:0,xPercent:-50},0);
+  tl.to('#care-toast',{opacity:0,y:-10,duration:.3},S+6.6);
+  // 4. The learner card steps back in depth while the team alert comes forward.
+  tl.to('#feeling-card',{x:-60,z:-320,opacity:.35,duration:.9,ease:'power3.inOut'},S+5.9);
+  tl.set('#risk-panel',{opacity:0},0);
+  tl.fromTo('#risk-panel',{opacity:0,x:9,z:480,y:-18,rotation:3},{opacity:1,x:0,z:0,y:0,rotation:0,duration:.85,ease:'back.out(1.25)',immediateRender:false},S+6.0);
+  tl.fromTo(pointer,{opacity:0,...tip({x:points.review.x+90,y:points.review.y+80})},{opacity:1,...tip(points.review),duration:.5,ease:'power2.inOut',immediateRender:false},S+7.3);
+  click(points.review,S+7.8);
+  tl.to(pointer,{opacity:0,duration:.25},S+8.15);
+  tl.to('.alert-ack-idle',{opacity:0,duration:.15},S+7.85);
+  tl.to('.alert-ack-confirmed',{opacity:1,duration:.2},S+7.85);
+  tl.to('#risk-panel .fixture-glow>div:first-child>span',{backgroundColor:'color-mix(in srgb,var(--color-success) 40%,transparent)',duration:.4,ease:'sine.inOut'},S+7.85);
+  tl.to('#risk-panel .alert-group',{borderColor:'color-mix(in srgb,var(--color-success) 30%,transparent)',duration:.4},S+7.85);
+  tl.to('#risk-panel .alert-group>strong,#risk-panel .risk-badge',{color:'var(--color-success)',duration:.4},S+7.85);
+  tl.to('#risk-panel .risk-badge',{borderColor:'var(--color-success)',duration:.4},S+7.85);
+  tl.to('#risk-panel .alert-state-pending',{opacity:0,duration:.15},S+7.85);
+  tl.to('#risk-panel .alert-state-resolved',{opacity:1,duration:.2},S+7.85);
+  // 5. Supported, the learner comes back to the front and the rain turns to sun.
+  tl.to('#feeling-card',{x:0,z:0,opacity:1,duration:.9,ease:'power3.inOut'},S+8.5);
+  tl.to('#feeling-card .feeling-path',{morphSVG:levels[4],duration:.8,ease:'power2.inOut'},S+9.45);
+  tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1.1,ease:'power2.inOut',immediateRender:false},S+9.4);
+  tl.to(icon,{scale:2,z:80,duration:.55,ease:'power2.out'},S+9.4);
+  tl.to(icon,{scale:1,z:0,duration:.6,ease:'power2.in'},S+9.95);
+  tl.fromTo('#care .care-caption',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},S+9.6);
+  tl.set('#care .care-caption',{opacity:0},0);
+}
+
+// Dashboards, built like a product reveal: the compact sidebar lands as liquid
+// glass, unfolds, then the board settles and the chatbot arrives last.
+{
+  const scene=document.getElementById('dashboards'),S=Number(scene.dataset.start),E=S+Number(scene.dataset.duration);
+  const inScene=(tween)=>tween.targets&&tween.targets().some(target=>target instanceof Element&&scene.contains(target));
+  const tweens=tl.getChildren(false,true,false).filter(inScene);
+  const first=(test)=>tweens.find(test);
+  const has=(tween,selector)=>tween.targets().some(target=>target.matches?.(selector));
+  // Replace the short entrances; the expansion and every later build keep their order.
+  first(t=>has(t,'.floating-sidebar')&&t.startTime()<S+.5)?.kill();
+  first(t=>has(t,'.dashboard-board')&&t.vars.opacity===1)?.kill();
+  first(t=>has(t,'#dashboard-chatbot>button')&&t.vars.opacity===1)?.kill();
+  // Make room for the landing: later tweens keep their sequence, about 10 % faster.
+  const from=S+.5,to=S+1.7,k=(E-to)/(E-from),map=(time)=>time<from?time:to+(time-from)*k;
+  for(const tween of tl.getChildren(false,true,false).filter(inScene)){
+    const start=tween.startTime();
+    if(start<from||start>=E)continue;
+    tween.totalDuration(tween.totalDuration()*k);
+    tween.startTime(map(start));
+  }
+  // 1. The compact sidebar lands delicately, turning in full 3D, as glass.
+  tl.fromTo('.floating-sidebar',{opacity:0,x:-24,y:-30,z:620,rotationX:0,rotationY:0,rotation:-8},{opacity:1,x:0,y:0,z:65,rotationX:0,rotationY:0,rotation:0,duration:1.2,ease:'back.out(1.2)',immediateRender:false},S+.2);
+  tl.set('.floating-sidebar',{opacity:0},0);
+  // 2. Once unfolded, the glass takes the real sidebar colour beneath its sheen.
+  const solid='.floating-sidebar>.sidebar-surface:not(.sidebar-glass)';
+  tl.set(solid,{opacity:0},0);
+  tl.fromTo(solid,{opacity:0},{opacity:1,duration:1.1,ease:'sine.inOut',immediateRender:false},map(S+1.95));
+  // The glass pane follows the real expansion, then leaves the genuine sidebar.
+  const expansion=tl.getChildren(false,true,false).find(t=>t.targets?.().some(target=>target.classList?.contains('sidebar-surface-middle'))&&t.vars.scaleX===1);
+  if(expansion)tl.fromTo('.sidebar-glass-pane',{width:104},{width:340,duration:expansion.duration(),ease:expansion.vars.ease,immediateRender:false},expansion.startTime());
+  tl.to('.sidebar-glass',{opacity:0,duration:1.1,ease:'sine.inOut'},map(S+1.95));
+  // 3. The board settles in depth after the sidebar.
+  tl.fromTo('.dashboard-board',{opacity:0},{opacity:1,duration:.3,ease:'sine.out',immediateRender:false},map(S+1.35));
+  tl.set('.dashboard-board',{opacity:0},0);
+  // 4. The chatbot arrives once the cards are in place, before its greeting.
+  tl.fromTo('#dashboard-chatbot>button',{opacity:0,x:110,y:40,scale:.4,rotation:-28},{opacity:1,x:0,y:0,scale:1,rotation:0,duration:.8,ease:'back.out(1.7)',immediateRender:false},map(S+3.4));
+  tl.set('#dashboard-chatbot>button',{opacity:0},0);
 }
 window.__timelines.main=tl;

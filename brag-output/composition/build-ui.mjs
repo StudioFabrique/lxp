@@ -26,9 +26,10 @@ const appCss = await readFile(path.join(front,'src/index.css'),'utf8');
 const themes = [...appCss.matchAll(/@plugin "daisyui\/theme"\s*\{[^}]+\}/g)].map(match => match[0]).filter(block => /name:\s*"(ocean|sage|aurora)"/.test(block));
 if (themes.length !== 3) throw new Error('Expected ocean, sage and aurora definitions in the LXP stylesheet.');
 const source = `@import "tailwindcss" source(none);
-@plugin "daisyui" { include: button, list, badge; themes: false; }
+@plugin "daisyui" { include: button, list, badge, range, textarea; themes: false; }
 @source "../../brag-output/composition/assets/ui-fragments.json";
 @source "../../brag-output/composition/assets/relationship-fragments.json";
+@source "../../brag-output/composition/assets/care-fragments.json";
 @source "../../brag-output/composition/assets/sidebar-fragments.json";
 @source "../../brag-output/composition/assets/chatbot-launcher.html";
 ${themes.join('\n')}`;

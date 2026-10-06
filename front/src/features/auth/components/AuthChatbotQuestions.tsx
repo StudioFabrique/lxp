@@ -73,7 +73,7 @@ export default function AuthChatbotQuestions({ message, id, anchorRef, bubbleRef
           className="pointer-events-auto fixed w-52 max-w-[calc(100vw-1.5rem)]"
           initial={reducedMotion ? false : { opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9, transition: { duration: reducedMotion ? 0 : .12, delay: 0 } }}
           transition={{ duration: reducedMotion ? 0 : .3, delay: reducedMotion ? 0 : index * .12, ease: [.22, 1, .36, 1] }}>
-          <button type="button" className={cn("btn h-auto min-h-11 w-full whitespace-normal rounded-full border border-secondary px-4 py-3 text-sm font-normal shadow-sm", selected === index ? "btn-accent" : "btn-secondary")}
+          <button type="button" className={cn("btn h-auto min-h-11 w-full whitespace-normal rounded-full border px-4 py-3 text-sm font-normal shadow-md", selected === index ? "btn-accent border-accent-content/40" : "btn-secondary border-secondary-content/40")}
             aria-pressed={selected === index}
             onClick={() => {
               onQuestionSelect(index, question.answer);
