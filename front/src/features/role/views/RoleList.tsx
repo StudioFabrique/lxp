@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, Plus } from "lucide-react";
+import { LoaderCircle, Plus, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
@@ -20,15 +20,18 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { normalizeSearchText } from "../../../utils/helpers/normalize-search-text";
 import type Role from "../../../utils/interfaces/role";
 import { AuthContext } from "../../../store/AuthProvider";
-import { roleApi, type PermissionTypes, type RoleCounts } from "../api/role.api";
+import {
+  roleApi,
+  type PermissionTypes,
+  type RoleCounts,
+} from "../api/role.api";
 import RoleCard from "../components/RoleCard";
 import RolePermissionsDrawer from "../components/permissions/RolePermissionsDrawer";
 import RoleForm from "../components/role-form/RoleForm";
 import { useRoleActions } from "../hooks/useRoleActions";
 
 type RoleFormModal =
-  | { mode: "create" }
-  | { mode: "edit" | "duplicate"; role: RoleCounts };
+  { mode: "create" } | { mode: "edit" | "duplicate"; role: RoleCounts };
 
 type PermissionDrawer = {
   role: RoleCounts;
@@ -82,15 +85,11 @@ const RoleList = () => {
     if (user?.roles[0]) void fetchRoles(user.roles[0]);
   };
 
-  const {
-    onDeleteOne,
-    isDeleting,
-    deleteError,
-    resetDeleteError,
-  } = useRoleActions(() => {
-    setRoleToDelete(null);
-    refreshRoleQueries();
-  });
+  const { onDeleteOne, isDeleting, deleteError, resetDeleteError } =
+    useRoleActions(() => {
+      setRoleToDelete(null);
+      refreshRoleQueries();
+    });
 
   const resetMutation = useMutation({
     mutationFn: (roleId: string) => roleApi.mutations.resetPermissions(roleId),
@@ -148,7 +147,7 @@ const RoleList = () => {
             data-page-tour="role-create-header"
             onClick={() => setFormModal({ mode: "create" })}
           >
-            <Plus className="size-5" />
+            <PlusCircle className="size-5" />
             Créer un rôle
           </button>
         </PermissionGuard>
@@ -321,7 +320,9 @@ const RoleList = () => {
             onClick={handleConfirmDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? <LoaderCircle className="size-5 animate-spin" /> : null}
+            {isDeleting ? (
+              <LoaderCircle className="size-5 animate-spin" />
+            ) : null}
             Supprimer
           </button>
         </TableActionsModal>

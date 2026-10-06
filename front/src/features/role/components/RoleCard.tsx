@@ -14,6 +14,7 @@ import type { ReactNode } from "react";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import type { PermissionTypes, RoleCounts } from "../api/role.api";
+import { roleModelIcons } from "../helpers/role-models";
 
 type PermissionSummary = {
   type: PermissionTypes;
@@ -45,6 +46,7 @@ export default function RoleCard({
   onViewUsers,
   onOpenPermissions,
 }: RoleCardProps) {
+  const RoleIcon = roleModelIcons[role.rank] ?? ShieldCheck;
   const summaries: PermissionSummary[] = [
     {
       type: "read",
@@ -76,7 +78,7 @@ export default function RoleCard({
     <HierarchicalListCard
       label="Rôle"
       title={role.label}
-      truncateTitle
+      titleIcon={<RoleIcon className="size-5 text-primary" />}
       labelAccessory={
         role.protection >= 1 ? (
           <span

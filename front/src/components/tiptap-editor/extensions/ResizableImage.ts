@@ -18,6 +18,13 @@ export const ResizableImage = Image.extend({
       },
       width: {
         default: undefined,
+        parseHTML: (element) => element.style.width || element.getAttribute("width"),
+        renderHTML: ({ width }) => {
+          const value = typeof width === "number" ? String(width) : width;
+          if (typeof value !== "string" || !/^(?:\d+(?:\.\d+)?)(?:%|px)?$/.test(value)) return {};
+          // Une largeur CSS résiste au width:auto du reset Tailwind, y compris en pourcentage.
+          return { width: value, style: `width: ${/[%a-z]$/.test(value) ? value : `${value}px`};` };
+        },
       },
       height: {
         default: undefined,

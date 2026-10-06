@@ -1,11 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useId, useState } from "react";
 import { Link, createSearchParams } from "react-router";
 import { RefreshCcw } from "lucide-react";
-import { queries } from "../../api/user.api";
 import type Role from "../../../../utils/interfaces/role";
-import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
-import { AuthContext } from "../../../../store/AuthProvider";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
+import RoleRadioCard from "../../../role/components/RoleRadioCard";
 
 type Props = {
   roleId: string | null;
@@ -14,7 +12,13 @@ type Props = {
   onSetRoleId: (v: string | null) => void;
   editMode?: boolean;
   disabled?: boolean;
-  initialRoleRank?: number;
+  roles: Role[];
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+  onRefresh: () => void;
+  studentOnly?: boolean;
+  error?: string;
 };
 
 const UserFormTypeUser = ({
@@ -24,33 +28,21 @@ const UserFormTypeUser = ({
   onSetRoleId,
   editMode,
   disabled,
-  initialRoleRank,
+  roles,
+  isLoading,
+  isFetching,
+  isError,
+  onRefresh,
+  studentOnly,
+  error,
 }: Props) => {
   const [showRefreshButton, setShowRefreshButton] = useState(false);
-  const { user: currentUser } = useContext(AuthContext);
-  const currentUserRank = currentUser
-    ? (currentUser.roles[0]?.rank ?? 4)
-    : 4;
-
-  const { data: roles, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ["permission-roles"],
-    queryFn: async () => {
-      const res = { data: await queries.roles() };
-      return res.data.data as Role[];
-    },
-  });
-
-  useEffect(() => {
-    if (!roleId && initialRoleRank && roles) {
-      const defaultRole = roles.find((role) => role.rank === initialRoleRank);
-      if (defaultRole) onSetRoleId(defaultRole._id);
-    }
-  }, [initialRoleRank, onSetRoleId, roleId, roles]);
+  const fieldId = useId();
 
   return (
     <BoxWrapper>
-      <div className="flex justify-between h-fit items-center">
-        <h2 className="font-bold text-xl">Type d'utilisateur</h2>
+      <div className="flex flex-wrap justify-between gap-3 h-fit items-center">
+        <h2 id={`${fieldId}-label`} className="font-bold text-xl">Type d'utilisateur</h2>
         <div className="flex gap-2 items-center">
           <Link
             className="btn btn-accent btn-sm normal-case tooltip"
@@ -72,7 +64,7 @@ const UserFormTypeUser = ({
               className="btn btn-ghost btn-sm tooltip"
               aria-label="Rafraîchir la liste des rôles"
               disabled={isFetching}
-              onClick={() => void refetch()}
+              onClick={onRefresh}
             >
               <RefreshCcw width={20} height={20} />
             </button>
@@ -80,43 +72,54 @@ const UserFormTypeUser = ({
         </div>
       </div>
       <div className="flex flex-col gap-y-5">
+        {studentOnly ? (
+          <p className="text-sm text-base-content/70">Seuls les apprenants peuvent être ajoutés au groupe.</p>
+        ) : null}
         {isLoading ? (
           <div role="status" aria-label="Chargement des rôles" className="space-y-3">
             <span className="sr-only">Chargement des rôles…</span>
             {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
           </div>
+        ) : isError ? (
+          <div className="alert alert-error" role="alert">
+            <span>Impossible de charger les rôles.</span>
+            <button type="button" className="btn btn-sm" onClick={onRefresh} disabled={isFetching}>Réessayer</button>
+          </div>
         ) : (
           <div className="flex flex-col justify-between h-full gap-5">
-            <div className="flex flex-col gap-y-4 overflow-y-auto">
-              {(roles ?? [])
-                .filter((role) => role.rank > currentUserRank)
-                .map((role: Role) => (
-                  <label key={role._id} className="flex gap-x-2">
-                    <input
-                      name="role"
-                      type="radio"
-                      className="radio radio-primary"
-                      onChange={() => onSetRoleId(role._id)}
-                      checked={roleId === role._id}
-                      disabled={disabled}
-                    />
-                    {role.label}
-                  </label>
+            <div role="radiogroup" aria-labelledby={`${fieldId}-label`} aria-describedby={error ? `${fieldId}-error` : undefined} className="flex flex-col gap-y-3">
+              {roles.map((role) => (
+                  <RoleRadioCard
+                    key={role._id}
+                    name={fieldId}
+                    value={role._id}
+                    rank={role.rank}
+                    label={role.label}
+                    onChange={() => onSetRoleId(role._id)}
+                    checked={roleId === role._id}
+                    disabled={disabled}
+                    invalid={Boolean(error)}
+                    describedBy={error ? `${fieldId}-error` : undefined}
+                  />
                 ))}
+              {roles.length === 0 ? <p className="text-sm text-base-content/70">Aucun rôle disponible. Vérifiez les rôles et vos droits, puis actualisez la liste.</p> : null}
             </div>
+            {error ? <p id={`${fieldId}-error`} className="text-sm text-error" role="alert">{error}</p> : null}
             {!editMode && (
               <>
                 <div className="divider" />
                 <label
                   className="flex place-items-center gap-x-2"
-                  htmlFor="sendEmail"
+                  htmlFor={`${fieldId}-send-email`}
                   data-recommended-tour="user-invitation"
                 >
                   <input
+                    id={`${fieldId}-send-email`}
                     className="checkbox checkbox-primary"
                     type="checkbox"
                     name="emailSent"
                     checked={sendEmail}
+                    disabled={disabled}
                     onChange={() => onSetSendEmail(!sendEmail)}
                     disabled={disabled}
                   />

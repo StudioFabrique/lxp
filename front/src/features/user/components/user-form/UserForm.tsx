@@ -16,6 +16,7 @@ import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
 import { transformLink, urlIsValid } from "../../helpers/link-transform";
 import { cn } from "../../../../utils/cn";
+import { useUserRoleOptions } from "../../hooks/useUserRoleOptions";
 
 type Props = {
   user?: User | null;
@@ -33,6 +34,7 @@ type Props = {
   fieldsDisabled?: boolean;
   editMode?: boolean;
   initialRoleRank?: number;
+  requiredRoleRank?: number;
   initialSendEmail?: boolean;
   cancelTo?: string;
 };
@@ -46,6 +48,7 @@ const UserForm = ({
   fieldsDisabled = false,
   editMode = false,
   initialRoleRank,
+  requiredRoleRank,
   initialSendEmail = false,
   cancelTo,
 }: Props) => {
@@ -93,6 +96,18 @@ const UserForm = ({
     sendEmail,
     setSendEmail,
   } = useUserForm(user, initialSendEmail);
+  const roleOptions = useUserRoleOptions(requiredRoleRank);
+
+  useEffect(() => {
+    if (!roleOptions.isSuccess) return;
+    const selectedRoleIsAllowed = roleOptions.roles.some((role) => role._id === roleId);
+    if (requiredRoleRank !== undefined && !selectedRoleIsAllowed) {
+      setRoleId(roleOptions.roles[0]?._id ?? null);
+    } else if (!roleId && initialRoleRank !== undefined) {
+      const initialRole = roleOptions.roles.find((role) => role.rank === initialRoleRank);
+      if (initialRole) setRoleId(initialRole._id);
+    }
+  }, [initialRoleRank, requiredRoleRank, roleId, roleOptions.isSuccess, roleOptions.roles, setRoleId]);
 
   useEffect(() => {
     if (error && error.length > 0) {
@@ -112,7 +127,12 @@ const UserForm = ({
 
   const handleSubmit = form.handleSubmit((values) => {
     if (fieldsDisabled || isLoading) return;
-    if (!values.roleId) { form.setError("roleId", { message: "Veuillez choisir un rôle." }); toast.error("Veuillez choisir un rôle."); return; }
+    if (!values.roleId || !roleOptions.isSuccess || !roleOptions.roles.some((role) => role._id === values.roleId)) {
+      const message = requiredRoleRank === 3 ? "Veuillez choisir un rôle apprenant disponible." : "Veuillez choisir un rôle disponible.";
+      form.setError("roleId", { message });
+      toast.error(message);
+      return;
+    }
     onSubmitForm(values, file);
   }, (errors) => { validateEmail(); showFormErrors(errors); });
 
@@ -197,7 +217,13 @@ const UserForm = ({
               sendEmail={sendEmail}
               onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
-              initialRoleRank={initialRoleRank ?? user?.roles?.[0]?.rank}
+              roles={roleOptions.roles}
+              isLoading={roleOptions.isLoading}
+              isFetching={roleOptions.isFetching}
+              isError={roleOptions.isError}
+              onRefresh={() => void roleOptions.refetch()}
+              studentOnly={requiredRoleRank === 3}
+              error={form.formState.errors.roleId?.message}
               editMode={editMode}
               disabled={disabled}
             />

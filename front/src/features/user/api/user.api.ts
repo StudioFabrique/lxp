@@ -1,6 +1,7 @@
 import apiClient from "../../../lib/axios";
 import type User from "../../../utils/interfaces/user";
 import type { UserDataResponse } from "../interfaces/user-data";
+import { roleOptionsResponseSchema } from "../../role/role.schema";
 
 export const queries = {
   list: async (path: string) => {
@@ -12,8 +13,8 @@ export const queries = {
     return res.data;
   },
   roles: async () => {
-    const res = await apiClient.get("/permission/role");
-    return res.data;
+    const res = await apiClient.get<unknown>("/permission/role");
+    return roleOptionsResponseSchema.parse(res.data);
   },
   getUserData: async (id: string): Promise<UserDataResponse> => {
     const res = await apiClient.get(`/user/data/${id}`);
@@ -35,6 +36,7 @@ export const mutations = {
   create: async (
     userData: Record<string, unknown>,
     file: File | null,
+    creationContext?: "group",
   ): Promise<{ message?: string; userId?: string }> => {
     const formData = new FormData();
     formData.append("data", JSON.stringify({ user: userData }));
@@ -44,6 +46,7 @@ export const mutations = {
     const res = await apiClient.post<{ message?: string; userId?: string }>(
       "/user",
       formData,
+      { params: creationContext ? { creationContext } : undefined },
     );
     return res.data;
   },

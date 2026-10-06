@@ -88,7 +88,8 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     const {action,color,contentColor,backgroundColor,textColor,autoplay} = event.data;
     if (action === 'initialize') {
       tint(color,contentColor,backgroundColor,textColor);
-      if (!initialized) { initialized = true; elapsed = autoplay === true ? 0 : duration;paint();autoplay === true ? play() : pause('ended'); }
+      // Reveal only after the parent palette and selected scene are painted.
+      if (!initialized) { initialized = true; elapsed = autoplay === true ? 0 : duration;paint();root.style.visibility = 'visible';autoplay === true ? play() : pause('ended'); }
     } else if (action === 'color') tint(color,contentColor,backgroundColor,textColor);
     else if (action === 'play') play();
     else if (action === 'pause') pause();

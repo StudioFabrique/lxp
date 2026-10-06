@@ -12,6 +12,8 @@ import {
 type HierarchicalListCardProps = {
   label?: string;
   title?: string;
+  titleIcon?: ReactNode;
+  actionAboveTitle?: boolean;
   labelAccessory?: ReactNode;
   truncateTitle?: boolean;
   description?: ReactNode;
@@ -36,6 +38,8 @@ type HierarchicalListCardProps = {
 const HierarchicalListCard = ({
   label,
   title,
+  titleIcon,
+  actionAboveTitle = false,
   labelAccessory,
   truncateTitle,
   description,
@@ -103,9 +107,12 @@ const HierarchicalListCard = ({
                     : undefined
                 }
               >
-                <div className="flex w-full items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
+                <div className={cn(
+                  "w-full items-start gap-3",
+                  actionAboveTitle ? "grid grid-cols-[minmax(0,1fr)_auto]" : "flex justify-between",
+                )}>
+                  <div className={cn("min-w-0", actionAboveTitle && "contents")}>
+                    <div className={cn("flex items-center gap-2", actionAboveTitle && "col-start-1 row-start-1 self-center")}>
                       {label ? (
                         <p className={cn("select-none text-xs tracking-wide", headerBackgroundImage ? "text-white/80" : "text-base-content/80")}>
                           {label}
@@ -117,23 +124,25 @@ const HierarchicalListCard = ({
                         </div>
                       ) : null}
                     </div>
-                    <div className="flex min-w-0 items-center gap-2">
+                    <div className={cn("flex min-w-0 items-center gap-2", actionAboveTitle && "col-span-2 row-start-2")}>
+                      {titleIcon ? <span className="flex shrink-0 items-center" aria-hidden="true">{titleIcon}</span> : null}
                       <h4
                         className={cn(
                           "min-w-0 first-letter:uppercase text-xl font-bold",
                           { truncate: truncateTitle },
+                          actionAboveTitle && "[overflow-wrap:anywhere]",
                         )}
                       >
                         {formatTitle(title)}
                       </h4>
                     </div>
                     {description ? (
-                      <div className={cn("mt-1 text-xs", headerBackgroundImage ? "text-white/80" : "text-base-content/80")}>
+                      <div className={cn("mt-1 text-xs", headerBackgroundImage ? "text-white/80" : "text-base-content/80", actionAboveTitle && "col-span-2 row-start-3 mt-0")}>
                         {description}
                       </div>
                     ) : null}
                   </div>
-                  {action ? <div className="shrink-0">{action}</div> : null}
+                  {action ? <div className={cn("shrink-0", actionAboveTitle && "col-start-2 row-start-1")}>{action}</div> : null}
                 </div>
               </li>
 

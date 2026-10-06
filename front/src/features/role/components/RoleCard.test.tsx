@@ -41,6 +41,19 @@ const renderCard = (overrides: Partial<RoleCounts> = {}) =>
   );
 
 describe("RoleCard", () => {
+  it("affiche le titre complet et son icône à côté des actions", () => {
+    const container = document.createElement("div");
+    container.innerHTML = renderCard({ label: "Équipe pédagogique" });
+    const title = container.querySelector("h4");
+    expect(title?.textContent).toBe("Équipe pédagogique");
+    expect(title?.classList.contains("truncate")).toBe(false);
+    expect(title?.parentElement?.classList.contains("row-start-2")).toBe(false);
+    expect(title?.previousElementSibling?.querySelector("svg")?.classList.contains("lucide-users-round")).toBe(true);
+    const actions = container.querySelector('button[aria-label="Dupliquer le rôle Équipe pédagogique"]')?.parentElement?.parentElement;
+    expect(actions?.parentElement?.classList.contains("flex")).toBe(true);
+    expect(actions?.parentElement?.classList.contains("justify-between")).toBe(true);
+  });
+
   it("présente les quatre familles de permissions et leurs compteurs", () => {
     const markup = renderCard();
 

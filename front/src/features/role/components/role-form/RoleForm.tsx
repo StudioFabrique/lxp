@@ -170,9 +170,9 @@ const RoleForm = ({
         />
       </div>
 
-      <div className="flex min-w-0 flex-col gap-y-1">
+      <div className="flex min-w-0 flex-col gap-y-2 md:col-span-2">
         <div className="flex items-center gap-2">
-          <label htmlFor={`${formId}-model`}>Modèle de rôle</label>
+          <span id={`${formId}-model-label`}>Modèle de rôle</span>
           <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfinies au rôle actuel" />
         </div>
         <RoleTypeSelector
@@ -185,7 +185,7 @@ const RoleForm = ({
         />
       </div>
 
-      <div className="flex items-end md:justify-end">
+      <div className="flex items-end md:col-span-2 md:justify-end">
         <button
           type="submit"
           className="btn btn-primary text-base-100 w-full md:w-auto"

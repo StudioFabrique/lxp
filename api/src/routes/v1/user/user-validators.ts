@@ -1,10 +1,20 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import {
   newPasswordValidate,
   stringValidateGeneric,
   tokenValidateGeneric,
 } from "../../../helpers/custom-validators.ts";
 import { checkValidatorResult } from "../../../middleware/validators.ts";
+
+export const userCreationContextValidator = [
+  query("creationContext")
+    .optional()
+    .isString()
+    .bail()
+    .isIn(["group"])
+    .withMessage("Le contexte de création de l'utilisateur est invalide."),
+  checkValidatorResult,
+];
 
 // Validateur pour vérifier le format d'une adresse email
 export const postCheckEmailValidator = [

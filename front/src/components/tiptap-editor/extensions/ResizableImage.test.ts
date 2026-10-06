@@ -12,6 +12,16 @@ let editor: Editor | undefined;
 afterEach(() => editor?.destroy());
 
 describe("Images HTML des parcours importés", () => {
+  it.each(["25%", "50%", "100%"])("conserve la largeur %s à l'affichage et après relecture", (width) => {
+    editor = new Editor({ extensions: [StarterKit, ResizableImage] });
+    editor.commands.insertContent({ type: "image", attrs: { src: "https://example.com/image.png", width } });
+    expect(editor.view.dom.querySelector("img")?.style.width).toBe(width);
+    const html = editor.getHTML();
+    editor.commands.setContent(html);
+    expect(editor.view.dom.querySelector("img")?.style.width).toBe(width);
+    expect(editor.getJSON().content?.find((node) => node.type === "image")?.attrs?.width).toBe(width);
+  });
+
   it.each([
     "/activities/images/imported.png",
     "activities/images/imported.png",

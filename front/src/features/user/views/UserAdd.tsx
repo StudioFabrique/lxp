@@ -26,13 +26,11 @@ const UserAdd = () => {
   const currentUserRank = user?.roles.length
     ? (user.roles[0]?.rank ?? 4)
     : 4;
-  const initialRoleRank =
+  const initialRoleRank = safeReturnTo ? 3 :
     [1, 2, 3].includes(requestedRoleRank) &&
     requestedRoleRank > currentUserRank
       ? requestedRoleRank
-      : safeReturnTo && searchParams.get("roleRank") === "3"
-        ? 3
-        : undefined;
+      : undefined;
   const initialSendEmail = searchParams.get("invite") === "true";
   const tutorial = searchParams.get("tutorial");
   const tutorialRole =
@@ -58,7 +56,7 @@ const UserAdd = () => {
     }: {
       userData: Record<string, unknown>;
       file: File | null;
-    }) => userApi.mutations.create(userData, file),
+    }) => userApi.mutations.create(userData, file, safeReturnTo ? "group" : undefined),
     onSuccess: (data) => {
       toast.success(data.message ?? "Utilisateur créé avec succès");
       const groupReturnPath = data.userId
@@ -102,6 +100,7 @@ const UserAdd = () => {
         }
         isLoading={isPending}
         initialRoleRank={initialRoleRank}
+        requiredRoleRank={safeReturnTo ? 3 : undefined}
         initialSendEmail={initialSendEmail}
         cancelTo={safeReturnTo ?? undefined}
       />
