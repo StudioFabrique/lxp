@@ -103,10 +103,10 @@
       #boot-auth-skeleton *{box-sizing:border-box}
       #boot-auth-skeleton .auth-left{display:flex;justify-content:center;padding:0 32px}
       #boot-auth-skeleton .auth-column{position:relative;width:400px;max-width:100%;height:100%;display:flex;flex-direction:column;align-items:center}
-      #boot-auth-skeleton .auth-logo{display:block;width:224px;height:auto;margin-top:80px}
+      #boot-auth-skeleton .auth-logo{visibility:hidden;display:block;width:224px;height:auto;margin-top:80px}
       #boot-auth-skeleton .auth-logo-dark,.boot-dark #boot-auth-skeleton .auth-logo-light{display:none}
       .boot-dark #boot-auth-skeleton .auth-logo-dark{display:block}
-      #boot-auth-skeleton .auth-tagline{font:600 12px/1.3 Arial,sans-serif;text-align:center;max-width:315px;margin-top:18px}
+      #boot-auth-skeleton .auth-tagline{visibility:hidden;font:600 12px/1.3 Arial,sans-serif;text-align:center;max-width:315px;margin-top:18px}
       #boot-auth-skeleton .auth-form{width:100%;margin-top:78px}
       #boot-auth-skeleton .auth-heading{height:26px;width:72%;margin:0 auto 22px}
       #boot-auth-skeleton .auth-field{height:48px;width:100%;margin-bottom:16px}
@@ -132,7 +132,7 @@
     </div>
     <div id="boot-auth-skeleton" role="status" aria-label="Chargement de la connexion">
       <div class="auth-left"><div class="auth-column">
-        <img class="auth-logo auth-logo-light" src="/andria-logo-light.svg" alt="ANDRIA"><img class="auth-logo auth-logo-dark" src="/andria-logo-dark.svg" alt="ANDRIA"><div class="auth-tagline">Apprentissage Numérique &amp; Développement Renforcé<br>par Intelligence Artificielle</div>
+        <img class="auth-logo auth-logo-light" src="/andria-logo-light.svg" alt="" aria-hidden="true"><img class="auth-logo auth-logo-dark" src="/andria-logo-dark.svg" alt="" aria-hidden="true"><div class="auth-tagline" aria-hidden="true">Apprentissage Numérique &amp; Développement Renforcé<br>par Intelligence Artificielle</div>
         <div class="auth-form"><div class="skeleton auth-heading"></div><div class="skeleton auth-field"></div><div class="skeleton auth-field"></div><div class="skeleton auth-button"></div><div class="skeleton auth-link"></div></div>
         <div class="skeleton auth-version"></div>
       </div></div>
