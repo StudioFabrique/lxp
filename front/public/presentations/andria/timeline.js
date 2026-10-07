@@ -37,7 +37,7 @@ plateDrop.forEach((time,index)=>{
   const turn=index%2?24:-24;
   tl.fromTo('#plate-'+index,{opacity:0,z:index*60+520,rotation:turn,x:turn*3},{opacity:1,z:index*60,rotation:0,x:0,duration:.75,ease:'back.out(1.3)'},time);
   tl.fromTo('#rail-'+levelsForRail[index],{x:0,rotationY:-75,opacity:0,transformPerspective:900},{x:index*30,rotationY:0,opacity:1,duration:.75,ease:'back.out(1.5)'},time);
-  tl.fromTo('#rail-'+levelsForRail[index]+'>span',{scale:1,borderColor:'var(--color-base-300)'},{scale:1.14,borderColor:'var(--color-primary)',duration:.22,yoyo:true,repeat:1,ease:'sine.inOut'},time+.45);
+  tl.fromTo('#rail-'+levelsForRail[index]+'>span',{scale:1},{scale:1.14,duration:.22,yoyo:true,repeat:1,ease:'sine.inOut'},time+.45);
 });
 // Exploded view: the stack opens in depth while it turns.
 tl.to('.level-plate',{z:(index)=>index*74,duration:.8,ease:'power2.inOut',stagger:.04},5.3);
@@ -56,7 +56,10 @@ levels.forEach((level,index)=>{
   const entrance=index===0?{opacity:0,y:-40,z:-340,rotationX:40,rotation:-12,scale:.75}:{opacity:0,scale:.32,rotationX:22,y:0,z:0,transformOrigin:rowOrigins[parent]};
   tl.fromTo('#face-'+level,entrance,{x:0,y:0,z:0,rotationY:0,rotationX:0,rotation:0,scale:1,duration:.6,ease:'expo.out'},start);
   tl.to('#face-'+level,{opacity:1,duration:index===0?.55:.18,ease:'power1.out'},start);
-  tl.to('#rail-'+level+'>span',{backgroundColor:'var(--color-primary)',color:'var(--color-primary-content)',duration:.25},start);
+  // Colour handoff: --t crossfades fill, border, icon and glow through color-mix
+  // (seek-safe, unlike tweening var() colours), the tile pops.
+  tl.fromTo('#rail-'+level+'>span',{'--t':0},{'--t':100,duration:.7,ease:'power2.inOut'},start);
+  tl.fromTo('#rail-'+level+'>span',{scale:1},{scale:1.12,duration:.3,ease:'power2.out',yoyo:true,repeat:1},start+.05);
     // Focus: lift and tilt the stop in 3D, fade its glass in and sweep a sheen.
   tl.fromTo('#rail-'+level+' .stop-glass',{opacity:0,scale:.9,backgroundPosition:'-160% 0, 0 0'},{opacity:1,scale:1,duration:.45,ease:'power3.out'},start);
   tl.to('#rail-'+level+' .stop-glass',{backgroundPosition:'260% 0, 0 0',duration:.9,ease:'power2.inOut'},start+.1);

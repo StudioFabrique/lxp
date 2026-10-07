@@ -518,3 +518,10 @@
 .brand-sheet{position:relative;width:384px;height:264px;margin:0 auto;transform-style:preserve-3d}
 .brand-sheet-face{position:absolute;left:0;top:0;width:320px;zoom:1.2;backface-visibility:hidden;border-radius:10px;overflow:hidden}
 #instance .scene-pointer,#instance .scene-click{z-index:6}
+
+/* Rail tiles: colour state is driven by --t (0 to 100) so the handoff to the primary colour is smooth. */
+.hierarchy-stop>span{--t:0;position:relative;
+  background:color-mix(in srgb,var(--color-primary) calc(var(--t)*1%),var(--color-base-100));
+  border-color:color-mix(in srgb,var(--color-primary) calc(var(--t)*1%),var(--color-base-300));
+  color:color-mix(in srgb,var(--color-primary-content) calc(var(--t)*1%),var(--color-primary));
+  box-shadow:0 calc(var(--t)*.14px) calc(var(--t)*.3px) calc(var(--t)*-.04px) color-mix(in srgb,var(--color-primary) calc(var(--t)*.5%),transparent)}
