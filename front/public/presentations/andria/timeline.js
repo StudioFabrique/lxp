@@ -98,7 +98,7 @@ tl.fromTo('.quiz-types .feature-pill',{opacity:0,y:12},{opacity:1,y:0,duration:.
 reveal('#assignments .work-panel:first-child',50.1,{x:-70,rotationY:5});reveal('.handoff',51.5);reveal('#correction',52.1,{x:70,rotationY:-5});
 reveal('.calendar-panel',57.1,{rotationX:7});
 tl.fromTo('.calendar-event',{opacity:0,y:15},{opacity:1,y:0,duration:.5,stagger:.15},57.7);
-reveal('#organize .operation-bottom',59.0);
+// The bottom row lands with the other panels of the scene; a second reveal made it blink.
 reveal('.progression-layout',66.1);
 tl.fromTo('#progression .product-progress i',{scaleX:0},{scaleX:1,duration:1.1,stagger:.2,ease:'power2.out'},66.8);
 reveal('#progression .profile-choices',68.0);
@@ -137,10 +137,18 @@ for(const method of Object.keys(originalTimelineMethods)) tl[method]=originalTim
 
 // Each pointer follows actual UI controls. Measure layout once during setup;
 // animation, clicks and feedback then remain deterministic on timeline seeks.
+// CSS zoom scales a box and everything inside it, while offsets are reported in
+// the box's own units: weight every offset by the zoom in effect at that node.
+const effectiveZoom=(node)=>{
+  let zoom=1;
+  for(let current=node;current&&current.nodeType===1;current=current.parentElement)zoom*=Number.parseFloat(getComputedStyle(current).zoom)||1;
+  return zoom;
+};
 const controlPoint=(element)=>{
   let x=0,y=0,node=element;
-  while(node){x+=node.offsetLeft||0;y+=node.offsetTop||0;node=node.offsetParent;}
-  return {x:x+element.offsetWidth*.78,y:y+element.offsetHeight*.58};
+  while(node){const zoom=effectiveZoom(node);x+=(node.offsetLeft||0)*zoom;y+=(node.offsetTop||0)*zoom;node=node.offsetParent;}
+  const zoom=effectiveZoom(element);
+  return {x:x+element.offsetWidth*zoom*.78,y:y+element.offsetHeight*zoom*.58};
 };
 const cursorPaths=new Map();
 const cursorScene=(id,actions)=>{
@@ -172,12 +180,12 @@ const cursorScene=(id,actions)=>{
   });
 };
 cursorScene('structure',[
-  [4.7,'#face-0 .list-row:nth-child(2)',{x:1360,y:550}],
-  [6.05,'#face-formation .list-row:nth-child(4)',{x:1360,y:826}],
-  [7.4,'#face-1 .list-row:nth-child(2)',{x:1360,y:550}],
-  [8.75,'#face-2 .list-row:nth-child(3)',{x:1360,y:688}],
-  [10.1,'#face-3 .list-row:nth-child(2)',{x:1360,y:550}],
-  [11.45,'#face-4 .list-row:nth-child(3)',{x:1360,y:688}],
+  [4.7,'#face-0 .list-row:nth-child(2)',{x:1435,y:497}],
+  [6.05,'#face-formation .list-row:nth-child(4)',{x:1435,y:801}],
+  [7.4,'#face-1 .list-row:nth-child(2)',{x:1435,y:497}],
+  [8.75,'#face-2 .list-row:nth-child(3)',{x:1435,y:649}],
+  [10.1,'#face-3 .list-row:nth-child(2)',{x:1435,y:497}],
+  [11.45,'#face-4 .list-row:nth-child(3)',{x:1435,y:649}],
 ]);
 cursorScene('author',[[1.0,'.editor-tools >span:nth-of-type(5)'],[2.1,'.editor-tools >span:nth-of-type(6)'],[3.3,'.editor-tools >span:nth-of-type(7)']]);
 cursorScene('assistant',[[2.9,'#ask-selection'],[3.0,'.chat-input',null,'focus'],[7.0,'.chat-source strong',null,'focus'],[9.0,'#chat-quiz .product-button']]);
@@ -265,14 +273,35 @@ cursorScene('tags',[[3.1,'#tag-choice']]);
 const selectionScene=document.getElementById('assistant');
 const selectionDisplay=selectionScene.style.display,selectionVisibility=selectionScene.style.visibility;
 selectionScene.style.display='block';selectionScene.style.visibility='hidden';
-const selectionWidth=document.getElementById('selected-passage').offsetWidth;
+// The text caret follows the highlight line by line. Lines are measured against
+// the reading panel, so transforms applied to the panels do not shift them.
+const caret=selectionScene.querySelector('.selection-cursor');
+const readingPanel=selectionScene.querySelector('.reading-panel'),selectionUnit=1920/document.getElementById('root').getBoundingClientRect().width;
+let panelX=0,panelY=0;
+for(let node=readingPanel;node;node=node.offsetParent){const zoom=effectiveZoom(node);panelX+=(node.offsetLeft||0)*zoom;panelY+=(node.offsetTop||0)*zoom;}
+const panelRect=readingPanel.getBoundingClientRect();
+const selectionLines=[...selectionScene.querySelector('.selection-text').getClientRects()].map(rect=>({left:panelX+(rect.left-panelRect.left)*selectionUnit,right:panelX+(rect.right-panelRect.left)*selectionUnit,middle:panelY+(rect.top-panelRect.top+rect.height/2)*selectionUnit}));
+const selectionLength=selectionLines.reduce((sum,line)=>sum+line.right-line.left,0);
+selectionScene.querySelector('.scene-inner').appendChild(caret);
+const placeCaret=(progress)=>{
+  let distance=progress*selectionLength;
+  for(const [index,line] of selectionLines.entries()){
+    const width=line.right-line.left;
+    if(distance<=width||index===selectionLines.length-1){caret.style.transform=`translate(${line.left+Math.min(distance,width)-12}px,${line.middle-28}px)`;return;}
+    distance-=width;
+  }
+};
+let caretProgress=0;
+const caretProxy={get n(){return caretProgress;},set n(value){caretProgress=value;placeCaret(value);}};
 selectionScene.style.display=selectionDisplay;selectionScene.style.visibility=selectionVisibility;
 tl.set('.selection-highlight',{scaleX:0},26);
-tl.set('.selection-cursor',{opacity:0,x:0},26);
+tl.set('.selection-cursor',{opacity:0},26);
+tl.set(caretProxy,{n:0},26);
 tl.set('#ask-selection',{opacity:0},26);
 tl.to('.selection-cursor',{opacity:1,duration:.18},27);
-tl.fromTo('.selection-highlight',{scaleX:0},{scaleX:1,duration:.95,ease:'sine.inOut',immediateRender:false},27.15);
-tl.fromTo('.selection-cursor',{x:0},{x:selectionWidth,duration:.95,ease:'sine.inOut',immediateRender:false},27.15);
+tl.set('.selection-text',{backgroundSize:'0% 100%'},26);
+tl.fromTo('.selection-text',{backgroundSize:'0% 100%'},{backgroundSize:'100% 100%',duration:.95,ease:'sine.inOut',immediateRender:false},27.15);
+tl.fromTo(caretProxy,{n:0},{n:1,duration:.95,ease:'sine.inOut',immediateRender:false},27.15);
 tl.to('.selection-cursor',{opacity:0,duration:.2},28.1);
 tl.fromTo('#ask-selection',{opacity:0,y:10,scale:.98},{opacity:1,y:0,scale:1,duration:.4,ease:'power2.out',immediateRender:false},28.1);
 
@@ -471,11 +500,13 @@ const typeInto=(element,text,from,to)=>{
   // The learner's card and the team's alert share the same top and height.
   {
     const card=document.querySelector('#feeling-card .feeling-zoom>div').getBoundingClientRect(),stage=scene.querySelector('.care-stage').getBoundingClientRect(),panel=document.getElementById('risk-panel');
-    panel.style.top=((card.top-stage.top)*unit)+'px';
-    panel.style.height=(card.height*unit)+'px';
+    // The stage is zoomed: its children's CSS lengths are scaled by that zoom.
+    const stageZoom=effectiveZoom(scene.querySelector('.care-stage'));
+    panel.style.top=((card.top-stage.top)*unit/stageZoom)+'px';
+    panel.style.height=(card.height*unit/stageZoom)+'px';
   }
   const centred=358;
-  const shift=(point)=>({x:point.x+centred,y:point.y});
+  const shift=(point)=>({x:point.x+centred*effectiveZoom(scene.querySelector('.care-stage')),y:point.y});
   const points={from:shift(thumb(3)),to:shift(thumb(2)),comment:shift(at(comment,.3,.5)),send:shift(at(document.getElementById('feeling-send'))),review:at(document.getElementById('review-button'),.6,.55)};
   scene.style.display=display;scene.style.visibility=visibility;
   const pointer='#care .scene-pointer',ring='#care .scene-click',tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
@@ -636,80 +667,98 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
   tl.fromTo('.sidebar-glass-back,.sidebar-glass-mid',{opacity:1},{opacity:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
 }
 
-// Instance settings, from the genuine superadministration page (presentation
-// time), kept to its essentials: themes, then the e-mail template. Choosing a
-// template is shown as stacked plates, like the pedagogical levels: the page,
-// the genuine selection dialog above it, and the chosen preview above that.
+// Instance, as three plates in depth (presentation time): the settings plate
+// drives two live previews. Each change leaves its setting as a beam of light
+// and lands on the plate it affects, which then updates.
 {
   const scene=document.getElementById('instance'),S=Number(scene.dataset.start),D=Number(scene.dataset.duration);
-  const page=scene.querySelector('.instance-page'),inner=scene.querySelector('.scene-inner');
-  const templateName=scene.querySelector('.instance-template-name');
-  const modal=document.getElementById('instance-template-modal'),box=modal.querySelector('.modal-box');
+  const inner=scene.querySelector('.scene-inner');
   const display=scene.style.display,visibility=scene.style.visibility;
   scene.style.display='block';scene.style.visibility='hidden';
   const root=document.getElementById('root').getBoundingClientRect(),unit=1920/root.width,base=inner.getBoundingClientRect();
   const at=(id,fx=.5,fy=.55)=>{const r=document.getElementById(id).getBoundingClientRect();return {x:(r.left-base.left+r.width*fx)*unit,y:(r.top-base.top+r.height*fy)*unit};};
-  const points={aurora:at('instance-aurora',.4),ocean:at('instance-ocean',.4),edit:at('instance-edit-template')};
+  const points={name:at('brand-name',.62,.5),aurora:at('brand-aurora',.5,.55),sage:at('brand-sage',.5,.55),contrast:at('brand-tpl-contrast',.5,.55)};
   scene.style.display=display;scene.style.visibility=visibility;
   const pointer='#instance .scene-pointer',ring='#instance .scene-click',tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
   const moveClick=(point,time,from)=>{
-    if(from)tl.fromTo(pointer,{opacity:0,...tip(from),scale:1},{opacity:1,...tip(point),duration:.5,ease:'power2.inOut',immediateRender:false},time-.5);
-    else tl.to(pointer,{...tip(point),duration:.5,ease:'power2.inOut'},time-.5);
+    if(from)tl.fromTo(pointer,{opacity:0,...tip(from),scale:1},{opacity:1,...tip(point),duration:.55,ease:'power2.inOut',immediateRender:false},time-.55);
+    else tl.to(pointer,{opacity:1,...tip(point),duration:.55,ease:'power2.inOut'},time-.55);
     tl.to(pointer,{scale:.92,duration:.1},time);tl.to(pointer,{scale:1,duration:.16},time+.1);
     tl.fromTo(ring,{x:point.x-22,y:point.y-22,scale:.35,opacity:.6},{x:point.x-22,y:point.y-22,scale:1.4,opacity:0,duration:.45,immediateRender:false},time);
   };
-  const T={flatten:1.2,aurora:3.0,ocean:4.9,edit:6.6,lift:7.0,choose:9.6,apply:12.6,settle:13.2};
-  const levels={rotationX:54,rotation:-12,scale:.62,x:30,y:30};
-  // 1. Header, themes and template land as plates, seen from the levels angle.
-  const blocks=[page.children[0],...[...page.children[1].firstElementChild.children].filter(block=>getComputedStyle(block).display!=='none'),page.children[2]];
-  blocks.forEach((block,index)=>{
-    const turn=index%2?3:-3;
-    tl.set(block,{opacity:0},S-.01);
-    tl.fromTo(block,{opacity:0,z:460,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.8,ease:'back.out(1.25)',immediateRender:false},S+.15+index*.18);
+  const T={land:.15,name:2.2,typed:3.5,aurora:5.4,sage:8.0,template:10.6};
+  // Plates land from the front, like the pedagogical levels; the previews keep a slight turn.
+  const plates=[['#brand-source',{rotationY:0,z:0}],['#brand-app',{rotationY:-7,z:-50}],['#brand-mail',{rotationY:-7,z:20}]];
+  plates.forEach(([selector,rest],index)=>{
+    tl.set(selector,{opacity:0},S-.01);
+    tl.fromTo(selector,{opacity:0,z:460,y:-18,rotationY:rest.rotationY+(index?-8:0)},{opacity:1,z:rest.z,y:0,rotationY:rest.rotationY,duration:.8,ease:'back.out(1.25)',immediateRender:false},S+T.land+index*.18);
   });
-  tl.set(page,{...levels},S-.01);
-  tl.fromTo(page,{...levels},{...levels,rotationX:50,rotation:-8,duration:T.flatten,ease:'sine.inOut',immediateRender:false},S);
-  tl.to(page,{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1,ease:'power3.inOut'},S+T.flatten);
-  // 2. A theme card applies its theme to the whole interface, as chooseTheme does.
-  const tokens=(theme)=>({...themeTokens[theme]});
-  tl.set(page,{...tokens('ocean')},S-.01);
-  const applyTheme=(card,point,theme,time,from)=>{
-    moveClick(point,time,from);
-    tl.to(card,{transformPerspective:700,z:60,scale:1.08,rotationX:-8,duration:.3,ease:'power2.out'},time);
-    tl.to(card,{z:0,scale:1,rotationX:0,duration:.5,ease:'back.out(1.6)'},time+.45);
-    tl.to(page,{...tokens(theme),duration:.5,ease:'sine.inOut'},time+.1);
+  // Themes act on the application plate, read from the compiled themes.
+  tl.set('#brand-app',{...themeTokens.ocean},S-.01);
+  // The e-mail keeps the organisation's identity: it wakes up when the name arrives.
+  tl.set('#brand-mail .brand-sheet',{opacity:.35,filter:'grayscale(1)'},S-.01);
+  tl.set('#brand-mail',{boxShadow:'0 30px 70px color-mix(in srgb,var(--color-neutral) 16%,transparent)'},S-.01);
+  tl.set('#plate-contrast',{opacity:0,rotationY:90},S-.01);tl.set('#plate-minimal',{opacity:1,rotationY:0},S-.01);
+  // A beam draws from its setting to its target, then fades; the target pulses.
+  const links=scene.querySelector('.brand-links');
+  const beam=(id,time,target)=>{
+    const path=links.querySelector(id),length=path.getTotalLength(),travel=.85;
+    // The streak grows along its curve behind a bright head, then is drawn in from its origin.
+    const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('r','9');links.appendChild(dot);
+    let progress=0;
+    const head={get n(){return progress;},set n(value){progress=value;const point=path.getPointAtLength(value*length);dot.setAttribute('cx',point.x);dot.setAttribute('cy',point.y);}};
+    tl.set(id,{strokeDashoffset:1,opacity:0},S-.01);
+    tl.set(dot,{opacity:0},S-.01);tl.set(head,{n:0},S-.02);
+    tl.set(id,{opacity:1},S+time);tl.set(dot,{opacity:1},S+time);
+    tl.fromTo(id,{strokeDashoffset:1},{strokeDashoffset:0,duration:travel,ease:'power2.inOut',immediateRender:false},S+time);
+    tl.fromTo(head,{n:0},{n:1,duration:travel,ease:'power2.inOut',immediateRender:false},S+time);
+    tl.to(dot,{opacity:0,duration:.2},S+time+travel);
+    tl.to(id,{strokeDashoffset:-1,duration:.7,ease:'power2.in'},S+time+travel+.1);
+    tl.set(id,{opacity:0},S+time+travel+.8);
+    if(target){
+      tl.to(target,{boxShadow:'0 0 0 4px var(--color-primary), 0 30px 70px color-mix(in srgb,var(--color-primary) 30%,transparent)',duration:.25,ease:'power2.out'},S+time+travel-.1);
+      tl.to(target,{boxShadow:'0 0 0 0px var(--color-primary), 0 30px 70px color-mix(in srgb,var(--color-neutral) 16%,transparent)',duration:.6,ease:'power2.inOut'},S+time+travel+.25);
+    }
   };
-  applyTheme('#instance-aurora',points.aurora,'aurora',S+T.aurora,{x:points.aurora.x+90,y:points.aurora.y+80});
-  applyTheme('#instance-ocean',points.ocean,'ocean',S+T.ocean);
-  moveClick(points.edit,S+T.edit);
-  tl.to(pointer,{opacity:0,duration:.25},S+T.edit+.3);
-  // 3. Template choice as stacked plates: page, dialog, chosen preview.
-  tl.set(modal,{autoAlpha:0,z:0},0);
-  tl.set('#instance .template-plate',{autoAlpha:0,z:0},0);
-  tl.to(page,{...levels,scale:.56,y:230,duration:1,ease:'power3.inOut'},S+T.lift);
-  tl.to(modal,{autoAlpha:1,duration:.3},S+T.lift+.7);
-  tl.fromTo(modal,{z:0},{z:190,duration:.9,ease:'back.out(1.2)',immediateRender:false},S+T.lift+.7);
-  tl.to('#instance .template-plate',{autoAlpha:1,duration:.3},S+T.lift+1.3);
-  tl.fromTo('#instance .template-plate',{z:190},{z:380,duration:.9,ease:'back.out(1.2)',immediateRender:false},S+T.lift+1.3);
-  tl.to(page,{rotation:-6,rotationX:50,duration:T.apply-T.lift-1,ease:'sine.inOut'},S+T.lift+1);
-  // The selection moves from Classique to Bannière; the top preview follows.
-  const chosen=S+T.choose;
-  tl.set('#plate-contrast',{opacity:0},S-.01);tl.set('#plate-minimal',{opacity:1},S-.01);
-  tl.set('#instance-banner',{borderColor:'var(--color-base-300)',boxShadow:'none'},S-.01);
-  tl.to('#instance-banner',{borderColor:'var(--color-primary)',boxShadow:'0 0 0 2px color-mix(in srgb,var(--color-primary) 20%,transparent)',duration:.25},chosen);
-  tl.to('#instance-banner>span:last-child>span',{backgroundColor:'var(--color-primary)',color:'var(--color-primary-content)',duration:.25},chosen);
-  tl.to('#instance-classic',{borderColor:'var(--color-base-300)',boxShadow:'none',duration:.25},chosen);
-  tl.to('#instance-classic>span:last-child>span',{backgroundColor:'var(--color-base-200)',color:'transparent',duration:.25},chosen);
-  tl.to('#plate-minimal',{opacity:0,rotationY:-90,duration:.35,ease:'power2.in'},chosen+.05);
-  tl.fromTo('#plate-contrast',{opacity:0,rotationY:90},{opacity:1,rotationY:0,duration:.45,ease:'power2.out',immediateRender:false},chosen+.4);
-  // 4. Applied: the plates fold back onto the page, which faces the reader again.
-  tl.to('#instance .template-plate',{z:0,autoAlpha:0,duration:.6,ease:'power2.in'},S+T.apply);
-  tl.to(modal,{z:0,autoAlpha:0,duration:.6,ease:'power2.in'},S+T.apply+.15);
-  tl.to(page,{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1,ease:'power3.inOut'},S+T.settle);
-  const chosenName=textProxy(n=>{templateName.textContent=n>.5?'Bannière':'Classique';});
-  tl.set(chosenName,{n:0},S-.02);tl.set(chosenName,{n:1},S+T.apply+.3);
-  tl.to(page,{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
-  tl.set(page,{opacity:1},S-.01);
+  const select=(id,time)=>tl.fromTo(id,{borderColor:'var(--color-base-300)'},{borderColor:'var(--color-primary)',duration:.25,immediateRender:false},S+time);
+  const deselect=(id,time)=>tl.to(id,{borderColor:'var(--color-base-300)',duration:.25},S+time);
+  const press=(id,time)=>{
+    tl.to(id,{transformPerspective:700,z:50,scale:1.06,duration:.2,ease:'power2.out'},S+time);
+    tl.to(id,{z:0,scale:1,duration:.45,ease:'back.out(1.6)'},S+time+.25);
+  };
+  // 1. The name is typed: logo and name replace the default brand, and the e-mail follows.
+  const name='Institut Horizon',nameText=document.getElementById('brand-name-text');
+  moveClick(points.name,S+T.name,{x:points.name.x+160,y:points.name.y+120});
+  tl.to('#instance .brand-bar',{opacity:1,duration:.1},S+T.name);
+  const typing=textProxy(n=>{nameText.textContent=name.slice(0,Math.round(n));});
+  tl.set(typing,{n:0},S-.02);
+  tl.fromTo(typing,{n:0},{n:name.length,duration:T.typed-T.name-.2,ease:'none',immediateRender:false},S+T.name+.2);
+  tl.to('#instance .brand-bar',{opacity:0,duration:.15},S+T.typed+.2);
+  beam('#beam-identity',T.typed,'#brand-app');
+  tl.to('#brand-logo-default',{opacity:0,duration:.3},S+T.typed+.8);
+  tl.to('#brand-logo-org',{opacity:1,duration:.4},S+T.typed+.9);
+  beam('#beam-identity-mail',T.typed+.1,'#brand-mail');
+  tl.to('#brand-mail .brand-sheet',{opacity:1,filter:'grayscale(0)',duration:.5},S+T.typed+1.0);
+  // 2. Two themes in a row: the application plate follows each one.
+  const retheme=(point,chip,previous,theme,time,from)=>{
+    moveClick(point,S+time,from);
+    press(chip,time);deselect(previous,time);select(chip,time);
+    beam('#beam-theme',time+.1,'#brand-app');
+    tl.to('#brand-app',{...themeTokens[theme],duration:.7,ease:'sine.inOut'},S+time+.9);
+  };
+  retheme(points.aurora,'#brand-aurora','#brand-ocean','aurora',T.aurora,{x:points.name.x+10,y:points.name.y+10});
+  retheme(points.sage,'#brand-sage','#brand-aurora','sage',T.sage,points.aurora);
+  // 3. The e-mail template: the sheet turns over to the chosen model.
+  moveClick(points.contrast,S+T.template,points.sage);
+  press('#brand-tpl-contrast',T.template);deselect('#brand-tpl-minimal',T.template);select('#brand-tpl-contrast',T.template);
+  beam('#beam-template',T.template+.1,'#brand-mail');
+  tl.to('#plate-minimal',{opacity:0,rotationY:-90,duration:.35,ease:'power2.in'},S+T.template+1.0);
+  tl.fromTo('#plate-contrast',{opacity:0,rotationY:90},{opacity:1,rotationY:0,duration:.5,ease:'power2.out',immediateRender:false},S+T.template+1.35);
+  tl.to(pointer,{opacity:0,duration:.25},S+T.template+.5);
+  // The settled plates fade out with the scene.
+  tl.to('#instance .brand-stage',{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
+  tl.set('#instance .brand-stage',{opacity:1},S-.01);
 }
 // Emails, in two numbered steps (presentation time): each trigger card lands,
 // one click, and the e-mail it sends flies into place beside it.
