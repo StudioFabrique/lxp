@@ -52,7 +52,6 @@ export default function ModuleForm({
       <form
         id="module-form"
         className="mt-6 min-h-0 flex-1 overflow-y-auto"
-        data-onboarding="module-form"
         onSubmit={onSubmit}
         noValidate
       >
@@ -65,7 +64,7 @@ export default function ModuleForm({
           </header>
 
           <ModuleFields register={register} errors={errors}>
-            <div data-onboarding="module-duration-field">
+            <div>
               <FormNumberInput
                 label="Durée du module en heures *"
                 name="duration"
@@ -80,7 +79,6 @@ export default function ModuleForm({
 
           <div
             className="flex flex-col gap-3"
-            data-onboarding="module-image-field"
           >
             <p className="text-sm font-bold">
               {mode === "edit"
@@ -159,7 +157,6 @@ export default function ModuleForm({
           Annuler
         </button>
         <button
-          data-onboarding="module-save"
           type="submit"
           form="module-form"
           className="btn btn-primary min-w-44"

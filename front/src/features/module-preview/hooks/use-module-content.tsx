@@ -30,7 +30,6 @@ import type {
   UpdateCourseFormValues,
 } from "../components/sidebar/course-form.types";
 import type { LessonFormValues } from "../components/sidebar/lesson-form.types";
-import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -482,7 +481,6 @@ const useModuleContent = () => {
         }
         await fetchModuleData();
         toast.success("Cours créé");
-        emitOnboardingEvent({ type: "course_created", id: data.course.id });
         return data.course.id;
       } catch {
         toast.error("Impossible de créer le cours");
@@ -530,12 +528,6 @@ const useModuleContent = () => {
         );
         await fetchModuleData();
         toast.success("Leçon créée");
-        // Le composant appelant sélectionne la nouvelle leçon une fois cette
-        // promesse résolue. Différer l'événement laisse React afficher le
-        // bouton de création d'activité avant que Joyride ne cherche sa cible.
-        window.setTimeout(() => {
-          emitOnboardingEvent({ type: "lesson_created", id: created.id });
-        });
         return created.id;
       } catch {
         toast.error("Impossible de créer la leçon");
@@ -615,10 +607,6 @@ const useModuleContent = () => {
 
         dispatch({ type: "select_lesson", lesson, activityId });
 
-        if (selectLastActivity && activityId) {
-          emitOnboardingEvent({ type: "activity_created", id: activityId });
-        }
-
         return true;
       } catch {
         toast.error("Impossible de rafraîchir la leçon");
@@ -679,7 +667,6 @@ const useModuleContent = () => {
           { title, value: finalContent, parent: "lesson" },
         )) as Activity;
         dispatch({ type: "create_activity", activity });
-        emitOnboardingEvent({ type: "activity_created", id: activity.id });
         response = true;
       } else {
         const activity = (

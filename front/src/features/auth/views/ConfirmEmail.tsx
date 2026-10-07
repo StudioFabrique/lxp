@@ -71,7 +71,10 @@ const ConfirmEmail = () => {
         {state === "success" && <AuthChatbotConfetti />}
         <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-5 text-center">
           {state === "success" ? (
-            <MailCheck className="h-8 w-8" aria-hidden="true" />
+            <div className="flex flex-col items-center gap-3 text-success">
+              <MailCheck className="h-8 w-8" aria-hidden="true" />
+              <span>Adresse mail validée</span>
+            </div>
           ) : (
             <Mail className="h-8 w-8" aria-hidden="true" />
           )}

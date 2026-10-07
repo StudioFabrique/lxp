@@ -7,7 +7,6 @@ import {
   Video,
 } from "lucide-react";
 import { ActivityType } from "../../../../../src/utils/interfaces/activity";
-import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 const activityTypes: {
   type: ActivityType;
@@ -38,17 +37,8 @@ const ActivityTypeSelection = ({ onSelectType, onCancel }: Props) => {
         {activityTypes.map((type) => (
           <button
             key={type.type}
-            data-onboarding={
-              type.type === "text" ? "activity-type-text" : undefined
-            }
             className="btn btn-primary flex flex-col items-center h-28 w-28 text-base-100 justify-center rounded-lg capitalize"
-            onClick={() => {
-              emitOnboardingEvent({
-                type: "activity_type_selected",
-                activityType: type.type,
-              });
-              onSelectType(type.type);
-            }}
+            onClick={() => onSelectType(type.type)}
           >
             <type.icon className="" /> {type.label}
           </button>

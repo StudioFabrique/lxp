@@ -110,27 +110,27 @@ describe("rôles du formulaire utilisateur", () => {
 
   it("place l'invitation dans un encadré distinct au-dessus des rôles sans groupe", () => {
     renderForm();
-    const invitation = container.querySelector('[data-recommended-tour="user-invitation"]');
-    const roles = container.querySelector('[data-recommended-tour="user-role"]');
+    const invitation = container.querySelector('[data-testid="user-invitation"]');
+    const roles = container.querySelector('[data-testid="user-role"]');
     expect(invitation?.parentElement?.nextElementSibling).toBe(roles);
-    expect(invitation?.closest('[data-recommended-tour="user-informations"]')).toBe(null);
-    expect(invitation?.closest('[data-recommended-tour="user-role"]')).toBe(null);
+    expect(invitation?.closest('[data-testid="user-informations"]')).toBe(null);
+    expect(invitation?.closest('[data-testid="user-role"]')).toBe(null);
     expect(container.querySelectorAll('[role="switch"]').length).toBe(1);
   });
 
   it("place le suivi sous le header avec l'invitation et une seule sauvegarde", () => {
     renderForm(3, true);
-    const header = container.querySelector('[data-recommended-tour="user-save"]')?.parentElement;
+    const header = container.querySelector('[data-testid="user-save"]')?.parentElement;
     const context = container.querySelector('[data-testid="group-context"]');
     expect(header?.nextElementSibling).toBe(context);
     expect(container.querySelector("form")?.firstElementChild).toBe(header);
-    const invitation = container.querySelector('[data-recommended-tour="user-invitation"]');
-    expect(invitation?.closest('[data-recommended-tour="user-role"]')).toBe(null);
+    const invitation = container.querySelector('[data-testid="user-invitation"]');
+    expect(invitation?.closest('[data-testid="user-role"]')).toBe(null);
     expect(invitation?.closest('[data-testid="group-context"]')).toBe(context);
-    expect(invitation?.closest('[data-recommended-tour="user-informations"]')).toBe(null);
+    expect(invitation?.closest('[data-testid="user-informations"]')).toBe(null);
     expect(container.querySelectorAll('[role="switch"]').length).toBe(1);
     expect(container.querySelectorAll('button[type="submit"]').length).toBe(1);
-    expect(container.querySelector('button[type="submit"]')?.closest('[data-recommended-tour="user-form"]')).not.toBe(null);
+    expect(container.querySelector('button[type="submit"]')?.closest('[data-testid="user-form"]')).not.toBe(null);
   });
 
   it("enregistre le choix d'invitation depuis le suivi du groupe", async () => {

@@ -258,7 +258,6 @@ export default function InstanceGeneralSettings() {
       <div className="grid items-stretch gap-4 xl:grid-cols-2">
         <BoxWrapper
           className="h-auto gap-6 overflow-visible"
-          data-recommended-tour="instance-logo"
         >
           <form
             className="flex h-full flex-col gap-6"

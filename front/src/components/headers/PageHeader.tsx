@@ -1,16 +1,8 @@
-import { PropsWithChildren, useMemo, useState, type MouseEvent } from "react";
-import { CircleHelp } from "lucide-react";
-import { EVENTS, Joyride, type Step } from "react-joyride";
+import { PropsWithChildren } from "react";
 import { cn } from "../../utils/cn";
 import { formatTitle } from "../../utils/helpers/text-helpers";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
-import PageTourTooltip from "./PageTourTooltip";
-import {
-  pageTourFloatingOptions,
-  pageTourLocale,
-  pageTourOptions,
-} from "./page-tour-options";
 
 interface Props {
   title: string;
@@ -22,40 +14,12 @@ interface Props {
   hasError?: boolean;
   classname?: string;
   onClick?: () => void;
-  tourSteps?: Step[];
 }
 
 const PageHeader = (props: PropsWithChildren<Props>) => {
-  const [isTourRunning, setIsTourRunning] = useState(false);
-  const [tourKey, setTourKey] = useState(0);
-  const steps = useMemo<Step[]>(
-    () =>
-      props.tourSteps?.length
-        ? props.tourSteps
-        : [
-            {
-              id: "page-overview",
-              target: '[data-page-tour="header"]',
-              title: props.title,
-              content:
-                props.description ??
-                "Découvrez les principales fonctionnalités disponibles sur cette page.",
-              placement: "bottom",
-            },
-          ],
-    [props.description, props.title, props.tourSteps],
-  );
-
-  const startTour = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    setTourKey((current) => current + 1);
-    setIsTourRunning(true);
-  };
-
   return (
     <BoxWrapper
       onClick={props.onClick}
-      data-page-tour="header"
       className={cn(
         "mb-6 h-auto w-full flex-row flex-wrap items-center justify-between gap-3 px-4 shadow-none select-none",
         !props.successBgColor && "themed-page-header",
@@ -91,34 +55,9 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
       </div>
       <div
         className={cn("header-actions flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end", !props.isSubHeader && "header-actions-main")}
-        data-page-tour="header-actions"
       >
         {props.children}
-        <button
-          type="button"
-          className="btn btn-circle btn-ghost btn-sm tooltip tooltip-left text-primary"
-          onClick={startTour}
-          data-tip="Découvrir cette page"
-          aria-label={`Lancer le tutoriel : ${props.title}`}
-        >
-          <CircleHelp className="h-5 w-5" />
-        </button>
       </div>
-
-      <Joyride
-        key={tourKey}
-        run={isTourRunning}
-        steps={steps}
-        continuous
-        scrollToFirstStep
-        tooltipComponent={PageTourTooltip}
-        onEvent={({ type }) => {
-          if (type === EVENTS.TOUR_END) setIsTourRunning(false);
-        }}
-        floatingOptions={pageTourFloatingOptions}
-        options={pageTourOptions}
-        locale={pageTourLocale}
-      />
     </BoxWrapper>
   );
 };

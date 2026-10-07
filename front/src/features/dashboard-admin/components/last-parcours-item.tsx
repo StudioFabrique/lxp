@@ -156,7 +156,6 @@ const LastParcoursItem = ({
             <button
               type="button"
               className="btn btn-dash"
-              data-onboarding="dashboard-formation-create-entry"
               onClick={onCreateFormation}
             >
               <Plus className="size-[1.2em]" />

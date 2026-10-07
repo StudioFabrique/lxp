@@ -139,7 +139,6 @@ export default function CreateCourseDetailsModal({
     <dialog className="modal modal-open z-100">
       <div
         className="modal-box flex max-h-[90vh] w-11/12 max-w-3xl flex-col overflow-hidden p-0"
-        data-onboarding="course-details"
       >
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
@@ -166,12 +165,10 @@ export default function CreateCourseDetailsModal({
           <label className="flex flex-col gap-2">
             <span
               className="text-sm font-semibold"
-              data-onboarding-label="course-title"
             >
               Titre *
             </span>
             <input
-              data-onboarding-field="course-title"
               autoFocus
               className="input input-bordered w-full"
               value={title}
@@ -191,13 +188,10 @@ export default function CreateCourseDetailsModal({
 
           <section
             className="flex flex-col gap-3"
-            data-onboarding-field="course-tags"
-            data-onboarding-valid={selectedTagIds.length > 0 ? "true" : "false"}
           >
             <div>
               <h4
                 className="text-sm font-semibold"
-                data-onboarding-label="course-tags"
               >
                 Tags du cours *
               </h4>

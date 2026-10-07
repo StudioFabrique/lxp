@@ -10,7 +10,6 @@ const dashboardState = vi.hoisted(() => ({ onboardingRequired: false, shouldAuto
 
 vi.mock("../hooks/use-student-dashboard", () => ({
   useStudentDashboard: () => ({
-    showOnboardingWelcome: false,
     welcomeTitle: "Bonjour",
     welcomeMessage: "Bienvenue",
     lastLesson: undefined,
@@ -41,7 +40,7 @@ vi.mock("../components/right-side/feeling-feedback", () => ({ default: () => <di
 vi.mock("../components/right-side/feedback-apprenant/student-accomplishments", () => ({ default: () => <div /> }));
 vi.mock("../components/right-side/most-read-courses", () => ({ default: () => <div /> }));
 
-describe("StudentDashboard onboarding targets", () => {
+describe("StudentDashboard", () => {
   let container: HTMLDivElement;
   let root: Root;
 
@@ -56,23 +55,6 @@ describe("StudentDashboard onboarding targets", () => {
   afterEach(() => {
     act(() => root.unmount());
     container.remove();
-  });
-
-  it("conserve les cibles des étapes 2 et 3 après le démarrage du tutoriel", async () => {
-    await act(async () => {
-      root.render(
-        <MemoryRouter initialEntries={["/student/dashboard"]}>
-          <StudentDashboard />
-        </MemoryRouter>,
-      );
-    });
-
-    expect(
-      container.querySelector('[data-onboarding="student-dashboard-header"]'),
-    ).not.toBeNull();
-    expect(
-      container.querySelector('[data-onboarding="student-content"]'),
-    ).not.toBeNull();
   });
 
   it("place la reprise du questionnaire dans le bandeau de bienvenue", async () => {
@@ -107,7 +89,7 @@ describe("StudentDashboard onboarding targets", () => {
       );
     });
 
-    expect(container.querySelector('[data-onboarding="student-content"]')).not.toBeNull();
+    expect(container.querySelector(".grid")).not.toBeNull();
     expect(container.querySelector('a[href="/student/onboarding"]')).toBeNull();
   });
 });

@@ -5,19 +5,16 @@ import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-st
 import LastModules from "../components/last-modules";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import RecommendedActions from "../components/recommended-actions";
 import { useAdminDashboard } from "../hooks/use-admin-dashboard";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
 import GroupAiAlerts from "../components/group-ai-alerts";
 import QuickActions from "../components/quick-actions";
 import { useSearchParams } from "react-router";
-import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 
 const AdminDashboard = () => {
   const {
     user,
-    showOnboardingWelcome,
     welcomeTitle,
     welcomeMessage,
     parcours,
@@ -31,7 +28,6 @@ const AdminDashboard = () => {
   const isTeacher = isTeacherUser(user);
 
   const openCreateModal = (key: "createFormation" | "createParcours") => {
-    if (key === "createFormation") emitOnboardingEvent({ type: "formation_entry_clicked" });
     const next = new URLSearchParams(searchParams);
     next.set(key, "true");
     setSearchParams(next);
@@ -39,25 +35,19 @@ const AdminDashboard = () => {
 
   return (
     <PageWrapper>
-      {showOnboardingWelcome ? (
-        <div data-onboarding="admin-dashboard-header">
-          <OnboardingWelcome layout="admin" />
-        </div>
-      ) : (
-        <Header
-          title={welcomeTitle}
-          description={welcomeMessage}
-          classname="capitalize"
-          containerClassname="z-20"
-        >
-          {isTeacher && (
-            <QuickActions
-              onCreateFormation={() => openCreateModal("createFormation")}
-              onCreateParcours={() => openCreateModal("createParcours")}
-            />
-          )}
-        </Header>
-      )}
+      <Header
+        title={welcomeTitle}
+        description={welcomeMessage}
+        classname="capitalize"
+        containerClassname="z-20"
+      >
+        {isTeacher && (
+          <QuickActions
+            onCreateFormation={() => openCreateModal("createFormation")}
+            onCreateParcours={() => openCreateModal("createParcours")}
+          />
+        )}
+      </Header>
 
       {/* --- Contenu Principal --- */}
       <section className="flex w-full flex-col gap-10">

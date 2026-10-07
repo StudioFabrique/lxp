@@ -9,7 +9,6 @@ import { formationApi } from "../api/formation.api";
 import { formationSchema, type FormationFormValues } from "../formation.schema";
 import type FormationItem from "../interfaces/formation-item";
 import type { AxiosError } from "axios";
-import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import {
   addPendingTag,
   partitionTagInput,
@@ -167,7 +166,6 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
       formationApi.mutations.createFormation(await buildPayload(values)),
     onSuccess: (formation) => {
       toast.success("Formation créée avec succès");
-      emitOnboardingEvent({ type: "formation_created", id: formation.id });
       setCreatedFormation(formation);
       resetForm();
       refetchFormations();

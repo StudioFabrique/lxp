@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { formatWelcomeTitle } from "../../../utils/helpers/welcome-title";
-import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import {
   learningProfileApi,
@@ -15,7 +14,6 @@ const defaultMessage =
 
 export function useStudentDashboard() {
   const { user } = useContext(AuthContext);
-  const { status: onboardingStatus } = useOnboarding();
 
   const { data: lastLessons } = useQuery({
     queryKey: ["last-read-lessons"],
@@ -29,10 +27,6 @@ export function useStudentDashboard() {
   });
 
   return {
-    showOnboardingWelcome:
-      onboardingStatus === "pending" &&
-      learningContext.data?.hasAvailableContent === true &&
-      learningContext.data?.onboardingRequired === false,
     welcomeTitle: formatWelcomeTitle(defaultTitle, user),
     welcomeMessage: defaultMessage,
     lastLesson: lastLessons?.[0],

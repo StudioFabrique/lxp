@@ -12,10 +12,6 @@ import { useFormationForm } from "../hooks/useFormationForm";
 import { parcoursApi } from "../../parcours/api/parcours.api";
 import { readParcoursArchiveFormationTitle } from "../../parcours/helpers/read-parcours-archive-formation";
 import ParcoursImportModal from "../../parcours/components/import/ParcoursImportModal";
-import {
-  emitOnboardingEvent,
-  subscribeToOnboardingEvents,
-} from "../../onboarding/onboarding-events";
 
 type FormationModalProps = {
   formationId?: number | null;
@@ -86,20 +82,9 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
 
   const handleClose = () => {
     if (isImporting) return;
-    emitOnboardingEvent({ type: "formation_modal_cancelled" });
     cancelEdit();
     onClose();
   };
-
-  useEffect(
-    () =>
-      subscribeToOnboardingEvents((event) => {
-        if (event.type !== "formation_modal_close_requested") return;
-        cancelEdit();
-        onClose();
-      }),
-    [cancelEdit, onClose],
-  );
 
   const confirmDelete = () => {
     if (!formationToEdit || formationToEdit.parcours > 0) return;

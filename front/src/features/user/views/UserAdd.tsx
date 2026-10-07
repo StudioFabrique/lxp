@@ -13,8 +13,6 @@ import {
   isConflictError,
 } from "../../../utils/helpers/api-error-message";
 import { AuthContext } from "../../../store/AuthProvider";
-import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
-import { getUserCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 import GroupUserCreationProgress from "../../group/components/GroupUserCreationProgress";
 
 const UserAdd = () => {
@@ -33,15 +31,6 @@ const UserAdd = () => {
       ? requestedRoleRank
       : undefined;
   const initialSendEmail = searchParams.get("invite") === "true";
-  const tutorial = searchParams.get("tutorial");
-  const tutorialRole =
-    tutorial === "teacher"
-      ? { id: "teacher", label: "équipe pédagogique" }
-      : tutorial === "admin"
-        ? { id: "admin", label: "administrateur" }
-        : tutorial === "student"
-          ? { id: "student", label: "apprenant" }
-          : null;
 
   // Le message du serveur est relayé au formulaire, qui le signale à la fois
   // en toast et sous le champ concerné quand il porte sur l'email.
@@ -106,15 +95,6 @@ const UserAdd = () => {
         cancelTo={safeReturnTo ?? undefined}
         groupCreationContext={safeReturnTo ? (invitation) => <GroupUserCreationProgress returnTo={safeReturnTo} action={invitation} /> : undefined}
       />
-      {tutorialRole ? (
-        <RecommendedActionTour
-          tutorial={tutorialRole.id}
-          steps={getUserCreationTourSteps(
-            tutorialRole.label,
-            initialSendEmail,
-          )}
-        />
-      ) : null}
     </>
   );
 };

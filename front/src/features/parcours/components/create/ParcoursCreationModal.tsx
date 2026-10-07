@@ -26,7 +26,6 @@ import Loader from "../../../../components/loaders/Loader";
 import Selecter from "../../../../components/UI/selecter/selecter.component";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 import { parcoursApi } from "../../api/parcours.api";
 import NewParcoursForm from "../edit/new-parcours-form";
 import ParcoursImportModal, {
@@ -95,7 +94,6 @@ export default function ParcoursCreationModal({
     }) =>
       parcoursApi.mutations.createParcours({ title, formation: formationId }),
     onSuccess: (data) => {
-      emitOnboardingEvent({ type: "parcours_created", id: data.parcoursId });
       navigate(`/admin/parcours/edit/${data.parcoursId}`);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
@@ -226,7 +224,7 @@ export default function ParcoursCreationModal({
               Pour commencer, veuillez saisir les informations nécessaires pour
               créer le parcours
             </p>
-            <div data-onboarding="parcours-create">
+            <div>
               <BoxWrapper>
                 <h2 className="text-lg font-bold">Créer un nouveau parcours</h2>
                 <NewParcoursForm

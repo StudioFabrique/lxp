@@ -98,7 +98,6 @@ const ParcoursInformationsForm: FC<Props> = ({
             >
               <div
                 className="flex flex-col gap-y-8"
-                data-onboarding="parcours-essential-information"
               >
                 <FormInput
                   label="Titre *"

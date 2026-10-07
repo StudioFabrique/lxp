@@ -123,7 +123,6 @@ const InstancePictureUpload = () => {
   return (
     <BoxWrapper
       className="h-auto gap-6 overflow-visible"
-      data-recommended-tour="instance-logo"
     >
       <div>
         <h2 className="text-lg font-bold">Logo et apparence</h2>

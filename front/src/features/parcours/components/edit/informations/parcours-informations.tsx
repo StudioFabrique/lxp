@@ -124,7 +124,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     <div className="flex flex-col gap-y-4">
       <div
         className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8"
-        data-onboarding="parcours-information"
       >
         <BoxWrapper>
           <div className="flex flex-col gap-y-8">

@@ -46,13 +46,11 @@ const FormationForm = ({
   <div className="flex flex-col gap-y-4">
     <div
       className="flex flex-col gap-y-4"
-      data-onboarding="formation-fields"
     >
       <form id={formId} className="flex flex-col gap-y-4" onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
         <span className="flex flex-col gap-y-2">
-          <label data-onboarding-label="formation-title">Formation *</label>
+          <label>Formation *</label>
           <input
-            data-onboarding-field="formation-title"
             className="input input-sm input-bordered focus:outline-none w-full"
             type="text"
             placeholder="Nom de la formation"
@@ -86,9 +84,8 @@ const FormationForm = ({
           />
         </span>
         <span className="flex flex-col gap-y-2 w-full">
-          <label data-onboarding-label="formation-level">Niveau *</label>
+          <label>Niveau *</label>
           <select
-            data-onboarding-field="formation-level"
             className="select select-bordered focus:outline-none"
             onChange={(e) => onLevel(e.target.value)}
             value={level}
@@ -108,8 +105,6 @@ const FormationForm = ({
 
       <div
         className="flex flex-col gap-y-4"
-        data-onboarding-field="formation-tags"
-        data-onboarding-valid={currentTags.length > 0 ? "true" : "false"}
       >
         <AddTag
           error={false}
@@ -162,7 +157,6 @@ const FormationForm = ({
         </button>
         <button
           type="submit"
-          data-onboarding="formation-save"
           className="btn btn-primary"
           disabled={isPending || isDeleting}
           form={formId}

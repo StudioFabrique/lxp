@@ -41,7 +41,6 @@ const SidebarWrapper = ({
 
   return (
     <nav
-      data-onboarding="sidebar-navigation"
       className="h-full 2xl:w-[20rem] flex flex-col justify-between gap-4 p-4 rounded-xl border bg-(--sidebar-bg) text-(--sidebar-content) border-(--sidebar-border) shadow-sm transition-colors duration-200"
     >
       <div>

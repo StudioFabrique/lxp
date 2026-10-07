@@ -22,7 +22,6 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
-import { groupsPageTourSteps } from "../../../components/headers/page-tour-steps";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
 import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
 import { cn } from "../../../utils/cn";
@@ -126,7 +125,6 @@ const GroupList = () => {
       <PageHeader
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
-        tourSteps={groupsPageTourSteps}
       >
         <PermissionGuard object="group" action="write">
           <Link className="btn btn-outline btn-primary" to="/admin/group/add">
@@ -154,7 +152,7 @@ const GroupList = () => {
         unstyled={!isLoading && filteredData.length === 0 && !searchValue}
       >
         {isLoading || filteredData.length > 0 || searchValue ? (
-          <div className="w-full" data-page-tour="filters">
+          <div className="w-full">
             <MultiCriteriaSearch
               value={searchValue ?? ""}
               onChange={onSubmitSearchValue}
@@ -183,7 +181,7 @@ const GroupList = () => {
           </div>
         ) : null}
 
-        <div className="w-full" data-page-tour="table">
+        <div className="w-full">
           <DataTable
             columns={columns}
             data={filteredData}
@@ -202,7 +200,7 @@ const GroupList = () => {
         </div>
 
         {filteredData.length > 0 ? (
-          <div className="w-full mt-5" data-page-tour="pagination">
+          <div className="w-full mt-5">
             <TablePagination
               leftText={`Groupes : ${totalItems}`}
               {...pagination}

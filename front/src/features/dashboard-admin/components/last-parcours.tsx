@@ -9,7 +9,6 @@ import type ParcoursSummary from "../interfaces/parcours-summary";
 import LastParcoursItem from "./last-parcours-item";
 import QuickActions from "./quick-actions";
 import FormationModal from "../../formation/components/FormationModal";
-import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
@@ -74,7 +73,6 @@ export default function LastParcours({
 
   const openFormationModal = () => {
     setFormationModal({ isOpen: true, formationId: null });
-    emitOnboardingEvent({ type: "formation_entry_clicked" });
   };
 
   const closeFormationModal = () => {

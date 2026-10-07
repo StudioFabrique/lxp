@@ -11,7 +11,6 @@ import {
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { cn } from "../../../../utils/cn";
-import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 type ActivityListProps = {
   readOnly?: boolean;
@@ -128,16 +127,12 @@ export default function ActivityList({
         {!readOnly && onClickCreateActivity && canEdit && !isReordering && (
           <PermissionGuard action="update" object="lesson">
             <button
-              data-onboarding="activity-create"
               className={cn(
                 "btn btn-success opacity-70 btn-xs gap-1",
                 activities && activities.length === 0 ? "mt-0" : "mt-2",
               )}
               disabled={newActivityButtonDisabled}
-              onClick={() => {
-                emitOnboardingEvent({ type: "activity_creation_started" });
-                onClickCreateActivity();
-              }}
+              onClick={onClickCreateActivity}
             >
               <Plus className="h-3.5 w-3.5" />
               Ajouter une activité

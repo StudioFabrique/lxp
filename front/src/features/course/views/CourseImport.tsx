@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Link, useLocation } from "react-router";
 import PageHeader from "../../../components/headers/PageHeader";
 import useImportCourses, { CoursesImportStep } from "../hooks/useImportCourses";
@@ -6,7 +5,6 @@ import ParcoursSelection from "../components/import/parcours-selection";
 import ImportResult from "../components/import/import-result";
 import CoursesPreview from "../components/import/courses-preview/courses-preview";
 import MbzImport from "../components/import/mbz-import";
-import { getCourseImportTourSteps } from "../components/import/course-import-tour-steps";
 
 const ImportCoursesHome = () => {
   const location = useLocation();
@@ -48,24 +46,6 @@ const ImportCoursesHome = () => {
     onRetryImport,
     onGoBack,
   } = useImportCourses(importTarget ?? undefined);
-
-  const tourSteps = useMemo(
-    () =>
-      getCourseImportTourSteps({
-        step,
-        hasSelectedFormation: Boolean(selectedFormation),
-        hasSelectedParcours: Boolean(selectedParcours),
-        isComplete: isImportComplete,
-        hasCriticalError: Boolean(criticalImportError),
-      }),
-    [
-      criticalImportError,
-      isImportComplete,
-      selectedFormation,
-      selectedParcours,
-      step,
-    ],
-  );
 
   const renderBody = () => {
     switch (step) {
@@ -137,7 +117,6 @@ const ImportCoursesHome = () => {
       <PageHeader
         title="Import de cours"
         description="Importer des cours depuis Moodle ainsi que toutes les leçons et activités associées."
-        tourSteps={tourSteps}
       >
         {step !== CoursesImportStep.ImportResult && (
           <Link to={".."} className="btn btn-outline">

@@ -16,7 +16,7 @@ function ModuleFields({
 }: Props) {
   return (
     <div className="flex flex-col gap-5">
-      <div data-onboarding="module-title-field">
+      <div>
         <FormInput
           label="Titre du module *"
           name="title"
@@ -26,7 +26,7 @@ function ModuleFields({
         />
       </div>
 
-      <div data-onboarding="module-description-field">
+      <div>
         <FormTextarea
           label="Description"
           name="description"
@@ -37,7 +37,6 @@ function ModuleFields({
 
       <div
         className="flex flex-col gap-2"
-        data-onboarding="module-quiz-instructions-field"
       >
         <FormTextarea
           label="Instructions pour le quiz *"

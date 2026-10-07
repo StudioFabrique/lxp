@@ -14,7 +14,6 @@ import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import type { UpdateCourseFormValues } from "./course-form.types";
 import type { LessonFormValues } from "./lesson-form.types";
 import { cn } from "../../../../utils/cn";
-import { useOnboarding } from "../../../onboarding/OnboardingContext";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import type {
   BaseEventPayload,
@@ -100,16 +99,7 @@ const SidebarCoursesList = ({
   disableCourseCreationFloating = false,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
-  const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
-  const selectedCourseId = courses.find((course) =>
-    course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
-  )?.id ?? selectedAssignmentCourseId;
-  const courseIdLockedOpen =
-    !calendarMode && onboardingStatus === "in_progress" &&
-    onboardingStep.split(":", 1)[0] === "admin-activity-create"
-      ? selectedCourseId
-      : undefined;
   const [openCourseId, setOpenCourseId] = useState<number | undefined>(() => {
     if (calendarMode) return undefined;
     const courseContainingSelectedLesson = courses.find((course) =>
@@ -148,7 +138,6 @@ const SidebarCoursesList = ({
       course.lessons.some((lesson) => lesson.id === editLessonId),
     );
     const nextOpenCourseId =
-      courseIdLockedOpen ??
       selectedCourse?.id ??
       editedCourse?.id ??
       openedCourseId;
@@ -158,7 +147,6 @@ const SidebarCoursesList = ({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenCourseId(nextOpenCourseId);
   }, [
-    courseIdLockedOpen,
     calendarMode,
     courses,
     editLessonId,
@@ -265,16 +253,9 @@ const SidebarCoursesList = ({
                 if (calendarMode && calendarAdding) return;
                 if (reorderingLessonCourseId === course.id) return;
                 if (calendarMode) onSelectCalendarCourse?.(course.id);
-                setOpenCourseId((currentId) => {
-                  if (
-                    currentId === course.id &&
-                    courseIdLockedOpen === course.id
-                  ) {
-                    return currentId;
-                  }
-
-                  return currentId === course.id ? undefined : course.id;
-                });
+                setOpenCourseId((currentId) =>
+                  currentId === course.id ? undefined : course.id,
+                );
               }}
               onOpen={() => setOpenCourseId(course.id)}
               onDeleteLesson={onDeleteLesson}

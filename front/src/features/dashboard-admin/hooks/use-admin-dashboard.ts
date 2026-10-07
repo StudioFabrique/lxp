@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { formatWelcomeTitle } from "../../../utils/helpers/welcome-title";
-import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { profileApi } from "../../profile/api/profile.api";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { buildRecommendedActions } from "../components/build-recommended-actions";
@@ -15,8 +14,6 @@ const teacherDescription =
 
 export function useAdminDashboard() {
   const { user } = useContext(AuthContext);
-  const { status: onboardingStatus, canStart: canStartOnboarding } =
-    useOnboarding();
   const userRank = user?.roles.length ? (user.roles[0]?.rank ?? 4) : 4;
   const isAdministrator = userRank <= 1;
   const isRoot = userRank === 0;
@@ -80,7 +77,6 @@ export function useAdminDashboard() {
       (studentsCount.isLoading || groupsCount.isLoading || isParcoursLoading));
   return {
     user,
-    showOnboardingWelcome: onboardingStatus === "pending" && canStartOnboarding,
     welcomeTitle: formatWelcomeTitle(defaultTitle, user),
     welcomeMessage: isTeacher ? teacherDescription : adminDescription,
     parcours,

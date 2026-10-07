@@ -28,7 +28,6 @@ import Skill from "../../../../../../src/utils/interfaces/skill";
 import { parcoursApi } from "../../../api/parcours.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { parcoursKeys } from "../../../api/parcours.keys";
-import { emitOnboardingEvent } from "../../../../onboarding/onboarding-events";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
@@ -180,7 +179,6 @@ const useNewModule = () => {
 
       try {
         const data = await parcoursApi.mutations.createModule(formData);
-        emitOnboardingEvent({ type: "module_created", id: data.data.id });
         await finishCreation(data.data);
       } catch (error) {
         toast.error(

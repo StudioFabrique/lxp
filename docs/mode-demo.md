@@ -12,7 +12,7 @@ la même image Docker, des variables différentes et des bases dédiées. Elle n
 peut pas accéder aux données de production.
 
 Sur une instance ordinaire, gardez `DEMO_MODE=false`. Définissez `DEMO_URL`
-pour afficher le bouton « Mode démonstration » à côté du tutoriel guidé.
+pour rediriger l'entrée `/demo` vers l'instance de démonstration.
 
 ## Pourquoi le front lit le mode depuis l'API
 
@@ -165,24 +165,7 @@ au prochain rafraîchissement des données.
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Le temps réel (Socket.IO)      | Ses gestionnaires écrivent en base sans passer par le verrou HTTP, et tous les visiteurs partagent un compte, donc les mêmes salons. Coupé dans `api/src/server.ts` et `front/src/store/AuthProvider.tsx`.                     |
 | Les fonctionnalités IA         | Chatbot et génération de quiz partent d'une session obtenue sans identifiants sur une instance publique, et consomment des jetons chez le fournisseur.                                                                         |
-| Le tutoriel d'onboarding       | Il enregistre sa progression sur le compte, partagé : le premier visiteur à le terminer en priverait tous les suivants. `OnboardingTour` ne fournit plus qu'un contexte inerte, et la visite guidée est portée par `DemoTour`. |
 | Le questionnaire bêta-testeurs | Sans objet pour un visiteur de passage.                                                                                                                                                                                        |
-
-## La visite guidée
-
-`DemoTour` (`front/src/features/demo/components/DemoTour.tsx`) démarre seul à
-l'entrée dans la démonstration et se relance depuis « Tutoriel guidée » dans la
-barre latérale.
-
-Son état est stocké dans `sessionStorage`, **jamais en base**, pour la raison ci-dessus :
-chaque onglet a donc sa propre visite, et la démonstration commence toujours par
-elle.
-
-Les étapes sont dans `front/src/features/demo/demo-tour-steps.ts`. Chacune
-déclare la page qu'elle ouvre ; la navigation passe par le hook `before` de
-react-joyride, qui attend la résolution de la promesse avant d'afficher la bulle.
-L'habillage est partagé avec les visites par page
-(`front/src/components/headers/page-tour-options.ts`).
 
 ## Produire le jeu de contenus
 

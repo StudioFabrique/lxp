@@ -35,7 +35,6 @@ export default function QuickActions({
           <li>
             <button
               type="button"
-              data-onboarding="formation-create-entry"
               onClick={onCreateFormation}
             >
               Créer une formation

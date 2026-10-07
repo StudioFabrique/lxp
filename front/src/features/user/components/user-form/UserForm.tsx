@@ -143,7 +143,7 @@ const UserForm = ({
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <PageWrapper as="form" className="@container min-w-0" onSubmit={handleSubmit} autoComplete="on" data-recommended-tour="user-form">
+    <PageWrapper as="form" className="@container min-w-0" onSubmit={handleSubmit} autoComplete="on" data-testid="user-form">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
@@ -162,7 +162,7 @@ const UserForm = ({
           type="submit"
           className="btn btn-primary normal-case"
           disabled={disabled}
-          data-recommended-tour="user-save"
+          data-testid="user-save"
         >
           {isLoading ? (
             <span className="flex items-center gap-x-2">
@@ -177,7 +177,7 @@ const UserForm = ({
       {groupCreationContext?.(!editMode ? <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact /> : null)}
       <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-1 gap-5 @min-[40rem]:grid-cols-2 @min-[64rem]:grid-cols-3">
-          <div className="min-w-0" data-recommended-tour="user-informations">
+          <div className="min-w-0" data-testid="user-informations">
             <UserFormInformations
               lastname={lastname}
               lastnameError={lastnameError}
@@ -221,7 +221,7 @@ const UserForm = ({
                 <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact />
               </BoxWrapper>
             )}
-            <div className="min-w-0 flex-1" data-recommended-tour="user-role">
+            <div className="min-w-0 flex-1" data-testid="user-role">
             <UserFormTypeUser
               roleId={roleId}
               onSetRoleId={setRoleId}

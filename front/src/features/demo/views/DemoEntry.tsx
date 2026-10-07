@@ -12,7 +12,6 @@ import AuthLayout from "../../auth/components/AuthLayout";
 import DemoCaptcha from "../components/DemoCaptcha";
 import { demoApi, type DemoProfile } from "../api/demo-client";
 import { solveChallenge, type DemoSolution } from "../lib/altcha-solver";
-import { DEMO_TOUR_STORAGE_KEY } from "../demo-tour-storage";
 
 import logoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import logoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
@@ -103,11 +102,6 @@ const DemoEntry = () => {
 
       try {
         const { layout } = await demoApi.openSession(profile, solution);
-
-        // Le tour est armé côté navigateur, jamais côté serveur : le compte de
-        // démonstration est partagé par tous les visiteurs simultanés, et un
-        // état enregistré sur le compte priverait les suivants du tutoriel.
-        sessionStorage.setItem(DEMO_TOUR_STORAGE_KEY, layout);
 
         await handshake();
         navigate(`/${layout}/dashboard`, { replace: true });

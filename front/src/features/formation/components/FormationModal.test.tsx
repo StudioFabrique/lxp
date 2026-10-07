@@ -2,11 +2,6 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  emitOnboardingEvent,
-  subscribeToOnboardingEvents,
-  type OnboardingEventDetail,
-} from "../../onboarding/onboarding-events";
 import FormationModal from "./FormationModal";
 
 const mocks = vi.hoisted(() => ({
@@ -105,34 +100,16 @@ afterEach(() => {
   mocks.readArchiveTitle.mockReset();
 });
 
-describe("FormationModal pendant l'onboarding", () => {
-  it("se ferme lorsque le tutoriel revient à l'étape précédente", () => {
+describe("FormationModal", () => {
+  it("annule l'édition et ferme la modale lorsque l'utilisateur annule", () => {
     const container = document.createElement("div");
     const onClose = vi.fn();
-    root = createRoot(container);
-
-    act(() => root?.render(<FormationModal onClose={onClose} />));
-    act(() => emitOnboardingEvent({ type: "formation_modal_close_requested" }));
-
-    expect(mocks.cancelEdit).toHaveBeenCalledOnce();
-    expect(onClose).toHaveBeenCalledOnce();
-  });
-
-  it("prévient le tutoriel lorsque l'utilisateur annule", () => {
-    const container = document.createElement("div");
-    const onClose = vi.fn();
-    const events: OnboardingEventDetail[] = [];
-    const unsubscribe = subscribeToOnboardingEvents((event) =>
-      events.push(event),
-    );
     root = createRoot(container);
 
     act(() => root?.render(<FormationModal onClose={onClose} />));
     const cancelButton = container.querySelector("button");
     act(() => cancelButton?.click());
-    unsubscribe();
 
-    expect(events).toContainEqual({ type: "formation_modal_cancelled" });
     expect(mocks.cancelEdit).toHaveBeenCalledOnce();
     expect(onClose).toHaveBeenCalledOnce();
   });

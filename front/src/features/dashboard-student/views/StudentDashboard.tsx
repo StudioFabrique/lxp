@@ -7,7 +7,6 @@ import StudentTimeline from "../components/timeline/student-timeline";
 import FeelingFeedback from "../components/right-side/feeling-feedback";
 import StudentAccomplishments from "../components/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../components/right-side/most-read-courses";
-import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useStudentDashboard } from "../hooks/use-student-dashboard";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
@@ -18,7 +17,6 @@ import { ChartNoAxesCombined, Play } from "lucide-react";
 const StudentDashboard = () => {
   const { demoMode } = useDemoMode();
   const {
-    showOnboardingWelcome,
     welcomeTitle,
     welcomeMessage,
     lastLesson,
@@ -44,29 +42,23 @@ const StudentDashboard = () => {
 
   return (
     <PageWrapper>
-      <div data-onboarding="student-dashboard-header">
-        {showOnboardingWelcome ? (
-          <OnboardingWelcome layout="student" />
+      <Header
+        title={welcomeTitle}
+        description={welcomeMessage}
+        classname="capitalize"
+      >
+        {canResumeOnboarding ? (
+          <Link to="/student/onboarding" className="btn btn-primary">
+            <Play className="size-4 fill-current" aria-hidden="true" />
+            Reprendre mon onboarding
+          </Link>
         ) : (
-          <Header
-            title={welcomeTitle}
-            description={welcomeMessage}
-            classname="capitalize"
-          >
-            {canResumeOnboarding ? (
-              <Link to="/student/onboarding" className="btn btn-primary">
-                <Play className="size-4 fill-current" aria-hidden="true" />
-                Reprendre mon onboarding
-              </Link>
-            ) : (
-              <Link to="/student/mon-avancement" className="btn btn-outline btn-primary">
-                <ChartNoAxesCombined className="size-4" aria-hidden="true" />
-                Mon avancement
-              </Link>
-            )}
-          </Header>
+          <Link to="/student/mon-avancement" className="btn btn-outline btn-primary">
+            <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+            Mon avancement
+          </Link>
         )}
-      </div>
+      </Header>
 
       {learningContext.isError ? (
         <BoxWrapper className="min-h-[50vh] items-center justify-center text-center">
@@ -94,7 +86,6 @@ const StudentDashboard = () => {
       <div className="grid gap-16 xl:grid-cols-3">
         <div
           className="flex flex-col gap-5 xl:col-span-2"
-          data-onboarding="student-content"
         >
           {/* <Notifications /> */}
           {hasLastLessons && lastLesson ? (

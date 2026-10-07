@@ -227,7 +227,6 @@ const ActivityHeader = ({
           )}
           {titleEditable && isSticky ? (
             <input
-              data-onboarding-field="activity-title"
               type="text"
               aria-label="Titre de l’activité"
               aria-invalid={Boolean(titleError)}
@@ -240,7 +239,6 @@ const ActivityHeader = ({
           ) : titleEditable ? (
             <textarea
               ref={titleInputRef}
-              data-onboarding-field="activity-title"
               rows={1}
               aria-label="Titre de l’activité"
               aria-invalid={Boolean(titleError)}

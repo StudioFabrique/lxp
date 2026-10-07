@@ -107,7 +107,6 @@ const NewParcoursForm: FC<Props> = ({
               form.register("title").ref(element);
               titleInputRef.current = element;
             }}
-            data-onboarding-field="parcours-title"
             className={setInputStyle(Boolean(form.formState.errors.title))}
             id="title"
             onChange={form.register("title").onChange}

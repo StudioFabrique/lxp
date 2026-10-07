@@ -9,7 +9,6 @@ import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
-import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 import type Tag from "../../../../utils/interfaces/tag";
 import { cn } from "../../../../utils/cn";
 
@@ -42,7 +41,6 @@ const CreateCourseItem = ({
 
   const handleOpenDetails = form.handleSubmit(() => {
     if (!title.trim()) return;
-    emitOnboardingEvent({ type: "course_form_opened" });
     setShowDetailsForm(true);
   }, showFormErrors);
 
@@ -76,7 +74,6 @@ const CreateCourseItem = ({
         />
       )}
       <motion.div
-        data-onboarding="course-create"
         className={cn(
           "flex w-full flex-col gap-4 rounded-xl",
           showTitleInput && "bg-success",

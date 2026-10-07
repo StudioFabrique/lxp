@@ -26,7 +26,6 @@ import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
-import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 import { cn } from "../../../utils/cn";
 
 const UserHome = () => {
@@ -216,7 +215,6 @@ const UserHome = () => {
       <PageHeader
         title="Liste d'utilisateurs"
         description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
-        tourSteps={usersPageTourSteps}
       >
         <PermissionGuard object="user" action="write">
           <Link className="btn btn-outline btn-primary" to="/admin/user/add">
@@ -226,14 +224,13 @@ const UserHome = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <div data-page-tour="stats">
+      <div>
         <UserStats stats={stats} />
       </div>
 
       {roles.length > 0 && currentRole ? (
         <div
           className="mb-4 flex w-full flex-wrap justify-start gap-2"
-          data-page-tour="role-filters"
         >
           {roles.map((role) => (
             <button
@@ -255,7 +252,7 @@ const UserHome = () => {
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
-          <div className="w-full" data-page-tour="filters">
+          <div className="w-full">
             <MultiCriteriaSearch
               value={searchValue ?? ""}
               onChange={onSubmitSearchValue}
@@ -298,7 +295,7 @@ const UserHome = () => {
           </div>
         ) : null}
 
-        <div className="w-full" data-page-tour="table">
+        <div className="w-full">
           <DataTable
             columns={columns}
             data={data}
@@ -322,7 +319,7 @@ const UserHome = () => {
         </div>
 
         {data.length > 0 ? (
-          <div className="w-full mt-5" data-page-tour="pagination">
+          <div className="w-full mt-5">
             <TablePagination
               leftText={`Utilisateurs : ${totalItems}`}
               {...pagination}

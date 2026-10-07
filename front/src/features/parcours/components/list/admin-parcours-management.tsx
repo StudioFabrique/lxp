@@ -15,7 +15,6 @@ import FormationModal from "../../../formation/components/FormationModal";
 import LastParcoursItem from "../../../dashboard-admin/components/last-parcours-item";
 import type ParcoursSummary from "../../../dashboard-admin/interfaces/parcours-summary";
 import type { FormationParcoursSummary } from "../../../dashboard-admin/interfaces/parcours-summary";
-import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
 import { hasRoleRank } from "../../../../utils/helpers/user-role";
 import { AuthContext } from "../../../../store/AuthProvider";
@@ -154,7 +153,6 @@ const AdminParcoursManagement = ({
 
   const openFormationCreation = () => {
     setFormationModal({ isOpen: true, formationId: null });
-    emitOnboardingEvent({ type: "formation_entry_clicked" });
   };
 
   const openFormationEdition = (formationId: number) => {
@@ -218,7 +216,6 @@ const AdminParcoursManagement = ({
               <button
                 type="button"
                 className="btn btn-outline btn-primary"
-                data-onboarding="formation-create-entry"
                 onClick={openFormationCreation}
               >
                 <PlusCircle />
@@ -253,7 +250,6 @@ const AdminParcoursManagement = ({
 
       <section
         className={cn("grid items-start gap-5", usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3")}
-        data-page-tour="parcours-cards"
       >
         {paginatedFormations?.length === 0 ? (
           <div className="col-span-full">
