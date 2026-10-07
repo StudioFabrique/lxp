@@ -8,6 +8,8 @@ export type ChatbotStep = {
   help?: ChatbotHelp;
   compact?: boolean;
   delay?: number;
+  /** Durée d'affichage des trois points avant le message, comptée une fois le chatbot visible. */
+  typingMs?: number;
   scopeRef: RefObject<HTMLDivElement | null>;
   stepId: string;
 };

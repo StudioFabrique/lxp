@@ -3,14 +3,16 @@ import { createPortal } from "react-dom";
 import { useReward } from "react-rewards";
 import { useReducedMotion } from "motion/react";
 import { useVisualPreferences } from "../../../store/VisualPreferences";
-import { chatbotMoveDurationMs } from "./auth-chatbot-motion";
 import { chatbotAvatarSelector } from "./auth-chatbot-handoff";
 
 type Source = { x: number; y: number };
 
-// Le chatbot est placé après 350 ms puis glisse vers son emplacement : on attend qu'il se soit posé.
-const settleDelayMs = 350 + chatbotMoveDurationMs + 150;
 const pageAvatarSelector = `[data-chatbot-placement="page"] ${chatbotAvatarSelector}`;
+const pageBubbleSelector = '[data-chatbot-placement="page"] [data-chatbot-bubble]';
+const pollMs = 100;
+// Position identique sur ce nombre de relevés : le chatbot a fini de glisser.
+const stableChecks = 3;
+const giveUpMs = 10000;
 
 // Même bibliothèque que FeedbacksButton. Un spread de 360° donne une explosion radiale ;
 // decay et lifetime élevés laissent les pièces en suspension avant leur chute.
@@ -33,16 +35,30 @@ export default function AuthChatbotConfetti() {
   const { reward } = useReward(rewardId, "confetti", rewardConfig);
   const enabled = confetti && !reducedMotion;
 
+  // Les confettis partent une fois le chatbot visible, immobile et son message affiché (plus de points d'attente).
   useEffect(() => {
     if (!enabled) return;
-    const timer = window.setTimeout(() => {
-      const rect = document
-        .querySelector<HTMLElement>(pageAvatarSelector)
-        ?.getBoundingClientRect();
-      if (!rect || rect.width === 0) return;
+    let last = "";
+    let stable = 0;
+    const startedAt = Date.now();
+    const timer = window.setInterval(() => {
+      if (Date.now() - startedAt > giveUpMs) return window.clearInterval(timer);
+      const avatar = document.querySelector<HTMLElement>(pageAvatarSelector);
+      const host = avatar?.closest<HTMLElement>('[data-chatbot-placement="page"]');
+      const rect = avatar?.getBoundingClientRect();
+      const typing = document.querySelector(`${pageBubbleSelector} [role="status"]`) !== null;
+      if (!rect || rect.width === 0 || !host || typing || getComputedStyle(host).visibility !== "visible") {
+        stable = 0;
+        return;
+      }
+      const key = `${Math.round(rect.left)}:${Math.round(rect.top)}`;
+      stable = key === last ? stable + 1 : 0;
+      last = key;
+      if (stable < stableChecks) return;
+      window.clearInterval(timer);
       setSource({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
-    }, settleDelayMs);
-    return () => window.clearTimeout(timer);
+    }, pollMs);
+    return () => window.clearInterval(timer);
   }, [enabled]);
 
   // Le point d'origine est rendu avant le déclenchement : l'effet s'exécute après le commit.

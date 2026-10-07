@@ -5,6 +5,8 @@ type Props = PropsWithChildren<{
   title: ReactNode;
   titleAccessory?: ReactNode;
   description?: ReactNode;
+  /** Fait précéder la description du chatbot par les trois points d'attente (en ms). */
+  descriptionTypingMs?: number;
   variant?: "default" | "setup";
 }>;
 
@@ -18,6 +20,7 @@ const AuthPageWrapper = ({
   title,
   titleAccessory,
   description,
+  descriptionTypingMs,
   variant = "default",
   children,
 }: Props) => {
@@ -32,7 +35,7 @@ const AuthPageWrapper = ({
             {titleAccessory}
           </div>
           {description && (
-            <AuthOnboardingChatbot key={typeof description === "string" ? description : undefined} introduction={false} compact message={description} />
+            <AuthOnboardingChatbot key={typeof description === "string" ? description : undefined} introduction={false} compact typingMs={descriptionTypingMs} message={description} />
           )}
         </header>
         {children}

@@ -15,6 +15,7 @@ type Props = {
   introduction?: boolean;
   delay?: number;
   compact?: boolean;
+  typingMs?: number;
   scopeRef?: RefObject<HTMLDivElement | null>;
   stepId?: string;
 };
@@ -30,6 +31,7 @@ export default function AuthChatbotDialogue({
   introduction = true,
   delay = 0,
   compact = false,
+  typingMs,
   scopeRef,
   stepId,
 }: Props) {
@@ -42,7 +44,8 @@ export default function AuthChatbotDialogue({
   // Every message shown in this step, kept invisibly in the bubble slot so its height, and the avatar centred on it, never changes.
   const [reserved, setReserved] = useState<ReactNode[]>(() => (followUp ? [welcomeFollowUp] : []));
   const [selected, setSelected] = useState<number | null>(0);
-  const [waiting, setWaiting] = useState(followUp);
+  const typingStep = !reducedMotion && typingMs !== undefined && typingMs > 0;
+  const [waiting, setWaiting] = useState(followUp || (typingStep && !introduction));
   const [bubbleObstructed, setBubbleObstructed] = useState(false);
   const responseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
@@ -59,7 +62,7 @@ export default function AuthChatbotDialogue({
     if (stepId === undefined) return;
     if (responseTimer.current !== null) clearTimeout(responseTimer.current);
     const frame = requestAnimationFrame(() => {
-    setWaiting(false);
+    setWaiting(typingStep);
     setAnswer(null);
     setReserved([]);
     setSelected(0);
@@ -68,7 +71,23 @@ export default function AuthChatbotDialogue({
     setReplaySignal(current => current + 1);
     });
     return () => cancelAnimationFrame(frame);
-  }, [stepId]);
+  }, [stepId, typingStep]);
+  // Les points restent affichés typingMs après l'apparition du chatbot, pas depuis le montage :
+  // il est caché jusqu'à son placement.
+  useEffect(() => {
+    if (!typingStep || stepId === undefined) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const poll = window.setInterval(() => {
+      const host = bubbleRef.current?.closest<HTMLElement>('[data-chatbot-placement="page"]');
+      if (!host || getComputedStyle(host).visibility !== "visible") return;
+      window.clearInterval(poll);
+      timer = setTimeout(() => setWaiting(false), typingMs);
+    }, 100);
+    return () => {
+      window.clearInterval(poll);
+      clearTimeout(timer);
+    };
+  }, [stepId, typingStep, typingMs]);
   useEffect(() => {
     if (!followUp) return;
     const timers = [

@@ -59,11 +59,18 @@ describe("Confirmation de l'adresse email", () => {
     await vi.waitFor(() => {
       expect(container.querySelector(".lucide-mail-check")).not.toBeNull();
     });
+    // Les trois points précèdent le message, qui apparaît une fois le chatbot posé.
     await vi.waitFor(() => {
-      expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain(
-        "Félicitations, votre compte est créé",
-      );
+      expect(document.querySelector('[data-chatbot-bubble] [role="status"]')).not.toBeNull();
     });
+    await vi.waitFor(
+      () => {
+        expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain(
+          "Félicitations, votre compte est créé",
+        );
+      },
+      { timeout: 5000 },
+    );
     expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain(
       "vous pouvez maintenant vous connecter",
     );
