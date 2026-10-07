@@ -14,7 +14,7 @@ scenes={}
 for attributes in scene_attributes:
     fields=dict(re.findall(r'([\w-]+)="([^"]*)"',attributes))
     scenes[fields['id']]={'id':fields['id'],'start':float(fields['data-start']),'duration':float(fields['data-duration'])}
-mappings=[['structure','personalize'],['assistant','steering'],['author','assess'],['organize','care'],['dashboards','structure','organize'],['progression'],['groups'],['trainers'],['tags'],['emails'],['instance'],['accomplishments']]
+mappings=[['structure'],['personalize'],['assistant'],['steering'],['author'],['assess'],['organize'],['care'],['dashboards'],['progression'],['groups'],['trainers'],['tags'],['emails'],['instance'],['accomplishments']]
 sequences=[[scenes[name] for name in names] for names in mappings]
 # Use the actual first scene, not the deleted old closing slogan.
 intro=scenes['identity']

@@ -1,4 +1,5 @@
 import { useContext, type Ref } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import AuthAnimatedLogo from "./AuthAnimatedLogo";
 import { AuthChatbotDragContext } from "./AuthChatbotDragContext";
 import type { ChatbotGesture } from "./auth-chatbot-gestures";
@@ -17,6 +18,8 @@ type Props = {
 
 export default function AuthChatbotAvatar({ gesture, compact, replaySignal, introduction, expanded, menuId, onActivate, buttonRef }: Props) {
   const drag = useContext(AuthChatbotDragContext);
+  const reducedMotion = useReducedMotion();
+  const carried = drag?.dragging === true && !reducedMotion;
   return (
     <button
       ref={buttonRef}
@@ -29,7 +32,12 @@ export default function AuthChatbotAvatar({ gesture, compact, replaySignal, intr
       onPointerDown={event => { if (!introduction) drag?.start(event); }}
       onClick={() => { if (!drag?.wasDragged()) onActivate(); }}
     >
-      <AuthAnimatedLogo mode="chatbot" gesture={gesture} className={cn("rounded-full", compact ? "w-16" : "w-20 sm:w-28")} replaySignal={replaySignal} />
+      {/* While carried, the avatar sways like a held toy, then settles when released. */}
+      <motion.span className="block"
+        animate={carried ? { rotate: [-9, 9, -9], scale: 1.1, y: -4 } : { rotate: 0, scale: 1, y: 0 }}
+        transition={carried ? { rotate: { duration: 0.7, repeat: Infinity, ease: "easeInOut" }, default: { type: "spring", stiffness: 300, damping: 14 } } : { type: "spring", stiffness: 260, damping: 12 }}>
+        <AuthAnimatedLogo mode="chatbot" gesture={gesture} className={cn("rounded-full", compact ? "w-16" : "w-20 sm:w-28")} replaySignal={replaySignal} />
+      </motion.span>
     </button>
   );
 }

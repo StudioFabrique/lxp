@@ -9,6 +9,8 @@ export function useUserRoleOptions(requiredRoleRank?: number) {
   const query = useQuery({
     queryKey: ["permission-roles"],
     queryFn: queries.roles,
+    // Les rôles se gèrent dans un autre onglet (« Gérer les rôles ») : rechargement au retour.
+    refetchOnWindowFocus: true,
   });
   const roles = useMemo(
     () => (query.data?.data ?? []).filter(

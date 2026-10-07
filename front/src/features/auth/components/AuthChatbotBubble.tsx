@@ -13,8 +13,8 @@ export default function AuthChatbotBubble({ message, waiting, hidden, delay, bub
   const reducedMotion = useReducedMotion();
   return (
     <motion.div ref={bubbleRef} data-chatbot-bubble layout aria-hidden={hidden || undefined}
-      className="relative min-w-0 rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-left leading-6 text-primary"
-      style={{ width: waiting ? 76 : 300 }}
+      className="relative col-start-1 row-start-1 min-w-0 self-center justify-self-end rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-left leading-6 text-primary"
+      style={{ width: waiting ? 76 : "100%" }}
       initial={reducedMotion ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: hidden ? 0 : 1, y: 0 }}
       transition={{ opacity: { duration: reducedMotion ? 0 : .2, delay }, y: { duration: reducedMotion ? 0 : .4 }, layout: { duration: reducedMotion ? 0 : .4, ease: [.22, 1, .36, 1] } }}>

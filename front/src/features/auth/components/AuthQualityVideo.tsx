@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LoaderCircle, Maximize, Minimize, Pause, Play, RotateCcw } from "lucide-react";
+import { LoaderCircle, Maximize, Pause, Play, RotateCcw } from "lucide-react";
 import { authPresentationStateSchema, type AuthPresentationState } from "./auth-presentation.schema";
 import { authTileColors, authTileContentColors } from "./auth-tile-colors";
 import { cn } from "../../../utils/cn";
@@ -9,15 +9,23 @@ type Props = {
   label: string;
   colorIndex: number;
   reducedMotion: boolean;
+  fullscreen?: boolean;
+  onToggleFullscreen?: () => void;
   onEnded?: () => void;
+  /** Keeps the next sequence unloaded while a turn animation runs, so its heavy start does not stall it. */
+  hold?: boolean;
 };
 
 const presentationTopics: readonly string[] = [
-  "Parcours pédagogiques et thèmes",
-  "Assistant IA et pilotage pédagogique",
-  "Création d’activités et quiz",
-  "Planning et prévention du décrochage",
-  "Tableaux de bord, contenus et calendrier",
+  "Parcours et niveaux pédagogiques",
+  "Thèmes aux couleurs de chacun",
+  "Assistant IA dans la leçon",
+  "Pilotage des usages et des contenus",
+  "Création d’activités",
+  "Quiz et entraînement",
+  "Calendrier et ressources",
+  "Prévention du décrochage",
+  "Tableaux de bord par rôle",
   "Progression et profil d’apprentissage",
   "Groupes, promotions et parcours",
   "Formateurs et groupes associés",
@@ -28,18 +36,23 @@ const presentationTopics: readonly string[] = [
 ];
 
 /** Plays the actual Hyperframes feature scenes. */
-export default function AuthQualityVideo({ quality, label, colorIndex, reducedMotion, onEnded }: Props) {
+export default function AuthQualityVideo({ quality, label, colorIndex, reducedMotion, fullscreen = false, onToggleFullscreen, onEnded, hold = false }: Props) {
   const frameRef = useRef<HTMLIFrameElement>(null);
-  const playerRef = useRef<HTMLElement>(null);
-  const colorRef = useRef<HTMLSpanElement>(null);
+    const colorRef = useRef<HTMLSpanElement>(null);
   const playedRef = useRef(false);
   const onEndedRef = useRef(onEnded);
   const completionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [state, setState] = useState<AuthPresentationState>("ready");
   const [loaded, setLoaded] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [fullscreen, setFullscreen] = useState(() => document.fullscreenElement?.hasAttribute("data-auth-quality-player") ?? false);
-  const [fullscreenError, setFullscreenError] = useState(false);
+  const [shownQuality, setShownQuality] = useState(quality);
+  // Adjusting state during render: the new sequence loads only once the turn animation is over.
+  if (!hold && shownQuality !== quality) {
+    setShownQuality(quality);
+    setLoaded(false);
+    setState("ready");
+  }
+  const pending = shownQuality !== quality;
   const send = useCallback((action: "initialize" | "play" | "pause" | "replay" | "color") => {
     const palette = colorRef.current ? getComputedStyle(colorRef.current) : undefined;
     frameRef.current?.contentWindow?.postMessage({
@@ -72,7 +85,7 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
         completionTimer.current = setTimeout(() => {
           completionTimer.current = null;
           if (!document.hidden) onEndedRef.current?.();
-        }, 1200);
+        }, 300);
       }
     };
     const onVisibility = () => { if (document.hidden) send("pause"); };
@@ -99,50 +112,26 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
     return () => observer.disconnect();
   }, [colorIndex, send]);
 
-  useEffect(() => {
-    const onFullscreenChange = () => {
-      const target = playerRef.current?.closest<HTMLElement>("[data-auth-quality-player]") ?? playerRef.current;
-      setFullscreen(document.fullscreenElement === target);
-    };
-    document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
-  }, []);
-
-  const toggleFullscreen = async () => {
-    setFullscreenError(false);
-    try {
-      const target = playerRef.current?.closest<HTMLElement>("[data-auth-quality-player]") ?? playerRef.current;
-      if (document.fullscreenElement === target) {
-        await document.exitFullscreen();
-      } else if (target?.requestFullscreen) {
-        await target.requestFullscreen();
-      } else {
-        setFullscreenError(true);
-      }
-    } catch {
-      setFullscreenError(true);
-    }
-  };
-
   const failed = state === "error";
   const finished = state === "ended";
-  const canReplay = finished;
+  // Offered during the final seconds so the learner can replay before the tour moves on.
+  const canReplay = finished || state === "ending";
   const playing = state === "playing";
   // Position of this feature in the tour of all presentations, when it is one of them.
   const step = Number.isInteger(quality) && quality >= 0 && quality < presentationTopics.length ? quality + 1 : null;
   return (
-    <figure ref={playerRef} className={cn("auth-quality-video relative flex h-full min-h-0 flex-col gap-3", fullscreen && "bg-base-100 text-base-content")}>
+    <figure className={cn("auth-quality-video relative flex h-full min-h-0 flex-col gap-3", fullscreen && "bg-base-100 text-base-content")}>
       <span ref={colorRef} aria-hidden="true" className="pointer-events-none absolute invisible" style={{ color: authTileColors[colorIndex % authTileColors.length], outlineColor: authTileContentColors[colorIndex % authTileContentColors.length], backgroundColor: "var(--color-base-100)", borderColor: "var(--color-base-content)" }} />
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-base-100">
         <iframe
           key={attempt}
           ref={frameRef}
-          src={`/presentations/andria/index.html?quality=${quality}`}
+          src={`/presentations/andria/index.html?quality=${shownQuality}`}
           title={`Présentation animée ANDRIA : ${label}`}
-          className="size-full border-0"
+          className={cn("size-full border-0 transition-opacity duration-300", (!loaded || pending) && "opacity-0")}
           onLoad={() => send("initialize")}
         />
-        {!loaded && !failed && <div className="absolute inset-0 flex items-center justify-center bg-base-100 text-base-content" role="status"><LoaderCircle className="size-6 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Chargement de la présentation</span></div>}
+        {!loaded && !failed && <div className="absolute inset-0 flex items-center justify-center bg-base-100 text-base-content transition-opacity delay-500 duration-300 starting:opacity-0" role="status"><LoaderCircle className="size-6 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Chargement de la présentation</span></div>}
         {failed && <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-base-100 p-4 text-center text-base-content"><p role="alert" className="text-sm">La présentation n’a pas pu démarrer.</p><button type="button" className="btn btn-sm btn-outline" onClick={() => { setLoaded(false); setState("ready"); setAttempt(current => current + 1); }}>Réessayer</button></div>}
       </div>
       <figcaption className="flex shrink-0 items-center justify-between gap-3 text-xs">
@@ -159,13 +148,12 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
             {canReplay ? <RotateCcw className="size-4" aria-hidden="true" /> : playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
             {canReplay ? "Rejouer" : playing ? "Pause" : "Lire"}
           </button>}
-          {!(fullscreen && document.fullscreenElement?.hasAttribute("data-auth-quality-player")) && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded || failed} aria-label={fullscreen ? "Quitter le plein écran" : "Plein écran"} onClick={() => void toggleFullscreen()}>
-            {fullscreen ? <Minimize className="size-4" aria-hidden="true" /> : <Maximize className="size-4" aria-hidden="true" />}
-            <span className="hidden sm:inline">{fullscreen ? "Réduire" : "Plein écran"}</span>
+          {onToggleFullscreen && !fullscreen && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded || failed} aria-label="Plein écran" onClick={onToggleFullscreen}>
+            <Maximize className="size-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Plein écran</span>
           </button>}
         </div>
       </figcaption>
-      {fullscreenError && <p role="alert" className="text-xs">Le plein écran est indisponible dans ce navigateur. Vous pouvez poursuivre la lecture ici.</p>}
     </figure>
   );
 }

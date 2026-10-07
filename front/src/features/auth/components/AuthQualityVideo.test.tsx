@@ -26,9 +26,9 @@ describe("login Hyperframes presentation", () => {
   });
 
   it("plays the matching scenes and offers replay after the final feature", () => {
-    act(() => root.render(<AuthQualityVideo quality={3} label="Réactive" colorIndex={1} reducedMotion={false} />));
+    act(() => root.render(<AuthQualityVideo quality={3} label="Maîtrisée" colorIndex={1} reducedMotion={false} />));
     expect(frame().getAttribute("src")).toContain("quality=3");
-    expect(container.querySelector("figcaption")?.textContent).toContain("Planning et prévention du décrochage");
+    expect(container.querySelector("figcaption")?.textContent).toContain("Pilotage des usages et des contenus");
     expect(container.textContent).not.toContain("Découvrir la plateforme");
     const post = vi.spyOn(frame().contentWindow!, "postMessage");
     notify("ready");
@@ -44,12 +44,12 @@ describe("login Hyperframes presentation", () => {
   });
 
   it.each([
-    [6, "Collective", "Groupes, promotions et parcours"],
-    [7, "Coordonnée", "Formateurs et groupes associés"],
-    [8, "Organisée", "Tags et contenus reliés"],
-    [9, "Connectée", "Alertes email et disponibilité des contenus"],
-    [10, "Personnalisable", "Identité, thèmes et emails de l’instance"],
-    [11, "Encourageante", "Accomplissements, félicitations et journal"],
+    [10, "Collective", "Groupes, promotions et parcours"],
+    [11, "Coordonnée", "Formateurs et groupes associés"],
+    [12, "Organisée", "Tags et contenus reliés"],
+    [13, "Connectée", "Alertes email et disponibilité des contenus"],
+    [14, "Personnalisable", "Identité, thèmes et emails de l’instance"],
+    [15, "Encourageante", "Accomplissements, félicitations et journal"],
   ] as const)("opens the new sequence %s with its topic", (quality, label, topic) => {
     act(() => root.render(<AuthQualityVideo quality={quality} label={label} colorIndex={0} reducedMotion={false} />));
     expect(frame().getAttribute("src")).toBe(`/presentations/andria/index.html?quality=${quality}`);
@@ -60,10 +60,19 @@ describe("login Hyperframes presentation", () => {
   it("shows the position of the feature in the tour before its topic", () => {
     act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} />));
     const caption = container.querySelector("figcaption")!;
-    expect(caption.querySelector(".badge")?.textContent).toBe("1/12");
-    expect(caption.textContent).toContain("Étape 1 sur 12 : Parcours pédagogiques et thèmes");
+    expect(caption.querySelector(".badge")?.textContent).toBe("1/16");
+    expect(caption.textContent).toContain("Étape 1 sur 16 : Parcours et niveaux pédagogiques");
     notify("ended");
     expect(caption.querySelector(".badge")).toBeNull();
+  });
+
+  it("offers replay during the last seconds, before the sequence ends", () => {
+    act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} />));
+    notify("playing");
+    expect(container.querySelector("button")?.textContent).toBe("Pause");
+    notify("ending");
+    expect(container.querySelector("button")?.textContent).toBe("Rejouer");
+    expect(container.textContent).not.toContain("Présentation terminée");
   });
 
   it("offers replay when the final feature ends", () => {
@@ -73,7 +82,7 @@ describe("login Hyperframes presentation", () => {
     notify("playing");
     notify("ended");
     expect(container.querySelector("button")?.textContent).toBe("Rejouer");
-    act(() => vi.advanceTimersByTime(1200));
+    act(() => vi.advanceTimersByTime(300));
     expect(onEnded).toHaveBeenCalledOnce();
     act(() => container.querySelector<HTMLButtonElement>("button")!.click());
     expect(post).toHaveBeenLastCalledWith(expect.objectContaining({ action: "replay" }), window.location.origin);
@@ -129,34 +138,14 @@ describe("login Hyperframes presentation", () => {
     expect(container.querySelector('[role="alert"]')).toBeNull();
   });
 
-  it("enters fullscreen and reflects the browser's exit", async () => {
-    let fullscreenElement: Element | null = null;
-    Object.defineProperty(document, "fullscreenElement", { configurable: true, get: () => fullscreenElement });
-    const request = vi.fn(async () => {
-      fullscreenElement = container.querySelector("figure");
-      document.dispatchEvent(new Event("fullscreenchange"));
-    });
-    const exit = vi.fn(async () => {
-      fullscreenElement = null;
-      document.dispatchEvent(new Event("fullscreenchange"));
-    });
-    Object.defineProperty(HTMLElement.prototype, "requestFullscreen", { configurable: true, value: request });
-    Object.defineProperty(document, "exitFullscreen", { configurable: true, value: exit });
-    try {
-      act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} />));
-      notify("playing");
-      await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="Plein écran"]')!.click());
-      expect(request).toHaveBeenCalledOnce();
-      expect(fullscreenElement).toBe(container.querySelector("figure"));
-      expect(container.querySelector('button[aria-label="Quitter le plein écran"]')).not.toBeNull();
-      await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="Quitter le plein écran"]')!.click());
-      expect(exit).toHaveBeenCalledOnce();
-      expect(container.querySelector('button[aria-label="Plein écran"]')).not.toBeNull();
-    } finally {
-      Reflect.deleteProperty(HTMLElement.prototype, "requestFullscreen");
-      Reflect.deleteProperty(document, "exitFullscreen");
-      Reflect.deleteProperty(document, "fullscreenElement");
-    }
+  it("delegates fullscreen to its parent and hides the button once fullscreen", () => {
+    const toggle = vi.fn();
+    act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} onToggleFullscreen={toggle} />));
+    notify("playing");
+    act(() => container.querySelector<HTMLButtonElement>('button[aria-label="Plein écran"]')!.click());
+    expect(toggle).toHaveBeenCalledOnce();
+    act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} fullscreen onToggleFullscreen={toggle} />));
+    expect(container.querySelector('button[aria-label="Plein écran"]')).toBeNull();
   });
 
   it("advances after holding the ANDRIA ending and cancels advancement on replay", () => {
@@ -164,13 +153,13 @@ describe("login Hyperframes presentation", () => {
     act(() => root.render(<AuthQualityVideo quality={0} label="Accessible" colorIndex={0} reducedMotion={false} onEnded={onEnded} />));
     notify("playing");
     notify("ended");
-    act(() => vi.advanceTimersByTime(1199));
+    act(() => vi.advanceTimersByTime(299));
     expect(onEnded).not.toHaveBeenCalled();
     notify("playing");
-    act(() => vi.advanceTimersByTime(1200));
+    act(() => vi.advanceTimersByTime(300));
     expect(onEnded).not.toHaveBeenCalled();
     notify("ended");
-    act(() => vi.advanceTimersByTime(1200));
+    act(() => vi.advanceTimersByTime(300));
     expect(onEnded).toHaveBeenCalledOnce();
   });
 

@@ -1,6 +1,5 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 import { Link, createSearchParams } from "react-router";
-import { RefreshCcw } from "lucide-react";
 import type Role from "../../../../utils/interfaces/role";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import RoleRadioCard from "../../../role/components/RoleRadioCard";
@@ -30,7 +29,6 @@ const UserFormTypeUser = ({
   studentOnly,
   error,
 }: Props) => {
-  const [showRefreshButton, setShowRefreshButton] = useState(false);
   const fieldId = useId();
 
   return (
@@ -45,24 +43,11 @@ const UserFormTypeUser = ({
               pathname: "/admin/roles",
               search: createSearchParams({ callback: "true" }).toString(),
             }}
-            onClick={() => setShowRefreshButton(true)}
             data-tip="Ouverture dans un nouvel onglet"
             target="_blank"
           >
             Gérer les rôles
           </Link>
-          {showRefreshButton && (
-            <button
-              type="button"
-              data-tip="Rafraîchir la liste des rôles"
-              className="btn btn-ghost btn-sm tooltip"
-              aria-label="Rafraîchir la liste des rôles"
-              disabled={isFetching}
-              onClick={onRefresh}
-            >
-              <RefreshCcw width={20} height={20} />
-            </button>
-          )}
         </div>
       </div>
       <div className="flex flex-col gap-y-5">
@@ -96,7 +81,7 @@ const UserFormTypeUser = ({
                     describedBy={error ? `${fieldId}-error` : undefined}
                   />
                 ))}
-              {roles.length === 0 ? <p className="text-sm text-base-content/70">Aucun rôle disponible. Vérifiez les rôles et vos droits, puis actualisez la liste.</p> : null}
+              {roles.length === 0 ? <p className="text-sm text-base-content/70">Aucun rôle disponible. Vérifiez les rôles et vos droits.</p> : null}
             </div>
             {error ? <p id={`${fieldId}-error`} className="text-sm text-error" role="alert">{error}</p> : null}
           </div>

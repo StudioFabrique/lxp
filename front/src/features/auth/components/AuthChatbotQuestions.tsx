@@ -1,10 +1,12 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "motion/react";
+import type { ChatbotHelp } from "./AuthChatbotHostContext";
 import { cn } from "../../../utils/cn";
 
 type Props = {
   message: ReactNode;
+  help?: ChatbotHelp;
   id: string;
   anchorRef: RefObject<HTMLButtonElement | null>;
   bubbleRef?: RefObject<HTMLDivElement | null>;
@@ -13,13 +15,13 @@ type Props = {
   onQuestionSelect: (index: number, answer: ReactNode) => void;
 };
 
-export default function AuthChatbotQuestions({ message, id, anchorRef, bubbleRef, onOverlapChange, selected, onQuestionSelect }: Props) {
+export default function AuthChatbotQuestions({ message, help, id, anchorRef, bubbleRef, onOverlapChange, selected, onQuestionSelect }: Props) {
   const reducedMotion = useReducedMotion();
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
   const questions = [
-    { label: "Que dois-je faire à cette étape ?", answer: message },
-    { label: "Comment passer à la suite ?", answer: "Renseignez les informations demandées, puis utilisez le bouton en bas de l’étape pour continuer." },
-    { label: "Puis-je revenir en arrière ?", answer: "Utilisez le bouton Précédent lorsqu’il est disponible pour revenir à l’étape précédente." },
+    { label: "Que dois-je faire à cette étape ?", answer: help?.action ?? message },
+    { label: "Comment passer à la suite ?", answer: help?.next ?? "Renseignez les informations demandées, puis utilisez le bouton en bas de l’étape pour continuer." },
+    { label: "Puis-je revenir en arrière ?", answer: help?.back ?? "Utilisez le bouton Précédent lorsqu’il est disponible pour revenir à l’étape précédente." },
   ];
 
   useEffect(() => {

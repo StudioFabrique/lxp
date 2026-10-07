@@ -4,6 +4,10 @@ import { themeLabels } from "../../config/themes";
 import { cn } from "../../utils/cn";
 import AuthOnboardingChatbot from "../auth/components/AuthOnboardingChatbot";
 
+// Même texte à l'affichage de l'étape et en réponse à « Que dois-je faire à cette étape ? ».
+const themeGuidance =
+  "Choisissez l’apparence qui vous plaît : un thème clair et un thème sombre. Chaque choix s’applique tout de suite et reste modifiable depuis votre profil.";
+
 export default function ThemeSelectionStep() {
   const { chooseTheme, availableLightThemes, availableDarkThemes } =
     useContext(ThemeContext);
@@ -16,7 +20,13 @@ export default function ThemeSelectionStep() {
     <div className="space-y-4 px-1 py-1">
       <div>
         <h1 className="text-2xl font-bold">Choisissez votre thème</h1>
-        <AuthOnboardingChatbot introduction={false} compact message="Vous pourrez toujours les modifier depuis votre profil." />
+        <AuthOnboardingChatbot introduction={false} compact
+          message={themeGuidance}
+          help={{
+            action: themeGuidance,
+            next: "Quand vos thèmes vous conviennent, utilisez le bouton Continuer en bas de l’étape.",
+          }}
+        />
       </div>
       {(
         [

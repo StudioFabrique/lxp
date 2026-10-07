@@ -3,8 +3,10 @@ import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { onboardingApi } from "../api/onboarding.api";
+import AuthChatbotProvider from "../components/AuthChatbotProvider";
 import ConfirmEmail from "./ConfirmEmail";
 
+vi.mock("react-confetti", () => ({ default: () => null }));
 vi.mock("../api/onboarding.api", () => ({
   onboardingApi: { confirmEmail: vi.fn() },
 }));
@@ -35,7 +37,9 @@ describe("Confirmation de l'adresse email", () => {
     await act(async () => {
       root.render(
         <MemoryRouter initialEntries={["/confirm-email?token=activation-token"]}>
-          <ConfirmEmail />
+          <AuthChatbotProvider>
+            <ConfirmEmail />
+          </AuthChatbotProvider>
         </MemoryRouter>,
       );
     });
@@ -55,7 +59,14 @@ describe("Confirmation de l'adresse email", () => {
     await vi.waitFor(() => {
       expect(container.querySelector(".lucide-mail-check")).not.toBeNull();
     });
-    expect(container.textContent).toContain("Votre adresse email est validée et votre compte root est activé.");
+    await vi.waitFor(() => {
+      expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain(
+        "Félicitations, votre compte est créé",
+      );
+    });
+    expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain(
+      "vous pouvez maintenant vous connecter",
+    );
     expect(container.querySelector('a[href="/"]')?.textContent).toBe("Continuer");
   });
 });

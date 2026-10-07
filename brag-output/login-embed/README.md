@@ -11,7 +11,7 @@ Les tuiles jouent les scènes de la version **enregistrée dans Hyperframes**. E
 | Intuitive | Sidebar 3D, dashboards progressifs, structure pédagogique et organisation |
 | Adaptative | Reprise, avancement et profil d’apprentissage |
 
-Chaque sélection termine sur sa dernière scène de fonctionnalité, sans séquence de logo. Après 1,2 seconde, le panneau tourne automatiquement vers la qualité suivante. Avec le mouvement réduit, la dernière scène s’affiche immédiatement et la rotation automatique est désactivée.
+Chaque sélection termine sur sa dernière scène de fonctionnalité, sans séquence de logo. Après 0,3 seconde, le panneau tourne automatiquement vers la qualité suivante. Avec le mouvement réduit, la dernière scène s’affiche immédiatement et la rotation automatique est désactivée.
 
 Le mode `?mode=logo` joue uniquement la construction originale en grille de pixels, puis conserve le logo assemblé. Le composant `AuthAnimatedLogo` l’utilise sur le login et les onboardings des apprenants, formateurs et administrateurs. Il reprend la transition d’apparition de l’onboarding apprenant, transmet la couleur `primary` et le fond du thème actif et conserve le lecteur lors des changements de thème. Le mouvement réduit affiche directement le logo assemblé.
 

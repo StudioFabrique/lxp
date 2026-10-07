@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
 
-export const authIntroDurationMs = 3600;
+export const authIntroDurationMs = 5000;
 
 /** Show the centered brand once before revealing an onboarding welcome. */
 export function useAuthIntro(enabled: boolean): boolean {

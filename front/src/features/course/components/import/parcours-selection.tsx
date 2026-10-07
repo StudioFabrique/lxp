@@ -5,14 +5,13 @@ import {
   Rocket,
   Component,
   Undo2,
-  RefreshCw,
 } from "lucide-react";
 import Parcours from "../../../../utils/interfaces/parcours";
 import Formation from "../../../../utils/interfaces/formation";
 import Header from "../../../../components/headers/Header";
 import { Link } from "react-router";
 import Module from "../../../../utils/interfaces/module";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import SelectableSubCard from "../../../../components/UI/selectable-sub-card";
 import FloatingBottomNavigation from "../../../../components/buttons/FloatingBottomNavigation";
 import { AuthContext } from "../../../../store/AuthProvider";
@@ -32,9 +31,6 @@ type Props = {
   modulesList: Module[];
   selectedModule: Module | null;
   onSelectModule: (module: Module | null) => void;
-  onRefreshFormations: () => void;
-  onRefreshParcours: () => void;
-  onRefreshModules: () => void;
 
   onConfirm: (parcours?: Parcours | null) => void;
   onGoBack: () => void;
@@ -52,27 +48,15 @@ const ParcoursSelection = ({
   modulesList,
   selectedModule,
   onSelectModule,
-  onRefreshFormations,
-  onRefreshParcours,
-  onRefreshModules,
   onConfirm,
   onGoBack,
 }: Props) => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
-  const [showReloadModulesButton, setShowReloadModulesButton] = useState(false);
-  const [showReloadFormationsButton, setShowReloadFormationsButton] =
-    useState(false);
-  const [showReloadParcoursButton, setShowReloadParcoursButton] =
-    useState(false);
 
   const canConfirm = Boolean(
     selectedFormation && selectedParcours && selectedModule,
   );
-
-  const onClickLink = () => {
-    setShowReloadModulesButton(true);
-  };
 
   return (
     <div
@@ -116,16 +100,6 @@ const ParcoursSelection = ({
         >
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             Choisir une formation
-            {showReloadFormationsButton && (
-              <button
-                type="button"
-                className="btn btn-xs btn-ghost tooltip ml-auto"
-                data-tip="Recharger la liste des formations"
-                onClick={onRefreshFormations}
-              >
-                <RefreshCw className="w-4 h-4" />
-              </button>
-            )}
           </h3>
 
           {isFormationsLoading ? (
@@ -145,7 +119,6 @@ const ParcoursSelection = ({
                   to="/admin/parcours?createFormation=true"
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() => setShowReloadFormationsButton(true)}
                 >
                   Créer une formation
                 </Link>
@@ -180,16 +153,6 @@ const ParcoursSelection = ({
               <span className="text-primary underline decoration-dotted capitalize">
                 {formatTitle(selectedFormation.title)}
               </span>
-              {showReloadParcoursButton && (
-                <button
-                  type="button"
-                  className="btn btn-xs btn-ghost tooltip ml-auto"
-                  data-tip="Recharger la liste des parcours"
-                  onClick={onRefreshParcours}
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
-              )}
             </h3>
 
             {parcoursList.length === 0 ? (
@@ -201,7 +164,6 @@ const ParcoursSelection = ({
                     to={`/admin/dashboard?createParcours=true&formationId=${selectedFormation.id}`}
                     target="_blank"
                     rel="noreferrer"
-                    onClick={() => setShowReloadParcoursButton(true)}
                   >
                     Créer un parcours
                   </Link>
@@ -241,24 +203,9 @@ const ParcoursSelection = ({
                 target="_blank"
                 data-tip="Ouverture dans un nouvel onglet"
                 className="text-primary underline decoration-dotted tooltip capitalize"
-                onClick={onClickLink}
               >
                 {formatTitle(selectedParcours.title)}
               </Link>
-              {showReloadModulesButton && (
-                <button
-                  type="button"
-                  className="btn btn-xs btn-ghost tooltip"
-                  data-tip={
-                    isTeacher
-                      ? "Recharger mes modules"
-                      : "Recharger la liste des modules"
-                  }
-                  onClick={onRefreshModules}
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
-              )}
             </h3>
 
             {modulesList?.length === 0 ? (

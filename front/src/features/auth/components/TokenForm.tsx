@@ -65,7 +65,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
     <AuthPageWrapper
       variant="setup"
       title="Activer le compte root"
-      description="Cette clé sécurise la création du compte qui gérera l’identité et les paramètres de votre instance."
+      description="Renseignez la clé d'activation qui vous a été communiqué. Cette clé sécurise la création du compte qui gérera l’identité et les paramètres de votre instance."
     >
       <form
         onSubmit={(event) => {

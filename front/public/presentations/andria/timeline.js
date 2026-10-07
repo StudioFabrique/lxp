@@ -212,10 +212,7 @@ tl.fromTo('.dashboard-board',{opacity:0,z:-55,rotationY:2},{opacity:1,z:0,rotati
 // One continuous camera advance: no repeated push-pull as cards appear.
 // Cards land like the level plates: from the front, turning slightly in plane.
 let dashboardDrop=0;
-const buildDashboard=(selector,time)=>{
-  const turn=dashboardDrop++%2?3:-3;
-  tl.fromTo(selector,{opacity:0,z:420,y:-18,x:turn*3,rotation:turn},{opacity:1,z:0,y:0,x:0,rotation:0,duration:.75,ease:'back.out(1.25)'},time);
-};
+const buildDashboard=()=>{/* landings are built with the slabs in the dashboards block below */};
 buildDashboard('#dashboard-student .dashboard-header',100.55);
 buildDashboard('#dash-resume',100.9);buildDashboard('#dash-calendar',101.25);
 buildDashboard('#dash-paths',101.6);buildDashboard('#dash-skills',101.95);
@@ -471,7 +468,13 @@ const typeInto=(element,text,from,to)=>{
   const base=inner.getBoundingClientRect();
   const at=(element,fx=.5,fy=.5)=>{const r=element.getBoundingClientRect();return {x:(r.left-base.left+r.width*fx)*unit,y:(r.top-base.top+r.height*fy)*unit};};
   const thumb=(value)=>{const r=range.getBoundingClientRect(),size=r.height;return {x:(r.left-base.left+size/2+(r.width-size)*(value-1)/4)*unit,y:(r.top-base.top+r.height/2)*unit};};
-  const centred=358,formHeight=form.offsetHeight;
+  // The learner's card and the team's alert share the same top and height.
+  {
+    const card=document.querySelector('#feeling-card .feeling-zoom>div').getBoundingClientRect(),stage=scene.querySelector('.care-stage').getBoundingClientRect(),panel=document.getElementById('risk-panel');
+    panel.style.top=((card.top-stage.top)*unit)+'px';
+    panel.style.height=(card.height*unit)+'px';
+  }
+  const centred=358;
   const shift=(point)=>({x:point.x+centred,y:point.y});
   const points={from:shift(thumb(3)),to:shift(thumb(2)),comment:shift(at(comment,.3,.5)),send:shift(at(document.getElementById('feeling-send'))),review:at(document.getElementById('review-button'),.6,.55)};
   scene.style.display=display;scene.style.visibility=visibility;
@@ -503,13 +506,13 @@ const typeInto=(element,text,from,to)=>{
   tl.fromTo(icon,{rotationY:0},{rotationY:360,duration:1.05,ease:'power2.inOut',immediateRender:false},S+T.drag+.15);
   tl.to(icon,{scale:1.9,z:70,duration:.5,ease:'power2.out'},S+T.drag+.15);
   tl.to(icon,{scale:1,z:0,duration:.55,ease:'power2.in'},S+T.drag+.65);
-  // 3. A comment, then Envoyer: as in the LXP, the form closes and a toast confirms.
+  // 3. A comment, then Envoyer: a toast confirms while the form stays in place.
   tl.to(pointer,{...tip(points.comment),duration:.5,ease:'power2.inOut'},S+T.comment-.5);
   click(points.comment,S+T.comment);
   tl.to(pointer,{...tip(points.send),duration:.45,ease:'power2.inOut'},S+T.send-.45);
   click(points.send,S+T.send);
   tl.to(pointer,{opacity:0,duration:.25},S+T.send+.3);
-  tl.fromTo(form,{height:formHeight,opacity:1},{height:0,opacity:0,duration:.45,ease:'power2.inOut',immediateRender:false},S+T.send+.15);
+  // The mood card keeps its full size after sending; only the toast confirms.
   tl.set('#care-toast',{opacity:0,xPercent:-50},0);
   tl.fromTo('#care-toast',{opacity:0,xPercent:-50,y:-14},{opacity:1,xPercent:-50,y:0,duration:.35,ease:'power2.out',immediateRender:false},S+T.send+.2);
   tl.to('#care-toast',{opacity:0,y:-10,duration:.3},S+T.send+1.2);
@@ -538,6 +541,14 @@ const typeInto=(element,text,from,to)=>{
   tl.fromTo('#care .care-caption',{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',immediateRender:false},S+T.sun+.4);
   tl.to('.care-stage',{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
 }
+// Cards and headers get the sidebar's treatment: three glass layers that give way to a solid pane.
+for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboards .dashboard-header')){
+  for(const layer of ['back','mid','front','solid']){
+    const slab=document.createElement('div');
+    slab.className='card-slab card-slab-'+layer;slab.setAttribute('aria-hidden','true');
+    element.prepend(slab);
+  }
+}
 // Dashboards, built like a product reveal: the compact sidebar lands as liquid
 // glass, unfolds, then the board settles and the chatbot arrives last.
 {
@@ -558,6 +569,7 @@ const typeInto=(element,text,from,to)=>{
     tween.totalDuration(tween.totalDuration()*k);
     tween.startTime(map(start));
   }
+  const zoomStart=tweens.find(t=>has(t,'.dashboard-camera')).startTime();
   // 1. The compact sidebar lands delicately, turning in full 3D, as glass.
   tl.fromTo('.floating-sidebar',{opacity:0,x:-24,y:-30,z:620,rotationX:0,rotationY:0,rotation:-8},{opacity:1,x:0,y:0,z:65,rotationX:0,rotationY:0,rotation:0,duration:1.2,ease:'back.out(1.2)',immediateRender:false},S+.2);
   tl.set('.floating-sidebar',{opacity:0},0);
@@ -572,20 +584,56 @@ const typeInto=(element,text,from,to)=>{
     tl.to('.sidebar-solid-pane',{opacity:1,duration:.2},expansion.startTime()+expansion.duration());
   }
   if(expansion)tl.fromTo('.sidebar-glass-pane',{width:104},{width:340,duration:expansion.duration(),ease:expansion.vars.ease,immediateRender:false},expansion.startTime());
-  tl.to('.sidebar-glass',{opacity:0,duration:1.1,ease:'sine.inOut'},map(S+1.95));
+  tl.to('.sidebar-glass-front',{opacity:0,duration:1.1,ease:'sine.inOut'},map(S+1.95));
   // 3. The board settles in depth after the sidebar.
-  tl.fromTo('.dashboard-board',{opacity:0,z:0,rotationY:0},{opacity:1,z:0,rotationY:0,duration:.3,ease:'sine.out',immediateRender:false},map(S+1.35));
+  tl.fromTo('.dashboard-board',{opacity:0,z:0,rotationY:0},{opacity:1,z:0,rotationY:0,duration:.3,ease:'sine.out',immediateRender:false},S+.3);
   tl.set('.dashboard-board',{z:0,rotationY:0},S-.01);
   tl.set('.dashboard-board',{opacity:0},0);
-  // 4. The chatbot arrives once the cards are in place, before its greeting.
-  tl.fromTo('#dashboard-chatbot>button',{opacity:0,x:110,y:40,scale:.4,rotation:-28},{opacity:1,x:0,y:0,scale:1,rotation:0,duration:.8,ease:'back.out(1.7)',immediateRender:false},map(S+3.4));
+  // 4. The chatbot arrives only once the whole interface is straight again, before its greeting.
+  tl.fromTo('#dashboard-chatbot>button',{opacity:0,x:110,y:40,scale:.4,rotation:-28},{opacity:1,x:0,y:0,scale:1,rotation:0,duration:.8,ease:'back.out(1.7)',immediateRender:false},zoomStart-.6);
   tl.set('#dashboard-chatbot>button',{opacity:0},0);
-  // Seen from the angle of the stacked levels while the sidebar lands and unfolds
-  // and the cards stack one by one, then the interface faces the reader.
-  const flatten=map(S+2.95)+.75;
-  tl.fromTo('.dashboard-stage',{rotationX:54,rotation:-12,scale:.95,x:110,y:20},{rotationX:48,rotation:-6,scale:.97,x:90,y:20,duration:flatten-S,ease:'sine.inOut',immediateRender:false},S);
+  // The camera first holds on the sidebar while it lands and unfolds, then pulls back
+  // as the cards stack; the interface keeps a gentle tilt so its relief stays visible.
+  const pull=S+2.4,focus={x:1204,y:22,scale:1.6};
+  tl.fromTo('.dashboard-camera',{...focus},{...focus,duration:pull-S,ease:'none',immediateRender:false},S);
+  tl.fromTo('.dashboard-camera',{...focus},{x:0,y:0,scale:1,duration:1.1,ease:'power2.inOut',immediateRender:false},pull);
+  tl.set('.dashboard-camera',{...focus},S-.01);
+  tl.fromTo('.dashboard-stage',{rotationX:54,rotation:-12,scale:.95,x:110,y:20},{rotationX:48,rotation:-6,scale:.95,x:50,y:20,duration:pull-S,ease:'sine.inOut',immediateRender:false},S);
   tl.set('.dashboard-stage',{rotationX:54,rotation:-12,scale:.95,x:110,y:20},S-.01);
-  tl.to('.dashboard-stage',{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1.05,ease:'power3.inOut'},flatten);
+  tl.fromTo('.dashboard-stage',{rotationX:48,rotation:-6,scale:.95,x:50,y:20},{rotationX:26,rotation:-3,scale:.94,x:-20,y:10,duration:1.9,ease:'power2.inOut',immediateRender:false},pull);
+  // The elements land once the camera has pulled back, already in their final colours. The learner's
+  // elements are then taken off one by one and the team's are put in their place. Opacity is only
+  // animated on the slab's children, never on the slab itself: group opacity would flatten its 3D.
+  const student=['#dashboard-student .dashboard-header','#dash-resume','#dash-calendar','#dash-paths','#dash-skills'];
+  const team=['#dashboard-teacher .dashboard-header','#dash-actions','#dash-alerts','#dash-latest','#dash-feedback'];
+  const swap=tweens.find(t=>has(t,'#dashboard-student')&&t.vars.opacity===0);
+  const swapAt=swap?swap.startTime():S+6;
+  for(const face of tweens.filter(t=>t.targets().some(x=>x.id==='dashboard-student'||x.id==='dashboard-teacher')))face.kill();
+  tl.set('#dashboard-student,#dashboard-teacher',{opacity:1},0);
+  const place=(selector,index,start)=>{
+    const element=scene.querySelector(selector),kids=[...element.children],turn=index%2?8:-8;
+    tl.fromTo(element,{x:-turn*3,y:-30,z:360,rotation:turn},{x:0,y:0,z:65,rotation:0,duration:1.1,ease:'back.out(1.2)',immediateRender:false},start);
+    tl.fromTo(kids,{opacity:0},{opacity:1,duration:.2,ease:'power1.out',immediateRender:false},start+.1);
+  };
+  // Each learner component flips edge-on and comes back, in the same place, as its team counterpart.
+  const flip=(from,to,index,start)=>{
+    const out=scene.querySelector(from),into=scene.querySelector(to),outKids=[...out.children],inKids=[...into.children],half=.4;
+    tl.fromTo(out,{rotationY:0},{rotationY:90,duration:half,ease:'power2.in',immediateRender:false},start);
+    tl.fromTo(outKids,{opacity:1},{opacity:0,duration:.01,immediateRender:false},start+half);
+    tl.fromTo(inKids,{opacity:0},{opacity:1,duration:.01,immediateRender:false},start+half);
+    tl.fromTo(into,{z:65,rotationY:-90},{z:65,rotationY:0,duration:.5,ease:'back.out(1.3)',immediateRender:false},start+half);
+  };
+  student.forEach((selector,index)=>place(selector,index,S+3.15+index*.2));
+  student.forEach((selector,index)=>flip(selector,team[index],index,swapAt+index*.1));
+  // Before the final zoom the whole interface stands straight again, in plain 2D: the
+  // relief (elevation, slab thickness, sidebar depth) is set back as well as the tilt.
+  const flat=zoomStart-1.8;
+  tl.fromTo('.dashboard-stage',{rotationX:26,rotation:-3,scale:.94,x:-20,y:10},{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
+  const teamEls=team.map(selector=>scene.querySelector(selector));
+  tl.fromTo(teamEls,{z:65},{z:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
+  tl.fromTo(teamEls.flatMap(el=>[...el.querySelectorAll(':scope>.card-slab')]),{opacity:1},{opacity:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
+  tl.fromTo('.floating-sidebar',{z:65},{z:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
+  tl.fromTo('.sidebar-glass-back,.sidebar-glass-mid',{opacity:1},{opacity:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
 }
 
 // Instance settings, from the genuine superadministration page (presentation
@@ -693,9 +741,9 @@ const typeInto=(element,text,from,to)=>{
     tl.set('#'+button+' .mail-done',{display:'none'},S-.01);tl.set('#'+button+' .mail-idle',{display:'inline'},S-.01);
     tl.set('#'+button+' .mail-idle',{display:'none'},sent);tl.set('#'+button+' .mail-done',{display:'inline'},sent);
     tl.fromTo('#'+button,{backgroundColor:'var(--color-primary)'},{backgroundColor:'var(--color-success)',color:'var(--color-success-content)',duration:.3,immediateRender:false},sent);
-    // The arrow draws, then the e-mail flies out of the trigger and lands like a plate.
-    tl.set('#'+id+' .mail-arrow',{scaleX:0,transformOrigin:'left center'},S-.01);
-    tl.to('#'+id+' .mail-arrow',{scaleX:1,duration:.45,ease:'power2.out'},sent+.1);
+    // The arrow button pops in, then the e-mail flies out of the trigger and lands like a plate.
+    tl.set('#'+id+' .mail-arrow',{scale:.4,opacity:0},S-.01);
+    tl.to('#'+id+' .mail-arrow',{scale:1,opacity:1,duration:.45,ease:'back.out(1.7)'},sent+.1);
     tl.set('#'+mail,{opacity:0},S-.01);
     tl.fromTo('#'+mail,{opacity:0,x:-520,y:20,z:300,scale:.35,rotation:-10},{opacity:1,x:0,y:0,z:0,scale:1,rotation:0,duration:1.1,ease:'back.out(1.15)',immediateRender:false},sent+.25);
     return sent;
@@ -752,24 +800,42 @@ const typeInto=(element,text,from,to)=>{
   tl.fromTo('#accomplishments .accomplishment-medallion',{transformPerspective:600,rotationY:0,z:0,scale:1},{rotationY:720,z:90,scale:1.25,duration:1.1,ease:'power3.out',immediateRender:false},click+1.0);
   tl.to('#accomplishments .accomplishment-medallion',{z:0,scale:1,duration:.5,ease:'back.out(1.6)'},click+2.1);
   // 3D confetti: each piece tumbles on three axes; some fly toward the camera.
-  const colours=['var(--color-primary)','var(--color-secondary)','var(--color-accent)','var(--color-success)','var(--color-warning)'];
+  // Festive colours are the confetti's own, independent of the tile theme, so
+  // they stay visible whatever colour the host gives the sequence. Pieces
+  // 0-59 burst from the button, 60-99 from the medal, 100+ rain across the scene.
+  const colours=['#f59e0b','#10b981','#3b82f6','#ec4899','#8b5cf6','#ef4444','#facc15'];
   scene.querySelectorAll('.accomplishment-confetti').forEach((piece,i)=>{
-    const burst=i<40,j=burst?i:i-40,phase=j*2.3999632297,depth=((j*37)%11)/10;
-    piece.style.background=colours[j%colours.length];
-    const origin=burst?button:{x:medal.x-380+((j*127)%760),y:120+((j*53)%120)};
-    const start=burst?click+.02+(j%6)*.02:click+1.05+(j%9)*.07;
+    const group=i<60?0:i<100?1:2,j=group===2?i-100:group===1?i-60:i;
+    const phase=j*2.3999632297,depth=((j*37)%11)/10;
+    piece.style.background=colours[i%colours.length];
     const spinX=360*(2+j%3),spinY=360*(1+(j*7)%3),spinZ=(j%2?1:-1)*(180+(j*41)%360);
-    tl.set(piece,{opacity:0},S-.01);
-    if(burst){
-      const reach=140+(j*29)%260,up=180+(j*13)%220,z=-200+depth*700;
-      tl.fromTo(piece,{opacity:1,x:origin.x,y:origin.y,z:0,rotationX:0,rotationY:0,rotation:j*19,scale:.6},{x:origin.x+Math.cos(phase)*reach,y:origin.y-up,z,rotationX:spinX*.5,rotationY:spinY*.5,rotation:j*19+spinZ*.5,scale:1,duration:.7,ease:'power3.out',immediateRender:false},start);
-      tl.to(piece,{x:origin.x+Math.cos(phase)*reach*1.35,y:origin.y+220,z:z*.6,rotationX:spinX,rotationY:spinY,rotation:j*19+spinZ,duration:1.5,ease:'power1.in'},start+.7);
-      tl.to(piece,{opacity:0,duration:.3},start+1.9);
+    // Every tween states its own start values: the player paints the end of the
+    // scene first and then rewinds, and lazily recorded values would be stale.
+    const rest=(at)=>tl.fromTo(piece,{opacity:0},{opacity:0,duration:.01,immediateRender:false},at);
+    if(group<2){
+      const origin=group===0?button:medal,start=(group===0?click+.02:click+1.05)+(j%6)*.02;
+      const reach=260+(j*29)%520,up=300+(j*13)%360,z=-200+depth*700;
+      const peak={x:origin.x+Math.cos(phase)*reach,y:origin.y-up,z,rotationX:spinX*.5,rotationY:spinY*.5,rotation:j*19+spinZ*.5,scale:1.1};
+      const land={x:origin.x+Math.cos(phase)*reach*1.35,y:origin.y+560,z:z*.6,rotationX:spinX,rotationY:spinY,rotation:j*19+spinZ,scale:1.1};
+      rest(start-.02);
+      tl.fromTo(piece,{opacity:1,x:origin.x,y:origin.y,z:0,rotationX:0,rotationY:0,rotation:j*19,scale:.6},{opacity:1,...peak,duration:.9,ease:'power3.out',immediateRender:false},start);
+      tl.fromTo(piece,{opacity:1,...peak},{opacity:1,...land,duration:2.6,ease:'power1.in',immediateRender:false},start+.9);
+      tl.fromTo(piece,{opacity:1},{opacity:0,duration:.01,immediateRender:false},start+3.5);
     }else{
-      const drift=Math.sin(phase)*140,z=-300+depth*600;
-      tl.fromTo(piece,{opacity:1,x:origin.x,y:origin.y-120,z,rotationX:0,rotationY:0,rotation:j*23,scale:.9},{x:origin.x+drift,y:960,z,rotationX:spinX,rotationY:spinY,rotation:j*23+spinZ,duration:2.6+depth,ease:'sine.in',immediateRender:false},start);
-      tl.to(piece,{opacity:0,duration:.35},start+2.4+depth);
+      // A steady shower from just after the click until the journal is open.
+      const start=click+.9+j*.07,fall=2.8+depth*1.2,z=-300+depth*600,x=10+(j*197)%1900,drift=Math.sin(phase)*160;
+      rest(start-.02);
+      tl.fromTo(piece,{opacity:1,x,y:-80,z,rotationX:0,rotationY:0,rotation:j*23,scale:1},{opacity:1,x:x+drift,y:1120,z,rotationX:spinX,rotationY:spinY,rotation:j*23+spinZ,duration:fall,ease:'none',immediateRender:false},start);
+      tl.fromTo(piece,{opacity:1},{opacity:0,duration:.01,immediateRender:false},start+fall);
     }
+  });
+  // One caption per step so the cause and effect read without prior context.
+  const steps=[...scene.querySelectorAll('.accomplishment-step')],stepTimes=[[.5,3.0],[3.0,4.2],[4.2,8.0],[8.0,D-.4]];
+  steps.forEach((step,index)=>{
+    const [from,to]=stepTimes[index];
+    tl.set(step,{opacity:0,y:12},S-.01);
+    tl.fromTo(step,{opacity:0,y:12},{opacity:1,y:0,duration:.4,ease:'power2.out',immediateRender:false},S+from);
+    tl.to(step,{opacity:0,y:-8,duration:.3,ease:'power2.in'},S+to-.3);
   });
   tl.to(stage,{opacity:0,duration:.4,ease:'power2.in'},S+D-.4);
   tl.set(stage,{opacity:1},S-.01);

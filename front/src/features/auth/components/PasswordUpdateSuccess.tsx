@@ -10,7 +10,7 @@ const PasswordUpdateSuccess = ({ message, url }: Props) => {
     <div className="flex flex-col items-center gap-10">
       <span className="text-center text-success">{message}</span>
       <Link className="btn btn-primary btn-sm" to={url}>
-        Retour à la page de connexion
+        Continuer vers la page de connexion
       </Link>
     </div>
   );

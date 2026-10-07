@@ -19,6 +19,16 @@ describe("questions radiales du chatbot", () => {
     vi.restoreAllMocks();
   });
 
+  it("affiche les trois points puis un message d’accueil chaleureux", () => {
+    vi.useFakeTimers();
+    act(() => root.render(<AuthOnboardingChatbot />));
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
+    expect(container.textContent).not.toContain("Je serai là pour vous aider.");
+    act(() => vi.advanceTimersByTime(2200));
+    expect(container.querySelector('[role="status"]')).toBeNull();
+    expect(container.textContent).toContain("Je serai là pour vous accompagner.");
+  });
+
   it("ouvre trois questions séparées et anime le personnage au choix d’une question", async () => {
     vi.useFakeTimers();
     act(() => root.render(<section><AuthOnboardingChatbot introduction={false} message="Indiquez votre clé d’activation." /></section>));
@@ -42,9 +52,9 @@ describe("questions radiales du chatbot", () => {
     await act(async () => { await vi.advanceTimersByTimeAsync(1100); });
     act(() => avatar.click());
     act(() => document.querySelectorAll<HTMLButtonElement>('ul[aria-label="Questions d’aide"] button')[1].click());
-    expect(document.body.textContent).not.toContain("Renseignez les informations demandées");
+    expect(document.querySelector("[data-chatbot-bubble]")?.textContent).not.toContain("Renseignez les informations demandées");
     await act(async () => { await vi.advanceTimersByTimeAsync(1100); });
-    expect(document.body.textContent).toContain("Renseignez les informations demandées");
+    expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain("Renseignez les informations demandées");
     expect(replay.mock.calls[replay.mock.calls.length - 1]?.[0].gesture).not.toBe(previousGesture);
     expect(document.querySelector("iframe")).toBe(frame);
     expect(avatar.getAttribute("aria-expanded")).toBe("false");

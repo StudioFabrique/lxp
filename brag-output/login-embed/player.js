@@ -14,6 +14,11 @@
   const chatbotClip = dashboard && {id: dashboard.id, start: dashboard.start + dashboard.duration - 2.4, duration: 2.4};
   if (logoOnly) root.dataset.logoOnly = 'true';
   if (chatbotOnly) root.dataset.chatbotOnly = 'true';
+  // Gestures are timed against this clip, whose position follows the composition.
+  if (chatbotOnly && chatbotClip) {
+    window.__chatbotClipStart = chatbotClip.start;
+    if (window.__createBrandTimeline) timeline = window.__timelines.main = window.__createBrandTimeline(params.get('gesture'));
+  }
   const clips = logoOnly ? [opening] : chatbotOnly && chatbotClip ? [chatbotClip] : sequence;
   const duration = clips.reduce((total, clip) => total + clip.duration, 0);
   let elapsed = 0;
@@ -22,6 +27,9 @@
   let playing = false;
   let initialized = false;
   let showingOutro = false;
+  // Lets the host offer "Rejouer" while the last seconds still play.
+  const endingLead = 3;
+  let endingSent = false;
   let activeSceneId = null;
   const notify = state => parent.postMessage({channel, state}, '*');
   const fit = () => {
@@ -75,14 +83,28 @@
     if (lastFrame !== null) elapsed = Math.min(duration, elapsed + (now-lastFrame)/1000);
     lastFrame = now;paint();
     if (elapsed >= duration) { pause('ended'); return; }
+    if (!endingSent && !logoOnly && !chatbotOnly && duration - elapsed <= endingLead) { endingSent = true; notify('ending'); }
     frame = requestAnimationFrame(tick);
   };
   const play = () => {
     if (playing) return;
     if (elapsed >= duration) elapsed = 0;
-    playing = true;lastFrame = null;notify(logoOnly ? 'outro' : 'playing');frame = requestAnimationFrame(tick);
+    playing = true;endingSent = false;lastFrame = null;notify(logoOnly ? 'outro' : 'playing');frame = requestAnimationFrame(tick);
   };
-  const tint = (value, contentColor, backgroundColor, textColor) => {
+  // Plays the logo's block reveal backwards (faster than the reveal) and reports when it is empty.
+  const reverse = () => {
+    if (!logoOnly) return;
+    playing = false;cancelAnimationFrame(frame);
+    elapsed = Math.min(elapsed, 2.02);lastFrame = null;
+    const step = now => {
+      if (lastFrame !== null) elapsed = Math.max(0, elapsed - (now - lastFrame) / 1000 * 4);
+      lastFrame = now;paint();
+      if (elapsed <= 0) { notify('reversed'); return; }
+      frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+  };
+  const tint = (value, contentColor, backgroundColor, textColor, transparentBackground) => {
     const valid = color => typeof color === 'string' && color.length < 120 && CSS.supports('color',color);
     if (!valid(value)) return;
     root.style.setProperty('--embed-logo-color',value);
@@ -100,6 +122,12 @@
       // The complete iframe viewport includes the margins around its 16:9 canvas.
       document.documentElement.style.setProperty('--embed-page-background',backgroundColor);
       root.style.setProperty('--color-base-100',backgroundColor);
+      // The standalone logo is composited over its parent's surface, but keeps an opaque ink-on-tile colour.
+      if (logoOnly && transparentBackground === true) {
+        document.documentElement.style.setProperty('--embed-page-background','transparent');
+        root.style.background = 'transparent';
+        for (const scene of allScenes) scene.style.background = 'transparent';
+      }
       root.style.setProperty('--color-base-200',`color-mix(in srgb,${value} 7%,${backgroundColor})`);
       root.style.setProperty('--color-base-300',`color-mix(in srgb,${value} 22%,${backgroundColor})`);
     }
@@ -107,14 +135,15 @@
   };
   window.addEventListener('message',event => {
     if (event.source !== parent || !event.data || typeof event.data !== 'object' || event.data.channel !== channel) return;
-    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme} = event.data;
+    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme,transparentBackground} = event.data;
     if (colorScheme === 'light' || colorScheme === 'dark') document.documentElement.style.colorScheme = colorScheme;
     if (action === 'initialize') {
-      tint(color,contentColor,backgroundColor,textColor);
+      tint(color,contentColor,backgroundColor,textColor,transparentBackground);
       // Reveal only after the parent palette and selected scene are painted.
       if (!initialized) { initialized = true; elapsed = autoplay === true ? 0 : duration;paint();root.style.visibility = 'visible';autoplay === true ? play() : pause('ended'); }
-    } else if (action === 'color') tint(color,contentColor,backgroundColor,textColor);
+    } else if (action === 'color') tint(color,contentColor,backgroundColor,textColor,transparentBackground);
     else if (action === 'play') play();
+    else if (action === 'reverse') reverse();
     else if (action === 'pause') {
       if (logoOnly) {elapsed = duration;paint();}
       pause();
@@ -125,7 +154,9 @@
         timeline.kill();
         timeline = window.__createBrandTimeline(gesture);
       }
-      elapsed = 0;paint();play();
+      const wasPlaying = playing;
+      elapsed = 0;endingSent = false;paint();play();
+      if (wasPlaying) notify('playing');
     }
   });
   window.addEventListener('resize',fit);

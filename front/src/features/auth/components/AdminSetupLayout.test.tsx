@@ -39,7 +39,7 @@ describe("introduction de l’accueil", () => {
     expect(container.querySelector('[title="Salut animé du chatbot ANDRIA"]')).toBeNull();
     act(() => vi.advanceTimersByTime(1000));
     expect(container.querySelector('[title="Salut animé du chatbot ANDRIA"]')).not.toBeNull();
-    expect(container.textContent).toContain("Je serai là pour vous aider.");
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
     act(() => vi.advanceTimersByTime(authIntroDurationMs - 1001));
     expect(container.querySelector("h1")).toBeNull();
     act(() => vi.advanceTimersByTime(1));
@@ -66,13 +66,13 @@ describe("introduction de l’accueil", () => {
       </MemoryRouter>,
     ));
     act(() => vi.advanceTimersByTime(1000));
-    expect(container.textContent).toContain("Je serai là pour vous aider.");
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
     expect(container.textContent).not.toContain("Configurez votre plateforme");
     act(() => vi.advanceTimersByTime(authIntroDurationMs - 1000));
     const message = Array.from(document.querySelectorAll("[data-chatbot-bubble]")).find(span => span.textContent?.startsWith("Configurez votre plateforme"));
     expect(message?.textContent).toBe("Configurez votre plateforme en créant le premier compte. Il vous permettra de gérer les paramètres de l’instance et les accès à ANDRIA.");
     expect(container.querySelector("p")?.textContent ?? "").not.toContain("Configurez votre plateforme");
-    expect(message?.parentElement?.querySelector('[aria-label="Chatbot ANDRIA"]')).not.toBeNull();
+    expect(message?.parentElement?.parentElement?.querySelector('[aria-label="Chatbot ANDRIA"]')).not.toBeNull();
     act(() => Array.from(container.querySelectorAll("button")).find(button => button.textContent?.includes("Commencer"))?.click());
     expect(onNext).toHaveBeenCalledOnce();
   });

@@ -7,7 +7,7 @@ import { getExpandedTileBounds, getVisibleAuthTiles } from "./auth-tile-grid";
 const preferences = vi.hoisted(() => ({ reducedMotion: false }));
 vi.mock("motion/react", async () => {
   const React = await import("react");
-  function MockMotionDiv({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { initial?: unknown; animate?: unknown; exit?: unknown; transition?: { duration?: number }; onAnimationComplete?: (definition: unknown) => void }) {
+  const createMotion = (tag: "div" | "span") => function MockMotion({ children, ...props }: React.HTMLAttributes<HTMLElement> & { initial?: unknown; animate?: unknown; exit?: unknown; transition?: { duration?: number }; onAnimationComplete?: (definition: unknown) => void }) {
     const { initial, animate, exit, transition, onAnimationComplete, ...htmlProps } = props;
     void initial; void exit;
     React.useEffect(() => {
@@ -15,12 +15,12 @@ vi.mock("motion/react", async () => {
       const timer = setTimeout(() => onAnimationComplete(animate), (transition?.duration ?? 0) * 1000);
       return () => clearTimeout(timer);
     }, [onAnimationComplete, transition, animate]);
-    return React.createElement("div", htmlProps, children);
-  }
+    return React.createElement(tag, htmlProps, children);
+  };
   return {
     useReducedMotion: () => preferences.reducedMotion,
     AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    motion: { div: MockMotionDiv },
+    motion: { div: createMotion("div"), span: createMotion("span") },
   };
 });
 
@@ -250,9 +250,9 @@ describe("auth flip tiles", () => {
     const title = () => container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent;
     const next = () => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label^="Qualité suivante"]')!;
     expect(title()).toBe("Accessible");
-    expect(next().getAttribute("aria-label")).toBe("Qualité suivante : Novatrice");
+    expect(next().getAttribute("aria-label")).toBe("Qualité suivante : Harmonieuse");
 
-    for (const expected of ["Novatrice", "Dynamique", "Réactive", "Intuitive", "Adaptative", "Collective", "Coordonnée", "Organisée", "Connectée", "Personnalisable", "Encourageante", "Accessible"]) {
+    for (const expected of ["Harmonieuse", "Novatrice", "Maîtrisée", "Dynamique", "Stimulante", "Réactive", "Attentive", "Intuitive", "Adaptative", "Collective", "Coordonnée", "Organisée", "Connectée", "Personnalisable", "Encourageante", "Accessible"]) {
       act(() => next().click());
       act(() => vi.runOnlyPendingTimers());
       expect(title()).toBe(expected);
@@ -282,10 +282,10 @@ describe("auth flip tiles", () => {
     expect(container.querySelector('[role="dialog"] .bg-secondary')).not.toBeNull();
     act(() => container.querySelector<HTMLButtonElement>('[role="dialog"] button[aria-label="Fermer les détails"]')!.click());
 
-    expect(tile.textContent).toContain("Novatrice");
+    expect(tile.textContent).toContain("Harmonieuse");
     expect(tile.querySelector(".auth-flip-icon-face")?.className).toContain("bg-secondary");
     act(() => tile.click());
-    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Novatrice");
+    expect(container.querySelector('[role="dialog"] [role="heading"][aria-level="2"]')?.textContent).toBe("Harmonieuse");
     expect(container.querySelector('[role="dialog"] .bg-secondary')).not.toBeNull();
   });
 

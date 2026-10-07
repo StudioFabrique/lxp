@@ -1,12 +1,14 @@
 {
-  "sourceSha256": "3c6d3e0f2997ec1b5face538e560c8cc482586e1e24539fd6bb170cb9568d893",
+  "sourceSha256": "5da454978f0e4789ad28785b96b9e452add8a385dc6e6ec44362063e12de3c84",
   "sequences": [
     [
       {
         "id": "structure",
         "start": 3.0,
         "duration": 19.0
-      },
+      }
+    ],
+    [
       {
         "id": "personalize",
         "start": 79.5,
@@ -18,7 +20,9 @@
         "id": "assistant",
         "start": 28.5,
         "duration": 12.0
-      },
+      }
+    ],
+    [
       {
         "id": "steering",
         "start": 74.5,
@@ -30,7 +34,9 @@
         "id": "author",
         "start": 22.0,
         "duration": 6.5
-      },
+      }
+    ],
+    [
       {
         "id": "assess",
         "start": 40.5,
@@ -42,7 +48,9 @@
         "id": "organize",
         "start": 51.5,
         "duration": 6.5
-      },
+      }
+    ],
+    [
       {
         "id": "care",
         "start": 63.0,
@@ -54,16 +62,6 @@
         "id": "dashboards",
         "start": 85.5,
         "duration": 13.0
-      },
-      {
-        "id": "structure",
-        "start": 3.0,
-        "duration": 19.0
-      },
-      {
-        "id": "organize",
-        "start": 51.5,
-        "duration": 6.5
       }
     ],
     [

@@ -20,6 +20,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { AuthChatbotDragContext } from "./AuthChatbotDragContext";
+import { chatbotMoveDurationMs, chatbotMoveEasing } from "./auth-chatbot-motion";
 import { chatbotAvatarSelector, chatbotDesktopQuery, hideIntroChatbots } from "./auth-chatbot-handoff";
 
 const isDesktop = (): boolean =>
@@ -127,7 +128,6 @@ export default function AuthChatbotPlacement({
   // Scale of the avatar inherited from the introduction, undone while moving to the first location.
   const handoffScale = useRef<number | null>(null);
   const [random] = useState(() => Math.random());
-  const [turnDuringMove] = useState(() => Math.random() < 0.35);
   const usePortal = floating;
   const placed = useRef(false);
   const [dragBounds, setDragBounds] = useState({
@@ -137,6 +137,7 @@ export default function AuthChatbotPlacement({
     bottom: 0,
   });
   const dragged = useRef(false);
+  const [dragging, setDragging] = useState(false);
   const dragControls = useDragControls();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -158,13 +159,14 @@ export default function AuthChatbotPlacement({
           });
         window.requestAnimationFrame(() => dragControls.start(event));
       },
+      dragging,
       wasDragged: (): boolean => {
         const result = dragged.current;
         dragged.current = false;
         return result;
       },
     }),
-    [dragControls, x, y],
+    [dragControls, dragging, x, y],
   );
 
   useEffect(() => {
@@ -345,7 +347,7 @@ export default function AuthChatbotPlacement({
             },
             { transform: "translate(0px, 0px)" },
           ],
-          { duration: 700, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+          { duration: chatbotMoveDurationMs, easing: chatbotMoveEasing },
         );
         const scale = handoffScale.current;
         const avatar = host.querySelector<HTMLElement>(chatbotAvatarSelector);
@@ -353,33 +355,33 @@ export default function AuthChatbotPlacement({
           avatar.style.transform = "";
           avatar.animate?.(
             [{ transform: `scale(${scale})` }, { transform: "scale(1)" }],
-            { duration: 700, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+            { duration: chatbotMoveDurationMs, easing: chatbotMoveEasing },
           );
         }
-        if (turnDuringMove) {
-          host
-            .querySelector<HTMLElement>('[aria-label="Chatbot ANDRIA"]')
-            ?.animate?.(
-              [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
-              { duration: 800, easing: "cubic-bezier(0.45, 0, 0.2, 1)" },
-            );
-        }
+        // The avatar rolls along the move, in the direction it travels, with the same timing.
+        const turn = previous.left > target.left ? -360 : 360;
+        host
+          .querySelector<HTMLElement>('[aria-label="Chatbot ANDRIA"]')
+          ?.animate?.(
+            [{ transform: "rotate(0deg)" }, { transform: `rotate(${turn}deg)` }],
+            { duration: chatbotMoveDurationMs, easing: chatbotMoveEasing },
+          );
       }
       // Without a previous location (first dialogue shown), enter from the left edge rolling instead of popping in.
       if (!previous && !reducedMotion) {
-        const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
+        const easing = chatbotMoveEasing;
         host.animate?.(
           [
             { transform: `translateX(${-(target.left + host.offsetWidth + 20)}px)` },
             { transform: "translateX(0px)" },
           ],
-          { duration: 900, easing },
+          { duration: chatbotMoveDurationMs, easing },
         );
         host
           .querySelector<HTMLElement>(chatbotAvatarSelector)
           ?.animate?.(
             [{ transform: "rotate(-360deg)" }, { transform: "rotate(0deg)" }],
-            { duration: 900, easing },
+            { duration: chatbotMoveDurationMs, easing },
           );
       }
       if (handoffScale.current !== null) {
@@ -404,7 +406,6 @@ export default function AuthChatbotPlacement({
     previousPosition,
     random,
     reducedMotion,
-    turnDuringMove,
     usePortal,
     scopeRef,
     stepId,
@@ -431,8 +432,10 @@ export default function AuthChatbotPlacement({
             dragMomentum={false}
             onDragStart={() => {
               dragged.current = true;
+              setDragging(true);
             }}
             onDragEnd={() => {
+              setDragging(false);
               const rect = hostRef.current?.getBoundingClientRect();
               if (rect)
                 previousPosition?.setPosition({

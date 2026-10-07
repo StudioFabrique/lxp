@@ -11,8 +11,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { LoaderCircle, MailCheck } from "lucide-react";
 import { accountApi } from "../api/account.api";
-import PasswordUpdateError from "../components/PasswordUpdateError";
 import PasswordForm from "../components/PasswordForm";
+import AuthChatbotConfetti from "../components/AuthChatbotConfetti";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 
@@ -107,12 +107,15 @@ export default function RegisterHome() {
     }
   };
 
+  // Une fois le compte activé, le lien est consommé : une revérification tardive ne doit plus afficher d'erreur.
+  const showError = error.length > 0 && !success;
+
   return (
     <OnboardingProgressPanel
       contentKey={
-        isChecking
+        isChecking && !success
           ? "checking"
-          : error
+          : showError
             ? "error"
             : success
               ? "success"
@@ -124,9 +127,8 @@ export default function RegisterHome() {
       animateProgressOnMount
       className="min-h-[500px] flex-none lg:min-h-0 lg:flex-1"
       footer={
-        !isChecking &&
-        !error && (
-          <div className="mt-5 border-t border-base-300 pt-4">
+        !(isChecking && !success) && (
+          <div className="mt-5 flex flex-col gap-3 border-t border-base-300 pt-4">
             {success ? (
               <Link
                 className="btn btn-primary w-full rounded-lg text-base normal-case text-base-100"
@@ -134,6 +136,21 @@ export default function RegisterHome() {
               >
                 Retour à la page de connexion
               </Link>
+            ) : showError ? (
+              <>
+                {expiredEmail !== null && (
+                  <Link
+                    className="btn btn-primary w-full"
+                    to="/reset-password"
+                    state={{ mode: "activation", email: expiredEmail }}
+                  >
+                    Renvoyer un lien d'activation
+                  </Link>
+                )}
+                <Link className="btn btn-outline btn-primary w-full" to="/login">
+                  Retour
+                </Link>
+              </>
             ) : (
               <button
                 type="submit"
@@ -155,23 +172,34 @@ export default function RegisterHome() {
       <AuthPageWrapper
         title={success ? "Compte activé" : "Activation du compte"}
         description={
-          email ? (
+          success ? (
+            "Félicitations, votre compte est activé ! Vous pouvez maintenant vous connecter."
+          ) : email ? (
             <>
-              <strong className="block">{email}</strong>
-              {roleLabel && (
-                <span
-                  className="badge badge-primary badge-soft"
-                  aria-label={`Rôle : ${roleLabel}`}
-                >
-                  {roleLabel}
-                </span>
-              )}
+              <p>
+                Activez votre compte pour l'adresse mail{" "}
+                <strong className="break-all">{email}</strong>
+                {roleLabel && (
+                  <>
+                    {" "}en tant que{" "}
+                    <span
+                      className="badge badge-primary badge-soft badge-sm align-middle font-semibold"
+                      aria-label={`Rôle : ${roleLabel}`}
+                    >
+                      {roleLabel}
+                    </span>
+                  </>
+                )}
+              </p>
+              <p className="mt-2">
+                Renseignez un mot de passe sécurisé.
+              </p>
             </>
           ) : undefined
         }
         variant="setup"
       >
-        {isChecking ? (
+        {isChecking && !success ? (
           <div
             role="status"
             aria-label="Vérification du lien"
@@ -181,21 +209,13 @@ export default function RegisterHome() {
             <div className="skeleton h-8 w-2/3" />
             <div className="skeleton h-4 w-full" />
           </div>
-        ) : error.length > 0 ? (
-          <div className="flex flex-col gap-4">
-            <PasswordUpdateError error={error} url="/login" />
-            {expiredEmail !== null && (
-              <Link
-                className="btn btn-primary w-full"
-                to="/reset-password"
-                state={{ mode: "activation", email: expiredEmail }}
-              >
-                Renvoyer un lien d'activation
-              </Link>
-            )}
+        ) : showError ? (
+          <div role="alert" className="alert alert-error alert-soft">
+            <span>{error}</span>
           </div>
         ) : success ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
+            <AuthChatbotConfetti />
             <MailCheck className="h-8 w-8" aria-hidden="true" />
             <p className="text-sm text-base-content/70">
               Votre compte a été activé avec succès.

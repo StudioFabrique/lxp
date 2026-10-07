@@ -1,4 +1,4 @@
-import { act } from "react";
+import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
@@ -7,6 +7,11 @@ import Register from "./Register";
 import PasswordUpdateHome from "../components/PasswordUpdateHome";
 import ThemeToggle from "../../../components/buttons/ThemeToggle";
 import { ThemeProvider } from "../../../store/ThemeProvider";
+
+// Le chatbot flottant dépend du placement dans la page : on rend son message en place.
+vi.mock("../components/AuthOnboardingChatbot", () => ({
+  default: ({ message }: { message?: ReactNode }) => <div>{message}</div>,
+}));
 
 vi.mock("../api/account.api", () => ({
   accountApi: {
@@ -134,8 +139,11 @@ it("affiche le formulaire lorsque le lien est valide", async () => {
 
   await render();
   expect(container.querySelectorAll('input[type="password"]')).toHaveLength(2);
-  expect(container.querySelector("header strong")?.textContent).toBe("invitee@example.fr");
-  expect(container.querySelector('header .badge[aria-label="Rôle : Formateur"]')?.textContent).toBe("Formateur");
+  expect(container.textContent).toContain(
+    "Activez votre compte pour l'adresse mail invitee@example.fr en tant que Formateur",
+  );
+  expect(container.textContent).toContain("Renseignez un mot de passe sécurisé.");
+  expect(container.querySelector('.badge[aria-label="Rôle : Formateur"]')?.textContent).toBe("Formateur");
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
   expect(container.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow")).toBe("50");
   expect(container.querySelector('button[type="submit"]')?.getAttribute("form")).toBe("account-activation-form");
