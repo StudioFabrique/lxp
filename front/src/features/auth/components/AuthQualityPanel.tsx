@@ -173,16 +173,15 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
                 {fullscreen && !reducedMotion
                   ? <AuthAnimatedLogo reverseSignal={reverseSignal} onReversed={commitPending} color={authTileColors[activeColorIndex % authTileColors.length]} className="w-28 shrink-0" transparent />
                   : <AuthQualityLogo color={activeColorIndex} />}
-                {/* In fullscreen only the title block turns; the rest of the content swaps without moving. */}
+                {/* In fullscreen only the title block fades; the rest of the content swaps without moving. */}
                 <motion.span
                   key={activeQuality}
                   className="auth-quality-heading min-w-0"
-                  style={{ transformPerspective: 800, backfaceVisibility: "hidden" }}
-                  initial={fullscreen && !reducedMotion && turning ? { rotateY: -90 } : false}
-                  animate={{ rotateY: leaving ? 90 : 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut", delay: leaving ? 0.2 : 0 }}
+                  initial={fullscreen && !reducedMotion && turning ? { opacity: 0 } : false}
+                  animate={{ opacity: leaving ? 0 : 1 }}
+                  transition={{ duration: 0.25, ease: "easeInOut", delay: leaving ? 0.2 : 0 }}
                   onAnimationComplete={(definition) => {
-                    if (fullscreen && turning && typeof definition === "object" && "rotateY" in definition && definition.rotateY === 0) finishTurn();
+                    if (fullscreen && turning && typeof definition === "object" && "opacity" in definition && definition.opacity === 1) finishTurn();
                   }}
                 >
                   <span id={titleId} role="heading" aria-level={2} className="block text-xl font-bold">{label}</span>

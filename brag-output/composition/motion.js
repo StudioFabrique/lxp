@@ -704,21 +704,29 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
   tl.set('#plate-contrast',{opacity:0,rotationY:90},S-.01);tl.set('#plate-minimal',{opacity:1,rotationY:0},S-.01);
   // A beam draws from its setting to its target, then fades; the target pulses.
   const links=scene.querySelector('.brand-links');
+  const drawn=new Set();
   const beam=(id,time,target)=>{
     const path=links.querySelector(id),length=path.getTotalLength(),travel=.85;
-    // The streak grows along its curve behind a bright head, then is drawn in from its origin.
+    // A bright head runs along the curve on every click. The first click also draws the line,
+    // which then stays lit at rest; later clicks on the same setting only send a new pulse.
     const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
     dot.setAttribute('r','9');links.appendChild(dot);
     let progress=0;
     const head={get n(){return progress;},set n(value){progress=value;const point=path.getPointAtLength(value*length);dot.setAttribute('cx',point.x);dot.setAttribute('cy',point.y);}};
-    tl.set(id,{strokeDashoffset:1,opacity:0},S-.01);
     tl.set(dot,{opacity:0},S-.01);tl.set(head,{n:0},S-.02);
-    tl.set(id,{opacity:1},S+time);tl.set(dot,{opacity:1},S+time);
-    tl.fromTo(id,{strokeDashoffset:1},{strokeDashoffset:0,duration:travel,ease:'power2.inOut',immediateRender:false},S+time);
+    tl.set(dot,{opacity:1},S+time);
     tl.fromTo(head,{n:0},{n:1,duration:travel,ease:'power2.inOut',immediateRender:false},S+time);
     tl.to(dot,{opacity:0,duration:.2},S+time+travel);
-    tl.to(id,{strokeDashoffset:-1,duration:.7,ease:'power2.in'},S+time+travel+.1);
-    tl.set(id,{opacity:0},S+time+travel+.8);
+    if(!drawn.has(id)){
+      drawn.add(id);
+      tl.set(id,{strokeDashoffset:1,opacity:0},S-.01);
+      tl.set(id,{opacity:1},S+time);
+      tl.fromTo(id,{strokeDashoffset:1},{strokeDashoffset:0,duration:travel,ease:'power2.inOut',immediateRender:false},S+time);
+      tl.to(id,{opacity:.4,duration:.6,ease:'power2.inOut'},S+time+travel+.1);
+    }else{
+      tl.to(id,{opacity:.9,duration:travel/2,ease:'sine.out'},S+time);
+      tl.to(id,{opacity:.4,duration:travel/2+.2,ease:'sine.in'},S+time+travel/2);
+    }
     if(target){
       tl.to(target,{boxShadow:'0 0 0 4px var(--color-primary), 0 30px 70px color-mix(in srgb,var(--color-primary) 30%,transparent)',duration:.25,ease:'power2.out'},S+time+travel-.1);
       tl.to(target,{boxShadow:'0 0 0 0px var(--color-primary), 0 30px 70px color-mix(in srgb,var(--color-neutral) 16%,transparent)',duration:.6,ease:'power2.inOut'},S+time+travel+.25);

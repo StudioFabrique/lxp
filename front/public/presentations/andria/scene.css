@@ -478,13 +478,13 @@
 /* Instance: three plates in depth. The settings plate drives two live previews,
    and light beams carry each change from the setting to what it affects. */
 #instance .brand-stage{position:absolute;left:60px;top:60px;width:1800px;height:960px;transform-style:preserve-3d}
-#instance .brand-links{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:3;transform:translateZ(60px)}
-#instance .brand-links path{fill:none;stroke:var(--color-primary);stroke-width:5;stroke-linecap:butt;stroke-dasharray:1 1;stroke-dashoffset:1;opacity:0;filter:drop-shadow(0 0 8px var(--color-primary))}
-#instance .brand-links circle{fill:var(--color-primary);opacity:0;filter:drop-shadow(0 0 10px var(--color-primary))}
+#instance .brand-links{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:3;transform:translateZ(1px)}
+#instance .brand-links path{fill:none;stroke:var(--color-primary);stroke-width:5;stroke-linecap:butt;stroke-dasharray:1 1;stroke-dashoffset:1;opacity:0}
+#instance .brand-links circle{fill:var(--color-primary);opacity:0}
 .brand-plate{position:absolute;padding:30px 34px;border-radius:22px;background:var(--color-base-100);color:var(--color-base-content);border:1px solid var(--color-base-300);box-shadow:0 30px 70px color-mix(in srgb,var(--color-neutral) 16%,transparent);transform-style:preserve-3d}
 #brand-source{left:0;top:170px;width:600px;height:620px}
-#brand-app{left:700px;top:0;width:1040px;height:540px;transform-origin:left center}
-#brand-mail{left:1260px;top:570px;width:480px;height:380px;transform-origin:left center}
+#brand-app{left:700px;top:0;width:1040px;height:540px;transform-origin:left center;transform-origin:left center}
+#brand-mail{left:1260px;top:570px;width:480px;height:380px;transform-origin:left center;transform-origin:left center}
 .brand-label{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:22px}
 .brand-label b{font-size:28px;font-weight:700}
 .brand-label small{font-size:19px;color:var(--color-primary)}
@@ -519,6 +519,13 @@
 .brand-sheet-face{position:absolute;left:0;top:0;width:320px;zoom:1.2;backface-visibility:hidden;border-radius:10px;overflow:hidden}
 #instance .scene-pointer,#instance .scene-click{z-index:6}
 
+/* Rail tiles: colour state is driven by --t (0 to 100) so the handoff to the primary colour is smooth. */
+.hierarchy-stop>span{--t:0;position:relative;
+  background:color-mix(in srgb,var(--color-primary) calc(var(--t)*1%),var(--color-base-100));
+  border-color:color-mix(in srgb,var(--color-primary) calc(var(--t)*1%),var(--color-base-300));
+  color:color-mix(in srgb,var(--color-primary-content) calc(var(--t)*1%),var(--color-primary));
+  box-shadow:0 calc(var(--t)*.14px) calc(var(--t)*.3px) calc(var(--t)*-.04px) color-mix(in srgb,var(--color-primary) calc(var(--t)*.5%),transparent)}
+
 html,body{background:var(--embed-page-background);width:100%;height:100%;overflow:hidden}#root{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:top left;visibility:hidden}.scene{display:none}.identity .brand-svg .ink,.identity .brand-svg .plate{fill:var(--embed-logo-color)!important}.identity .brand-svg .inverse{fill:var(--color-base-100)!important}.identity{color:var(--embed-logo-color)}
 
 /* Theme previews keep their changing surfaces, with the current tile's accent. */
@@ -529,9 +536,3 @@ html,body{background:var(--embed-page-background);width:100%;height:100%;overflo
 
 /* The welcome avatar keeps only its colored circle, without launcher shadows. */
 #root[data-chatbot-only] #dashboard-chatbot>button{box-shadow:none!important;filter:none!important;transition:none!important}
-/* Rail tiles: colour state is driven by --t (0 to 100) so the handoff to the primary colour is smooth. */
-.hierarchy-stop>span{--t:0;position:relative;
-  background:color-mix(in srgb,var(--color-primary) calc(var(--t)*1%),var(--color-base-100));
-  border-color:color-mix(in srgb,var(--color-primary) calc(var(--t)*1%),var(--color-base-300));
-  color:color-mix(in srgb,var(--color-primary-content) calc(var(--t)*1%),var(--color-primary));
-  box-shadow:0 calc(var(--t)*.14px) calc(var(--t)*.3px) calc(var(--t)*-.04px) color-mix(in srgb,var(--color-primary) calc(var(--t)*.5%),transparent)}

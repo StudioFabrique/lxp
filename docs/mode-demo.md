@@ -165,6 +165,7 @@ au prochain rafraîchissement des données.
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Le temps réel (Socket.IO)      | Ses gestionnaires écrivent en base sans passer par le verrou HTTP, et tous les visiteurs partagent un compte, donc les mêmes salons. Coupé dans `api/src/server.ts` et `front/src/store/AuthProvider.tsx`.                     |
 | Les fonctionnalités IA         | Chatbot et génération de quiz partent d'une session obtenue sans identifiants sur une instance publique, et consomment des jetons chez le fournisseur.                                                                         |
+| La présentation de la méthodologie | Son statut (`user.onboarding`) est enregistré sur le compte, partagé : le premier visiteur à l'ignorer en priverait tous les suivants. Elle ne s'ouvre jamais seule en démonstration, reste rouvrable depuis « Revoir la présentation », et rien n'est enregistré. |
 | Le questionnaire bêta-testeurs | Sans objet pour un visiteur de passage.                                                                                                                                                                                        |
 
 ## Produire le jeu de contenus

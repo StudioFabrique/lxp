@@ -1,4 +1,4 @@
-import { DoorOpen, LogOutIcon } from "lucide-react";
+import { DoorOpen, LogOutIcon, Presentation } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useContext, useState } from "react";
 import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
@@ -8,6 +8,7 @@ import ProfilePopover from "../../features/profile/components/ProfilePopover";
 import AiConsumptionPopover from "./AiConsumptionPopover";
 import ThemeToggle from "../buttons/ThemeToggle";
 import { useDemoMode } from "../../store/DemoContext";
+import { useIntroPresentation } from "../../features/intro-presentation/useIntroPresentation";
 import DemoExitConfirmation from "../../features/demo/components/DemoExitConfirmation";
 import {
   sidebarControlClassName,
@@ -22,6 +23,7 @@ type SharedSideBarProps = {
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { open: openIntroPresentation } = useIntroPresentation();
   const { demoMode, exitUrl, aiDisabled } = useDemoMode();
   const [isExitOpen, setIsExitOpen] = useState(false);
 
@@ -51,6 +53,19 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       {/* Bouton + modal questionnaire */}
       {!demoMode && interfaceType === "student" && <Questionnaire />}
+
+      <li className="flex w-full justify-center 2xl:block">
+        <button
+          type="button"
+          className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
+          onClick={openIntroPresentation}
+          data-tip="Revoir la présentation"
+          aria-label="Revoir la présentation"
+        >
+          <Presentation className="size-4 shrink-0" />
+          <span className="2xl:block hidden">Revoir la présentation</span>
+        </button>
+      </li>
 
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
