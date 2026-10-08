@@ -70,7 +70,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
-        <li className="flex w-full justify-center 2xl:block">
+        <li className="flex w-full justify-center max-2xl:order-2 2xl:block">
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -83,7 +83,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           </button>
         </li>
       ) : (
-        <li className="flex w-full justify-center 2xl:block">
+        <li className="flex w-full justify-center max-2xl:order-2 2xl:block">
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -97,13 +97,14 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </li>
       )}
 
-      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 2xl:flex-row">
+      {/* En mode compact, la ligne se défait : thème, puis sortie, puis logo tout en bas. */}
+      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 max-2xl:contents 2xl:flex-row">
         {/* Logo */}
-        <div className="flex size-8 items-center justify-center 2xl:w-16">
+        <div className="flex size-8 items-center justify-center max-2xl:order-3 2xl:w-16">
           <SidebarLogo />
         </div>
         <div
-          className="tooltip tooltip-right 2xl:tooltip-top"
+          className="tooltip tooltip-right max-2xl:order-1 2xl:tooltip-top"
           data-tip="Mode clair / Mode sombre"
         >
           <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />

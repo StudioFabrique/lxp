@@ -4,17 +4,17 @@ import { LoaderCircle } from "lucide-react";
 import { authPresentationStateSchema } from "../auth/components/auth-presentation.schema";
 import { cn } from "../../utils/cn";
 import { prefersReducedMotion } from "./intro-motion";
-import type { IntroSpace } from "./intro-role";
+import type { IntroSpaceContent } from "./intro-space-content";
 
 type Props = {
-  space: IntroSpace;
+  content: IntroSpaceContent;
   onEnded: () => void;
 };
 
 /** Index de la séquence « Tableaux de bord par rôle » dans `manifest.json`. */
 const DASHBOARDS_SEQUENCE = 8;
 const LOAD_TIMEOUT_MS = 10_000;
-const SPACE_LABELS: Record<IntroSpace, string> = {
+const SPACE_LABELS: Record<IntroSpaceContent["space"], string> = {
   student: "l'espace apprenant",
   team: "l'espace de l'équipe pédagogique",
 };
@@ -23,7 +23,8 @@ const SPACE_LABELS: Record<IntroSpace, string> = {
  * Joue la séquence Hyperframes de construction de l'interface (avec le chatbot)
  * limitée à l'espace du rôle détecté, et prévient à sa fin.
  */
-const IntroSpaceVideo = ({ space, onEnded }: Props) => {
+const IntroSpaceVideo = ({ content, onEnded }: Props) => {
+  const { space } = content;
   const frameRef = useRef<HTMLIFrameElement>(null);
   const paletteRef = useRef<HTMLSpanElement>(null);
   const onEndedRef = useRef(onEnded);
@@ -39,6 +40,13 @@ const IntroSpaceVideo = ({ space, onEnded }: Props) => {
 
   const send = useCallback(
     (action: "initialize" | "color") => {
+      // Le contenu du rôle précède toujours le démarrage : la séquence le lit avant sa première image.
+      if (action === "initialize") {
+        frameRef.current?.contentWindow?.postMessage(
+          { channel: "andria-auth-presentation", action: "content", content },
+          window.location.origin,
+        );
+      }
       const palette = paletteRef.current
         ? getComputedStyle(paletteRef.current)
         : undefined;
@@ -55,7 +63,7 @@ const IntroSpaceVideo = ({ space, onEnded }: Props) => {
         window.location.origin,
       );
     },
-    [reducedMotion],
+    [reducedMotion, content],
   );
 
   useEffect(() => {

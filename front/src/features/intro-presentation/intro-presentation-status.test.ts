@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  isDashboardLanding,
   isIntroStillPending,
   shouldAutoOpenIntro,
 } from "./intro-presentation-status";
@@ -37,5 +38,16 @@ describe("isIntroStillPending", () => {
     expect(isIntroStillPending("in_progress")).toBe(true);
     expect(isIntroStillPending("skipped")).toBe(false);
     expect(isIntroStillPending("completed")).toBe(false);
+  });
+});
+
+describe("isDashboardLanding", () => {
+  it("reconnaît le dashboard et les adresses qui y redirigent", () => {
+    for (const path of ["/", "/admin", "/student", "/admin/dashboard", "/student/dashboard/"]) {
+      expect(isDashboardLanding(path)).toBe(true);
+    }
+    for (const path of ["/admin/parcours", "/student/calendrier", "/login"]) {
+      expect(isDashboardLanding(path)).toBe(false);
+    }
   });
 });

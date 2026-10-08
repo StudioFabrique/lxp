@@ -5,8 +5,10 @@ import { AuthContext } from "../../store/AuthProvider";
 import { useIntroPresentation } from "./useIntroPresentation";
 import { prefersReducedMotion } from "./intro-motion";
 import IntroRoleDetection from "./IntroRoleDetection";
-import IntroSpaceVideo from "./IntroSpaceVideo";
+import IntroStudentSpace from "./IntroStudentSpace";
+import IntroTeamSpace from "./IntroTeamSpace";
 import { findIntroRole, getIntroSpace } from "./intro-role";
+import { buildInitials } from "./intro-space-content";
 
 type Props = {
   onDone: () => void;
@@ -62,10 +64,18 @@ const IntroRoleReveal = ({ onDone }: Props) => {
       className="absolute inset-0 overflow-hidden bg-base-100 outline-none"
     >
       {step === "detection" ? (
-        <IntroRoleDetection role={role} onDone={() => setStep("leaving")} />
-      ) : step === "space" ? (
-        <IntroSpaceVideo space={getIntroSpace(role)} onEnded={onDone} />
+        <IntroRoleDetection
+          role={role}
+          initials={buildInitials({ firstname: user?.firstname, lastname: user?.lastname })}
+          onDone={() => setStep("leaving")}
+        />
       ) : null}
+      {/* Monté dès la détection : le dashboard du rôle se charge pendant l'animation. */}
+      {getIntroSpace(role) === "student" ? (
+        <IntroStudentSpace role={role} isPlaying={step === "space"} onEnded={onDone} />
+      ) : (
+        <IntroTeamSpace role={role} isPlaying={step === "space"} onEnded={onDone} />
+      )}
       <button
         type="button"
         className="btn btn-ghost btn-sm absolute bottom-4 left-4 z-10"

@@ -18,6 +18,8 @@ import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
 import IntroSceneHeading from "./IntroSceneHeading";
 import IntroStepControls from "./IntroStepControls";
+import { cn } from "../../utils/cn";
+import { useIntroPresentation } from "./useIntroPresentation";
 
 type Props = {
   /** Ancre du chatbot de l'introduction, placée dans l'espace vide au-dessus de la pyramide. */
@@ -57,6 +59,9 @@ const IntroOverviewScene = ({
   onStepChange,
   onContinue,
 }: Props) => {
+  // Avec la barre réduite de la première présentation, le titre prend la ligne libre à sa droite.
+  const { sidebarPhase } = useIntroPresentation();
+  const isCompactSidebar = sidebarPhase !== "normal";
   const scrollRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -390,8 +395,17 @@ const IntroOverviewScene = ({
       >
         <div
           ref={stageRef}
-          className="sticky top-0 flex h-[100cqh] flex-col px-4 pb-16 pt-10 sm:px-8"
+          className={cn(
+            "sticky top-0 flex h-[100cqh] flex-col px-4 pb-16 sm:px-8",
+            isCompactSidebar ? "pt-20" : "pt-10",
+          )}
         >
+          {isCompactSidebar ? (
+            // Alignée sur la barre réduite, centrée dans l'espace libre à sa droite.
+            <div className="pointer-events-none absolute right-14 top-0 left-[calc(var(--intro-bar-width,30rem)+1.5rem)] flex h-[3.75rem] items-center justify-center">
+              <IntroSceneHeading className="text-center" />
+            </div>
+          ) : null}
           <p className="sr-only" aria-live="polite">
             {level
               ? `${level.label} : ${level.explanation}`
@@ -411,9 +425,13 @@ const IntroOverviewScene = ({
               className="relative flex min-w-0 flex-col items-center self-stretch"
             >
               {/* Les explications des niveaux sont dites par le chatbot. */}
-              <div className="grid min-h-32 w-full shrink-0 place-items-center">
-                <IntroSceneHeading className="text-center" />
-              </div>
+              {isCompactSidebar ? (
+                <div className="min-h-24 w-full shrink-0" />
+              ) : (
+                <div className="grid min-h-32 w-full shrink-0 place-items-center">
+                  <IntroSceneHeading className="text-center" />
+                </div>
+              )}
               {/* Zone réservée au chatbot : le calcul de placement de l'onboarding
                   ignore la pyramide 3D et le restreint à l'espace de ce panneau,
                   vide entre le titre et la pyramide. */}
@@ -421,7 +439,10 @@ const IntroOverviewScene = ({
                 data-onboarding-panel
                 aria-hidden="true"
                 style={panelStyle}
-                className="pointer-events-none absolute inset-x-0 top-20 mx-auto h-52 w-full max-w-xl"
+                className={cn(
+                  "pointer-events-none absolute inset-x-0 mx-auto h-52 w-full max-w-xl",
+                  isCompactSidebar ? "top-2" : "top-20",
+                )}
               >
                 <div ref={chatbotAnchorRef} />
               </div>

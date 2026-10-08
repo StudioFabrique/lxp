@@ -31,7 +31,10 @@ const StudentLayout = () => {
 
   return (
     <ChatbotProvider>
-      <IntroPresentationProvider isEligible={isIntroEligible}>
+      <IntroPresentationProvider
+        isEligible={isIntroEligible}
+        isEligibilityPending={!demoMode && learningContext.isPending}
+      >
         <ConfettiWrapper>
           <AppWrapper
             sidebar={<Sidebar />}

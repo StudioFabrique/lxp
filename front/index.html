@@ -119,11 +119,29 @@
       .boot-dark #boot-auth-skeleton{background:var(--boot-base,#1e1d27);color:var(--boot-content,#e5e7eb)}
       .boot-dark #boot-auth-skeleton .skeleton{background-color:var(--boot-shade,#35455a)}
       @media(max-width:1023px){.boot-auth-route #boot-auth-skeleton{grid-template-columns:1fr}#boot-auth-skeleton .auth-right{display:none}}
+      /* Première présentation : la barre réduite remplace la colonne, comme dans l'application. */
+      .boot-intro #boot-skeleton aside{position:absolute;left:8px;top:8px;width:min(32rem,calc(100vw - 16px));height:64px;padding:0 12px;flex-direction:row;align-items:center;justify-content:space-between;gap:20px}
+      .boot-intro #boot-skeleton aside>div{display:none}
+      /* La présentation remplace le contenu de la page : un voile et un spinner, pas de squelette de page. */
+      .boot-intro #boot-skeleton main{visibility:hidden}
+      #boot-skeleton .boot-veil{display:none}
+      .boot-intro #boot-skeleton .boot-veil{display:grid;position:absolute;inset:0;z-index:1;place-items:center;background:color-mix(in srgb,var(--boot-side,#192d43) 15%,transparent)}
+      .boot-intro #boot-skeleton aside{z-index:2}
+      #boot-skeleton .boot-veil i{width:40px;height:40px;border-radius:50%;border:4px solid color-mix(in srgb,var(--boot-side,#192d43) 25%,transparent);border-top-color:var(--boot-side,#192d43);animation:boot-spin .8s linear infinite}
+      @keyframes boot-spin{to{transform:rotate(360deg)}}
+      #boot-skeleton .boot-bar{display:none}
+      .boot-intro #boot-skeleton aside>.boot-bar{display:block}
+      #boot-skeleton .boot-bar-logo{width:96px;height:31px}
+      #boot-skeleton .boot-bar-theme{flex:1;height:48px;max-width:320px}
+      #boot-skeleton .boot-bar-icon{width:32px;height:32px}
+      /* Compte jamais vu par ce navigateur : aucune barre plutôt que la mauvaise. */
+      .boot-intro-unknown #boot-skeleton aside{visibility:hidden}
       @media(min-width:1280px){#boot-skeleton .boot-content{width:80%}}
       @media(min-width:1536px){#boot-skeleton aside{width:320px;padding:16px}#boot-skeleton .boot-logo{width:50px;height:50px}#boot-skeleton .boot-nav{width:100%;justify-content:flex-start;padding:0 8px}#boot-skeleton .boot-label{display:block}}
     </style>
     <div id="boot-skeleton" role="status" aria-label="Chargement de l’application">
-      <aside aria-hidden="true"><div><div class="skeleton boot-logo"></div><div id="boot-nav-top"></div></div><div id="boot-nav-bottom"></div></aside>
+      <aside aria-hidden="true"><i class="skeleton boot-bar boot-bar-logo"></i><i class="skeleton boot-bar boot-bar-theme"></i><i class="skeleton boot-bar boot-bar-icon"></i><div><div class="skeleton boot-logo"></div><div id="boot-nav-top"></div></div><div id="boot-nav-bottom"></div></aside>
+      <div class="boot-veil" aria-hidden="true"><i></i></div>
       <main aria-hidden="true"><div class="boot-content">
         <div class="boot-header"><div class="skeleton boot-header-icon"></div><div><div class="skeleton boot-title"></div><div class="skeleton boot-subtitle"></div></div></div>
         <div class="boot-body"><div class="skeleton boot-line"></div><div class="skeleton boot-line boot-line-short"></div><div class="skeleton boot-line boot-line-row"></div>
@@ -138,6 +156,15 @@
       </div></div>
       <div class="auth-right" aria-hidden="true"><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div><div class="skeleton auth-tile"></div></div>
     </div>
+    <script>
+      // Même indice que `intro-first-run-hint.ts` : seules les adresses du dashboard sont concernées.
+      try {
+        if (/^(\/(admin|student))?(\/dashboard)?\/?$/.test(location.pathname)) {
+          const hint = localStorage.getItem('andria:intro-first-run');
+          document.documentElement.classList.add(hint === null ? 'boot-intro-unknown' : hint === '1' ? 'boot-intro' : 'boot-known');
+        }
+      } catch {}
+    </script>
     <script>
       for (const [id, count] of [['boot-nav-top', 8], ['boot-nav-bottom', 4]]) {
         document.getElementById(id).innerHTML = '<div class="boot-nav"><div class="skeleton boot-icon"></div><div class="skeleton boot-label"></div></div>'.repeat(count);

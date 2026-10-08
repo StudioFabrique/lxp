@@ -3,6 +3,10 @@ import { themeLabels } from "../../../config/themes";
 import { cn } from "../../../utils/cn";
 import { ThemeSwatch } from "./theme-swatch";
 
+/** Le mode (clair ou sombre) est déjà choisi : « Classique sombre » se lit « Classique ». */
+const themeName = (theme: string): string =>
+  (themeLabels[theme] ?? theme).replace(/ sombre$/, "");
+
 interface ThemeSelectProps {
   label: "Thème clair" | "Thème sombre";
   themesList: readonly string[];
@@ -10,6 +14,11 @@ interface ThemeSelectProps {
   dropdownClassName?: string;
   compact?: boolean;
   selectedTheme?: string;
+  /**
+   * Thèmes dont le nom le plus long fixe la largeur du bouton : il ne varie plus
+   * quand le thème ou le mode change.
+   */
+  reserveWidthFor?: readonly string[];
 }
 
 export default function ThemeSelect({
@@ -19,6 +28,7 @@ export default function ThemeSelect({
   dropdownClassName = "",
   compact = false,
   selectedTheme: controlledTheme,
+  reserveWidthFor,
 }: ThemeSelectProps) {
   const mode = useMemo(() => {
     return label === "Thème clair" ? "light" : "dark";
@@ -55,14 +65,32 @@ export default function ThemeSelect({
           aria-label={`Choisir le ${label.toLowerCase()}`}
           className={
             cn(compact
-              ? "btn btn-sm h-8 min-h-8 max-w-32 min-w-0 gap-1 px-2"
+              ? cn("btn btn-sm h-8 min-h-8 max-w-32 min-w-0 gap-1 px-2", reserveWidthFor && "max-w-none")
               : "btn m-1 gap-2")
           }
         >
           <ThemeSwatch theme={selectedTheme} />
-          <span className="truncate">
-            {themeLabels[selectedTheme] ?? selectedTheme}
-          </span>
+          {reserveWidthFor ? (
+            // Tous les noms se superposent : le plus long donne sa largeur au bouton.
+            <span className="grid">
+              <span className="col-start-1 row-start-1 truncate">
+                {themeName(selectedTheme)}
+              </span>
+              {reserveWidthFor.map((theme) => (
+                <span
+                  key={theme}
+                  aria-hidden="true"
+                  className="invisible col-start-1 row-start-1 h-0 overflow-hidden"
+                >
+                  {themeName(theme)}
+                </span>
+              ))}
+            </span>
+          ) : (
+            <span className="truncate">
+              {themeName(selectedTheme)}
+            </span>
+          )}
           <svg
             width="12px"
             height="12px"
@@ -90,7 +118,7 @@ export default function ThemeSelect({
                 />
                 <span className="btn btn-sm btn-block btn-ghost justify-start gap-3">
                   <ThemeSwatch theme={theme} />
-                  {themeLabels[theme] ?? theme}
+                  {themeName(theme)}
                 </span>
               </label>
             </li>

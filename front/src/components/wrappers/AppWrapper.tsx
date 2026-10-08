@@ -14,14 +14,14 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
     <div className="relative flex flex-col h-screen p-2 bg-base-100 box-border">
       <div className="flex gap-2 h-full overflow-hidden">
         {/* Sidebar */}
-        {/* Pendant la présentation, la barre est une bande horizontale en haut à droite, posée sur le contenu ;
-            en sortie, elle recule légèrement puis part d'un coup vers la droite, comme poussée. */}
+        {/* Pendant la présentation, la barre est une bande horizontale en haut à gauche, posée sur le contenu ;
+            en sortie, elle recule légèrement puis part d'un coup vers la gauche, comme poussée. */}
         <aside
           className={cn(
             "z-20",
-            sidebarPhase === "normal" ? "h-full" : "absolute right-2 top-2",
+            sidebarPhase === "normal" ? "h-full" : "absolute left-2 top-2",
             sidebarPhase === "leaving" &&
-              "translate-x-[130%] transition-transform duration-700 ease-[cubic-bezier(0.6,-0.28,0.735,0.045)] motion-reduce:transition-none",
+              "-translate-x-[130%] transition-transform duration-700 ease-[cubic-bezier(0.6,-0.28,0.735,0.045)] motion-reduce:transition-none",
             sidebarPhase === "gone" && "hidden",
           )}
         >

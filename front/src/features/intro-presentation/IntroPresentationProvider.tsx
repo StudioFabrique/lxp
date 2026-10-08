@@ -1,4 +1,4 @@
-import { useContext, useState, type PropsWithChildren } from "react";
+import { useContext, useEffect, useState, type PropsWithChildren } from "react";
 import { useLocation } from "react-router";
 import toast from "react-hot-toast";
 
@@ -9,7 +9,9 @@ import {
   type SidebarExit,
   type SidebarPhase,
 } from "./IntroPresentationContext";
+import { setIntroFirstRunHint } from "./intro-first-run-hint";
 import {
+  isDashboardLanding,
   isIntroStillPending,
   shouldAutoOpenIntro,
 } from "./intro-presentation-status";
@@ -17,6 +19,11 @@ import {
 type Props = {
   /** Faux tant que le compte n'est pas prêt, par exemple pendant le questionnaire apprenant. */
   isEligible?: boolean;
+  /**
+   * Vrai tant que l'éligibilité se charge : la barre réduite s'affiche déjà, pour
+   * qu'on ne voie pas la barre complète clignoter avant l'ouverture.
+   */
+  isEligibilityPending?: boolean;
 };
 
 /**
@@ -31,6 +38,7 @@ type Props = {
  */
 export const IntroPresentationProvider = ({
   isEligible = true,
+  isEligibilityPending = false,
   children,
 }: PropsWithChildren<Props>) => {
   const { user, updateOnboarding } = useContext(AuthContext);
@@ -52,8 +60,25 @@ export const IntroPresentationProvider = ({
   // La barre latérale se réduit pendant la première exploration, jusqu'à sa sortie ;
   // une présentation rejouée après coup la laisse normale.
   const isFirstRun = isOpen && isIntroStillPending(status);
+  // Avant l'ouverture : éligibilité en cours de lecture, ou redirection vers le dashboard
+  // en cours (juste après la connexion). La barre complète ne doit pas clignoter.
+  const isOpeningSoon =
+    !isOpen &&
+    Boolean(user) &&
+    !demoMode &&
+    isIntroStillPending(status) &&
+    (isEligible || isEligibilityPending) &&
+    (isEligibilityPending
+      ? shouldAutoOpenIntro({ status, pathname, isEligible: true, demoMode })
+      : isDashboardLanding(pathname));
+  const isFirstRunPending =
+    Boolean(user) && !demoMode && isIntroStillPending(status);
+  useEffect(() => {
+    if (user) setIntroFirstRunHint(isFirstRunPending);
+  }, [user, isFirstRunPending]);
+  // La démonstration partage son compte : sa barre reste complète.
   const sidebarPhase: SidebarPhase =
-    isFirstRun || isRoleRevealOpen
+    !demoMode && (isFirstRun || isOpeningSoon || isRoleRevealOpen)
       ? sidebarExit === "none"
         ? "skeleton"
         : sidebarExit

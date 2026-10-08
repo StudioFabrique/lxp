@@ -9,6 +9,8 @@ export type IntroSpace = "student" | "team";
 export type IntroRoleOption = {
   rank: number;
   label: string;
+  /** Intitulé de l'espace dans la séquence (sous-titre de la barre latérale et de l'en-tête). */
+  spaceLabel: string;
   icon: LucideIcon;
 };
 
@@ -18,10 +20,10 @@ export type IntroRoleOption = {
  * l'utilisateur, alors que la détection parcourt tous les rôles existants.
  */
 export const INTRO_ROLES: readonly IntroRoleOption[] = [
-  { rank: 0, label: "Root", icon: Crown },
-  { rank: 1, label: "Administrateur", icon: ShieldCheck },
-  { rank: 2, label: "Équipe pédagogique", icon: BookOpen },
-  { rank: 3, label: "Apprenant", icon: GraduationCap },
+  { rank: 0, label: "Root", spaceLabel: "Espace root", icon: Crown },
+  { rank: 1, label: "Administrateur", spaceLabel: "Espace administrateur", icon: ShieldCheck },
+  { rank: 2, label: "Équipe pédagogique", spaceLabel: "Espace pédagogique", icon: BookOpen },
+  { rank: 3, label: "Apprenant", spaceLabel: "Espace apprenant", icon: GraduationCap },
 ];
 
 const STUDENT_RANK = 3;

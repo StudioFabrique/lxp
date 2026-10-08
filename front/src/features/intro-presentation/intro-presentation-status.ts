@@ -26,6 +26,13 @@ export const shouldAutoOpenIntro = ({
   (status === "pending" || status === "in_progress") &&
   pathname.endsWith("/dashboard");
 
+/**
+ * Le dashboard et les adresses qui y redirigent (« / », « /admin », « /student ») :
+ * après la connexion, le layout se monte sur l'une d'elles avant la redirection.
+ */
+export const isDashboardLanding = (pathname: string): boolean =>
+  /^(\/(admin|student))?(\/dashboard)?\/?$/.test(pathname);
+
 /** Seule une présentation encore à voir enregistre un choix sur le compte. */
 export const isIntroStillPending = (status: OnboardingStatus): boolean =>
   status === "pending" || status === "in_progress";

@@ -135,9 +135,87 @@
     }
     if (valid(textColor)) root.style.setProperty('--color-base-content',textColor);
   };
+  // Replaces the sample data of the dashboards scene with the signed-in user's real dashboard.
+  // Only text and sidebar entries change: the layout and the 3D timeline stay as authored.
+  const applyContent = content => {
+    if (!params.get('role') || !content || typeof content !== 'object') return;
+    const str = (value, max = 160) => typeof value === 'string' ? value.slice(0, max) : '';
+    const setText = (element, value) => { if (element) element.textContent = str(value); };
+    const student = content.space === 'student';
+    const face = document.getElementById(student ? 'dashboard-student' : 'dashboard-teacher');
+    const nav = document.getElementById(student ? 'dashboard-nav-student' : 'dashboard-nav-admin');
+    if (!face || !nav) return;
+    const style = document.createElement('style');
+    style.textContent = '.dashboard-face .product-row>div{min-width:0}.dashboard-face b,.dashboard-face small,.dashboard-face h2,.dashboard-face .dashboard-header p,.dashboard-face .fixture-content p,.dashboard-face .fixture-content h3{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dashboard-face .product-row b,.dashboard-face .product-row small{display:block}';
+    document.head.appendChild(style);
+    // Templates are taken before any edit, since cards are emptied and refilled.
+    const rowTemplate = document.querySelector(student ? '#dash-paths .product-row' : '#dash-actions .product-row')?.cloneNode(true);
+    const moduleIcon = document.querySelector('#dash-latest .panel-title svg')?.cloneNode(true);
+    // Rows keep the icon of the card they come from; the cards that take another slot's content borrow a fitting one.
+    const rowIcon = id => document.querySelector(`#${id} .product-row>svg`)?.cloneNode(true);
+    const rowIcons = student ? {} : {'dash-actions': rowIcon('dash-actions'), 'dash-alerts': rowIcon('dash-latest'), 'dash-latest': rowIcon('dash-latest'), 'dash-feedback': rowIcon('dash-actions')};
+    // Header.
+    const header = face.querySelector('.dashboard-header');
+    setText(header?.querySelector('small'), content.spaceLabel);
+    setText(header?.querySelector('h2'), content.title);
+    setText(header?.querySelector('p'), content.message);
+    const action = header?.querySelector('.product-button');
+    if (action) { if (typeof content.headerAction === 'string') action.textContent = str(content.headerAction); else action.style.display = 'none'; }
+    // Sidebar: only the entries the role can open, under their real labels.
+    setText(nav.querySelector(':scope>small'), content.spaceLabel);
+    const entries = new Map((Array.isArray(content.nav) ? content.nav : []).map(entry => [str(entry?.label), str(entry?.displayLabel)]));
+    for (const item of nav.querySelectorAll('.dashboard-navigation>li')) {
+      const link = item.querySelector('a');
+      const label = link?.getAttribute('aria-label') ?? '';
+      if (!entries.has(label)) { item.style.display = 'none'; continue; }
+      const shown = entries.get(label) || label;
+      link.setAttribute('aria-label', shown);
+      link.setAttribute('data-tip', shown);
+      setText(link.querySelector(':scope>span:last-child'), shown);
+    }
+    const profile = document.querySelector('#dashboards .dashboard-profile');
+    setText(profile?.querySelector('.avatar'), str(content.initials, 3));
+    setText(profile?.querySelector('b'), content.userName);
+    setText(profile?.querySelector('small'), content.roleLabel);
+    // Cards.
+    for (const card of Array.isArray(content.cards) ? content.cards : []) {
+      const element = document.getElementById(str(card?.id));
+      const box = element?.querySelector('.fixture-content');
+      if (!box || !face.contains(element)) continue;
+      setText(box.querySelector('.panel-title h3'), card.title);
+      const icon = box.querySelector('.panel-title svg');
+      if (card.id === 'dash-alerts' && icon && moduleIcon) icon.replaceWith(moduleIcon.cloneNode(true));
+      for (const child of [...box.children]) if (!child.classList.contains('panel-title')) child.remove();
+      for (const row of (Array.isArray(card.rows) ? card.rows : []).slice(0, 3)) {
+        if (!rowTemplate) break;
+        const line = rowTemplate.cloneNode(true);
+        const icon = rowIcons[card.id];
+        if (icon) line.querySelector(':scope>svg')?.replaceWith(icon.cloneNode(true));
+        setText(line.querySelector('b'), row?.title);
+        setText(line.querySelector('small'), row?.subtitle);
+        box.appendChild(line);
+      }
+    }
+    if (student && content.resume && typeof content.resume === 'object') {
+      const resume = document.getElementById('dash-resume');
+      setText(resume?.querySelector('h3'), content.resume.course);
+      setText(resume?.querySelector('.fixture-content>p'), content.resume.lesson);
+      setText(resume?.querySelector('.dashboard-resume strong'), content.resume.action);
+      setText(resume?.querySelector('.dashboard-resume span'), '');
+      const progress = resume?.querySelector('.product-progress');
+      if (progress) progress.style.visibility = 'hidden';
+      const calendar = document.getElementById('dash-calendar');
+      setText(calendar?.querySelector('strong'), 'Votre calendrier');
+      setText(calendar?.querySelector('.fixture-content>p'), 'Retrouvez vos prochaines séances.');
+      const skills = document.getElementById('dash-skills');
+      setText(skills?.querySelector('.fixture-content>p'), 'Suivez vos compétences et accomplissements.');
+      for (const badge of skills?.querySelectorAll('.skill-badge') ?? []) badge.style.display = 'none';
+    }
+  };
   window.addEventListener('message',event => {
     if (event.source !== parent || !event.data || typeof event.data !== 'object' || event.data.channel !== channel) return;
-    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme,transparentBackground} = event.data;
+    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme,transparentBackground,content} = event.data;
+    if (action === 'content') { applyContent(content); return; }
     if (colorScheme === 'light' || colorScheme === 'dark') document.documentElement.style.colorScheme = colorScheme;
     if (action === 'initialize') {
       tint(color,contentColor,backgroundColor,textColor,transparentBackground);
