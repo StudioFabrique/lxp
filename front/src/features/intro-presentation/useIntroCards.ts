@@ -6,6 +6,7 @@ import { useDemoMode } from "../../store/DemoContext";
 import { dashboardAdminApi } from "../dashboard-admin/api/dashboard-admin.api";
 import { dashboardStudentApi } from "../dashboard-student/api/dashboard-student.api";
 import { profileApi } from "../profile/api/profile.api";
+import { INTRO_ROLES } from "./intro-role";
 import { buildIntroCards, type IntroCard, type IntroSource } from "./intro-content";
 import {
   introPresentationApi,
@@ -20,7 +21,18 @@ type Pathway = {
   formationTitles: string[];
   parcoursTitles: string[];
   parcoursId: number;
+  /** Niveau de qualification de la formation suivie. */
+  formationLevel?: string;
 };
+
+type Named = { name: string };
+type Person = { firstname?: string; lastname?: string };
+
+const names = (items?: readonly Named[]) => items?.map((item) => item.name);
+const descriptions = (items?: readonly { description: string }[]) =>
+  items?.map((item) => item.description);
+const people = (items?: readonly Person[]) =>
+  items?.map((item) => [item.firstname, item.lastname].filter(Boolean).join(" "));
 
 const unique = (titles: string[]) => [...new Set(titles)];
 
@@ -77,6 +89,7 @@ export function useIntroCards(enabled: boolean): {
         formationTitles: unique(formations.map((item) => item.title)),
         parcoursTitles: unique(parcours.map((item) => item.title)),
         parcoursId: parcours[0].id,
+        formationLevel: formation.level,
       };
     }
   } else if (isStudent) {
@@ -92,9 +105,33 @@ export function useIntroCards(enabled: boolean): {
         ),
         parcoursTitles: unique(sameFormation.map((item) => item.title)),
         parcoursId: first.id,
+        formationLevel: first.formation?.level,
       };
     }
   }
+
+  // Tags et groupes de l'organisme : réservés aux formateurs, les autres voient des exemples.
+  const tags = useQuery({
+    queryKey: introPresentationKeys.tags(),
+    queryFn: introPresentationApi.getTagNames,
+    enabled: canUseOwnContent && isTeacher,
+    staleTime: STALE_TIME,
+    retry: false,
+  });
+  const groups = useQuery({
+    queryKey: introPresentationKeys.groups(),
+    queryFn: introPresentationApi.getGroupNames,
+    enabled: canUseOwnContent && isTeacher,
+    staleTime: STALE_TIME,
+    retry: false,
+  });
+  const parcoursDetail = useQuery({
+    queryKey: introPresentationKeys.parcours(pathway?.parcoursId ?? 0),
+    queryFn: () => introPresentationApi.getParcours(pathway!.parcoursId),
+    enabled: Boolean(pathway),
+    staleTime: STALE_TIME,
+    retry: false,
+  });
 
   const modules = useQuery({
     queryKey: introPresentationKeys.modules(pathway?.parcoursId ?? 0),
@@ -120,8 +157,29 @@ export function useIntroCards(enabled: boolean): {
     staleTime: STALE_TIME,
   });
 
+  const firstCourse = courses[0];
+  const moduleInfo = moduleDetail.data?.data;
   const source: IntroSource = {
     organisationName: instance.data?.name,
+    details: {
+      "organisation.roles": INTRO_ROLES.map((role) => role.label),
+      "organisation.tags": tags.data,
+      "organisation.groupes": groups.data,
+      "formation.niveau": pathway?.formationLevel ? [pathway.formationLevel] : undefined,
+      "parcours.groupes": names(parcoursDetail.data?.groups),
+      "parcours.tags": names(parcoursDetail.data?.tags),
+      "parcours.objectifs": descriptions(parcoursDetail.data?.objectives),
+      "parcours.competences": descriptions(parcoursDetail.data?.skills),
+      "parcours.contacts": people(parcoursDetail.data?.contacts),
+      "module.duree": moduleInfo?.duration ? [`${moduleInfo.duration} heures`] : undefined,
+      "module.tags": names(moduleInfo?.tags),
+      "module.competences": descriptions(moduleInfo?.bonusSkills),
+      "module.contacts": people(moduleInfo?.contacts),
+      "cours.tags": names(firstCourse?.tags),
+      "cours.objectifs": descriptions(firstCourse?.objectives),
+      "lecon.tag": lesson.data?.tag ? [lesson.data.tag.name] : undefined,
+      "lecon.modalite": lesson.data?.modalite ? [lesson.data.modalite] : undefined,
+    },
     ...(pathway && {
       formationTitles: pathway.formationTitles,
       parcoursTitles: pathway.parcoursTitles,
@@ -136,6 +194,9 @@ export function useIntroCards(enabled: boolean): {
     instance,
     teacherParcours,
     studentParcours,
+    tags,
+    groups,
+    parcoursDetail,
     modules,
     moduleDetail,
     lesson,

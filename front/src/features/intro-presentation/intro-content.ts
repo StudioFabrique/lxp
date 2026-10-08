@@ -1,3 +1,6 @@
+import type { LucideIcon } from "lucide-react";
+
+import { INTRO_DETAILS } from "./intro-details";
 import { INTRO_LEVELS, type IntroLevelId } from "./intro-levels";
 import type { IntroLesson } from "./intro-content.schema";
 
@@ -7,12 +10,24 @@ export type IntroItem = {
   isPlaceholder: boolean;
 };
 
-/** Carte d'un niveau : l'élément retenu et ce qu'il contient. */
+/** Composant d'un niveau (groupes, tags, objectifs...), réel ou d'exemple. */
+export type IntroDetail = {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  items: IntroItem[];
+  /** Vrai quand aucune valeur réelle n'a pu être lue : ce sont des exemples. */
+  isPlaceholder: boolean;
+  explanation: string;
+};
+
+/** Carte d'un niveau : l'élément retenu, ce qu'il contient et ses composants. */
 export type IntroCard = {
   levelId: IntroLevelId;
   title: string;
   isPlaceholder: boolean;
   rows: IntroItem[];
+  details: IntroDetail[];
 };
 
 /**
@@ -28,9 +43,15 @@ export type IntroSource = {
   courseTitles?: string[];
   lessonTitles?: string[];
   activities?: IntroLesson["activities"];
+  /**
+   * Valeurs réelles des composants, par clé `niveau.détail` (voir `INTRO_DETAILS`).
+   * Une clé absente ou vide laisse place aux exemples.
+   */
+  details?: Record<string, string[] | undefined>;
 };
 
 export const INTRO_ROW_COUNT = 3;
+const MAX_DETAIL_ITEMS = 4;
 
 const PLACEHOLDER_TITLES: Record<IntroLevelId, string> = {
   organisation: "Votre organisme",
@@ -136,10 +157,30 @@ export const buildIntroCards = (source: IntroSource = {}): IntroCard[] => {
     ACTIVITY_TYPES,
   ];
 
-  return selected.map((item, index) => ({
-    levelId: INTRO_LEVELS[index].id,
-    title: item.title,
-    isPlaceholder: item.isPlaceholder,
-    rows: rows[index],
-  }));
+  return selected.map((item, index) => {
+    const levelId = INTRO_LEVELS[index].id;
+    return {
+      levelId,
+      title: item.title,
+      isPlaceholder: item.isPlaceholder,
+      rows: rows[index],
+      details: INTRO_DETAILS[levelId].map((definition) => {
+        const real = (source.details?.[definition.id] ?? [])
+          .map((value) => value.trim())
+          .filter(Boolean)
+          .slice(0, MAX_DETAIL_ITEMS);
+        return {
+          id: definition.id,
+          label: definition.label,
+          icon: definition.icon,
+          explanation: definition.explanation,
+          isPlaceholder: real.length === 0,
+          items: (real.length ? real : definition.placeholders).map((title) => ({
+            title,
+            isPlaceholder: real.length === 0,
+          })),
+        };
+      }),
+    };
+  });
 };

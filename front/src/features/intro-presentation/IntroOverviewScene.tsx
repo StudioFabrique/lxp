@@ -457,19 +457,30 @@ const IntroOverviewScene = ({
                 Faire défiler vers le haut pour naviguer entre les différents
                 niveaux
               </p>
-              {/* Disponible dès le premier niveau : inutile de tout parcourir. */}
-              {activeStep >= 1 ? (
-                <button
-                  type="button"
-                  className="intro-start btn btn-primary btn-lg absolute bottom-16 right-24"
-                  onClick={startExploring}
-                >
-                  Commencer à explorer
-                  <ArrowRight className="size-5" aria-hidden="true" />
-                </button>
-              ) : null}
             </div>
           </div>
+
+          {/* En bas à droite : « Suivant » (même action que la flèche du haut) pour le premier
+              palier, puis « Commencer à explorer », disponible dès le premier niveau. */}
+          {activeStep === 0 ? (
+            <button
+              type="button"
+              className="btn btn-primary btn-sm absolute bottom-4 right-4 sm:right-8"
+              onClick={() => goToStep(1)}
+            >
+              Suivant
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="intro-start btn btn-primary btn-sm absolute bottom-4 right-4 sm:right-8"
+              onClick={startExploring}
+            >
+              Commencer à explorer
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </button>
+          )}
 
           {/* Flèches en colonne, à droite de la zone : le défilement est vertical. */}
           <IntroStepControls

@@ -73,7 +73,7 @@ describe("IntroDrillScene", () => {
 
   it("n'offre qu'une ligne cliquable par carte", () => {
     expect(currentCard()?.querySelectorAll("ul button")).toHaveLength(1);
-    expect(currentCard()?.querySelectorAll("ul li")).toHaveLength(3);
+    expect(currentCard()?.querySelectorAll("section:not([data-intro-detail]) > ul > li")).toHaveLength(3);
   });
 
   it("remonte avec le rail", () => {
@@ -107,5 +107,20 @@ describe("IntroDrillScene", () => {
     renderScene(true);
 
     expect(buttonByText("Terminer la présentation")?.disabled).toBe(true);
+  });
+
+  it("affiche les composants de chaque niveau, en exemples sans contenu réel", () => {
+    const labels = () =>
+      Array.from(currentCard()?.querySelectorAll("[data-intro-detail]") ?? []).map(
+        (section) => section.getAttribute("aria-label"),
+      );
+
+    expect(labels()).toEqual(["Groupes", "Tags", "Rôles"]);
+    // Les rôles sont réels ; groupes et tags sont des exemples.
+    expect(currentCard()?.querySelectorAll("[data-intro-detail] .badge-outline.border-dashed").length).toBeGreaterThan(0);
+
+    descend();
+    descend();
+    expect(labels()).toEqual(["Groupes", "Tags", "Objectifs", "Compétences", "Contacts"]);
   });
 });

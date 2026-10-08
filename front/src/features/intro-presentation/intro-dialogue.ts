@@ -29,6 +29,17 @@ export const NEXT_PLACEMENT_MS = 350;
 /** Temps de lecture d'un message avant le suivant. */
 export const READ_MS = 2800;
 
+/** Réponses d'aide pendant la descente niveau par niveau. */
+export const INTRO_DRILL_HELP: ChatbotHelp = {
+  action:
+    "Cliquez sur la première ligne de la carte pour descendre d'un niveau.",
+  next: "Descendez jusqu'aux activités, puis cliquez sur « Terminer la présentation ».",
+  back: "Cliquez sur un niveau dans la liste à gauche pour remonter.",
+};
+
+/** Temps entre deux explications du chatbot sur les composants d'un niveau. */
+export const GUIDE_STEP_MS = 4500;
+
 /** Points d'attente entre deux niveaux : brefs, pour ne pas ralentir la découverte. */
 export const LEVEL_TYPING_MS = 250;
 

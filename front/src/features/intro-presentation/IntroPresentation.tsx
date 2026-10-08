@@ -49,13 +49,13 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
     [],
   );
 
-  // Pendant la découverte des niveaux, le chatbot de la présentation remplace
-  // celui de l'application et explique chaque niveau ; il le lui rend ensuite.
+  // Pendant toute la présentation, le chatbot de la présentation remplace celui
+  // de l'application : il explique les niveaux, puis leurs composants.
   const isOverview = phase === "overview";
   useEffect(() => {
-    setChatbotHidden(isOverview);
+    setChatbotHidden(true);
     return () => setChatbotHidden(false);
-  }, [isOverview, setChatbotHidden]);
+  }, [setChatbotHidden]);
 
   // Le chatbot attend la fin de l'ouverture animée pour ne pas la saccader.
   const [isOpeningDone, setIsOpeningDone] = useState(false);
