@@ -97,3 +97,10 @@ export const INTRO_LEVELS: readonly IntroLevel[] = [
 ];
 
 export const INTRO_LEVEL_COUNT = INTRO_LEVELS.length;
+
+/**
+ * Niveaux de la pyramide 3D : l'organisme de formation n'en fait pas partie,
+ * il est affiché à plat derrière la pyramide au palier d'introduction.
+ */
+export const INTRO_PYRAMID_LEVELS: readonly IntroLevel[] = INTRO_LEVELS.slice(1);
+export const INTRO_PYRAMID_LEVEL_COUNT = INTRO_PYRAMID_LEVELS.length;

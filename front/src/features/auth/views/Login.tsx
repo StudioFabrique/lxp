@@ -1,13 +1,23 @@
 import { LoaderCircle } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../auth.schema";
 import { showFormErrors } from "../../../components/form/form-errors";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { AuthContext } from "../../../store/AuthProvider";
 import PasswordVisibilityToggle from "../components/PasswordVisibilityToggle";
 import AuthPageWrapper from "../components/AuthPageWrapper";
+import AuthOnboardingChatbot from "../components/AuthOnboardingChatbot";
+
+const activatedMessage =
+  "Votre compte est activé ! Votre adresse mail est déjà renseignée : saisissez le mot de passe que vous venez de créer, puis cliquez sur « Se connecter ».";
+
+/** E-mail transmis par l'activation du compte ; toute autre valeur de navigation est ignorée. */
+const readActivatedEmail = (state: unknown): string => {
+  if (typeof state !== "object" || state === null || !("activatedEmail" in state)) return "";
+  return typeof state.activatedEmail === "string" ? state.activatedEmail.trim() : "";
+};
 
 const Login = () => {
   const {
@@ -17,13 +27,17 @@ const Login = () => {
     activationRequired,
     activationRetryAfterSeconds,
   } = useContext(AuthContext);
+  const activatedEmail = readActivatedEmail(useLocation().state);
   const [submittedEmail, setSubmittedEmail] = useState("");
 
   const [inputType, setInputType] = useState("password");
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, setFocus } = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: activatedEmail, password: "" },
   });
+  useEffect(() => {
+    if (activatedEmail) setFocus("password");
+  }, [activatedEmail, setFocus]);
   const submitHandler = handleSubmit((values) => {
     setSubmittedEmail(values.email);
     login(values.email, values.password);
@@ -35,6 +49,9 @@ const Login = () => {
 
   return (
     <AuthPageWrapper title="Connectez-vous à votre espace">
+      {activatedEmail && (
+        <AuthOnboardingChatbot introduction={false} compact message={activatedMessage} />
+      )}
       <form className="flex flex-col gap-4" onSubmit={submitHandler}>
         {/* Champ email */}
         <div className="form-control w-full">

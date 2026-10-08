@@ -20,7 +20,13 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { AuthChatbotDragContext } from "./AuthChatbotDragContext";
-import { chatbotMoveDurationMs, chatbotMoveEasing } from "./auth-chatbot-motion";
+import {
+  chatbotAppearDurationMs,
+  chatbotAppearEasing,
+  chatbotAppearScale,
+  chatbotMoveDurationMs,
+  chatbotMoveEasing,
+} from "./auth-chatbot-motion";
 import { chatbotAvatarSelector, chatbotDesktopQuery, hideIntroChatbots } from "./auth-chatbot-handoff";
 
 const isDesktop = (): boolean =>
@@ -50,6 +56,12 @@ const layoutOrigin = (element: HTMLElement): { left: number; top: number } => {
   for (let node: HTMLElement | null = element; node; node = node.offsetParent as HTMLElement | null) {
     left += node.offsetLeft;
     top += node.offsetTop;
+    // Content scrolled inside a positioned ancestor (a scroll container) is shifted by its scroll offset.
+    const parent = node.offsetParent;
+    if (parent instanceof HTMLElement && parent !== document.body) {
+      left -= parent.scrollLeft;
+      top -= parent.scrollTop;
+    }
     if (getComputedStyle(node).position === "fixed") {
       left += window.scrollX;
       top += window.scrollY;
@@ -367,22 +379,15 @@ export default function AuthChatbotPlacement({
             { duration: chatbotMoveDurationMs, easing: chatbotMoveEasing },
           );
       }
-      // Without a previous location (first dialogue shown), enter from the left edge rolling instead of popping in.
+      // Without a previous location (first dialogue shown), appear in place rather than sliding in.
       if (!previous && !reducedMotion) {
-        const easing = chatbotMoveEasing;
         host.animate?.(
           [
-            { transform: `translateX(${-(target.left + host.offsetWidth + 20)}px)` },
-            { transform: "translateX(0px)" },
+            { opacity: 0, transform: `scale(${chatbotAppearScale})`, transformOrigin: "right center" },
+            { opacity: 1, transform: "scale(1)", transformOrigin: "right center" },
           ],
-          { duration: chatbotMoveDurationMs, easing },
+          { duration: chatbotAppearDurationMs, easing: chatbotAppearEasing },
         );
-        host
-          .querySelector<HTMLElement>(chatbotAvatarSelector)
-          ?.animate?.(
-            [{ transform: "rotate(-360deg)" }, { transform: "rotate(0deg)" }],
-            { duration: chatbotMoveDurationMs, easing },
-          );
       }
       if (handoffScale.current !== null) {
         host.querySelector<HTMLElement>(chatbotAvatarSelector)?.style.removeProperty("transform");
@@ -394,7 +399,7 @@ export default function AuthChatbotPlacement({
     // Measure the settled column, rather than positions mid-way through its intro.
     const timer = window.setTimeout(
       place,
-      previousPosition?.getPosition() ? 350 : 1300,
+      previousPosition?.getPosition() ? 350 : 700,
     );
     window.addEventListener("resize", place);
     return () => {

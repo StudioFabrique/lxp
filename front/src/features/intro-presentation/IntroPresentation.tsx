@@ -11,6 +11,8 @@ import IntroChatbot from "./IntroChatbot";
 import IntroDrillScene from "./IntroDrillScene";
 import IntroOverviewScene from "./IntroOverviewScene";
 import IntroSceneHeading from "./IntroSceneHeading";
+import { OPENING_ANIMATION_MS } from "./intro-dialogue";
+import { prefersReducedMotion } from "./intro-motion";
 import { useIntroPresentation } from "./useIntroPresentation";
 
 type Props = {
@@ -47,13 +49,27 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
     [],
   );
 
-  // Au palier d'introduction, le chatbot de la présentation remplace celui de
-  // l'application ; dès le premier niveau, ce dernier reprend sa place.
-  const isIntroduction = phase === "overview" && overviewStep === 0;
+  // Pendant la découverte des niveaux, le chatbot de la présentation remplace
+  // celui de l'application et explique chaque niveau ; il le lui rend ensuite.
+  const isOverview = phase === "overview";
   useEffect(() => {
-    setChatbotHidden(isIntroduction);
+    setChatbotHidden(isOverview);
     return () => setChatbotHidden(false);
-  }, [isIntroduction, setChatbotHidden]);
+  }, [isOverview, setChatbotHidden]);
+
+  // Le chatbot attend la fin de l'ouverture animée pour ne pas la saccader.
+  const [isOpeningDone, setIsOpeningDone] = useState(false);
+  useEffect(() => {
+    if (!isOverview) return;
+    const timer = setTimeout(
+      () => setIsOpeningDone(true),
+      prefersReducedMotion() ? 0 : OPENING_ANIMATION_MS,
+    );
+    return () => {
+      clearTimeout(timer);
+      setIsOpeningDone(false);
+    };
+  }, [isOverview]);
 
   // La page qui était affichée vient de disparaître : le focus passe ici.
   useEffect(() => {
@@ -94,7 +110,9 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
         />
       )}
 
-      {isIntroduction ? <IntroChatbot scopeRef={chatbotAnchorRef} /> : null}
+      {isOverview && isOpeningDone ? (
+        <IntroChatbot scopeRef={chatbotAnchorRef} step={overviewStep} />
+      ) : null}
 
       <button
         type="button"

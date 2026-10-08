@@ -5,6 +5,7 @@ type Props = {
   level: IntroLevel;
   index: number;
   isActive: boolean;
+  onSelect: () => void;
 };
 
 /** Plus on descend dans la pile, plus la plaque est petite. */
@@ -13,13 +14,17 @@ const PLATE_HEIGHT = 500;
 const WIDTH_STEP = 80;
 const HEIGHT_STEP = 62;
 
-const IntroLevelPlate = ({ level, index, isActive }: Props) => {
+const IntroLevelPlate = ({ level, index, isActive, onSelect }: Props) => {
   const Icon = level.icon;
   const width = PLATE_WIDTH - index * WIDTH_STEP;
   const height = PLATE_HEIGHT - index * HEIGHT_STEP;
 
   return (
-    <div
+    // Doublon du rail (qui porte l'accès clavier) : la plaque se clique à la souris.
+    <button
+      type="button"
+      tabIndex={-1}
+      onClick={onSelect}
       data-intro-plate={index}
       style={{
         width,
@@ -28,17 +33,21 @@ const IntroLevelPlate = ({ level, index, isActive }: Props) => {
         top: -height / 2,
       }}
       className={cn(
-        "intro-plate absolute flex items-end gap-3.5 rounded-2xl border px-5 py-3 text-2xl text-base-content shadow-[0_9px_0_var(--color-base-300),0_30px_50px_color-mix(in_srgb,var(--color-neutral)_10%,transparent)] transition-colors [backface-visibility:hidden]",
+        // Effet verre dépoli : fond translucide, flou de l'arrière-plan,
+        // reflet intérieur en haut et fine bordure lumineuse.
+        "intro-plate absolute flex cursor-default items-end gap-3.5 rounded-2xl border px-5 py-3 text-2xl text-base-content backdrop-blur-md transition-colors [backface-visibility:hidden]",
+        "bg-gradient-to-br from-base-100/70 via-base-100/25 to-base-100/10",
+        "shadow-[inset_0_1px_0_color-mix(in_srgb,var(--color-base-100)_90%,transparent),inset_0_-12px_24px_color-mix(in_srgb,var(--color-base-100)_20%,transparent),0_20px_40px_color-mix(in_srgb,var(--color-neutral)_12%,transparent)]",
         isActive
-          ? "border-primary bg-base-100"
-          : "border-base-300 bg-base-200",
+          ? "border-primary bg-primary/10"
+          : "border-base-100/60 hover:border-primary/60",
       )}
     >
       <span className="grid size-11 place-items-center rounded-xl bg-primary text-primary-content">
         <Icon className="size-5" aria-hidden="true" />
       </span>
       <b className="whitespace-nowrap leading-[2.75rem]">{level.label}</b>
-    </div>
+    </button>
   );
 };
 

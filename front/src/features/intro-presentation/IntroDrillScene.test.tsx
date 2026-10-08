@@ -76,10 +76,10 @@ describe("IntroDrillScene", () => {
     expect(currentCard()?.querySelectorAll("ul li")).toHaveLength(3);
   });
 
-  it("remonte avec le rail ou avec le bouton précédent", () => {
+  it("remonte avec le rail", () => {
     descend();
     descend();
-    act(() => buttonByText("Niveau précédent")?.click());
+    act(() => buttonByText("Formation")?.click());
     expect(currentCard()?.getAttribute("aria-label")).toContain("Formation");
 
     act(() => buttonByText("Organisme de formation")?.click());

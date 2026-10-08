@@ -3,7 +3,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export { gsap };
+export { ScrollTrigger, gsap };
 
 /** Lu à chaque animation : l'utilisateur peut changer son réglage en cours de route. */
 export const prefersReducedMotion = (): boolean =>

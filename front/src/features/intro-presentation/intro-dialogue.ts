@@ -4,22 +4,33 @@ import type { ChatbotHelp } from "../auth/components/AuthChatbotHostContext";
 export const OVERVIEW_DIALOGUE: readonly string[] = [
   "Bonjour ! Je vais vous montrer comment ANDRIA organise vos contenus.",
   "Tout est emboîté : un organisme contient des formations, qui contiennent des parcours, et ainsi de suite jusqu'aux activités.",
-  "Faites défiler pour découvrir chaque niveau, un par un.",
+  "Faites défiler vers le haut pour découvrir chaque niveau, un par un.",
 ];
 
 /** Réponses aux questions que l'utilisateur peut poser au chatbot. */
 export const INTRO_HELP: ChatbotHelp = {
   action:
-    "Faites défiler, ou utilisez les flèches à droite, pour découvrir les sept niveaux un par un.",
-  next: "Une fois arrivé aux activités, cliquez sur « Explorer en cliquant ».",
-  back: "Utilisez la flèche du haut, ou cliquez sur un niveau à gauche, pour revenir en arrière.",
+    "Faites défiler vers le haut, ou utilisez les flèches à droite, pour découvrir les niveaux un par un.",
+  next: "Une fois arrivé aux activités, cliquez sur « Commencer à explorer », disponible dès le premier niveau.",
+  back: "Faites défiler vers le bas, utilisez la flèche du bas, ou cliquez sur un niveau à gauche, pour revenir en arrière.",
 };
+
+/**
+ * Le chatbot n'est monté qu'après l'ouverture animée de la pyramide et de
+ * l'arborescence : son placement parcourt tout le DOM et bloquerait le fil
+ * principal en plein mouvement, d'où des images sautées. Il se place ensuite
+ * FIRST_PLACEMENT_MS plus tard, quand les lignes de l'arborescence ont fini.
+ */
+export const OPENING_ANIMATION_MS = 2400;
 
 /** Le chatbot se place après ce délai la première fois, puis après le second. */
 export const FIRST_PLACEMENT_MS = 1300;
 export const NEXT_PLACEMENT_MS = 350;
 /** Temps de lecture d'un message avant le suivant. */
 export const READ_MS = 2800;
+
+/** Points d'attente entre deux niveaux : brefs, pour ne pas ralentir la découverte. */
+export const LEVEL_TYPING_MS = 250;
 
 const MIN_TYPING_MS = 900;
 const MAX_TYPING_MS = 2200;

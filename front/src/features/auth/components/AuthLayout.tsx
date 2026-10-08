@@ -148,20 +148,10 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               >
                 {isSessionLoading ? (
                   <AuthHeaderSpacer />
-                ) : pathname === "/login" ? (
-                  <div className="mt-20"><AuthAnimatedLogo /></div>
                 ) : (
-                  <img
-                    className={cn("h-auto w-56", isOnboardingLayout ? "mt-0" : "mt-20")}
-                    src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
-                    alt="logo ANDRIA"
-                  />
+                  <div className={isOnboardingLayout ? "mt-0" : "mt-20"}><AuthAnimatedLogo /></div>
                 )}
-                {isSessionLoading ? null : pathname === "/login" ? <AuthLogoCaption /> : (
-                  <span className="mt-2 max-w-xs text-center text-xs font-semibold text-base-content">
-                    Apprentissage Numérique & Développement Renforcé par Intelligence Artificielle
-                  </span>
-                )}
+                {isSessionLoading ? null : <AuthLogoCaption />}
               </div>
             )}
 

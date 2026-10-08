@@ -1,7 +1,7 @@
 import { DoorOpen, LogOutIcon, Presentation } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useContext, useState } from "react";
-import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
+import SidebarLogo from "./SidebarLogo";
 import Questionnaire from "./Questionnaire";
 import { AuthContext } from "../../store/AuthProvider";
 import ProfilePopover from "../../features/profile/components/ProfilePopover";
@@ -100,11 +100,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       <li className="flex w-full flex-col-reverse items-center justify-between gap-1 2xl:flex-row">
         {/* Logo */}
         <div className="flex size-8 items-center justify-center 2xl:w-16">
-          <img
-            className="w-full object-contain"
-            src={newLogo}
-            alt="logo ANDRIA en blanc et bleu"
-          />
+          <SidebarLogo />
         </div>
         <div
           className="tooltip tooltip-right 2xl:tooltip-top"

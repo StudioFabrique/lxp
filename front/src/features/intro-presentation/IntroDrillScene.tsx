@@ -7,7 +7,6 @@ import { gsap, prefersReducedMotion } from "./intro-motion";
 import IntroLevelCard from "./IntroLevelCard";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroSceneHeading from "./IntroSceneHeading";
-import IntroStepControls from "./IntroStepControls";
 
 type Props = {
   cards: IntroCard[];
@@ -61,7 +60,14 @@ const IntroDrillScene = ({
         if (forward) {
           gsap.fromTo(
             element,
-            { opacity: 0, scale: 0.32, rotationX: 22, y: 0, z: 0, transformOrigin: origin },
+            {
+              opacity: 0,
+              scale: 0.32,
+              rotationX: 22,
+              y: 0,
+              z: 0,
+              transformOrigin: origin,
+            },
             arrive,
           );
         } else {
@@ -166,13 +172,15 @@ const IntroDrillScene = ({
           </div>
         </div>
 
-        {/* Même colonne de flèches que la découverte, à droite de la zone. */}
-        <IntroStepControls
-          current={depth + 1}
-          total={INTRO_LEVEL_COUNT}
-          previousLabel={depth === 0 ? "Revoir les niveaux" : "Niveau précédent"}
-          onPrevious={depth === 0 ? onBackToOverview : () => goTo(depth - 1)}
-        />
+        {depth === 0 ? (
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm absolute bottom-4 right-4 sm:right-8"
+            onClick={onBackToOverview}
+          >
+            Revoir les niveaux
+          </button>
+        ) : null}
 
         {isLast ? (
           <button
@@ -182,7 +190,10 @@ const IntroDrillScene = ({
             onClick={onComplete}
           >
             {isSaving ? (
-              <span className="loading loading-spinner loading-xs" aria-hidden="true" />
+              <span
+                className="loading loading-spinner loading-xs"
+                aria-hidden="true"
+              />
             ) : (
               <Check className="size-4" aria-hidden="true" />
             )}

@@ -133,6 +133,7 @@ export default function RegisterHome() {
               <Link
                 className="btn btn-primary w-full rounded-lg text-base normal-case text-base-100"
                 to="/login"
+                state={{ activatedEmail: email }}
               >
                 Retour à la page de connexion
               </Link>

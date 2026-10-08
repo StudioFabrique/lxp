@@ -17,14 +17,18 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
         const isActive = index === activeIndex;
 
         return (
-          <li key={level.id} style={{ marginLeft: `${index * 1.1}rem` }}>
+          <li
+            key={level.id}
+            className="intro-rail-item will-change-transform"
+            style={{ marginLeft: `${index * 1.1}rem` }}
+          >
             <button
               type="button"
               disabled={index > selectableUpTo}
               aria-current={isActive ? "step" : undefined}
               onClick={() => onSelect(index)}
               className={cn(
-                "flex items-center gap-3 rounded-2xl p-1.5 pr-4 text-left transition-colors disabled:cursor-default",
+                "flex items-center gap-3 rounded-2xl p-1.5 pr-4 text-left transition-[background-color,box-shadow] duration-500 enabled:cursor-pointer disabled:cursor-default",
                 isActive
                   ? "bg-base-100 shadow-lg ring-1 ring-base-300"
                   : "enabled:hover:bg-base-200",
@@ -32,7 +36,7 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
             >
               <span
                 className={cn(
-                  "grid size-10 shrink-0 place-items-center rounded-xl border transition-colors",
+                  "intro-rail-icon will-change-transform grid size-10 shrink-0 place-items-center rounded-xl border transition-colors duration-500",
                   index <= activeIndex
                     ? "border-primary bg-primary text-primary-content"
                     : "border-base-300 bg-base-100 text-primary",
@@ -42,7 +46,7 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
               </span>
               <span
                 className={cn(
-                  "text-base font-semibold sm:text-lg",
+                  "text-base font-semibold transition-colors duration-500 sm:text-lg",
                   !isActive && "text-base-content/70",
                 )}
               >
