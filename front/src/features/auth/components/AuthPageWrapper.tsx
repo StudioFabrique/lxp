@@ -44,7 +44,8 @@ const AuthPageWrapper = ({
   }
 
   return (
-    <section className="flex w-full flex-col my-10">
+    // flex-1 : la section occupe toute la colonne pour que le vide sous le formulaire fasse partie de la zone du chatbot.
+    <section className="flex w-full flex-1 flex-col py-10">
       <header className="text-center mb-5">
         <div className="flex items-start justify-center gap-2">
           <h1 className="text-2xl font-bold leading-tight text-base-content">

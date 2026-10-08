@@ -101,6 +101,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
     <div className={cn("relative min-h-screen w-full font-inter bg-base-100 flex", isOnboardingLayout ? "py-4 lg:items-center lg:py-0" : "py-12")}>
       <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full overflow-x-clip", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
         <div
+          data-auth-column
           className={cn("relative flex flex-col items-center px-8 w-full h-full transition-transform duration-1100 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none", fullIntro ? "lg:translate-x-1/2" : "lg:translate-none", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}
         >
           <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>

@@ -830,7 +830,9 @@ buildDashboard('#dashboard-teacher .dashboard-header',104);
 buildDashboard('#dash-actions',104.1);buildDashboard('#dash-alerts',104.45);
 buildDashboard('#dash-latest',104.8);buildDashboard('#dash-feedback',105.15);
 tl.fromTo('.dashboard-caption',{opacity:0,y:14},{opacity:1,y:0,duration:.5},102);
-cursorScene('dashboards',[[1.8,'#dashboard-nav-student li:first-child',null,'focus'],[4.1,'#dash-resume .dashboard-resume',null,'focus'],[6.6,'#dash-paths .product-row',null,'focus'],[8.8,'#dashboard-nav-admin li:first-child',null,'focus'],[10.5,'#dash-actions .product-row',null,'focus'],[12.0,'#dash-alerts small',null,'focus'],[14.0,'#dash-feedback .product-button',null,'focus']]);
+// `?role=student|team` keeps a single space (used after the first sign-in); without it both are shown.
+const dashboardRole=['student','team'].find(value=>value===new URLSearchParams(location.search).get('role'))||null;
+cursorScene('dashboards',dashboardRole==='student'?[[1.8,'#dashboard-nav-student li:first-child',null,'focus'],[4.1,'#dash-resume .dashboard-resume',null,'focus'],[6.6,'#dash-paths .product-row',null,'focus']]:dashboardRole==='team'?[[1.8,'#dashboard-nav-admin li:first-child',null,'focus'],[4.1,'#dash-actions .product-row',null,'focus'],[6.6,'#dash-alerts small',null,'focus'],[8.8,'#dash-feedback .product-button',null,'focus']]:[[1.8,'#dashboard-nav-student li:first-child',null,'focus'],[4.1,'#dash-resume .dashboard-resume',null,'focus'],[6.6,'#dash-paths .product-row',null,'focus'],[8.8,'#dashboard-nav-admin li:first-child',null,'focus'],[10.5,'#dash-actions .product-row',null,'focus'],[12.0,'#dash-alerts small',null,'focus'],[14.0,'#dash-feedback .product-button',null,'focus']]);
 window.__timelines.main=tl;
 
 
@@ -1232,10 +1234,20 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
   // animated on the slab's children, never on the slab itself: group opacity would flatten its 3D.
   const student=['#dashboard-student .dashboard-header','#dash-resume','#dash-calendar','#dash-paths','#dash-skills'];
   const team=['#dashboard-teacher .dashboard-header','#dash-actions','#dash-alerts','#dash-latest','#dash-feedback'];
+  // A single role skips the swap: its own space and sidebar are shown from the start.
+  const only=dashboardRole;
+  if(only){
+    scene.querySelector('.scene-heading').textContent=only==='team'?'Votre espace pour accompagner':'Votre espace pour apprendre';
+    document.querySelector('.dashboard-caption').textContent=only==='team'?'Tout pour organiser les contenus et accompagner les apprenants.':'Tout pour avancer à votre rythme, avec votre assistant.';
+    for(const nav of tweens.filter(t=>t.targets().some(x=>x.id==='dashboard-nav-student'||x.id==='dashboard-nav-admin')))nav.kill();
+    tl.set('#dashboard-nav-student',{opacity:only==='student'?1:0},0);
+    tl.set('#dashboard-nav-admin',{opacity:only==='team'?1:0},0);
+  }
   const swap=tweens.find(t=>has(t,'#dashboard-student')&&t.vars.opacity===0);
   const swapAt=swap?swap.startTime():S+6;
   for(const face of tweens.filter(t=>t.targets().some(x=>x.id==='dashboard-student'||x.id==='dashboard-teacher')))face.kill();
-  tl.set('#dashboard-student,#dashboard-teacher',{opacity:1},0);
+  tl.set('#dashboard-student',{opacity:only==='team'?0:1},0);
+  tl.set('#dashboard-teacher',{opacity:only==='student'?0:1},0);
   const place=(selector,index,start)=>{
     const element=scene.querySelector(selector),kids=[...element.children],turn=index%2?8:-8;
     tl.fromTo(element,{x:-turn*3,y:-30,z:360,rotation:turn},{x:0,y:0,z:65,rotation:0,duration:1.1,ease:'back.out(1.2)',immediateRender:false},start);
@@ -1249,17 +1261,48 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
     tl.fromTo(inKids,{opacity:0},{opacity:1,duration:.01,immediateRender:false},start+half);
     tl.fromTo(into,{z:65,rotationY:-90},{z:65,rotationY:0,duration:.5,ease:'back.out(1.3)',immediateRender:false},start+half);
   };
-  student.forEach((selector,index)=>place(selector,index,S+3.15+index*.2));
-  student.forEach((selector,index)=>flip(selector,team[index],index,swapAt+index*.1));
+  (only==='team'?team:student).forEach((selector,index)=>place(selector,index,S+3.15+index*.2));
+  if(!only)student.forEach((selector,index)=>flip(selector,team[index],index,swapAt+index*.1));
   // Before the final zoom the whole interface stands straight again, in plain 2D: the
   // relief (elevation, slab thickness, sidebar depth) is set back as well as the tilt.
   const flat=zoomStart-1.8;
   tl.fromTo('.dashboard-stage',{rotationX:26,rotation:-3,scale:.94,x:-20,y:10},{rotationX:0,rotation:0,scale:1,x:0,y:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
-  const teamEls=team.map(selector=>scene.querySelector(selector));
+  const teamEls=(only==='student'?student:team).map(selector=>scene.querySelector(selector));
   tl.fromTo(teamEls,{z:65},{z:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
   tl.fromTo(teamEls.flatMap(el=>[...el.querySelectorAll(':scope>.card-slab')]),{opacity:1},{opacity:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
   tl.fromTo('.floating-sidebar',{z:65},{z:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
   tl.fromTo('.sidebar-glass-back,.sidebar-glass-mid',{opacity:1},{opacity:0,duration:1.1,ease:'power3.inOut',immediateRender:false},flat);
+  // Single-role tail: after its greeting, a cursor clicks the launcher and the assistant answers
+  // that questions can be asked at any time. The player extends this scene by `__dashboardRoleExtra`.
+  if(only){
+    window.__dashboardRoleExtra=4.6;
+    const greeting=scene.querySelector('.dashboard-chatbot-message');
+    const reply=greeting.cloneNode(true);
+    reply.classList.add('dashboard-chatbot-reply');
+    for(const span of reply.querySelectorAll(':scope>span'))span.remove();
+    const tail=reply.querySelector(':scope>div');
+    for(const text of ['Une question ?',' Cliquez sur mon bouton et posez-la-moi ','à tout moment.']){
+      const span=document.createElement('span');span.textContent=text;reply.insertBefore(span,tail);
+    }
+    greeting.after(reply);
+    const pointer=scene.querySelector('.scene-pointer'),ring=scene.querySelector('.scene-click');
+    // The launcher's centre once the camera has settled on it (scene coordinates).
+    const target={x:1390,y:610},from={x:1640,y:830},tip=(point)=>({x:point.x-3.6,y:point.y-2.3});
+    const click=E+1.1;
+    tl.set(reply,{opacity:0},0);
+    tl.fromTo(pointer,{opacity:0,...tip(from),scale:1},{opacity:1,...tip(target),duration:.9,ease:'power2.inOut',immediateRender:false},E+.1);
+    tl.to(pointer,{scale:.9,duration:.12},click);
+    tl.to(pointer,{scale:1,duration:.18},click+.13);
+    tl.fromTo(ring,{x:target.x-22,y:target.y-22,scale:.35,opacity:.55},{x:target.x-22,y:target.y-22,scale:1.6,opacity:0,duration:.5,immediateRender:false},click);
+    tl.to('#dashboard-chatbot>button',{scale:.94,duration:.12,ease:'power2.out'},click);
+    tl.to('#dashboard-chatbot>button',{scale:1,duration:.3,ease:'back.out(2)'},click+.12);
+    tl.to(pointer,{opacity:0,duration:.25},click+.7);
+    // The greeting gives way to the answer, and the avatar nods as it speaks.
+    tl.to(greeting,{opacity:0,x:-10,duration:.2,ease:'power1.in'},click+.1);
+    tl.fromTo(reply,{opacity:0,x:16},{opacity:1,x:0,duration:.5,ease:'power2.out',immediateRender:false},click+.3);
+    tl.to('#dashboard-chatbot svg',{rotation:-6,y:-2,duration:.3,ease:'sine.inOut'},click+.3);
+    tl.to('#dashboard-chatbot svg',{rotation:0,y:0,duration:.4,ease:'sine.inOut'},click+.6);
+  }
 }
 
 // Instance, as three plates in depth (presentation time): the settings plate

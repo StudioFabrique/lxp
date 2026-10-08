@@ -22,6 +22,7 @@ const ConfirmEmail = () => {
   const [state, setState] = useState<"loading" | "success" | "error">(
     token ? "loading" : "error",
   );
+  const [activatedEmail, setActivatedEmail] = useState("");
   const [message, setMessage] = useState(
     token ? "Validation en cours…" : "Le lien de validation est incomplet.",
   );
@@ -35,6 +36,7 @@ const ConfirmEmail = () => {
       .then((response) => {
         if (!active) return;
         clearPendingRootActivation();
+        setActivatedEmail(response.email);
         setState("success");
         setMessage(response.message);
       })
@@ -102,7 +104,8 @@ const ConfirmEmail = () => {
           {state !== "loading" && (
             <Link
               className="btn btn-primary mt-auto w-full rounded-lg text-base normal-case text-base-100"
-              to={state === "success" ? "/" : "/login"}
+              to="/login"
+              state={state === "success" ? { activatedEmail } : undefined}
             >
               {state === "success" ? "Continuer" : "Aller à la connexion"}
             </Link>

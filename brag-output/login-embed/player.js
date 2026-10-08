@@ -19,7 +19,9 @@
     window.__chatbotClipStart = chatbotClip.start;
     if (window.__createBrandTimeline) timeline = window.__timelines.main = window.__createBrandTimeline(params.get('gesture'));
   }
-  const clips = logoOnly ? [opening] : chatbotOnly && chatbotClip ? [chatbotClip] : sequence;
+  // A single-role dashboards sequence plays a longer tail (cursor click on the chatbot), declared by the composition.
+  const roleExtra = params.get('role') && window.__dashboardRoleExtra ? window.__dashboardRoleExtra : 0;
+  const clips = logoOnly ? [opening] : chatbotOnly && chatbotClip ? [chatbotClip] : sequence.map(clip => clip.id === 'dashboards' ? {...clip, duration: clip.duration + roleExtra} : clip);
   const duration = clips.reduce((total, clip) => total + clip.duration, 0);
   let elapsed = 0;
   let lastFrame = null;

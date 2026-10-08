@@ -31,6 +31,14 @@ vi.mock("./IntroPresentation", () => ({
   ),
 }));
 
+vi.mock("./IntroRoleReveal", () => ({
+  default: ({ onDone }: { onDone: () => void }) => (
+    <div data-testid="role-reveal">
+      <button type="button" onClick={onDone}>reveal-done</button>
+    </div>
+  ),
+}));
+
 const updateOnboarding = vi.fn();
 
 const authValue = (status?: OnboardingStatus): ContextType<typeof AuthContext> => ({
@@ -97,6 +105,7 @@ const click = async (label: string) => {
 };
 
 const isOpen = () => container.querySelector('[data-testid="presentation"]') !== null;
+const isRevealShown = () => container.querySelector('[data-testid="role-reveal"]') !== null;
 const isPageShown = () => container.querySelector('[data-testid="page"]') !== null;
 
 beforeEach(() => {
@@ -176,5 +185,34 @@ describe("IntroPresentationProvider", () => {
 
     expect(updateOnboarding).not.toHaveBeenCalled();
     expect(isOpen()).toBe(false);
+  });
+
+  it("enchaîne la découverte du rôle une fois le choix enregistré", async () => {
+    render();
+    await click("skip");
+    // Le serveur a confirmé : le compte n'est plus en attente.
+    await render({ status: "skipped" });
+
+    expect(isOpen()).toBe(false);
+    expect(isRevealShown()).toBe(true);
+    expect(isPageShown()).toBe(false);
+
+    await click("reveal-done");
+
+    expect(isRevealShown()).toBe(false);
+    expect(isPageShown()).toBe(true);
+  });
+
+  it("ne lance pas la découverte du rôle si l'enregistrement échoue, ni après une réouverture", async () => {
+    updateOnboarding.mockRejectedValue(new Error("réseau"));
+    render();
+    await click("skip");
+    expect(isRevealShown()).toBe(false);
+
+    render({ status: "completed" });
+    await click("reopen");
+    await click("skip");
+    expect(isRevealShown()).toBe(false);
+    expect(isPageShown()).toBe(true);
   });
 });

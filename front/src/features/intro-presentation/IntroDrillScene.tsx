@@ -38,6 +38,19 @@ const IntroDrillScene = ({
   const origins = useRef<number[]>([]);
   const hasInteracted = useRef(false);
 
+  // Arrivée depuis la pyramide repliée : la première carte se déploie.
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const first = cardRefs.current[0];
+    if (!first) return;
+    const tween = gsap.fromTo(
+      first,
+      { opacity: 0, scale: 0.88, y: 24 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "expo.out" },
+    );
+    return () => void tween?.kill();
+  }, []);
+
   const goTo = (nextDepth: number) => {
     const duration = prefersReducedMotion() ? 0 : DURATION;
     const forward = nextDepth > depth;

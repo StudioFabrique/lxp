@@ -63,7 +63,10 @@ const IntroStepControls = ({
   ) : null;
 
   return (
-    <div className="absolute right-3 top-1/2 flex -translate-y-1/2 flex-col items-center gap-1 rounded-2xl border border-base-300 bg-base-100 p-1.5 shadow-sm">
+    <div
+      data-intro-controls
+      className="absolute right-3 top-1/2 flex -translate-y-1/2 flex-col items-center gap-1 rounded-2xl border border-base-300 bg-base-100 p-1.5 shadow-sm"
+    >
       {isReversed ? nextButton : previousButton}
 
       <p

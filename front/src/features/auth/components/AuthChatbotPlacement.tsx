@@ -272,6 +272,8 @@ export default function AuthChatbotPlacement({
         height:
           Math.min(scope.bottom, window.innerHeight) - Math.max(0, scope.top),
       };
+      const columnElement = scopeElement.closest("[data-auth-column]");
+      const column = columnElement ? settledRect(columnElement) : null;
       const point = desktop
         ? (chooseChatbotPlacement(
             viewport,
@@ -282,6 +284,18 @@ export default function AuthChatbotPlacement({
             undefined,
             previousPosition?.getPosition(),
           ) ??
+          // Colonne plus étroite que la bulle (connexion) : centrer dans le vide de la colonne entière.
+          (column
+            ? chooseChatbotPlacement(
+                viewport,
+                size,
+                [...obstacles, ...contentObstacles(scopeElement, host)],
+                random,
+                { ...visibleScope, left: column.left, width: column.width },
+                undefined,
+                previousPosition?.getPosition(),
+              )
+            : null) ??
           chooseChatbotPlacement(
             viewport,
             size,

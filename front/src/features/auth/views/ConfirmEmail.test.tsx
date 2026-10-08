@@ -74,6 +74,6 @@ describe("Confirmation de l'adresse email", () => {
     expect(document.querySelector("[data-chatbot-bubble]")?.textContent).toContain(
       "vous pouvez maintenant vous connecter",
     );
-    expect(container.querySelector('a[href="/"]')?.textContent).toBe("Continuer");
+    expect(container.querySelector('a[href="/login"]')?.textContent).toBe("Continuer");
   });
 });

@@ -35,7 +35,7 @@ const IntroLevelPlate = ({ level, index, isActive, onSelect }: Props) => {
       className={cn(
         // Effet verre dépoli : fond translucide, flou de l'arrière-plan,
         // reflet intérieur en haut et fine bordure lumineuse.
-        "intro-plate absolute flex cursor-default items-end gap-3.5 rounded-2xl border px-5 py-3 text-2xl text-base-content backdrop-blur-md transition-colors [backface-visibility:hidden]",
+        "intro-plate absolute flex cursor-default items-end gap-3.5 rounded-2xl border px-5 py-3 text-2xl text-base-content backdrop-blur-md outline outline-1 outline-transparent transition-colors [backface-visibility:hidden]",
         "bg-gradient-to-br from-base-100/70 via-base-100/25 to-base-100/10",
         "shadow-[inset_0_1px_0_color-mix(in_srgb,var(--color-base-100)_90%,transparent),inset_0_-12px_24px_color-mix(in_srgb,var(--color-base-100)_20%,transparent),0_20px_40px_color-mix(in_srgb,var(--color-neutral)_12%,transparent)]",
         isActive

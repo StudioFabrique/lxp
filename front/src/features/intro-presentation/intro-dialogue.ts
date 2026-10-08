@@ -16,12 +16,12 @@ export const INTRO_HELP: ChatbotHelp = {
 };
 
 /**
- * Le chatbot n'est monté qu'après l'ouverture animée de la pyramide et de
- * l'arborescence : son placement parcourt tout le DOM et bloquerait le fil
- * principal en plein mouvement, d'où des images sautées. Il se place ensuite
- * FIRST_PLACEMENT_MS plus tard, quand les lignes de l'arborescence ont fini.
+ * Le chatbot est monté pendant l'ouverture animée de la pyramide et de
+ * l'arborescence, mais son placement, qui parcourt tout le DOM et bloque le
+ * fil principal, a lieu FIRST_PLACEMENT_MS plus tard : il doit tomber à la fin
+ * de l'ouverture (environ 2,3 s) pour ne pas saccader les lignes.
  */
-export const OPENING_ANIMATION_MS = 2400;
+export const OPENING_ANIMATION_MS = 1000;
 
 /** Le chatbot se place après ce délai la première fois, puis après le second. */
 export const FIRST_PLACEMENT_MS = 1300;

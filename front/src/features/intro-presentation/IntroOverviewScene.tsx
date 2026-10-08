@@ -283,6 +283,69 @@ const IntroOverviewScene = ({
     return () => context.revert();
   }, []);
 
+  // Une fois le départ lancé, plus rien ne doit relancer l'animation ni le scroll.
+  const leaveTimeline = useRef<gsap.core.Timeline | null>(null);
+  useEffect(() => () => void leaveTimeline.current?.kill(), []);
+
+  /**
+   * Replie la pyramide dans la première carte, comme dans la vidéo de
+   * présentation : les plaques s'écartent en profondeur, puis se rabattent en
+   * s'effaçant en partant du sommet pendant que la pile se met à plat. La
+   * descente niveau par niveau démarre ensuite.
+   */
+  const startExploring = () => {
+    const stage = stageRef.current;
+    const scroller = scrollRef.current;
+    if (leaveTimeline.current) return;
+    if (!stage || !scroller || prefersReducedMotion()) {
+      onContinue();
+      return;
+    }
+    scroller.style.overflowY = "hidden";
+    const plates = gsap.utils.toArray<HTMLElement>(".intro-plate", stage);
+    const stack = stage.querySelector<HTMLElement>(".intro-stack");
+    const timeline = gsap.timeline({ onComplete: onContinue });
+    timeline.to(
+      stage.querySelectorAll("[data-intro-controls], .intro-start"),
+      { autoAlpha: 0, duration: 0.3 },
+      0,
+    );
+    timeline.to(
+      plates,
+      {
+        z: (index: number) => index * 90,
+        duration: 0.5,
+        ease: "power2.inOut",
+        stagger: 0.03,
+      },
+      0,
+    );
+    timeline.to(
+      plates,
+      {
+        z: 0,
+        opacity: 0,
+        duration: 0.45,
+        ease: "power2.in",
+        stagger: { each: 0.05, from: "end" },
+      },
+      0.5,
+    );
+    timeline.to(
+      stack,
+      {
+        rotationX: 0,
+        rotation: 0,
+        y: 0,
+        scale: 1.05,
+        duration: 0.65,
+        ease: "power2.in",
+      },
+      0.5,
+    );
+    leaveTimeline.current = timeline;
+  };
+
   const goToStep = (step: number) => {
     const scroller = scrollRef.current;
     if (!scroller) return;
@@ -377,8 +440,8 @@ const IntroOverviewScene = ({
               {activeStep >= 1 ? (
                 <button
                   type="button"
-                  className="btn btn-primary btn-lg absolute bottom-16 right-24"
-                  onClick={onContinue}
+                  className="intro-start btn btn-primary btn-lg absolute bottom-16 right-24"
+                  onClick={startExploring}
                 >
                   Commencer à explorer
                   <ArrowRight className="size-5" aria-hidden="true" />

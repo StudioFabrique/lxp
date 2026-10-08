@@ -1,17 +1,28 @@
 import { motion } from "motion/react";
 import { Bot } from "lucide-react";
 
+import { useIntroPresentation } from "../../intro-presentation/useIntroPresentation";
+import { cn } from "../../../utils/cn";
+
 type Props = {
   onOpenChatbot: () => void;
 };
 
 export default function ChatbotButton({ onOpenChatbot }: Props) {
+  // Pendant la présentation, le bas de l'écran porte ses propres commandes : le bouton flotte à mi-hauteur.
+  const { isOpen: isIntroOpen } = useIntroPresentation();
+
   const handleOpenChatbot = () => {
     onOpenChatbot();
   };
 
   return (
-    <div className="group fixed bottom-6 right-6 flex items-center z-40">
+    <div
+      className={cn(
+        "group fixed right-6 flex items-center z-40",
+        isIntroOpen ? "top-1/2 -translate-y-1/2" : "bottom-6",
+      )}
+    >
       <div className="absolute right-20 mr-2 whitespace-nowrap bg-base-100 text-base-content text-sm font-medium px-4 py-3 rounded-2xl shadow-xl border border-base-200 pointer-events-none opacity-0 translate-x-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0 hidden sm:block">
         <span className="text-primary">Besoin d'aide ?</span>
         <span> Le chatbot </span>

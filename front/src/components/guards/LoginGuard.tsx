@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import AuthIntroLoading from "../../features/auth/components/AuthIntroLoading";
 import LoginLoadingSkeleton from "../../features/auth/components/LoginLoadingSkeleton";
@@ -16,6 +16,12 @@ const LoginGuard = () => {
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [setupChecked, setSetupChecked] = useState(false);
   const [hasAdmins, setHasAdmins] = useState(true);
+  // Chemin pour lequel le statut d'installation a été lu : tant qu'aucun admin
+  // n'existe, il est relu à chaque navigation (ex. activation du compte root
+  // puis « Continuer » vers /login), sinon la valeur périmée renvoie vers /init.
+  const [checkedPath, setCheckedPath] = useState(location.pathname);
+  const hasAdminsRef = useRef(true);
+  const statusReadRef = useRef(false);
   const isTokenRoute = ["/createRoot", "/confirm-email"].includes(
     location.pathname,
   );
@@ -31,15 +37,26 @@ const LoginGuard = () => {
       return;
     }
 
+    // Un administrateur existe déjà : le statut ne changera plus, inutile de
+    // le relire (et de démonter la page en cours) à chaque navigation.
+    if (statusReadRef.current && hasAdminsRef.current) return;
+
     setSetupChecked(false);
+    setCheckedPath(location.pathname);
 
     onboardingApi
       .getSetupStatus()
       .then((res) => {
-        if (active) setHasAdmins(res.hasAdmins);
+        if (!active) return;
+        statusReadRef.current = true;
+        hasAdminsRef.current = res.hasAdmins;
+        setHasAdmins(res.hasAdmins);
       })
       .catch(() => {
-        if (active) setHasAdmins(true);
+        if (!active) return;
+        statusReadRef.current = true;
+        hasAdminsRef.current = true;
+        setHasAdmins(true);
       })
       .finally(() => {
         if (active) setSetupChecked(true);
@@ -48,9 +65,11 @@ const LoginGuard = () => {
     return () => {
       active = false;
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, location.pathname]);
 
-  if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked)) {
+  const setupStale = !isLoggedIn && !hasAdmins && checkedPath !== location.pathname;
+
+  if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked) || setupStale) {
     if (location.pathname === "/init" || isStudentOnboardingRoute || isStaffOnboardingRoute) return <AuthIntroLoading />;
     return <LoginLoadingSkeleton />;
   }
