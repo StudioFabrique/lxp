@@ -2,7 +2,6 @@ import {
   Award,
   Clock,
   GraduationCap,
-  Shield,
   Tag,
   Target,
   UserRound,
@@ -29,32 +28,7 @@ export type IntroDetailDefinition = {
 };
 
 export const INTRO_DETAILS: Record<IntroLevelId, readonly IntroDetailDefinition[]> = {
-  organisation: [
-    {
-      id: "organisation.groupes",
-      label: "Groupes",
-      icon: Users,
-      placeholders: ["Promotion 2026", "Promotion 2027"],
-      explanation:
-        "Les groupes rassemblent vos apprenants, par exemple par promotion. On leur associe ensuite des parcours.",
-    },
-    {
-      id: "organisation.tags",
-      label: "Tags",
-      icon: Tag,
-      placeholders: ["Débutant", "Numérique", "Certifiant"],
-      explanation:
-        "Les tags étiquettent vos contenus pour les retrouver et les relier entre eux.",
-    },
-    {
-      id: "organisation.roles",
-      label: "Rôles",
-      icon: Shield,
-      placeholders: ["Administrateur", "Équipe pédagogique", "Apprenant"],
-      explanation:
-        "Chaque personne a un rôle qui définit ce qu'elle voit et ce qu'elle peut faire.",
-    },
-  ],
+  organisation: [],
   formation: [
     {
       id: "formation.niveau",

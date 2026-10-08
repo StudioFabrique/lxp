@@ -6,7 +6,6 @@ import { useDemoMode } from "../../store/DemoContext";
 import { dashboardAdminApi } from "../dashboard-admin/api/dashboard-admin.api";
 import { dashboardStudentApi } from "../dashboard-student/api/dashboard-student.api";
 import { profileApi } from "../profile/api/profile.api";
-import { INTRO_ROLES } from "./intro-role";
 import { buildIntroCards, type IntroCard, type IntroSource } from "./intro-content";
 import {
   introPresentationApi,
@@ -110,21 +109,6 @@ export function useIntroCards(enabled: boolean): {
     }
   }
 
-  // Tags et groupes de l'organisme : réservés aux formateurs, les autres voient des exemples.
-  const tags = useQuery({
-    queryKey: introPresentationKeys.tags(),
-    queryFn: introPresentationApi.getTagNames,
-    enabled: canUseOwnContent && isTeacher,
-    staleTime: STALE_TIME,
-    retry: false,
-  });
-  const groups = useQuery({
-    queryKey: introPresentationKeys.groups(),
-    queryFn: introPresentationApi.getGroupNames,
-    enabled: canUseOwnContent && isTeacher,
-    staleTime: STALE_TIME,
-    retry: false,
-  });
   const parcoursDetail = useQuery({
     queryKey: introPresentationKeys.parcours(pathway?.parcoursId ?? 0),
     queryFn: () => introPresentationApi.getParcours(pathway!.parcoursId),
@@ -162,9 +146,6 @@ export function useIntroCards(enabled: boolean): {
   const source: IntroSource = {
     organisationName: instance.data?.name,
     details: {
-      "organisation.roles": INTRO_ROLES.map((role) => role.label),
-      "organisation.tags": tags.data,
-      "organisation.groupes": groups.data,
       "formation.niveau": pathway?.formationLevel ? [pathway.formationLevel] : undefined,
       "parcours.groupes": names(parcoursDetail.data?.groups),
       "parcours.tags": names(parcoursDetail.data?.tags),
@@ -194,8 +175,6 @@ export function useIntroCards(enabled: boolean): {
     instance,
     teacherParcours,
     studentParcours,
-    tags,
-    groups,
     parcoursDetail,
     modules,
     moduleDetail,

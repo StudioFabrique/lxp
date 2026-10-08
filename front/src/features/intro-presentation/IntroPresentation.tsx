@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { SkipForward } from "lucide-react";
 
 import {
@@ -7,13 +7,10 @@ import {
   type ChatbotMemoryAccess,
 } from "../auth/components/AuthChatbotTransitionContext";
 import { useIntroCards } from "./useIntroCards";
-import IntroChatbot from "./IntroChatbot";
-import IntroDrillScene from "./IntroDrillScene";
 import IntroOverviewScene from "./IntroOverviewScene";
 import IntroSceneHeading from "./IntroSceneHeading";
-import { OPENING_ANIMATION_MS } from "./intro-dialogue";
-import { prefersReducedMotion } from "./intro-motion";
 import { useIntroPresentation } from "./useIntroPresentation";
+import { useIntroSpaceReady } from "./useIntroSpaceReady";
 
 type Props = {
   isSaving: boolean;
@@ -23,19 +20,16 @@ type Props = {
 
 /**
  * Présentation de la méthodologie, affichée dans la zone de contenu du layout :
- * découverte des niveaux par le scroll, puis descente par les clics jusqu'aux
- * activités.
+ * découverte des niveaux par le scroll, le détail de chaque niveau se déployant
+ * à côté de sa plaque, jusqu'aux activités.
  */
-type Phase = "overview" | "drill";
-
 const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
   const { setChatbotHidden } = useIntroPresentation();
-  const [overviewStep, setOverviewStep] = useState(0);
-  const [phase, setPhase] = useState<Phase>("overview");
   const { cards, isLoading } = useIntroCards(true);
+  // Les titres réels sont attendus, mais jamais plus de quelques secondes.
+  const isReady = useIntroSpaceReady(isLoading);
   const rootRef = useRef<HTMLElement>(null);
-  const chatbotAnchorRef = useRef<HTMLDivElement>(null);
-  // Position et geste du chatbot, conservés d'une phase à l'autre pour qu'il se déplace au lieu de réapparaître.
+  // Position et geste du chatbot, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
   const memory = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: null });
   const chatbotMemory = useMemo<ChatbotMemoryAccess>(
     () => ({
@@ -49,27 +43,11 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
     [],
   );
 
-  // Pendant toute la présentation, le chatbot de la présentation remplace celui
-  // de l'application : il explique les niveaux, puis leurs composants.
-  const isOverview = phase === "overview";
+  // Pendant toute la présentation, son chatbot remplace celui de l'application.
   useEffect(() => {
     setChatbotHidden(true);
     return () => setChatbotHidden(false);
   }, [setChatbotHidden]);
-
-  // Le chatbot attend la fin de l'ouverture animée pour ne pas la saccader.
-  const [isOpeningDone, setIsOpeningDone] = useState(false);
-  useEffect(() => {
-    if (!isOverview) return;
-    const timer = setTimeout(
-      () => setIsOpeningDone(true),
-      prefersReducedMotion() ? 0 : OPENING_ANIMATION_MS,
-    );
-    return () => {
-      clearTimeout(timer);
-      setIsOpeningDone(false);
-    };
-  }, [isOverview]);
 
   // La page qui était affichée vient de disparaître : le focus passe ici.
   useEffect(() => {
@@ -84,13 +62,13 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
       aria-labelledby="intro-presentation-title"
       className="absolute inset-0 overflow-hidden outline-none"
     >
-      {phase === "overview" ? (
+      {isReady ? (
         <IntroOverviewScene
-          chatbotAnchorRef={chatbotAnchorRef}
-          onStepChange={setOverviewStep}
-          onContinue={() => setPhase("drill")}
+          cards={cards}
+          isSaving={isSaving}
+          onComplete={onComplete}
         />
-      ) : isLoading ? (
+      ) : (
         <div className="grid h-full place-items-center" role="status">
           <div className="sr-only">
             <IntroSceneHeading />
@@ -101,18 +79,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
             aria-hidden="true"
           />
         </div>
-      ) : (
-        <IntroDrillScene
-          cards={cards}
-          isSaving={isSaving}
-          onBackToOverview={() => setPhase("overview")}
-          onComplete={onComplete}
-        />
       )}
-
-      {isOverview && isOpeningDone ? (
-        <IntroChatbot scopeRef={chatbotAnchorRef} step={overviewStep} />
-      ) : null}
 
       <button
         type="button"

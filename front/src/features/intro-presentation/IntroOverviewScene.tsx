@@ -5,29 +5,33 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
-  type RefObject,
 } from "react";
-import { ArrowRight, ChevronsUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronsUp } from "lucide-react";
 
+import { cn } from "../../utils/cn";
+import type { IntroCard } from "./intro-content";
+import { OPENING_ANIMATION_MS } from "./intro-dialogue";
 import {
   INTRO_PYRAMID_LEVELS,
   INTRO_PYRAMID_LEVEL_COUNT,
 } from "./intro-levels";
 import { ScrollTrigger, gsap, prefersReducedMotion } from "./intro-motion";
+import IntroChatbot from "./IntroChatbot";
+import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
 import IntroSceneHeading from "./IntroSceneHeading";
-import IntroStepControls from "./IntroStepControls";
-import { cn } from "../../utils/cn";
+import { readableTextColor } from "../../utils/helpers/color-helpers";
+import { useInstanceBranding } from "./useInstanceBranding";
+import { useIntroGuide } from "./useIntroGuide";
 import { useIntroPresentation } from "./useIntroPresentation";
 
 type Props = {
-  /** Ancre du chatbot de l'introduction, placée dans l'espace vide au-dessus de la pyramide. */
-  chatbotAnchorRef: RefObject<HTMLDivElement | null>;
-  /** Informe de chaque changement de palier (0 : introduction). */
-  onStepChange: (step: number) => void;
-  /** Appelé quand l'utilisateur a vu tous les niveaux et passe à l'exploration. */
-  onContinue: () => void;
+  /** Une carte par niveau : l'élément retenu, ce qu'il contient et ses composants. */
+  cards: IntroCard[];
+  isSaving: boolean;
+  /** Appelé quand l'utilisateur termine la présentation, au dernier niveau. */
+  onComplete: () => void;
 };
 
 /** Palier 0 : présentation et chatbot ; paliers 1 à 7 : un niveau chacun. */
@@ -35,36 +39,60 @@ const LAST_STEP = INTRO_PYRAMID_LEVEL_COUNT;
 /** Distance de défilement qui sépare deux paliers, en hauteurs de la zone. */
 const STEP_HEIGHT_CQH = 70;
 const PLATE_DEPTH = 60;
+
+const pad = (value: number) => String(value).padStart(2, "0");
 /** Délai après le dernier changement de palier avant que la pyramide soit au repos. */
 const SETTLE_MS = 800;
 /** Délai entre deux niveaux, où seul un léger mouvement de la pile subsiste. */
 const NEXT_LEVEL_MS = 120;
-/** Zone réservée au chatbot à côté d'une plaque. */
-const PANEL_WIDTH = 440;
-const PANEL_HEIGHT = 140;
+/** Zone réservée au chatbot, sous le composant qu'il explique. */
+const PANEL_WIDTH = 560;
+const PANEL_HEIGHT = 200;
+/** Largeur du détail du niveau, en part de la colonne, et son plafond en pixels. */
+const DETAIL_SHARE = 0.46;
+const DETAIL_MAX_WIDTH = 512;
+const DETAIL_GAP = 24;
+/** Réduction de la pile quand elle laisse la place au détail du niveau. */
+const STACK_SCALE_WITH_DETAIL = 0.85;
+/** Largeur de colonne en dessous de laquelle le détail passe sous la pyramide. */
+const MIN_SIDE_BY_SIDE_WIDTH = 720;
 
 /**
  * Découverte des niveaux par le défilement.
  *
  * Au palier 0, aucun niveau n'est sélectionné : la pyramide est vue du dessus
- * (presque en 2D) devant l'encadré « Organisme de formation », son titre est
- * au-dessus et le chatbot dialogue. Le sens est inversé : la zone démarre en
- * bas de son défilement et on progresse en défilant vers le haut. La
+ * (presque en 2D) devant l'encadré « Organisme de formation », dont le nom est
+ * affiché en grand, et le chatbot dialogue. Le sens est inversé : la zone
+ * démarre en bas de son défilement et on progresse en défilant vers le haut. La
  * progression du scroll, inversée, pilote une timeline GSAP : la pile s'incline
- * et l'explication du niveau remplace le titre. Les boutons et le clavier
- * déplacent la même zone, il n'y a donc qu'une source de vérité.
+ * puis se range sur le côté, et le détail du niveau se déploie depuis sa plaque
+ * sans toucher aux autres plaques. Le chatbot explique le niveau puis chacun de
+ * ses composants. Les boutons et le clavier déplacent la même zone, il n'y a
+ * donc qu'une source de vérité.
  */
-const IntroOverviewScene = ({
-  chatbotAnchorRef,
-  onStepChange,
-  onContinue,
-}: Props) => {
+/** Couleurs des plaques quand aucun fond coloré ne les précède : celles du thème. */
+const THEME_PLATE_COLORS = {
+  glass: "var(--color-base-100)",
+  text: "var(--color-base-content)",
+};
+
+const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
+  const { logoUrl, backgroundColor } = useInstanceBranding();
+  // Sur un fond coloré (blanc, par exemple) les plaques de verre et leur texte prennent
+  // ce fond et un texte lisible dessus, pour ne pas dépendre du thème clair ou sombre.
+  const plateText = backgroundColor ? readableTextColor(backgroundColor) : undefined;
+  const plateColors =
+    backgroundColor && plateText
+      ? { glass: backgroundColor, text: plateText }
+      : THEME_PLATE_COLORS;
   // Avec la barre réduite de la première présentation, le titre prend la ligne libre à sa droite.
   const { sidebarPhase } = useIntroPresentation();
   const isCompactSidebar = sidebarPhase !== "normal";
   const scrollRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const chatbotAnchorRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   // L'organisme n'est sélectionné dans le rail qu'à l'apparition de son encadré.
   const [isOrganisationShown, setIsOrganisationShown] = useState(false);
@@ -88,26 +116,76 @@ const IntroOverviewScene = ({
     return () => clearTimeout(timer);
   }, [activeStep]);
 
-  // Au palier d'un niveau, la zone du chatbot se pose à droite de l'étiquette
-  // de la plaque correspondante ; au palier 0, elle reprend sa place de départ.
+  // Le chatbot attend la fin de l'ouverture animée pour ne pas la saccader.
+  const [isChatbotReady, setIsChatbotReady] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setIsChatbotReady(true),
+      prefersReducedMotion() ? 0 : OPENING_ANIMATION_MS,
+    );
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Le chatbot explique le niveau, puis chacun de ses composants l'un après l'autre.
+  const settledCard = settledStep >= 1 ? cards[settledStep] : undefined;
+  const guideStep = useIntroGuide(
+    (settledCard?.details.length ?? 0) + 1,
+    `level-${settledStep}`,
+    isChatbotReady && settledStep >= 1,
+  );
+  const activeDetail = settledCard ? guideStep - 1 : -1;
+  const detailMessage =
+    settledCard && activeDetail >= 0
+      ? settledCard.details[activeDetail]?.explanation
+      : undefined;
+  const isDetailShown = settledStep >= 1 && activeStep >= 1;
+
+  // Au palier d'un niveau, la zone du chatbot se pose sous le composant expliqué
+  // ; au palier 0, elle reprend sa place de départ.
   useLayoutEffect(() => {
     const column = columnRef.current;
-    const label = stageRef.current?.querySelector<HTMLElement>(
-      `[data-intro-plate="${settledStep - 1}"] > span`,
-    );
-    if (settledStep < 1 || !column || !label) {
-      setPanelStyle(undefined);
+    const detail = detailRef.current;
+    const stage = stageRef.current;
+    if (!isDetailShown || !column || !detail || !stage || !settledCard) {
+      // Introduction : la zone du chatbot se pose juste au-dessus du titre de l'organisme.
+      const title = settledStep === 0
+        ? stage?.querySelector<HTMLElement>(".intro-organisation-fade b")
+        : null;
+      if (column && title) {
+        const columnRect = column.getBoundingClientRect();
+        const titleRect = title.getBoundingClientRect();
+        const width = Math.min(PANEL_WIDTH, columnRect.width);
+        setPanelStyle({
+          left: (columnRect.width - width) / 2,
+          top: Math.max(titleRect.top - columnRect.top - PANEL_HEIGHT - 8, 0),
+          width,
+          height: PANEL_HEIGHT,
+          right: "auto",
+          margin: 0,
+        });
+      } else {
+        setPanelStyle(undefined);
+      }
       return;
     }
     const columnRect = column.getBoundingClientRect();
-    const labelRect = label.getBoundingClientRect();
+    const detailRect = detail.getBoundingClientRect();
+    const targetId = activeDetail >= 0 ? settledCard.details[activeDetail]?.id : undefined;
+    const target =
+      (targetId
+        ? detail.querySelector<HTMLElement>(`[data-intro-detail="${targetId}"]`)
+        : null) ?? detail.querySelector<HTMLElement>("header");
+    const targetRect = (target ?? detail).getBoundingClientRect();
     const width = Math.min(PANEL_WIDTH, columnRect.width);
     const left = Math.min(
-      labelRect.right - columnRect.left + 24,
+      Math.max(targetRect.left + targetRect.width / 2 - columnRect.left - width / 2, 0),
       columnRect.width - width,
     );
+    const below = detailRect.bottom - columnRect.top + 12;
     const top =
-      labelRect.top + labelRect.height / 2 - columnRect.top - PANEL_HEIGHT / 2;
+      below + PANEL_HEIGHT <= columnRect.height
+        ? below
+        : Math.max(detailRect.top - columnRect.top - PANEL_HEIGHT - 12, 0);
     setPanelStyle({
       left,
       top,
@@ -116,9 +194,30 @@ const IntroOverviewScene = ({
       right: "auto",
       margin: 0,
     });
-  }, [settledStep]);
+  }, [isDetailShown, settledCard, settledStep, activeDetail, isChatbotReady]);
 
-  useEffect(() => onStepChange(settledStep), [settledStep, onStepChange]);
+  // Le détail se déploie depuis la plaque : il s'étire vers la droite, puis ses
+  // parties apparaissent l'une après l'autre. Rien ne bouge dans la pyramide.
+  useLayoutEffect(() => {
+    const detail = detailRef.current;
+    if (!detail || !isDetailShown || prefersReducedMotion()) return;
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        detail,
+        { scaleX: 0.35, opacity: 0, x: -56, transformOrigin: "0% 50%" },
+        { scaleX: 1, opacity: 1, x: 0, duration: 0.7, ease: "power3.out" },
+      );
+      gsap.from(".intro-detail-part", {
+        opacity: 0,
+        y: 14,
+        duration: 0.45,
+        delay: 0.25,
+        stagger: 0.07,
+        ease: "power2.out",
+      });
+    }, detail.parentElement ?? detail);
+    return () => context.revert();
+  }, [isDetailShown, settledStep]);
 
   useEffect(() => {
     const scroller = scrollRef.current;
@@ -272,12 +371,38 @@ const IntroOverviewScene = ({
         },
       });
 
-      // L'encadré de l'organisme et la consigne s'effacent dès le premier palier.
+      // L'encadré de l'organisme et la consigne s'effacent dès le premier palier ; les
+      // plaques, qui reposent alors sur la page, reprennent les couleurs du thème.
       timeline.to([organisation, hint], { autoAlpha: 0, duration: 0.5 }, 0.1);
+      timeline.set(
+        stage.querySelector(".intro-plate-scope"),
+        {
+          "--intro-glass": THEME_PLATE_COLORS.glass,
+          "--intro-plate-text": THEME_PLATE_COLORS.text,
+        },
+        0.3,
+      );
       // La pile se redresse vers le lecteur, d'abord vite puis doucement.
       timeline.to(stack, { rotationX: 54, rotation: -12, duration: 1 }, 0);
-      // La pyramide remonte en haut de la zone : le chatbot vient près de chaque plaque.
-      timeline.to(stack, { y: -70, duration: 1 }, 0);
+      // La pyramide remonte en haut de la zone et se range sur la gauche, avec une
+      // réduction légère : le détail du niveau prend la place libérée à droite.
+      const column = columnRef.current;
+      const container = stack?.parentElement;
+      const columnWidth = column?.clientWidth ?? 0;
+      const unit = container ? container.getBoundingClientRect().width / 700 : 1;
+      const sideBySide = columnWidth >= MIN_SIDE_BY_SIDE_WIDTH && unit > 0;
+      const detailWidth = Math.min(columnWidth * DETAIL_SHARE, DETAIL_MAX_WIDTH);
+      const shift = sideBySide ? (detailWidth + DETAIL_GAP) / 2 / unit : 0;
+      timeline.to(
+        stack,
+        {
+          y: -70,
+          x: -shift,
+          scale: sideBySide ? STACK_SCALE_WITH_DETAIL : 1,
+          duration: 1,
+        },
+        0,
+      );
       timeline.to(
         stack,
         { rotationX: 46, rotation: -4, duration: LAST_STEP - 1 },
@@ -287,69 +412,6 @@ const IntroOverviewScene = ({
 
     return () => context.revert();
   }, []);
-
-  // Une fois le départ lancé, plus rien ne doit relancer l'animation ni le scroll.
-  const leaveTimeline = useRef<gsap.core.Timeline | null>(null);
-  useEffect(() => () => void leaveTimeline.current?.kill(), []);
-
-  /**
-   * Replie la pyramide dans la première carte, comme dans la vidéo de
-   * présentation : les plaques s'écartent en profondeur, puis se rabattent en
-   * s'effaçant en partant du sommet pendant que la pile se met à plat. La
-   * descente niveau par niveau démarre ensuite.
-   */
-  const startExploring = () => {
-    const stage = stageRef.current;
-    const scroller = scrollRef.current;
-    if (leaveTimeline.current) return;
-    if (!stage || !scroller || prefersReducedMotion()) {
-      onContinue();
-      return;
-    }
-    scroller.style.overflowY = "hidden";
-    const plates = gsap.utils.toArray<HTMLElement>(".intro-plate", stage);
-    const stack = stage.querySelector<HTMLElement>(".intro-stack");
-    const timeline = gsap.timeline({ onComplete: onContinue });
-    timeline.to(
-      stage.querySelectorAll("[data-intro-controls], .intro-start"),
-      { autoAlpha: 0, duration: 0.3 },
-      0,
-    );
-    timeline.to(
-      plates,
-      {
-        z: (index: number) => index * 90,
-        duration: 0.5,
-        ease: "power2.inOut",
-        stagger: 0.03,
-      },
-      0,
-    );
-    timeline.to(
-      plates,
-      {
-        z: 0,
-        opacity: 0,
-        duration: 0.45,
-        ease: "power2.in",
-        stagger: { each: 0.05, from: "end" },
-      },
-      0.5,
-    );
-    timeline.to(
-      stack,
-      {
-        rotationX: 0,
-        rotation: 0,
-        y: 0,
-        scale: 1.05,
-        duration: 0.65,
-        ease: "power2.in",
-      },
-      0.5,
-    );
-    leaveTimeline.current = timeline;
-  };
 
   const goToStep = (step: number) => {
     const scroller = scrollRef.current;
@@ -412,7 +474,7 @@ const IntroOverviewScene = ({
               : "Comment s'organisent vos contenus ?"}
           </p>
 
-          <div className="grid min-h-0 flex-1 items-center gap-6 pr-14 lg:grid-cols-[minmax(16rem,22rem)_1fr]">
+          <div className="grid min-h-0 flex-1 items-center gap-6 lg:grid-cols-[minmax(16rem,22rem)_1fr]">
             <IntroLevelRail
               activeIndex={
                 activeStep === 0 && !isOrganisationShown ? -1 : activeStep
@@ -449,9 +511,29 @@ const IntroOverviewScene = ({
               <div className="flex flex-1 items-center">
                 <IntroLevelStack
                   activeIndex={levelIndex}
+                  organisationName={cards[0].title}
+                  isOrganisationPlaceholder={cards[0].isPlaceholder}
+                  logoUrl={logoUrl}
+                  backgroundColor={backgroundColor}
+                  plateColors={plateColors}
                   onSelect={(index) => goToStep(index + 1)}
                 />
               </div>
+              {isDetailShown && settledCard ? (
+                <>
+                  <div className={cn("mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
+                      // Sous le titre de la colonne ; le chatbot se place dessous.
+                      isCompactSidebar ? "lg:top-0" : "lg:top-32",
+                    )}>
+                    <IntroLevelDetail
+                      ref={detailRef}
+                      card={settledCard}
+                      index={settledStep}
+                      activeDetail={activeDetail}
+                    />
+                  </div>
+                </>
+              ) : null}
               <p className="intro-scroll-hint flex items-center gap-2 text-sm text-base-content/70">
                 <ChevronsUp className="size-4" aria-hidden="true" />
                 Faire défiler vers le haut pour naviguer entre les différents
@@ -460,40 +542,64 @@ const IntroOverviewScene = ({
             </div>
           </div>
 
-          {/* En bas à droite : « Suivant » (même action que la flèche du haut) pour le premier
-              palier, puis « Commencer à explorer », disponible dès le premier niveau. */}
-          {activeStep === 0 ? (
-            <button
-              type="button"
-              className="btn btn-primary btn-sm absolute bottom-4 right-4 sm:right-8"
-              onClick={() => goToStep(1)}
-            >
-              Suivant
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="intro-start btn btn-primary btn-sm absolute bottom-4 right-4 sm:right-8"
-              onClick={startExploring}
-            >
-              Commencer à explorer
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </button>
-          )}
+          {isChatbotReady ? (
+            <IntroChatbot
+              scopeRef={chatbotAnchorRef}
+              step={settledStep}
+              detailMessage={detailMessage}
+              guideStep={guideStep}
+            />
+          ) : null}
 
-          {/* Flèches en colonne, à droite de la zone : le défilement est vertical. */}
-          <IntroStepControls
-            current={activeStep}
-            total={LAST_STEP}
-            previousLabel="Palier précédent"
-            onPrevious={() => goToStep(activeStep - 1)}
-            isPreviousDisabled={activeStep === 0}
-            nextLabel="Palier suivant"
-            onNext={() => goToStep(activeStep + 1)}
-            isNextDisabled={isLast}
-            isReversed
-          />
+          {/* Numérotation du palier, en bas au milieu de la page. */}
+          <p
+            className="absolute bottom-5 left-1/2 -translate-x-1/2 text-sm tabular-nums"
+            aria-label={`Palier ${activeStep} sur ${LAST_STEP}`}
+          >
+            <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
+            <span className="text-base-content/60"> / {pad(LAST_STEP)}</span>
+          </p>
+
+          {/* En bas à droite : « Précédent », puis « Suivant » (même action que le défilement
+              vers le haut) ou « Terminer la présentation » au dernier niveau. */}
+          <div className="absolute bottom-4 right-4 flex items-center gap-2 sm:right-8">
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              disabled={activeStep === 0}
+              onClick={() => goToStep(activeStep - 1)}
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Précédent
+            </button>
+            {isLast ? (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                disabled={isSaving}
+                onClick={onComplete}
+              >
+                {isSaving ? (
+                  <span
+                    className="loading loading-spinner loading-xs"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Check className="size-4" aria-hidden="true" />
+                )}
+                Terminer la présentation
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => goToStep(activeStep + 1)}
+              >
+                Suivant
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

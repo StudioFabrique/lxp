@@ -70,7 +70,7 @@ describe("buildIntroCards", () => {
 
   it("donne à chaque niveau ses composants, réels quand ils sont connus", () => {
     const cards = buildIntroCards({
-      details: { "parcours.tags": ["  Web ", ""], "organisation.roles": ["Apprenant"] },
+      details: { "parcours.tags": ["  Web ", ""] },
     });
 
     const tags = cards[2].details.find((detail) => detail.id === "parcours.tags");
@@ -79,9 +79,10 @@ describe("buildIntroCards", () => {
     const groups = cards[2].details.find((detail) => detail.id === "parcours.groupes");
     expect(groups?.isPlaceholder).toBe(true);
     expect(groups?.items.every((item) => item.isPlaceholder)).toBe(true);
-    expect(cards[0].details.find((detail) => detail.id === "organisation.roles")?.isPlaceholder).toBe(false);
+    // L'organisme n'a que son titre : pas de composants.
+    expect(cards[0].details).toEqual([]);
     // Le dernier niveau n'a que ses types d'activités.
     expect(cards[6].details).toEqual([]);
-    cards.slice(0, -1).forEach((card) => expect(card.details.length).toBeGreaterThan(0));
+    cards.slice(1, -1).forEach((card) => expect(card.details.length).toBeGreaterThan(0));
   });
 });
