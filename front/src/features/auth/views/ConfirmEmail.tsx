@@ -13,9 +13,6 @@ import { cn } from "../../../utils/cn";
 const successMessage =
   "Félicitations, votre compte est créé ! Votre adresse email est validée : vous pouvez maintenant vous connecter.";
 
-// Durée des trois points une fois le chatbot posé, avant le message de félicitations.
-const successTypingMs = 1200;
-
 const ConfirmEmail = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
@@ -61,7 +58,6 @@ const ConfirmEmail = () => {
       <AuthPageWrapper
         title="Validation de l'adresse email"
         variant="setup"
-        descriptionTypingMs={state === "success" ? successTypingMs : undefined}
         description={
           state === "success" ? (
             successMessage

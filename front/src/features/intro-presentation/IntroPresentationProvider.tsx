@@ -44,7 +44,12 @@ export const IntroPresentationProvider = ({
   const { user, updateOnboarding } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const { pathname } = useLocation();
-  const [isReopened, setIsReopened] = useState(false);
+  // Page où la présentation a été rouverte : naviguer ailleurs la ferme.
+  const [reopenedAt, setReopenedAt] = useState<string | null>(null);
+  const isReopened = reopenedAt === pathname;
+  useEffect(() => {
+    if (reopenedAt !== null && reopenedAt !== pathname) setReopenedAt(null);
+  }, [reopenedAt, pathname]);
   const [isSaving, setIsSaving] = useState(false);
   const [isRoleRevealOpen, setIsRoleRevealOpen] = useState(false);
   const [isChatbotHidden, setChatbotHidden] = useState(false);
@@ -87,7 +92,7 @@ export const IntroPresentationProvider = ({
   const close = async (choice: "skipped" | "completed") => {
     if (isSaving) return;
     if (demoMode || !isIntroStillPending(status)) {
-      setIsReopened(false);
+      setReopenedAt(null);
       return;
     }
 
@@ -97,7 +102,7 @@ export const IntroPresentationProvider = ({
     setIsRoleRevealOpen(true);
     try {
       await updateOnboarding(choice);
-      setIsReopened(false);
+      setReopenedAt(null);
     } catch {
       setIsRoleRevealOpen(false);
       toast.error("Impossible d'enregistrer votre choix. Réessayez.");
@@ -115,7 +120,7 @@ export const IntroPresentationProvider = ({
     // Pendant la découverte du rôle, la séquence joue son propre chatbot.
     isChatbotHidden: isRoleRevealOpen || (isOpen && isChatbotHidden),
     setChatbotHidden,
-    open: () => setIsReopened(true),
+    open: () => setReopenedAt(pathname),
     skip: () => void close("skipped"),
     complete: () => void close("completed"),
     closeRoleReveal: () => {

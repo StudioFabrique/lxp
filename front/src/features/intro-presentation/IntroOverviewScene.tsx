@@ -48,6 +48,8 @@ const NEXT_LEVEL_MS = 120;
 /** Zone réservée au chatbot, sous le composant qu'il explique. */
 const PANEL_WIDTH = 560;
 const PANEL_HEIGHT = 200;
+/** Hauteur de la ligne du titre de la scène, en haut de la zone. */
+const HEADING_ROW_HEIGHT = 60;
 /** Largeur du détail du niveau, en part de la colonne, et son plafond en pixels. */
 const DETAIL_SHARE = 0.46;
 const DETAIL_MAX_WIDTH = 512;
@@ -147,19 +149,40 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
     const detail = detailRef.current;
     const stage = stageRef.current;
     if (!isDetailShown || !column || !detail || !stage || !settledCard) {
-      // Introduction : la zone du chatbot se pose juste au-dessus du titre de l'organisme.
       const title = settledStep === 0
         ? stage?.querySelector<HTMLElement>(".intro-organisation-fade b")
         : null;
-      if (column && title) {
+      const firstItem = stage?.querySelector<HTMLElement>(".intro-rail-item");
+      if (column && title && firstItem && !isCompactSidebar) {
+        // Présentation rejouée : la barre latérale reste complète et l'espace vide
+        // est au-dessus de l'arborescence, à gauche du titre de la scène.
+        const columnRect = column.getBoundingClientRect();
+        const itemRect = firstItem.getBoundingClientRect();
+        const left = itemRect.left - columnRect.left - 40;
+        const top = stage ? stage.getBoundingClientRect().top - columnRect.top : 0;
+        setPanelStyle({
+          left,
+          top,
+          width: PANEL_WIDTH - 40,
+          height: Math.min(PANEL_HEIGHT, itemRect.top - columnRect.top - top - 8),
+          right: "auto",
+          margin: 0,
+        });
+      } else if (column && title) {
+        // Introduction : la zone du chatbot occupe le vide entre la ligne du titre de
+        // la scène et le titre de l'organisme.
         const columnRect = column.getBoundingClientRect();
         const titleRect = title.getBoundingClientRect();
         const width = Math.min(PANEL_WIDTH, columnRect.width);
+        const top = Math.max(
+          (stage?.getBoundingClientRect().top ?? columnRect.top) - columnRect.top + HEADING_ROW_HEIGHT,
+          0,
+        );
         setPanelStyle({
           left: (columnRect.width - width) / 2,
-          top: Math.max(titleRect.top - columnRect.top - PANEL_HEIGHT - 8, 0),
+          top,
           width,
-          height: PANEL_HEIGHT,
+          height: Math.min(PANEL_HEIGHT, titleRect.top - columnRect.top - top - 8),
           right: "auto",
           margin: 0,
         });
@@ -194,7 +217,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
       right: "auto",
       margin: 0,
     });
-  }, [isDetailShown, settledCard, settledStep, activeDetail, isChatbotReady]);
+  }, [isDetailShown, settledCard, settledStep, activeDetail, isChatbotReady, isCompactSidebar]);
 
   // Le détail se déploie depuis la plaque : il s'étire vers la droite, puis ses
   // parties apparaissent l'une après l'autre. Rien ne bouge dans la pyramide.
@@ -508,7 +531,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
               >
                 <div ref={chatbotAnchorRef} />
               </div>
-              <div className="flex flex-1 items-center">
+              <div className="flex flex-1 -translate-y-8 items-center">
                 <IntroLevelStack
                   activeIndex={levelIndex}
                   organisationName={cards[0].title}
@@ -534,7 +557,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
                   </div>
                 </>
               ) : null}
-              <p className="intro-scroll-hint flex items-center gap-2 text-sm text-base-content/70">
+              <p className="intro-scroll-hint mt-12 flex items-center gap-2 text-sm text-base-content/70">
                 <ChevronsUp className="size-4" aria-hidden="true" />
                 Faire défiler vers le haut pour naviguer entre les différents
                 niveaux

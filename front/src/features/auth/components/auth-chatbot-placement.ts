@@ -14,8 +14,9 @@ export function chooseChatbotPlacement(
   const margin = 20;
   const clearance = 16;
   const horizontalSpace = area.width - size.width - margin * 2;
-  const verticalSpace = area.height - size.height - margin * 2;
-  if (horizontalSpace < 0 || verticalSpace < 0) return null;
+  // Une zone à peine plus haute que le dialogue convient encore : seule la marge disparaît.
+  const verticalSpace = Math.max(area.height - size.height - margin * 2, 0);
+  if (horizontalSpace < 0 || area.height < size.height) return null;
   const candidates: ChatbotPoint[] = [];
   const left = area.left + (area.width - size.width) / 2;
   const blocking = obstacles
@@ -26,11 +27,13 @@ export function chooseChatbotPlacement(
   if (blocking.length) {
     const gaps: { top: number; height: number }[] = [];
     let cursor = area.top;
+    const end = area.top + area.height;
     for (const { top, bottom } of blocking) {
-      if (top - cursor >= size.height) gaps.push({ top: cursor, height: top - cursor });
+      // Un obstacle sous la zone ne doit pas ouvrir un espace qui en déborde.
+      const gapEnd = Math.min(top, end);
+      if (gapEnd - cursor >= size.height) gaps.push({ top: cursor, height: gapEnd - cursor });
       cursor = Math.max(cursor, bottom);
     }
-    const end = area.top + area.height;
     if (end - cursor >= size.height) gaps.push({ top: cursor, height: end - cursor });
     const centred = gaps
       .sort((a, b) => b.height - a.height)
