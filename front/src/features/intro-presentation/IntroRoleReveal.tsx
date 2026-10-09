@@ -8,7 +8,6 @@ import IntroRoleDetection from "./IntroRoleDetection";
 import IntroStudentSpace from "./IntroStudentSpace";
 import IntroTeamSpace from "./IntroTeamSpace";
 import { findIntroRole, getIntroSpace } from "./intro-role";
-import { buildInitials } from "./intro-space-content";
 
 type Props = {
   onDone: () => void;
@@ -66,7 +65,6 @@ const IntroRoleReveal = ({ onDone }: Props) => {
       {step === "detection" ? (
         <IntroRoleDetection
           role={role}
-          initials={buildInitials({ firstname: user?.firstname, lastname: user?.lastname })}
           onDone={() => setStep("leaving")}
         />
       ) : null}

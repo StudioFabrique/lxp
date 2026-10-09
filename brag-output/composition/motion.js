@@ -630,7 +630,7 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
   tl.set('#dashboard-chatbot>button',{opacity:0},0);
   // The camera first holds on the sidebar while it lands and unfolds, then pulls back
   // as the cards stack; the interface keeps a gentle tilt so its relief stays visible.
-  const pull=S+2.4,focus={x:1204,y:22,scale:1.6};
+  const pull=S+2.4,focus={x:470,y:-48,scale:1.1};
   tl.fromTo('.dashboard-camera',{...focus},{...focus,duration:pull-S,ease:'none',immediateRender:false},S);
   tl.fromTo('.dashboard-camera',{...focus},{x:0,y:0,scale:1,duration:1.1,ease:'power2.inOut',immediateRender:false},pull);
   tl.set('.dashboard-camera',{...focus},S-.01);

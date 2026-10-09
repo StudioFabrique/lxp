@@ -1,23 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { Check } from "lucide-react";
 
-import { cn } from "../../utils/cn";
 import { gsap, prefersReducedMotion } from "./intro-motion";
 import { INTRO_ROLES, type IntroRoleOption } from "./intro-role";
 
 type Props = {
   role: IntroRoleOption;
-  /** Initiales de l'utilisateur, affichées dans le halo d'analyse. */
-  initials: string;
   onDone: () => void;
 };
 
-const HOLD_AFTER_MATCH_MS = 450;
-const SPIN_SECONDS = 1.5;
+const HOLD_AFTER_MATCH_MS = 600;
+const SPIN_SECONDS = 1.9;
 /** La roue répète la liste pour rester remplie de part et d'autre du rôle central. */
 const COPIES = 3;
 const RING_SIZE = INTRO_ROLES.length * COPIES;
 const ROW_HEIGHT = 60;
+/** Amplitude, en pixels, de l'errance du halo avant qu'il se pose sur le rôle. */
+const GLOW_WANDER_X = 90;
+const GLOW_WANDER_Y = 80;
 
 /** Distance signée, en lignes, entre une ligne de la roue et sa position courante. */
 const ringDistance = (row: number, position: number): number =>
@@ -25,16 +24,18 @@ const ringDistance = (row: number, position: number): number =>
   RING_SIZE / 2;
 
 /**
- * Détection du rôle : une roue en perspective défile en ralentissant, sous une
- * loupe lumineuse, jusqu'à s'arrêter sur le rôle de l'utilisateur.
+ * Détection du rôle : seule la roue est affichée. Elle défile en ralentissant
+ * autour d'un halo flou inspiré de `CursorGlowCard` (aucun cadre), puis elle
+ * s'arrête sur le rôle de l'utilisateur.
  */
-const IntroRoleDetection = ({ role, initials, onDone }: Props) => {
+const IntroRoleDetection = ({ role, onDone }: Props) => {
   const targetIndex = INTRO_ROLES.findIndex((item) => item.rank === role.rank);
   const [isMatched, setIsMatched] = useState(false);
   const rowRefs = useRef<Array<HTMLLIElement | null>>([]);
-  const lensRef = useRef<HTMLDivElement>(null);
-  const pingRef = useRef<HTMLDivElement>(null);
-  const haloRef = useRef<HTMLDivElement>(null);
+  const wheelRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const burstRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLDivElement>(null);
   const onDoneRef = useRef(onDone);
 
   useEffect(() => {
@@ -53,10 +54,16 @@ const IntroRoleDetection = ({ role, initials, onDone }: Props) => {
           y: distance * ROW_HEIGHT,
           rotationX: -distance * 26,
           scale: 1 - Math.min(away, 3) * 0.1,
-          opacity: Math.max(0, 1 - away * 0.4),
-          filter: `blur(${Math.min(away, 3) * 1.1}px)`,
+          opacity: Math.max(0, 1 - away * 0.38),
+          filter: `blur(${Math.min(away, 3) * 1.6}px)`,
           zIndex: 10 - Math.round(away),
         });
+      });
+      // Le halo erre sur la liste tant que la roue tourne ; l'amplitude est nulle à l'arrêt.
+      const remaining = Math.min(1, Math.abs(stop - position) / INTRO_ROLES.length);
+      gsap.set(glowRef.current, {
+        x: Math.sin(position * 1.7) * GLOW_WANDER_X * remaining,
+        y: Math.sin(position * 2.3 + 1) * GLOW_WANDER_Y * remaining,
       });
     };
     let doneTimer: ReturnType<typeof setTimeout> | undefined;
@@ -67,18 +74,29 @@ const IntroRoleDetection = ({ role, initials, onDone }: Props) => {
 
     if (prefersReducedMotion()) {
       place(stop);
-      gsap.set(lensRef.current, { opacity: 1 });
+      gsap.set(glowRef.current, { opacity: 1 });
+      gsap.set(rowRefs.current[stop], { color: "var(--color-primary-content)", fontWeight: 600 });
+      gsap.set(pillRef.current, { opacity: 1, scaleX: 1 });
       finish();
       return () => clearTimeout(doneTimer);
     }
 
     const wheel = { position: stop - INTRO_ROLES.length * 2 };
     place(wheel.position);
+    gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
+    const target = rowRefs.current[stop];
+    gsap.set(burstRef.current, { opacity: 0, scale: 0.6 });
+    gsap.set(pillRef.current, { opacity: 0, scaleX: 0.5 });
     const timeline = gsap.timeline({ onComplete: finish });
-    gsap.set(lensRef.current, { opacity: 0, scaleX: 0.7 });
-    gsap.set(haloRef.current, { opacity: 0.6 });
     timeline
-      .to(lensRef.current, { opacity: 1, scaleX: 1, duration: 0.3, ease: "power3.out" })
+      // Apparition : la roue se densifie depuis le flou, le halo s'étend.
+      .fromTo(
+        wheelRef.current,
+        { opacity: 0, filter: "blur(18px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.7, ease: "power2.out" },
+        0,
+      )
+      .to(glowRef.current, { opacity: 0.7, scale: 1, duration: 0.8, ease: "power2.out" }, 0.1)
       .to(
         wheel,
         {
@@ -87,22 +105,19 @@ const IntroRoleDetection = ({ role, initials, onDone }: Props) => {
           ease: "power4.out",
           onUpdate: () => place(wheel.position),
         },
-        0.05,
+        0.2,
       )
-      // Le rôle retenu s'illumine : la loupe se détend en un anneau qui se dissipe.
+      // Le halo s'est posé sur le rôle retenu : il s'intensifie, le texte se colore et une onde floue se dissipe.
+      .to(glowRef.current, { opacity: 1, scale: 1.25, duration: 0.5, ease: "power2.out" }, SPIN_SECONDS)
+      // Pastille pleine déployée derrière le rôle retenu, dont le texte passe en couleur de contenu.
+      .to(pillRef.current, { opacity: 1, scaleX: 1, duration: 0.45, ease: "back.out(1.6)" }, SPIN_SECONDS)
+      .to(target, { color: "var(--color-primary-content)", fontWeight: 600, duration: 0.3 }, SPIN_SECONDS + 0.1)
       .fromTo(
-        pingRef.current,
-        { opacity: 0.7, scale: 1 },
-        { opacity: 0, scale: 1.18, duration: 0.5, ease: "power2.out" },
-        SPIN_SECONDS + 0.05,
-      )
-      .to(
-        lensRef.current,
-        { scale: 1.04, duration: 0.18, ease: "power2.out" },
-        SPIN_SECONDS + 0.05,
-      )
-      .to(lensRef.current, { scale: 1, duration: 0.3, ease: "back.out(2)" })
-      .to(haloRef.current, { opacity: 1, scale: 1.08, duration: 0.3 }, SPIN_SECONDS);
+        burstRef.current,
+        { opacity: 0.7, scale: 0.7 },
+        { opacity: 0, scale: 1.7, duration: 0.8, ease: "power2.out" },
+        SPIN_SECONDS + 0.1,
+      );
 
     return () => {
       timeline.kill();
@@ -111,77 +126,55 @@ const IntroRoleDetection = ({ role, initials, onDone }: Props) => {
   }, [targetIndex]);
 
   return (
-    <div className="grid h-full place-items-center p-6">
-      <div className="flex w-full max-w-md flex-col items-center">
-        {/* Halo d'analyse autour des initiales : il tourne tant que le rôle n'est pas trouvé. */}
-        <div className="relative grid size-20 place-items-center">
-          <div
-            ref={haloRef}
-            aria-hidden="true"
-            className={cn(
-              "absolute inset-0 rounded-full border-2 border-primary/30 border-t-primary",
-              isMatched
-                ? "border-primary"
-                : "animate-spin motion-reduce:animate-none",
-            )}
-          />
-          <span className="grid size-14 place-items-center rounded-full bg-primary text-lg font-semibold text-primary-content shadow-lg shadow-primary/30">
-            {isMatched ? (
-              <Check className="size-6" aria-hidden="true" />
-            ) : (
-              initials || "?"
-            )}
-          </span>
-        </div>
+    <div className="grid h-full place-items-center overflow-hidden p-6">
+      <p className="sr-only" role="status">
+        {isMatched ? `Rôle détecté : ${role.label}` : "Détection du rôle en cours"}
+      </p>
 
-        <h1 className="mt-5 text-center text-2xl font-semibold">
-          {isMatched ? "Rôle détecté" : "Analyse de votre profil"}
-        </h1>
-        <p className="mt-1 min-h-6 text-center text-base-content/70">
-          {isMatched
-            ? `Voici votre espace ${role.label.toLowerCase()}.`
-            : "Nous préparons l'espace qui vous correspond."}
-        </p>
-        <p className="sr-only" role="status">
-          {isMatched ? `Rôle détecté : ${role.label}` : "Détection en cours"}
-        </p>
-
-        {/* Roue de rôles : décorative, le résultat est annoncé par le statut ci-dessus. */}
-        <div
-          aria-hidden="true"
-          className="relative mt-8 h-[19rem] w-full max-w-sm overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]"
-          style={{ perspective: "800px" }}
-        >
+      {/* Roue de rôles : décorative, le résultat est annoncé par le statut ci-dessus. */}
+      <div
+        ref={wheelRef}
+        aria-hidden="true"
+        className="relative h-[19rem] w-[44rem] max-w-full [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]"
+        style={{ perspective: "800px" }}
+      >
+        {/* Halos flous sans bordure : ils sont centrés par flex, GSAP ne gère que leur décalage. */}
+        <div className="pointer-events-none absolute inset-0 grid place-items-center">
           <div
-            ref={lensRef}
-            className={cn(
-              "absolute inset-x-0 top-1/2 -mt-[1.875rem] h-[3.75rem] rounded-box border-2 border-primary bg-primary/10 shadow-[0_0_40px] shadow-primary/30 transition-colors duration-300",
-              isMatched && "bg-primary/20",
-            )}
+            ref={glowRef}
+            className="h-16 w-80 rounded-full bg-primary/30 blur-2xl"
           />
-          <div
-            ref={pingRef}
-            className="absolute inset-x-0 top-1/2 -mt-[1.875rem] h-[3.75rem] rounded-box border-2 border-primary opacity-0"
-          />
-          <ul className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
-            {Array.from({ length: RING_SIZE }, (_, row) => {
-              const item = INTRO_ROLES[row % INTRO_ROLES.length];
-              const Icon = item.icon;
-              return (
-                <li
-                  key={row}
-                  ref={(element) => {
-                    rowRefs.current[row] = element;
-                  }}
-                  className="absolute inset-x-6 top-1/2 -mt-[1.5rem] flex h-12 items-center gap-3 px-4 text-lg font-medium will-change-transform"
-                >
-                  <Icon className="size-5 shrink-0" />
-                  {item.label}
-                </li>
-              );
-            })}
-          </ul>
         </div>
+        <div className="pointer-events-none absolute inset-0 grid place-items-center">
+          <div
+            ref={burstRef}
+            className="h-20 w-96 rounded-full bg-primary/40 opacity-0 blur-3xl"
+          />
+        </div>
+        <div className="pointer-events-none absolute inset-0 grid place-items-center">
+          <div
+            ref={pillRef}
+            className="h-12 w-72 rounded-full bg-primary opacity-0 shadow-lg shadow-primary/40"
+          />
+        </div>
+        <ul className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
+          {Array.from({ length: RING_SIZE }, (_, row) => {
+            const item = INTRO_ROLES[row % INTRO_ROLES.length];
+            const Icon = item.icon;
+            return (
+              <li
+                key={row}
+                ref={(element) => {
+                  rowRefs.current[row] = element;
+                }}
+                className="absolute inset-x-0 top-1/2 -mt-[1.5rem] mx-auto flex h-12 w-72 items-center gap-3 px-4 text-xl font-medium origin-left will-change-transform"
+              >
+                <Icon className="size-5 shrink-0" />
+                {item.label}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );

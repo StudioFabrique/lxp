@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, Crown, GraduationCap, ShieldCheck } from "lucide-react";
+import { BookOpen, GraduationCap, ShieldCheck, Terminal } from "lucide-react";
 
 import type Role from "../../utils/interfaces/role";
 
@@ -20,7 +20,7 @@ export type IntroRoleOption = {
  * l'utilisateur, alors que la détection parcourt tous les rôles existants.
  */
 export const INTRO_ROLES: readonly IntroRoleOption[] = [
-  { rank: 0, label: "Root", spaceLabel: "Espace root", icon: Crown },
+  { rank: 0, label: "Root", spaceLabel: "Espace root", icon: Terminal },
   { rank: 1, label: "Administrateur", spaceLabel: "Espace administrateur", icon: ShieldCheck },
   { rank: 2, label: "Équipe pédagogique", spaceLabel: "Espace pédagogique", icon: BookOpen },
   { rank: 3, label: "Apprenant", spaceLabel: "Espace apprenant", icon: GraduationCap },
