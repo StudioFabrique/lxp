@@ -117,6 +117,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         setActivationRequired(requiresActivation);
         setActivationRetryAfterSeconds(0);
         if (err.response?.status === 403) logout();
+      } else if (err.response?.status === 429) {
+        setError(
+          "Trop de tentatives de connexion, patientez quelques minutes avant de réessayer.",
+        );
       } else {
         setError("Problème serveur, réessayez plus tard svp");
       }

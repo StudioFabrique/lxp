@@ -8,13 +8,20 @@ import IntroLevelDetail from "./IntroLevelDetail";
 let container: HTMLDivElement;
 let root: Root;
 
-const render = (index: number, activeDetail = -1) =>
+const render = (
+  index: number,
+  activeDetail = -1,
+  highlightedRow = -1,
+  onHighlightRow?: (row: number) => void,
+) =>
   act(() =>
     root.render(
       <IntroLevelDetail
         card={buildIntroCards({ parcoursTitles: ["Mon parcours"], details: { "parcours.tags": ["Web"] } })[index]}
         index={index}
         activeDetail={activeDetail}
+        highlightedRow={highlightedRow}
+        onHighlightRow={onHighlightRow}
       />,
     ),
   );
@@ -49,6 +56,22 @@ describe("IntroLevelDetail", () => {
     const active = container.querySelectorAll("[data-intro-detail].ring-2");
     expect(active).toHaveLength(1);
     expect(active[0].getAttribute("aria-label")).toBe("Tags");
+  });
+
+  it("met en avant la ligne survolée dans la pile 3D et signale le survol de la liste", () => {
+    const hovered: number[] = [];
+    render(1, -1, 2, (row) => hovered.push(row));
+
+    const rows = Array.from(container.querySelectorAll("li[data-highlighted]"));
+    expect(rows).toHaveLength(1);
+    expect(rows[0].textContent).toContain("Parcours 3");
+
+    const first = container.querySelector("section[data-intro-detail='children'] li");
+    act(() => {
+      first?.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+      first?.dispatchEvent(new MouseEvent("mouseout", { bubbles: true }));
+    });
+    expect(hovered).toEqual([0, -1]);
   });
 
   it("n'affiche que les types d'activités au dernier niveau", () => {

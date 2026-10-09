@@ -60,7 +60,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
       ref={rootRef}
       tabIndex={-1}
       aria-labelledby="intro-presentation-title"
-      className="absolute inset-0 overflow-hidden outline-none"
+      className="absolute inset-0 select-none overflow-hidden outline-none"
     >
       {isReady ? (
         <IntroOverviewScene

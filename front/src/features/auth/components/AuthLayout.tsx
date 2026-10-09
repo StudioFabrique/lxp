@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import AuthAnimatedLogo from "./AuthAnimatedLogo";
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { useContext, useEffect, useMemo, useRef, useState, type PropsWithChildren } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, type PropsWithChildren } from "react";
 import { LoaderCircle, Sun, Moon, LogOut } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -43,6 +43,12 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
   const [headerActionHost, setHeaderActionHost] = useState<HTMLDivElement | null>(null);
   const { pathname } = useLocation();
   const [introActive, setIntroActive] = useState(() => pathname === "/init" || pathname === "/student/onboarding" || pathname === "/staff/onboarding");
+  // Le glissement de fin d'intro n'est joué que si l'intro a réellement été affichée : au rechargement en cours de parcours, l'état initial est seulement une hypothèse.
+  const [introPlayed, setIntroPlayed] = useState(false);
+  const updateIntroActive = useCallback((active: boolean) => {
+    if (active) setIntroPlayed(true);
+    setIntroActive(active);
+  }, []);
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
   const isStudentOnboarding = pathname === "/student/onboarding";
@@ -102,7 +108,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
       <div className={cn("grid grid-cols-1 lg:grid-cols-2 w-full overflow-x-clip", isOnboardingLayout && "lg:h-[85vh] lg:min-h-[600px]")}>
         <div
           data-auth-column
-          className={cn("relative flex flex-col items-center px-8 w-full h-full transition-transform duration-1100 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none", fullIntro ? "lg:translate-x-1/2" : "lg:translate-none", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}
+          className={cn("relative flex flex-col items-center px-8 w-full h-full ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none", introPlayed && "transition-transform duration-1100", fullIntro ? "lg:translate-x-1/2" : "lg:translate-none", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}
         >
           <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
             <div ref={setHeaderActionHost} className="contents" />
@@ -171,7 +177,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 </div>
               )}
               <AuthHeaderActionContext value={headerActionHost}>
-                <AuthIntroContext value={setIntroActive}>
+                <AuthIntroContext value={updateIntroActive}>
                   <AuthChatbotTransitionContext value={chatbotMemory}>
                   <AuthChatbotProvider>{children ?? <LoginGuard />}</AuthChatbotProvider>
                   </AuthChatbotTransitionContext>
@@ -232,7 +238,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           className="hidden min-w-0 overflow-hidden lg:block"
           initial={false}
           animate={{ opacity: fullIntro ? 0 : 1, x: fullIntro ? "100%" : "0%" }}
-          transition={{ duration: reduceMotion || fullIntro ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: reduceMotion || fullIntro || !introPlayed ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}
           inert={fullIntro}
           aria-hidden={fullIntro || undefined}
         >

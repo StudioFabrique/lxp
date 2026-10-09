@@ -12,7 +12,8 @@ import {
   introPresentationKeys,
 } from "./intro-presentation.api";
 
-const TEACHER_RANK = 2;
+/** Rang le moins élevé de l'équipe (root 0, administrateur 1, pédagogique 2). */
+const TEAM_MAX_RANK = 2;
 const STUDENT_RANK = 3;
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -38,8 +39,8 @@ const unique = (titles: string[]) => [...new Set(titles)];
 /**
  * Cartes de la présentation.
  *
- * Seuls les formateurs et les apprenants voient un de leurs parcours ; les
- * autres rôles et le mode démonstration (compte partagé) n'ont que des exemples.
+ * L'équipe (root, administrateur, pédagogique) et les apprenants voient un de leurs
+ * parcours ; le mode démonstration (compte partagé) n'a que des exemples.
  * Les lectures s'enchaînent du parcours jusqu'à une leçon et chacune peut
  * échouer sans bloquer : le niveau concerné devient alors un exemple.
  */
@@ -50,9 +51,9 @@ export function useIntroCards(enabled: boolean): {
   const { user } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const rank = user?.roles[0]?.rank;
-  const isTeacher = rank === TEACHER_RANK;
+  const isTeam = rank !== undefined && rank <= TEAM_MAX_RANK;
   const isStudent = rank === STUDENT_RANK;
-  const canUseOwnContent = enabled && !demoMode && (isTeacher || isStudent);
+  const canUseOwnContent = enabled && !demoMode && (isTeam || isStudent);
 
   const instance = useQuery({
     queryKey: ["instance-settings"],
@@ -64,7 +65,7 @@ export function useIntroCards(enabled: boolean): {
   const teacherParcours = useQuery({
     queryKey: ["root-parcours"],
     queryFn: dashboardAdminApi.queries.getRootParcours,
-    enabled: canUseOwnContent && isTeacher,
+    enabled: canUseOwnContent && isTeam,
     staleTime: STALE_TIME,
   });
   const studentParcours = useQuery({
@@ -75,7 +76,7 @@ export function useIntroCards(enabled: boolean): {
   });
 
   let pathway: Pathway | undefined;
-  if (isTeacher) {
+  if (isTeam) {
     const formations = (teacherParcours.data ?? []).filter((formation) =>
       formation.parcours.some((parcours) => parcours.canManage !== false),
     );

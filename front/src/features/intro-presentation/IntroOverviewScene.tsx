@@ -17,6 +17,7 @@ import {
 } from "./intro-levels";
 import { ScrollTrigger, gsap, prefersReducedMotion } from "./intro-motion";
 import IntroChatbot from "./IntroChatbot";
+import IntroChildrenStack from "./IntroChildrenStack";
 import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
@@ -96,6 +97,9 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
   const chatbotAnchorRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
+  // Repli de la pyramide en cours, avant d'enregistrer la fin de la présentation.
+  const [isClosing, setIsClosing] = useState(false);
+  const closeRef = useRef<((done: () => void) => void) | null>(null);
   // L'organisme n'est sélectionné dans le rail qu'à l'apparition de son encadré.
   const [isOrganisationShown, setIsOrganisationShown] = useState(false);
 
@@ -103,6 +107,9 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
   // Palier une fois la pyramide immobile : le chatbot ne se déplace qu'alors,
   // vers la plaque du niveau, et non pendant le défilement.
   const [settledStep, setSettledStep] = useState(0);
+  // Élément enfant survolé, dans la pile 3D ou la liste : il ne vaut que pour son palier.
+  const [hover, setHover] = useState({ step: 0, row: -1 });
+  const hoveredRow = hover.step === settledStep ? hover.row : -1;
   const [panelStyle, setPanelStyle] = useState<CSSProperties | undefined>();
 
   const settledRef = useRef(0);
@@ -364,6 +371,32 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
         defaults: { ease: "none" },
       });
 
+      // Repli de fin : la pile s'écrase sur la plaque de la formation, les plus hautes
+      // plaques d'abord, puis la fin de la présentation est enregistrée.
+      closeRef.current = (done) => {
+        // La plaque de la formation reste : c'est elle qui reçoit l'écrasement, et
+        // la dernière image doit être une plaque à plat, pas une pile de plaques.
+        const base = stage.querySelector(".intro-plate");
+        const crushed = gsap
+          .utils.toArray<HTMLElement>(
+            ".intro-child-plate, .intro-layer-plate, .intro-plate",
+            stage,
+          )
+          .filter((plate) => plate !== base);
+        const stagger = { each: 0.08, from: "end" } as const;
+        const closing = gsap.timeline({ onComplete: done });
+        closing.to(crushed, { z: 0, duration: 0.7, ease: "power3.in", stagger }, 0);
+        // Chaque plaque se fond dans la formation en la touchant.
+        closing.to(
+          crushed,
+          { opacity: 0, duration: 0.2, ease: "power1.in", stagger },
+          0.5,
+        );
+        // Tout le reste de la scène (arborescence, détail, plaque, commandes) s'estompe
+        // d'un même fondu, lancé juste avant la fin de l'écrasement pour l'enchaîner.
+        closing.to(scroller, { opacity: 0, duration: 0.5, ease: "power1.inOut" }, ">-0.35");
+      };
+
       ScrollTrigger.create({
         trigger: spacer,
         scroller,
@@ -431,10 +464,27 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
         { rotationX: 46, rotation: -4, duration: LAST_STEP - 1 },
         1,
       );
+      // Dès le premier niveau, les plaques des niveaux suivants s'affaissent sur la
+      // formation, qui reste visible et sert de première couche à la pile des
+      // éléments du niveau, rangée au même endroit sur le côté.
+      timeline.to(plates.slice(1), { autoAlpha: 0, z: 0, duration: 0.8, ease: "power2.in" }, 0.2);
     }, stage);
 
-    return () => context.revert();
+    return () => {
+      closeRef.current = null;
+      context.revert();
+    };
   }, []);
+
+  const handleComplete = () => {
+    if (isClosing) return;
+    if (prefersReducedMotion() || !closeRef.current) {
+      onComplete();
+      return;
+    }
+    setIsClosing(true);
+    closeRef.current(onComplete);
+  };
 
   const goToStep = (step: number) => {
     const scroller = scrollRef.current;
@@ -455,7 +505,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
       PageDown: -1,
     };
     const move = moves[event.key];
-    if (move === undefined) return;
+    if (move === undefined || isClosing) return;
     event.preventDefault();
     goToStep(activeStep + move);
   };
@@ -472,7 +522,11 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
       role="region"
       aria-label="Découverte des niveaux, faites défiler vers le haut ou utilisez les flèches"
       onKeyDown={handleKeyDown}
-      className="absolute inset-0 overflow-y-auto overscroll-contain [container-type:size]"
+      className={cn(
+        "absolute inset-0 overflow-y-auto overscroll-contain [container-type:size]",
+        // Pendant le repli, ni défilement ni clic ne doivent interrompre l'animation.
+        isClosing && "pointer-events-none",
+      )}
     >
       <div
         ref={spacerRef}
@@ -540,11 +594,20 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
                   backgroundColor={backgroundColor}
                   plateColors={plateColors}
                   onSelect={(index) => goToStep(index + 1)}
-                />
+                >
+                  <IntroChildrenStack
+                    card={settledCard}
+                    // Dès le retour vers l'introduction, les cartes s'effacent sans attendre
+                    // que la pyramide soit au repos : elle se redresse déjà sous elles.
+                    levelIndex={activeStep >= 1 ? settledStep : 0}
+                    highlightedRow={hoveredRow}
+                    onHighlightRow={(row) => setHover({ step: settledStep, row })}
+                  />
+                </IntroLevelStack>
               </div>
               {isDetailShown && settledCard ? (
                 <>
-                  <div className={cn("mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
+                  <div className={cn("intro-detail-wrap mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
                       // Sous le titre de la colonne ; le chatbot se place dessous.
                       isCompactSidebar ? "lg:top-0" : "lg:top-32",
                     )}>
@@ -553,6 +616,8 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
                       card={settledCard}
                       index={settledStep}
                       activeDetail={activeDetail}
+                      highlightedRow={hoveredRow}
+                      onHighlightRow={(row) => setHover({ step: settledStep, row })}
                     />
                   </div>
                 </>
@@ -599,10 +664,10 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
-                disabled={isSaving}
-                onClick={onComplete}
+                disabled={isSaving || isClosing}
+                onClick={handleComplete}
               >
-                {isSaving ? (
+                {isSaving || isClosing ? (
                   <span
                     className="loading loading-spinner loading-xs"
                     aria-hidden="true"

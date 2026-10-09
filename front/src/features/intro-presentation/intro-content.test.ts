@@ -85,4 +85,19 @@ describe("buildIntroCards", () => {
     expect(cards[6].details).toEqual([]);
     cards.slice(1, -1).forEach((card) => expect(card.details.length).toBeGreaterThan(0));
   });
+
+  it("met la première lettre des titres réels en majuscule, sans toucher au reste", () => {
+    const cards = buildIntroCards({
+      formationTitles: ["réceptionniste en hôtellerie"],
+      parcoursTitles: ["promo réceptionniste 2026 - 2027", "Autre"],
+    });
+
+    expect(cards[1].title).toBe("Réceptionniste en hôtellerie");
+    expect(cards[2].title).toBe("Promo réceptionniste 2026 - 2027");
+    // Les lignes d'une carte sont les éléments du niveau suivant.
+    expect(cards[1].rows.map((row) => row.title).slice(0, 2)).toEqual([
+      "Promo réceptionniste 2026 - 2027",
+      "Autre",
+    ]);
+  });
 });

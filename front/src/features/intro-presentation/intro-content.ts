@@ -77,6 +77,10 @@ const ACTIVITY_TYPES: IntroItem[] = ["Texte", "Vidéo", "Image", "Ressource"].ma
   (title) => ({ title, isPlaceholder: false }),
 );
 
+/** Les titres saisis peuvent commencer par une minuscule : on n'affiche que leur première lettre en majuscule. */
+const capitalizeFirst = (title: string): string =>
+  title.charAt(0).toLocaleUpperCase("fr") + title.slice(1);
+
 const placeholder = (title: string): IntroItem => ({
   title,
   isPlaceholder: true,
@@ -94,7 +98,7 @@ const buildRows = (
     .map((title) => title.trim())
     .filter(Boolean)
     .slice(0, INTRO_ROW_COUNT)
-    .map((title) => ({ title, isPlaceholder: false }));
+    .map((title) => ({ title: capitalizeFirst(title), isPlaceholder: false }));
 
   for (let index = rows.length; index < INTRO_ROW_COUNT; index += 1) {
     rows.push(placeholder(`${placeholderTitle} ${index + 1} (exemple)`));
@@ -108,7 +112,9 @@ const firstTitle = (
   fallback: string,
 ): IntroItem => {
   const title = titles?.map((value) => value.trim()).find(Boolean);
-  return title ? { title, isPlaceholder: false } : placeholder(fallback);
+  return title
+    ? { title: capitalizeFirst(title), isPlaceholder: false }
+    : placeholder(fallback);
 };
 
 const activityTitles = (activities: IntroSource["activities"]): string[] =>

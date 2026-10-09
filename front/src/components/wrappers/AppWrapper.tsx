@@ -18,7 +18,9 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
             en sortie, elle recule légèrement puis part d'un coup vers la gauche, comme poussée. */}
         <aside
           className={cn(
-            "z-20",
+            // Au-dessus des éléments du contenu (calendrier, en-têtes sticky jusqu'à z-30) pour que
+            // la bulle du questionnaire ne passe pas dessous ; sous les modales et tiroirs (z-50).
+            "z-40",
             sidebarPhase === "normal" ? "h-full" : "absolute left-2 top-2",
             sidebarPhase === "leaving" &&
               "-translate-x-[130%] transition-transform duration-700 ease-[cubic-bezier(0.6,-0.28,0.735,0.045)] motion-reduce:transition-none",

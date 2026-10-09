@@ -133,8 +133,10 @@ export default function StudentLearningOnboarding() {
   const [saving, setSaving] = useState(false);
   const [started, setStarted] = useState(false);
   const [welcomeStarted, setWelcomeStarted] = useState(false);
+  // L'intro n'est réservée qu'à la toute première arrivée (redirection automatique) : un onboarding déjà entamé, repris depuis le dashboard, ne la rejoue pas.
   const showIntro = useAuthIntro(
     context?.onboardingMode === "initial" && context.onboardingRequired &&
+    context.shouldAutoRedirect &&
     !context.profile.currentStep && !welcomeStarted,
   );
   const [hobbies, setHobbies] = useFormField(form, "hobbies");
@@ -697,6 +699,7 @@ export default function StudentLearningOnboarding() {
                         ?
                       </h1>
                     </div>
+                    <AuthOnboardingChatbot key={module.id} introduction={false} compact message="Choisissez le niveau qui correspond le mieux à votre situation actuelle. Si vous hésitez, « Je ne sais pas encore » est un bon choix : nous adapterons le contenu au fil de votre progression." />
                   </div>
                   <div>
                     <LevelChoiceButtons

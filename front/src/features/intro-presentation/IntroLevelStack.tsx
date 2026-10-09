@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { INTRO_PYRAMID_LEVELS } from "./intro-levels";
 import IntroOrganisationFrame from "./IntroOrganisationFrame";
@@ -16,6 +16,8 @@ type Props = {
   plateColors: { glass: string; text: string };
   /** Appelé avec l'indice (dans la pyramide) de la plaque cliquée. */
   onSelect: (index: number) => void;
+  /** Pile des éléments enfants, posée dans le même repère 3D que les plaques : même caméra par construction. */
+  children?: ReactNode;
 };
 
 /**
@@ -33,6 +35,7 @@ const IntroLevelStack = ({
   backgroundColor,
   plateColors,
   onSelect,
+  children,
 }: Props) => (
   <div
     aria-hidden="true"
@@ -65,6 +68,7 @@ const IntroLevelStack = ({
               onSelect={() => onSelect(index)}
             />
           ))}
+          {children}
         </div>
       </div>
     </div>
