@@ -536,3 +536,26 @@ html,body{background:var(--embed-page-background);width:100%;height:100%;overflo
 
 /* The welcome avatar keeps only its colored circle, without launcher shadows. */
 #root[data-chatbot-only] #dashboard-chatbot>button{box-shadow:none!important;filter:none!important;transition:none!important}
+
+/* Sidebar tutorial (presentation only): 3D glass windows beside the stopped sidebar. */
+.tutorial-layer{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:60;perspective:1800px;perspective-origin:50% 50%}
+.tutorial-link{position:absolute;height:2px;transform-origin:0 50%;background:linear-gradient(90deg,var(--sidebar-content,var(--color-primary-content)),var(--color-primary));border-radius:2px;pointer-events:none}
+.tutorial-window{position:absolute;width:560px;padding:34px 38px 30px;border-radius:22px;color:var(--color-base-content);background:var(--color-base-100);border:1px solid var(--color-base-300);box-shadow:0 30px 60px color-mix(in srgb,var(--color-neutral,#000) 20%,transparent);transform-origin:0 50%}
+.tutorial-head{display:flex;align-items:center;gap:22px}
+.tutorial-icon{display:grid;place-items:center;flex:none;width:68px;height:68px;border-radius:18px;background:var(--color-primary);color:var(--color-primary-content)}
+.tutorial-icon svg{width:36px;height:36px}
+.tutorial-count{display:block;font-size:19px;opacity:.7}
+.tutorial-title{margin:2px 0 0;font-size:34px;line-height:1.15;font-weight:700}
+.tutorial-text{margin:22px 0 0;font-size:24px;line-height:1.4}
+.tutorial-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:28px}
+.tutorial-actions .btn{height:48px;min-height:48px;padding:0 24px;font-size:20px}
+.dashboard-navigation.tutorial-on a{transition:opacity .3s,box-shadow .3s}
+.dashboard-navigation.tutorial-on a:not(.tutorial-active){opacity:.6}
+.dashboard-navigation.tutorial-on a.tutorial-active{box-shadow:0 0 0 2px var(--sidebar-active-content,var(--color-primary-content)),0 0 28px color-mix(in srgb,var(--sidebar-active-content,var(--color-primary-content)) 55%,transparent)}
+
+.tutorial-links{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.tutorial-curve{fill:none;stroke:var(--color-primary);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;opacity:.55}
+.tutorial-dot{fill:var(--color-primary)}
+.tutorial-chip{position:absolute;border-radius:16px;overflow:hidden;background:var(--color-base-100);border:1px solid var(--color-base-300);box-shadow:0 26px 50px color-mix(in srgb,var(--color-neutral,#000) 22%,transparent);pointer-events:none}
+.tutorial-chip.is-cropped{-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}
+.tutorial-chip-inner{position:absolute;left:0;top:0;transform-origin:0 0}

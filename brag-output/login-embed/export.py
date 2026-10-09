@@ -19,7 +19,8 @@ sequences=[[scenes[name] for name in names] for names in mappings]
 # Use the actual first scene, not the deleted old closing slogan.
 intro=scenes['identity']
 styles=re.findall(r'<style>(.*?)</style>',html,re.S)
-(OUT/'scene.css').write_text('\n'.join(styles)+'\n'+(HERE/'player.css').read_text())
+# The sidebar tutorial belongs to the presentation only: the login tiles and brand frames do not load it.
+(OUT/'scene.css').write_text('\n'.join(styles)+'\n'+(HERE/'player.css').read_text()+'\n'+(HERE/'tutorial.css').read_text())
 scripts=re.findall(r'<script>(.*?)</script>',html,re.S)
 (OUT/'timeline.js').write_text('\n'.join(scripts))
 html=re.sub(r'<style>.*?</style>','<link rel="stylesheet" href="scene.css">',html,flags=re.S)

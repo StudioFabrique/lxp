@@ -24,9 +24,13 @@ export type IntroSpaceCard = {
 };
 
 export type IntroSpaceNavEntry = {
+  /** Clé de l'entrée dans `sidebarItems` : le tutoriel y rattache les composants à montrer. */
+  key: string;
   /** Intitulé d'origine dans le film, qui sert de clé. */
   label: string;
   displayLabel: string;
+  /** Explication affichée par le tutoriel de la barre latérale ; vide si aucune. */
+  description: string;
 };
 
 export type IntroSpaceResume = {
@@ -78,13 +82,16 @@ export const buildNavEntries = (
     canRead: (item: SidebarItemConfig) => boolean;
     isTeacher: boolean;
     displayLabel?: (item: SidebarItemConfig) => string;
+    description?: (item: SidebarItemConfig) => string;
   },
 ): IntroSpaceNavEntry[] =>
   items
     .filter((item) => (!item.teacherOnly || options.isTeacher) && options.canRead(item))
     .map((item) => ({
+      key: item.key,
       label: item.label,
       displayLabel: options.displayLabel?.(item) ?? item.label,
+      description: options.description?.(item) ?? "",
     }));
 
 const limitRows = (rows: IntroSpaceRow[], empty: IntroSpaceRow): IntroSpaceRow[] =>

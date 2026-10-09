@@ -13,6 +13,7 @@ import {
   buildTeamContent,
   type IntroSpaceContent,
 } from "./intro-space-content";
+import { getSidebarHelp } from "./intro-sidebar-help";
 import { useIntroSpaceReady } from "./useIntroSpaceReady";
 
 /**
@@ -63,6 +64,7 @@ export const useIntroTeamContent = (role: IntroRoleOption) => {
           isTeacher,
           displayLabel: (item) =>
             item.key === "module" ? getModulesLabel(user, item.label) : item.label,
+          description: (item) => getSidebarHelp("admin", item),
         }),
         recommended: recommendedActions,
         modules,

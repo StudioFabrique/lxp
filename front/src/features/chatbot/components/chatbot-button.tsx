@@ -10,7 +10,7 @@ type Props = {
 
 export default function ChatbotButton({ onOpenChatbot }: Props) {
   // Pendant la présentation, le bas de l'écran porte ses propres commandes : le bouton flotte à mi-hauteur.
-  const { isOpen: isIntroOpen } = useIntroPresentation();
+  const { isOpen: isIntroOpen, hasJustRevealed } = useIntroPresentation();
 
   const handleOpenChatbot = () => {
     onOpenChatbot();
@@ -36,7 +36,8 @@ export default function ChatbotButton({ onOpenChatbot }: Props) {
         onClick={handleOpenChatbot}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0, x: 40, scale: 0.95 }}
+        // À la fin de la séquence 3D, le bouton est déjà à sa place : pas d'entrée animée.
+        initial={hasJustRevealed ? false : { opacity: 0, x: 40, scale: 0.95 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         exit={{ opacity: 0, x: 20, scale: 0.95 }}
         transition={{ duration: 0.3, ease: "easeOut" }}

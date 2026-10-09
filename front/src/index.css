@@ -741,3 +741,9 @@
     --sidebar-active-content: #eff6ff;
     --sidebar-border: #35609a;
 }
+
+/* Entrée en fondu de la barre latérale et du tableau de bord (connexion, rechargement, fin de la présentation). */
+@keyframes app-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

@@ -1,5 +1,6 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { useIntroPresentation } from "../../features/intro-presentation/useIntroPresentation";
+import { useVisualPreferences } from "../../store/VisualPreferences";
 import { cn } from "../../utils/cn";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 
 const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
   const { sidebarPhase } = useIntroPresentation();
+  const { animations } = useVisualPreferences();
 
   return (
     <div className="relative flex flex-col h-screen p-2 bg-base-100 box-border">
@@ -21,6 +23,8 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
             // Au-dessus des éléments du contenu (calendrier, en-têtes sticky jusqu'à z-30) pour que
             // la bulle du questionnaire ne passe pas dessous ; sous les modales et tiroirs (z-50).
             "z-40",
+            // Apparition en fondu à la connexion, au rechargement et au retour de la séquence (la barre masquée se réaffiche).
+            animations && "animate-[app-fade-in_0.8s_ease-out]",
             sidebarPhase === "normal" ? "h-full" : "absolute left-2 top-2",
             sidebarPhase === "leaving" &&
               "-translate-x-[130%] transition-transform duration-700 ease-[cubic-bezier(0.6,-0.28,0.735,0.045)] motion-reduce:transition-none",

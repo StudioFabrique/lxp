@@ -15,6 +15,8 @@ export type IntroPresentationContextValue = {
   isSaving: boolean;
   /** Vrai pendant la détection du rôle qui suit la présentation. */
   isRoleRevealOpen: boolean;
+  /** Vrai un court instant après la découverte du rôle : l'interface réelle se substitue à la séquence. */
+  hasJustRevealed: boolean;
   sidebarPhase: SidebarPhase;
   setSidebarExit: (exit: SidebarExit) => void;
   /** Vrai quand le chatbot de l'application doit laisser la place à celui de la présentation. */
@@ -32,6 +34,7 @@ export const IntroPresentationContext =
     isOpen: false,
     isSaving: false,
     isRoleRevealOpen: false,
+    hasJustRevealed: false,
     sidebarPhase: "normal",
     setSidebarExit: () => {},
     isChatbotHidden: false,

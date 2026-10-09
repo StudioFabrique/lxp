@@ -1,5 +1,260 @@
 const sequences=[[{"id": "structure", "start": 3.0, "duration": 19.0}], [{"id": "personalize", "start": 79.5, "duration": 6.0}], [{"id": "assistant", "start": 28.5, "duration": 12.0}], [{"id": "steering", "start": 74.5, "duration": 5.0}], [{"id": "author", "start": 22.0, "duration": 6.5}], [{"id": "assess", "start": 40.5, "duration": 6.0}], [{"id": "organize", "start": 51.5, "duration": 6.5}], [{"id": "care", "start": 63.0, "duration": 11.5}], [{"id": "dashboards", "start": 85.5, "duration": 13.0}], [{"id": "progression", "start": 58.0, "duration": 5.0}], [{"id": "groups", "start": 101.5, "duration": 16.0}], [{"id": "trainers", "start": 117.5, "duration": 16.0}], [{"id": "tags", "start": 133.5, "duration": 16.0}], [{"id": "emails", "start": 149.5, "duration": 18.0}], [{"id": "instance", "start": 167.5, "duration": 18.0}], [{"id": "accomplishments", "start": 185.5, "duration": 16.0}]];
 const opening={"id": "identity", "start": 0.0, "duration": 3.0};
+/* Sidebar tutorial, presentation only: the film stops once the sidebar is unfolded and glass windows in 3D
+   explain its entries one by one. Around each explanation, excerpts of the real components the entry leads to
+   (cloned from the film's own screens) float in depth, joined to the entry by fine curves, while the camera moves.
+   The last button resumes the sequence. Never loaded with data on the login tiles. */
+(() => {
+  let steps = [];
+  let state = null;
+  const SVG = 'http://www.w3.org/2000/svg';
+  const make = (tag, className) => Object.assign(document.createElement(tag), {className});
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+  const role = new URLSearchParams(location.search).get('role') === 'student' ? 'student' : 'team';
+  // Slow, different camera moves for the successive entries: a pan and a slight turn of the interface.
+  const MOVES = [
+    {x: 0, y: 0, scale: 0, rotationX: 0, rotation: 0},
+    {x: -50, y: -24, scale: .08, rotationX: 3, rotation: -1.5},
+    {x: 30, y: -44, scale: .04, rotationX: -2, rotation: 1.5},
+    {x: -20, y: 14, scale: .1, rotationX: 2, rotation: -2},
+  ];
+  // The real components each sidebar entry leads to, taken from the film's screens (first match of each selector).
+  const EXCERPTS = {
+    team: {
+      home: ['#dash-actions .fixture-glow', '#dash-latest .fixture-glow', '#dash-alerts .fixture-glow'],
+      user: ['#group-january', '#team-group .relationship-card', '#team-group'],
+      group: ['#team-group', '#group-october'],
+      parcours: ['#face-1 .native-card', '#face-formation .native-card', '#group-parcours'],
+      module: ['#face-2 .native-card', '#face-1 .native-card', '#face-3 .native-card'],
+      course: ['#face-3 .native-card', '#face-4 .native-card', '#face-2 .native-card'],
+      calendar: ['#organize .calendar-panel', '#calendar-event-preview', '#organize .operation-bottom .fixture-glow:nth-child(2)'],
+      evaluations: ['#correction', '#assignments .work-panel', '#risk-panel .fixture-glow'],
+      resource: ['#organize .operation-bottom .fixture-glow', '#steering .steering-right .fixture-glow'],
+      role: ['#organize .operation-bottom .fixture-glow:nth-child(2)', '#team-group', '#group-october'],
+      tag: ['#tag-library', '#tags .relationship-card', '#tag-choice'],
+      mediatheque: ['#organize .operation-bottom .fixture-glow', '#author .palette'],
+    },
+    student: {
+      home: ['#dash-resume .fixture-glow', '#dash-paths .fixture-glow', '#dash-skills .fixture-glow'],
+      parcours: ['#dash-paths .fixture-glow', '#face-1 .native-card'],
+      calendar: ['#organize .calendar-panel', '#calendar-event-preview'],
+      assignments: ['#assignments .work-panel', '#correction'],
+      resources: ['#organize .operation-bottom .fixture-glow', '#steering .steering-right .fixture-glow'],
+    },
+  };
+  // Where the excerpts float around the explanation, relative to it: [dx, dy from its right/top, anchor] and tilt.
+  const SLOTS = [
+    {at: 'below-left', rotationY: -10, rotation: -1.5, z: 30},
+    {at: 'above-right', rotationY: -12, rotation: 1, z: 50},
+    {at: 'below-right', rotationY: -8, rotation: 1.5, z: 0},
+  ];
+  const CHIP_WIDTH = 420;
+  const CHIP_MAX_HEIGHT = 230;
+  // Sizes are left to the layout (copied pixel widths wrap the text differently); only the excerpt's root keeps its own.
+  const SKIP = new Set(['width', 'height', 'inline-size', 'block-size', 'perspective-origin', 'transform', 'opacity', 'transition', 'animation', 'will-change', 'perspective', 'transform-style', 'transform-origin', 'filter']);
+  // A frozen copy of a real component: its computed styles are copied one by one, so it keeps its look away from its screen.
+  const snapshot = el => {
+    const scene = el.closest('section.scene');
+    const was = scene.style.display;
+    scene.style.display = 'block';
+    const view = el.ownerDocument.defaultView;
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('.pointer-events-none.absolute, .card-slab').forEach(extra => extra.remove());
+    const originals = [el, ...el.querySelectorAll('*')].filter(node => !node.matches('.pointer-events-none.absolute, .card-slab') && !node.closest('.pointer-events-none.absolute, .card-slab'));
+    const copies = [clone, ...clone.querySelectorAll('*')];
+    const size = {width: el.offsetWidth, height: el.offsetHeight};
+    originals.forEach((original, index) => {
+      const copy = copies[index];
+      const computed = view.getComputedStyle(original);
+      let css = '';
+      for (const property of computed) if (!SKIP.has(property)) css += `${property}:${computed.getPropertyValue(property)};`;
+      copy.removeAttribute('id');
+      copy.style.cssText = css;
+      // Elements the timeline keeps hidden at this instant are shown: the excerpt is a still of the finished component.
+      copy.style.opacity = original.style.opacity !== '' && parseFloat(computed.opacity) === 0 ? '1' : computed.opacity;
+    });
+    scene.style.display = was;
+    Object.assign(clone.style, {position: 'relative', left: '0', top: '0', margin: '0', opacity: '1', width: `${size.width}px`, height: `${size.height}px`, overflow: 'hidden'});
+    return {clone, ...size};
+  };
+  window.__setupTutorial = (nav, details) => {
+    steps = [...nav.querySelectorAll('.dashboard-navigation>li')].filter(item => item.style.display !== 'none').map(item => {
+      const link = item.querySelector('a');
+      const label = link?.getAttribute('aria-label') ?? '';
+      const detail = details.get(label);
+      return {link, label, description: detail?.description ?? '', key: detail?.key ?? '', icon: link?.querySelector('svg')};
+    }).filter(step => step.link);
+    window.__startTutorial = steps.length ? start : undefined;
+  };
+  const poseOf = () => ({
+    camera: {x: gsap.getProperty('.dashboard-camera', 'x'), y: gsap.getProperty('.dashboard-camera', 'y'), scale: gsap.getProperty('.dashboard-camera', 'scale')},
+    stage: {rotationX: gsap.getProperty('.dashboard-stage', 'rotationX'), rotation: gsap.getProperty('.dashboard-stage', 'rotation')},
+  });
+  const killOwn = () => {
+    if (!state) return;
+    // Only the tutorial's own tweens: the camera and stage also carry the film's timeline tweens, which must survive.
+    gsap.killTweensOf([state.layer, state.window, state.links, ...state.chips]);
+    state.chips.forEach(chip => gsap.killTweensOf(chip.firstChild));
+    state.moves.forEach(tween => tween.kill());
+    state.moves = [];
+  };
+  const cleanup = () => {
+    if (!state) return;
+    killOwn();
+    for (const step of steps) step.link.classList.remove('tutorial-active');
+    state.nav.classList.remove('tutorial-on');
+    state.layer.remove();
+    state = null;
+  };
+  window.__stopTutorial = cleanup;
+  const curve = (from, to) => {
+    const reach = Math.max((to.x - from.x) * .55, 40);
+    return `M${from.x},${from.y} C${from.x + reach},${from.y} ${to.x - reach},${to.y} ${to.x},${to.y}`;
+  };
+  const show = index => {
+    const {layer, window: panel, links, nav, sidebar} = state;
+    const step = steps[index];
+    state.index = index;
+    steps.forEach((other, position) => other.link.classList.toggle('tutorial-active', position === index));
+    layer.querySelector('.tutorial-count').textContent = `Étape ${index + 1} sur ${steps.length}`;
+    layer.querySelector('.tutorial-title').textContent = step.label;
+    layer.querySelector('.tutorial-text').textContent = step.description;
+    layer.querySelector('.tutorial-icon').replaceChildren(...(step.icon ? [step.icon.cloneNode(true)] : []));
+    layer.querySelector('.tutorial-prev').disabled = index === 0;
+    const next = layer.querySelector('.tutorial-next');
+    next.textContent = index === steps.length - 1 ? 'Continuer' : 'Suivant';
+    // The real components of this entry, as floating excerpts.
+    state.chips.forEach(chip => { gsap.killTweensOf(chip.firstChild); chip.remove(); });
+    state.chips = [];
+    const wanted = (EXCERPTS[role][step.key] ?? []);
+    for (const selector of wanted) {
+      if (state.chips.length >= SLOTS.length) break;
+      const source = document.querySelector(selector);
+      if (!source || !source.textContent.trim()) continue;
+      const shot = snapshot(source);
+      if (!shot.width || !shot.height) continue;
+      const scale = CHIP_WIDTH / shot.width;
+      const shown = Math.min(shot.height * scale, CHIP_MAX_HEIGHT);
+      const chip = make('div', 'tutorial-chip');
+      const inner = make('div', 'tutorial-chip-inner');
+      Object.assign(chip.style, {width: `${CHIP_WIDTH}px`, height: `${shown}px`});
+      chip.classList.toggle('is-cropped', shot.height * scale > CHIP_MAX_HEIGHT);
+      Object.assign(inner.style, {width: `${shot.width}px`, height: `${shot.height}px`});
+      gsap.set(inner, {scale, transformOrigin: '0 0'});
+      inner.appendChild(shot.clone);
+      chip.appendChild(inner);
+      layer.appendChild(chip);
+      state.chips.push(chip);
+    }
+    // Camera move of this step: measured at its end pose, then played from the current one.
+    const move = MOVES[index % MOVES.length];
+    const from = poseOf();
+    const to = {
+      camera: {x: state.base.camera.x + move.x, y: state.base.camera.y + move.y, scale: state.base.camera.scale + move.scale},
+      stage: {rotationX: state.base.stage.rotationX + move.rotationX, rotation: state.base.stage.rotation + move.rotation},
+    };
+    state.moves.forEach(tween => tween.kill());
+    gsap.set('.dashboard-camera', to.camera);
+    gsap.set('.dashboard-stage', to.stage);
+    // Positions are read in the 1920 x 1080 space of the scene, whatever the zoom of the frame.
+    const area = layer.getBoundingClientRect();
+    const unit = area.width / 1920 || 1;
+    const rect = step.link.getBoundingClientRect();
+    const edge = (sidebar.getBoundingClientRect().right - area.left) / unit;
+    const centre = (rect.top + rect.height / 2 - area.top) / unit;
+    gsap.set('.dashboard-camera', from.camera);
+    gsap.set('.dashboard-stage', from.stage);
+    state.moves = [
+      gsap.to('.dashboard-camera', {...to.camera, duration: 1, ease: 'power2.inOut'}),
+      gsap.to('.dashboard-stage', {...to.stage, duration: 1, ease: 'power2.inOut'}),
+    ];
+    // The explanation sits beside its entry; the excerpts float around it.
+    const width = panel.offsetWidth;
+    const height = panel.offsetHeight;
+    const left = clamp(edge + 120, 0, Math.min(860, 1920 - 70 - width));
+    const top = clamp(centre - height / 2, 270, 1080 - 520);
+    panel.style.left = `${left}px`;
+    panel.style.top = `${top}px`;
+    const origin = {x: edge - 4, y: centre};
+    const targets = [{x: left, y: top + height / 2}];
+    const placed = [];
+    state.chips.forEach((chip, position) => {
+      const slot = SLOTS[position];
+      const chipHeight = parseFloat(chip.style.height);
+      const spots = {
+        'below-left': {x: left - 20, y: top + height + 34},
+        'above-right': {x: left + width - CHIP_WIDTH + 70, y: top - chipHeight - 34},
+        'below-right': {x: left + width - CHIP_WIDTH + 30, y: top + height + 34 + (state.chips.length > 2 ? 90 : 0)},
+      };
+      const spot = {x: clamp(spots[slot.at].x, 30, 1920 - CHIP_WIDTH - 90), y: clamp(spots[slot.at].y, 30, 1080 - chipHeight - 40)};
+      chip.style.left = `${spot.x}px`;
+      chip.style.top = `${spot.y}px`;
+      placed.push({chip, slot, spot});
+      targets.push({x: spot.x, y: spot.y + Math.min(chipHeight / 2, 60)});
+    });
+    // Fine curves from the entry to each card, drawn in one after the other.
+    links.replaceChildren();
+    const paths = targets.map(target => {
+      const path = document.createElementNS(SVG, 'path');
+      path.setAttribute('d', curve(origin, target));
+      path.setAttribute('pathLength', '1');
+      path.setAttribute('class', 'tutorial-curve');
+      const dot = document.createElementNS(SVG, 'circle');
+      dot.setAttribute('cx', target.x);
+      dot.setAttribute('cy', target.y);
+      dot.setAttribute('r', 5);
+      dot.setAttribute('class', 'tutorial-dot');
+      links.append(path, dot);
+      return {path, dot};
+    });
+    const start = document.createElementNS(SVG, 'circle');
+    start.setAttribute('cx', origin.x);
+    start.setAttribute('cy', origin.y);
+    start.setAttribute('r', 6);
+    start.setAttribute('class', 'tutorial-dot');
+    links.appendChild(start);
+    gsap.killTweensOf([panel, links]);
+    gsap.fromTo(panel, {opacity: 0, x: 60, z: -120, rotationY: -16}, {opacity: 1, x: 0, z: 0, rotationY: -4, duration: .65, ease: 'power3.out'});
+    gsap.fromTo(paths.map(item => item.path), {strokeDashoffset: 1}, {strokeDashoffset: 0, duration: .8, ease: 'power2.inOut', stagger: .12});
+    gsap.fromTo(paths.map(item => item.dot).concat(start), {opacity: 0, scale: 0, transformOrigin: 'center'}, {opacity: 1, scale: 1, duration: .35, delay: .5, stagger: .1, ease: 'back.out(2)'});
+    placed.forEach(({chip, slot, spot}, position) => {
+      gsap.fromTo(chip, {opacity: 0, x: 50, y: 30, z: -240, rotationY: slot.rotationY - 22}, {opacity: 1, x: 0, y: 0, z: slot.z, rotationY: slot.rotationY, rotation: slot.rotation, duration: .8, delay: .2 + position * .14, ease: 'power3.out'});
+      // A slow float keeps the excerpts alive in depth while the step is read.
+      gsap.to(chip.firstChild, {y: position % 2 ? -8 : 8, duration: 2.6 + position * .5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1});
+    });
+    next.focus({preventScroll: true});
+  };
+  const finish = () => {
+    if (!state) return;
+    const {resume, layer, base} = state;
+    // The film resumes from its own camera pose: the interface settles back into it first.
+    state.moves.forEach(tween => tween.kill());
+    state.moves = [
+      gsap.to('.dashboard-camera', {...base.camera, duration: .5, ease: 'power2.inOut'}),
+      gsap.to('.dashboard-stage', {...base.stage, duration: .5, ease: 'power2.inOut'}),
+    ];
+    gsap.to(layer, {opacity: 0, duration: .4, delay: .1, ease: 'power1.in', onComplete: () => { cleanup(); resume(); }});
+  };
+  function start(resume) {
+    cleanup();
+    const scene = document.getElementById('dashboards');
+    const nav = steps[0].link.closest('.dashboard-navigation');
+    const layer = make('div', 'tutorial-layer');
+    layer.setAttribute('role', 'dialog');
+    layer.setAttribute('aria-label', 'Découverte de la barre latérale');
+    layer.innerHTML = '<svg class="tutorial-links" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"></svg><div class="tutorial-window"><div class="tutorial-head"><span class="tutorial-icon" aria-hidden="true"></span><div><small class="tutorial-count"></small><h3 class="tutorial-title"></h3></div></div><p class="tutorial-text" aria-live="polite"></p><div class="tutorial-actions"><button type="button" class="btn btn-ghost btn-sm tutorial-prev">Précédent</button><button type="button" class="btn btn-primary btn-sm tutorial-next"></button></div></div>';
+    scene.appendChild(layer);
+    state = {layer, nav, resume, index: 0, moves: [], chips: [], base: poseOf(), window: layer.querySelector('.tutorial-window'), links: layer.querySelector('.tutorial-links'), sidebar: scene.querySelector('.floating-sidebar')};
+    nav.classList.add('tutorial-on');
+    layer.querySelector('.tutorial-prev').addEventListener('click', () => show(Math.max(state.index - 1, 0)));
+    layer.querySelector('.tutorial-next').addEventListener('click', () => state.index >= steps.length - 1 ? finish() : show(state.index + 1));
+    layer.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight') layer.querySelector('.tutorial-next').click();
+      if (event.key === 'ArrowLeft') layer.querySelector('.tutorial-prev').click();
+    });
+    show(0);
+  }
+})();
 /* Only local, authored scenes. No network, API, active IA or Studio dependency. */
 (() => {
   const channel = 'andria-auth-presentation';
@@ -35,6 +290,8 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   const endingLead = 3;
   let endingSent = false;
   let activeSceneId = null;
+  // Presentation only: the film stops once at `hold` (seconds into the clip) while the sidebar tutorial runs.
+  let holdPassed = false;
   const notify = state => parent.postMessage({channel, state}, '*');
   const fit = () => {
     if (chatbotOnly) {
@@ -85,7 +342,17 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   const tick = now => {
     if (!playing) return;
     if (lastFrame !== null) elapsed = Math.min(duration, elapsed + (now-lastFrame)/1000);
-    lastFrame = now;paint();
+    lastFrame = now;
+    const hold = params.get('role') && Number.isFinite(window.__tutorialHold) ? window.__tutorialHold : null;
+    const holding = hold !== null && !holdPassed && elapsed >= hold && !!window.__startTutorial;
+    if (holding) elapsed = hold;
+    paint();
+    if (holding) {
+      holdPassed = true;playing = false;lastFrame = null;cancelAnimationFrame(frame);notify('paused');
+      // The sequence carries on from the same instant once the tutorial is done.
+      window.__startTutorial(play);
+      return;
+    }
     if (elapsed >= duration) { pause('ended'); return; }
     if (!endingSent && !logoOnly && !chatbotOnly && duration - elapsed <= endingLead) { endingSent = true; notify('ending'); }
     frame = requestAnimationFrame(tick);
@@ -165,7 +432,8 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     if (action) { if (typeof content.headerAction === 'string') action.textContent = str(content.headerAction); else action.style.display = 'none'; }
     // Sidebar: only the entries the role can open, under their real labels.
     setText(nav.querySelector(':scope>small'), content.spaceLabel);
-    const entries = new Map((Array.isArray(content.nav) ? content.nav : []).map(entry => [str(entry?.label), str(entry?.displayLabel)]));
+    const navEntries = Array.isArray(content.nav) ? content.nav : [];
+    const entries = new Map(navEntries.map(entry => [str(entry?.label), str(entry?.displayLabel)]));
     for (const item of nav.querySelectorAll('.dashboard-navigation>li')) {
       const link = item.querySelector('a');
       const label = link?.getAttribute('aria-label') ?? '';
@@ -175,6 +443,7 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
       link.setAttribute('data-tip', shown);
       setText(link.querySelector(':scope>span:last-child'), shown);
     }
+    window.__setupTutorial?.(nav, new Map(navEntries.map(entry => [str(entry?.displayLabel) || str(entry?.label), {description: str(entry?.description, 220), key: str(entry?.key, 40)}])));
     const profile = document.querySelector('#dashboards .dashboard-profile');
     setText(profile?.querySelector('.avatar'), str(content.initials, 3));
     setText(profile?.querySelector('b'), content.userName);
@@ -216,8 +485,21 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   };
   window.addEventListener('message',event => {
     if (event.source !== parent || !event.data || typeof event.data !== 'object' || event.data.channel !== channel) return;
-    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme,transparentBackground,content} = event.data;
-    if (action === 'content') { applyContent(content); return; }
+    const {action,color,contentColor,backgroundColor,textColor,autoplay,gesture,colorScheme,transparentBackground,content,chatbot} = event.data;
+    if (action === 'content') {
+      applyContent(content);
+      // Where the application's own launcher sits in this frame (px, centre and diameter): converted to scene units.
+      const finite = value => typeof value === 'number' && Number.isFinite(value);
+      if (params.get('role') && chatbot && finite(chatbot.centerX) && finite(chatbot.centerY) && finite(chatbot.size) && chatbot.size > 0) {
+        const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+        window.__dezoomChatbot?.({
+          x: (chatbot.centerX - (innerWidth - 1920 * scale) / 2) / scale,
+          y: (chatbot.centerY - (innerHeight - 1080 * scale) / 2) / scale,
+          size: chatbot.size / scale,
+        });
+      }
+      return;
+    }
     if (colorScheme === 'light' || colorScheme === 'dark') document.documentElement.style.colorScheme = colorScheme;
     if (action === 'initialize') {
       tint(color,contentColor,backgroundColor,textColor,transparentBackground);
@@ -237,6 +519,7 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
         timeline = window.__createBrandTimeline(gesture);
       }
       const wasPlaying = playing;
+      holdPassed = false;window.__stopTutorial?.();
       elapsed = 0;endingSent = false;paint();play();
       if (wasPlaying) notify('playing');
     }

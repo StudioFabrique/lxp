@@ -16,6 +16,9 @@ import {
   shouldAutoOpenIntro,
 } from "./intro-presentation-status";
 
+/** Durée pendant laquelle l'interface qui remplace la séquence est considérée comme en cours d'apparition. */
+const HANDOFF_MS = 1500;
+
 type Props = {
   /** Faux tant que le compte n'est pas prêt, par exemple pendant le questionnaire apprenant. */
   isEligible?: boolean;
@@ -53,6 +56,13 @@ export const IntroPresentationProvider = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isRoleRevealOpen, setIsRoleRevealOpen] = useState(false);
   const [isChatbotHidden, setChatbotHidden] = useState(false);
+  // Le temps que l'interface réelle remplace la séquence : le chatbot est déjà en place, sans entrée animée.
+  const [hasJustRevealed, setHasJustRevealed] = useState(false);
+  useEffect(() => {
+    if (!hasJustRevealed) return;
+    const timer = setTimeout(() => setHasJustRevealed(false), HANDOFF_MS);
+    return () => clearTimeout(timer);
+  }, [hasJustRevealed]);
   const [sidebarExit, setSidebarExit] = useState<SidebarExit>("none");
 
   // Sans état enregistré, l'ancien compte est traité comme jamais présenté.
@@ -115,6 +125,7 @@ export const IntroPresentationProvider = ({
     isOpen,
     isSaving,
     isRoleRevealOpen,
+    hasJustRevealed,
     sidebarPhase,
     setSidebarExit,
     // Pendant la découverte du rôle, la séquence joue son propre chatbot.
@@ -124,6 +135,7 @@ export const IntroPresentationProvider = ({
     skip: () => void close("skipped"),
     complete: () => void close("completed"),
     closeRoleReveal: () => {
+      setHasJustRevealed(true);
       setIsRoleRevealOpen(false);
       setSidebarExit("none");
     },

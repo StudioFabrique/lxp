@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import type { SidebarItemConfig } from "../../config/sidebarItems";
+import { sidebarItems, type SidebarItemConfig } from "../../config/sidebarItems";
 import { INTRO_ROLES } from "./intro-role";
+import { getSidebarHelp } from "./intro-sidebar-help";
 import {
   buildInitials,
   buildNavEntries,
@@ -26,6 +27,29 @@ describe("intro-space-content", () => {
 
     expect(buildNavEntries(items, { canRead, isTeacher: false }).map((e) => e.label)).toEqual(["Accueil"]);
     expect(buildNavEntries(items, { canRead, isTeacher: true }).map((e) => e.label)).toEqual(["Accueil", "Évaluations"]);
+  });
+
+  it("transmet l'explication de chaque entrée au tutoriel de la barre latérale", () => {
+    const items = [item("home", "Accueil"), item("tag", "Tags")];
+    const entries = buildNavEntries(items, {
+      canRead: () => true,
+      isTeacher: false,
+      description: (entry) => getSidebarHelp("admin", entry),
+    });
+
+    expect(entries.map((entry) => entry.description)).toEqual([
+      expect.stringContaining("tableau de bord"),
+      expect.stringContaining("tags"),
+    ]);
+    expect(buildNavEntries(items, { canRead: () => true, isTeacher: false })[0].description).toBe("");
+  });
+
+  it("fournit une explication pour chaque entrée de la barre latérale", () => {
+    for (const layout of ["admin", "student"] as const) {
+      for (const entry of sidebarItems[layout]) {
+        expect(getSidebarHelp(layout, entry), `${layout}/${entry.key}`).not.toBe("");
+      }
+    }
   });
 
   it("construit le dashboard administrateur sans bouton d'en-tête ni retours", () => {

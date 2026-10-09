@@ -12,6 +12,7 @@ import {
   buildStudentContent,
   type IntroSpaceContent,
 } from "./intro-space-content";
+import { getSidebarHelp } from "./intro-sidebar-help";
 import { useIntroSpaceReady } from "./useIntroSpaceReady";
 
 /** Contenu du dashboard apprenant, lu avec les mêmes requêtes que le vrai dashboard. */
@@ -40,6 +41,7 @@ export const useIntroStudentContent = (role: IntroRoleOption) => {
         nav: buildNavEntries(sidebarItems.student, {
           canRead: (item) => ability.can("read", item.subject),
           isTeacher: false,
+          description: (item) => getSidebarHelp("student", item),
         }),
         lastLesson: lastLesson
           ? {

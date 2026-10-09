@@ -710,6 +710,44 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
     tl.fromTo(reply,{opacity:0,x:16},{opacity:1,x:0,duration:.5,ease:'power2.out',immediateRender:false},click+.3);
     tl.to('#dashboard-chatbot svg',{rotation:-6,y:-2,duration:.3,ease:'sine.inOut'},click+.3);
     tl.to('#dashboard-chatbot svg',{rotation:0,y:0,duration:.4,ease:'sine.inOut'},click+.6);
+    // Presentation only (the login tiles never pass a role): the film stops once the sidebar is
+    // unfolded and opaque, before the camera pulls back and the board is built. The player holds
+    // here while the tutorial walks through each sidebar entry, then resumes. Everything that
+    // follows is pushed back so the sequence stays whole; the sidebar's own tweens stay in place.
+    const settle=tl.getChildren(false,true,false).find(t=>inScene(t)&&has(t,'.sidebar-glass-front')&&t.vars.opacity===0);
+    if(settle){
+      const holdAt=settle.startTime()+settle.duration()+.1,delta=holdAt-pull;
+      const sidebarPart=(t)=>t.targets().some(x=>x instanceof Element&&(x.closest('.floating-sidebar')||x.matches('.sidebar-glass-pane,.sidebar-solid-pane')));
+      const drift=tl.getChildren(false,true,false).find(t=>inScene(t)&&has(t,'.dashboard-stage')&&Math.abs(t.startTime()-S)<.01&&t.vars.rotationX===48);
+      const later=tl.getChildren(false,true,false).filter(t=>inScene(t)&&t.startTime()>=pull-.01&&!(sidebarPart(t)&&t.startTime()<holdAt));
+      for(const tween of later)tween.startTime(tween.startTime()+delta);
+      // The stage turns towards the viewer while the tutorial runs so the sidebar reads clearly,
+      // then the pull-back starts from that same pose.
+      const lean={rotationX:34,rotation:-3,scale:.95,x:50,y:20};
+      const pullStage=tl.getChildren(false,true,false).find(t=>inScene(t)&&has(t,'.dashboard-stage')&&t.vars.rotationX===26);
+      if(drift&&pullStage){
+        drift.kill();pullStage.kill();
+        tl.fromTo('.dashboard-stage',{rotationX:54,rotation:-12,scale:.95,x:110,y:20},{...lean,duration:holdAt-S,ease:'sine.inOut',immediateRender:false},S);
+        tl.fromTo('.dashboard-stage',lean,{rotationX:26,rotation:-3,scale:.94,x:-20,y:10,duration:1.9,ease:'power2.inOut',immediateRender:false},holdAt);
+      }
+      window.__dashboardRoleExtra+=delta;
+      window.__tutorialHold=holdAt-S;
+      // The sequence ends on the real interface's own chatbot: once its message has been read, the camera
+      // pulls back so the launcher has the size and place of the application's button. The host supplies
+      // that target (scene coordinates), so the tiles and any host without it keep the zoomed ending.
+      const dezoomAt=E+delta+4.3;
+      window.__dashboardRoleExtra+=.6;
+      let dezoomed=false;
+      window.__dezoomChatbot=(spot)=>{
+        if(dezoomed)return;
+        const natural=scene.querySelector('#dashboard-chatbot>button')?.offsetWidth;
+        if(!natural||!(spot.size>0))return;
+        dezoomed=true;
+        // The launcher sits at the camera's origin (1774, 970): it stays put while the camera scales.
+        tl.to('.dashboard-chatbot-message,.dashboard-chatbot-reply',{opacity:0,duration:.25,ease:'power1.in',immediateRender:false},dezoomAt);
+        tl.fromTo('.dashboard-camera',{x:-384,y:-360,scale:3.6},{x:spot.x-1774,y:spot.y-970,scale:spot.size/natural,duration:.7,ease:'power2.inOut',immediateRender:false},dezoomAt+.1);
+      };
+    }
   }
 }
 
