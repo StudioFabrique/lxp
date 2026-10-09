@@ -9,6 +9,51 @@ const styles = readFileSync(resolve("../brag-output/login-embed/player.css"), "u
 describe("embedded presentation initialization", () => {
   afterEach(() => document.body.replaceChildren());
 
+  it.each([[1698, 828], [1000, 760], [390, 844], [1920, 1080]])(
+    "keeps the final chatbot fully inside the film at %s × %s",
+    (width, height) => {
+      const root = document.createElement("div");
+      root.id = "root";
+      document.body.append(root);
+      const dezoom = vi.fn<(spot: { x: number; y: number; size: number }) => void>();
+      let onMessage: ((event: { source: object; data: object }) => void) | undefined;
+      const parent = { postMessage: vi.fn() };
+      runInNewContext(`
+        const sequences = [[{ id: 'dashboards', start: 85.5, duration: 13 }]];
+        const opening = { id: 'identity', start: 0, duration: 3 };
+        ${player}
+      `, {
+        window: {
+          __timelines: { main: { totalTime: vi.fn() } },
+          __dezoomChatbot: dezoom,
+          addEventListener: (type: string, listener: typeof onMessage) => {
+            if (type === "message") onMessage = listener;
+          },
+        },
+        document, parent, URLSearchParams, location: { search: "?role=team" },
+        innerWidth: width, innerHeight: height, getComputedStyle,
+        CSS: { supports: () => true },
+        requestAnimationFrame: vi.fn(), cancelAnimationFrame: vi.fn(),
+      });
+      onMessage?.({ source: parent, data: {
+        channel: "andria-auth-presentation", action: "content",
+        chatbot: { centerX: width - 56, centerY: height - 56, size: 64 },
+      } });
+      expect(dezoom).toHaveBeenCalledOnce();
+      const spot = dezoom.mock.calls[0][0];
+      const scale = Math.min(width / 1920, height / 1080);
+      const margin = 16 / scale;
+      expect(spot.size * scale).toBeCloseTo(64);
+      expect(spot.x - spot.size / 2).toBeGreaterThanOrEqual(margin);
+      expect(spot.y - spot.size / 2).toBeGreaterThanOrEqual(margin);
+      expect(spot.x + spot.size / 2).toBeLessThanOrEqual(1920 - margin);
+      expect(spot.y + spot.size / 2).toBeLessThanOrEqual(1080 - margin);
+      if (width === 1920 && height === 1080) {
+        expect(spot).toEqual({ x: width - 56, y: height - 56, size: 64 });
+      }
+    },
+  );
+
   it.each([true, false])("fits the preview and fullscreen without losing its center (zoom: %s)", (supportsZoom) => {
     const root = document.createElement("div");
     root.id = "root";

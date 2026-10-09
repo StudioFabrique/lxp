@@ -29,6 +29,8 @@ L’export lit `brag-output/composition/index.html` sans le réécrire. Il publi
 
 `player.js` et `player.css` ici sont les sources du lecteur. Le JavaScript est servi dans des fichiers locaux externes, compatible avec la CSP de production ; aucun `eval` et aucune dépendance frontend supplémentaire.
 
+Le tutoriel de la sidebar utilise aussi `tutorial.css`. Ses liaisons restent attachées aux cartes et à l’entrée active pendant les déplacements, avec un reflet continu à vitesse constante. Les animations sont nettoyées à chaque changement d’étape et à la fermeture. Le dézoom final du chatbot vise le bouton de l’application, dans les limites du cadre 16:9 : son diamètre et une marge de 16 pixels sont pris en compte pour éviter qu’il soit coupé sur les écrans larges ou en portrait.
+
 ## Vérifications
 
 Build TypeScript/Vite, lint ciblé, tests des tuiles, du lecteur et du logo. Contrôle Chrome sur la page de connexion, les six fins de séquence et le chargement avec la CSP de production. Un test existant de `AuthLayout.test.tsx` sur le titre des notes de version échoue indépendamment : il attend le texte « ANDRIA » dans un h2 dont le contenu actuel est un logo. Ce test et les notes de version n’ont pas été modifiés.

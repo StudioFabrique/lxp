@@ -6,7 +6,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
-import { ArrowLeft, ArrowRight, Check, ChevronsUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronsUp } from "lucide-react";
 
 import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
@@ -31,7 +31,7 @@ type Props = {
   /** Une carte par niveau : l'élément retenu, ce qu'il contient et ses composants. */
   cards: IntroCard[];
   isSaving: boolean;
-  /** Appelé quand l'utilisateur termine la présentation, au dernier niveau. */
+  /** Appelé quand l'utilisateur poursuit la découverte après le dernier niveau. */
   onComplete: () => void;
 };
 
@@ -649,7 +649,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
           </p>
 
           {/* En bas à droite : « Précédent », puis « Suivant » (même action que le défilement
-              vers le haut) ou « Terminer la présentation » au dernier niveau. */}
+              vers le haut) ou « Continuer la découverte » au dernier niveau. */}
           <div className="absolute bottom-4 right-4 flex items-center gap-2 sm:right-8">
             <button
               type="button"
@@ -667,15 +667,15 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
                 disabled={isSaving || isClosing}
                 onClick={handleComplete}
               >
+                Continuer la découverte
                 {isSaving || isClosing ? (
                   <span
                     className="loading loading-spinner loading-xs"
                     aria-hidden="true"
                   />
                 ) : (
-                  <Check className="size-4" aria-hidden="true" />
+                  <ArrowRight className="size-4" aria-hidden="true" />
                 )}
-                Terminer la présentation
               </button>
             ) : (
               <button

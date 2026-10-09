@@ -50,6 +50,7 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   ];
   const CHIP_WIDTH = 420;
   const CHIP_MAX_HEIGHT = 230;
+  const SIDEBAR_SHIFT = -70;
   // Sizes are left to the layout (copied pixel widths wrap the text differently); only the excerpt's root keeps its own.
   const SKIP = new Set(['width', 'height', 'inline-size', 'block-size', 'perspective-origin', 'transform', 'opacity', 'transition', 'animation', 'will-change', 'perspective', 'transform-style', 'transform-origin', 'filter']);
   // A frozen copy of a real component: its computed styles are copied one by one, so it keeps its look away from its screen.
@@ -93,7 +94,9 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
   const killOwn = () => {
     if (!state) return;
     // Only the tutorial's own tweens: the camera and stage also carry the film's timeline tweens, which must survive.
-    gsap.killTweensOf([state.layer, state.window, state.links, ...state.chips]);
+    gsap.killTweensOf([state.layer, state.window, state.links, ...state.links.children, ...state.chips]);
+    if (state.linkTick) gsap.ticker.remove(state.linkTick);
+    state.linkTick = null;
     state.chips.forEach(chip => gsap.killTweensOf(chip.firstChild));
     state.moves.forEach(tween => tween.kill());
     state.moves = [];
@@ -112,7 +115,8 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     return `M${from.x},${from.y} C${from.x + reach},${from.y} ${to.x - reach},${to.y} ${to.x},${to.y}`;
   };
   const show = index => {
-    const {layer, window: panel, links, nav, sidebar} = state;
+    killOwn();
+    const {layer, window: panel, links, sidebar} = state;
     const step = steps[index];
     state.index = index;
     steps.forEach((other, position) => other.link.classList.toggle('tutorial-active', position === index));
@@ -150,7 +154,7 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     const move = MOVES[index % MOVES.length];
     const from = poseOf();
     const to = {
-      camera: {x: state.base.camera.x + move.x, y: state.base.camera.y + move.y, scale: state.base.camera.scale + move.scale},
+      camera: {x: state.base.camera.x + SIDEBAR_SHIFT + move.x, y: state.base.camera.y + move.y, scale: state.base.camera.scale + move.scale},
       stage: {rotationX: state.base.stage.rotationX + move.rotationX, rotation: state.base.stage.rotation + move.rotation},
     };
     state.moves.forEach(tween => tween.kill());
@@ -171,12 +175,12 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     // The explanation sits beside its entry; the excerpts float around it.
     const width = panel.offsetWidth;
     const height = panel.offsetHeight;
-    const left = clamp(edge + 120, 0, Math.min(860, 1920 - 70 - width));
+    const left = clamp(edge + 280, 0, Math.min(1100, 1920 - 140 - width));
     const top = clamp(centre - height / 2, 270, 1080 - 520);
     panel.style.left = `${left}px`;
     panel.style.top = `${top}px`;
     const origin = {x: edge - 4, y: centre};
-    const targets = [{x: left, y: top + height / 2}];
+    const targets = [panel];
     const placed = [];
     state.chips.forEach((chip, position) => {
       const slot = SLOTS[position];
@@ -190,22 +194,21 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
       chip.style.left = `${spot.x}px`;
       chip.style.top = `${spot.y}px`;
       placed.push({chip, slot, spot});
-      targets.push({x: spot.x, y: spot.y + Math.min(chipHeight / 2, 60)});
+      targets.push(chip);
     });
-    // Fine curves from the entry to each card, drawn in one after the other.
+    // A quiet continuous line carries a highlight at constant speed, without a pause at each loop.
     links.replaceChildren();
     const paths = targets.map(target => {
       const path = document.createElementNS(SVG, 'path');
-      path.setAttribute('d', curve(origin, target));
-      path.setAttribute('pathLength', '1');
       path.setAttribute('class', 'tutorial-curve');
+      const flow = document.createElementNS(SVG, 'path');
+      flow.setAttribute('class', 'tutorial-curve tutorial-flow');
+      flow.setAttribute('pathLength', '1');
       const dot = document.createElementNS(SVG, 'circle');
-      dot.setAttribute('cx', target.x);
-      dot.setAttribute('cy', target.y);
       dot.setAttribute('r', 5);
       dot.setAttribute('class', 'tutorial-dot');
-      links.append(path, dot);
-      return {path, dot};
+      links.append(path, flow, dot);
+      return {path, flow, dot, target};
     });
     const start = document.createElementNS(SVG, 'circle');
     start.setAttribute('cx', origin.x);
@@ -215,13 +218,40 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     links.appendChild(start);
     gsap.killTweensOf([panel, links]);
     gsap.fromTo(panel, {opacity: 0, x: 60, z: -120, rotationY: -16}, {opacity: 1, x: 0, z: 0, rotationY: -4, duration: .65, ease: 'power3.out'});
-    gsap.fromTo(paths.map(item => item.path), {strokeDashoffset: 1}, {strokeDashoffset: 0, duration: .8, ease: 'power2.inOut', stagger: .12});
-    gsap.fromTo(paths.map(item => item.dot).concat(start), {opacity: 0, scale: 0, transformOrigin: 'center'}, {opacity: 1, scale: 1, duration: .35, delay: .5, stagger: .1, ease: 'back.out(2)'});
-    placed.forEach(({chip, slot, spot}, position) => {
+    gsap.fromTo(links, {opacity: 0}, {opacity: 1, duration: .65, ease: 'sine.out'});
+    paths.forEach(({flow}, position) => {
+      // SVG attributes preserve fractional offsets on normalized paths, avoiding CSS pixel rounding.
+      const offset = -position / paths.length;
+      state.moves.push(gsap.fromTo(flow, {attr: {'stroke-dashoffset': offset}}, {attr: {'stroke-dashoffset': offset - 1}, duration: 3.6, repeat: -1, ease: 'none'}));
+    });
+    placed.forEach(({chip, slot}, position) => {
       gsap.fromTo(chip, {opacity: 0, x: 50, y: 30, z: -240, rotationY: slot.rotationY - 22}, {opacity: 1, x: 0, y: 0, z: slot.z, rotationY: slot.rotationY, rotation: slot.rotation, duration: .8, delay: .2 + position * .14, ease: 'power3.out'});
       // A slow float keeps the excerpts alive in depth while the step is read.
-      gsap.to(chip.firstChild, {y: position % 2 ? -8 : 8, duration: 2.6 + position * .5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1});
+      gsap.fromTo(chip, {y: 0}, {y: position % 2 ? -8 : 8, duration: 2.6 + position * .5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.1 + position * .14, immediateRender: false});
     });
+    // Read all moving anchors before writing SVG geometry; keep the curves attached during camera and card motion.
+    state.linkTick = () => {
+      const bounds = layer.getBoundingClientRect();
+      const scale = bounds.width / 1920 || 1;
+      const entry = step.link.getBoundingClientRect();
+      const source = {x: (entry.right - bounds.left) / scale, y: (entry.top + entry.height / 2 - bounds.top) / scale};
+      const ends = paths.map(({target}) => {
+        const box = target.getBoundingClientRect();
+        return {x: (box.left - bounds.left) / scale, y: (box.top - bounds.top) / scale + Math.min(box.height / scale / 2, target === panel ? Infinity : 60)};
+      });
+      start.setAttribute('cx', source.x);
+      start.setAttribute('cy', source.y);
+      paths.forEach(({path, flow, dot}, position) => {
+        const end = ends[position];
+        const d = curve(source, end);
+        path.setAttribute('d', d);
+        flow.setAttribute('d', d);
+        dot.setAttribute('cx', end.x);
+        dot.setAttribute('cy', end.y);
+      });
+    };
+    state.linkTick();
+    gsap.ticker.add(state.linkTick);
     next.focus({preventScroll: true});
   };
   const finish = () => {
@@ -244,7 +274,7 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
     layer.setAttribute('aria-label', 'Découverte de la barre latérale');
     layer.innerHTML = '<svg class="tutorial-links" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"></svg><div class="tutorial-window"><div class="tutorial-head"><span class="tutorial-icon" aria-hidden="true"></span><div><small class="tutorial-count"></small><h3 class="tutorial-title"></h3></div></div><p class="tutorial-text" aria-live="polite"></p><div class="tutorial-actions"><button type="button" class="btn btn-ghost btn-sm tutorial-prev">Précédent</button><button type="button" class="btn btn-primary btn-sm tutorial-next"></button></div></div>';
     scene.appendChild(layer);
-    state = {layer, nav, resume, index: 0, moves: [], chips: [], base: poseOf(), window: layer.querySelector('.tutorial-window'), links: layer.querySelector('.tutorial-links'), sidebar: scene.querySelector('.floating-sidebar')};
+    state = {layer, nav, resume, index: 0, moves: [], chips: [], linkTick: null, base: poseOf(), window: layer.querySelector('.tutorial-window'), links: layer.querySelector('.tutorial-links'), sidebar: scene.querySelector('.floating-sidebar')};
     nav.classList.add('tutorial-on');
     layer.querySelector('.tutorial-prev').addEventListener('click', () => show(Math.max(state.index - 1, 0)));
     layer.querySelector('.tutorial-next').addEventListener('click', () => state.index >= steps.length - 1 ? finish() : show(state.index + 1));
@@ -492,10 +522,15 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
       const finite = value => typeof value === 'number' && Number.isFinite(value);
       if (params.get('role') && chatbot && finite(chatbot.centerX) && finite(chatbot.centerY) && finite(chatbot.size) && chatbot.size > 0) {
         const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+        // The film is clipped to its 16:9 scene, even when the iframe has empty space around it.
+        // Keep the whole launcher inside that scene, with breathing room at the destination.
+        const size = Math.min(chatbot.size / scale, 1080);
+        const inset = Math.min(size / 2 + 16 / scale, 540);
+        const clampToScene = (value, extent) => Math.min(Math.max(value, inset), extent - inset);
         window.__dezoomChatbot?.({
-          x: (chatbot.centerX - (innerWidth - 1920 * scale) / 2) / scale,
-          y: (chatbot.centerY - (innerHeight - 1080 * scale) / 2) / scale,
-          size: chatbot.size / scale,
+          x: clampToScene((chatbot.centerX - (innerWidth - 1920 * scale) / 2) / scale, 1920),
+          y: clampToScene((chatbot.centerY - (innerHeight - 1080 * scale) / 2) / scale, 1080),
+          size,
         });
       }
       return;

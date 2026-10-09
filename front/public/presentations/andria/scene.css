@@ -554,7 +554,8 @@ html,body{background:var(--embed-page-background);width:100%;height:100%;overflo
 .dashboard-navigation.tutorial-on a.tutorial-active{box-shadow:0 0 0 2px var(--sidebar-active-content,var(--color-primary-content)),0 0 28px color-mix(in srgb,var(--sidebar-active-content,var(--color-primary-content)) 55%,transparent)}
 
 .tutorial-links{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
-.tutorial-curve{fill:none;stroke:var(--color-primary);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;opacity:.55}
+.tutorial-curve{fill:none;stroke:var(--color-primary);stroke-width:2;stroke-linecap:round;opacity:.3}
+.tutorial-flow{stroke-dasharray:.16 .84;opacity:.8}
 .tutorial-dot{fill:var(--color-primary)}
 .tutorial-chip{position:absolute;border-radius:16px;overflow:hidden;background:var(--color-base-100);border:1px solid var(--color-base-300);box-shadow:0 26px 50px color-mix(in srgb,var(--color-neutral,#000) 22%,transparent);pointer-events:none}
 .tutorial-chip.is-cropped{-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}

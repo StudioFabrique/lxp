@@ -11,7 +11,7 @@ export const OVERVIEW_DIALOGUE: readonly string[] = [
 export const INTRO_HELP: ChatbotHelp = {
   action:
     "Faites défiler vers le haut, ou utilisez les flèches à droite, pour découvrir les niveaux un par un.",
-  next: "Cliquez sur « Suivant », ou faites défiler vers le haut, pour passer au niveau suivant. Au dernier niveau, cliquez sur « Terminer la présentation ».",
+  next: "Cliquez sur « Suivant », ou faites défiler vers le haut, pour passer au niveau suivant. Au dernier niveau, cliquez sur « Continuer la découverte ».",
   back: "Faites défiler vers le bas, utilisez la flèche du bas, ou cliquez sur un niveau à gauche, pour revenir en arrière.",
 };
 
