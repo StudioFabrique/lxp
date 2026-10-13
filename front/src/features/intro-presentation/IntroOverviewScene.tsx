@@ -6,7 +6,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
-import { ArrowLeft, ArrowRight, ChevronsUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronsDown } from "lucide-react";
 
 import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
@@ -16,6 +16,9 @@ import {
   INTRO_PYRAMID_LEVEL_COUNT,
 } from "./intro-levels";
 import { ScrollTrigger, gsap, prefersReducedMotion } from "./intro-motion";
+import type { IntroFormationOption } from "./intro-example-formations";
+import IntroFormationSelector from "./IntroFormationSelector";
+import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION } from "./intro-stack-layout";
 import IntroChatbot from "./IntroChatbot";
 import IntroChildrenStack from "./IntroChildrenStack";
 import IntroLevelDetail from "./IntroLevelDetail";
@@ -30,6 +33,10 @@ import { useIntroPresentation } from "./useIntroPresentation";
 type Props = {
   /** Une carte par niveau : l'élément retenu, ce qu'il contient et ses composants. */
   cards: IntroCard[];
+  onSelectChild?: (parentIndex: number, rowIndex: number) => void;
+  formationOptions?: readonly IntroFormationOption[];
+  selectedFormationId?: string;
+  onSelectFormation?: (id: string) => void;
   isSaving: boolean;
   /** Appelé quand l'utilisateur poursuit la découverte après le dernier niveau. */
   onComplete: () => void;
@@ -65,9 +72,9 @@ const MIN_SIDE_BY_SIDE_WIDTH = 720;
  *
  * Au palier 0, aucun niveau n'est sélectionné : la pyramide est vue du dessus
  * (presque en 2D) devant l'encadré « Organisme de formation », dont le nom est
- * affiché en grand, et le chatbot dialogue. Le sens est inversé : la zone
- * démarre en bas de son défilement et on progresse en défilant vers le haut. La
- * progression du scroll, inversée, pilote une timeline GSAP : la pile s'incline
+ * affiché en grand, et le chatbot dialogue. La zone démarre en haut de son
+ * défilement et on progresse en défilant vers le bas. La progression du scroll
+ * pilote une timeline GSAP : la pile s'incline
  * puis se range sur le côté, et le détail du niveau se déploie depuis sa plaque
  * sans toucher aux autres plaques. Le chatbot explique le niveau puis chacun de
  * ses composants. Les boutons et le clavier déplacent la même zone, il n'y a
@@ -75,11 +82,17 @@ const MIN_SIDE_BY_SIDE_WIDTH = 720;
  */
 /** Couleurs des plaques quand aucun fond coloré ne les précède : celles du thème. */
 const THEME_PLATE_COLORS = {
-  glass: "var(--color-base-100)",
+  glass: "color-mix(in srgb, var(--color-base-200) 88%, var(--color-base-content))",
   text: "var(--color-base-content)",
 };
 
-const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
+const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFormationId, onSelectFormation, isSaving, onComplete }: Props) => {
+  const maxStep = Math.max(1, cards.length - 1);
+  const maxStepRef = useRef(maxStep);
+  useLayoutEffect(() => {
+    maxStepRef.current = maxStep;
+    ScrollTrigger.refresh();
+  }, [maxStep]);
   const { logoUrl, backgroundColor } = useInstanceBranding();
   // Sur un fond coloré (blanc, par exemple) les plaques de verre et leur texte prennent
   // ce fond et un texte lisible dessus, pour ne pas dépendre du thème clair ou sombre.
@@ -104,6 +117,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
   const [isOrganisationShown, setIsOrganisationShown] = useState(false);
 
   const columnRef = useRef<HTMLDivElement>(null);
+  const formationSelectorRef = useRef<HTMLDivElement>(null);
   // Palier une fois la pyramide immobile : le chatbot ne se déplace qu'alors,
   // vers la plaque du niveau, et non pendant le défilement.
   const [settledStep, setSettledStep] = useState(0);
@@ -139,7 +153,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
   const settledCard = settledStep >= 1 ? cards[settledStep] : undefined;
   const guideStep = useIntroGuide(
     (settledCard?.details.length ?? 0) + 1,
-    `level-${settledStep}`,
+    `level-${settledStep}-${settledCard?.title ?? ""}`,
     isChatbotReady && settledStep >= 1,
   );
   const activeDetail = settledCard ? guideStep - 1 : -1;
@@ -363,8 +377,8 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
         setIsOrganisationShown(true);
       }
 
-      // Le scroll démarre en bas : défiler vers le haut fait avancer.
-      scroller.scrollTop = scroller.scrollHeight - scroller.clientHeight;
+      // Le scroll démarre en haut : défiler vers le bas fait avancer.
+      scroller.scrollTop = 0;
 
       const timeline = gsap.timeline({
         paused: true,
@@ -379,7 +393,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
         const base = stage.querySelector(".intro-plate");
         const crushed = gsap
           .utils.toArray<HTMLElement>(
-            ".intro-child-plate, .intro-layer-plate, .intro-plate",
+            ".intro-child-layer, .intro-child-plate, .intro-layer-plate, .intro-plate",
             stage,
           )
           .filter((plate) => plate !== base);
@@ -403,7 +417,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
         start: "top top",
         end: "bottom bottom",
         snap: {
-          snapTo: 1 / LAST_STEP,
+          snapTo: (value: number) => Math.round(value * maxStepRef.current) / maxStepRef.current,
           // Le palier le plus proche, quelle que soit la vitesse du geste.
           directional: false,
           inertia: false,
@@ -411,8 +425,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
           ease: "power1.inOut",
         },
         onUpdate: (self) => {
-          // Progression inversée : le haut de la zone correspond au dernier palier.
-          const progress = 1 - self.progress;
+          const progress = self.progress * maxStepRef.current / LAST_STEP;
           setActiveStep(Math.round(progress * LAST_STEP));
           if (reduced) {
             timeline.progress(progress);
@@ -427,9 +440,9 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
         },
       });
 
-      // L'encadré de l'organisme et la consigne s'effacent dès le premier palier ; les
+      // L'encadré de l'organisme s'efface dès le premier palier ; les
       // plaques, qui reposent alors sur la page, reprennent les couleurs du thème.
-      timeline.to([organisation, hint], { autoAlpha: 0, duration: 0.5 }, 0.1);
+      timeline.to(organisation, { autoAlpha: 0, duration: 0.5 }, 0.1);
       timeline.set(
         stage.querySelector(".intro-plate-scope"),
         {
@@ -461,7 +474,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
       );
       timeline.to(
         stack,
-        { rotationX: 46, rotation: -4, duration: LAST_STEP - 1 },
+        { rotationX: FINAL_STACK_ROTATION_X, rotation: FINAL_STACK_ROTATION, duration: LAST_STEP - 1 },
         1,
       );
       // Dès le premier niveau, les plaques des niveaux suivants s'affaissent sur la
@@ -489,20 +502,20 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
   const goToStep = (step: number) => {
     const scroller = scrollRef.current;
     if (!scroller) return;
-    const clamped = Math.min(Math.max(step, 0), LAST_STEP);
+    const clamped = Math.min(Math.max(step, 0), maxStep);
     const distance = scroller.scrollHeight - scroller.clientHeight;
     scroller.scrollTo({
-      top: distance - (distance / LAST_STEP) * clamped,
+      top: (distance / maxStep) * clamped,
       behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const moves: Record<string, number> = {
-      ArrowUp: 1,
-      PageUp: 1,
-      ArrowDown: -1,
-      PageDown: -1,
+      ArrowUp: -1,
+      PageUp: -1,
+      ArrowDown: 1,
+      PageDown: 1,
     };
     const move = moves[event.key];
     if (move === undefined || isClosing) return;
@@ -512,7 +525,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
 
   const levelIndex = activeStep - 1;
   const level = INTRO_PYRAMID_LEVELS[levelIndex];
-  const isLast = activeStep === LAST_STEP;
+  const isLast = activeStep >= maxStep;
 
   return (
     // La zone de défilement est atteignable au clavier : ses flèches changent de palier.
@@ -520,7 +533,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
       ref={scrollRef}
       tabIndex={0}
       role="region"
-      aria-label="Découverte des niveaux, faites défiler vers le haut ou utilisez les flèches"
+      aria-label="Découverte des niveaux, faites défiler vers le bas ou utilisez les flèches"
       onKeyDown={handleKeyDown}
       className={cn(
         "absolute inset-0 overflow-y-auto overscroll-contain [container-type:size]",
@@ -530,12 +543,12 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
     >
       <div
         ref={spacerRef}
-        style={{ height: `${100 + LAST_STEP * STEP_HEIGHT_CQH}cqh` }}
+        style={{ height: `${100 + maxStep * STEP_HEIGHT_CQH}cqh` }}
       >
         <div
           ref={stageRef}
           className={cn(
-            "sticky top-0 flex h-[100cqh] flex-col px-4 pb-16 sm:px-8",
+            "sticky top-0 flex h-[100cqh] flex-col px-4 pb-28 sm:px-8",
             isCompactSidebar ? "pt-20" : "pt-10",
           )}
         >
@@ -556,7 +569,7 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
               activeIndex={
                 activeStep === 0 && !isOrganisationShown ? -1 : activeStep
               }
-              selectableUpTo={LAST_STEP}
+              selectableUpTo={maxStep}
               onSelect={goToStep}
             />
             <div
@@ -585,11 +598,20 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
               >
                 <div ref={chatbotAnchorRef} />
               </div>
-              <div className="flex flex-1 -translate-y-8 items-center">
+              <div ref={formationSelectorRef} className="relative z-20 min-h-20 w-full shrink-0 pt-2 lg:w-[52%] lg:self-start">
+                {activeStep >= 1 && formationOptions && selectedFormationId && onSelectFormation ? (
+                  <IntroFormationSelector
+                    options={formationOptions}
+                    selectedId={selectedFormationId}
+                    onSelect={(id) => { onSelectFormation(id); goToStep(1); }}
+                  />
+                ) : null}
+              </div>
+              <div className="flex min-h-0 w-full flex-1 items-center justify-center">
                 <IntroLevelStack
                   activeIndex={levelIndex}
+                  visibleLevelCount={maxStep}
                   organisationName={cards[0].title}
-                  isOrganisationPlaceholder={cards[0].isPlaceholder}
                   logoUrl={logoUrl}
                   backgroundColor={backgroundColor}
                   plateColors={plateColors}
@@ -597,11 +619,17 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
                 >
                   <IntroChildrenStack
                     card={settledCard}
+                    formationSelectorRef={formationSelectorRef}
                     // Dès le retour vers l'introduction, les cartes s'effacent sans attendre
                     // que la pyramide soit au repos : elle se redresse déjà sous elles.
                     levelIndex={activeStep >= 1 ? settledStep : 0}
                     highlightedRow={hoveredRow}
                     onHighlightRow={(row) => setHover({ step: settledStep, row })}
+                    onSelectLevel={goToStep}
+                    onSelectChild={(rowIndex) => {
+                      onSelectChild?.(settledStep, rowIndex);
+                      goToStep(settledStep + 1);
+                    }}
                   />
                 </IntroLevelStack>
               </div>
@@ -622,13 +650,13 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
                   </div>
                 </>
               ) : null}
-              <p className="intro-scroll-hint mt-12 flex items-center gap-2 text-sm text-base-content/70">
-                <ChevronsUp className="size-4" aria-hidden="true" />
-                Faire défiler vers le haut pour naviguer entre les différents
-                niveaux
-              </p>
             </div>
           </div>
+
+          <p className="intro-scroll-hint pointer-events-none absolute inset-x-4 bottom-16 z-30 mx-auto flex w-fit max-w-[calc(100%-2rem)] items-center justify-center gap-2 text-center text-sm text-base-content/80">
+            <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
+            Faire défiler vers le bas pour naviguer entre les différents niveaux
+          </p>
 
           {isChatbotReady ? (
             <IntroChatbot
@@ -642,14 +670,14 @@ const IntroOverviewScene = ({ cards, isSaving, onComplete }: Props) => {
           {/* Numérotation du palier, en bas au milieu de la page. */}
           <p
             className="absolute bottom-5 left-1/2 -translate-x-1/2 text-sm tabular-nums"
-            aria-label={`Palier ${activeStep} sur ${LAST_STEP}`}
+            aria-label={`Palier ${activeStep} sur ${maxStep}`}
           >
             <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
-            <span className="text-base-content/60"> / {pad(LAST_STEP)}</span>
+            <span className="text-base-content/60"> / {pad(maxStep)}</span>
           </p>
 
           {/* En bas à droite : « Précédent », puis « Suivant » (même action que le défilement
-              vers le haut) ou « Continuer la découverte » au dernier niveau. */}
+              vers le bas) ou « Continuer la découverte » au dernier niveau. */}
           <div className="absolute bottom-4 right-4 flex items-center gap-2 sm:right-8">
             <button
               type="button"

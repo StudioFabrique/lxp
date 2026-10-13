@@ -5,7 +5,6 @@ import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
 import IntroChildrenList from "./IntroChildrenList";
 import IntroDetailSection from "./IntroDetailSection";
-import IntroExampleBadge from "./IntroExampleBadge";
 import { INTRO_LEVELS } from "./intro-levels";
 
 type Props = {
@@ -36,7 +35,7 @@ const IntroLevelDetail = ({ card, index, activeDetail, highlightedRow, onHighlig
       <p className="text-sm text-base-content/70">{INTRO_LEVELS[index].label}</p>
       <h2 className="flex flex-wrap items-center gap-2 text-2xl font-bold leading-tight">
         {card.title}
-        {card.isPlaceholder ? <IntroExampleBadge /> : null}
+
       </h2>
     </header>
 

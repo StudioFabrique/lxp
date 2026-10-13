@@ -14,7 +14,6 @@ const IntroDetailSection = ({ detail, isActive }: Props) => (
     icon={detail.icon}
     title={detail.label}
     detailId={detail.id}
-    isPlaceholder={detail.isPlaceholder}
     isActive={isActive}
   >
     <ul className="mt-2 flex flex-wrap gap-1.5">

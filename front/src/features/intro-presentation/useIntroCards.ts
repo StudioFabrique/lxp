@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { AuthContext } from "../../store/AuthProvider";
@@ -6,7 +6,19 @@ import { useDemoMode } from "../../store/DemoContext";
 import { dashboardAdminApi } from "../dashboard-admin/api/dashboard-admin.api";
 import { dashboardStudentApi } from "../dashboard-student/api/dashboard-student.api";
 import { profileApi } from "../profile/api/profile.api";
-import { buildIntroCards, type IntroCard, type IntroSource } from "./intro-content";
+import {
+  buildIntroCards,
+  type IntroCard,
+  type IntroSource,
+  type IntroSelection,
+} from "./intro-content";
+import {
+  buildExampleIntroCards,
+  INTRO_EXAMPLE_FORMATIONS,
+  type IntroFormationOption,
+} from "./intro-example-formations";
+import { INTRO_LEVELS } from "./intro-levels";
+import { selectIntroChild, selectedIntroEntity } from "./intro-selection";
 import {
   introPresentationApi,
   introPresentationKeys,
@@ -17,14 +29,6 @@ const TEAM_MAX_RANK = 2;
 const STUDENT_RANK = 3;
 const STALE_TIME = 5 * 60 * 1000;
 
-type Pathway = {
-  formationTitles: string[];
-  parcoursTitles: string[];
-  parcoursId: number;
-  /** Niveau de qualification de la formation suivie. */
-  formationLevel?: string;
-};
-
 type Named = { name: string };
 type Person = { firstname?: string; lastname?: string };
 
@@ -33,8 +37,6 @@ const descriptions = (items?: readonly { description: string }[]) =>
   items?.map((item) => item.description);
 const people = (items?: readonly Person[]) =>
   items?.map((item) => [item.firstname, item.lastname].filter(Boolean).join(" "));
-
-const unique = (titles: string[]) => [...new Set(titles)];
 
 /**
  * Cartes de la présentation.
@@ -47,7 +49,14 @@ const unique = (titles: string[]) => [...new Set(titles)];
 export function useIntroCards(enabled: boolean): {
   cards: IntroCard[];
   isLoading: boolean;
+  onSelectChild: (parentIndex: number, rowIndex: number) => void;
+  formationOptions: IntroFormationOption[];
+  selectedFormationId: string;
+  onSelectFormation: (id: string) => void;
 } {
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [exampleId, setExampleId] = useState<string | null>(null);
+  const [selection, setSelection] = useState<IntroSelection>({});
   const { user } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const rank = user?.roles[0]?.rank;
@@ -75,79 +84,82 @@ export function useIntroCards(enabled: boolean): {
     staleTime: STALE_TIME,
   });
 
-  let pathway: Pathway | undefined;
-  if (isTeam) {
-    const formations = (teacherParcours.data ?? []).filter((formation) =>
-      formation.parcours.some((parcours) => parcours.canManage !== false),
-    );
-    const formation = formations[0];
-    const parcours = formation?.parcours.filter(
-      (item) => item.canManage !== false,
-    );
-    if (formation && parcours?.length) {
-      pathway = {
-        formationTitles: unique(formations.map((item) => item.title)),
-        parcoursTitles: unique(parcours.map((item) => item.title)),
-        parcoursId: parcours[0].id,
-        formationLevel: formation.level,
-      };
-    }
-  } else if (isStudent) {
-    const all = studentParcours.data ?? [];
-    const first = all[0];
-    if (first) {
-      const sameFormation = all.filter(
-        (item) => item.formation?.title === first.formation?.title,
-      );
-      pathway = {
-        formationTitles: unique(
-          all.flatMap((item) => (item.formation?.title ? [item.formation.title] : [])),
-        ),
-        parcoursTitles: unique(sameFormation.map((item) => item.title)),
-        parcoursId: first.id,
-        formationLevel: first.formation?.level,
-      };
-    }
-  }
+  const teamFormations = (canUseOwnContent && isTeam ? teacherParcours.data ?? [] : []).filter((formation) =>
+    formation.canManage !== false && (
+      formation.parcours.length === 0 || formation.parcours.some((parcours) => parcours.canManage !== false)
+    ),
+  );
+  const studentPaths = canUseOwnContent && isStudent ? studentParcours.data ?? [] : [];
+  const formations: { id?: number; title: string; level: string }[] = isTeam
+    ? teamFormations
+    : studentPaths.flatMap((path) => path.formation ? [path.formation] : [])
+        .filter((formation, index, all) => all.findIndex((other) =>
+          formation.id !== undefined ? other.id === formation.id : other.title === formation.title,
+        ) === index);
+  const formation = selectedIntroEntity(formations, selection.formation);
+  const parcours: { id: number; title: string }[] = isTeam
+    ? teamFormations.find((item) => item.id === formation?.id)?.parcours
+        .filter((item) => item.canManage !== false) ?? []
+    : studentPaths.filter((item) => formation && (
+        formation.id !== undefined
+          ? item.formation?.id === formation.id
+          : item.formation?.title === formation.title
+      ));
+  const selectedParcours = formation
+    ? selectedIntroEntity(parcours, selection.parcours)
+    : undefined;
+  const parcoursId = selectedParcours?.id;
 
   const parcoursDetail = useQuery({
-    queryKey: introPresentationKeys.parcours(pathway?.parcoursId ?? 0),
-    queryFn: () => introPresentationApi.getParcours(pathway!.parcoursId),
-    enabled: Boolean(pathway),
+    queryKey: introPresentationKeys.parcours(parcoursId ?? 0),
+    queryFn: () => introPresentationApi.getParcours(parcoursId!),
+    enabled: !exampleId && parcoursId !== undefined,
     staleTime: STALE_TIME,
     retry: false,
   });
 
   const modules = useQuery({
-    queryKey: introPresentationKeys.modules(pathway?.parcoursId ?? 0),
-    queryFn: () => introPresentationApi.getModules(pathway!.parcoursId),
-    enabled: Boolean(pathway),
+    queryKey: introPresentationKeys.modules(parcoursId ?? 0),
+    queryFn: () => introPresentationApi.getModules(parcoursId!),
+    enabled: !exampleId && parcoursId !== undefined,
     staleTime: STALE_TIME,
   });
-  const firstModuleId = modules.data?.[0]?.id;
+  const selectedModule = selectedIntroEntity(modules.data ?? [], selection.module);
+  const moduleId = selectedModule?.id;
 
   const moduleDetail = useQuery({
-    queryKey: introPresentationKeys.moduleDetail(firstModuleId ?? 0),
-    queryFn: () => introPresentationApi.getModuleDetail(firstModuleId!),
-    enabled: firstModuleId !== undefined,
+    queryKey: introPresentationKeys.moduleDetail(moduleId ?? 0),
+    queryFn: () => introPresentationApi.getModuleDetail(moduleId!),
+    enabled: !exampleId && moduleId !== undefined,
     staleTime: STALE_TIME,
   });
   const courses = moduleDetail.data?.data.courses ?? [];
-  const firstLessonId = courses[0]?.lessons[0]?.id;
+  const selectedCourse = selectedIntroEntity(courses, selection.cours);
+  const lessons = selectedCourse?.lessons ?? [];
+  const selectedLesson = selectedIntroEntity(lessons, selection.lecon);
+  const lessonId = selectedLesson?.id;
 
   const lesson = useQuery({
-    queryKey: introPresentationKeys.lesson(firstLessonId ?? 0),
-    queryFn: () => introPresentationApi.getLesson(firstLessonId!),
-    enabled: firstLessonId !== undefined,
+    queryKey: introPresentationKeys.lesson(lessonId ?? 0),
+    queryFn: () => introPresentationApi.getLesson(lessonId!),
+    enabled: !exampleId && lessonId !== undefined,
     staleTime: STALE_TIME,
   });
 
-  const firstCourse = courses[0];
   const moduleInfo = moduleDetail.data?.data;
   const source: IntroSource = {
     organisationName: instance.data?.name,
+    includeExamples: false,
+    selection,
+    entities: {
+      formation: formations,
+      parcours: formation ? parcours : [],
+      module: modules.data ?? [],
+      cours: courses,
+      lecon: lessons,
+    },
     details: {
-      "formation.niveau": pathway?.formationLevel ? [pathway.formationLevel] : undefined,
+      "formation.niveau": formation?.level ? [formation.level] : undefined,
       "parcours.groupes": names(parcoursDetail.data?.groups),
       "parcours.tags": names(parcoursDetail.data?.tags),
       "parcours.objectifs": descriptions(parcoursDetail.data?.objectives),
@@ -157,22 +169,21 @@ export function useIntroCards(enabled: boolean): {
       "module.tags": names(moduleInfo?.tags),
       "module.competences": descriptions(moduleInfo?.bonusSkills),
       "module.contacts": people(moduleInfo?.contacts),
-      "cours.tags": names(firstCourse?.tags),
-      "cours.objectifs": descriptions(firstCourse?.objectives),
+      "cours.tags": names(selectedCourse?.tags),
+      "cours.objectifs": descriptions(selectedCourse?.objectives),
       "lecon.tag": lesson.data?.tag ? [lesson.data.tag.name] : undefined,
       "lecon.modalite": lesson.data?.modalite ? [lesson.data.modalite] : undefined,
     },
-    ...(pathway && {
-      formationTitles: pathway.formationTitles,
-      parcoursTitles: pathway.parcoursTitles,
-      moduleTitles: modules.data?.map((item) => item.title),
-      courseTitles: courses.map((course) => course.title),
-      lessonTitles: courses[0]?.lessons.map((item) => item.title),
-      activities: lesson.data?.activities,
-    }),
+    formationTitles: formations.map((item) => item.title),
+    parcoursTitles: formation ? parcours.map((item) => item.title) : [],
+    moduleTitles: modules.data?.map((item) => item.title),
+    courseTitles: courses.map((item) => item.title),
+    lessonTitles: lessons.map((item) => item.title),
+    activities: lesson.data?.activities,
   };
 
-  const isLoading = [
+  // Une sélection ne doit pas remonter l’écran d’attente et réinitialiser la scène.
+  const isLoading = !hasInteracted && [
     instance,
     teacherParcours,
     studentParcours,
@@ -182,5 +193,27 @@ export function useIntroCards(enabled: boolean): {
     lesson,
   ].some((query) => query.isLoading);
 
-  return { cards: buildIntroCards(source), isLoading };
+  const currentFormation = formations[0];
+  const formationOptions: IntroFormationOption[] = currentFormation
+    ? [{ id: "current", title: currentFormation.title, isCurrent: true }, ...INTRO_EXAMPLE_FORMATIONS.slice(0, 2)]
+    : [...INTRO_EXAMPLE_FORMATIONS];
+  const selectedFormationId = exampleId ?? (currentFormation ? "current" : INTRO_EXAMPLE_FORMATIONS[0].id);
+  const cards = selectedFormationId === "current"
+    ? buildIntroCards(source)
+    : buildExampleIntroCards(selectedFormationId, selection, instance.data?.name);
+  const onSelectFormation = (id: string): void => {
+    if (!formationOptions.some((option) => option.id === id)) return;
+    setHasInteracted(true);
+    setExampleId(id === "current" ? null : id);
+    setSelection({});
+  };
+  const onSelectChild = (parentIndex: number, rowIndex: number): void => {
+    const childLevel = INTRO_LEVELS[parentIndex + 1];
+    const item = cards[parentIndex]?.rows[rowIndex];
+    if (!childLevel || !item) return;
+    setHasInteracted(true);
+    setSelection((previous) => selectIntroChild(previous, childLevel.id, item));
+  };
+
+  return { cards, isLoading, onSelectChild, formationOptions, selectedFormationId, onSelectFormation };
 }

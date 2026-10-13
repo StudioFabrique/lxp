@@ -25,7 +25,7 @@ type Props = {
  */
 const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
   const { setChatbotHidden } = useIntroPresentation();
-  const { cards, isLoading } = useIntroCards(true);
+  const { cards, isLoading, onSelectChild, formationOptions, selectedFormationId, onSelectFormation } = useIntroCards(true);
   // Les titres réels sont attendus, mais jamais plus de quelques secondes.
   const isReady = useIntroSpaceReady(isLoading);
   const rootRef = useRef<HTMLElement>(null);
@@ -65,6 +65,10 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
       {isReady ? (
         <IntroOverviewScene
           cards={cards}
+          onSelectChild={onSelectChild}
+          formationOptions={formationOptions}
+          selectedFormationId={selectedFormationId}
+          onSelectFormation={onSelectFormation}
           isSaving={isSaving}
           onComplete={onComplete}
         />

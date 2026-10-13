@@ -1,19 +1,23 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 import { INTRO_ROW_COUNT, type IntroCard } from "./intro-content";
 import { INTRO_LEVELS } from "./intro-levels";
 import { gsap, prefersReducedMotion } from "./intro-motion";
-import { STACK_DEPTH, childBox, layerBox } from "./intro-stack-layout";
+import { STACK_DEPTH, activityFacingTransform, activityTypeBox, childBox, layerBox } from "./intro-stack-layout";
 import IntroStackPlate from "./IntroStackPlate";
 
 type Props = {
   /** Carte du niveau expliqué ; absente tant que la pyramide complète est affichée. */
   card?: IntroCard;
+  formationSelectorRef?: RefObject<HTMLDivElement | null>;
   /** Rang du niveau de la carte dans `INTRO_LEVELS`, 0 pour l'introduction. */
   levelIndex: number;
   /** Élément survolé, à gauche comme dans la liste de droite : -1 si aucun. */
   highlightedRow: number;
   onHighlightRow: (row: number) => void;
+  /** Sélection d’une couche existante ou découverte du niveau enfant. */
+  onSelectLevel: (level: number) => void;
+  onSelectChild: (rowIndex: number) => void;
 };
 
 type Shown = { levelIndex: number; card: IntroCard };
@@ -37,9 +41,12 @@ const toBoxProps = (box: ReturnType<typeof layerBox>) => ({
  */
 const IntroChildrenStack = ({
   card,
+  formationSelectorRef,
   levelIndex,
   highlightedRow,
   onHighlightRow,
+  onSelectLevel,
+  onSelectChild,
 }: Props) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const target: Shown | null =
@@ -48,6 +55,7 @@ const IntroChildrenStack = ({
   const [shown, setShown] = useState<Shown | null>(null);
   const targetRef = useRef(target);
   const shownRef = useRef<Shown | null>(null);
+  const selectedChildRef = useRef(0);
   // Nature de la dernière bascule : au retour, la couche rétrécie devient la première
   // carte ; lors d'un saut de plusieurs niveaux, toutes les couches se reposent.
   const transitionRef = useRef<"forward" | "back" | "jump">("jump");
@@ -69,6 +77,7 @@ const IntroChildrenStack = ({
       const gap = current && next ? next.levelIndex - current.levelIndex : 0;
       transitionRef.current =
         gap === 1 ? "forward" : gap === -1 ? "back" : "jump";
+      selectedChildRef.current = 0;
       shownRef.current = next;
       setShown(next);
     };
@@ -86,14 +95,14 @@ const IntroChildrenStack = ({
     const context = gsap.context(() => {
       const timeline = gsap.timeline({ onComplete: commit });
       if (next && next.levelIndex === current.levelIndex + 1) {
-        // La première carte grandit jusqu'à la taille de la couche suivante.
+        // La carte choisie (la première par défaut) devient la couche suivante.
         timeline.to(
-          children.slice(1),
+          children.filter((_, index) => index !== selectedChildRef.current),
           { opacity: 0, duration: 0.3, ease: "power1.out" },
           0,
         );
         timeline.to(
-          children[0],
+          children[selectedChildRef.current] ?? children[0],
           {
             ...toBoxProps(layerBox(next.levelIndex)),
             duration: 0.8,
@@ -143,7 +152,18 @@ const IntroChildrenStack = ({
     // Les couches qui restent d'un niveau à l'autre ont pu être effacées par la sortie.
     const layers = gsap.utils.toArray<HTMLElement>(".intro-layer-plate", root);
     gsap.set(layers, { clearProps: "opacity" });
-    if (prefersReducedMotion()) return;
+    const selector = formationSelectorRef?.current;
+    if (selector) gsap.set(selector, { y: 0 });
+    const childLayer = root.querySelector<HTMLElement>(".intro-child-layer");
+    const isLeaf = shownLevel === INTRO_LEVELS.length - 1;
+    gsap.set(childLayer, { z: isLeaf ? shownLevel * STACK_DEPTH : 0, rotationX: 0, rotationY: 0, rotation: 0 });
+    if (prefersReducedMotion()) {
+      if (isLeaf) {
+        gsap.set(childLayer, { transform: activityFacingTransform(shownLevel) });
+        if (selector) gsap.set(selector, { y: -24 });
+      }
+      return;
+    }
     const isJump = transitionRef.current === "jump";
     const all = gsap.utils.toArray<HTMLElement>(".intro-child-plate", root);
     // Au retour, la première carte est déjà là (la couche rétrécie) : les autres en sortent.
@@ -161,8 +181,9 @@ const IntroChildrenStack = ({
           stagger: 0.1,
         });
       }
+      const delay = isJump ? 0.2 + layers.length * 0.1 : 0;
       gsap.from(children, {
-        delay: isJump ? 0.2 + layers.length * 0.1 : 0,
+        delay,
         opacity: 0,
         scale: 0.55,
         x: (_index: number, plate: HTMLElement) =>
@@ -175,9 +196,19 @@ const IntroChildrenStack = ({
         ease: "power3.out",
         stagger: 0.12,
       });
+      if (isLeaf) {
+        const facingDelay = delay + 0.8 + Math.max(children.length - 1, 0) * 0.12;
+        gsap.to(childLayer, {
+          transform: activityFacingTransform(shownLevel),
+          delay: facingDelay,
+          duration: 0.8,
+          ease: "power2.inOut",
+        });
+        if (selector) gsap.to(selector, { y: -24, delay: facingDelay, duration: 0.8, ease: "power2.inOut" });
+      }
     }, root);
     return () => context.revert();
-  }, [shownLevel]);
+  }, [shownLevel, formationSelectorRef]);
 
   const isCurrent = target !== null && shown?.levelIndex === target.levelIndex;
   // Tant que la sortie se joue, `shown` garde les cartes précédentes ; une fois
@@ -204,26 +235,39 @@ const IntroChildrenStack = ({
                 label={level.label}
                 icon={level.icon}
                 box={layerBox(index + 2)}
+                onSelect={() => onSelectLevel(index + 2)}
+                disabled={!isCurrent}
+                selectionLabel={`Revenir au niveau ${level.label}`}
               />
             );
           })}
-          {displayed.card.rows.map((row, index) => (
-            <IntroStackPlate
-              key={`${displayed.levelIndex}-${index}`}
-              variant="child"
-              label={row.title}
-              icon={childLevel.icon}
-              box={childBox(
-                displayed.levelIndex,
-                index,
-                displayed.card.rows.length,
-              )}
-              isActive={isCurrent && index === highlightedRow}
-              onHoverChange={(isHovered) =>
-                onHighlightRow(isHovered ? index : -1)
-              }
-            />
-          ))}
+          <div className="intro-child-layer absolute left-0 top-0 size-0 [transform-style:preserve-3d]">
+            {displayed.card.rows.map((row, index) => (
+              <IntroStackPlate
+                key={`${displayed.levelIndex}-${index}`}
+                variant="child"
+                label={row.title}
+                icon={childLevel.icon}
+                box={displayed.levelIndex === INTRO_LEVELS.length - 1
+                  ? activityTypeBox(index, displayed.card.rows.length)
+                  : childBox(displayed.levelIndex, index, displayed.card.rows.length)}
+                isActive={isCurrent && index === highlightedRow}
+                onSelect={
+                  displayed.levelIndex < INTRO_LEVELS.length - 1
+                    ? () => {
+                        selectedChildRef.current = index;
+                        onSelectChild(index);
+                      }
+                    : undefined
+                }
+                disabled={!isCurrent}
+                selectionLabel={`Découvrir ${row.title}`}
+                onHoverChange={(isHovered) =>
+                  onHighlightRow(isHovered ? index : -1)
+                }
+              />
+            ))}
+          </div>
         </>
       ) : null}
     </div>

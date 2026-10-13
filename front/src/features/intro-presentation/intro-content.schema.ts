@@ -27,6 +27,7 @@ export const introModuleDetailSchema = z.object({
     courses: z
       .array(
         z.object({
+          id: z.number().int().positive().optional(),
           title: z.string(),
           lessons: z.array(z.object({ id: z.number(), title: z.string() })),
           tags: optionalList(named),

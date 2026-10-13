@@ -1199,8 +1199,13 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
   }
   const zoomStart=tweens.find(t=>has(t,'.dashboard-camera')).startTime();
   // 1. The compact sidebar lands delicately, turning in full 3D, as glass.
-  tl.fromTo('.floating-sidebar',{opacity:0,x:-24,y:-30,z:620,rotationX:0,rotationY:0,rotation:-8},{opacity:1,x:0,y:0,z:65,rotationX:0,rotationY:0,rotation:0,duration:1.2,ease:'back.out(1.2)',immediateRender:false},S+.2);
-  tl.set('.floating-sidebar',{opacity:0},0);
+  tl.fromTo('.floating-sidebar',{x:-24,y:-30,z:620,rotationX:0,rotationY:0,rotation:-8},{x:0,y:0,z:65,rotationX:0,rotationY:0,rotation:0,duration:1.2,ease:'back.out(1.2)',immediateRender:false},S+.2);
+  // Group opacity below 1 flattens preserve-3d: fade the painted children instead.
+  const sidebarPaint='.floating-sidebar>.sidebar-glass,.floating-sidebar>.sidebar-identity,.floating-sidebar>.dashboard-profile,.floating-sidebar .dashboard-navigation';
+  tl.set('.floating-sidebar',{opacity:1,visibility:'hidden'},0);
+  tl.set('.floating-sidebar',{visibility:'visible'},S+.2);
+  tl.set(sidebarPaint,{opacity:0},0);
+  tl.fromTo(sidebarPaint,{opacity:0},{opacity:1,duration:1.2,ease:'power2.out',immediateRender:false},S+.2);
   // 2. Once unfolded, the glass takes the real sidebar colour beneath its sheen.
   const solid='.floating-sidebar>.sidebar-surface:not(.sidebar-glass)';
   tl.set(solid,{opacity:0},0);

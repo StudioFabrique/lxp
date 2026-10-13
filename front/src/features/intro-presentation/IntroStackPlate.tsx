@@ -13,6 +13,9 @@ type Props = {
   /** Vrai quand la carte, ou sa ligne dans la liste, est survolée. */
   isActive?: boolean;
   onHoverChange?: (isHovered: boolean) => void;
+  onSelect?: () => void;
+  selectionLabel?: string;
+  disabled?: boolean;
 };
 
 /** Plaque 3D de la pile ; la scène anime les éléments `.intro-layer-plate` et `.intro-child-plate`. */
@@ -23,42 +26,55 @@ const IntroStackPlate = ({
   variant,
   isActive = false,
   onHoverChange,
-}: Props) => (
-  // Doublon de la liste de droite, qui porte le contenu accessible : la carte se survole à la souris.
-  <div
-    data-depth={box.z}
-    data-x={box.x}
-    data-active={isActive ? "true" : undefined}
-    onMouseEnter={onHoverChange ? () => onHoverChange(true) : undefined}
-    onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
-    style={boxStyle(box)}
-    className={cn(
-      INTRO_PLATE_CLASS,
-      variant === "layer"
-        ? "intro-layer-plate"
-        : cn(
-            "intro-child-plate flex-col items-center justify-center gap-2 px-1",
-            // Les dernières couches sont étroites : le texte et l'icône se réduisent.
-            box.width < 120 ? "text-xs" : "text-base",
-          ),
-      isActive
-        ? "border-primary bg-primary/10 ring-2 ring-primary/50"
-        : "border-(--intro-glass)/60",
-      variant === "child" && !isActive && "hover:border-primary/60",
-    )}
-  >
-    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-content">
-      <Icon className="size-5" aria-hidden="true" />
-    </span>
-    <b
+  onSelect,
+  selectionLabel,
+  disabled = false,
+}: Props) => {
+  // Désactiver le bouton sans remplacer son nœud préserve la profondeur posée par GSAP.
+  const Element = onSelect ? "button" : "div";
+  return (
+    <Element
+      type={onSelect ? "button" : undefined}
+      onClick={onSelect}
+      disabled={onSelect ? disabled : undefined}
+      aria-label={onSelect ? selectionLabel : undefined}
+      onFocus={onHoverChange ? () => onHoverChange(true) : undefined}
+      onBlur={onHoverChange ? () => onHoverChange(false) : undefined}
+      data-depth={box.z}
+      data-x={box.x}
+      data-active={isActive ? "true" : undefined}
+      onMouseEnter={onHoverChange ? () => onHoverChange(true) : undefined}
+      onMouseLeave={onHoverChange ? () => onHoverChange(false) : undefined}
+      style={boxStyle(box)}
       className={cn(
-        "min-w-0 max-w-full truncate",
-        variant === "layer" ? "text-2xl leading-[2.5rem]" : "text-center",
+        INTRO_PLATE_CLASS,
+        variant === "layer"
+          ? "intro-layer-plate"
+          : cn(
+              "intro-child-plate flex-col items-center justify-center gap-2 px-1",
+              // Les dernières couches sont étroites : le texte et l'icône se réduisent.
+              box.width < 120 ? "text-xs" : "text-base",
+            ),
+        isActive
+          ? "border-primary bg-primary/10 ring-2 ring-primary/50"
+          : "border-(--intro-plate-text)/35",
+        !isActive && onSelect && "hover:border-primary",
+        onSelect && "cursor-pointer focus-visible:outline-2 focus-visible:outline-primary",
       )}
     >
-      {label}
-    </b>
-  </div>
-);
+      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-content">
+        <Icon className="size-5" aria-hidden="true" />
+      </span>
+      <b
+        className={cn(
+          "min-w-0 max-w-full truncate",
+          variant === "layer" ? "text-2xl leading-[2.5rem]" : "text-center",
+        )}
+      >
+        {label}
+      </b>
+    </Element>
+  );
+};
 
 export default IntroStackPlate;

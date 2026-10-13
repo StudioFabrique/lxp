@@ -6,6 +6,7 @@ type Props = {
   level: IntroLevel;
   index: number;
   isActive: boolean;
+  isVisible: boolean;
   onSelect: () => void;
 };
 
@@ -15,16 +16,16 @@ const PLATE_HEIGHT = 500;
 const WIDTH_STEP = 80;
 const HEIGHT_STEP = 62;
 
-const IntroLevelPlate = ({ level, index, isActive, onSelect }: Props) => {
+const IntroLevelPlate = ({ level, index, isActive, isVisible, onSelect }: Props) => {
   const Icon = level.icon;
   const width = PLATE_WIDTH - index * WIDTH_STEP;
   const height = PLATE_HEIGHT - index * HEIGHT_STEP;
 
   return (
-    // Doublon du rail (qui porte l'accès clavier) : la plaque se clique à la souris.
+    // Chaque plaque permet aussi la navigation au clavier.
     <button
       type="button"
-      tabIndex={-1}
+      hidden={!isVisible}
       onClick={onSelect}
       data-intro-plate={index}
       style={{
@@ -34,11 +35,11 @@ const IntroLevelPlate = ({ level, index, isActive, onSelect }: Props) => {
         top: -height / 2,
       }}
       className={cn(
-        "intro-plate cursor-default",
+        "intro-plate cursor-pointer focus-visible:outline-2 focus-visible:outline-primary",
         INTRO_PLATE_CLASS,
         isActive
           ? "border-primary bg-primary/10"
-          : "border-(--intro-glass)/60 hover:border-primary/60",
+          : "border-(--intro-plate-text)/35 hover:border-primary",
       )}
     >
       <span className="grid size-11 place-items-center rounded-xl bg-primary text-primary-content">

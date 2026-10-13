@@ -2,13 +2,10 @@ import type { LucideIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 
 import { cn } from "../../utils/cn";
-import IntroExampleBadge from "./IntroExampleBadge";
 
 type Props = {
   icon: LucideIcon;
   title: string;
-  /** Vrai quand le contenu est un exemple. */
-  isPlaceholder?: boolean;
   /** Vrai quand le chatbot est en train d'expliquer cette partie. */
   isActive?: boolean;
   /** Identifie un composant du niveau, pour que le chatbot se place à côté. */
@@ -20,7 +17,6 @@ type Props = {
 const IntroSectionFrame = ({
   icon: Icon,
   title,
-  isPlaceholder = false,
   isActive = false,
   detailId,
   className,
@@ -38,7 +34,7 @@ const IntroSectionFrame = ({
     <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold">
       <Icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
       {title}
-      {isPlaceholder ? <IntroExampleBadge /> : null}
+
     </h3>
     {children}
   </section>

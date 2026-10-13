@@ -16,6 +16,19 @@ const LAYER_HEIGHT = 500;
 const WIDTH_STEP = 80;
 const HEIGHT_STEP = 62;
 export const STACK_DEPTH = 60;
+export const FINAL_STACK_ROTATION_X = 46;
+export const FINAL_STACK_ROTATION = -4;
+
+/** Ordre inverse des rotations de la pile : les cartes regardent exactement l’écran. */
+export const activityFacingTransform = (level: number): string =>
+  `translateZ(${level * STACK_DEPTH}px) rotateX(${-FINAL_STACK_ROTATION_X}deg) rotateZ(${-FINAL_STACK_ROTATION}deg) translateY(-48px)`;
+
+/** Quatre cartes de taille lisible, alignées dans leur propre plan face au lecteur. */
+export const activityTypeBox = (index: number, count: number): StackBox => {
+  const width = 160;
+  const gap = 16;
+  return { x: (index - (count - 1) / 2) * (width + gap), y: 0, width, height: 150, z: 0 };
+};
 const ROW_GAP = 14;
 const ROW_HEIGHT_SHARE = 0.62;
 

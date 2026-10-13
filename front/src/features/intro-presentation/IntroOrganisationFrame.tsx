@@ -1,12 +1,10 @@
 import { Building2 } from "lucide-react";
 
 import { readableTextColor } from "../../utils/helpers/color-helpers";
-import IntroExampleBadge from "./IntroExampleBadge";
 
 type Props = {
   /** Nom de l'organisme, affiché en grand dans le cadre. */
   name: string;
-  isPlaceholder: boolean;
   logoUrl: string | null;
   /** Fond coloré de l'instance : il appartient au cadre et disparaît avec lui. */
   backgroundColor?: string;
@@ -23,7 +21,6 @@ type Props = {
  */
 const IntroOrganisationFrame = ({
   name,
-  isPlaceholder,
   logoUrl,
   backgroundColor,
 }: Props) => {
@@ -56,7 +53,7 @@ const IntroOrganisationFrame = ({
           ) : (
             <p className="flex items-center gap-3 text-5xl font-extrabold leading-none">
               {name}
-              {isPlaceholder ? <IntroExampleBadge /> : null}
+
             </p>
           )}
         </div>

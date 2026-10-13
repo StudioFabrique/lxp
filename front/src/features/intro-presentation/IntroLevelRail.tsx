@@ -19,6 +19,7 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
         return (
           <li
             key={level.id}
+            hidden={index > selectableUpTo}
             className="intro-rail-item will-change-transform"
             style={{ marginLeft: `${index * 1.1}rem` }}
           >

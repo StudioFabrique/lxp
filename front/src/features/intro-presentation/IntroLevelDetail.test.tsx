@@ -48,6 +48,8 @@ describe("IntroLevelDetail", () => {
     );
     expect(labels).toEqual(["3 modules", "Groupes", "Tags", "Objectifs", "Compétences", "Contacts"]);
     expect(container.textContent).toContain("Web");
+    expect(container.textContent).not.toContain("Exemple");
+    expect(container.textContent).not.toContain("(exemple)");
   });
 
   it("met en avant le composant expliqué par le chatbot", () => {

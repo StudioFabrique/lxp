@@ -1,6 +1,5 @@
 import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
-import IntroExampleBadge from "./IntroExampleBadge";
 import IntroSectionFrame from "./IntroSectionFrame";
 import { INTRO_LEVELS } from "./intro-levels";
 
@@ -30,6 +29,9 @@ const IntroChildrenList = ({ card, index, highlightedRow = -1, onHighlightRow }:
           : `${card.rows.length} ${level.childrenPlural}`
       }
     >
+      {card.rows.length === 0 ? (
+        <p className="mt-2 text-sm text-base-content/70">Aucun contenu accessible à ce niveau. Vous pouvez choisir une autre formation.</p>
+      ) : null}
       <ul className="mt-1 flex flex-col">
         {card.rows.map((row, rowIndex) => (
           <li
@@ -44,7 +46,7 @@ const IntroChildrenList = ({ card, index, highlightedRow = -1, onHighlightRow }:
             )}
           >
             <span className="min-w-0 truncate">{row.title}</span>
-            {row.isPlaceholder ? <IntroExampleBadge /> : null}
+
           </li>
         ))}
       </ul>

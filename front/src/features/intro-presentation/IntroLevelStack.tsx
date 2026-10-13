@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { INTRO_PYRAMID_LEVELS } from "./intro-levels";
 import IntroOrganisationFrame from "./IntroOrganisationFrame";
@@ -6,9 +6,9 @@ import IntroLevelPlate from "./IntroLevelPlate";
 
 type Props = {
   activeIndex: number;
+  visibleLevelCount: number;
   /** Nom de l'organisme, affiché en grand dans le cadre posé derrière la pile. */
   organisationName: string;
-  isOrganisationPlaceholder: boolean;
   /** Logo et fond coloré de l'organisme, affichés dans le cadre. */
   logoUrl: string | null;
   backgroundColor?: string;
@@ -23,56 +23,73 @@ type Props = {
 /**
  * Pile de plaques en perspective, l'organisme de formation à plat derrière.
  *
- * Le rail et la carte d'explication portent le même contenu, d'où `aria-hidden` ;
- * les plaques restent cliquables à la souris. La scène anime les éléments `.intro-stack` et
- * `.intro-plate`.
+ * Les plaques permettent de choisir un niveau à la souris comme au clavier.
+ * La scène anime les éléments `.intro-stack` et `.intro-plate`.
  */
 const IntroLevelStack = ({
   activeIndex,
+  visibleLevelCount,
   organisationName,
-  isOrganisationPlaceholder,
   logoUrl,
   backgroundColor,
   plateColors,
   onSelect,
   children,
-}: Props) => (
-  <div
-    aria-hidden="true"
-    className="grid h-64 w-full place-items-center sm:h-80 lg:h-[24rem] xl:h-[28rem]"
-  >
+}: Props) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.45);
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const measure = (): void => {
+      // Inclut le cadre et la projection des six couches, pas seulement leur base à plat.
+      const { width, height } = root.getBoundingClientRect();
+      if (width > 0 && height > 0) setScale(Math.min(width / 1000, height / 850, 0.8));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+  return (
     <div
-      style={
-        {
-          "--intro-glass": plateColors.glass,
-          "--intro-plate-text": plateColors.text,
-        } as CSSProperties
-      }
-      className="intro-plate-scope relative h-[500px] w-[700px] translate-y-6 scale-[0.45] [perspective:1500px] sm:scale-[0.62] lg:translate-y-6 lg:scale-[0.7] xl:translate-y-10 xl:scale-[0.8]">
-      <IntroOrganisationFrame
-        name={organisationName}
-        isPlaceholder={isOrganisationPlaceholder}
-        logoUrl={logoUrl}
-        backgroundColor={backgroundColor}
-      />
-      <div className="intro-stack absolute left-1/2 top-1/2 size-0 [transform-style:preserve-3d]">
-        {/* L'animation d'ouverture incline la pile ici, sans entrer en conflit
-            avec l'inclinaison de `.intro-stack` pilotée par le scroll. */}
-        <div className="intro-tilt absolute left-0 top-0 size-0 [transform-style:preserve-3d]">
-          {INTRO_PYRAMID_LEVELS.map((level, index) => (
-            <IntroLevelPlate
-              key={level.id}
-              level={level}
-              index={index}
-              isActive={index === activeIndex}
-              onSelect={() => onSelect(index)}
-            />
-          ))}
-          {children}
+      ref={rootRef}
+      className="grid h-full min-h-0 w-full grid-rows-[minmax(0,1fr)] place-items-center"
+    >
+      <div
+        style={
+          {
+            "--intro-glass": plateColors.glass,
+            "--intro-plate-text": plateColors.text,
+            transform: `translateY(${70 * scale}px) scale(${scale})`,
+          } as CSSProperties
+        }
+        className="intro-plate-scope relative h-[500px] w-[700px] [perspective:1500px]">
+        <IntroOrganisationFrame
+          name={organisationName}
+          logoUrl={logoUrl}
+          backgroundColor={backgroundColor}
+        />
+        <div className="intro-stack absolute left-1/2 top-1/2 size-0 [transform-style:preserve-3d]">
+          {/* L'animation d'ouverture incline la pile ici, sans entrer en conflit
+              avec l'inclinaison de `.intro-stack` pilotée par le scroll. */}
+          <div className="intro-tilt absolute left-0 top-0 size-0 [transform-style:preserve-3d]">
+            {INTRO_PYRAMID_LEVELS.map((level, index) => (
+              <IntroLevelPlate
+                key={level.id}
+                level={level}
+                index={index}
+                isActive={index === activeIndex}
+                isVisible={index < visibleLevelCount}
+                onSelect={() => onSelect(index)}
+              />
+            ))}
+            {children}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default IntroLevelStack;

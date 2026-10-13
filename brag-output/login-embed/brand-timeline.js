@@ -39,9 +39,10 @@
     });
     tl.fromTo('#intro-logo', {rotationY: -12, scale: .96},
       {rotationY: 0, scale: 1, duration: 1.1, ease: 'power3.out'}, 0);
+    // The settled layer fades in over the still-visible masked one: fading both out of phase dips the
+    // combined opacity mid-way, which reads as a light flash.
     tl.fromTo('#intro-logo .logo-settled', {opacity: 0},
       {opacity: 1, duration: .22, ease: 'power2.inOut'}, 1.1);
-    tl.to('#intro-logo > .brand-svg:not(.logo-settled)', {opacity: 0, duration: .22}, 1.1);
   }
   return tl;
   };

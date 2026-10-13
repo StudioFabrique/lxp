@@ -34,7 +34,7 @@ describe("buildIntroCards", () => {
     expect(cards[1].rows.map((row) => row.title)).toEqual([
       "Parcours A",
       "Parcours B",
-      "Parcours 3 (exemple)",
+      "Parcours 3",
     ]);
     expect(cards[1].rows.map((row) => row.isPlaceholder)).toEqual([
       false,
@@ -54,7 +54,7 @@ describe("buildIntroCards", () => {
     expect(cards[5].rows.map((row) => row.title)).toEqual([
       "Lire le cours",
       "Vidéo",
-      "Activité 3 (exemple)",
+      "Activité 3",
     ]);
     expect(cards[6].title).toBe("Lire le cours");
   });

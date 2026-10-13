@@ -5,10 +5,14 @@ import { INTRO_LEVELS, type IntroLevelId } from "./intro-levels";
 import type { IntroLesson } from "./intro-content.schema";
 
 export type IntroItem = {
+  /** Identifiant SQL, conservé pour charger le contenu de l’élément choisi. */
+  id?: number;
   title: string;
   /** Vrai pour un exemple : le contenu réel de l'utilisateur est absent. */
   isPlaceholder: boolean;
 };
+
+export type IntroSelection = Partial<Record<IntroLevelId, IntroItem>>;
 
 /** Composant d'un niveau (groupes, tags, objectifs...), réel ou d'exemple. */
 export type IntroDetail = {
@@ -32,10 +36,14 @@ export type IntroCard = {
 
 /**
  * Éléments réels connus de l'utilisateur, tous facultatifs. Pour chaque niveau,
- * le premier titre est celui que suit la présentation, les suivants ne servent
- * que de lignes voisines.
+ * le premier titre est retenu par défaut ; une sélection explicite permet de
+ * suivre un autre élément et sa branche.
  */
 export type IntroSource = {
+  /** Faux pour un contenu réel : aucun remplissage par des exemples. */
+  includeExamples?: boolean;
+  selection?: IntroSelection;
+  entities?: Partial<Record<IntroLevelId, { id?: number; title: string }[]>>;
   organisationName?: string;
   formationTitles?: string[];
   parcoursTitles?: string[];
@@ -93,15 +101,18 @@ const placeholder = (title: string): IntroItem => ({
 const buildRows = (
   titles: string[] | undefined,
   placeholderTitle: string,
+  entities?: { id?: number; title: string }[],
+  includeExamples = true,
 ): IntroItem[] => {
-  const rows: IntroItem[] = (titles ?? [])
-    .map((title) => title.trim())
-    .filter(Boolean)
+  const items = entities ?? titles?.map((title) => ({ title }));
+  const rows: IntroItem[] = (items ?? [])
+    .map((item) => ({ ...item, title: item.title.trim() }))
+    .filter((item) => Boolean(item.title))
     .slice(0, INTRO_ROW_COUNT)
-    .map((title) => ({ title: capitalizeFirst(title), isPlaceholder: false }));
+    .map((item) => ({ ...item, title: capitalizeFirst(item.title), isPlaceholder: false }));
 
-  for (let index = rows.length; index < INTRO_ROW_COUNT; index += 1) {
-    rows.push(placeholder(`${placeholderTitle} ${index + 1} (exemple)`));
+  for (let index = rows.length; includeExamples && index < INTRO_ROW_COUNT; index += 1) {
+    rows.push(placeholder(`${placeholderTitle} ${index + 1}`));
   }
 
   return rows;
@@ -136,9 +147,11 @@ const realOrPlaceholder = (
 /**
  * Construit les sept cartes de la présentation le long d'un seul chemin :
  * l'organisme, une formation, un parcours, un module, un cours, une leçon puis
- * une activité. Chaque niveau absent de `source` est remplacé par un exemple.
+ * une activité. Le contenu réel s’arrête au premier niveau absent ; les appels
+ * qui autorisent les exemples conservent un chemin complet.
  */
 export const buildIntroCards = (source: IntroSource = {}): IntroCard[] => {
+  const includeExamples = source.includeExamples !== false;
   const activities = activityTitles(source.activities);
   const organisation = realOrPlaceholder(
     source.organisationName,
@@ -154,28 +167,30 @@ export const buildIntroCards = (source: IntroSource = {}): IntroCard[] => {
     firstTitle(activities, PLACEHOLDER_TITLES.activites),
   ];
   const rows: IntroItem[][] = [
-    buildRows(source.formationTitles, "Formation"),
-    buildRows(source.parcoursTitles, "Parcours"),
-    buildRows(source.moduleTitles, "Module"),
-    buildRows(source.courseTitles, "Cours"),
-    buildRows(source.lessonTitles, "Leçon"),
-    buildRows(activities, "Activité"),
+    buildRows(source.formationTitles, "Formation", source.entities?.formation, includeExamples),
+    buildRows(source.parcoursTitles, "Parcours", source.entities?.parcours, includeExamples),
+    buildRows(source.moduleTitles, "Module", source.entities?.module, includeExamples),
+    buildRows(source.courseTitles, "Cours", source.entities?.cours, includeExamples),
+    buildRows(source.lessonTitles, "Leçon", source.entities?.lecon, includeExamples),
+    buildRows(activities, "Activité", undefined, includeExamples),
     ACTIVITY_TYPES,
   ];
 
-  return selected.map((item, index) => {
+  const cards = selected.map((item, index) => {
     const levelId = INTRO_LEVELS[index].id;
+    const chosen = source.selection?.[levelId] ?? item;
     return {
       levelId,
-      title: item.title,
-      isPlaceholder: item.isPlaceholder,
+      title: chosen.title,
+      isPlaceholder: chosen.isPlaceholder,
       rows: rows[index],
-      details: INTRO_DETAILS[levelId].map((definition) => {
+      details: INTRO_DETAILS[levelId].flatMap((definition) => {
         const real = (source.details?.[definition.id] ?? [])
           .map((value) => value.trim())
           .filter(Boolean)
           .slice(0, MAX_DETAIL_ITEMS);
-        return {
+        if (!includeExamples && real.length === 0) return [];
+        return [{
           id: definition.id,
           label: definition.label,
           icon: definition.icon,
@@ -185,8 +200,12 @@ export const buildIntroCards = (source: IntroSource = {}): IntroCard[] => {
             title,
             isPlaceholder: real.length === 0,
           })),
-        };
+        }];
       }),
     };
   });
+  if (includeExamples) return cards;
+  // Le premier niveau sans élément arrête la branche ; ses descendants restent absents.
+  const lastIndex = cards.findIndex((card, index) => index > 0 && card.isPlaceholder);
+  return lastIndex === -1 ? cards : cards.slice(0, Math.max(2, lastIndex));
 };

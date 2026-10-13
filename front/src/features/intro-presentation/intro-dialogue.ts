@@ -4,15 +4,15 @@ import type { ChatbotHelp } from "../auth/components/AuthChatbotHostContext";
 export const OVERVIEW_DIALOGUE: readonly string[] = [
   "Bonjour ! Je vais vous montrer comment ANDRIA organise vos contenus.",
   "Tout est emboîté : un organisme contient des formations, qui contiennent des parcours, et ainsi de suite jusqu'aux activités.",
-  "Faites défiler vers le haut pour découvrir chaque niveau, un par un.",
+  "Faites défiler vers le bas pour découvrir chaque niveau, un par un.",
 ];
 
 /** Réponses aux questions que l'utilisateur peut poser au chatbot. */
 export const INTRO_HELP: ChatbotHelp = {
   action:
-    "Faites défiler vers le haut, ou utilisez les flèches à droite, pour découvrir les niveaux un par un.",
-  next: "Cliquez sur « Suivant », ou faites défiler vers le haut, pour passer au niveau suivant. Au dernier niveau, cliquez sur « Continuer la découverte ».",
-  back: "Faites défiler vers le bas, utilisez la flèche du bas, ou cliquez sur un niveau à gauche, pour revenir en arrière.",
+    "Faites défiler vers le bas, ou utilisez les flèches à droite, pour découvrir les niveaux un par un.",
+  next: "Cliquez sur « Suivant », ou faites défiler vers le bas, pour passer au niveau suivant. Au dernier niveau, cliquez sur « Continuer la découverte ».",
+  back: "Faites défiler vers le haut, utilisez la flèche du haut, ou cliquez sur un niveau à gauche, pour revenir en arrière.",
 };
 
 /**
