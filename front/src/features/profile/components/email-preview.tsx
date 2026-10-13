@@ -10,12 +10,14 @@ export function EmailPreview({
   website,
   hasInstanceLogo,
   instanceColor,
+  instanceLogoUrl = INSTANCE_LOGO,
 }: {
   template: (typeof emailTemplates)[number];
   instanceName: string;
   website: string;
   hasInstanceLogo: boolean;
   instanceColor: string;
+  instanceLogoUrl?: string;
 }) {
   const configuredAccent = instanceColor || "#ffffff";
   const accent = /^#(?:fff|ffffff)$/i.test(configuredAccent)
@@ -68,7 +70,7 @@ export function EmailPreview({
             style={{ backgroundColor: hasInstanceLogo ? configuredAccent : accent }}
           >
             {hasInstanceLogo ? (
-              <img src={INSTANCE_LOGO} alt="" className="h-auto max-h-8 w-14 object-contain" />
+              <img src={instanceLogoUrl} alt="" className="h-auto max-h-8 w-14 object-contain" />
             ) : (
               <span className="text-[9px] font-bold text-white">
                 {instanceName || "Votre organisme"}
@@ -98,7 +100,7 @@ export function EmailPreview({
               </span>
             ) : hasInstanceLogo ? (
               <span className="flex flex-col items-start gap-1">
-                <img src={INSTANCE_LOGO} alt="" className="h-auto max-h-5 w-10 object-contain" />
+                <img src={instanceLogoUrl} alt="" className="h-auto max-h-5 w-10 object-contain" />
                 {website && <span className="max-w-24 truncate text-[6px] underline" style={{ color: mutedColor }}>{website}</span>}
               </span>
             ) : (

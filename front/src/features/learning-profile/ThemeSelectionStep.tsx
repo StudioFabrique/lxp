@@ -20,7 +20,9 @@ export default function ThemeSelectionStep() {
     <div className="space-y-4 px-1 py-1">
       <div>
         <h1 className="text-2xl font-bold">Choisissez votre thème</h1>
-        <AuthOnboardingChatbot introduction={false} compact
+        <AuthOnboardingChatbot
+          introduction={false}
+          compact
           message={themeGuidance}
           help={{
             action: themeGuidance,

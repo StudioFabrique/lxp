@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { Check, LayoutTemplate, Mail, Pencil } from "lucide-react";
 import Modal from "../../../components/UI/modal/modal";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
@@ -14,14 +15,16 @@ type Props = {
   website: string;
   hasInstanceLogo: boolean;
   instanceColor: string;
+  instanceLogoUrl?: string;
+  disabled?: boolean;
   isOpen: boolean;
   isSaving: boolean;
-  isSendingTest: boolean;
+  isSendingTest?: boolean;
   onOpen: () => void;
   onClose: () => void;
   onSelect: (template: EmailTemplateId) => void;
   onSave: () => void;
-  onSendTest: () => void;
+  onSendTest?: () => void;
 };
 
 const templateName = (id: EmailTemplateId) =>
@@ -44,11 +47,11 @@ export default function EmailTemplateSettings(props: Props) {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" className="btn btn-outline btn-primary normal-case" onClick={props.onSendTest} disabled={props.isSendingTest}>
+            {props.onSendTest && <button type="button" className="btn btn-outline btn-primary normal-case" onClick={props.onSendTest} disabled={props.disabled || props.isSaving || props.isSendingTest}>
               <Mail className={cn("size-4", props.isSendingTest && "animate-pulse")} aria-hidden="true" />
               {props.isSendingTest ? "Envoi…" : "Envoyer un e-mail de test"}
-            </button>
-            <button type="button" className="btn btn-primary normal-case" onClick={props.onOpen}>
+            </button>}
+            <button type="button" className="btn btn-primary normal-case" onClick={props.onOpen} disabled={props.disabled || props.isSaving}>
               <Pencil className="size-4" aria-hidden="true" />
               Modifier le template
             </button>
@@ -56,7 +59,7 @@ export default function EmailTemplateSettings(props: Props) {
         </div>
       </BoxWrapper>
 
-      {props.isOpen && (
+      {props.isOpen && createPortal(
         <Modal
           title="Choisir un template d’e-mail"
           leftLabel="Annuler"
@@ -78,6 +81,7 @@ export default function EmailTemplateSettings(props: Props) {
                 <button
                   key={template.id}
                   type="button"
+                  aria-label={template.name}
                   aria-pressed={selected}
                   onClick={() => props.onSelect(template.id)}
                   className={cn("group overflow-hidden rounded-2xl border-2 bg-base-100 text-left transition hover:-translate-y-0.5 hover:shadow-lg", selected ? "border-primary ring-2 ring-primary/20" : "border-base-300")}
@@ -88,6 +92,7 @@ export default function EmailTemplateSettings(props: Props) {
                     website={props.website}
                     hasInstanceLogo={props.hasInstanceLogo}
                     instanceColor={props.instanceColor}
+                    instanceLogoUrl={props.instanceLogoUrl}
                   />
                   <span className="flex items-center justify-between px-4 py-3 text-sm font-bold">
                     {template.name}
@@ -99,7 +104,8 @@ export default function EmailTemplateSettings(props: Props) {
               );
             })}
           </div>
-        </Modal>
+        </Modal>,
+        document.body,
       )}
     </>
   );

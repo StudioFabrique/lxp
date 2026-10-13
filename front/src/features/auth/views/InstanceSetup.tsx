@@ -1,6 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { instanceIdentitySchema } from "../../profile/schemas/instance-schema";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  instanceSetupSchema,
+  type InstanceSetupValues,
+} from "../schemas/instance-setup.schema";
+import { profileKeys } from "../../profile/api/profile.keys";
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useEffect, useState, useRef } from "react";
@@ -8,82 +13,95 @@ import { motion, useReducedMotion } from "motion/react";
 import { Building2, LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
 import InstanceLogoControls from "../../../components/UI/instance-logo-controls";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
-import {
-  profileApi,
-  type InstanceSettings,
-} from "../../profile/api/profile.api";
+import { profileApi } from "../../profile/api/profile.api";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 import { cn } from "../../../utils/cn";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
+import EmailTemplateSettings, {
+  type EmailTemplateId,
+} from "../../profile/components/email-template-settings";
 
 const DEFAULT_NAME = "ANDRIA";
 const DEFAULT_LOGO_BACKGROUND = "#ffffff";
 
 export default function InstanceSetup() {
   const navigate = useNavigate();
-  const navigateRef = useRef(navigate);
-  navigateRef.current = navigate;
   const reduceMotion = useReducedMotion();
-  const [settings, setSettings] = useState<InstanceSettings | null>(null);
-  const form = useForm({
-    resolver: zodResolver(instanceIdentitySchema),
+  const queryClient = useQueryClient();
+  const settingsQuery = useQuery({
+    queryKey: profileKeys.instanceSettings(),
+    queryFn: profileApi.queries.getInstanceSettings,
+  });
+  const settings = settingsQuery.data;
+  const form = useForm<InstanceSetupValues>({
+    resolver: zodResolver(instanceSetupSchema),
     defaultValues: {
       name: DEFAULT_NAME,
       website: "",
       color: DEFAULT_LOGO_BACKGROUND,
+      emailTemplate: "minimal",
+      logo: { file: null, url: null },
     },
   });
   const [name, setName] = useFormField(form, "name");
   const [website, setWebsite] = useFormField(form, "website");
+  const nameError = form.formState.errors.name?.message;
   const websiteError = form.formState.errors.website?.message ?? "";
-  const [logo, setLogo] = useState<TemporaryImage>({ file: null, url: null });
+  const [logo, setLogo] = useFormField(form, "logo");
+  const [emailTemplate, setEmailTemplate] = useFormField(form, "emailTemplate");
+  const [draftEmailTemplate, setDraftEmailTemplate] =
+    useState<EmailTemplateId>("minimal");
+  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] = useState(false);
   const [logoBackgroundColor, setLogoBackgroundColor] = useFormField(
     form,
     "color",
   );
-  const [isSaving, setIsSaving] = useState(false);
   const [step, setStep] = useState(1);
+  const initialized = useRef(false);
+  const { reset } = form;
 
   useEffect(() => {
-    profileApi.queries
-      .getInstanceSettings()
-      .then((current) => {
-        if (current.setupCompleted) {
-          navigateRef.current("/admin", { replace: true });
-          return;
-        }
-        setSettings(current);
-        setName(current.name.trim() || DEFAULT_NAME);
-        setWebsite(current.website);
-      })
-      .catch(() =>
-        toast.error("La configuration de l’instance est indisponible."),
-      );
-  }, [setName, setWebsite]);
-
-  const completeSetup = form.handleSubmit(async (values) => {
-    if (!settings || isSaving) return;
-    setIsSaving(true);
-    try {
-      const payload = new FormData();
-      payload.append("name", values.name);
-      payload.append("website", values.website);
-      payload.append("setupCompleted", "true");
-      payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
-      payload.append("color", values.color);
-      if (logo.file) payload.append("image", logo.file);
-
-      await profileApi.mutations.updateInstanceSettings(payload);
+    if (!settings || initialized.current) return;
+    if (settings.setupCompleted) {
       navigate("/admin", { replace: true });
-    } catch (error: unknown) {
-      toast.error(getApiErrorMessage(error, "La configuration a échoué."));
-    } finally {
-      setIsSaving(false);
+      return;
     }
+    initialized.current = true;
+    reset({
+      name: settings.name.trim() || DEFAULT_NAME,
+      website: settings.website,
+      color: DEFAULT_LOGO_BACKGROUND,
+      emailTemplate: settings.emailTemplate,
+      logo: { file: null, url: null },
+    });
+  }, [settings, reset, navigate]);
+
+  const saveMutation = useMutation({
+    mutationFn: profileApi.mutations.updateInstanceSettings,
+    onSuccess: (saved) => {
+      queryClient.setQueryData(profileKeys.instanceSettings(), saved);
+      void queryClient.invalidateQueries({ queryKey: profileKeys.instanceLogo() });
+      navigate("/admin", { replace: true });
+    },
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, "La configuration a échoué."));
+    },
+  });
+  const isSaving = saveMutation.isPending || form.formState.isSubmitting;
+  const completeSetup = form.handleSubmit(async (values) => {
+    if (!settings || saveMutation.isPending) return;
+    const payload = new FormData();
+    payload.append("name", values.name);
+    payload.append("website", values.website);
+    payload.append("setupCompleted", "true");
+    payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
+    payload.append("color", values.color);
+    payload.append("emailTemplate", values.emailTemplate);
+    if (values.logo.file) payload.append("image", values.logo.file);
+    await saveMutation.mutateAsync(payload).catch(() => undefined);
   }, showFormErrors);
 
   return (
@@ -150,6 +168,12 @@ export default function InstanceSetup() {
             description="Configurez l’identité de votre organisme. Vous pourrez modifier ces informations plus tard dans les paramètres."
             variant="setup"
           >
+            {settingsQuery.isError && (
+              <div role="alert" className="alert alert-error mb-4">
+                <span>La configuration de l’instance est indisponible.</span>
+                <button type="button" className="btn btn-sm" onClick={() => void settingsQuery.refetch()}>Réessayer</button>
+              </div>
+            )}
             <form
               id="instance-setup-form"
               className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-5"
@@ -164,10 +188,13 @@ export default function InstanceSetup() {
                   type="text"
                   value={name}
                   maxLength={80}
+                  aria-invalid={Boolean(nameError)}
+                  aria-describedby={nameError ? "setup-name-error" : undefined}
                   disabled={!settings || isSaving}
                   onChange={(event) => setName(event.target.value)}
                   className="input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
                 />
+                {nameError && <span id="setup-name-error" className="text-sm text-error">{nameError}</span>}
               </label>
 
               <div className="grid w-full gap-5 sm:grid-cols-2 sm:items-start">
@@ -219,6 +246,30 @@ export default function InstanceSetup() {
                 />
               </div>
             </form>
+            <div className="mx-auto mt-5 w-full max-w-xl">
+              <EmailTemplateSettings
+                selectedTemplate={emailTemplate}
+                draftTemplate={draftEmailTemplate}
+                instanceName={name}
+                website={website}
+                hasInstanceLogo={Boolean(logo.url) || Boolean(settings?.hasLogo)}
+                instanceLogoUrl={logo.url ?? undefined}
+                instanceColor={logoBackgroundColor}
+                isOpen={isEmailTemplateModalOpen}
+                isSaving={isSaving}
+                disabled={!settings || isSaving}
+                onOpen={() => {
+                  setDraftEmailTemplate(emailTemplate);
+                  setIsEmailTemplateModalOpen(true);
+                }}
+                onClose={() => setIsEmailTemplateModalOpen(false)}
+                onSelect={setDraftEmailTemplate}
+                onSave={() => {
+                  setEmailTemplate(draftEmailTemplate);
+                  setIsEmailTemplateModalOpen(false);
+                }}
+              />
+            </div>
           </AuthPageWrapper>
         )}
       </OnboardingProgressPanel>

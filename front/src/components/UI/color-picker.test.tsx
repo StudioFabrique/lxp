@@ -24,7 +24,9 @@ describe("ColorPicker", () => {
     root = createRoot(container);
     await act(async () => root.render(<ControlledPicker />));
 
-    const input = container.querySelector<HTMLInputElement>(
+    await act(async () => container.querySelector("button")?.click());
+
+    const input = document.querySelector<HTMLInputElement>(
       'input[type="color"]',
     );
     expect(input).not.toBeNull();
@@ -43,10 +45,10 @@ describe("ColorPicker", () => {
 
     expect(blur).not.toHaveBeenCalled();
     expect(document.activeElement).toBe(input);
-    expect(container.textContent).toContain("#123456");
+    expect(document.querySelector("[role=dialog]")?.textContent).toContain("#123456");
   });
 
-  it("affiche une palette compacte à droite de la pastille", async () => {
+  it("affiche la palette compacte hors du conteneur qui découpe le contenu", async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
@@ -56,13 +58,17 @@ describe("ColorPicker", () => {
       ),
     );
 
-    const menu = container.querySelector(".dropdown-content");
+    container.style.overflow = "hidden";
+    await act(async () => container.querySelector("button")?.click());
+
+    const menu = document.querySelector("[role=dialog]");
     const trigger = container.querySelector<HTMLElement>(
-      '[role="button"][aria-label="Couleur de fond du logo"]',
+      'button[aria-label="Couleur de fond du logo"]',
     );
     expect(trigger?.style.backgroundColor).toBe("var(--color-base-100)");
     expect(trigger?.style.borderColor).toBe("var(--color-base-300)");
-    expect(menu?.className).toContain("sm:left-full");
+    expect(menu).not.toBeNull();
+    expect(container.contains(menu)).toBe(false);
     expect(menu?.textContent).toContain("Choisir une couleur de fond");
     expect(menu?.querySelector(".grid-cols-4")?.children).toHaveLength(8);
     expect(
@@ -80,4 +86,39 @@ describe("ColorPicker", () => {
       "Teal",
     ]);
   });
+
+  it("ferme la palette après une sélection et rend le focus au bouton", async () => {
+    const onColorChange = vi.fn();
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    await act(async () => root.render(<ColorPicker onColorChange={onColorChange} />));
+    const trigger = container.querySelector("button");
+    await act(async () => trigger?.click());
+    await act(async () => document.querySelector<HTMLButtonElement>('button[title="Blue"]')?.click());
+
+    expect(onColorChange).toHaveBeenCalledWith("#3b82f6");
+    expect(document.querySelector("[role=dialog]")).toBeNull();
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 0)));
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("ferme la palette avec Échap sans modifier la couleur", async () => {
+    const onColorChange = vi.fn();
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    await act(async () => root.render(<ColorPicker compact onColorChange={onColorChange} />));
+    const trigger = container.querySelector("button");
+    await act(async () => trigger?.click());
+    await act(async () => document.activeElement?.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    ));
+
+    expect(document.querySelector("[role=dialog]")).toBeNull();
+    expect(onColorChange).not.toHaveBeenCalled();
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 0)));
+    expect(document.activeElement).toBe(trigger);
+  });
+
 });
