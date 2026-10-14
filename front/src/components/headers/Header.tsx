@@ -2,12 +2,14 @@
  * En tête pour les interfaces qui listent les groupes, les users, les parcours, etc...
  */
 
+import { createPortal } from "react-dom";
 import type { PropsWithChildren, ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 import { formatTitle } from "../../utils/helpers/text-helpers";
+import { useMobilePageHeader } from "./useMobilePageHeader";
 
 interface HeaderProps {
   title: ReactNode;
@@ -21,6 +23,8 @@ interface HeaderProps {
   classname?: string;
   containerClassname?: string;
   onClick?: () => void;
+  /** Mobile : le titre prend la place du nom de la section dans la barre du haut. */
+  showTitleInTopBar?: boolean;
 }
 
 const Header = ({
@@ -35,8 +39,26 @@ const Header = ({
   classname,
   containerClassname,
   onClick,
+  showTitleInTopBar = false,
   children,
 }: PropsWithChildren<HeaderProps>) => {
+  const isPageTitle =
+    !isSubHeader && !alternateBgColor && !successBgColor && !hasError && !disabled && !onClick;
+  const mobile = useMobilePageHeader(
+    isPageTitle,
+    showTitleInTopBar && typeof title === "string" ? { text: title, className: classname } : undefined,
+  );
+
+  // Mobile : la barre du haut porte déjà la section, le titre ne reste que pour les lecteurs d'écran.
+  if (mobile.collapsed) {
+    return (
+      <>
+        <h2 className="sr-only">{title}</h2>
+        {children && mobile.container ? createPortal(children, mobile.container) : null}
+      </>
+    );
+  }
+
   return (
     <BoxWrapper
       onClick={onClick}

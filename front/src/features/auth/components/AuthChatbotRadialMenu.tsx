@@ -22,6 +22,8 @@ type Props = {
   /** Côté de la bulle : l'entrée épinglée s'y place, les autres entrées passent de l'autre côté quand il y a la place. */
   pinnedSide?: "left" | "right";
   onOverlapChange?: (overlap: boolean) => void;
+  /** Petit écran : pas la place d'un éventail, les entrées s'empilent en bas de l'écran, la question libre en dernier. */
+  stacked?: boolean;
 };
 
 /**
@@ -29,7 +31,7 @@ type Props = {
  * gauche près du bord droit de l'écran, se décale pour rester visible et signale
  * s'il recouvre la bulle de l'assistant, que l'appelant peut alors masquer.
  */
-export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange }: Props) {
+export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange, stacked = false }: Props) {
   const reducedMotion = useReducedMotion();
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
   const count = items.length;
@@ -37,6 +39,11 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
   const pinnedOverhang = items[pinnedIndex]?.overhang ?? 0;
 
   useEffect(() => {
+    // La pile recouvre le bas de l'écran, et avec lui la bulle de l'assistant virtuel : elle s'efface le temps du menu.
+    if (stacked) {
+      onOverlapChange?.(true);
+      return;
+    }
     let frame = 0;
     let previousOverlap: boolean | null = null;
     const compact = pinnedSide !== undefined;
@@ -108,13 +115,16 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
     };
     positionItems();
     return () => window.cancelAnimationFrame(frame);
-  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange]);
+  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange, stacked]);
 
   return createPortal(
-    <ul id={id} aria-label={label} className="pointer-events-none fixed inset-0 z-50">
+    <ul id={id} aria-label={label} className={cn("pointer-events-none fixed z-50", stacked ? "inset-x-3 bottom-3 flex max-h-[calc(100dvh-1.5rem)] flex-col gap-2 overflow-y-auto" : "inset-0")}>
       {items.map((item, index) => (
         <motion.li key={item.key} ref={element => { itemsRef.current[index] = element; }}
-          className={cn("pointer-events-auto fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52")}
+          className={cn(
+            "pointer-events-auto",
+            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
+          )}
           initial={reducedMotion ? false : { opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9, transition: { duration: reducedMotion ? 0 : .12, delay: 0 } }}
           transition={{ duration: reducedMotion ? 0 : .3, delay: reducedMotion ? 0 : index * .12, ease: [.22, 1, .36, 1] }}>
           {item.node}

@@ -29,8 +29,8 @@ const StepItem: FC<Props> = ({
         "cursor-pointer",
         "hover:after:bg-info after:border-0 after:font-semibold hover:after:text-info-content",
         "step after:content-[counter(step)] [&:first-child::before]:hidden",
-        "min-h-12 md:min-h-auto md:before:h-1.5",
-        "before:w-1.5 md:before:w-full",
+        // Sur mobile, seuls les numéros tiennent : les libellés passent sous la barre (voir `Stepper`).
+        "before:h-1.5 before:w-full max-md:min-w-0",
         isActive ? "step-primary after:text-primary-content" : undefined,
         stepItem.id === actualStepId && [
           "before:bg-primary",
@@ -43,7 +43,7 @@ const StepItem: FC<Props> = ({
       aria-disabled={disabled}
       data-content={stepItem.id}
     >
-      {stepItem.label}
+      <span className="max-md:sr-only">{stepItem.label}</span>
     </li>
   );
 };

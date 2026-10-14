@@ -1,8 +1,10 @@
+import { createPortal } from "react-dom";
 import { PropsWithChildren } from "react";
 import { cn } from "../../utils/cn";
 import { formatTitle } from "../../utils/helpers/text-helpers";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
+import { useMobilePageHeader } from "./useMobilePageHeader";
 
 interface Props {
   title: string;
@@ -17,6 +19,20 @@ interface Props {
 }
 
 const PageHeader = (props: PropsWithChildren<Props>) => {
+  const isPageTitle =
+    !props.isSubHeader && !props.successBgColor && !props.hasError && !props.disabled && !props.onClick;
+  const mobile = useMobilePageHeader(isPageTitle);
+
+  // Mobile : la barre du haut porte déjà la section, le titre ne reste que pour les lecteurs d'écran.
+  if (mobile.collapsed) {
+    return (
+      <>
+        <h2 className="sr-only">{props.title}</h2>
+        {props.children && mobile.container ? createPortal(props.children, mobile.container) : null}
+      </>
+    );
+  }
+
   return (
     <BoxWrapper
       onClick={props.onClick}

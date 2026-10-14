@@ -111,7 +111,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
 
   return (
     <section className="w-full flex flex-col">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-y-2">
         {props.title ? (
           <h2
             className={cn(sizeClass, "p-2", props.titleSize === "large" && "font-bold")}
@@ -119,7 +119,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
             {formatTitle(props.title)}
           </h2>
         ) : null}
-        <div className="flex items-center gap-x-2 ml-auto">
+        <div className="flex flex-wrap items-center justify-end gap-2 ml-auto">
           {props.headerActions}
           <ButtonAdd
             label={props.buttonLabel ?? "Sélectionner"}

@@ -23,7 +23,7 @@ export default function AuthChatbotQuestions({ message, help, id, anchorRef, bub
   const items = questions.map((question, index) => ({
     key: question.label,
     node: (
-      <button type="button" className={cn("btn h-auto min-h-11 w-full whitespace-normal rounded-full border px-4 py-3 text-sm font-normal shadow-md", selected === index ? "btn-accent border-accent-content/40" : "btn-secondary border-secondary-content/40")}
+      <button type="button" className={cn("btn h-auto min-h-11 w-full whitespace-normal rounded-full border px-4 py-3 text-sm font-normal shadow-md", selected === index ? "btn-primary border-primary-content/40 ring-2 ring-base-content ring-offset-2 ring-offset-base-100" : "btn-secondary border-secondary-content/40")}
         aria-pressed={selected === index}
         onClick={() => {
           onQuestionSelect(index, question.answer);

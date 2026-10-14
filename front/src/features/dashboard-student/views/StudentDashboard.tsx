@@ -46,6 +46,7 @@ const StudentDashboard = () => {
         title={welcomeTitle}
         description={welcomeMessage}
         classname="capitalize"
+        showTitleInTopBar
       >
         {canResumeOnboarding ? (
           <Link to="/student/onboarding" className="btn btn-primary">

@@ -7,6 +7,14 @@ export type ChatbotBubbleSide = "left" | "right";
 
 export const CHATBOT_AVATAR_SIZE = 64;
 export const CHATBOT_BUBBLE_WIDTH = 300;
+/** Place gardée pour l'assistant virtuel, sa marge et l'écart avec sa bulle quand la bulle se réduit sur un petit écran. */
+const BUBBLE_VIEWPORT_RESERVE = 128;
+/** Classe de la largeur de la bulle : celle de `chatbotBubbleWidth`, pour que le placement et l'affichage concordent. */
+export const CHATBOT_BUBBLE_WIDTH_CLASS = "w-[min(300px,calc(100vw-8rem))]";
+
+/** La bulle fait 300 px, moins sur un écran étroit où elle doit tenir à côté de l'assistant virtuel. */
+export const chatbotBubbleWidth = (viewportWidth: number): number =>
+  Math.min(CHATBOT_BUBBLE_WIDTH, viewportWidth - BUBBLE_VIEWPORT_RESERVE);
 /** Marge minimale entre l'assistant virtuel et le bord de l'écran. */
 export const CHATBOT_EDGE_MARGIN = 20;
 /** Même retrait que l'ancien bouton flottant, repris par la séquence de présentation (`intro-chatbot-spot`). */
@@ -41,8 +49,8 @@ export const restingChatbotPoint = (
 };
 
 /** La bulle se place à gauche de l'assistant virtuel, sauf si elle n'y tient pas : elle passe alors à droite. */
-export const chatbotBubbleSide = (point: ChatbotPoint): ChatbotBubbleSide =>
-  point.x - BUBBLE_GAP - CHATBOT_BUBBLE_WIDTH >= CHATBOT_EDGE_MARGIN ? "left" : "right";
+export const chatbotBubbleSide = (point: ChatbotPoint, viewportWidth = Infinity): ChatbotBubbleSide =>
+  point.x - BUBBLE_GAP - chatbotBubbleWidth(viewportWidth) >= CHATBOT_EDGE_MARGIN ? "left" : "right";
 
 const overlaps = (a: ChatbotRect, b: ChatbotRect): boolean =>
   a.left < b.left + b.width && a.left + a.width > b.left && a.top < b.top + b.height && a.top + a.height > b.top;
@@ -59,7 +67,8 @@ export const chooseTutorialPlacement = (
   viewport: ChatbotViewport,
   size = CHATBOT_AVATAR_SIZE,
 ): ChatbotTutorialPlacement | null => {
-  const bubbleSpan = CHATBOT_BUBBLE_WIDTH + BUBBLE_GAP;
+  const bubbleWidth = chatbotBubbleWidth(viewport.width);
+  const bubbleSpan = bubbleWidth + BUBBLE_GAP;
   // Un élément plus haut ou plus large que l'écran garde l'assistant virtuel dans la partie visible.
   const centerY = Math.max(CHATBOT_EDGE_MARGIN, Math.min(target.top + target.height / 2 - size / 2, viewport.height - size - CHATBOT_EDGE_MARGIN));
   const centerX = Math.max(CHATBOT_EDGE_MARGIN, Math.min(target.left + target.width / 2 - size / 2, viewport.width - size - CHATBOT_EDGE_MARGIN));
@@ -82,7 +91,7 @@ export const chooseTutorialPlacement = (
     const bubbleLeft = side === "left" ? point.x - bubbleSpan : point.x + size + BUBBLE_GAP;
     const fitsViewport = point.x >= CHATBOT_EDGE_MARGIN && point.y >= CHATBOT_EDGE_MARGIN
       && point.x + size <= viewport.width - CHATBOT_EDGE_MARGIN && point.y + size <= viewport.height - CHATBOT_EDGE_MARGIN
-      && bubbleLeft >= CHATBOT_EDGE_MARGIN && bubbleLeft + CHATBOT_BUBBLE_WIDTH <= viewport.width - CHATBOT_EDGE_MARGIN;
+      && bubbleLeft >= CHATBOT_EDGE_MARGIN && bubbleLeft + bubbleWidth <= viewport.width - CHATBOT_EDGE_MARGIN;
     return fitsViewport && !overlaps(avatar, clearTarget);
   }) ?? null;
 };

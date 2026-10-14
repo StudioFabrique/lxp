@@ -181,8 +181,8 @@ const EditParcours = () => {
                   updateStep={updateStep}
                 />
               </BoxWrapper>
-              <div className="mt-12 w-full">
-                <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
+              <div className="mt-8 w-full md:mt-12">
+                <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
                 <div className="mt-4">{renderActualStep()}</div>
               </div>
               {actualStep.id !== stepsList.length && !moduleFormOpened ? (

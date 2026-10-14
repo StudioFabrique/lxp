@@ -5,3 +5,9 @@
  */
 export const INTRO_PLATE_CLASS =
   "absolute flex items-end gap-3.5 rounded-2xl border px-5 py-3 text-2xl text-(--intro-plate-text) backdrop-blur-md outline outline-1 outline-transparent transition-colors [backface-visibility:hidden] bg-gradient-to-br from-(--intro-glass)/85 via-(--intro-glass)/65 to-(--intro-glass)/45 shadow-[inset_0_1px_0_color-mix(in_srgb,var(--intro-plate-text)_25%,transparent),inset_0_-12px_24px_color-mix(in_srgb,var(--intro-glass)_20%,transparent),0_20px_40px_color-mix(in_srgb,var(--color-neutral)_35%,transparent)]";
+
+/** Couleurs des plaques quand aucun fond coloré ne les précède : celles du thème. */
+export const INTRO_THEME_PLATE_COLORS = {
+  glass: "color-mix(in srgb, var(--color-base-200) 88%, var(--color-base-content))",
+  text: "var(--color-base-content)",
+};

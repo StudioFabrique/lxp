@@ -3,6 +3,7 @@ import {
   CHATBOT_AVATAR_SIZE,
   CHATBOT_BUBBLE_WIDTH,
   chatbotBubbleSide,
+  chatbotBubbleWidth,
   chooseTutorialPlacement,
   clampChatbotPoint,
   restingChatbotPoint,
@@ -75,5 +76,15 @@ describe("placement de l'assistant virtuel face à un élément", () => {
 
   it("renonce quand l'élément occupe presque tout l'écran", () => {
     expect(chooseTutorialPlacement({ left: 0, top: 0, width: 1440, height: 900 }, viewport)).toBeNull();
+  });
+
+  it("réduit la bulle sur un écran étroit pour qu'elle tienne à gauche de l'assistant virtuel", () => {
+    // iPhone 16 : l'assistant virtuel est posé à son retrait par défaut (64 px + 24 px du bord droit).
+    const avatar = { x: 393 - 64 - 24, y: 600 };
+
+    expect(chatbotBubbleWidth(1280)).toBe(CHATBOT_BUBBLE_WIDTH);
+    expect(chatbotBubbleWidth(393)).toBeLessThan(CHATBOT_BUBBLE_WIDTH);
+    expect(chatbotBubbleSide(avatar)).toBe("right");
+    expect(chatbotBubbleSide(avatar, 393)).toBe("left");
   });
 });

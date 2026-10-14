@@ -16,6 +16,7 @@ import {
   sidebarListClassName,
 } from "./sidebar-styles";
 import { cn } from "../../utils/cn";
+import { useSidebarDisplay } from "./sidebar-display";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -27,6 +28,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const { open: openIntroPresentation } = useIntroPresentation();
   const { demoMode, exitUrl, aiDisabled } = useDemoMode();
   const [isExitOpen, setIsExitOpen] = useState(false);
+  const { expanded } = useSidebarDisplay();
 
   const handleClickLogout = () => {
     logout();
@@ -71,7 +73,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
-        <li className="block w-full max-2xl:order-2">
+        <li className={cn("block w-full", !expanded && "max-2xl:order-2")}>
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -84,7 +86,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           </button>
         </li>
       ) : (
-        <li className="block w-full max-2xl:order-2">
+        <li className={cn("block w-full", !expanded && "max-2xl:order-2")}>
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -99,13 +101,30 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       )}
 
       {/* En mode compact, la ligne se défait : thème, puis sortie, puis logo tout en bas. */}
-      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 max-2xl:contents 2xl:flex-row">
+      <li
+        className={cn(
+          "flex w-full items-center justify-between gap-1",
+          expanded
+            ? "flex-row"
+            : "flex-col-reverse max-2xl:contents 2xl:flex-row",
+        )}
+      >
         {/* Logo */}
-        <div className="flex size-8 items-center justify-center max-2xl:order-3 max-2xl:self-center 2xl:w-16">
+        <div
+          className={cn(
+            "flex size-8 items-center justify-center",
+            expanded ? "w-16" : "max-2xl:order-3 max-2xl:self-center 2xl:w-16",
+          )}
+        >
           <SidebarLogo />
         </div>
         <div
-          className="tooltip tooltip-right max-2xl:order-1 max-2xl:self-center 2xl:tooltip-top"
+          className={cn(
+            "tooltip tooltip-right",
+            expanded
+              ? "tooltip-top"
+              : "max-2xl:order-1 max-2xl:self-center 2xl:tooltip-top",
+          )}
           data-tip="Mode clair / Mode sombre"
         >
           <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />

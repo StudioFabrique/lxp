@@ -40,6 +40,7 @@ const AdminDashboard = () => {
         description={welcomeMessage}
         classname="capitalize"
         containerClassname="z-20"
+        showTitleInTopBar
       >
         {isTeacher && (
           <QuickActions

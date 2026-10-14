@@ -7,11 +7,13 @@ import {
   type ChatbotMemoryAccess,
 } from "../auth/components/AuthChatbotTransitionContext";
 import { useIntroCards } from "./useIntroCards";
+import IntroMobileScene from "./IntroMobileScene";
 import IntroOverviewScene from "./IntroOverviewScene";
 import IntroSceneHeading from "./IntroSceneHeading";
 import IntroSkipConfirmModal from "./IntroSkipConfirmModal";
 import { useIntroPresentation } from "./useIntroPresentation";
 import { useIntroSpaceReady } from "./useIntroSpaceReady";
+import { useIsMobile } from "../../hooks/useMediaQuery";
 
 type Props = {
   isSaving: boolean;
@@ -29,6 +31,9 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
   const { cards, isLoading, onSelectChild, formationOptions, selectedFormationId, onSelectFormation } = useIntroCards(true);
   // Les titres réels sont attendus, mais jamais plus de quelques secondes.
   const isReady = useIntroSpaceReady(isLoading);
+  // Sur mobile, une scène dédiée remplace celle du bureau (défilement, mesures et assistant à côté des plaques).
+  const isMobile = useIsMobile();
+  const Scene = isMobile ? IntroMobileScene : IntroOverviewScene;
   const rootRef = useRef<HTMLElement>(null);
   const [isSkipConfirmOpen, setIsSkipConfirmOpen] = useState(false);
   // Position et geste de l’assistant virtuel, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
@@ -65,7 +70,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
       className="absolute inset-0 select-none overflow-hidden outline-none"
     >
       {isReady ? (
-        <IntroOverviewScene
+        <Scene
           cards={cards}
           onSelectChild={onSelectChild}
           formationOptions={formationOptions}

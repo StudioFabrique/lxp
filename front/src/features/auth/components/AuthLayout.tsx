@@ -147,7 +147,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 ? "w-full max-w-2xl"
                 : isInstanceSetup || isAccountActivation || hasSetupLayout
                   ? "w-full max-w-xl"
-                  : "w-100")}
+                  : "w-full max-w-100")}
           >
             {!isOnboarding && !hasSetupLayout && (
               <div

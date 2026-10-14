@@ -21,13 +21,14 @@ import useChatbotQuiz from "../hooks/use-chatbot-quiz";
 import useChatbotTutorial from "../hooks/use-chatbot-tutorial";
 import useChatbotUi from "../hooks/use-chatbot-ui";
 import { buildChatbotQuestions, chatbotQuestionKey, pickSelectionPrompts, type ChatbotQuestion } from "../chatbot-questions";
-import { chooseTutorialPlacement } from "../chatbot-position";
+import { CHATBOT_BUBBLE_WIDTH_CLASS, chooseTutorialPlacement } from "../chatbot-position";
 import { FIRST_FORMATION_TUTORIAL } from "../chatbot-tutorials";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import { useIntroPresentation } from "../../intro-presentation/useIntroPresentation";
 import { canSuggestActivityQuiz } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
 import { prebuiltPrompt } from "../../../config/ai/ai-texts.json";
 import { cn } from "../../../utils/cn";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 type Props = {
   /** Faux quand les fonctionnalités IA sont désactivées : il ne reste que les tutoriels de l'interface. */
@@ -51,6 +52,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
   const { currentActivity, activityTextSelection, setActivityTextSelection } = useContext(ChatbotContext);
   const { isOpen: isIntroOpen, hasJustRevealed } = useIntroPresentation();
   const reducedMotion = useReducedMotion();
+  const narrowScreen = useMediaQuery("(max-width: 639px)");
   const dock = useChatbotDock(isIntroOpen);
   const { moveForTutorial, returnToRest } = dock;
   const tutorial = useChatbotTutorial();
@@ -244,7 +246,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     // Le bouton d'historique dépasse au-dessus du champ.
     overhang: question.kind === "input" ? 24 : 0,
     node: question.kind === "input"
-      ? <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable} />
+      ? <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable && !narrowScreen} />
       : <ChatbotRadialButton label={question.label} onClick={() => select(question)} />,
   }));
 
@@ -283,7 +285,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
           }}
         />
         {showBubble && (
-          <div ref={bubbleSlotRef} className={cn("absolute top-1/2 grid w-[300px] -translate-y-1/2", dock.side === "left" ? "right-full mr-3" : "left-full ml-3")}>
+          <div ref={bubbleSlotRef} className={cn("absolute top-1/2 grid -translate-y-1/2", CHATBOT_BUBBLE_WIDTH_CLASS, dock.side === "left" ? "right-full mr-3" : "left-full ml-3")}>
             <AuthChatbotBubble
               bubbleRef={bubbleRef}
               message={bubbleContent}
@@ -297,7 +299,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       </motion.div>
       <AnimatePresence>
         {radialOpen && (
-          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} onOverlapChange={setBubbleObstructed} />
+          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} onOverlapChange={setBubbleObstructed} stacked={narrowScreen} />
         )}
       </AnimatePresence>
       {tutorial.step && !hidden && <ChatbotTutorialHighlight element={tutorial.step.element} />}

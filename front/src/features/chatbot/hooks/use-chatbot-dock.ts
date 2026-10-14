@@ -59,7 +59,7 @@ export default function useChatbotDock(centered: boolean) {
   const [initial] = useState(() => restingChatbotPoint(readViewport(), initialOffset, centered));
   const x = useMotionValue(initial.x);
   const y = useMotionValue(initial.y);
-  const [side, setSide] = useState<ChatbotBubbleSide>(() => chatbotBubbleSide(initial));
+  const [side, setSide] = useState<ChatbotBubbleSide>(() => chatbotBubbleSide(initial, window.innerWidth));
 
   const stopAnimations = useCallback(() => {
     animations.current.forEach((animation) => animation.stop());
@@ -69,7 +69,7 @@ export default function useChatbotDock(centered: boolean) {
   const moveTo = useCallback((point: ChatbotPoint, bubbleSide?: ChatbotBubbleSide) => {
     const target = clampChatbotPoint(point, readViewport());
     stopAnimations();
-    setSide(bubbleSide ?? chatbotBubbleSide(target));
+    setSide(bubbleSide ?? chatbotBubbleSide(target, window.innerWidth));
     if (reducedMotion) {
       x.set(target.x);
       y.set(target.y);
@@ -106,7 +106,7 @@ export default function useChatbotDock(centered: boolean) {
       stopAnimations();
       x.set(point.x);
       y.set(point.y);
-      setSide(chatbotBubbleSide(point));
+      setSide(chatbotBubbleSide(point, window.innerWidth));
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -140,7 +140,7 @@ export default function useChatbotDock(centered: boolean) {
     atRest.current = true;
     saved.current = toEdgeOffset(point, current);
     writeSavedOffset(saved.current);
-    setSide(chatbotBubbleSide(point));
+    setSide(chatbotBubbleSide(point, window.innerWidth));
   }, [x, y]);
 
   const dragBounds = useMemo(() => ({

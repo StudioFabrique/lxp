@@ -7,11 +7,14 @@ import {
   sidebarLabelClassName,
 } from "./sidebar-styles";
 import { cn } from "../../utils/cn";
+import { useSidebarDisplay } from "./sidebar-display";
 
 type Props = { textSize?: "text-sm" | "text-lg" };
 
 const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  // La bulle s'ouvre à droite du menu : le tiroir mobile n'a pas la place de l'accueillir.
+  const { expanded } = useSidebarDisplay();
 
   useEffect(() => {
     setTimeout(() => {
@@ -48,7 +51,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
           </span>
         </Link>
 
-        {showTooltip && (
+        {showTooltip && !expanded && (
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}

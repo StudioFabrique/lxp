@@ -29,6 +29,7 @@ import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
 import IntroSceneHeading from "./IntroSceneHeading";
+import { INTRO_THEME_PLATE_COLORS } from "./intro-plate-style";
 import { useInstanceBranding } from "../../hooks/useInstanceBranding";
 import { useIntroGuide } from "./useIntroGuide";
 import { useIntroPresentation } from "./useIntroPresentation";
@@ -95,12 +96,6 @@ const STACK_VISUAL_WIDTH = 840;
  * ses composants. Les boutons et le clavier déplacent la même zone, il n'y a
  * donc qu'une source de vérité.
  */
-/** Couleurs des plaques quand aucun fond coloré ne les précède : celles du thème. */
-const THEME_PLATE_COLORS = {
-  glass: "color-mix(in srgb, var(--color-base-200) 88%, var(--color-base-content))",
-  text: "var(--color-base-content)",
-};
-
 const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFormationId, onSelectFormation, isSaving, onComplete }: Props) => {
   const maxStep = Math.max(1, cards.length - 1);
   const maxStepRef = useRef(maxStep);
@@ -110,7 +105,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
   }, [maxStep]);
   const { logoUrl, backgroundColor } = useInstanceBranding();
   // Le fond coloré n'entoure plus que le logo : les plaques reposent sur la page et gardent les couleurs du thème.
-  const plateColors = THEME_PLATE_COLORS;
+  const plateColors = INTRO_THEME_PLATE_COLORS;
   // Avec la barre réduite de la première présentation, le titre prend la ligne libre à sa droite.
   const { sidebarPhase } = useIntroPresentation();
   const isCompactSidebar = sidebarPhase !== "normal";
@@ -484,8 +479,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       timeline.set(
         stage.querySelector(".intro-plate-scope"),
         {
-          "--intro-glass": THEME_PLATE_COLORS.glass,
-          "--intro-plate-text": THEME_PLATE_COLORS.text,
+          "--intro-glass": INTRO_THEME_PLATE_COLORS.glass,
+          "--intro-plate-text": INTRO_THEME_PLATE_COLORS.text,
         },
         0.3,
       );

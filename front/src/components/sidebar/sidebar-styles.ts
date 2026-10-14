@@ -12,7 +12,7 @@ export const sidebarControlClassName =
   "flex min-h-8 w-full shrink-0 cursor-pointer items-center justify-start gap-2 rounded-lg px-2 py-1 text-sm transition-colors hover:bg-[var(--sidebar-hover)]";
 
 export const sidebarLabelClassName = cn(
-  "min-w-0 overflow-hidden whitespace-nowrap opacity-0 2xl:opacity-100",
+  "min-w-0 overflow-hidden whitespace-nowrap opacity-0 2xl:opacity-100 group-data-[variant=drawer]/sidebar:opacity-100",
   "group-data-[animated=true]/sidebar:transition-opacity",
   sidebarTransitionClassName,
 );
