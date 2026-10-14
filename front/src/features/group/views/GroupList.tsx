@@ -11,7 +11,10 @@ import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import Group from "../../../utils/interfaces/group";
 import { useGroupActions } from "../hooks/useGroupActions";
-import { getGroupColumns } from "../components/group-table-columns";
+import {
+  getGroupColumns,
+  GROUP_COLUMN_BREAKPOINTS,
+} from "../components/group-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -184,6 +187,7 @@ const GroupList = () => {
         <div className="w-full">
           <DataTable
             columns={columns}
+            columnBreakpoints={GROUP_COLUMN_BREAKPOINTS}
             data={filteredData}
             isLoading={isLoading}
             isSearching={Boolean(searchValue)}

@@ -76,7 +76,6 @@ const ParcoursSelection = ({
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
         isSubHeader
-        alternateBgColor
       >
         {selectedModule && (
           <div className="flex font-bold text-sm items-center gap-2 mr-5">

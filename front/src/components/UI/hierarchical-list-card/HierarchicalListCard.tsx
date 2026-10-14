@@ -1,7 +1,8 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
-import { useState, type ReactNode } from "react";
+import { useContext, useState, type ReactNode } from "react";
 
 import { cn } from "../../../utils/cn";
+import { BoxWrapperNestingContext } from "../../wrappers/box-wrapper-nesting";
 import CursorGlowCard from "../cursor-glow-card";
 import Modal from "../modal/modal";
 import {
@@ -67,6 +68,7 @@ const HierarchicalListCard = ({
   const visibleItems = items.slice(0, maxItemsShown);
   const remainingItems = items.slice(maxItemsShown);
   const hasHeader = Boolean(title);
+  const isNested = useContext(BoxWrapperNestingContext);
 
   return (
     <>
@@ -87,7 +89,8 @@ const HierarchicalListCard = ({
             {
               "h-full min-h-52": !fullWidth,
               "border-dashed border-primary/55 bg-base-200/40": !hasHeader,
-              "bg-base-200": hasHeader,
+              "bg-base-200": hasHeader && !isNested,
+              "bg-base-100/60": hasHeader && isNested,
             },
           )}
         >

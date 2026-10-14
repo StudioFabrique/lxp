@@ -20,6 +20,8 @@ type Props = {
   ) => void;
 };
 
+const emptyStateClassName = "py-6 text-center text-sm text-base-content/60";
+
 /** Recherche et sélection de leçons ou ressources existantes à importer dans un cours. */
 export default function CourseContentImport({
   parcoursTags,
@@ -65,6 +67,57 @@ export default function CourseContentImport({
       );
     }
   };
+
+  const isSelected = (content: LessonWithActivitiesCount) =>
+    selectedContents.some(
+      (selected) =>
+        selected.id === content.id && selected.source === content.source,
+    );
+  const pendingContents = availableContents.filter(
+    (content) => !isSelected(content),
+  );
+
+  // Un seul message d'état vide, selon la situation, pour un rendu homogène.
+  const emptyMessage = !hasTags
+    ? "Aucun tag n'est associé à ce module : ajoutez-en pour retrouver des leçons à importer."
+    : selectedContents.length > 0 || pendingContents.length > 0
+      ? null
+      : contentTagId === 0
+        ? "Choisissez un tag pour afficher ses leçons."
+        : includeCourseContents
+          ? "Aucune leçon disponible pour ce tag."
+          : "Aucune ressource supplémentaire disponible pour ce tag.";
+
+  const renderContent = (
+    content: LessonWithActivitiesCount,
+    selected: boolean,
+  ) => (
+    <label
+      key={`${content.source}-${content.id}`}
+      className={cn(
+        "flex w-full cursor-pointer items-center gap-4 rounded-lg border border-base-300 px-4 py-3 text-sm select-none",
+        selected && "bg-info/10",
+      )}
+    >
+      <input
+        type="checkbox"
+        className="checkbox checkbox-primary checkbox-sm"
+        checked={selected}
+        onChange={() => toggleExistingLesson(content)}
+      />
+      <span className="flex-1">
+        <span className="block font-medium">{formatTitle(content.title)}</span>
+        <span className="text-xs text-base-content/50">
+          {content.source === "resource"
+            ? "Ressource supplémentaire"
+            : content.sourceTitle}
+        </span>
+      </span>
+      <span className="shrink-0 text-xs text-base-content/50">
+        {content.activitiesCount ?? 0} activité(s)
+      </span>
+    </label>
+  );
 
   return (
               <div className="flex flex-col gap-3">
@@ -114,11 +167,7 @@ export default function CourseContentImport({
                   </label>
                 </div>
 
-                {!hasTags ? (
-                  <p className="pt-2 text-center text-xs text-base-content/55">
-                    Aucun tag n'est associé à ce module : ajoutez-en pour retrouver des leçons à importer.
-                  </p>
-                ) : isLoadingLessons ? (
+                {isLoadingLessons ? (
                   <div
                     role="status"
                     aria-label="Chargement des contenus"
@@ -128,88 +177,15 @@ export default function CourseContentImport({
                     <div className="skeleton h-9 w-full" />
                     <div className="skeleton h-9 w-full" />
                   </div>
-                ) : contentTagId > 0 && availableContents.length === 0 ? (
-                  <p className="text-xs text-center text-base-content/55 pt-2">
-                    {includeCourseContents
-                      ? "Aucun contenu trouvé pour ce tag."
-                      : "Aucune ressource supplémentaire trouvée pour ce tag."}
-                  </p>
+                ) : emptyMessage ? (
+                  <p className={emptyStateClassName}>{emptyMessage}</p>
                 ) : (
-                  <div>
-                    <div className="flex flex-col gap-3 overflow-y-auto">
-                      {availableContents.map(
-                        (content: LessonWithActivitiesCount) =>
-                          !selectedContents.some(
-                            (selected) =>
-                              selected.id === content.id &&
-                              selected.source === content.source,
-                          ) && (
-                            <label
-                              key={`${content.source}-${content.id}`}
-                              className="flex w-full cursor-pointer items-center gap-4 rounded-lg border border-base-300 px-4 py-3 text-sm select-none"
-                            >
-                              <input
-                                type="checkbox"
-                                className="checkbox checkbox-primary checkbox-sm"
-                                checked={false}
-                                onChange={() => toggleExistingLesson(content)}
-                              />
-                              <span className="flex-1">
-                                <span className="block font-medium">
-                                  {formatTitle(content.title)}
-                                </span>
-                                <span className="text-xs text-base-content/50">
-                                  {content.source === "resource"
-                                    ? "Ressource supplémentaire"
-                                    : content.sourceTitle}
-                                </span>
-                              </span>
-                              <span className="shrink-0 text-xs text-base-content/50">
-                                {content.activitiesCount ?? 0} activité(s)
-                              </span>
-                            </label>
-                          ),
-                      )}
-                    </div>
-
-                    {selectedContents.length > 0 ? (
-                      <div className="mt-4 flex flex-col gap-3 overflow-y-auto">
-                        {selectedContents.map(
-                          (content: LessonWithActivitiesCount) => (
-                            <label
-                              key={`${content.source}-${content.id}`}
-                              className={cn(
-                                "flex w-full cursor-pointer items-center gap-4 rounded-lg border border-base-300 px-4 py-3 text-sm select-none",
-                                "bg-info/10",
-                              )}
-                            >
-                              <input
-                                type="checkbox"
-                                className="checkbox checkbox-primary checkbox-sm"
-                                checked
-                                onChange={() => toggleExistingLesson(content)}
-                              />
-                              <span className="flex-1">
-                                <span className="block font-medium">
-                                  {formatTitle(content.title)}
-                                </span>
-                                <span className="text-xs text-base-content/50">
-                                  {content.source === "resource"
-                                    ? "Ressource supplémentaire"
-                                    : content.sourceTitle}
-                                </span>
-                              </span>
-                              <span className="shrink-0 text-xs text-base-content/50">
-                                {content.activitiesCount ?? 0} activité(s)
-                              </span>
-                            </label>
-                          ),
-                        )}
-                      </div>
-                    ) : (
-                      <p className="mt-4 text-center text-xs">
-                        Aucune leçon disponible.
-                      </p>
+                  <div className="flex flex-col gap-3">
+                    {pendingContents.map((content) =>
+                      renderContent(content, false),
+                    )}
+                    {selectedContents.map((content) =>
+                      renderContent(content, true),
                     )}
                   </div>
                 )}

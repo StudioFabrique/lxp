@@ -15,6 +15,7 @@ import { useUserList } from "../hooks/useUserList";
 import {
   canManageUser,
   getUsersColumns,
+  USER_COLUMN_BREAKPOINTS,
 } from "../components/user-table-columns";
 import UserStats from "../components/user-data/UserStats";
 
@@ -298,6 +299,7 @@ const UserHome = () => {
         <div className="w-full">
           <DataTable
             columns={columns}
+            columnBreakpoints={USER_COLUMN_BREAKPOINTS}
             data={data}
             isLoading={isLoading}
             isSearching={Boolean(searchValue)}

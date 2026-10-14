@@ -45,7 +45,8 @@ export function personSelectionColumn<TData extends TablePerson>(
             disabled={!selectable}
             onChange={row.getToggleSelectedHandler()}
           />
-          <span className="ml-3">
+          {/* Masqué quand les lignes passent en cartes (sous 48rem de conteneur) */}
+          <span className="ml-3 hidden @3xl:inline">
             <AvatarSmall
               user={{ avatar, firstname, lastname }}
               noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-secondary-content"

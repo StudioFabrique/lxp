@@ -22,7 +22,6 @@ const MbzImport = ({ error, isLoading, onImportMbz }: Props) => {
           title="Première étape"
           isSubHeader
           description={headerDescription}
-          alternateBgColor
           hasError={Boolean(error)}
         >
           <FileUpload

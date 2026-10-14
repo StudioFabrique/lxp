@@ -3,6 +3,15 @@ import { ChartNoAxesCombined, Pencil, Trash2 } from "lucide-react";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import type { ColumnBreakpoint } from "../../../components/table/DataTable";
+
+/**
+ * Sans en-tête (affichage en cartes sous 48rem), un nombre seul n'a plus de
+ * sens : la colonne n'est affichée que lorsque son titre l'est aussi.
+ */
+export const GROUP_COLUMN_BREAKPOINTS: Record<string, ColumnBreakpoint> = {
+  nbStudents: "3xl",
+};
 
 export const getGroupColumns = (
   onDelete: (id: string) => void,

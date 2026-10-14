@@ -2,7 +2,6 @@ import { formatTitle } from "../../../../../../utils/helpers/text-helpers";
 import BookIcon from "../../../../../../../src/components/UI/svg/book-icon";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../../../../src/utils/interfaces/course";
-import EditIcon from "../../../../../../../src/components/UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router";
 import {
   ArrowRight,
@@ -111,16 +110,6 @@ const ContenuDetail: FC<{
                   <UploadCloud className="w-6 h-6" />
                 </button>
               )}
-              <Link
-                className="btn btn-ghost btn-sm text-base-content/70 hover:text-primary"
-                type="button"
-                to={`/${currentRoute[0]}/course/edit/${course.id}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="w-6 h-6">
-                  <EditIcon />
-                </div>
-              </Link>
             </div>
           </PermissionGuard>
 
