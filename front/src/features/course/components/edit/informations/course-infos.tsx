@@ -2,6 +2,7 @@ import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
+import { autoSaveToastId } from "../../../../../config/auto-submit-timer";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 
@@ -103,7 +104,7 @@ const CourseInfos = () => {
       const data = await courseApi.mutations.updateVirtualClass(courseId!, url);
       if (!data.success) throw new Error(data.message);
       dispatch({ type: "SET_COURSE_VIRTUAL_CLASS", payload: url });
-      toast.success(data.message);
+      toast.success(data.message, { id: autoSaveToastId });
     } catch (error) { toast.error("Le lien vers la classe virtuelle n'a pas été mis à jour"); throw error; }
   };
 

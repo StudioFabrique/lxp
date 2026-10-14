@@ -10,7 +10,7 @@ import { AuthContext } from "../../../../../store/AuthProvider";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { AbilityContext } from "../../../../../rbac/AbilityProvider";
-import { Edit, Plus } from "lucide-react";
+import { BookOpen, Edit, Plus } from "lucide-react";
 import { cn } from "../../../../../utils/cn";
 import { sortModulesByStartDate } from "../../../helpers/sort-modules-by-start-date";
 import { getModulesLabel, getUserArea } from "../../../../../utils/helpers/user-role";
@@ -60,7 +60,8 @@ const Contenu = ({ modules }: ContenuProps) => {
     <BoxWrapper>
       <div className="flex flex-col gap-y-6">
         <span className="flex justify-between">
-          <h2 className="text-2xl font-bold text-primary select-none">
+          <h2 className="flex items-center gap-2 text-2xl font-bold text-primary select-none">
+            <BookOpen className="size-6 shrink-0" aria-hidden="true" />
             {getModulesLabel(user, "Contenu du parcours")}
           </h2>
           {canEditParcoursContent && (

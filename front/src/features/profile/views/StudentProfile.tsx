@@ -176,7 +176,7 @@ export default function StudentProfile({ onClose }: Props) {
             value={pace}
             onChange={setPace}
           />
-          <h3 className="font-semibold">Comment aimez-vous apprendre ?</h3>
+          <h3 className="font-semibold">Quelles méthodes vous aident à apprendre ?</h3>
           <PreferenceCards value={preferences} onChange={setPreferences} />
         </div>
       ) : (

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { FormProvider, type UseFormReturn } from "react-hook-form";
 import { Link } from "react-router";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 
 import Informations from "./GroupFormInformations";
 import Details from "./GroupFormDetails";
@@ -12,6 +12,7 @@ import type { GroupFormValues } from "../../group.schema";
 import { cn } from "../../../../utils/cn";
 import type Group from "../../../../utils/interfaces/group";
 import GroupTeachers from "./GroupTeachers";
+import GroupCreationTeachers from "./GroupCreationTeachers";
 
 type Props = {
   form: UseFormReturn<GroupFormValues>;
@@ -44,7 +45,6 @@ const GroupForm = ({
         as="form"
         autoComplete="off"
         onSubmit={form.handleSubmit(onSubmitForm)}
-        data-recommended-tour="group-form"
       >
         <Header
           title={isEditing ? "Modifier un groupe" : "Créer un groupe"}
@@ -59,9 +59,8 @@ const GroupForm = ({
               type="submit"
               className="btn btn-primary min-w-32 normal-case"
               disabled={isLoading}
-              data-recommended-tour="group-save"
             >
-              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
               {isLoading ? "Sauvegarde…" : "Sauvegarder"}
             </button>
           </div>
@@ -70,7 +69,7 @@ const GroupForm = ({
         <div
           className={cn("grid", gridType === "rows" ? "grid-rows-2" : "grid-cols-2", "max-lg:grid-cols-1 gap-5")}
         >
-          <div data-recommended-tour="group-informations">
+          <div>
             <Informations isLoading={isLoading} />
           </div>
           {!fromParcours ? (
@@ -79,7 +78,7 @@ const GroupForm = ({
             <FromParcoursWarning parcoursId={Number(fromParcours)} />
           )}
         </div>
-        {isEditing && <GroupTeachers group={existingGroup} />}
+        {isEditing ? <GroupTeachers group={existingGroup} /> : <GroupCreationTeachers />}
       </PageWrapper>
       {children}
     </FormProvider>

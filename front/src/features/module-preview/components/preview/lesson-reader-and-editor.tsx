@@ -10,6 +10,7 @@ import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
 import ActivityPreview from "./activity-preview";
+import ActivityContentSkeleton from "./activity-content-skeleton";
 import IframeActivity from "./iframe-activity";
 import { ActivitySelectMode } from "../../store/module-content-reducer";
 import Modal from "../../../../components/UI/modal/modal";
@@ -17,6 +18,7 @@ import Video from "../../../lesson/components/edit/activities/video";
 import ImageActivityEditor from "../../../lesson/components/edit/activities/image/image-activity-editor";
 import ResourcePreview from "../../../lesson/components/edit/activities/resources/preview/resource-preview";
 import ResourceUpload from "../../../lesson/components/edit/activities/resources/resource-upload";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -33,6 +35,9 @@ type Props = {
   iframeActivitySrc?: string;
   showDeleteModal: boolean;
   isLoading?: boolean;
+  isActivityContentLoading?: boolean;
+  fadeScrollButtonsOnly?: boolean;
+  hideScrollButtons?: boolean;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
   onEditIframeSrc: (src: string) => void;
@@ -67,6 +72,9 @@ const LessonReaderAndEditor = ({
   textActivityContent,
   showDeleteModal,
   isLoading,
+  isActivityContentLoading = false,
+  fadeScrollButtonsOnly,
+  hideScrollButtons,
   onEditContent,
   onEditTitle,
   onEditIframeSrc,
@@ -82,6 +90,7 @@ const LessonReaderAndEditor = ({
   children,
 }: PropsWithChildren<Props>) => {
   const [headerSticky, setHeaderSticky] = useState(false);
+  const lessonRating = selectedLesson?.lessonRating?.[0]?.rating;
 
   const hasOwnEditorHeader =
     canEdit &&
@@ -131,10 +140,10 @@ const LessonReaderAndEditor = ({
       )}
 
       <div className="flex flex-col gap-5">
-        {isLessonCompleted && selectedLesson?.lessonRating[0]?.rating && onRateActivity && (
+        {isLessonCompleted && lessonRating && onRateActivity && (
           <div className="w-full flex justify-end items-center">
             <RatingPanelButton
-              note={selectedLesson.lessonRating[0].rating}
+              note={lessonRating}
               onRateContent={onRateActivity}
             />
           </div>
@@ -143,11 +152,6 @@ const LessonReaderAndEditor = ({
         {/* Rendu de l'activité */}
         <div
           className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm relative"
-          data-onboarding={
-            activityType === "text" && mode === "write"
-              ? "text-editor"
-              : undefined
-          }
         >
           {/* Header de l'activité : titre et menu contextuel */}
           {isResourceEditor ? (
@@ -187,6 +191,8 @@ const LessonReaderAndEditor = ({
               onCancel={mode === "write" ? onBack : onClose}
               enableSticky
               onStickyChange={setHeaderSticky}
+              fadeScrollButtonsOnly={fadeScrollButtonsOnly}
+              hideScrollButtons={hideScrollButtons}
             />
           ) : !hasOwnEditorHeader ? (
             <ActivityHeader
@@ -195,6 +201,8 @@ const LessonReaderAndEditor = ({
               className="font-semibold text-primary flex justify-between items-center mb-6"
               titleClassName="text-2xl font-bold first-letter:uppercase"
               enableSticky
+              fadeScrollButtonsOnly={fadeScrollButtonsOnly}
+              hideScrollButtons={hideScrollButtons}
             >
               {selectedActivity && canEdit && (
                 <ActivityActionsMenu
@@ -202,15 +210,17 @@ const LessonReaderAndEditor = ({
                   permissionSubject={parent}
                   onEditActivity={onEditActivity}
                   onOpenDeleteModal={onOpenDeleteModal}
-                  disabled={mode !== "read"}
+                  disabled={mode !== "read" || isActivityContentLoading}
                 />
               )}
             </ActivityHeader>
           ) : null}
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
-          {activityType === "text" ? (
-            <div className={mode === "read" ? "mt-4" : undefined}>
+          {isActivityContentLoading ? (
+            <ActivityContentSkeleton />
+          ) : activityType === "text" ? (
+            <div className={cn(mode === "read" ? "mt-4" : undefined)}>
               <TiptapActivity
                 key={`tiptap-${mode}`}
                 mode={mode}
@@ -276,7 +286,11 @@ const LessonReaderAndEditor = ({
         </div>
 
         {/* Boutons de navigation */}
-        <div className="flex justify-end items-center">{children}</div>
+        <div className="flex justify-end items-center">
+          {isActivityContentLoading ? (
+            <div className="skeleton h-10 w-44" aria-hidden="true" />
+          ) : children}
+        </div>
       </div>
     </>
   );

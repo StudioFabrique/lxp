@@ -1,8 +1,8 @@
+import { LoaderCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordCreationSchema } from "../auth.schema";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
-import { ThemeContext } from "../../../../src/store/ThemeProvider";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { accountApi } from "../api/account.api";
@@ -23,7 +23,6 @@ type PasswordUpdateValues = {
 };
 
 const PasswordUpdateHome = ({ message, title, description }: Props) => {
-  const { chooseTheme } = useContext(ThemeContext);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("id") ?? "";
 
@@ -40,10 +39,6 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
     resolver: zodResolver(passwordCreationSchema),
     defaultValues: { password: "", confirmPassword: "" },
   });
-
-  useEffect(() => {
-    chooseTheme("classic", "light");
-  }, [chooseTheme]);
 
   const onSubmit = async (data: PasswordUpdateValues) => {
     setIsLoading(true);
@@ -84,7 +79,7 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
             className="btn btn-primary w-full mt-2"
           >
             {isLoading ? (
-              <span className="loading loading-spinner loading-sm"></span>
+              <LoaderCircle className="size-4 animate-spin" />
             ) : (
               "Valider"
             )}

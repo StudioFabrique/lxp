@@ -101,8 +101,7 @@ export const resourcesRbac = [
 // Pour les actions write, update et delete pour teacher rank 2
 // enlever certaines ressources du tableau
 const teacherResourcesRbac = resourcesRbac.filter(
-  (resource) =>
-    !["permission", "role"].includes(resource.name),
+  (resource) => !["permission", "role"].includes(resource.name),
 );
 const teacherCreatableResources = teacherResourcesRbac.filter(
   ({ name }) => !["formation", "parcours"].includes(name),

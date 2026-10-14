@@ -1,0 +1,69 @@
+import type { CSSProperties } from "react";
+
+import { cn } from "../../utils/cn";
+import { INTRO_LEVELS } from "./intro-levels";
+
+type Props = {
+  activeIndex: number;
+  /** Dernier niveau sélectionnable ; les suivants sont à découvrir. */
+  selectableUpTo: number;
+  onSelect: (index: number) => void;
+};
+
+/** Les sept niveaux, chacun décalé du précédent pour montrer l'emboîtement. */
+const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
+  <nav aria-label="Niveaux pédagogiques">
+    <ol className="flex flex-wrap gap-2 lg:flex-col">
+      {INTRO_LEVELS.map((level, index) => {
+        const Icon = level.icon;
+        const isActive = index === activeIndex;
+
+        return (
+          <li
+            key={level.id}
+            hidden={index > selectableUpTo}
+            className="intro-rail-item will-change-transform lg:ml-(--intro-rail-indent)"
+            // Emboîtement en escalier seulement quand la liste est verticale.
+            style={{ "--intro-rail-indent": `${index * 1.1}rem` } as CSSProperties}
+          >
+            <button
+              type="button"
+              disabled={index > selectableUpTo}
+              aria-current={isActive ? "step" : undefined}
+              onClick={() => onSelect(index)}
+              className={cn(
+                "flex items-center gap-3 rounded-2xl p-1.5 pr-4 text-left transition-[background-color,box-shadow] duration-500 enabled:cursor-pointer disabled:cursor-default",
+                isActive
+                  ? "bg-base-100 shadow-lg ring-1 ring-base-300"
+                  : "enabled:hover:bg-base-200",
+              )}
+            >
+              <span
+                className={cn(
+                  "intro-rail-icon will-change-transform grid size-10 shrink-0 place-items-center rounded-xl border transition-colors duration-500",
+                  index <= activeIndex
+                    ? "border-primary bg-primary text-primary-content"
+                    : "border-base-300 bg-base-100 text-primary",
+                )}
+              >
+                <Icon className="size-5" aria-hidden="true" />
+              </span>
+              <span
+                className={cn(
+                  "text-base font-semibold transition-colors duration-500 sm:text-lg",
+                  !isActive && "text-base-content/70",
+                  // Sur une colonne, seul le niveau actif garde son libellé : la liste reste courte.
+                  !isActive && "max-lg:sr-only",
+                )}
+              >
+                {level.label}
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+);
+
+export default IntroLevelRail;

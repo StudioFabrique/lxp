@@ -4,7 +4,10 @@ import FormTextarea from "../../../../../components/form/FormTextarea";
 import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type Props = {
+  /** Champs affichés sous le titre, dans l'espace libre à côté de l'image. */
   children?: React.ReactNode;
+  /** Contenu affiché à côté du champ titre (ex. image du module). */
+  titleAside?: React.ReactNode;
   register: UseFormRegister<ModuleCreateFormValues>;
   errors: FieldErrors<ModuleCreateFormValues>;
 };
@@ -13,20 +16,25 @@ function ModuleFields({
   register,
   errors,
   children,
+  titleAside,
 }: Props) {
   return (
     <div className="flex flex-col gap-5">
-      <div data-onboarding="module-title-field">
-        <FormInput
-          label="Titre du module *"
-          name="title"
-          placeholder="Ex : Javascript"
-          register={register}
-          error={errors.title}
-        />
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-5">
+          <FormInput
+            label="Titre du module *"
+            name="title"
+            placeholder="Ex : Javascript"
+            register={register}
+            error={errors.title}
+          />
+          {children}
+        </div>
+        {titleAside}
       </div>
 
-      <div data-onboarding="module-description-field">
+      <div>
         <FormTextarea
           label="Description"
           name="description"
@@ -37,7 +45,6 @@ function ModuleFields({
 
       <div
         className="flex flex-col gap-2"
-        data-onboarding="module-quiz-instructions-field"
       >
         <FormTextarea
           label="Instructions pour le quiz *"
@@ -51,8 +58,6 @@ function ModuleFields({
           questions auto-corrigeables.
         </p>
       </div>
-
-      {children}
     </div>
   );
 }

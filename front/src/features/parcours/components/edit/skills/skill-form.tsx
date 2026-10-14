@@ -40,7 +40,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   // test la validité du formulaire
 
   // définit le style du champ du formulaire en fonction de sa validité
-  const style = "textarea focus:outline-none bg-secondary/20";
+  const style = "textarea w-full focus:outline-none bg-secondary/20";
   const textareaStyle = cn(style, error && "textarea-error");
 
   /**

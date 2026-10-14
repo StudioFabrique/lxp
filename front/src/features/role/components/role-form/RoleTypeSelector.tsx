@@ -1,11 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
-
-const roleTypes = [
-  { name: "administrateur", rank: 1 },
-  { name: "équipe pédagogique", rank: 2 },
-  { name: "apprenant", rank: 3 },
-  { name: "visiteur", rank: 4 },
-];
+import { type Dispatch, type SetStateAction, useId } from "react";
+import { roleModels } from "../../helpers/role-models";
+import RoleRadioCard from "../RoleRadioCard";
 
 const RoleTypeSelector = ({
   currentRoleType,
@@ -22,39 +17,38 @@ const RoleTypeSelector = ({
   minimumRank: number;
   id?: string;
 }) => {
-  const [showAlertRoleType, setShowAlertRoleType] = useState(false);
-  const availableRoleTypes = roleTypes.filter(
+  const radioGroupId = useId();
+  const availableRoleTypes = roleModels.filter(
     ({ rank }) => rank > minimumRank,
   );
 
   return (
-    <div className="relative flex w-full min-w-0 flex-col gap-1">
-      <select
-        className="select select-sm w-full min-w-0 max-w-full border border-neutral/50 capitalize focus:outline-none"
-        name="menu"
+    <div className="flex w-full min-w-0 flex-col gap-3">
+      <div
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+        role="radiogroup"
+        aria-labelledby={`${id}-label`}
+        aria-describedby={editMode && !disabled ? `${id}-warning` : undefined}
         id={id}
-        value={currentRoleType}
-        onChange={(e) => {
-          const found = availableRoleTypes.find(
-            (rt) => e.currentTarget.value === rt.rank.toString(),
-          );
-          onSetCurrentRoleType(() => found?.rank ?? currentRoleType);
-        }}
-        onFocus={() => setShowAlertRoleType(true)}
-        onBlur={() => setShowAlertRoleType(false)}
-        disabled={disabled}
       >
-        {availableRoleTypes.map((item) => (
-          <option key={item.rank} value={item.rank}>
-            {item.name}
-          </option>
+        {availableRoleTypes.map(({ name, rank }) => (
+          <RoleRadioCard
+            key={rank}
+            name={radioGroupId}
+            value={rank}
+            rank={rank}
+            label={name}
+            checked={currentRoleType === rank}
+            onChange={() => onSetCurrentRoleType(rank)}
+            disabled={disabled}
+          />
         ))}
-      </select>
-      {showAlertRoleType && editMode && (
-        <div className="absolute top-full mt-2 bg-base-100 p-2 rounded-lg shadow-lg border border-error w-64 text-xs text-error select-none">
+      </div>
+      {editMode && !disabled && (
+        <p id={`${id}-warning`} className="text-xs text-warning">
           La modification du modèle de rôle remplacera automatiquement les
           permissions actuelles
-        </div>
+        </p>
       )}
     </div>
   );

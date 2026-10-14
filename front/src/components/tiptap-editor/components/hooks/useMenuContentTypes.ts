@@ -16,9 +16,13 @@ export const useMenuContentTypes = (
   imageInputRef: React.RefObject<HTMLInputElement | null>,
 ) => {
   const imageQueue = useRef<QueuedImage[]>([]);
-  const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
-    "small",
-  );
+  const [imageSize, setImageSize] = useState<"small" | "medium" | "large">("medium");
+  const pendingFileSize = useRef<"small" | "medium" | "large">("medium");
+  const prepareImageUpload = useCallback((size: "small" | "medium" | "large") => {
+    setImageSize(size);
+    pendingFileSize.current = size;
+    imageInputRef.current?.click();
+  }, [imageInputRef]);
 
   const handleImageSelect = useCallback(
     (file: File) => {
@@ -29,7 +33,7 @@ export const useMenuContentTypes = (
       imageQueue.current.push({
         file,
         blobUrl,
-        size: imageSize,
+        size: pendingFileSize.current,
         tempId,
       });
 
@@ -40,34 +44,35 @@ export const useMenuContentTypes = (
           src: blobUrl, // Use the same blob URL
           dataTempId: tempId,
           width:
-            imageSize === "small"
+            pendingFileSize.current === "small"
               ? "25%"
-              : imageSize === "medium"
+              : pendingFileSize.current === "medium"
                 ? "50%"
                 : "100%",
         },
       });
     },
-    [editor, imageSize],
+    [editor],
   );
 
   const handleImageUploadFromURL = useCallback(
-    (url: string) => {
+    (url: string, size: "small" | "medium" | "large" = "medium") => {
+      setImageSize(size);
       // For direct URLs, no need to queue - just insert
       editor.commands.insertContent({
         type: "image",
         attrs: {
           src: url,
           width:
-            imageSize === "small"
+            size === "small"
               ? "25%"
-              : imageSize === "medium"
+              : size === "medium"
                 ? "50%"
                 : "100%",
         },
       });
     },
-    [editor, imageSize],
+    [editor],
   );
 
   const uploadAllImages = useCallback(async () => {
@@ -155,7 +160,7 @@ export const useMenuContentTypes = (
   useEffect(() => {
     const current = imageInputRef.current;
     const handleChange = () => {
-      if (!current?.files) return;
+      if (!current?.files?.[0]) return;
       handleImageSelect(current.files[0]);
     };
 
@@ -171,7 +176,8 @@ export const useMenuContentTypes = (
       selector: (): ContentPickerOptions => [],
     }),
     onImageUploadFromURL: handleImageUploadFromURL,
-    onSetImageSize: setImageSize,
+    imageSize,
+    onClickImageUpload: prepareImageUpload,
     uploadAllImages,
   };
 };

@@ -2,13 +2,19 @@ import { ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
-import { sidebarControlClassName } from "./sidebar-styles";
+import {
+  sidebarControlClassName,
+  sidebarLabelClassName,
+} from "./sidebar-styles";
 import { cn } from "../../utils/cn";
+import { useSidebarDisplay } from "./sidebar-display";
 
 type Props = { textSize?: "text-sm" | "text-lg" };
 
 const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  // La bulle s'ouvre à droite du menu : le tiroir mobile n'a pas la place de l'accueillir.
+  const { expanded } = useSidebarDisplay();
 
   useEffect(() => {
     setTimeout(() => {
@@ -27,8 +33,8 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   };
 
   return (
-    <li className="flex w-full justify-center 2xl:block">
-      <div className="relative z-50 flex w-full justify-center 2xl:block">
+    <li className="block w-full">
+      <div className="relative z-50 w-full">
         <Link
           to="https://forms.gle/joWqE48La7S6NqCK8"
           onClick={handleClose}
@@ -40,12 +46,12 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
           <span>
             <ClipboardList className="size-4 shrink-0" />
           </span>
-          <span className={cn("2xl:block hidden", textSize)}>
+          <span className={cn(sidebarLabelClassName, textSize)}>
             Questionnaire (Bêta Testeurs)
           </span>
         </Link>
 
-        {showTooltip && (
+        {showTooltip && !expanded && (
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}

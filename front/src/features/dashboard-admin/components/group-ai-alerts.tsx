@@ -5,6 +5,7 @@ import { dashboardIAApi } from "../../dashboard-ia/api/dashboardIA.api";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
 import { groupAnalysisNameLines } from "../../dashboard-ia/helpers/group-analysis-name";
+import { cn } from "../../../utils/cn";
 
 export default function GroupAiAlerts() {
   const { data, isPending, isError } = useQuery({
@@ -23,7 +24,7 @@ export default function GroupAiAlerts() {
       glowSize={2}
       className="w-full self-stretch rounded-lg"
     >
-      <BoxWrapper className={`relative z-10 gap-3 p-4 ${alerts.length ? "border-error/25 bg-error/5" : "border-success/25 bg-success/5"}`} aria-label="Alertes de groupe">
+      <BoxWrapper className={cn("relative z-10 gap-3 p-4", alerts.length ? "border-error/25 bg-error/5" : "border-success/25 bg-success/5")} aria-label="Alertes de groupe">
       <h2 className="font-bold">Alertes</h2>
       {isPending ? (
         <p className="text-sm">Chargement des alertes…</p>
@@ -40,7 +41,7 @@ export default function GroupAiAlerts() {
               >
                 <span className="min-w-0">
                   <span className="block leading-snug">
-                    {groupAnalysisNameLines(group.name).map((line, index) => <span key={index} className={`block ${index === 0 ? "text-base font-bold" : "text-xs font-normal text-base-content/65"}`}>{line}</span>)}
+                    {groupAnalysisNameLines(group.name).map((line, index) => <span key={index} className={cn("block", index === 0 ? "text-base font-bold" : "text-xs font-normal text-base-content/65")}>{line}</span>)}
                   </span>
                   <span className="mt-1 block text-xs text-base-content/70">
                     <strong className="block text-error">{group.alertCritical} {group.alertCritical === 1 ? "cas critique" : "cas critiques"}</strong>

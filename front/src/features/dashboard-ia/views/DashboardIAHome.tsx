@@ -79,7 +79,7 @@ const DashboardIAHome = () => {
             </ul> : <p>Aucun traitement terminé pour le moment.</p>}
         </BoxWrapper>
       </section>
-      {settingsOpen && preferences && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label="Paramètres d'analyse du décrochage">
+      {settingsOpen && preferences && <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral/50 p-4" role="dialog" aria-modal="true" aria-label="Paramètres d'analyse du décrochage">
         <BoxWrapper className="h-auto w-full max-w-lg bg-base-100">
           <div className="flex justify-between"><h2 className="text-xl font-bold">Paramètres de l'analyse</h2><button aria-label="Fermer" onClick={() => setSettingsOpen(false)}>✕</button></div>
           <DropoutPreferencesForm initial={preferences} onSaved={() => setSettingsOpen(false)} />

@@ -5,8 +5,9 @@ import Sidebar from "../../sidebar/Sidebar";
 import AppWrapper from "../AppWrapper";
 import ConfettiWrapper from "../ConfettiWrapper";
 import FadeWrapper from "../FadeWrapper";
-import OnboardingTour from "../../../features/onboarding/OnboardingTour";
-import DemoTour from "../../../features/demo/components/DemoTour";
+import IntroPresentationHidden from "../../../features/intro-presentation/IntroPresentationHidden";
+import IntroPresentationGate from "../../../features/intro-presentation/IntroPresentationGate";
+import { IntroPresentationProvider } from "../../../features/intro-presentation/IntroPresentationProvider";
 import { useDemoMode } from "../../../store/DemoContext";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -16,34 +17,42 @@ import {
 import { Outlet } from "react-router";
 
 const StudentLayout = () => {
-  const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
+  const { demoMode, isConfigLoaded } = useDemoMode();
   const learningContext = useQuery({
     queryKey: learningProfileKey,
     queryFn: learningProfileApi.get,
     enabled: isConfigLoaded && !demoMode,
   });
-  const navigationTourEnabled =
-    demoMode ||
-    (learningContext.data?.hasAvailableContent === true &&
-      learningContext.data.onboardingRequired === false);
+  // La présentation vient après le questionnaire d'apprentissage, et seulement
+  // s'il y a du contenu à illustrer.
+  const isIntroEligible =
+    learningContext.data?.hasAvailableContent === true &&
+    learningContext.data.onboardingRequired === false;
 
   return (
     <ChatbotProvider>
-      {/* Voir AdminLayout : le fournisseur reste monté, le tutoriel non. */}
-      <OnboardingTour layout="student" enabled={navigationTourEnabled}>
+      <IntroPresentationProvider
+        isEligible={isIntroEligible}
+        isEligibilityPending={!demoMode && learningContext.isPending}
+      >
         <ConfettiWrapper>
           <AppWrapper
             sidebar={<Sidebar />}
             loader={<Loader />}
           >
             <FadeWrapper>
-              <Outlet />
+              <IntroPresentationGate>
+                <Outlet />
+              </IntroPresentationGate>
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
-        {isConfigLoaded && !aiDisabled && <Chatbot enableQuizSuggestion />}
-        {demoMode && <DemoTour layout="student" />}
-      </OnboardingTour>
+        {isConfigLoaded && (
+          <IntroPresentationHidden>
+            <Chatbot enableQuizSuggestion />
+          </IntroPresentationHidden>
+        )}
+      </IntroPresentationProvider>
     </ChatbotProvider>
   );
 };

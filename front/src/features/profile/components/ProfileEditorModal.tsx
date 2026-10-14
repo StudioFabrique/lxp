@@ -46,7 +46,7 @@ export default function ProfileEditorModal({ onClose, onSaved }: Props) {
             <X className="size-5" />
           </button>
         </div>
-        <div className="min-h-0 overflow-y-auto px-6 pb-5">
+        <div className="scroll-fade-bottom min-h-0 overflow-y-auto px-6 pb-5">
           <InformationAndSettings formRef={formRef} onSaved={onSaved} isStudent={isStudent} />
         </div>
         <div className="flex shrink-0 justify-end gap-2 border-t border-base-300 bg-base-100 px-6 py-4">

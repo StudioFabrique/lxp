@@ -89,6 +89,16 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
           </li>
         ))}
       </ul>
+      {isAnswered && (
+        <section className="rounded-box border-2 border-success bg-success/10 p-4 text-base-content" aria-label="Ordre correct">
+          <h3 className="mb-2 font-bold">Ordre correct</h3>
+          <ol className="list-decimal space-y-2 pl-6">
+            {quiz.data.order.map((itemIndex) => (
+              <li key={itemIndex}>{quiz.data.items[itemIndex]}</li>
+            ))}
+          </ol>
+        </section>
+      )}
       <QuizModalButtons isAnswered={isAnswered} isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />
     </div>
   );

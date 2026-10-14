@@ -74,7 +74,21 @@ const ParcoursView = () => {
   const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
   const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
   const hasSupplementaryContent = hasDescription || hasTags || hasContacts;
-  const [areTagsAndResourcesOpen, setAreTagsAndResourcesOpen] = useState(false);
+  // Les deux premières cartes présentes (Description, Tags, Ressources) tiennent sur la même ligne : elles s'ouvrent ensemble.
+  const pairedSections = (
+    [
+      hasDescription && "description",
+      hasTags && "tags",
+      hasContacts && "contacts",
+    ] as const
+  )
+    .filter((section) => section !== false)
+    .slice(0, 2);
+  const [arePairedSectionsOpen, setArePairedSectionsOpen] = useState(false);
+  const getPairedProps = (section: "description" | "tags" | "contacts") =>
+    pairedSections.length === 2 && pairedSections.includes(section)
+      ? { open: arePairedSectionsOpen, onOpenChange: setArePairedSectionsOpen }
+      : {};
 
   const exportParcoursMutation = useMutation({
     mutationFn: () => parcoursApi.mutations.exportParcours(Number(id)),
@@ -169,7 +183,7 @@ const ParcoursView = () => {
                   onClick={() => exportParcoursMutation.mutate()}
                 >
                   {exportParcoursMutation.isPending ? (
-                    <LoaderCircle className="animate-spin" />
+                    <LoaderCircle className="size-5 animate-spin" />
                   ) : (
                     <Download />
                   )}
@@ -186,9 +200,9 @@ const ParcoursView = () => {
                 : `/student/mon-avancement?parcoursId=${id}`
             }
             className={
-              learningContext.data.onboardingRequired && !demoMode
+              cn(learningContext.data.onboardingRequired && !demoMode
                 ? "btn btn-primary"
-                : "btn btn-outline btn-primary"
+                : "btn btn-outline btn-primary")
             }
           >
             {learningContext.data.onboardingRequired && !demoMode ? (
@@ -251,22 +265,12 @@ const ParcoursView = () => {
               </div>
               {hasSupplementaryContent ? (
                 <div className="flex h-full flex-wrap items-stretch gap-4 lg:col-span-2 [&>*]:min-w-0 [&>*]:basis-80 [&>*]:grow">
-                  {hasDescription ? <Description /> : null}
-                  {hasTags ? (
-                    <Tags
-                      open={hasContacts ? areTagsAndResourcesOpen : undefined}
-                      onOpenChange={
-                        hasContacts ? setAreTagsAndResourcesOpen : undefined
-                      }
-                    />
+                  {hasDescription ? (
+                    <Description {...getPairedProps("description")} />
                   ) : null}
+                  {hasTags ? <Tags {...getPairedProps("tags")} /> : null}
                   {hasContacts ? (
-                    <Contacts
-                      open={hasTags ? areTagsAndResourcesOpen : undefined}
-                      onOpenChange={
-                        hasTags ? setAreTagsAndResourcesOpen : undefined
-                      }
-                    />
+                    <Contacts {...getPairedProps("contacts")} />
                   ) : null}
                 </div>
               ) : null}

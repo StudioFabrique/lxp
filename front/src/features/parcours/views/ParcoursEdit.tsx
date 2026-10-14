@@ -1,4 +1,5 @@
 import { useContext, useMemo, useState } from "react";
+import { ArrowRight, Send } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
@@ -22,17 +23,15 @@ import ModuleComponent from "../components/edit/modules/module";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
-import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { AuthContext } from "../../../store/AuthProvider";
 import {
   getModulesLabel,
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
-import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
-import { moduleCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import useValidateParcours from "../hooks/useValidateParcours";
 import { parcoursApi } from "../api/parcours.api";
+import { showParcoursValidationToast } from "../helpers/show-parcours-validation-toast";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
@@ -40,11 +39,6 @@ const EditParcours = () => {
   const navigate = useNavigate();
   const { validateParcours } = useValidateParcours();
   const [isPublishing, setIsPublishing] = useState(false);
-  const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
-  const onboardingNavigationLocked =
-    onboardingStatus === "in_progress" &&
-    (onboardingStep.startsWith("admin-parcours-tags") ||
-      onboardingStep.startsWith("admin-module-"));
   const {
     id,
     moduleFormOpened,
@@ -93,7 +87,7 @@ const EditParcours = () => {
 
     const validationErrors = validateParcours();
     if (validationErrors.length > 0) {
-      toast.error(Object.values(validationErrors[0]).toString());
+      showParcoursValidationToast(validationErrors, updateStep);
       return;
     }
 
@@ -185,52 +179,44 @@ const EditParcours = () => {
                   actualStep={actualStep}
                   stepsList={contextualStepsList}
                   updateStep={updateStep}
-                  disabled={onboardingNavigationLocked}
                 />
               </BoxWrapper>
-              <div className="mt-12 w-full">
-                <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
+              <div className="mt-8 w-full md:mt-12">
+                <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
                 <div className="mt-4">{renderActualStep()}</div>
               </div>
               {actualStep.id !== stepsList.length && !moduleFormOpened ? (
                 <FloatingBottomNavigation
                   startActions={
-                    <button
-                      className="btn btn-outline"
-                      onClick={handleRetour}
-                      disabled={onboardingNavigationLocked}
-                    >
+                    <button className="btn btn-outline" onClick={handleRetour}>
                       Retour
                     </button>
                   }
                   endActions={
                     <>
-                      <button
-                        className="btn btn-info px-6"
-                        onClick={() => handleUpdateStep(actualStep.id)}
-                        disabled={onboardingNavigationLocked}
-                      >
-                        Étape suivante
-                      </button>
                       {!isTeacher && !infos?.isPublished && (
                         <button
                           className="btn btn-primary"
                           onClick={handlePublishParcours}
-                          disabled={onboardingNavigationLocked || isPublishing}
+                          disabled={isPublishing}
                         >
+                          <Send className="size-4" aria-hidden="true" />
                           Publier
                         </button>
                       )}
+                      <button
+                        className="btn btn-info px-6"
+                        onClick={() => handleUpdateStep(actualStep.id)}
+                      >
+                        Étape suivante
+                        <ArrowRight className="size-4" aria-hidden="true" />
+                      </button>
                     </>
                   }
                 />
               ) : null}
             </ParcoursStepContent>
           </div>
-          <RecommendedActionTour
-            tutorial="module"
-            steps={moduleCreationTourSteps}
-          />
         </FadeWrapper>
       ) : (
         <Error404 />

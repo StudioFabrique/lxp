@@ -1,18 +1,17 @@
 import { AuthContext } from "../../../../store/AuthProvider";
 import { ChatbotValues } from "../../hooks/use-chatbot";
 import AvatarChatbot from "./avatar-chatbot";
+import ChatbotMarkdown from "./chatbot-markdown";
+import ChatbotSources from "./chatbot-sources";
 import { useContext, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { motion } from "motion/react";
 import {
-  BookOpen,
-  ExternalLink,
   ChevronDown,
   ChevronUp,
   CornerDownRight,
   RotateCw,
 } from "lucide-react";
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import { cn } from "../../../../utils/cn";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
@@ -126,19 +125,7 @@ export default function MessageChatbot({
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="prose prose-sm max-w-none text-inherit *:flex-col! [&>ol]:flex! [&>ul]:flex!"
           >
-            <ReactMarkdown
-              components={{
-                a: ({ children, ...props }) => {
-                  if (props.href?.includes("http")) {
-                    props.target = "_blank";
-                    props.rel = "noopener noreferrer";
-                  }
-                  return <a {...props}>{children}</a>;
-                },
-              }}
-            >
-              {message.message}
-            </ReactMarkdown>
+            <ChatbotMarkdown>{message.message}</ChatbotMarkdown>
             {isGeneralKnowledge && (
               <span className="text-xs italic font-light text-neutral/70">
                 Cette réponse utilise des connaissances générales externes au
@@ -147,31 +134,8 @@ export default function MessageChatbot({
             )}
           </motion.div>
 
-          {hasSources && (
-            <div className="mt-2 pt-2 border-t border-base-content/10 text-xs">
-              <span className="font-semibold mb-1.5 opacity-70 flex items-center gap-1">
-                <BookOpen className="w-3 h-3" /> Contenus de cours associés :
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {message.sources?.map((src) => (
-                  <Link
-                    key={src.activity}
-                    to={`/${currentRoute[0]}/parcours/module/${src.moduleId}`}
-                    onClick={onCloseChatbot}
-                    state={{
-                      lessonId: src.lessonId,
-                      activityId: src.activityId,
-                    }}
-                    className="badge badge-sm badge-outline hover:badge-primary transition-all duration-200 py-2.5 px-2 flex items-center gap-1 group no-underline"
-                  >
-                    <span className="truncate max-w-35 font-medium text-base-content">
-                      {src.heading_path || src.section}
-                    </span>
-                    <ExternalLink className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100" />
-                  </Link>
-                ))}
-              </div>
-            </div>
+          {hasSources && message.sources && (
+            <ChatbotSources sources={message.sources} routeRoot={currentRoute[0]} onNavigate={onCloseChatbot} />
           )}
         </div>
         {!isUser && onRetry && (

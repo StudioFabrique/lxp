@@ -1,3 +1,5 @@
+import * as Popover from "@radix-ui/react-popover";
+import { useId, useRef, useState } from "react";
 import { cn } from "../../utils/cn";
 type Props = {
   onColorChange: (color: string) => void;
@@ -11,6 +13,17 @@ const ColorPicker = ({
   compact = false,
 }: Props) => {
   const selectedColor = defaultColor;
+  const id = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement>();
+
+  const handleOpenChange = (nextOpen: boolean): void => {
+    if (nextOpen) {
+      setPortalContainer(triggerRef.current?.closest("dialog") ?? document.body);
+    }
+    setOpen(nextOpen);
+  };
 
   const predefinedColors = [
     { name: "White", hex: "#ffffff" },
@@ -43,100 +56,111 @@ const ColorPicker = ({
 
   const handlePredefinedColorSelect = (color: string) => {
     onColorChange(color);
-    const elem = document.activeElement as HTMLElement;
-    elem?.blur();
+    setOpen(false);
   };
 
   return (
-    <div className="dropdown dropdown-end">
-      <div
-        tabIndex={0}
-        role="button"
-        aria-label="Couleur de fond du logo"
-        title="Couleur de fond du logo"
-        className={
-          cn(compact
-            ? "btn btn-square btn-sm border p-1 shadow-sm"
-            : "btn btn-dash btn-sm gap-2")
-        }
-        style={
-          compact
-            ? { backgroundColor: "#ffffff", borderColor: "#cbd5e1" }
-            : undefined
-        }
-      >
-        <div
+    <Popover.Root open={open} onOpenChange={handleOpenChange}>
+      <Popover.Trigger asChild>
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-label="Couleur de fond du logo"
+          title="Couleur de fond du logo"
           className={
             cn(compact
-              ? "h-5 w-5 rounded border"
-              : "h-4 w-4 border border-base-300")
+              ? "btn btn-square btn-sm border p-1 shadow-sm"
+              : "btn btn-dash btn-sm gap-2")
           }
-          style={{
-            backgroundColor: selectedColor,
-            ...(compact ? { borderColor: "#cbd5e1" } : {}),
-          }}
-        />
-        {!compact && (
-          <span className="font-mono">{selectedColor.toUpperCase()}</span>
-        )}
-      </div>
-
-      <div
-        tabIndex={0}
-        className={cn("dropdown-content z-20 card card-compact rounded-box bg-base-100 shadow", compact ? "right-0 top-10 w-56 p-4 sm:left-full sm:right-auto sm:top-0 sm:ml-2" : "bottom-10 left-0 w-64 p-4")}
-      >
-        <div className={cn(compact ? "card-body gap-3 p-0" : "card-body")}>
-          <h3 className={cn(compact ? "text-xs font-bold" : "card-title text-sm")}>
-            Choisir une couleur de fond
-          </h3>
-
-          <div
-            className={
-              cn(compact ? "grid grid-cols-4 gap-3" : "mb-3 flex flex-wrap gap-5")
-            }
-          >
-            {visibleColors.map((color) => (
-              <button
-                key={color.hex}
-                type="button"
-                className={cn("cursor-pointer rounded-lg border-2 transition-transform hover:scale-110", compact ? "h-9 w-9" : "h-10 w-10", selectedColor === color.hex
-                    ? "border-primary"
-                    : "border-base-300")}
-                style={{ backgroundColor: color.hex }}
-                onClick={() => handlePredefinedColorSelect(color.hex)}
-                title={color.name}
-              />
-            ))}
-          </div>
-
+          style={
+            compact
+              ? { backgroundColor: "var(--color-base-100)", borderColor: "var(--color-base-300)" }
+              : undefined
+          }
+        >
           <div
             className={
               cn(compact
-                ? "flex items-center justify-between gap-2"
-                : "form-control flex gap-2")
+                ? "h-5 w-5 rounded border"
+                : "h-4 w-4 border border-base-300")
             }
-          >
-            <label className={cn(compact ? "text-xs" : "label")}>
-              <span className={cn(compact ? "" : "label-text text-xs")}>
-                Couleur personnalisée
-              </span>
-            </label>
-            <input
-              type="color"
-              value={selectedColor}
-              onChange={(e) => onColorChange(e.target.value)}
-              className={cn("input input-sm cursor-pointer border-0 p-0", compact ? "h-9 w-9 shrink-0" : "h-10 w-10")}
-            />
-          </div>
-
+            style={{
+              backgroundColor: selectedColor,
+              ...(compact ? { borderColor: "var(--color-base-300)" } : {}),
+            }}
+          />
           {!compact && (
-            <div className="mt-2 text-center font-mono text-xs text-base-content/70">
-              {selectedColor}
-            </div>
+            <span className="font-mono">{selectedColor.toUpperCase()}</span>
           )}
-        </div>
-      </div>
-    </div>
+        </button>
+      </Popover.Trigger>
+
+      <Popover.Portal container={portalContainer}>
+        <Popover.Content
+          side={compact ? "right" : "top"}
+          align="start"
+          sideOffset={8}
+          collisionPadding={12}
+          aria-labelledby={`${id}-title`}
+          className={cn(
+            "z-50 card card-compact max-w-[calc(100vw-1.5rem)] max-h-[var(--radix-popover-content-available-height)] overflow-y-auto rounded-box bg-base-100 p-4 text-base-content shadow-lg",
+            compact ? "w-56" : "w-64",
+          )}
+        >
+          <div className={cn(compact ? "card-body gap-3 p-0" : "card-body")}>
+            <h3 id={`${id}-title`} className={cn(compact ? "text-xs font-bold" : "card-title text-sm")}>
+              Choisir une couleur de fond
+            </h3>
+
+            <div
+              className={
+                cn(compact ? "grid grid-cols-4 gap-3" : "mb-3 flex flex-wrap gap-5")
+              }
+            >
+              {visibleColors.map((color) => (
+                <button
+                  key={color.hex}
+                  type="button"
+                  className={cn("cursor-pointer rounded-lg border-2 transition-transform hover:scale-110", compact ? "h-9 w-9" : "h-10 w-10", selectedColor === color.hex
+                      ? "border-primary"
+                      : "border-base-300")}
+                  style={{ backgroundColor: color.hex }}
+                  onClick={() => handlePredefinedColorSelect(color.hex)}
+                  title={color.name}
+                />
+              ))}
+            </div>
+
+            <div
+              className={
+                cn(compact
+                  ? "flex items-center justify-between gap-2"
+                  : "form-control flex gap-2")
+              }
+            >
+              <label htmlFor={`${id}-color`} className={cn(compact ? "text-xs" : "label")}>
+                <span className={cn(compact ? "" : "label-text text-xs")}>
+                  Couleur personnalisée
+                </span>
+              </label>
+              <input
+                id={`${id}-color`}
+                type="color"
+                value={selectedColor}
+                onChange={(e) => onColorChange(e.target.value)}
+                className={cn("input input-sm cursor-pointer border-0 p-0", compact ? "h-9 w-9 shrink-0" : "h-10 w-10")}
+              />
+            </div>
+
+            {!compact && (
+              <div className="mt-2 text-center font-mono text-xs text-base-content/70">
+                {selectedColor}
+              </div>
+            )}
+          </div>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 };
 

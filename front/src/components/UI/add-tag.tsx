@@ -30,6 +30,10 @@ export default function AddTag(props: AddTagProps) {
           placeholder={props.placeholder ?? ""}
           value={props.tag}
           onChange={props.onChangeValue}
+          onBlur={(event) => {
+            // Un tag saisi sans « Entrée » est ajouté quand le champ perd le focus.
+            if (props.tag.trim()) handleTagSubmit(event);
+          }}
         />
         <QuestionMarkTooltip
           tooltipValue="Les tags aident à trouver du contenu par mots clés."

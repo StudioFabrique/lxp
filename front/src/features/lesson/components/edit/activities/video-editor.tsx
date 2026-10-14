@@ -12,7 +12,7 @@ import {
 } from "../../../media.schema";
 import { useFormField } from "../../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../../components/form/form-errors";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import FormTextarea from "../../../../../components/form/FormTextarea";
 import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
 import ActivityHeader from "./activity-header";
@@ -189,7 +189,7 @@ export default function VideoEditor({
         >
           {loading ? (
             <span className="flex items-center gap-x-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <LoaderCircle className="w-4 h-4 animate-spin" />
               <p>Sauvegarde en cours...</p>
             </span>
           ) : (

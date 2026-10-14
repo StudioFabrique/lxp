@@ -123,7 +123,7 @@ describe("LoginGuard", () => {
     await renderAt("/init", false);
 
     expect(container.querySelector('[role="status"]')?.getAttribute("aria-label"))
-      .toBe("Vérification de l'instance");
+      .toBe("Préparation de votre accueil");
     expect(container.querySelector(".skeleton")).toBeNull();
   });
 

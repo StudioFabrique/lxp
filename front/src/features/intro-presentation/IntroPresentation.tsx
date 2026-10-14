@@ -1,0 +1,116 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { SkipForward } from "lucide-react";
+
+import {
+  AuthChatbotTransitionContext,
+  type ChatbotMemory,
+  type ChatbotMemoryAccess,
+} from "../auth/components/AuthChatbotTransitionContext";
+import { useIntroCards } from "./useIntroCards";
+import IntroMobileScene from "./IntroMobileScene";
+import IntroOverviewScene from "./IntroOverviewScene";
+import IntroSceneHeading from "./IntroSceneHeading";
+import IntroSkipConfirmModal from "./IntroSkipConfirmModal";
+import { useIntroPresentation } from "./useIntroPresentation";
+import { useIntroSpaceReady } from "./useIntroSpaceReady";
+import { useIsMobile } from "../../hooks/useMediaQuery";
+
+type Props = {
+  isSaving: boolean;
+  onSkip: () => void;
+  onComplete: () => void;
+};
+
+/**
+ * Présentation de la méthodologie, affichée dans la zone de contenu du layout :
+ * découverte des niveaux par le scroll, le détail de chaque niveau se déployant
+ * à côté de sa plaque, jusqu'aux activités.
+ */
+const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
+  const { setChatbotHidden } = useIntroPresentation();
+  const { cards, isLoading, onSelectChild, formationOptions, selectedFormationId, onSelectFormation } = useIntroCards(true);
+  // Les titres réels sont attendus, mais jamais plus de quelques secondes.
+  const isReady = useIntroSpaceReady(isLoading);
+  // Sur mobile, une scène dédiée remplace celle du bureau (défilement, mesures et assistant à côté des plaques).
+  const isMobile = useIsMobile();
+  const Scene = isMobile ? IntroMobileScene : IntroOverviewScene;
+  const rootRef = useRef<HTMLElement>(null);
+  const [isSkipConfirmOpen, setIsSkipConfirmOpen] = useState(false);
+  // Position et geste de l’assistant virtuel, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
+  const memory = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: null });
+  const chatbotMemory = useMemo<ChatbotMemoryAccess>(
+    () => ({
+      getPosition: () => memory.current.position,
+      setPosition: (position) => { memory.current.position = position; },
+      getGesture: () => memory.current.gesture,
+      setGesture: (gesture) => { memory.current.gesture = gesture; },
+      getIntroAvatar: () => memory.current.introAvatar,
+      setIntroAvatar: (rect) => { memory.current.introAvatar = rect; },
+    }),
+    [],
+  );
+
+  // Pendant toute la présentation, son assistant virtuel remplace celui de l'application.
+  useEffect(() => {
+    setChatbotHidden(true);
+    return () => setChatbotHidden(false);
+  }, [setChatbotHidden]);
+
+  // La page qui était affichée vient de disparaître : le focus passe ici.
+  useEffect(() => {
+    rootRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  return (
+    <AuthChatbotTransitionContext value={chatbotMemory}>
+    <section
+      ref={rootRef}
+      tabIndex={-1}
+      aria-labelledby="intro-presentation-title"
+      className="absolute inset-0 select-none overflow-hidden outline-none"
+    >
+      {isReady ? (
+        <Scene
+          cards={cards}
+          onSelectChild={onSelectChild}
+          formationOptions={formationOptions}
+          selectedFormationId={selectedFormationId}
+          onSelectFormation={onSelectFormation}
+          isSaving={isSaving}
+          onComplete={onComplete}
+        />
+      ) : (
+        <div className="grid h-full place-items-center" role="status">
+          <div className="sr-only">
+            <IntroSceneHeading />
+            Préparation de la présentation
+          </div>
+          <span
+            className="loading loading-spinner loading-lg text-primary"
+            aria-hidden="true"
+          />
+        </div>
+      )}
+
+      <button
+        type="button"
+        className="btn btn-ghost btn-xs absolute bottom-4 left-4 z-10 h-6 min-h-0 gap-1 px-2 text-[0.7rem] font-normal"
+        disabled={isSaving}
+        onClick={() => setIsSkipConfirmOpen(true)}
+      >
+        <SkipForward className="size-3" aria-hidden="true" />
+        Passer la présentation
+      </button>
+      {isSkipConfirmOpen && (
+        <IntroSkipConfirmModal
+          isSaving={isSaving}
+          onCancel={() => setIsSkipConfirmOpen(false)}
+          onConfirm={onSkip}
+        />
+      )}
+    </section>
+    </AuthChatbotTransitionContext>
+  );
+};
+
+export default IntroPresentation;

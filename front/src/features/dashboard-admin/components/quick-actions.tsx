@@ -4,6 +4,8 @@ import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
+import { useIsMobile } from "../../../hooks/useMediaQuery";
+import { useMobileHeaderActions } from "../../../hooks/useMobileHeaderActions";
 
 const links = [
   { path: "/admin/user/add", label: "Créer un utilisateur" },
@@ -23,6 +25,50 @@ export default function QuickActions({
   onCreateParcours: () => void;
 }) {
   const { user } = useContext(AuthContext);
+  // Mobile : l'en-tête de page est remplacé par le tiroir d'actions de la barre, qui est déjà le menu :
+  // les entrées s'y affichent directement, sans second bouton déroulant.
+  const isMobile = useIsMobile();
+  const headerActions = useMobileHeaderActions();
+  const isInActionsDrawer = isMobile && headerActions !== null;
+
+  const items = (
+    <>
+      <PermissionGuard action="write" object="formation">
+        <li>
+          <button
+            type="button"
+            onClick={onCreateFormation}
+          >
+            Créer une formation
+          </button>
+        </li>
+      </PermissionGuard>
+      <PermissionGuard action="write" object="parcours">
+        <li>
+          <button type="button" onClick={onCreateParcours}>
+            Créer un parcours
+          </button>
+        </li>
+      </PermissionGuard>
+      {links.map((item) => {
+        if (item.teacherOnly && !isTeacherUser(user)) return null;
+
+        return (
+          <li key={item.label}>
+            <Link to={item.path}>{item.label}</Link>
+          </li>
+        );
+      })}
+    </>
+  );
+
+  if (isInActionsDrawer) {
+    return (
+      <ul className="menu w-full gap-1 p-0 text-base" aria-label="Actions rapides">
+        {items}
+      </ul>
+    );
+  }
 
   return (
     <details className="dropdown dropdown-end shrink-0 ml-auto">
@@ -31,33 +77,7 @@ export default function QuickActions({
         <EllipsisVertical className="w-4 h-4" />
       </summary>
       <ul className="menu dropdown-content theme-tinted-dropdown rounded-box z-20 w-52 border p-2 shadow-lg">
-        <PermissionGuard action="write" object="formation">
-          <li>
-            <button
-              type="button"
-              data-onboarding="formation-create-entry"
-              onClick={onCreateFormation}
-            >
-              Créer une formation
-            </button>
-          </li>
-        </PermissionGuard>
-        <PermissionGuard action="write" object="parcours">
-          <li>
-            <button type="button" onClick={onCreateParcours}>
-              Créer un parcours
-            </button>
-          </li>
-        </PermissionGuard>
-        {links.map((item) => {
-          if (item.teacherOnly && !isTeacherUser(user)) return null;
-
-          return (
-            <li key={item.label}>
-              <Link to={item.path}>{item.label}</Link>
-            </li>
-          );
-        })}
+        {items}
       </ul>
     </details>
   );

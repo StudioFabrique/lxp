@@ -26,7 +26,7 @@ const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarP
               <button
                 key={lesson.id}
                 type="button"
-                title={`${course.title} — ${lesson.title}`}
+                title={`Leçon « ${lesson.title} » du cours « ${course.title} »`}
                 aria-label={`Ouvrir la leçon : ${lesson.title} (${course.title})`}
                 aria-current={lesson.id === selectedLessonId ? "step" : undefined}
                 disabled={lesson.id === undefined}

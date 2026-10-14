@@ -22,7 +22,7 @@ export default function OnboardingGroupModal({ title, onClose, children }: {
   }, []);
 
   return createPortal(
-    <dialog ref={attachDialog} className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-hidden border-0 bg-transparent p-4 text-base-content outline-none open:flex open:items-center open:justify-center backdrop:bg-black/40" aria-labelledby={titleId}
+    <dialog ref={attachDialog} className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-hidden border-0 bg-transparent p-4 text-base-content outline-none open:flex open:items-center open:justify-center backdrop:bg-neutral/40" aria-labelledby={titleId}
       onCancel={(event) => { event.preventDefault(); onClose(); }}
       onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-base-100 p-6 shadow-xl">

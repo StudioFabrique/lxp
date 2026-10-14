@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import type { TagRow } from "../api/tag.api";
 import { useTagActions } from "../hooks/useTagActions";
@@ -23,7 +23,6 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
-import { tagsPageTourSteps } from "../../../components/headers/page-tour-steps";
 import { cn } from "../../../utils/cn";
 
 const TagsHome = () => {
@@ -153,7 +152,6 @@ const TagsHome = () => {
       <PageHeader
         title="Liste des tags"
         description="Créer, modifier et supprimer des tags"
-        tourSteps={tagsPageTourSteps}
       >
         <PermissionGuard object="tag" action="write">
           <Link
@@ -171,7 +169,7 @@ const TagsHome = () => {
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
-          <div className="w-full" data-page-tour="filters">
+          <div className="w-full">
             <MultiCriteriaSearch
               value={searchValue ?? ""}
               onChange={onSubmitSearchValue}
@@ -200,7 +198,7 @@ const TagsHome = () => {
           </div>
         ) : null}
 
-        <div className="w-full" data-page-tour="table">
+        <div className="w-full">
           <DataTable
             columns={columns}
             data={data}
@@ -220,7 +218,7 @@ const TagsHome = () => {
         </div>
 
         {data.length > 0 ? (
-          <div className="w-full mt-5" data-page-tour="pagination">
+          <div className="w-full mt-5">
             <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
           </div>
         ) : null}
@@ -234,10 +232,11 @@ const TagsHome = () => {
         descList={tagToDelete ? [tagToDelete.name] : undefined}
       >
         <button
-          className={cn("btn btn-error btn-md", isDeleting && "loading")}
+          className="btn btn-error btn-md"
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >
+          {isDeleting && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>

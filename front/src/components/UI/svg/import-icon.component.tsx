@@ -1,11 +1,12 @@
 import { FC } from "react";
+import { iconSizeStyle } from "../../../utils/icon-size-style";
 
 type Props = {
   size: number;
 };
 
 const ImportIcon: FC<Props> = ({ size }) => {
-  const style = `w-${size} h-${size}`;
+  const style = iconSizeStyle(size);
 
   return (
     <svg
@@ -14,7 +15,7 @@ const ImportIcon: FC<Props> = ({ size }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={style}
+      style={style}
     >
       <path
         strokeLinecap="round"

@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { useForm } from "react-hook-form";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import useAutoSave from "./useAutoSave";
-import { autoSubmitTimer } from "../config/auto-submit-timer";
+import { autoSaveBlurDelay } from "../config/auto-submit-timer";
 
 let root: Root;
 let container: HTMLDivElement;
@@ -37,7 +37,11 @@ function render(save: () => Promise<void>, enabled = true) {
 }
 const tick = () =>
   act(async () => {
-    await vi.advanceTimersByTimeAsync(autoSubmitTimer);
+    await vi.advanceTimersByTimeAsync(autoSaveBlurDelay);
+  });
+const blur = () =>
+  act(() => {
+    document.dispatchEvent(new Event("focusout", { bubbles: true }));
   });
 const click = (index = 0) =>
   act(() => container.querySelectorAll("button")[index].click());
@@ -48,27 +52,47 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-it("enregistre la première modification, sans enregistrer le chargement initial", async () => {
+it("n'enregistre qu'après la perte de focus, sans enregistrer le chargement initial", async () => {
   const save = vi.fn().mockResolvedValue(undefined);
   render(save);
   click(1);
+  blur();
   await tick();
   expect(save).not.toHaveBeenCalled();
   click();
   await tick();
+  expect(save).not.toHaveBeenCalled();
+  blur();
   await tick();
   expect(save).toHaveBeenCalledTimes(1);
 });
 
-it("réessaie après un échec de sauvegarde", async () => {
+it("attend le délai après la perte de focus avant d'enregistrer", async () => {
+  const save = vi.fn().mockResolvedValue(undefined);
+  render(save);
+  click();
+  blur();
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(autoSaveBlurDelay - 100);
+  });
+  expect(save).not.toHaveBeenCalled();
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(100);
+  });
+  expect(save).toHaveBeenCalledTimes(1);
+});
+
+it("réessaie à la perte de focus suivante après un échec de sauvegarde", async () => {
   const save = vi
     .fn()
     .mockRejectedValueOnce(new Error("network"))
     .mockResolvedValue(undefined);
   render(save);
   click();
+  blur();
   await tick();
-  await tick();
+  expect(save).toHaveBeenCalledTimes(1);
+  blur();
   await tick();
   expect(save).toHaveBeenCalledTimes(2);
 });
@@ -84,23 +108,36 @@ it("attend la requête en cours puis sauvegarde les modifications intervenues pe
     .mockResolvedValue(undefined);
   render(save);
   click();
+  blur();
   await tick();
   click();
+  blur();
   await tick();
   expect(save).toHaveBeenCalledTimes(1);
   await act(async () => {
     finish();
     await pending;
   });
-  await tick();
+  blur();
   await tick();
   expect(save).toHaveBeenCalledTimes(2);
+});
+
+it("enregistre immédiatement une modification en attente à la fermeture de l'écran", async () => {
+  const save = vi.fn().mockResolvedValue(undefined);
+  render(save);
+  click();
+  blur();
+  act(() => root.unmount());
+  expect(save).toHaveBeenCalledTimes(1);
+  root = createRoot(container);
 });
 
 it("ne sauvegarde pas un écran désactivé", async () => {
   const save = vi.fn().mockResolvedValue(undefined);
   render(save, false);
   click();
+  blur();
   await tick();
   expect(save).not.toHaveBeenCalled();
 });

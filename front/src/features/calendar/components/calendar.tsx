@@ -35,6 +35,7 @@ interface Props {
   currentWeekDayVisible?: boolean;
   header?: ReactNode;
   style?: { hourHeight: number };
+  className?: string;
 }
 
 const Calendar = ({
@@ -54,6 +55,7 @@ const Calendar = ({
   currentWeekDayVisible = true,
   header,
   style = { hourHeight: 60 },
+  className,
 }: Props) => {
   const [overflow, setOverflow] = useState<CalendarEvent[] | null>(null);
   // Render the body
@@ -110,7 +112,7 @@ const Calendar = ({
 
   return (
     <div
-      className={cn("flex flex-col pb-1 rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300", theme.bg, theme.text, theme.border)}
+      className={cn("flex flex-col pb-1 rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300", theme.bg, theme.text, theme.border, className)}
     >
       {/* --- HEADER --- */}
       {header}

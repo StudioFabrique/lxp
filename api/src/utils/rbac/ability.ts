@@ -4,12 +4,7 @@ import {
   type RawRuleOf,
 } from "@casl/ability";
 
-export const appActions = [
-  "read",
-  "write",
-  "update",
-  "delete",
-] as const;
+export const appActions = ["read", "write", "update", "delete"] as const;
 
 export type AppAction = (typeof appActions)[number];
 
@@ -63,9 +58,7 @@ export function permissionNameToRule(name: string): AppAbilityRule | null {
   return { action: action as AppAction, subject: subject as AppSubject };
 }
 
-export function buildAbility(
-  permissionNames: Iterable<string>,
-): AppAbility {
+export function buildAbility(permissionNames: Iterable<string>): AppAbility {
   const uniqueRules = new Map<string, AppAbilityRule>();
   for (const permissionName of permissionNames) {
     const rule = permissionNameToRule(permissionName);
@@ -73,7 +66,5 @@ export function buildAbility(
       uniqueRules.set(`${String(rule.action)}:${String(rule.subject)}`, rule);
     }
   }
-  return createMongoAbility<[AppAction, AppSubject]>([
-    ...uniqueRules.values(),
-  ]);
+  return createMongoAbility<[AppAction, AppSubject]>([...uniqueRules.values()]);
 }

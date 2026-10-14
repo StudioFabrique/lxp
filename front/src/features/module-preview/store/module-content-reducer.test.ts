@@ -9,7 +9,7 @@ import {
 } from "./module-content-reducer";
 
 describe("moduleContentReducer", () => {
-  it("preserves loaded activities when a chatbot source targets the selected lesson", () => {
+  it("preserves loaded activities when a virtual assistant source targets the selected lesson", () => {
     const loadedActivities = [
       {
         id: 10,

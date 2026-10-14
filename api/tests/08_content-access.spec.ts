@@ -314,6 +314,82 @@ describe("Cloisonnement des contenus par parcours", () => {
         .expect(200);
     });
 
+    it("ouvre un module contenant seulement un devoir sans activité", async () => {
+      const existingModule = await prisma.orm.public.Module.where({ id: inscrit.moduleId })
+        .select("adminId")
+        .first();
+      if (!existingModule) throw new Error("Module de test introuvable");
+      const module = await prisma.orm.public.Module.select("id").create({
+        title: "Module avec devoir uniquement",
+        author: "test",
+        adminId: existingModule.adminId,
+        parcoursId: inscrit.parcoursId,
+      });
+      try {
+        const course = await prisma.orm.public.Course.select("id").create({
+          title: "Devoir seul",
+          author: "test",
+          adminId: existingModule.adminId,
+          moduleId: module.id,
+          order: 1,
+          dates: [],
+          isPublished: true,
+          visibility: true,
+        });
+        const assignment = await prisma.orm.public.CourseAssignment.select("id").create({
+          courseId: course.id,
+          dueAt: "2099-01-01T00:00:00.000Z",
+          maxScore: 20,
+          rubricVisible: true,
+          instructions: "Rendre le devoir",
+        });
+        const detail = await request(app)
+          .get(`/v1/modules/detail/limited/${module.id}`)
+          .set("Cookie", cookieApprenant)
+          .expect(200);
+        expect(detail.body.data.courses).toHaveLength(1);
+        expect(detail.body.data.courses[0]).toMatchObject({
+          id: course.id,
+          lessons: [],
+          assignment: { id: assignment.id },
+          stats: { progress: 0, isCompleted: false },
+        });
+        const parcours = await request(app)
+          .get(`/v1/parcours/parcours-by-id/${inscrit.parcoursId}`)
+          .set("Cookie", cookieApprenant)
+          .expect(200);
+        expect(parcours.body.modules.map((item: { id: number }) => item.id)).toContain(module.id);
+        await request(app)
+          .get(`/v1/assignment/course/${course.id}`)
+          .set("Cookie", cookieApprenant)
+          .expect(200);
+
+        // Un devoir reste soumis aux règles de publication et de visibilité.
+        for (const values of [{ visibility: false }, { isPublished: false }]) {
+          await prisma.orm.public.Course.where({ id: course.id }).update(values);
+          await request(app)
+            .get(`/v1/modules/detail/limited/${module.id}`)
+            .set("Cookie", cookieApprenant)
+            .expect(404);
+          await request(app)
+            .get(`/v1/assignment/course/${course.id}`)
+            .set("Cookie", cookieApprenant)
+            .expect(404);
+          await prisma.orm.public.Course.where({ id: course.id }).update({
+            visibility: true,
+            isPublished: true,
+          });
+        }
+        await prisma.orm.public.CourseAssignment.where({ id: assignment.id }).deleteAndCount();
+        await request(app)
+          .get(`/v1/modules/detail/limited/${module.id}`)
+          .set("Cookie", cookieApprenant)
+          .expect(404);
+      } finally {
+        await prisma.orm.public.Module.where({ id: module.id }).deleteAndCount();
+      }
+    });
+
     it("ne liste pas un module qui ne contient aucun cours accessible", async () => {
       const moduleExistant = await prisma.orm.public.Module.where({
         id: inscrit.moduleId,

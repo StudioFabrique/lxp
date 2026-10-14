@@ -31,4 +31,6 @@ export interface LessonWithActivitiesCount {
   isSelected?: boolean;
   source: "resource" | "lesson";
   sourceTitle?: string;
+  /** Tag associé au contenu, affiché quand la recherche ne cible aucun tag. */
+  tag?: { id: number; name: string; color: string };
 }

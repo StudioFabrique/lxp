@@ -52,7 +52,8 @@ const UserFormContact = ({
         type="text"
         value={address}
         onChange={(e) => onAddress(e.target.value)}
-        autoComplete="off"
+        name="address"
+        autoComplete="street-address"
         disabled={disabled}
       />
     </span>
@@ -63,7 +64,8 @@ const UserFormContact = ({
         type="text"
         value={city}
         onChange={(e) => onCity(e.target.value)}
-        autoComplete="off"
+        name="city"
+        autoComplete="address-level2"
         disabled={disabled}
       />
     </span>
@@ -74,7 +76,8 @@ const UserFormContact = ({
         type="text"
         value={postCode}
         onChange={(e) => onPostCode(e.target.value)}
-        autoComplete="off"
+        name="postCode"
+        autoComplete="postal-code"
         disabled={disabled}
       />
     </span>
@@ -85,7 +88,8 @@ const UserFormContact = ({
         type="text"
         value={phone}
         onChange={(e) => onPhone(e.target.value)}
-        autoComplete="off"
+        name="phoneNumber"
+        autoComplete="tel"
         disabled={disabled}
       />
     </span>

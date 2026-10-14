@@ -4,7 +4,7 @@ import { parcoursImportSchema } from "../../parcours.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
 import { useState } from "react";
-import { Loader2, PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import Modal from "../../../../components/UI/modal/modal";
 
@@ -169,7 +169,7 @@ const ParcoursImportModal = ({
             onClick={handleImport}
             disabled={isImporting || formationChoice === undefined}
           >
-            {isImporting ? <Loader2 className="animate-spin" /> : null}
+            {isImporting ? <LoaderCircle className="size-5 animate-spin" /> : null}
             Importer le parcours
           </button>
         </div>

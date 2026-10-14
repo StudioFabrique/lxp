@@ -4,16 +4,19 @@ import { resolveAccessScope } from "../../utils/services/permissions/accessible-
 import getLessonsByTag from "../../models/lesson/get-lessons-by-tag.ts";
 
 async function httpGetLessonsByTag(req: CustomRequest, res: Response) {
-  const { tagId } = req.params;
+  // Sans identifiant de tag (`GET /lesson/tag`), toutes les leçons sont proposées, bornées par `limit`.
+  const tagId = req.params.tagId !== undefined ? +req.params.tagId : null;
+  const limit = req.query.limit !== undefined ? Number(req.query.limit) : undefined;
   const includeCourseContents = req.query.includeCourseContents === "true";
   const supplementaryResources = req.query.supplementaryResources === "true";
 
   try {
     const response = await getLessonsByTag(
-      +tagId,
+      tagId,
       includeCourseContents,
       supplementaryResources,
       await resolveAccessScope(req.auth!),
+      limit,
     );
     return res.status(200).json({ total: response.length, data: response });
   } catch (error: any) {

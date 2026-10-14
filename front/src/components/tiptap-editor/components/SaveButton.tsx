@@ -1,4 +1,4 @@
-import { Save } from "lucide-react";
+import { LoaderCircle, Save } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../../../utils/cn";
@@ -77,9 +77,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   }, [floating]);
 
   const icon = pending ? (
-    <span className="flex justify-center items-center w-5 h-5">
-      <span className="loading loading-spinner loading-xs" />
-    </span>
+    <LoaderCircle className="size-5 animate-spin" />
   ) : (
     <Save className="size-5 shrink-0" />
   );

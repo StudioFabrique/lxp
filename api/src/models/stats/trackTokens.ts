@@ -3,7 +3,7 @@ import { incrementPromptStats } from "./prompt-stats-day.ts";
 import { logger } from "../../utils/logs/logger.ts";
 
 /**
- * Incrémente les tokens utilisés pour un utilisateur donné (Chatbot ou Quiz)
+ * Incrémente les tokens utilisés pour un utilisateur donné (Assistant virtuel ou Quiz)
  */
 export async function trackTokens(
   userId: string | undefined,

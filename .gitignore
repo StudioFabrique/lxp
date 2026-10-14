@@ -49,3 +49,11 @@ fixtures-test.ts
 !/api/dumps/.gitkeep
 !/api/dumps/demo/
 /dumps/
+
+# Hyperframes : conserver les sources et les assets, pas les rendus ni les caches.
+/brag-output/composition/renders/
+/brag-output/composition/snapshots/
+/brag-output/**/.hyperframes/
+/brag-output/**/.thumbnails/
+/brag-output/**/.waveform-cache/
+/brag-output/**/__pycache__/

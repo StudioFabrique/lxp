@@ -2,6 +2,7 @@ import {
   Edit,
   Eye,
   EyeOff,
+  Import,
   MoreVertical,
   Trash,
   UploadCloud,
@@ -16,6 +17,7 @@ type CourseActionsProps = {
   course: Course;
   onOpenModal: (modalType: ModalCourseType, e: React.MouseEvent) => void;
   onEdit: (event: React.MouseEvent) => void;
+  onImportContent?: (event: React.MouseEvent) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };
 
@@ -23,6 +25,7 @@ const CourseActions = ({
   course,
   onOpenModal,
   onEdit,
+  onImportContent,
   onClickMenu,
 }: CourseActionsProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +50,11 @@ const CourseActions = ({
     onEdit(e);
   };
 
+  const handleClickImport = (e: React.MouseEvent) => {
+    setIsOpen(false);
+    onImportContent?.(e);
+  };
+
   return (
     <div onClick={onClickMenu} className="select-none">
       <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -62,7 +70,7 @@ const CourseActions = ({
             align="start"
             sideOffset={20}
             alignOffset={-12}
-            className="menu z-[100] bg-base-300/80 text-base-content rounded-lg w-60 backdrop-blur-sm border border-primary/20"
+            className="menu z-[100] bg-base-300/80 text-base-content rounded-lg w-max min-w-60 backdrop-blur-sm border border-primary/20"
           >
             {!course.isPublished && (
               <PermissionGuard action="update" object="course">
@@ -96,17 +104,30 @@ const CourseActions = ({
               <button
                 type="button"
                 onClick={handleClickEdit}
-                className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
+                className="cursor-default flex w-full items-center whitespace-nowrap px-4 py-3 text-left text-sm hover:bg-primary/20 transition-all"
               >
-                <Edit className="w-4 h-4 mr-3" />
+                <Edit className="w-4 h-4 mr-3 shrink-0" />
                 Modifier le cours
               </button>
             </PermissionGuard>
 
+            {onImportContent && (
+              <PermissionGuard action="update" object="course">
+                <button
+                  type="button"
+                  onClick={handleClickImport}
+                  className="cursor-default flex w-full items-center whitespace-nowrap px-4 py-3 text-left text-sm hover:bg-primary/20 transition-all"
+                >
+                  <Import className="w-4 h-4 mr-3 shrink-0" />
+                  Importer des leçons existantes
+                </button>
+              </PermissionGuard>
+            )}
+
             {/* <PermissionGuard action="update" object="course">
           <button
             onClick={onClickChangeCourseOrder}
-            className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
+            className="cursor-default flex w-full items-center whitespace-nowrap px-4 py-3 text-left text-sm hover:bg-primary/20 transition-all"
           >
             {isDragAndDropEnabled ? (
               <>

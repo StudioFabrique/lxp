@@ -47,11 +47,22 @@ const createRootAccount = async (data: {
   return res.data;
 };
 
-const confirmEmail = async (
-  token: string,
-): Promise<{ success: boolean; email: string; message: string }> => {
-  const res = await apiClient.post("/auth/confirm-email", { token });
-  return res.data;
+type ConfirmEmailResult = { success: boolean; email: string; message: string };
+
+// Le jeton est à usage unique : une requête par jeton, partagée entre les
+// montages successifs (React StrictMode exécute l'effet deux fois en dev, le
+// second appel recevrait « lien déjà utilisé »).
+const confirmEmailRequests = new Map<string, Promise<ConfirmEmailResult>>();
+
+const confirmEmail = (token: string): Promise<ConfirmEmailResult> => {
+  const pending = confirmEmailRequests.get(token);
+  if (pending) return pending;
+
+  const request = apiClient
+    .post("/auth/confirm-email", { token })
+    .then((res) => res.data as ConfirmEmailResult);
+  confirmEmailRequests.set(token, request);
+  return request;
 };
 
 export const onboardingApi = {

@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { PlusCircle, RefreshCw } from "lucide-react";
+import { LoaderCircle, PlusCircle, RefreshCw } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import type Role from "../../../utils/interfaces/role";
@@ -15,6 +15,7 @@ import { useUserList } from "../hooks/useUserList";
 import {
   canManageUser,
   getUsersColumns,
+  USER_COLUMN_BREAKPOINTS,
 } from "../components/user-table-columns";
 import UserStats from "../components/user-data/UserStats";
 
@@ -26,7 +27,6 @@ import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
-import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 import { cn } from "../../../utils/cn";
 
 const UserHome = () => {
@@ -216,7 +216,6 @@ const UserHome = () => {
       <PageHeader
         title="Liste d'utilisateurs"
         description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
-        tourSteps={usersPageTourSteps}
       >
         <PermissionGuard object="user" action="write">
           <Link className="btn btn-outline btn-primary" to="/admin/user/add">
@@ -226,14 +225,13 @@ const UserHome = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <div data-page-tour="stats">
+      <div>
         <UserStats stats={stats} />
       </div>
 
       {roles.length > 0 && currentRole ? (
         <div
-          className="mb-4 flex w-full flex-wrap justify-start gap-2"
-          data-page-tour="role-filters"
+          className="mb-4 flex w-full flex-wrap items-center justify-center gap-2"
         >
           {roles.map((role) => (
             <button
@@ -255,7 +253,7 @@ const UserHome = () => {
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
-          <div className="w-full" data-page-tour="filters">
+          <div className="w-full">
             <MultiCriteriaSearch
               value={searchValue ?? ""}
               onChange={onSubmitSearchValue}
@@ -270,7 +268,7 @@ const UserHome = () => {
                 className="btn btn-sm btn-ghost disabled:bg-transparent"
                 aria-label="Rafraîchir la liste des utilisateurs"
               >
-                <RefreshCw className={cn(isLoading ? "animate-spin" : "")} />
+                {isLoading ? <LoaderCircle className="size-5 animate-spin" /> : <RefreshCw />}
               </button>
               <PermissionGuard object="user" action="delete">
                 <TableActionsButtons<User>
@@ -298,9 +296,10 @@ const UserHome = () => {
           </div>
         ) : null}
 
-        <div className="w-full" data-page-tour="table">
+        <div className="w-full">
           <DataTable
             columns={columns}
+            columnBreakpoints={USER_COLUMN_BREAKPOINTS}
             data={data}
             isLoading={isLoading}
             isSearching={Boolean(searchValue)}
@@ -322,7 +321,7 @@ const UserHome = () => {
         </div>
 
         {data.length > 0 ? (
-          <div className="w-full mt-5" data-page-tour="pagination">
+          <div className="w-full mt-5">
             <TablePagination
               leftText={`Utilisateurs : ${totalItems}`}
               {...pagination}
@@ -345,10 +344,11 @@ const UserHome = () => {
         error={deleteError}
       >
         <button
-          className={cn("btn btn-error btn-md", isDeleting && "loading")}
+          className="btn btn-error btn-md"
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >
+          {isDeleting && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>

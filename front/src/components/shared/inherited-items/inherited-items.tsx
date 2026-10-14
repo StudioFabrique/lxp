@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { ListChecks } from "lucide-react";
 
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../../UI/button-add/button-add";
@@ -24,6 +25,8 @@ interface InheritedItemsProps {
   property: string | string[]; // propriété(s) affichée(s) dans les listes
   onSubmit: (items: any[]) => void;
   titleSize?: "small" | "medium" | "large";
+  /** Actions affichées dans l'en-tête, à gauche du bouton d'ouverture du drawer. */
+  headerActions?: ReactNode;
 }
 
 const InheritedItems = (props: InheritedItemsProps) => {
@@ -108,21 +111,25 @@ const InheritedItems = (props: InheritedItemsProps) => {
 
   return (
     <section className="w-full flex flex-col">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-y-2">
         {props.title ? (
           <h2
-            className={cn(props.titleSize !== "large" ? sizeClass : sizeClass + " font-bold", "p-2")}
+            className={cn(sizeClass, "p-2", props.titleSize === "large" && "font-bold")}
           >
             {formatTitle(props.title)}
           </h2>
         ) : null}
-        <ButtonAdd
-          label={props.buttonLabel ?? "Sélectionner"}
-          small={true}
-          loading={props.loading}
-          isDisabled={isDisabled}
-          onClickEvent={() => handleCloseDrawer(props.drawerId)}
-        />
+        <div className="flex flex-wrap items-center justify-end gap-2 ml-auto">
+          {props.headerActions}
+          <ButtonAdd
+            label={props.buttonLabel ?? "Sélectionner"}
+            icon={<ListChecks className="size-4" aria-hidden="true" />}
+            small={true}
+            loading={props.loading}
+            isDisabled={isDisabled}
+            onClickEvent={() => handleCloseDrawer(props.drawerId)}
+          />
+        </div>
       </div>
       <div
         className={cn("w-full flex flex-col gap-y-4 mt-4", {

@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { cn } from "../../../../../utils/cn";
 
 export type ToggleProps = {
@@ -15,41 +14,16 @@ export const Toggle = ({
   const state = active ? "checked" : "unchecked";
   const value = active ? "on" : "off";
 
-  const buttonClass = cn(
-    "inline-flex cursor-pointer items-center rounded-full border-transparent transition-colors",
-    !active ? "bg-neutral-200 hover:bg-neutral-300" : "bg-black",
-    size === "small" && "h-3 w-6 px-0.5",
-    size === "large" && "h-5 w-9 px-0.5",
-  );
-
-  const pinClass = cn(
-    "rounded-full pointer-events-none block transition-transform",
-    "bg-white",
-    size === "small" && "h-2 w-2",
-    size === "large" && "h-4 w-4",
-    active
-      ? cn(
-          size === "small" ? "translate-x-3" : "",
-          size === "large" ? "translate-x-4" : "",
-        )
-      : "translate-x-0",
-  );
-
-  const handleChange = useCallback(() => {
-    onChange(!active);
-  }, [active, onChange]);
-
   return (
-    <button
-      className={buttonClass}
-      type="button"
+    <input
+      className={cn("toggle toggle-primary", size === "small" ? "toggle-xs" : "toggle-sm")}
+      type="checkbox"
       role="switch"
+      checked={active}
       aria-checked={active}
       data-state={state}
       value={value}
-      onClick={handleChange}
-    >
-      <span className={pinClass} data-state={state} />
-    </button>
+      onChange={(event) => onChange(event.target.checked)}
+    />
   );
 };

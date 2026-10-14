@@ -52,6 +52,7 @@ import {
   updateManyUsersStatusValidator,
   updateUserStatusValidator,
   userIdValidator,
+  userCreationContextValidator,
 } from "./user-validators.ts";
 import httpPutResetPassword from "../../../controllers/user/http-put-reset-password.ts";
 import httpPutResetPasswordEmail from "../../../controllers/user/http-put-reset-password-email.ts";
@@ -195,6 +196,7 @@ userRouter.put(
 userRouter.post(
   "/",
   checkPermissions("user"),
+  userCreationContextValidator,
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   userValidator(true),

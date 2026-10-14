@@ -19,7 +19,7 @@ const GroupFormInformations = ({
       <span className="max-w-[70vh] flex flex-col gap-y-4">
         <FormInput
           label="Titre du groupe *"
-          placeholder="Ex: Promo 2025"
+          placeholder={`Ex: Promo ${new Date().getFullYear()}`}
           name="name"
           register={register}
           error={errors.name}

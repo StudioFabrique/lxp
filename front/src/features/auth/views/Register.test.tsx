@@ -1,9 +1,17 @@
-import { act } from "react";
+import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { accountApi } from "../api/account.api";
 import Register from "./Register";
+import PasswordUpdateHome from "../components/PasswordUpdateHome";
+import ThemeToggle from "../../../components/buttons/ThemeToggle";
+import { ThemeProvider } from "../../../store/ThemeProvider";
+
+// L’assistant virtuel flottant dépend du placement dans la page : on rend son message en place.
+vi.mock("../components/AuthOnboardingChatbot", () => ({
+  default: ({ message }: { message?: ReactNode }) => <div>{message}</div>,
+}));
 
 vi.mock("../api/account.api", () => ({
   accountApi: {
@@ -26,6 +34,7 @@ beforeEach(() => {
   document.body.appendChild(container);
   root = createRoot(container);
   vi.mocked(accountApi.checkInvitation).mockReset();
+  vi.mocked(accountApi.activateAccount).mockReset();
 });
 
 afterEach(() => {
@@ -44,6 +53,9 @@ const render = async () => {
         </Routes>
       </MemoryRouter>,
     );
+  });
+  await vi.waitFor(() => {
+    expect(container.querySelector('[aria-label="Vérification du lien"]')).toBeNull();
   });
 };
 
@@ -81,15 +93,103 @@ it("ne propose pas le renvoi pour un lien invalide", async () => {
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
 });
 
+it("termine la progression et garde la confirmation dans le panneau après activation", async () => {
+  vi.mocked(accountApi.checkInvitation).mockResolvedValue({
+    success: true,
+    message: "Lien valide.",
+    email: "invitee@example.fr",
+    roleLabel: "Formateur",
+  });
+  vi.mocked(accountApi.activateAccount).mockResolvedValue({
+    success: true,
+    message: "Compte activé.",
+  });
+  await render();
+
+  for (const input of container.querySelectorAll<HTMLInputElement>('input[type="password"]')) {
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, "Password@1234");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+  await act(async () => {
+    container.querySelector<HTMLButtonElement>('button[type="submit"]')?.click();
+  });
+
+  expect(accountApi.activateAccount).toHaveBeenCalledWith("lien", "Password@1234");
+  expect(container.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow")).toBe("100");
+  await vi.waitFor(() => {
+    expect(container.textContent).toContain("Votre compte a été activé avec succès.");
+  });
+  const panel = container.querySelector('[role="progressbar"]')?.parentElement;
+  expect(panel?.querySelector(".lucide-mail-check")).not.toBeNull();
+  const login = panel?.querySelector<HTMLAnchorElement>('a[href="/login"]');
+  expect(login?.textContent).toContain("Retour à la page de connexion");
+  await act(async () => login?.click());
+  expect(container.textContent).toBe("connexion");
+});
+
 it("affiche le formulaire lorsque le lien est valide", async () => {
   vi.mocked(accountApi.checkInvitation).mockResolvedValue({
     success: true,
     message: "Lien valide.",
     email: "invitee@example.fr",
+    roleLabel: "Formateur",
   });
 
   await render();
   expect(container.querySelectorAll('input[type="password"]')).toHaveLength(2);
-  expect(container.querySelector("header strong")?.textContent).toBe("invitee@example.fr");
+  expect(container.textContent).toContain(
+    "Activez votre compte pour l'adresse mail invitee@example.fr en tant que Formateur",
+  );
+  expect(container.textContent).toContain("Renseignez un mot de passe sécurisé.");
+  expect(container.querySelector('.badge[aria-label="Rôle : Formateur"]')?.textContent).toBe("Formateur");
   expect(container.textContent).not.toContain("Renvoyer un lien d'activation");
+  expect(container.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow")).toBe("50");
+  expect(container.querySelector('button[type="submit"]')?.getAttribute("form")).toBe("account-activation-form");
 });
+
+for (const page of ["activation", "réinitialisation"]) {
+  it(`conserve le thème choisi et permet la bascule sur l’écran de ${page}`, async () => {
+    localStorage.setItem("activeTheme", "dark");
+    localStorage.setItem("lightTheme", "classic");
+    localStorage.setItem("darkTheme", "classic-dark");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ enabledThemes: ["classic", "classic-dark"] }),
+    }));
+    vi.mocked(accountApi.checkInvitation).mockResolvedValue({
+      success: true,
+      message: "Lien valide.",
+      email: "invitee@example.fr",
+      roleLabel: "Formateur",
+    });
+
+    try {
+      await act(async () => {
+        root.render(
+          <ThemeProvider>
+            <MemoryRouter initialEntries={["/register?id=lien"]}>
+              <ThemeToggle />
+              {page === "activation" ? <Register /> : <PasswordUpdateHome message="Mot de passe mis à jour." />}
+            </MemoryRouter>
+          </ThemeProvider>,
+        );
+      });
+      expect(document.documentElement.dataset.theme).toBe("classic-dark");
+
+      for (const expectedTheme of ["classic", "classic-dark"]) {
+        await act(async () => {
+          container.querySelector<HTMLInputElement>("#mode-toggle")?.click();
+        });
+        expect(document.documentElement.dataset.theme).toBe(expectedTheme);
+      }
+    } finally {
+      act(() => root.unmount());
+      root = createRoot(container);
+      vi.unstubAllGlobals();
+      localStorage.clear();
+      document.documentElement.removeAttribute("data-theme");
+    }
+  });
+}

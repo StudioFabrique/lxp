@@ -1,8 +1,9 @@
-import type { PropsWithChildren, ReactNode } from "react";
-import { Loader2, Minimize2, X } from "lucide-react";
+import { useRef, type PropsWithChildren, type ReactNode } from "react";
+import { LoaderCircle, Minimize2, X } from "lucide-react";
 import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 import { cn } from "../../../utils/cn";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import { useModalAutoFocus } from "../../../hooks/useModalAutoFocus";
 
 type ModalProps = {
   title?: string;
@@ -26,18 +27,21 @@ type ModalProps = {
 const Modal = (props: PropsWithChildren<ModalProps>) => {
   const isSubmitting =
     props.isSubmitting !== undefined ? props.isSubmitting : false;
+  const modalBoxRef = useRef<HTMLDivElement>(null);
+  useModalAutoFocus(modalBoxRef);
 
   return (
     <dialog
       id="my_modal_4"
       className={cn("modal modal-open", props.dialogAdditionalClass)}
     >
-      <div className={cn("modal-box", props.modalBoxStyle)}>
+      <div ref={modalBoxRef} className={cn("modal-box", props.modalBoxStyle)}>
         {props.buttonsBothTopBottom && !props.closeButtonAtTop && (
           <div className={cn("modal-action mb-4", props.actionsClassName ?? "")}>
             {props.leftLabel && (
               <button
                 className="btn btn-outline btn-primary"
+                disabled={isSubmitting}
                 onClick={props.onLeftClick}
               >
                 {props.leftLabel}
@@ -49,7 +53,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >
-                {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+                {isSubmitting ? <LoaderCircle className="size-5 animate-spin" /> : null}
                 <span>{props.rightLabel}</span>
               </button>
             )}
@@ -77,6 +81,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             <button
               type="button"
               className="btn btn-sm btn-ghost ml-auto gap-2"
+              disabled={isSubmitting}
               onClick={props.onLeftClick}
             >
               <X className="size-4" />
@@ -99,6 +104,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             {props.onLeftClick && !props.closeButtonAtTop && (
               <button
                 className="btn btn-outline btn-primary"
+                disabled={isSubmitting}
                 onClick={props.onLeftClick}
               >
                 {props.leftLabel}
@@ -110,7 +116,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >
-                {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+                {isSubmitting ? <LoaderCircle className="size-5 animate-spin" /> : null}
                 <span>{props.rightLabel}</span>
               </button>
             )}

@@ -6,25 +6,27 @@ import {
   SunIcon,
 } from "lucide-react";
 
+import { iconSizeStyle } from "../../utils/icon-size-style";
+
 interface FeelingLevelProps {
   value: number;
   size?: number;
 }
 
 export default function FeelingLevel({ value, size = 10 }: FeelingLevelProps) {
-  const iconClassname = `w-${size} h-${size}`;
+  const iconStyle = iconSizeStyle(size);
 
   switch (value) {
     case 1:
-      return <CloudLightningIcon className={iconClassname} />;
+      return <CloudLightningIcon style={iconStyle} />;
     case 2:
-      return <CloudRainIcon className={iconClassname} />;
+      return <CloudRainIcon style={iconStyle} />;
     case 3:
-      return <CloudSunRainIcon className={iconClassname} />;
+      return <CloudSunRainIcon style={iconStyle} />;
     case 4:
-      return <CloudSunIcon className={iconClassname} />;
+      return <CloudSunIcon style={iconStyle} />;
     case 5:
-      return <SunIcon className={iconClassname} />;
+      return <SunIcon style={iconStyle} />;
     default:
       return undefined;
   }

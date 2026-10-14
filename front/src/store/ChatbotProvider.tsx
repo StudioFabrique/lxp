@@ -20,7 +20,7 @@ type ChatbotContextType = {
   setForceHideChatbot: Dispatch<SetStateAction<boolean>>;
   /**
    * Indique si le serveur IA est considéré comme indisponible (erreur réseau
-   * ou réponse >= 500). Partagé entre le chatbot et les quiz afin d'éviter
+   * ou réponse >= 500). Partagé entre l’assistant virtuel et les quiz afin d'éviter
    * d'enchaîner des requêtes vouées à l'échec et de polluer l'interface.
    */
   aiUnavailable: boolean;

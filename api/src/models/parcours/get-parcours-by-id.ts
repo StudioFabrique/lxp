@@ -1,4 +1,4 @@
-import { all, and } from "@prisma/orm-postgres/orm-client";
+import { all, and, or } from "@prisma/orm-postgres/orm-client";
 
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
@@ -84,10 +84,13 @@ async function getParcoursById(
                 ? and(
                     row.isPublished.eq(true),
                     row.visibility.eq(true),
-                    row.lessons.some((lesson) =>
-                      and(
-                        lesson.visibility.eq(true),
-                        lesson.activities.some((activity) => activity.id.gt(0)),
+                    or(
+                      row.assignment.some((assignment) => assignment.id.gt(0)),
+                      row.lessons.some((lesson) =>
+                        and(
+                          lesson.visibility.eq(true),
+                          lesson.activities.some((activity) => activity.id.gt(0)),
+                        ),
                       ),
                     ),
                   )
@@ -186,27 +189,29 @@ async function getParcoursById(
 
   // 6. Traitement des modules (si présents)
   if (parcours.modules && parcours.modules.length > 0) {
-    result.modules = parcours.modules.map((item: any) => {
-      // Image du module
-      const thumb = item.thumb
-        ? Buffer.from(item.thumb as any).toString("base64")
-        : null;
+    result.modules = parcours.modules
+      .filter((item) => scope?.kind !== "learner" || item.courses.length > 0)
+      .map((item: any) => {
+        // Image du module
+        const thumb = item.thumb
+          ? Buffer.from(item.thumb as any).toString("base64")
+          : null;
 
-      // Contacts du module (aplatissement)
-      const moduleContacts = item.contacts.map(({ contact }: any) =>
-        contactsByMongoId.get(contact.idMdb)!,
-      );
+        // Contacts du module (aplatissement)
+        const moduleContacts = item.contacts.map(({ contact }: any) =>
+          contactsByMongoId.get(contact.idMdb)!,
+        );
 
-      return {
-        ...item,
-        thumb,
-        // Calcul de la progression via la fonction helper
-        stats: {
-          progress: calculateModuleProgress(item),
-        },
-        contacts: moduleContacts,
-      };
-    });
+        return {
+          ...item,
+          thumb,
+          // Calcul de la progression via la fonction helper
+          stats: {
+            progress: calculateModuleProgress(item),
+          },
+          contacts: moduleContacts,
+        };
+      });
   }
 
   // 7. Calcul du nombre d'étudiants

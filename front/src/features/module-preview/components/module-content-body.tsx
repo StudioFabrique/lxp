@@ -39,6 +39,8 @@ export default function ModuleContentBody({
   isStaff,
   onSelectAssignment,
 }: ModuleContentBodyProps) {
+  const { scrollTopRef } = store;
+
   if (calendar) {
     return <ModuleCourseCalendar module={module} store={calendar} />;
   }
@@ -73,13 +75,15 @@ export default function ModuleContentBody({
   }
 
   return (
-    <ModuleContentPreview
-      store={store}
-      quizState={quiz}
-      aiIndexed={selectedCourse?.aiIndexed !== false}
-      smartQuizState={smartQuiz}
-      canEditSelectedLesson={canEditSelectedLesson}
-      canNavigateAsAdmin={canNavigateAsAdmin}
-    />
+    <div ref={scrollTopRef}>
+      <ModuleContentPreview
+        store={store}
+        quizState={quiz}
+        aiIndexed={selectedCourse?.aiIndexed !== false}
+        smartQuizState={smartQuiz}
+        canEditSelectedLesson={canEditSelectedLesson}
+        canNavigateAsAdmin={canNavigateAsAdmin}
+      />
+    </div>
   );
 }

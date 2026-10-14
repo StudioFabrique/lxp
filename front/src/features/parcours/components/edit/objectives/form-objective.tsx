@@ -44,7 +44,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
   }, showFormErrors);
 
   // définit le style du champ du formulaire en fonction de sa validité
-  const style = "textarea focus:outline-none bg-secondary/20";
+  const style = "textarea w-full focus:outline-none bg-secondary/20";
   const textareaStyle = cn(style, error && "textarea-error");
 
   return (

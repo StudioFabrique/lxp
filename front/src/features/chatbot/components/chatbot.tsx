@@ -1,12 +1,13 @@
 import { AnimatePresence } from "motion/react";
+import { useContext } from "react";
+import ChatbotAssistant from "./chatbot-assistant";
 import DrawerChatbot from "./drawer-chatbot";
-import ChatbotButton from "./chatbot-button";
 import useChatbot from "../hooks/use-chatbot";
 import useChatbotUi from "../hooks/use-chatbot-ui";
 import useChatBotQuiz from "../hooks/use-chatbot-quiz";
 import QuizModal from "../../quiz/components/modals/quiz-modal";
-import { useContext } from "react";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
+import { useDemoMode } from "../../../store/DemoContext";
 
 type Props = {
   enableQuizSuggestion?: boolean;
@@ -14,28 +15,33 @@ type Props = {
 
 export default function Chatbot({ enableQuizSuggestion = false }: Props) {
   const { forceHideChatbot } = useContext(ChatbotContext);
+  // Sans IA, l'assistant virtuel reste là pour guider dans l'interface : ni historique, ni question, ni quiz.
+  const { aiDisabled } = useDemoMode();
+  const aiEnabled = !aiDisabled;
 
-  const chatbot = useChatbot();
+  const chatbot = useChatbot({ enabled: aiEnabled });
   const chatbotUi = useChatbotUi(chatbot.dialog, chatbot.setDialog);
   const chatbotQuiz = useChatBotQuiz(
     chatbotUi.showChatbot,
-    chatbotUi.handleOpenChatbot,
     chatbotUi.handleCloseChatbot,
-    enableQuizSuggestion,
+    enableQuizSuggestion && aiEnabled,
   );
 
   const { quizState } = chatbotQuiz;
 
   return (
     <>
-      <AnimatePresence>
-        {!chatbotUi.showChatbot && !forceHideChatbot && (
-          <ChatbotButton onOpenChatbot={chatbotUi.handleOpenChatbot} />
-        )}
-      </AnimatePresence>
+      <ChatbotAssistant
+        aiEnabled={aiEnabled}
+        enableQuizSuggestion={enableQuizSuggestion}
+        hidden={chatbotUi.showChatbot || forceHideChatbot}
+        chatbot={chatbot}
+        chatbotUi={chatbotUi}
+        chatbotQuiz={chatbotQuiz}
+      />
 
       <AnimatePresence>
-        {chatbotUi.showChatbot && !forceHideChatbot && (
+        {aiEnabled && chatbotUi.showChatbot && !forceHideChatbot && (
           <DrawerChatbot
             chatbot={chatbot}
             chatbotUi={chatbotUi}

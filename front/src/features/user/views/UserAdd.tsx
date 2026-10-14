@@ -13,8 +13,7 @@ import {
   isConflictError,
 } from "../../../utils/helpers/api-error-message";
 import { AuthContext } from "../../../store/AuthProvider";
-import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
-import { getUserCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
+import GroupUserCreationProgress from "../../group/components/GroupUserCreationProgress";
 
 const UserAdd = () => {
   const navigate = useNavigate();
@@ -26,23 +25,12 @@ const UserAdd = () => {
   const currentUserRank = user?.roles.length
     ? (user.roles[0]?.rank ?? 4)
     : 4;
-  const initialRoleRank =
+  const initialRoleRank = safeReturnTo ? 3 :
     [1, 2, 3].includes(requestedRoleRank) &&
     requestedRoleRank > currentUserRank
       ? requestedRoleRank
-      : safeReturnTo && searchParams.get("roleRank") === "3"
-        ? 3
-        : undefined;
+      : undefined;
   const initialSendEmail = searchParams.get("invite") === "true";
-  const tutorial = searchParams.get("tutorial");
-  const tutorialRole =
-    tutorial === "teacher"
-      ? { id: "teacher", label: "équipe pédagogique" }
-      : tutorial === "admin"
-        ? { id: "admin", label: "administrateur" }
-        : tutorial === "student"
-          ? { id: "student", label: "apprenant" }
-          : null;
 
   // Le message du serveur est relayé au formulaire, qui le signale à la fois
   // en toast et sous le champ concerné quand il porte sur l'email.
@@ -58,7 +46,7 @@ const UserAdd = () => {
     }: {
       userData: Record<string, unknown>;
       file: File | null;
-    }) => userApi.mutations.create(userData, file),
+    }) => userApi.mutations.create(userData, file, safeReturnTo ? "group" : undefined),
     onSuccess: (data) => {
       toast.success(data.message ?? "Utilisateur créé avec succès");
       const groupReturnPath = data.userId
@@ -102,18 +90,11 @@ const UserAdd = () => {
         }
         isLoading={isPending}
         initialRoleRank={initialRoleRank}
+        requiredRoleRank={safeReturnTo ? 3 : undefined}
         initialSendEmail={initialSendEmail}
         cancelTo={safeReturnTo ?? undefined}
+        groupCreationContext={safeReturnTo ? (invitation) => <GroupUserCreationProgress returnTo={safeReturnTo} action={invitation} /> : undefined}
       />
-      {tutorialRole ? (
-        <RecommendedActionTour
-          tutorial={tutorialRole.id}
-          steps={getUserCreationTourSteps(
-            tutorialRole.label,
-            initialSendEmail,
-          )}
-        />
-      ) : null}
     </>
   );
 };

@@ -1,11 +1,10 @@
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { LoaderCircle, Plus, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
 import PageHeader from "../../../components/headers/PageHeader";
-import { rolesPageTourSteps } from "../../../components/headers/page-tour-steps";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
@@ -20,15 +19,18 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { normalizeSearchText } from "../../../utils/helpers/normalize-search-text";
 import type Role from "../../../utils/interfaces/role";
 import { AuthContext } from "../../../store/AuthProvider";
-import { roleApi, type PermissionTypes, type RoleCounts } from "../api/role.api";
+import {
+  roleApi,
+  type PermissionTypes,
+  type RoleCounts,
+} from "../api/role.api";
 import RoleCard from "../components/RoleCard";
 import RolePermissionsDrawer from "../components/permissions/RolePermissionsDrawer";
 import RoleForm from "../components/role-form/RoleForm";
 import { useRoleActions } from "../hooks/useRoleActions";
 
 type RoleFormModal =
-  | { mode: "create" }
-  | { mode: "edit" | "duplicate"; role: RoleCounts };
+  { mode: "create" } | { mode: "edit" | "duplicate"; role: RoleCounts };
 
 type PermissionDrawer = {
   role: RoleCounts;
@@ -82,15 +84,11 @@ const RoleList = () => {
     if (user?.roles[0]) void fetchRoles(user.roles[0]);
   };
 
-  const {
-    onDeleteOne,
-    isDeleting,
-    deleteError,
-    resetDeleteError,
-  } = useRoleActions(() => {
-    setRoleToDelete(null);
-    refreshRoleQueries();
-  });
+  const { onDeleteOne, isDeleting, deleteError, resetDeleteError } =
+    useRoleActions(() => {
+      setRoleToDelete(null);
+      refreshRoleQueries();
+    });
 
   const resetMutation = useMutation({
     mutationFn: (roleId: string) => roleApi.mutations.resetPermissions(roleId),
@@ -139,23 +137,21 @@ const RoleList = () => {
       <PageHeader
         title="Gestion des rôles"
         description="Créez des rôles et gérez leurs droits d'accès"
-        tourSteps={rolesPageTourSteps}
       >
         <PermissionGuard action="write" object="role">
           <button
             type="button"
             className="btn btn-outline btn-primary"
-            data-page-tour="role-create-header"
             onClick={() => setFormModal({ mode: "create" })}
           >
-            <Plus className="size-5" />
+            <PlusCircle className="size-5" />
             Créer un rôle
           </button>
         </PermissionGuard>
       </PageHeader>
 
       {(rawData?.length ?? 0) > 0 ? (
-        <div data-page-tour="role-filters">
+        <div>
           <MultiCriteriaSearch
             value={searchValue}
             onChange={(value) => {
@@ -173,7 +169,6 @@ const RoleList = () => {
       ) : (
         <section
           className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
-          data-page-tour="role-cards"
         >
           {roles.length === 0 ? (
             <div className="col-span-full">
@@ -211,7 +206,7 @@ const RoleList = () => {
           ))}
 
           <PermissionGuard action="write" object="role">
-            <div data-page-tour="role-create-card">
+            <div>
               <HierarchicalListCard
                 placeholder={
                   <button
@@ -321,7 +316,9 @@ const RoleList = () => {
             onClick={handleConfirmDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? <span className="loading loading-spinner" /> : null}
+            {isDeleting ? (
+              <LoaderCircle className="size-5 animate-spin" />
+            ) : null}
             Supprimer
           </button>
         </TableActionsModal>

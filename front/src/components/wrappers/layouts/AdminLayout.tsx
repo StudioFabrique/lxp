@@ -4,31 +4,34 @@ import Loader from "../../loaders/Loader";
 import Sidebar from "../../sidebar/Sidebar";
 import AppWrapper from "../AppWrapper";
 import FadeWrapper from "../FadeWrapper";
-import OnboardingTour from "../../../features/onboarding/OnboardingTour";
-import DemoTour from "../../../features/demo/components/DemoTour";
+import IntroPresentationHidden from "../../../features/intro-presentation/IntroPresentationHidden";
+import IntroPresentationGate from "../../../features/intro-presentation/IntroPresentationGate";
+import { IntroPresentationProvider } from "../../../features/intro-presentation/IntroPresentationProvider";
 import { useDemoMode } from "../../../store/DemoContext";
 import { Outlet } from "react-router";
 
 const AdminLayout = () => {
-  const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
+  const { isConfigLoaded } = useDemoMode();
 
   return (
     <ChatbotProvider>
-      {/* En démonstration, `OnboardingTour` ne fournit qu'un contexte inerte :
-          plusieurs vues appellent `useOnboarding`, mais le tutoriel lui-même
-          n'a pas lieu d'être sur un compte partagé. */}
-      <OnboardingTour layout="admin">
+      <IntroPresentationProvider>
         <AppWrapper
           sidebar={<Sidebar />}
           loader={<Loader />}
         >
           <FadeWrapper>
-            <Outlet />
+            <IntroPresentationGate>
+              <Outlet />
+            </IntroPresentationGate>
           </FadeWrapper>
         </AppWrapper>
-        {isConfigLoaded && !aiDisabled && <Chatbot />}
-        {demoMode && <DemoTour layout="admin" />}
-      </OnboardingTour>
+        {isConfigLoaded && (
+          <IntroPresentationHidden>
+            <Chatbot />
+          </IntroPresentationHidden>
+        )}
+      </IntroPresentationProvider>
     </ChatbotProvider>
   );
 };

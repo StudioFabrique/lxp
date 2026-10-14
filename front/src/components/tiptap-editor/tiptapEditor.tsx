@@ -64,7 +64,7 @@ export default function TiptapEditor({
   return (
     <>
       {mode === "read" && (
-        <div className="flex justify-end text-gray-500 text-sm">
+        <div className="flex justify-end text-base-content/60 text-sm">
           <span className="mr-1">Temps estimé de lecture :</span>
           <span>
             {readTimeMinutes > 0

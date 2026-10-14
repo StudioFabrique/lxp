@@ -53,10 +53,17 @@ export async function sendActivationInvitation(
   }
 }
 
+type CreateUserData = Pick<IUser,
+  "email" | "firstname" | "lastname" | "nickname" | "description" |
+  "address" | "city" | "postCode" | "birthDate" | "phoneNumber" |
+  "avatar" | "invitationSent"
+>;
+
 export default async function createUser(
-  user: IUser,
+  user: CreateUserData,
   roleId: string,
   actorRank: number,
+  options: { studentOnly?: boolean } = {},
 ) {
   const email = normalizeEmail(user.email ?? "");
 
@@ -90,6 +97,12 @@ export default async function createUser(
         statusCode: 403,
         message:
           "Vous ne pouvez créer qu'un utilisateur de rang inférieur au vôtre.",
+      };
+    }
+    if (options.studentOnly && role.rank !== 3) {
+      throw {
+        statusCode: 400,
+        message: "Seul un apprenant peut être créé depuis un groupe.",
       };
     }
 

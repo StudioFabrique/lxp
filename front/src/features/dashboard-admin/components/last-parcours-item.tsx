@@ -33,6 +33,7 @@ type LastParcoursItemProps = {
   isManagementView?: boolean;
   baseRoute?: "admin" | "student";
   onCreateFormation?: () => void;
+  isFirstFormation?: boolean;
   onCreateParcours?: (formationId: number) => void;
   onEditFormation?: (formationId: number) => void;
   onDeleteParcours?: (
@@ -52,6 +53,7 @@ const LastParcoursItem = ({
   isManagementView = false,
   baseRoute = "admin",
   onCreateFormation,
+  isFirstFormation = false,
   onCreateParcours,
   onEditFormation,
   onDeleteParcours,
@@ -153,15 +155,32 @@ const LastParcoursItem = ({
       placeholder={
         !formation ? (
           <PermissionGuard action="write" object="formation">
-            <button
-              type="button"
-              className="btn btn-dash"
-              data-onboarding="dashboard-formation-create-entry"
-              onClick={onCreateFormation}
-            >
-              <Plus className="size-[1.2em]" />
-              <span>Créer une formation</span>
-            </button>
+            <div className="relative w-fit">
+              {isFirstFormation && (
+                <span
+                  className="pointer-events-none absolute -inset-1 rounded-field bg-primary/30 blur-md motion-safe:animate-pulse"
+                  aria-hidden="true"
+                />
+              )}
+              <button
+                type="button"
+                // Repère de l'assistant virtuel, qui guide vers ce bouton tant que la première formation n'existe pas.
+                data-chatbot-target={isFirstFormation ? "first-formation" : undefined}
+                className={cn(
+                  // h-auto : le libellé peut passer sur deux lignes dans une carte étroite sans coller aux bords du bouton.
+                  "btn relative h-auto min-h-10 py-2.5 text-center",
+                  isFirstFormation ? "btn-primary" : "btn-dash",
+                )}
+                onClick={onCreateFormation}
+              >
+                <Plus className="size-[1.2em]" />
+                <span>
+                  {isFirstFormation
+                    ? "Créer ma première formation"
+                    : "Créer une formation"}
+                </span>
+              </button>
+            </div>
           </PermissionGuard>
         ) : undefined
       }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Course from "../../../../src/utils/interfaces/course";
 import Lesson from "../../../../src/utils/interfaces/lesson";
@@ -103,6 +104,12 @@ function getCriticalImportError(error: unknown) {
   );
 }
 
+const importSelectionKeys = {
+  formations: ["course-import", "formations"] as const,
+  parcours: (formationId?: number) => ["course-import", "parcours", formationId] as const,
+  modules: (parcoursId?: number) => ["course-import", "modules", parcoursId] as const,
+};
+
 export default function useImportCourses(importTarget?: ImportTarget) {
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
@@ -115,19 +122,57 @@ export default function useImportCourses(importTarget?: ImportTarget) {
   const isMbzImportRunning = useRef(false);
 
   // Selection Data
-  const [formationsList, setFormationsList] = useState<Formation[]>([]);
-  const [isFormationsLoading, setIsFormationsLoading] = useState(false);
-  const [formationsError, setFormationsError] = useState("");
-  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(
+  const [pickedFormation, setSelectedFormation] = useState<Formation | null>(
     null,
   );
-  const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
-  const [selectedParcours, setSelectedParcours] = useState<Parcours | null>(
+  const [pickedParcours, setSelectedParcours] = useState<Parcours | null>(
     null,
   );
-  const [modulesList, setModulesList] = useState<Module[]>([]);
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [pickedModule, setSelectedModule] = useState<Module | null>(null);
   const hasInitializedImportTarget = useRef(false);
+  const queryClient = useQueryClient();
+
+  // Ces listes peuvent être modifiées dans un autre onglet d'ANDRIA (liens
+  // « target=_blank ») : elles sont rechargées au retour sur la fenêtre.
+  const formationsQuery = useQuery({
+    queryKey: importSelectionKeys.formations,
+    queryFn: courseApi.queries.formationsList,
+    enabled: step === CoursesImportStep.ParcoursSelection,
+    refetchOnWindowFocus: true,
+  });
+  const parcoursQuery = useQuery({
+    queryKey: importSelectionKeys.parcours(pickedFormation?.id),
+    queryFn: () => courseApi.queries.parcoursByFormationId(pickedFormation?.id),
+    enabled: step === CoursesImportStep.ParcoursSelection && Boolean(pickedFormation),
+    refetchOnWindowFocus: true,
+  });
+  const modulesQuery = useQuery({
+    queryKey: importSelectionKeys.modules(pickedParcours?.id),
+    queryFn: () => courseApi.queries.modulesByParcoursId(pickedParcours?.id),
+    enabled: step === CoursesImportStep.ParcoursSelection && Boolean(pickedParcours),
+    refetchOnWindowFocus: true,
+  });
+  const formationsList: Formation[] = formationsQuery.data ?? [];
+  const parcoursList: Parcours[] = pickedFormation ? (parcoursQuery.data?.data ?? []) : [];
+  const modulesList: Module[] = pickedParcours ? (modulesQuery.data?.modules ?? []) : [];
+  // Une sélection supprimée dans un autre onglet disparaît après rechargement de la liste.
+  const stillListed = <T extends { id?: number }>(picked: T | null, list: T[], isLoaded: boolean) =>
+    picked !== null && (!isLoaded || list.some((item) => item.id === picked.id));
+  const selectedFormation = stillListed(pickedFormation, formationsList, formationsQuery.isSuccess)
+    ? pickedFormation
+    : null;
+  const selectedParcours = selectedFormation &&
+    stillListed(pickedParcours, parcoursList, parcoursQuery.isSuccess)
+    ? pickedParcours
+    : null;
+  const selectedModule = selectedParcours &&
+    stillListed(pickedModule, modulesList, modulesQuery.isSuccess)
+    ? pickedModule
+    : null;
+  const isFormationsLoading = formationsQuery.isLoading;
+  const formationsError = formationsQuery.isError
+    ? "Les formations n'ont pas pu être chargées. Veuillez réessayer."
+    : "";
 
   // UI State
   const [isLoading, setIsLoading] = useState(false);
@@ -673,138 +718,68 @@ export default function useImportCourses(importTarget?: ImportTarget) {
     );
   };
 
-  const loadModules = useCallback(async (parcours: Parcours | null) => {
-    setModulesList([]);
-    setSelectedModule(null);
-    if (!parcours) return;
-
-    try {
-      const data = await courseApi.queries.modulesByParcoursId(parcours.id);
-      setModulesList(data.modules);
-    } catch (err) {
-      console.error("Erreur chargement modules:", err);
-    }
-  }, []);
-
-  const handleSelectFormation = useCallback(async (formation: Formation) => {
+  const handleSelectFormation = useCallback((formation: Formation) => {
     setSelectedFormation(formation);
-    setParcoursList([]);
     setSelectedParcours(null);
-    setModulesList([]);
     setSelectedModule(null);
-
-    try {
-      const data = await courseApi.queries.parcoursByFormationId(formation.id);
-      setParcoursList(data.data);
-    } catch (err) {
-      console.error("Erreur chargement parcours:", err);
-    }
   }, []);
 
-  const handleSelectParcours = useCallback(
-    (parcours: Parcours | null) => {
-      setSelectedParcours(parcours);
-      void loadModules(parcours);
-    },
-    [loadModules],
-  );
-
-  const fetchModules = useCallback(async () => {
-    await loadModules(selectedParcours);
-  }, [loadModules, selectedParcours]);
-
-  const fetchFormations = useCallback(async () => {
-    setIsFormationsLoading(true);
-    setFormationsError("");
-    try {
-      setFormationsList(await courseApi.queries.formationsList());
-    } catch (err) {
-      console.error("Erreur chargement formations:", err);
-      setFormationsError(
-        "Les formations n'ont pas pu être chargées. Veuillez réessayer.",
-      );
-    } finally {
-      setIsFormationsLoading(false);
-    }
+  const handleSelectParcours = useCallback((parcours: Parcours | null) => {
+    setSelectedParcours(parcours);
+    setSelectedModule(null);
   }, []);
 
-  const fetchParcours = useCallback(async () => {
-    if (!selectedFormation) return;
-    try {
-      const data = await courseApi.queries.parcoursByFormationId(
-        selectedFormation.id,
-      );
-      setParcoursList(data.data);
-    } catch (err) {
-      console.error("Erreur chargement parcours:", err);
-    }
-  }, [selectedFormation]);
-
-  // --- Effects de Synchronisation & Chargement des Données de Listes ---
-
+  // Présélection depuis un module existant (lien « importer des cours »).
+  const parcoursId = importTarget?.parcoursId;
+  const moduleId = importTarget?.moduleId;
   useEffect(() => {
-    if (step !== CoursesImportStep.ParcoursSelection) return;
-
+    if (
+      step !== CoursesImportStep.ParcoursSelection ||
+      hasInitializedImportTarget.current ||
+      !parcoursId ||
+      !moduleId ||
+      !formationsQuery.isSuccess
+    ) {
+      return;
+    }
+    hasInitializedImportTarget.current = true;
+    const formations = formationsQuery.data;
     let isCurrent = true;
-    setIsFormationsLoading(true);
-    setFormationsError("");
 
-    const loadSelection = async () => {
+    const preselect = async () => {
       try {
-        const formations = await courseApi.queries.formationsList();
-        if (!isCurrent) return;
-        setFormationsList(formations);
-
-        if (
-          hasInitializedImportTarget.current ||
-          !importTarget?.parcoursId ||
-          !importTarget.moduleId
-        ) {
-          return;
-        }
-
-        hasInitializedImportTarget.current = true;
-        const modulesData = await courseApi.queries.modulesByParcoursId(
-          importTarget.parcoursId,
-        );
+        const modulesData = await queryClient.fetchQuery({
+          queryKey: importSelectionKeys.modules(parcoursId),
+          queryFn: () => courseApi.queries.modulesByParcoursId(parcoursId),
+        });
         const formation = formations.find(
           (item) => item.id === modulesData.parcoursData.formationId,
         );
         if (!formation) return;
-
-        const parcoursData = await courseApi.queries.parcoursByFormationId(
-          formation.id,
-        );
+        const parcoursData = await queryClient.fetchQuery({
+          queryKey: importSelectionKeys.parcours(formation.id),
+          queryFn: () => courseApi.queries.parcoursByFormationId(formation.id),
+        });
         const parcours = parcoursData.data.find(
-          (item: Parcours) => item.id === importTarget.parcoursId,
+          (item: Parcours) => item.id === parcoursId,
         );
         const module = modulesData.modules.find(
-          (item: Module) => item.id === importTarget.moduleId,
+          (item: Module) => item.id === moduleId,
         );
         if (!isCurrent || !parcours || !module) return;
-
         setSelectedFormation(formation);
-        setParcoursList(parcoursData.data);
         setSelectedParcours(parcours);
-        setModulesList(modulesData.modules);
         setSelectedModule(module);
       } catch (err) {
-        console.error("Erreur chargement formations:", err);
-        if (isCurrent) {
-          setFormationsError(
-            "Les formations n'ont pas pu être chargées. Veuillez réessayer.",
-          );
-        }
-      } finally {
-        if (isCurrent) setIsFormationsLoading(false);
+        console.error("Erreur chargement de la sélection:", err);
       }
     };
 
-    void loadSelection();
+    void preselect();
     return () => {
       isCurrent = false;
     };
-  }, [importTarget?.moduleId, importTarget?.parcoursId, step]);
+  }, [formationsQuery.data, formationsQuery.isSuccess, moduleId, parcoursId, queryClient, step]);
 
   return {
     step,
@@ -830,9 +805,6 @@ export default function useImportCourses(importTarget?: ImportTarget) {
     setSelectedFormation: handleSelectFormation,
     setSelectedParcours: handleSelectParcours,
     setSelectedModule,
-    fetchFormations,
-    fetchParcours,
-    fetchModules,
     handleImportMbz,
     onRemoveActivity,
     onRemoveCourse,

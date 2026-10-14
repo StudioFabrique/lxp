@@ -22,6 +22,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
   const { id } = useParams();
   const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
   const [draftContacts, setDraftContacts] = useState<Contact[] | null>(null);
+  const isSaving = submit || props.loading;
   const currentContacts = useMemo(
     () => draftContacts ?? parcours?.contacts ?? [],
     [draftContacts, parcours?.contacts],
@@ -50,12 +51,12 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           drawerId="add-contacts"
           drawerTitle="Ajouter des Contacts"
           title="Ressources Pédagogiques"
-          loading={props.loading}
+          loading={isSaving}
           initialList={availableContacts}
           selectedItems={currentContacts}
           property={["firstname", "lastname"]}
           onSubmit={handleUpdateContacts}
-          isDisabled={props.readOnly}
+          isDisabled={props.readOnly || isSaving}
         >
           <InheritedTextList
             renderAction={(contact: Contact) =>
@@ -67,6 +68,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
                 )) ? null : (
                 <button
                   type="button"
+                  disabled={isSaving}
                   className="btn btn-sm btn-ghost text-primary"
                   aria-label={`Affecter ${contact.firstname} ${contact.lastname} à plusieurs modules`}
                   onClick={() => props.onAssignToModules(contact)}
@@ -80,7 +82,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           <NotSelectedContacts />
         </InheritedItems>
       ) : null}
-      {(submit || props.loading) && (
+      {isSaving && (
         <p className="mt-2 text-sm text-base-content/70" role="status">
           Enregistrement des ressources pédagogiques en cours…
         </p>

@@ -97,7 +97,6 @@ const ImportResult = ({
                 ? "Tous les contenus ont été traités avec succès."
                 : `Les cours sélectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`
           }
-          alternateBgColor={!isComplete}
           isSubHeader
           hasError={Boolean(criticalError)}
           successBgColor={isComplete}

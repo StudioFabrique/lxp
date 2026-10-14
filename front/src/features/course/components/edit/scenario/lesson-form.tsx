@@ -79,7 +79,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
           <h2>Modalité</h2>
           <span className="w-full grid grid-cols-3 gap-4">
             <label
-              className="w-full flex gap-x-4 items-center border border-neutral-300/50 bg-base-300/50 rounded-md p-2"
+              className="w-full flex gap-x-4 items-center border border-base-300/50 bg-base-300/50 rounded-md p-2"
               htmlFor="mode-presentiel"
             >
               <input
@@ -94,7 +94,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
             </label>
 
             <label
-              className="w-full flex gap-x-4 items-center border border-neutral-300/50 bg-base-300/50 rounded-md p-2"
+              className="w-full flex gap-x-4 items-center border border-base-300/50 bg-base-300/50 rounded-md p-2"
               htmlFor="mode-distanciel"
             >
               <input
@@ -109,7 +109,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
             </label>
 
             <label
-              className="w-full flex gap-x-4 items-center border border-neutral-300/50 bg-base-300/50 rounded-md p-2"
+              className="w-full flex gap-x-4 items-center border border-base-300/50 bg-base-300/50 rounded-md p-2"
               htmlFor="mode-hybride"
             >
               <input

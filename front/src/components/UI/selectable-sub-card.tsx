@@ -25,7 +25,7 @@ const SelectableSubCard = <T extends { id?: number | string; title: string }>({
     >
       <div className="card-body p-4 flex flex-row items-center gap-3">
         <div
-          className={cn("p-2 rounded-full", isSelected ? "bg-primary text-white" : "bg-base-200 text-base-content/50")}
+          className={cn("p-2 rounded-full", isSelected ? "bg-primary text-primary-content" : "bg-base-200 text-base-content/50")}
         >
           {icon}
         </div>

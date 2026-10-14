@@ -1,8 +1,10 @@
-import { FC } from "react";
+import { LoaderCircle } from "lucide-react";
+import { FC, ReactNode } from "react";
 import { cn } from "../../../utils/cn";
 
 type Props = {
   label: string;
+  icon?: ReactNode;
   small?: boolean;
   isDisabled?: boolean;
   outline?: boolean;
@@ -13,6 +15,7 @@ type Props = {
 
 const ButtonAdd: FC<Props> = ({
   label,
+  icon,
   small = false,
   isDisabled = false,
   loading = false,
@@ -23,11 +26,11 @@ const ButtonAdd: FC<Props> = ({
   return (
     <button
       className={cn("btn btn-primary flex gap-x-2", small && "btn-sm", outline && "btn-outline")}
-      disabled={isDisabled}
+      disabled={isDisabled || loading}
       onClick={onClickEvent}
       type={type}
     >
-      {loading ? <div className="loading loading-spinner loading-sm" /> : null}
+      {loading ? <LoaderCircle className="size-4 animate-spin" /> : icon}
       {label}
     </button>
   );

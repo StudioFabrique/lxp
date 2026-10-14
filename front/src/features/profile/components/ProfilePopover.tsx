@@ -1,4 +1,5 @@
 import { useContext, useRef, useState, type ChangeEvent } from "react";
+import { createPortal } from "react-dom";
 import * as Popover from "@radix-ui/react-popover";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
@@ -20,9 +21,14 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { profileApi } from "../api/profile.api";
 import ProfileEditorModal from "./ProfileEditorModal";
 import ThemeSelect from "./theme-select";
-import { sidebarControlClassName } from "../../../components/sidebar/sidebar-styles";
+import {
+  sidebarControlClassName,
+  sidebarLabelClassName,
+} from "../../../components/sidebar/sidebar-styles";
 import { useVisualPreferences } from "../../../store/VisualPreferences";
 import { cn } from "../../../utils/cn";
+import { useDrawerKeyboard } from "../../../components/sidebar/useDrawerKeyboard";
+import { useSidebarDisplay } from "../../../components/sidebar/sidebar-display";
 
 type Props = { interfaceType: string };
 
@@ -36,6 +42,8 @@ export default function ProfilePopover({ interfaceType }: Props) {
     availableDarkThemes,
   } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
+  // Dans le tiroir mobile, il n'y a pas de place à droite du menu : la carte s'ouvre au-dessus.
+  const { expanded } = useSidebarDisplay();
   const { glow, confetti, animations, setPreference } = useVisualPreferences();
   const [open, setOpen] = useState(false);
   const [showRenderSettings, setShowRenderSettings] = useState(false);
@@ -43,6 +51,13 @@ export default function ProfilePopover({ interfaceType }: Props) {
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const handleDialogKeyDown = useDrawerKeyboard({
+    active: expanded && open,
+    panelRef: dialogRef,
+    initialFocusRef: dialogRef,
+    onClose: () => setOpen(false),
+  });
   const fullName = user
     ? `${user.firstname} ${user.lastname}`.trim()
     : "Utilisateur";
@@ -117,66 +132,9 @@ export default function ProfilePopover({ interfaceType }: Props) {
   const themeOptions =
     theme === "light" ? availableLightThemes : availableDarkThemes;
 
-  return (
+  // Contenu de la carte : posé dans un popover à côté du menu, ou dans sa propre fenêtre sur mobile.
+  const card = (
     <>
-      <Popover.Root open={open} onOpenChange={setOpen}>
-        <Popover.Trigger asChild>
-          <button
-            type="button"
-            className={cn(
-              sidebarControlClassName,
-              "capitalize",
-              open && "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)",
-            )}
-            data-tip={fullName}
-            aria-label={`Ouvrir le menu de ${fullName}`}
-          >
-            {user && (
-              <span className="flex size-4 shrink-0 items-center justify-center">
-                <AvatarSmall
-                  user={user}
-                  noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
-                  imgClassName="size-6 shrink-0 rounded-full object-cover"
-                />
-              </span>
-            )}
-            <span className="2xl:block hidden truncate">{fullName}</span>
-          </button>
-        </Popover.Trigger>
-        <Popover.Portal forceMount>
-          <AnimatePresence>
-            {open && (
-              <Popover.Content
-                asChild
-                forceMount
-                side="right"
-                align="end"
-                sideOffset={20}
-                collisionPadding={12}
-              >
-                <motion.div
-                  initial={
-                    reduceMotion || !animations
-                      ? { opacity: 0 }
-                      : { opacity: 0, scale: 0.96, x: -6 }
-                  }
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={
-                    reduceMotion || !animations
-                      ? { opacity: 0 }
-                      : { opacity: 0, scale: 0.98, x: -4 }
-                  }
-                  transition={{
-                    duration: reduceMotion || !animations ? 0 : 0.2,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  style={{
-                    transformOrigin:
-                      "var(--radix-popover-content-transform-origin)",
-                  }}
-                  className="z-50 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-base-300 bg-base-100 p-4 text-base-content shadow-xl outline-none"
-                  aria-label="Menu du profil"
-                >
                   <div className="group/profile flex items-start gap-3">
                     <div className="relative size-14 shrink-0">
                       <button
@@ -346,11 +304,99 @@ export default function ProfilePopover({ interfaceType }: Props) {
                       </Link>
                     </div>
                   )}
+    </>
+  );
+
+  return (
+    <>
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger asChild>
+          <button
+            type="button"
+            className={cn(
+              sidebarControlClassName,
+              "capitalize",
+              open && "bg-(--sidebar-hover) ring-1 ring-(--sidebar-border)",
+            )}
+            data-tip={fullName}
+            aria-label={`Ouvrir le menu de ${fullName}`}
+          >
+            {user && (
+              <span className="flex size-4 shrink-0 items-center justify-center">
+                <AvatarSmall
+                  user={user}
+                  noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
+                  imgClassName="size-6 shrink-0 rounded-full object-cover"
+                />
+              </span>
+            )}
+            <span className={cn(sidebarLabelClassName, "truncate")}>{fullName}</span>
+          </button>
+        </Popover.Trigger>
+        {expanded ? (
+          // Tiroir mobile : pas de place à côté du menu, la carte s'ouvre dans sa propre fenêtre.
+          open &&
+          createPortal(
+            <div className="fixed inset-0 z-50 grid place-items-center p-3" onKeyDown={handleDialogKeyDown}>
+              <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden="true" />
+              <div
+                ref={dialogRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Menu du profil"
+                tabIndex={-1}
+                className="relative max-h-full w-full max-w-sm overflow-y-auto rounded-2xl border border-base-300 bg-base-100 p-4 text-base-content shadow-xl outline-none"
+              >
+                {card}
+                <button type="button" className="btn btn-ghost btn-sm mt-3 w-full" onClick={() => setOpen(false)}>
+                  Fermer
+                </button>
+              </div>
+            </div>,
+            document.body,
+          )
+        ) : (
+        <Popover.Portal forceMount>
+          <AnimatePresence>
+            {open && (
+              <Popover.Content
+                asChild
+                forceMount
+                side="right"
+                align="end"
+                sideOffset={20}
+                collisionPadding={12}
+              >
+                <motion.div
+                  initial={
+                    reduceMotion || !animations
+                      ? { opacity: 0 }
+                      : { opacity: 0, scale: 0.96, x: -6 }
+                  }
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={
+                    reduceMotion || !animations
+                      ? { opacity: 0 }
+                      : { opacity: 0, scale: 0.98, x: -4 }
+                  }
+                  transition={{
+                    duration: reduceMotion || !animations ? 0 : 0.2,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{
+                    transformOrigin:
+                      "var(--radix-popover-content-transform-origin)",
+                  }}
+                  className="z-50 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-base-300 bg-base-100 p-4 text-base-content shadow-xl outline-none"
+                  aria-label="Menu du profil"
+                >
+                  {card}
                 </motion.div>
               </Popover.Content>
             )}
           </AnimatePresence>
         </Popover.Portal>
+        )}
       </Popover.Root>
       <input
         ref={fileRef}

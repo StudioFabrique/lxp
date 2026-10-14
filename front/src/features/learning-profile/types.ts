@@ -22,6 +22,7 @@ export type LearningFormation = {
   parcours: Array<{
     id: number;
     title: string;
+    groupNames?: string[];
     tags: Array<{ id: number; name: string; color: string }>;
     modules: Array<{
       id: number;

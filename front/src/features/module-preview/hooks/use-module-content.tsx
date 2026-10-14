@@ -26,20 +26,21 @@ import {
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
 import { modulePreviewApi } from "../api/module-preview.api";
 import type {
+  CourseContentValues,
   CreateCourseFormValues,
   UpdateCourseFormValues,
 } from "../components/sidebar/course-form.types";
 import type { LessonFormValues } from "../components/sidebar/lesson-form.types";
-import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { getUserArea } from "../../../utils/helpers/user-role";
 import { parcoursKeys } from "../../parcours/api/parcours.keys";
 import type Skill from "../../../utils/interfaces/skill";
+import { readModuleContentPosition, saveModuleContentPosition } from "../helpers/module-content-position";
 
 const useModuleContent = () => {
-  // Le contexte du chatbot
+  // Le contexte de l’assistant virtuel
   const { setCurrentActivity } = useContext(ChatbotContext);
   const { user } = useContext(AuthContext);
   const isStudent = getUserArea(user) === "student";
@@ -53,7 +54,14 @@ const useModuleContent = () => {
 
   const { moduleId } = useParams();
   const location = useLocation();
-  const stateFromUrl = location.state as {
+  // La clé de l’entrée d’historique reste identique après un rechargement.
+  // Une nouvelle navigation explicite dispose de sa propre sélection.
+  const positionStorageKey = `module-content-position:${user?._id ?? "anonymous"}:${moduleId}:${location.pathname}:${location.key}`;
+  const savedPosition = useMemo(
+    () => readModuleContentPosition(positionStorageKey),
+    [positionStorageKey],
+  );
+  const stateFromUrl = (savedPosition ?? location.state) as {
     courseId?: number;
     lessonId?: number;
     activityId?: number;
@@ -70,6 +78,8 @@ const useModuleContent = () => {
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isPublishingAllCourses, setIsPublishingAllCourses] = useState(false);
+  const [isUpdatingCourseVisibility, setIsUpdatingCourseVisibility] = useState(false);
+  const courseVisibilityInFlight = useRef(false);
 
   const [state, dispatch] = useReducer(
     moduleContentReducer,
@@ -344,6 +354,30 @@ const useModuleContent = () => {
     [fetchModuleData],
   );
 
+  const toggleAllCoursesVisibility = useCallback(async (visibility: boolean) => {
+    const courses = state.module?.courses ?? [];
+    if (courses.length === 0 || courseVisibilityInFlight.current) return;
+
+    courseVisibilityInFlight.current = true;
+    setIsUpdatingCourseVisibility(true);
+    try {
+      const results = await Promise.allSettled(
+        courses
+          .filter((course) => Boolean(course.visibility) !== visibility)
+          .map((course) => modulePreviewApi.mutations.enableCourse(course.id, visibility)),
+      );
+      await fetchModuleData();
+      if (results.some((result) => result.status === "rejected" || !result.value.success)) {
+        toast.error("Impossible de modifier la visibilité de tous les cours");
+      } else {
+        toast.success(visibility ? "Tous les cours sont visibles" : "Tous les cours sont invisibles");
+      }
+    } finally {
+      courseVisibilityInFlight.current = false;
+      setIsUpdatingCourseVisibility(false);
+    }
+  }, [fetchModuleData, state.module?.courses]);
+
   const publishCourse = useCallback(
     async (courseId: number) => {
       try {
@@ -423,32 +457,8 @@ const useModuleContent = () => {
             values.tagIds,
           );
         }
-        if (values.lessonTitles.length > 0) {
-          const tagId = values.tagIds[0];
-          for (const lessonTitle of values.lessonTitles) {
-            await modulePreviewApi.mutations.createLesson(data.course.id, {
-              title: lessonTitle,
-              description: "",
-              modalite: "distanciel",
-              tagId,
-            });
-          }
-        }
-        if (values.lessonIds.length > 0) {
-          await modulePreviewApi.mutations.duplicateLessons(
-            data.course.id,
-            values.lessonIds,
-          );
-        }
-        if (values.resourceIds.length > 0) {
-          await modulePreviewApi.mutations.duplicateResources(
-            data.course.id,
-            values.resourceIds,
-          );
-        }
         await fetchModuleData();
         toast.success("Cours créé");
-        emitOnboardingEvent({ type: "course_created", id: data.course.id });
         return data.course.id;
       } catch {
         toast.error("Impossible de créer le cours");
@@ -456,6 +466,34 @@ const useModuleContent = () => {
       }
     },
     [fetchModuleData, moduleId],
+  );
+
+  const addCourseContent = useCallback(
+    async (courseId: number, values: CourseContentValues): Promise<boolean> => {
+      try {
+        if (values.lessonIds.length > 0) {
+          await modulePreviewApi.mutations.duplicateLessons(
+            courseId,
+            values.lessonIds,
+          );
+        }
+        if (values.resourceIds.length > 0) {
+          await modulePreviewApi.mutations.duplicateResources(
+            courseId,
+            values.resourceIds,
+          );
+        }
+        await fetchModuleData();
+        toast.success("Contenu ajouté au cours");
+        return true;
+      } catch {
+        // Une partie du contenu a pu être ajoutée avant l'échec.
+        await fetchModuleData();
+        toast.error("Impossible d'ajouter le contenu au cours");
+        return false;
+      }
+    },
+    [fetchModuleData],
   );
 
   const updateCourse = useCallback(
@@ -496,12 +534,6 @@ const useModuleContent = () => {
         );
         await fetchModuleData();
         toast.success("Leçon créée");
-        // Le composant appelant sélectionne la nouvelle leçon une fois cette
-        // promesse résolue. Différer l'événement laisse React afficher le
-        // bouton de création d'activité avant que Joyride ne cherche sa cible.
-        window.setTimeout(() => {
-          emitOnboardingEvent({ type: "lesson_created", id: created.id });
-        });
         return created.id;
       } catch {
         toast.error("Impossible de créer la leçon");
@@ -581,10 +613,6 @@ const useModuleContent = () => {
 
         dispatch({ type: "select_lesson", lesson, activityId });
 
-        if (selectLastActivity && activityId) {
-          emitOnboardingEvent({ type: "activity_created", id: activityId });
-        }
-
         return true;
       } catch {
         toast.error("Impossible de rafraîchir la leçon");
@@ -645,7 +673,6 @@ const useModuleContent = () => {
           { title, value: finalContent, parent: "lesson" },
         )) as Activity;
         dispatch({ type: "create_activity", activity });
-        emitOnboardingEvent({ type: "activity_created", id: activity.id });
         response = true;
       } else {
         const activity = (
@@ -954,7 +981,21 @@ const useModuleContent = () => {
     void fetchModuleData();
   }, [fetchModuleData]);
 
-  // If a activity is selected, select the title of the current course and set the chatbot activity name
+  useEffect(() => {
+    if (
+      String(state.module?.id) !== moduleId ||
+      !selectedLessonId ||
+      state.isSelectedLessonLoading ||
+      state.mode !== "read"
+    ) return;
+
+    saveModuleContentPosition(positionStorageKey, {
+      lessonId: selectedLessonId,
+      activityId: selectedActivityId,
+    });
+  }, [moduleId, positionStorageKey, selectedLessonId, selectedActivityId, state.module?.id, state.isSelectedLessonLoading, state.mode]);
+
+  // If a activity is selected, select the title of the current course and set the virtual assistant activity name
   useEffect(() => {
     if (
       state.selectedLesson?.courseId &&
@@ -966,7 +1007,7 @@ const useModuleContent = () => {
         (course) => course.id === state.selectedLesson?.courseId,
       );
 
-      // Attribue le titre du cours au chatbot
+      // Attribue le titre du cours à l’assistant virtuel
       if (currentCourse?.title) {
         setCurrentActivity((prev) => ({
           ...prev,
@@ -1012,6 +1053,7 @@ const useModuleContent = () => {
       (selectedTextActivityKey && state.loadedTextActivityKey !== selectedTextActivityKey),
     ),
     isPublishingAllCourses,
+    isUpdatingCourseVisibility,
     dispatch,
     moduleActions: {
       fetchModuleData,
@@ -1019,10 +1061,12 @@ const useModuleContent = () => {
     },
     courseActions: {
       enableCourse,
+      toggleAllCoursesVisibility,
       publishCourse,
       publishAllCourses,
       deleteCourse,
       createCourse,
+      addCourseContent,
       updateCourse,
       courseReorder,
     },

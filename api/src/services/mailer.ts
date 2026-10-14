@@ -141,10 +141,20 @@ const andriaFooterLogoAttachment = (_themeMode?: "light" | "dark") => {
 // variable manquait.
 const smtpPort = env.MAILER_SMTP_PORT ?? 587;
 
+// Délais courts : les valeurs par défaut de nodemailer (jusqu'à 2 minutes pour la
+// connexion) laissaient l'utilisateur devant un chargement sans fin quand le
+// serveur SMTP est injoignable, alors que l'envoi est attendu avant de répondre.
+const SMTP_CONNECTION_TIMEOUT_MS = 10_000;
+const SMTP_GREETING_TIMEOUT_MS = 10_000;
+const SMTP_SOCKET_TIMEOUT_MS = 30_000;
+
 const transporter = nodemailer.createTransport({
   host: env.MAILER_SMTP,
   port: smtpPort,
   secure: smtpPort === 465,
+  connectionTimeout: SMTP_CONNECTION_TIMEOUT_MS,
+  greetingTimeout: SMTP_GREETING_TIMEOUT_MS,
+  socketTimeout: SMTP_SOCKET_TIMEOUT_MS,
   auth: {
     user: env.MAILER_EMAIL,
     pass: env.MAILER_PASSWORD,

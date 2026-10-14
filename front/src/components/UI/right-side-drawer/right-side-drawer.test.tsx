@@ -78,4 +78,32 @@ describe("RightSideDrawer", () => {
     );
     expect(container.querySelector<HTMLInputElement>("input.drawer-toggle")?.checked).toBe(false);
   });
+
+  it("place le focus sur le premier champ à l'ouverture", async () => {
+    vi.useFakeTimers();
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() =>
+      root?.render(
+        <RightSideDrawer id="focus-drawer" title="Test" buttonTitle="Ouvrir">
+          <input type="checkbox" aria-label="Case" />
+          <textarea aria-label="Objectif" />
+        </RightSideDrawer>,
+      ),
+    );
+    act(() =>
+      container.querySelector<HTMLLabelElement>("label.drawer-button")?.click(),
+    );
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+
+    expect(document.activeElement).toBe(
+      container.querySelector("textarea[aria-label='Objectif']"),
+    );
+    vi.useRealTimers();
+    container.remove();
+  });
 });

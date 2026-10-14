@@ -1,0 +1,147 @@
+# Présentation ANDRIA LXP
+
+Version actuelle : **3 min 00,5**, 1920 × 1080, sans audio. Voir `brag-plan.md` pour le déroulé et les composants repris.
+
+Ouvrir `composition/` dans Hyperframes. Les retouches précédentes sont archivées dans `revisions/user-edit-20261005/`. Les MP4 dans `composition/renders/` sont conservés ; ils ne comprennent pas ces dernières retouches. La version actuelle est visible dans le Studio et dans les tuiles de connexion.
+
+## Sources et reconstruction
+
+Pour reprendre le workflow sur une autre machine, versionner `brag-output/` et
+`front/public/presentations/andria/` avec les composants du login. Le `.gitignore`
+exclut les anciens rendus MP4, les captures de validation et les caches Hyperframes.
+Ces fichiers restent disponibles localement et peuvent être régénérés ; ils ne
+sont pas nécessaires pour ouvrir le montage dans Studio ou afficher les tuiles.
+Les assets, les fixtures, la configuration Hyperframes et les archives des
+retouches utilisateur sont conservés dans Git.
+
+`composition/index.html` contient le montage actuel, y compris les modifications
+Studio. Pour créer une nouvelle séquence, repartir de ce montage et des composants
+existants, puis synchroniser `style.css`, `motion.js`, `source.html.in` et
+`.build-sha256` après les retouches Studio. Exporter ensuite les tuiles depuis la
+racine avec `python3 brag-output/login-embed/export.py`. Ne pas relancer le
+générateur historique `presentation.py` sur le montage actuel.
+
+- `composition/presentation.py` : scènes et contenu de démonstration.
+- `composition/ui-fixtures.tsx` : imports des vrais composants du LXP.
+- `composition/build-ui.mjs` : pré-rendu des composants et compilation Tailwind/DaisyUI.
+- `composition/style.css`, `composition/motion.js` : mise en page et timeline.
+- `composition/source.html.in` : document assemblé avant injection CSS/JS.
+- `composition/build.py` : sortie `index.html`, avec protection des modifications Studio.
+
+Depuis `composition/` :
+
+```sh
+# Nécessaire seulement après modification des composants ou de leurs fixtures.
+# HYPERFRAMES_ESBUILD désigne le module esbuild déjà installé avec Hyperframes.
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-ui.mjs
+python3 build.py
+npx --yes hyperframes check
+npx --yes hyperframes@0.8.130 preview --background --port 3017
+```
+
+Si `build.py` détecte une retouche Studio, il s’arrête. Sauvegarder cette retouche, la reporter dans les sources puis réconcilier le hash ; ne pas forcer une reconstruction sur une modification non relue.
+
+Les données sont fictives. Aucun appel à l’IA ou à l’API du LXP, aucun envoi et aucune modification des bases. Les mêmes scènes sont exportées dans `front/public/presentations/andria/`. Aucun backend modifié ni dépendance applicative ajoutée.
+
+Le nouvel export MP4 attend la revue de cette timeline, conformément au workflow brag. Le poster sera actualisé depuis une image validée du nouveau montage.
+
+Les sources actuelles reprennent les retouches enregistrées dans Studio. `presentation.py` reste le générateur historique : ne pas le relancer sur ces sources. Après une retouche Studio, réconcilier les sources avant `build.py`, puis lancer `python3 brag-output/login-embed/export.py` depuis la racine.
+
+Dernières retouches : logo continu révélé par un masque de cases animé sans traits visibles, sept niveaux pédagogiques en 19 secondes (rythme ralenti ; les scènes suivantes commencent 5 s plus tard que les temps cités plus bas), ouverts par une pyramide 3D des niveaux (3,2 à 6,8 s) et un rail en escalier qui matérialise l’imbrication, puis parcourus carte par carte : chaque carte enfant sort de la ligne cliquée, les parents reculent en pile derrière elle et le niveau courant du rail s’avance en 3D sur une couche de verre, icône Rocket pour Parcours, morphing des humeurs avec curseur et profondeur, calendrier sans Timeline, suggestion de quiz dans le flux de l'assistant virtuel, curseurs contextuels sur les scènes interactives.
+
+La scène `dashboards` construit les espaces apprenant et pédagogique pendant 13 secondes : sidebar réelle pré-rendue via `SidebarItem` et `sidebarItems`, passage compact/complet, caméra continue sans rebonds, cartes dévoilées progressivement. Les badges DaisyUI indiquent les rôles avec les icônes Lucide du LXP. Les clics superflus ont été retirés ; les clics du chatbot et du calendrier ouvrent des aperçus. La hiérarchie comporte six clics sur la droite, avec des lignes différentes et de courts déplacements locaux.
+
+Les curseurs n’apparaissent désormais que pour des actions avec un résultat visible et disparaissent pendant la lecture. Les scènes de statistiques et de construction d’interface ne comportent plus de pauses de curseur sans action.
+
+Le dashboard est présenté sans cadre global, comme le `PageWrapper` du LXP. Le lanceur du chatbot est pré-rendu depuis `ChatbotButton` par `composition/chatbot-fixture.tsx`, sans appel à l’IA. Une caméra commune rapproche l’avatar à la fin de la scène, puis l’identité ANDRIA termine la présentation à 96,5 secondes.
+
+La fin du dashboard reprend la bulle d’aide native à sa propre échelle, avec le texte original. Un seul clignement bref utilise deux masques SVG centrés sur les yeux natifs, sans déplacer ni tourner leurs tracés. Les cartes se construisent avec un décalage de 350 ms.
+
+Les pauses finales des scènes éditeur, évaluation, devoirs, organisation, progression, accompagnement et consommation IA sont raccourcies par `compactTime`, sans accélérer les mouvements. `sourceSceneClocks` garde les coordonnées temporelles du montage pour les interactions et les halos ; les métadonnées HTML portent les temps de présentation. L’avatar de la scène chatbot reprend le salut et le clignement du lanceur. La prise en compte de l’alerte utilise les couleurs `success` et affiche sa confirmation.
+
+Trois nouvelles séquences de 16 secondes sont intégrées aux qualités Collective,
+Coordonnée et Organisée : `groups` (96,5 s), `trainers` (112,5 s) et `tags` (128,5 s).
+Elles reprennent les promotions octobre/janvier du même parcours. Les fixtures
+`relationship-fixtures.tsx` pré-rendent les vrais composants `GroupTeachers`,
+`TagItem` et `CursorGlowCard` avec des données fictives. Pour les reconstruire :
+
+```sh
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-relationship-fixtures.mjs
+```
+
+Cette commande s’exécute depuis `composition/`, puis `build-ui.mjs` actualise les
+styles nécessaires. Les trois nouvelles qualités rejoignent la rotation des
+douze tuiles. Le lecteur conserve l’animation de construction par blocs du logo
+final et propose Rejouer dès le début de celle-ci. La sélection de texte dans la
+scène assistant utilise un curseur de texte et un surlignage progressif avant
+l’apparition du bouton Demander à l’IA. Tous ces comportements restent hors ligne.
+
+Les séquences Connectée (`emails`, 144,5 s, 18 s) et Personnalisable (`instance`,
+162,5 s, 18 s) montrent les récapitulatifs hebdomadaires/mensuels avec un seuil
+critique, l’annonce d’une formation disponible, puis l’identité de l’organisme,
+les thèmes accessibles et les six modèles email. Les paramètres de l’instance
+sont identifiés comme une fonction de superadministration. Les données et emails
+sont des exemples statiques ; aucun envoi, appel IA ou changement de configuration
+n’est déclenché par le lecteur.
+
+La dernière qualité Encourageante utilise `accomplishments` (180,5 s, 16 s).
+L’équipe pédagogique félicite un cours terminé, Camille reçoit le message
+et les confettis, puis ouvre son journal. Le journal est pré-rendu depuis
+`JournalTimeline` avec des données fictives. Les 40 particules au clic reprennent
+la configuration du bouton de feedback ; la pluie de confettis côté apprenant
+est déterministe et pilotée par GSAP pour conserver les seeks et le replay.
+Aucun événement Socket.IO ni félicitation réelle n’est envoyé.
+La composition complète dure 201,5 secondes.
+
+Toutes les scènes produit reprennent l’empilement de la séquence des niveaux :
+chaque panneau se pose depuis l’avant avec une légère rotation dans le plan,
+puis reste parfaitement à plat (aucune inclinaison pendant la lecture). Les
+éléments secondaires (pastilles de fonctionnalités, sous-titres, descriptions
+de lignes, notes) sont masqués en CSS ; les cibles des curseurs restent visibles.
+
+Les badges de rôle en haut des scènes sont masqués ; ceux des cartes restent.
+
+La scène `care` est reconstruite autour du vrai composant `FeelingFeedback`,
+pré-rendu hors ligne par `composition/care-fixture.tsx` (cache de requête
+pré-rempli, aucune session ni socket). Son icône `FeelingLevel` est extrudée en
+10 couches SVG et se transforme (MorphSVG) de « nuageux » à « pluie » quand
+l’apprenant déplace le curseur, puis à « soleil » après la prise en compte de
+l’alerte par l’équipe. Pour reconstruire la fixture depuis `composition/` :
+
+```sh
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-care-fixture.mjs
+HYPERFRAMES_ESBUILD=/chemin/vers/esbuild/lib/main.js node build-ui.mjs
+```
+
+La scène `dashboards` commence par la sidebar compacte en verre liquide (une
+plaque par couche de profondeur, sans jointure), qui se pose comme une plaque
+puis s’étend avant de retrouver l’apparence réelle ; les cartes du tableau de
+bord se posent ensuite une à une, vues sous l’angle de la pyramide des niveaux,
+puis l’interface se redresse face au lecteur et l'assistant virtuel arrive en dernier.
+La scène `care` s’ouvre sous ce même angle avant de se redresser ; son curseur
+d’humeur glisse en continu (`step` rendu continu pour l’animation seulement).
+La suite de la scène est resserrée d’environ 10 % pour conserver ses 13 s.
+
+La scène `instance` reprend la vraie page « Paramètres de l’instance »
+(`Header`, `InstanceGeneralSettings`, `EmailTemplateSettings` et sa fenêtre de
+choix), pré-rendue par `composition/instance-fixture.tsx` puis
+`build-instance-fixture.mjs`. Les points de rupture responsive sont figés sur la
+mise en page bureau pour les tuiles étroites ; le logo de démonstration est un
+monogramme local. Les huit thèmes activés par défaut sont compilés.
+
+La scène `emails` montre deux étapes numérotées : l’équipe pédagogique active
+un récapitulatif hebdomadaire, puis une formation devenue disponible envoie un
+e-mail à Camille. Chaque e-mail part du bouton et se pose à côté.
+
+Le lecteur des tuiles avance la timeline sans rappels (`totalTime(t, true)`) :
+les valeurs de formulaire (curseur, textes saisis, libellés) sont donc animées
+par des tweens de propriétés, jamais par `onUpdate`.
+
+Les scènes `instance` et `accomplishments` se construisent elles aussi sous
+l’angle de la pyramide avant de se redresser. Dans `instance`, limitée à
+l’essentiel (thèmes et template d’e-mail), appliquer un thème soulève la carte
+choisie en 3D ; le choix du template s’affiche en plaques superposées comme la
+pyramide : la page, la vraie fenêtre de choix, puis l’aperçu du template choisi. Dans `accomplishments`, féliciter projette des confettis qui tournent
+sur trois axes et en profondeur, un jeton vole en arc jusqu’à l’apprenant, sa
+médaille fait deux tours, puis une pluie de confettis 3D tombe ; tout est
+déterministe (indices fixes) pour les retours en arrière et le lecteur.

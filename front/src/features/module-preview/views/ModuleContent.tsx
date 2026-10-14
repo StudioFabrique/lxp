@@ -52,7 +52,6 @@ const ModuleContent = () => {
     computed,
     dispatch,
     moduleActions,
-    scrollTopRef,
   } = contentStore;
 
   const [calendarModuleId, setCalendarModuleId] = useState<number | null>(null);
@@ -111,6 +110,11 @@ const ModuleContent = () => {
       id: state.module?.id,
       title: state.module?.title,
       description: state.module?.description,
+      quizInstructions: state.module?.quizInstructions,
+      hasPreliminaryQuiz: state.module?.hasPreliminaryQuiz,
+      hasQuizContent: Boolean(state.module?.courses.some(
+        (course) => course.aiIndexed !== false && course.lessons.length > 0,
+      )),
     },
     moduleActions.onFinishInitialQuiz,
   );
@@ -237,7 +241,6 @@ const ModuleContent = () => {
                   />
                 </RoleRankGuard>
               }
-              progressRef={scrollTopRef}
               isSidebarCollapsed={state.isPanelClosed}
               isContentSelected={Boolean(
                 state.selectedLesson || selectedAssignmentCourseId,
@@ -254,6 +257,10 @@ const ModuleContent = () => {
                 (course) => !course.isPublished,
               )}
               isPublishingAll={contentStore.isPublishingAllCourses}
+              showCourseVisibility={state.module.courses.length > 0}
+              areAllCoursesVisible={state.module.courses.every((course) => course.visibility)}
+              isUpdatingCourseVisibility={contentStore.isUpdatingCourseVisibility}
+              onToggleCourseVisibility={contentStore.courseActions.toggleAllCoursesVisibility}
               onToggleSidebar={handleToggleSidebar}
               onToggleCalendar={handleToggleCalendar}
               onToggleCourseReordering={handleToggleCourseReordering}

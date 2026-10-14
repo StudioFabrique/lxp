@@ -1,0 +1,100 @@
+/* One paused, deterministic timeline; Hyperframes owns seeking and playback. */
+gsap.registerPlugin(MorphSVGPlugin);
+const tl = gsap.timeline({ paused: true });
+tl.fromTo('#film-progress', { scaleX: 0 }, { scaleX: 1, duration: 25, ease: 'none' }, 0);
+tl.fromTo('.orb-one', { x: 0, y: 0, scale: 1 }, { x: -120, y: 130, scale: 1.15, duration: 25, ease: 'sine.inOut' }, 0);
+tl.fromTo('.orb-two', { x: 0, y: 0 }, { x: 160, y: -75, duration: 25, ease: 'sine.inOut' }, 0);
+
+// Original SVG subpaths assemble deterministically, preserving the final mark.
+document.querySelectorAll('#intro-logo .logo-pixel').forEach((pixel, index) => {
+  const angle = index * 2.399963;
+  tl.fromTo(pixel, { x: Math.cos(angle) * 45, y: Math.sin(angle) * 28, rotation: ((index % 7) - 3) * 8, opacity: 0 }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0.1 + (index % 30) * 0.014);
+});
+tl.fromTo('#intro-logo', { rotationY: -28, rotationX: 10, z: -130 }, { rotationY: 0, rotationX: 0, z: 0, duration: 1.25, ease: 'power3.out' }, 0.1);
+tl.to('#intro-logo .ink', { fill: 'var(--color-primary)', duration: 0.55 }, 0.8);
+tl.fromTo('.intro-copy .eyebrow', { opacity: 0, x: -35 }, { opacity: 1, x: 0, duration: 0.35 }, 0.08);
+tl.fromTo('.intro-copy h1 span', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: 'power4.out' }, 0.15);
+tl.fromTo('.intro-rule', { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: 'power2.out' }, 0.5);
+tl.fromTo('.intro-note,.logo-caption', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.75);
+tl.to('.intro-layout', { opacity: 0, y: -30, duration: 0.22 }, 2.18);
+
+const sceneStarts = { hierarchy: 2.4, activities: 8.74, themes: 14.2, care: 17.47 };
+Object.entries(sceneStarts).forEach(([scene, start]) => {
+  tl.fromTo(`#${scene} .scene-title`, { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }, start);
+});
+
+// Adapted camera-rig-depth-stack: stable lens, preserve-3d world, Z layers.
+// beat-grid: levels at 2.73, 3.27, 3.82, 4.91, 6.00, 7.09; held together.
+const levelTimes = [2.73, 3.27, 3.82, 4.91, 6, 7.09];
+tl.fromTo('#pedagogical-world', { rotationY: -18, rotationX: 13, z: -100, x: 45 }, { rotationY: -7, rotationX: 4, z: -45, x: 10, duration: 4.5, ease: 'power2.inOut' }, 2.4);
+levelTimes.forEach((start, index) => {
+  tl.fromTo(`#level-${index}`, { opacity: 0, x: 120, z: 220 + index * 25, rotationY: -25 }, { opacity: 1, x: 0, z: index * 18, rotationY: 0, duration: 0.42, ease: 'power4.out' }, start);
+  tl.fromTo(`#label-${index}`, { opacity: 0, x: -25 }, { opacity: 1, x: 0, duration: 0.32, ease: 'power3.out' }, start);
+});
+tl.to('#pedagogical-world', { rotationY: 0, rotationX: 0, z: 0, x: 0, duration: 0.55, ease: 'power3.out' }, 7.75);
+tl.to('.level-card', { z: 0, duration: 0.45, ease: 'power3.out' }, 7.95);
+
+// beat-locked: the editor reveal lands at the 8.74s strong cue.
+tl.fromTo('.activity-palette', { opacity: 0, x: -90 }, { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }, 8.74);
+tl.fromTo('.activity-type', { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.06 }, 8.94);
+tl.fromTo('#editor-window', { opacity: 0, rotationY: 20, rotationX: 7, z: -240, x: 110 }, { opacity: 1, rotationY: 0, rotationX: 0, z: 0, x: 0, duration: 0.8, ease: 'power4.out' }, 8.74);
+tl.fromTo('#doc-heading', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3 }, 9.3);
+tl.fromTo('#doc-paragraph', { opacity: 0 }, { opacity: 1, duration: 0.35 }, 9.55);
+tl.fromTo('#doc-list p', { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.1 }, 9.83);
+tl.fromTo('#doc-table', { opacity: 0, scaleY: 0.75, transformOrigin: 'top center' }, { opacity: 1, scaleY: 1, duration: 0.4, ease: 'power3.out' }, 10.37);
+tl.fromTo('#doc-image', { opacity: 0, scale: 0.8, rotation: 3 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(1.2)' }, 10.93);
+tl.fromTo('#doc-code', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, 11.46);
+tl.fromTo('.editor-capabilities span', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.09 }, 11.8);
+['#table-tool', '#image-tool', '#code-tool'].forEach((selector, index) => {
+  const start = [10.37, 10.93, 11.46][index];
+  tl.to(selector, { backgroundColor: 'var(--color-primary)', color: 'var(--color-primary-content)', duration: 0.12 }, start);
+  tl.to(selector, { backgroundColor: 'transparent', color: 'var(--color-base-content)', duration: 0.2 }, start + 0.5);
+});
+
+// The same DOM dashboard changes theme tokens, with reversible GSAP keyframes.
+const themeTokens = {};
+['ocean', 'sage', 'aurora'].forEach((name) => {
+  const styles = getComputedStyle(document.getElementById('theme-' + name));
+  themeTokens[name] = {};
+  ['primary', 'primary-content', 'secondary', 'secondary-content', 'accent', 'neutral', 'neutral-content', 'base-100', 'base-200', 'base-300', 'base-content', 'success', 'error'].forEach((token) => {
+    themeTokens[name][`--color-${token}`] = styles.getPropertyValue(`--color-${token}`).trim();
+  });
+});
+tl.fromTo('#theme-dashboard', { rotationY: -18, rotationX: 7, z: -100, opacity: 0 }, { rotationY: 0, rotationX: 0, z: 0, opacity: 1, duration: 0.55, ease: 'power4.out' }, 14.2);
+tl.fromTo('.theme-option', { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.06 }, 14.2);
+tl.fromTo('#theme-dashboard', themeTokens.ocean, { ...themeTokens.sage, duration: 0.32, ease: 'power2.inOut', immediateRender: false }, 15.29);
+tl.to('#theme-dashboard', { ...themeTokens.aurora, duration: 0.32, ease: 'power2.inOut' }, 16.38);
+[[14.2, 'ocean'], [15.29, 'sage'], [16.38, 'aurora']].forEach(([start, name]) => {
+  tl.fromTo(`#theme-${name}`, { x: 0 }, { x: 22, duration: 0.2, ease: 'power3.out' }, start);
+  if (name !== 'aurora') tl.to(`#theme-${name}`, { x: 0, duration: 0.2 }, start + 0.9);
+});
+
+// beat-locked: care reveal at 17.47s. The analysis is a prefilled example.
+tl.fromTo('#alert-panel', { x: -110, rotationY: 12, opacity: 0 }, { x: 0, rotationY: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, 17.47);
+tl.fromTo('#feedback-panel', { x: 90, rotationY: -12, opacity: 0 }, { x: 0, rotationY: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, 17.7);
+tl.fromTo('.indicators .meter i', { scaleX: 0, transformOrigin: 'left center' }, { scaleX: 1, duration: 0.65, stagger: 0.12, ease: 'power3.out' }, 18.02);
+tl.fromTo('#student-feedback', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.35 }, 18.56);
+
+// Continuous SVG silhouette morph, not a swap or a crossfade.
+const cloud = 'M28 74 C8 74 8 45 26 42 C29 18 59 17 68 36 C87 30 107 45 105 63 C105 70 100 74 93 74 Z';
+const sun = 'M91 60 C91 77 77 91 60 91 C43 91 29 77 29 60 C29 43 43 29 60 29 C77 29 91 43 91 60 Z';
+const rain = 'M34 85 L27 103 M59 85 L52 103 M84 85 L77 103';
+tl.fromTo('#mood-shape', { morphSVG: cloud }, { morphSVG: cloud, duration: 0.45 }, 17.47);
+tl.to('#mood-detail', { morphSVG: rain, fill: 'none', strokeWidth: 5, duration: 0.55, ease: 'power2.inOut' }, 18.2);
+tl.to('#mood-shape', { morphSVG: sun, duration: 1.0, ease: 'power2.inOut' }, 19.1);
+tl.to('#mood-detail', { opacity: 0, duration: 0.55 }, 19.1);
+tl.fromTo('#mood-rays', { opacity: 0, rotation: -25, svgOrigin: '60 60', scale: 0.7 }, { opacity: 1, rotation: 0, scale: 1, duration: 0.6, ease: 'power3.out' }, 19.55);
+tl.fromTo('#mood-progress', { scaleX: 0.15 }, { scaleX: 0.95, duration: 2.0, ease: 'power2.inOut' }, 18.2);
+tl.fromTo('#mood-knob', { x: 90 }, { x: 690, duration: 2.0, ease: 'power2.inOut' }, 18.2);
+tl.fromTo('#teacher-note', { opacity: 0, y: 45, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' }, 19.66);
+tl.fromTo('#review-success', { opacity: 0 }, { opacity: 1, duration: 0.2 }, 20.39);
+tl.to('#review-pending', { opacity: 0, duration: 0.2 }, 20.19);
+
+// beat-locked: final identity lands at 22.93s and holds to the last frame.
+tl.fromTo('#outro-logo', { opacity: 0, y: 30, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' }, 22.93);
+tl.set('#outro-logo .ink', { fill: 'var(--color-primary)' }, 22.93);
+tl.fromTo('.outro-content h2 span', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.08, ease: 'power3.out' }, 23.04);
+tl.fromTo('.outro-content>p', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 23.35);
+tl.fromTo('.outro-rule', { scaleX: 0 }, { scaleX: 1, duration: 0.45 }, 23.3);
+window.__timelines = window.__timelines || {};
+window.__timelines['main'] = tl;

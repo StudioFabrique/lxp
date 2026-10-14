@@ -1,0 +1,48 @@
+{
+  "durationSeconds": 108,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "rendered": false,
+  "runtime": {
+    "errorCount": 0,
+    "warningCount": 0
+  },
+  "layout": {
+    "errorCount": 0,
+    "warningCount": 0
+  },
+  "contrast": {
+    "errorCount": 0,
+    "warningCount": 0,
+    "checked": 61,
+    "passed": 61
+  },
+  "lint": {
+    "errorCount": 0,
+    "warningCount": 13
+  },
+  "lintWarningCodes": [
+    "nested_structure_needs_subcomposition",
+    "timeline_track_too_dense"
+  ],
+  "reviewedFramesSeconds": [
+    1.5,
+    5,
+    9.7,
+    18.5,
+    26,
+    36.5,
+    39.5,
+    47,
+    54,
+    61,
+    70,
+    77,
+    83,
+    93,
+    102,
+    106
+  ]
+}

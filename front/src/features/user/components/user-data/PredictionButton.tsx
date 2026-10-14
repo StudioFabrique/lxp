@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 interface PredictionButtonProps {
   onAnalyze: () => void;
   isPending: boolean;
@@ -33,7 +34,7 @@ export default function PredictionButton({
     >
       {isPending ? (
         <>
-          <span className="loading loading-spinner" />
+          <LoaderCircle className="size-5 animate-spin" />
           Analyse en cours…
         </>
       ) : dailyLimitReached || hasResult ? (

@@ -34,7 +34,7 @@ const TableActionsModal = ({
   const modal = (
     <dialog
       id="modal1"
-      className="modal z-[100000] bg-black/50"
+      className="modal z-[100000] bg-neutral/50"
       open={isOpen}
     >
       <div className="modal-box px-8 w-full">

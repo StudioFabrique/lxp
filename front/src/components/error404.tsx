@@ -5,7 +5,7 @@ const Error404 = () => {
   return (
     <EmptyStatePlaceholder title="Parcours introuvable" withBorder={false}>
       <p className="text-center text-base-content/70">
-        Ce parcours n’existe pas ou n’est plus disponible.
+        Ce parcours n’existe pas ou n’est pas encore disponible.
       </p>
       <Link className="btn btn-primary" to="..">
         Voir les parcours

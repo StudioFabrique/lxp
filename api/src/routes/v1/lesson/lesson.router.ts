@@ -7,6 +7,7 @@ import {
   duplicateLessonValidator,
   duplicateResourcesValidator,
   getLessonsByTagValidator,
+  getLessonsToImportValidator,
   lessonIdValidator,
   lessonRateValidator,
   putLessonValidator,
@@ -55,6 +56,15 @@ lessonRouter.get(
   "/tag/:tagId",
   checkPermissions("lesson"),
   getLessonsByTagValidator,
+  getLessonsToImportValidator,
+  httpGetLessonsByTag
+);
+
+// Route pour obtenir les leçons de tous les tags (limite obligatoire)
+lessonRouter.get(
+  "/tag",
+  checkPermissions("lesson"),
+  getLessonsToImportValidator,
   httpGetLessonsByTag
 );
 

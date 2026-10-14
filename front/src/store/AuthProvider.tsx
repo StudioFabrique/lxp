@@ -11,6 +11,8 @@ import { useDemoMode } from "./DemoContext";
 import apiClient from "../lib/axios";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
+import { setIntroFirstRunHint } from "../features/intro-presentation/intro-first-run-hint";
+import { isIntroStillPending } from "../features/intro-presentation/intro-presentation-status";
 import { injectAbilityResync, injectLogout } from "../lib/axios";
 import type {
   OnboardingStatus,
@@ -96,6 +98,12 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         },
         { withCredentials: true },
       );
+      // Écrit avant la navigation : l'écran de chargement qui suit lit l'état de ce compte,
+      // pas celui du précédent.
+      setIntroFirstRunHint(
+        !demoMode &&
+          isIntroStillPending(response.data?.onboarding?.status ?? "pending"),
+      );
       setUser(response.data);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
@@ -109,6 +117,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         setActivationRequired(requiresActivation);
         setActivationRetryAfterSeconds(0);
         if (err.response?.status === 403) logout();
+      } else if (err.response?.status === 429) {
+        setError(
+          "Trop de tentatives de connexion, patientez quelques minutes avant de réessayer.",
+        );
       } else {
         setError("Problème serveur, réessayez plus tard svp");
       }
@@ -121,6 +133,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     try {
       const response = await apiClient.get("/auth/handshake");
       if (response.data?.roles?.length > 0) {
+        setIntroFirstRunHint(
+          !demoMode &&
+            isIntroStillPending(response.data?.onboarding?.status ?? "pending"),
+        );
         setUser(response.data);
       } else {
         setUser(null);
@@ -128,7 +144,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     } catch {
       setUser(null);
     }
-  }, [logout]);
+  }, [logout, demoMode]);
 
   const fetchRoles = useCallback(async (role: Role) => {
     try {

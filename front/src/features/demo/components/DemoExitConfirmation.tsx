@@ -7,7 +7,7 @@ type Props = {
 
 const DemoExitConfirmation = ({ onCancel, onConfirm }: Props) => (
   <div
-    className="fixed inset-0 z-[3000] flex items-center justify-center bg-slate-950/70 p-4"
+    className="fixed inset-0 z-[3000] flex items-center justify-center bg-neutral/70 p-4"
     role="dialog"
     aria-modal="true"
     aria-labelledby="demo-exit-title"

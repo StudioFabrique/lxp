@@ -50,6 +50,43 @@ describe("AssignContactsToModulesModal", () => {
     expect(resourceName).toBeDefined();
   });
 
+  it("bloque la fermeture et les choix pendant l'affectation puis les réactive", () => {
+    const onClose = vi.fn();
+    const onSubmit = vi.fn();
+    const render = (isSubmitting: boolean) => {
+      act(() => {
+        root.render(
+          <AssignContactsToModulesModal
+            contacts={[{ id: 1, idMdb: "contact-1", firstname: "jeanne", lastname: "dupont", role: "formatrice" }]}
+            modules={[{ id: 10, title: "Premier module", contacts: [] }]}
+            isSubmitting={isSubmitting}
+            onClose={onClose}
+            onSubmit={onSubmit}
+          />,
+        );
+      });
+    };
+
+    render(true);
+    const buttons = Array.from(container.querySelectorAll("button"));
+    const checkboxes = Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
+    expect(buttons.every((button) => button.disabled)).toBe(true);
+    expect(checkboxes.every((checkbox) => checkbox.disabled)).toBe(true);
+    act(() => {
+      buttons.forEach((button) => button.click());
+      checkboxes.forEach((checkbox) => checkbox.click());
+    });
+    expect(onClose).not.toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(checkboxes.every((checkbox) => checkbox.checked)).toBe(true);
+
+    render(false);
+    expect(buttons.every((button) => !button.disabled)).toBe(true);
+    expect(checkboxes.every((checkbox) => !checkbox.disabled)).toBe(true);
+    act(() => buttons.find((button) => button.textContent === "Plus tard")!.click());
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
   it("permet de désélectionner puis sélectionner tous les modules", () => {
     const getCheckboxes = () =>
       Array.from(

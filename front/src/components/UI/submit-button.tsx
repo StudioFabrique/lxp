@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { ReactNode } from "react";
 
 interface SubmitButtonProps {
@@ -19,7 +20,7 @@ const SubmitButton = ({
     <>
       {isLoading ? (
         <button className="btn btn-primary" disabled={isLoading}>
-          <span className="loading loading-spinner"></span>
+          <LoaderCircle className="size-5 animate-spin" />
           <p className="flex-1">{loadingLabel}</p>
         </button>
       ) : (

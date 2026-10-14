@@ -1,13 +1,15 @@
 import { showFormErrors } from "../../../../components/form/form-errors";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
 import { useUserForm } from "./useUserForm";
 import UserFormInformations from "./UserFormInformations";
 import UserFormContact from "./UserFormContact";
 import UserFormTypeUser from "./UserFormTypeUser";
+import UserInvitationCard from "./UserInvitationCard";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import UserFormPresentation from "./UserFormPresentation";
 import UserFormCertifications from "./UserFormCertifications";
 import Header from "../../../../../src/components/headers/Header";
@@ -16,6 +18,7 @@ import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
 import { transformLink, urlIsValid } from "../../helpers/link-transform";
 import { cn } from "../../../../utils/cn";
+import { useUserRoleOptions } from "../../hooks/useUserRoleOptions";
 
 type Props = {
   user?: User | null;
@@ -33,8 +36,10 @@ type Props = {
   fieldsDisabled?: boolean;
   editMode?: boolean;
   initialRoleRank?: number;
+  requiredRoleRank?: number;
   initialSendEmail?: boolean;
   cancelTo?: string;
+  groupCreationContext?: (invitation: ReactNode) => ReactNode;
 };
 
 const UserForm = ({
@@ -46,8 +51,10 @@ const UserForm = ({
   fieldsDisabled = false,
   editMode = false,
   initialRoleRank,
+  requiredRoleRank,
   initialSendEmail = false,
   cancelTo,
+  groupCreationContext,
 }: Props) => {
   const {
     form,
@@ -93,6 +100,18 @@ const UserForm = ({
     sendEmail,
     setSendEmail,
   } = useUserForm(user, initialSendEmail);
+  const roleOptions = useUserRoleOptions(requiredRoleRank);
+
+  useEffect(() => {
+    if (!roleOptions.isSuccess) return;
+    const selectedRoleIsAllowed = roleOptions.roles.some((role) => role._id === roleId);
+    if (requiredRoleRank !== undefined && !selectedRoleIsAllowed) {
+      setRoleId(roleOptions.roles[0]?._id ?? null);
+    } else if (!roleId && initialRoleRank !== undefined) {
+      const initialRole = roleOptions.roles.find((role) => role.rank === initialRoleRank);
+      if (initialRole) setRoleId(initialRole._id);
+    }
+  }, [initialRoleRank, requiredRoleRank, roleId, roleOptions.isSuccess, roleOptions.roles, setRoleId]);
 
   useEffect(() => {
     if (error && error.length > 0) {
@@ -112,14 +131,19 @@ const UserForm = ({
 
   const handleSubmit = form.handleSubmit((values) => {
     if (fieldsDisabled || isLoading) return;
-    if (!values.roleId) { form.setError("roleId", { message: "Veuillez choisir un rôle." }); toast.error("Veuillez choisir un rôle."); return; }
+    if (!values.roleId || !roleOptions.isSuccess || !roleOptions.roles.some((role) => role._id === values.roleId)) {
+      const message = requiredRoleRank === 3 ? "Veuillez choisir un rôle apprenant disponible." : "Veuillez choisir un rôle disponible.";
+      form.setError("roleId", { message });
+      toast.error(message);
+      return;
+    }
     onSubmitForm(values, file);
   }, (errors) => { validateEmail(); showFormErrors(errors); });
 
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <PageWrapper as="form" onSubmit={handleSubmit} autoComplete="off" data-recommended-tour="user-form">
+    <PageWrapper as="form" className="@container min-w-0" onSubmit={handleSubmit} autoComplete="on" data-testid="user-form">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
@@ -138,11 +162,11 @@ const UserForm = ({
           type="submit"
           className="btn btn-primary normal-case"
           disabled={disabled}
-          data-recommended-tour="user-save"
+          data-testid="user-save"
         >
           {isLoading ? (
             <span className="flex items-center gap-x-2">
-              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
               <p>Sauvegarde en cours...</p>
             </span>
           ) : (
@@ -150,15 +174,18 @@ const UserForm = ({
           )}
         </button>
       </Header>
+      {groupCreationContext?.(!editMode ? <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact /> : null)}
       <div className="flex flex-col gap-y-5">
-        <div className="grid grid-cols-3 gap-x-5">
-          <div data-recommended-tour="user-informations">
+        <div className="grid grid-cols-1 gap-5 @min-[40rem]:grid-cols-2 @min-[64rem]:grid-cols-3">
+          <div className="min-w-0" data-testid="user-informations">
             <UserFormInformations
               lastname={lastname}
               lastnameError={lastnameError}
+              lastnameMessage={form.formState.errors.lastname?.message}
               onLastname={setLastname}
               firstname={firstname}
               firstnameError={firstnameError}
+              firstnameMessage={form.formState.errors.firstname?.message}
               onFirstname={setFirstname}
               nickname={nickname}
               nicknameError={nicknameError}
@@ -189,22 +216,31 @@ const UserForm = ({
             disabled={disabled}
           />
           <div
-            className="grid grid-rows-1 gap-y-5"
-            data-recommended-tour="user-role"
+            className="flex min-w-0 flex-col gap-5 @min-[40rem]:col-span-2 @min-[64rem]:col-span-1"
           >
+            {!editMode && !groupCreationContext && (
+              <BoxWrapper className="h-auto shrink-0">
+                <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact />
+              </BoxWrapper>
+            )}
+            <div className="min-w-0 flex-1" data-testid="user-role">
             <UserFormTypeUser
               roleId={roleId}
-              sendEmail={sendEmail}
-              onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
-              initialRoleRank={initialRoleRank ?? user?.roles?.[0]?.rank}
-              editMode={editMode}
+              roles={roleOptions.roles}
+              isLoading={roleOptions.isLoading}
+              isFetching={roleOptions.isFetching}
+              isError={roleOptions.isError}
+              onRefresh={() => void roleOptions.refetch()}
+              studentOnly={requiredRoleRank === 3}
+              error={form.formState.errors.roleId?.message}
               disabled={disabled}
             />
+            </div>
           </div>
         </div>
         {editMode && (
-          <div className="grid grid-cols-3 gap-x-5">
+          <div className="grid grid-cols-1 gap-5 @min-[64rem]:grid-cols-3">
             <ItemsAdder
               styleOptions={{
                 label: "Centre d'intérêts",
@@ -233,7 +269,7 @@ const UserForm = ({
                 return true;
               }}
             />
-            <div className="col-span-2">
+            <div className="min-w-0 @min-[64rem]:col-span-2">
               <UserFormPresentation
                 description={description}
                 onDescription={setDescription}
@@ -242,8 +278,8 @@ const UserForm = ({
             </div>
           </div>
         )}
-        <div className="grid grid-cols-3 gap-x-5">
-          <div className={cn(editMode ? "col-span-2" : "col-span-3")}>
+        <div className="grid grid-cols-1 gap-5 @min-[64rem]:grid-cols-3">
+          <div className={cn("min-w-0", editMode ? "@min-[64rem]:col-span-2" : "@min-[64rem]:col-span-3")}>
             <UserFormCertifications
               graduations={graduations}
               setGraduations={setGraduations}

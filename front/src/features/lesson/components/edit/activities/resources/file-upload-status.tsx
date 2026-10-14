@@ -1,4 +1,4 @@
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, LoaderCircle } from "lucide-react";
 
 type Props = {
   minUpload: number;
@@ -34,7 +34,7 @@ const FileUploadStatus = ({ minUpload, maxUpload, uploadProgess }: Props) => {
       ) : uploadProgess >= maxUpload ? (
         <CheckCircle className="text-success" />
       ) : (
-        <Loader2 className="animate-spin text-info" />
+        <LoaderCircle className="size-5 animate-spin text-info" />
       )}
     </div>
   );

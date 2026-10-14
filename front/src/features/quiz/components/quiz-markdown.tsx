@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { formatQuizExplanation } from "../utils/format-quiz-explanation";
+import { cn } from "../../../utils/cn";
 
 interface Props {
   children: string;
@@ -12,7 +13,7 @@ interface Props {
  * sans imposer de couleur de texte — hérite toujours de la couleur du parent.
  */
 const QuizMarkdown = ({ children, explanation = false }: Props) => (
-  <div className={explanation ? "space-y-2 leading-relaxed" : undefined}>
+  <div className={cn(explanation ? "space-y-2 leading-relaxed" : undefined)}>
     <ReactMarkdown
       components={{
         p: ({ children }) => <p>{children}</p>,
@@ -37,7 +38,7 @@ const QuizMarkdown = ({ children, explanation = false }: Props) => (
 
         // Code inline : fond semi-transparent pour fonctionner sur tout fond
         code: ({ children }) => (
-          <code className="font-mono text-[0.85em] bg-black/10 rounded px-1 py-0.5">
+          <code className="font-mono text-[0.85em] bg-base-300 rounded px-1 py-0.5">
             {children}
           </code>
         ),

@@ -1,7 +1,8 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
-import { useState, type ReactNode } from "react";
+import { useContext, useState, type ReactNode } from "react";
 
 import { cn } from "../../../utils/cn";
+import { BoxWrapperNestingContext } from "../../wrappers/box-wrapper-nesting";
 import CursorGlowCard from "../cursor-glow-card";
 import Modal from "../modal/modal";
 import {
@@ -12,6 +13,8 @@ import {
 type HierarchicalListCardProps = {
   label?: string;
   title?: string;
+  titleIcon?: ReactNode;
+  titleRowClassName?: string;
   labelAccessory?: ReactNode;
   truncateTitle?: boolean;
   description?: ReactNode;
@@ -31,11 +34,14 @@ type HierarchicalListCardProps = {
   placeholder?: ReactNode;
   fullWidth?: boolean;
   disableHoverScale?: boolean;
+  glowIntensity?: number;
 };
 
 const HierarchicalListCard = ({
   label,
   title,
+  titleIcon,
+  titleRowClassName,
   labelAccessory,
   truncateTitle,
   description,
@@ -56,17 +62,20 @@ const HierarchicalListCard = ({
   placeholder,
   fullWidth = false,
   disableHoverScale = false,
+  glowIntensity = 1,
 }: HierarchicalListCardProps) => {
   const [showRemainingItems, setShowRemainingItems] = useState(false);
   const visibleItems = items.slice(0, maxItemsShown);
   const remainingItems = items.slice(maxItemsShown);
   const hasHeader = Boolean(title);
+  const isNested = useContext(BoxWrapperNestingContext);
 
   return (
     <>
       <CursorGlowCard
         glowColor="secondary"
         glowSize={2.4}
+        glowIntensity={glowIntensity}
         allowOverflow
         disableHoverScale={disableHoverScale}
         className={cn(
@@ -80,7 +89,8 @@ const HierarchicalListCard = ({
             {
               "h-full min-h-52": !fullWidth,
               "border-dashed border-primary/55 bg-base-200/40": !hasHeader,
-              "bg-base-200": hasHeader,
+              "bg-base-200": hasHeader && !isNested,
+              "bg-base-100/60": hasHeader && isNested,
             },
           )}
         >
@@ -117,7 +127,8 @@ const HierarchicalListCard = ({
                         </div>
                       ) : null}
                     </div>
-                    <div className="flex min-w-0 items-center gap-2">
+                    <div className={cn("flex min-w-0 items-center gap-2", titleRowClassName)}>
+                      {titleIcon ? <span className="flex shrink-0 items-center" aria-hidden="true">{titleIcon}</span> : null}
                       <h4
                         className={cn(
                           "min-w-0 first-letter:uppercase text-xl font-bold",

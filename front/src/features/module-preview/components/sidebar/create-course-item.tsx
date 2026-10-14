@@ -7,9 +7,9 @@ import { Check, Import, Plus } from "lucide-react";
 import { Link } from "react-router";
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
-import type { CreateCourseFormValues } from "./course-form.types";
+import type { CourseContentValues, CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
-import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
+import CourseContentModal from "./course-content-modal";
 import type Tag from "../../../../utils/interfaces/tag";
 import { cn } from "../../../../utils/cn";
 
@@ -18,6 +18,7 @@ type CreateCourseItemProps = {
   moduleId: number;
   parcoursTags: Tag[];
   onCreate: (values: CreateCourseFormValues) => Promise<number | false>;
+  onAddContent: (courseId: number, values: CourseContentValues) => Promise<boolean>;
   onCreated?: (courseId: number) => void;
   openDetailsOnMount?: boolean;
 };
@@ -27,12 +28,19 @@ const CreateCourseItem = ({
   moduleId,
   parcoursTags,
   onCreate,
+  onAddContent,
   onCreated,
   openDetailsOnMount = false,
 }: CreateCourseItemProps) => {
   const [showTitleInput, setShowTitleInput] = useState(false);
   const [showDetailsForm, setShowDetailsForm] = useState(openDetailsOnMount);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Cours tout juste créé : son contenu est proposé dans une seconde modale.
+  const [contentCourse, setContentCourse] = useState<{
+    id: number;
+    title: string;
+  } | null>(null);
+  const [isAddingContent, setIsAddingContent] = useState(false);
   const form = useForm({
     resolver: zodResolver(courseTitleSchema),
     defaultValues: { title: "" },
@@ -42,7 +50,6 @@ const CreateCourseItem = ({
 
   const handleOpenDetails = form.handleSubmit(() => {
     if (!title.trim()) return;
-    emitOnboardingEvent({ type: "course_form_opened" });
     setShowDetailsForm(true);
   }, showFormErrors);
 
@@ -55,8 +62,17 @@ const CreateCourseItem = ({
       setShowDetailsForm(false);
       setShowTitleInput(false);
       onCreated?.(courseId);
+      setContentCourse({ id: courseId, title: values.title.trim() });
     }
     return courseId !== false;
+  };
+
+  const handleAddContent = async (values: CourseContentValues) => {
+    if (!contentCourse) return false;
+    setIsAddingContent(true);
+    const success = await onAddContent(contentCourse.id, values);
+    setIsAddingContent(false);
+    return success;
   };
 
   const closeTitleInput = () => {
@@ -75,8 +91,15 @@ const CreateCourseItem = ({
           onSubmit={handleCreate}
         />
       )}
+      {contentCourse && (
+        <CourseContentModal
+          parcoursTags={parcoursTags}
+          isSubmitting={isAddingContent}
+          onClose={() => setContentCourse(null)}
+          onSubmit={handleAddContent}
+        />
+      )}
       <motion.div
-        data-onboarding="course-create"
         className={cn(
           "flex w-full flex-col gap-4 rounded-xl",
           showTitleInput && "bg-success",
@@ -93,7 +116,7 @@ const CreateCourseItem = ({
             <div className="flex items-center gap-2">
               <input
                 autoFocus
-                className="input input-sm input-bordered w-full font-semibold"
+                className="input input-sm input-bordered w-full bg-base-100 font-semibold text-base-content placeholder:text-base-content/70"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 onBlur={(event) => {
@@ -115,7 +138,7 @@ const CreateCourseItem = ({
                 ref={validationButtonRef}
                 type="submit"
                 disabled={!title.trim()}
-                className="btn btn-primary/50 disabled:bg-primary/50 btn-sm"
+                className="btn btn-primary btn-sm disabled:border-base-100 disabled:bg-base-100 disabled:text-base-content/70"
                 aria-label="Continuer"
               >
                 <Check className="h-4 w-4" />

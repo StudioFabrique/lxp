@@ -32,7 +32,7 @@ export default function HeaderChatbot({
           <Bot className="w-full h-full object-contain" />
         </div>
         <div>
-          <h2 className="text-lg font-bold leading-tight">Chatbot ANDRIA</h2>
+          <h2 className="text-lg font-bold leading-tight">Assistant virtuel ANDRIA</h2>
           <p className="text-xs opacity-80">Assistant virtuel</p>
         </div>
       </div>
@@ -41,7 +41,7 @@ export default function HeaderChatbot({
         {showNewChatButton && (
           <button
             type="button"
-            className="btn btn-ghost text-primary-content tooltip tooltip-left btn-sm btn-circle transition-colors"
+            className="btn btn-ghost text-primary-content hover:bg-primary-content/10 tooltip tooltip-left btn-sm btn-circle transition-colors"
             onClick={onNewChat}
             title="Nouvelle discussion"
             aria-label="Nouvelle discussion"
@@ -54,7 +54,7 @@ export default function HeaderChatbot({
         {showFullScreenButton && (
           <button
             type="button"
-            className="btn btn-ghost text-primary-content btn-sm btn-circle transition-colors"
+            className="btn btn-ghost text-primary-content hover:bg-primary-content/10 btn-sm btn-circle transition-colors"
             onClick={() => onChangeSize()}
             aria-label="Changer la taille"
           >
@@ -72,7 +72,7 @@ export default function HeaderChatbot({
           type="button"
           className="btn btn-ghost btn-sm text-primary-content hover:bg-primary-content/10 btn-circle"
           onClick={onClose}
-          aria-label="Fermer le chatbot"
+          aria-label="Fermer l’assistant virtuel"
         >
           <X className="w-5 h-5" />
         </button>

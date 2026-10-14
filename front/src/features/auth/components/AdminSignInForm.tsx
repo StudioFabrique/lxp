@@ -3,7 +3,7 @@ import { adminCreationSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
 import { useContext, useState } from "react";
 import { createPortal } from "react-dom";
-import { Mail, RotateCcw } from "lucide-react";
+import { LoaderCircle, Mail, RotateCcw } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
@@ -124,6 +124,7 @@ const AdminSignInForm = ({
         <AuthPageWrapper
           title="Vérifiez votre boîte mail"
           variant={mode === "first" ? "setup" : "default"}
+          description={mode === "first" ? "Cliquez sur le lien compris dans le mail pour activer votre compte." : undefined}
         >
           <div className="flex min-h-64 flex-1 flex-col items-center justify-start gap-5 text-center">
             <Mail className="h-8 w-8" aria-hidden="true" />
@@ -133,10 +134,10 @@ const AdminSignInForm = ({
                 <span>Un lien d’activation a été envoyé à</span>
                 <strong className="text-base-content">{activationEmail}</strong>
               </div>
-              <p>
+              {mode !== "first" && <p>
                 Cliquez sur ce lien compris dans le mail pour activer votre
                 compte.
-              </p>
+              </p>}
             </div>
           </div>
         </AuthPageWrapper>
@@ -147,6 +148,7 @@ const AdminSignInForm = ({
   return (
     <AuthPageWrapper
       variant={mode === "first" ? "setup" : "default"}
+      description={mode === "first" ? "Créez votre compte pour gérer l’identité, les paramètres et les accès à votre plateforme." : undefined}
       title={
         mode === "additional"
           ? "Créer votre compte root"
@@ -219,7 +221,7 @@ const AdminSignInForm = ({
         >
           {isLoading ? (
             <>
-              <span className="loading loading-spinner loading-sm"></span>
+              <LoaderCircle className="size-4 animate-spin" />
               Création...
             </>
           ) : mode === "additional" ? (

@@ -116,6 +116,19 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
           </div>
         ))}
       </div>
+      {isAnswered && (
+        <section className="rounded-box border-2 border-success bg-success/10 p-4 text-base-content" aria-label="Associations correctes">
+          <h3 className="mb-2 font-bold">Associations correctes</h3>
+          <dl className="space-y-2">
+            {pairs.map((pair, index) => (
+              <div key={index} className="grid grid-cols-2 gap-3">
+                <dt className="font-medium break-words">{pair.left}</dt>
+                <dd className="break-words">{pair.right}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
       <QuizModalButtons isAnswered={isAnswered} isValid={positions.length === pairs.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} nextAction={isAnswered ? nextAction : undefined} />
     </div>
   );

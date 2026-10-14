@@ -1,24 +1,22 @@
-import { CircleHelp, DoorOpen, LogOutIcon } from "lucide-react";
+import { DoorOpen, LogOutIcon, Presentation } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useContext, useState } from "react";
-import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
+import SidebarLogo from "./SidebarLogo";
 import Questionnaire from "./Questionnaire";
 import { AuthContext } from "../../store/AuthProvider";
 import ProfilePopover from "../../features/profile/components/ProfilePopover";
 import AiConsumptionPopover from "./AiConsumptionPopover";
 import ThemeToggle from "../buttons/ThemeToggle";
-import { emitOnboardingEvent } from "../../features/onboarding/onboarding-events";
 import { useDemoMode } from "../../store/DemoContext";
+import { useIntroPresentation } from "../../features/intro-presentation/useIntroPresentation";
 import DemoExitConfirmation from "../../features/demo/components/DemoExitConfirmation";
-import { clearDemoTour } from "../../features/demo/demo-tour-storage";
-import { emitDemoTourEvent } from "../../features/demo/demo-tour-events";
-import TutorialChoiceModal from "../../features/demo/components/TutorialChoiceModal";
-import { useOnboarding } from "../../features/onboarding/OnboardingContext";
 import {
   sidebarControlClassName,
+  sidebarLabelClassName,
   sidebarListClassName,
 } from "./sidebar-styles";
 import { cn } from "../../utils/cn";
+import { useSidebarDisplay } from "./sidebar-display";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -26,11 +24,11 @@ type SharedSideBarProps = {
 
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const { logout } = useContext(AuthContext);
-  const { canStart: canStartOnboarding } = useOnboarding();
   const navigate = useNavigate();
-  const { demoMode, demoUrl, exitUrl, aiDisabled } = useDemoMode();
+  const { open: openIntroPresentation } = useIntroPresentation();
+  const { demoMode, exitUrl, aiDisabled } = useDemoMode();
   const [isExitOpen, setIsExitOpen] = useState(false);
-  const [isChoiceOpen, setIsChoiceOpen] = useState(false);
+  const { expanded } = useSidebarDisplay();
 
   const handleClickLogout = () => {
     logout();
@@ -38,29 +36,20 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   };
 
   const handleExitDemo = async () => {
-    clearDemoTour();
     await logout();
     // Changement d'origine : `navigate` ne suffit pas pour sortir du site.
     window.location.href = exitUrl || "/demo";
   };
 
-  // Hors démonstration, proposer le choix n'a de sens que si une instance de
-  // démonstration existe ; sinon on garde le comportement d'origine.
-  const handleClickTutorial = () => {
-    if (demoMode) return emitDemoTourEvent({ type: "restart" });
-    if (demoUrl) return setIsChoiceOpen(true);
-    emitOnboardingEvent({ type: "restart" });
-  };
-
   return (
     <ul className={sidebarListClassName}>
       {/* Avatar */}
-      <li className="flex w-full justify-center 2xl:block">
+      <li className="block w-full">
         <ProfilePopover interfaceType={interfaceType} />
       </li>
 
       {interfaceType === "admin" && !aiDisabled && (
-        <li className="flex w-full justify-center 2xl:block">
+        <li className="block w-full">
           <AiConsumptionPopover />
         </li>
       )}
@@ -68,39 +57,36 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Bouton + modal questionnaire */}
       {!demoMode && interfaceType === "student" && <Questionnaire />}
 
-      {(demoMode || canStartOnboarding) && (
-        <li className="flex w-full justify-center 2xl:block">
-          <button
-            type="button"
-            className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
-            onClick={handleClickTutorial}
-            data-tip="Relancer le tutoriel"
-            aria-label="Relancer le tutoriel"
-          >
-            <CircleHelp className="size-4 shrink-0" />
-            <span className="2xl:block hidden">Tutoriel guidé</span>
-          </button>
-        </li>
-      )}
+      <li className="block w-full">
+        <button
+          type="button"
+          className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
+          onClick={openIntroPresentation}
+          data-tip="Revoir la présentation"
+          aria-label="Revoir la présentation"
+        >
+          <Presentation className="size-4 shrink-0" />
+          <span className={sidebarLabelClassName}>Revoir la présentation</span>
+        </button>
+      </li>
 
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
-        <li className="flex w-full justify-center 2xl:block">
+        <li className={cn("block w-full", !expanded && "max-2xl:order-2")}>
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
             data-tip="Quitter la démonstration"
-            data-demo-tour="demo-exit"
             onClick={() => setIsExitOpen(true)}
             aria-label="Quitter la démonstration"
           >
             <DoorOpen className="size-4 shrink-0" />
-            <span className="2xl:block hidden">Sortir de la démo</span>
+            <span className={sidebarLabelClassName}>Sortir de la démo</span>
           </button>
         </li>
       ) : (
-        <li className="flex w-full justify-center 2xl:block">
+        <li className={cn("block w-full", !expanded && "max-2xl:order-2")}>
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -109,22 +95,36 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             aria-label="Déconnexion"
           >
             <LogOutIcon className="size-4 shrink-0" />
-            <span className="2xl:block hidden">Déconnexion</span>
+            <span className={sidebarLabelClassName}>Déconnexion</span>
           </button>
         </li>
       )}
 
-      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 2xl:flex-row">
+      {/* En mode compact, la ligne se défait : thème, puis sortie, puis logo tout en bas. */}
+      <li
+        className={cn(
+          "flex w-full items-center justify-between gap-1",
+          expanded
+            ? "flex-row"
+            : "flex-col-reverse max-2xl:contents 2xl:flex-row",
+        )}
+      >
         {/* Logo */}
-        <div className="flex size-8 items-center justify-center 2xl:w-16">
-          <img
-            className="w-full object-contain"
-            src={newLogo}
-            alt="logo ANDRIA en blanc et bleu"
-          />
+        <div
+          className={cn(
+            "flex size-8 items-center justify-center",
+            expanded ? "w-16" : "max-2xl:order-3 max-2xl:self-center 2xl:w-16",
+          )}
+        >
+          <SidebarLogo />
         </div>
         <div
-          className="tooltip tooltip-right 2xl:tooltip-top"
+          className={cn(
+            "tooltip tooltip-right",
+            expanded
+              ? "tooltip-top"
+              : "max-2xl:order-1 max-2xl:self-center 2xl:tooltip-top",
+          )}
           data-tip="Mode clair / Mode sombre"
         >
           <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />
@@ -134,17 +134,6 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         <DemoExitConfirmation
           onCancel={() => setIsExitOpen(false)}
           onConfirm={() => void handleExitDemo()}
-        />
-      )}
-
-      {isChoiceOpen && (
-        <TutorialChoiceModal
-          demoUrl={demoUrl}
-          onClose={() => setIsChoiceOpen(false)}
-          onStartTutorial={() => {
-            setIsChoiceOpen(false);
-            emitOnboardingEvent({ type: "restart" });
-          }}
         />
       )}
     </ul>

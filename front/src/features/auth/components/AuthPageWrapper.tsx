@@ -1,9 +1,12 @@
 import type { PropsWithChildren, ReactNode } from "react";
+import AuthOnboardingChatbot from "./AuthOnboardingChatbot";
 
 type Props = PropsWithChildren<{
   title: ReactNode;
   titleAccessory?: ReactNode;
   description?: ReactNode;
+  /** Fait précéder la description de l’assistant virtuel par les trois points d'attente (en ms). */
+  descriptionTypingMs?: number;
   variant?: "default" | "setup";
 }>;
 
@@ -17,6 +20,7 @@ const AuthPageWrapper = ({
   title,
   titleAccessory,
   description,
+  descriptionTypingMs,
   variant = "default",
   children,
 }: Props) => {
@@ -31,9 +35,7 @@ const AuthPageWrapper = ({
             {titleAccessory}
           </div>
           {description && (
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-base-content/65">
-              {description}
-            </p>
+            <AuthOnboardingChatbot key={typeof description === "string" ? description : undefined} introduction={false} compact typingMs={descriptionTypingMs} message={description} />
           )}
         </header>
         {children}
@@ -42,7 +44,8 @@ const AuthPageWrapper = ({
   }
 
   return (
-    <section className="flex w-full flex-col my-10">
+    // flex-1 : la section occupe toute la colonne pour que le vide sous le formulaire fasse partie de la zone de l’assistant virtuel.
+    <section className="flex w-full flex-1 flex-col py-10">
       <header className="text-center mb-5">
         <div className="flex items-start justify-center gap-2">
           <h1 className="text-2xl font-bold leading-tight text-base-content">

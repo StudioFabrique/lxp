@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Check, LockKeyhole } from "lucide-react";
 import { PropsWithChildren } from "react";
 import FeedbacksButton from "../../../../components/buttons/FeedbacksButton";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   modalVisibility: "deletionModal" | "lessonCompletionModal" | "none";
@@ -54,7 +55,7 @@ const StudentActivityNavigation = ({
         {isLastActivitySelected ? (
           (!isLastLessonSelected || !isLessonCompleted) && (
             <div
-              className={isDisabled ? "tooltip tooltip-left" : undefined}
+              className={cn(isDisabled ? "tooltip tooltip-left" : undefined)}
               data-tip={isDisabled ? disabledReason : undefined}
             >
               <FeedbacksButton

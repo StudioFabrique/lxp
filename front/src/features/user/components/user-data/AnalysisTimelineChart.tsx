@@ -21,12 +21,12 @@ export default function AnalysisTimelineChart({ analyses }: { analyses: Historic
     })),
   }));
   const options = {
-    chart: { id: "analysis-timeline", toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: false } },
+    chart: { foreColor: "var(--color-base-content)", id: "analysis-timeline", toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: false } },
     colors: OUTCOMES.map(({ color }) => color),
     dataLabels: { enabled: false },
     stroke: { curve: "smooth" as const, width: 3 },
     markers: { size: chronological.length === 1 ? 5 : 4, hover: { sizeOffset: 2 } },
-    grid: { borderColor: "rgba(148, 163, 184, 0.25)" },
+    grid: { borderColor: "var(--color-base-300)" },
     legend: { position: "top" as const, horizontalAlign: "left" as const },
     xaxis: {
       type: "datetime" as const,

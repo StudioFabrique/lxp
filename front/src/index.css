@@ -3,12 +3,22 @@
 @import "./themes/dark-themes.css";
 @plugin "@tailwindcss/typography";
 
+/*
+ * Estompe le bas d'une zone qui défile pour éviter une coupe nette du contenu.
+ * À utiliser sur un conteneur dont le padding bas est au moins égal à
+ * --scroll-fade-size (1.25rem par défaut) : le fondu est alors invisible en fin de défilement.
+ */
+@utility scroll-fade-bottom {
+    mask-image: linear-gradient(to bottom, black calc(100% - var(--scroll-fade-size, 1.25rem)), transparent);
+}
+
 /* User-entered headings may arrive with a lowercase initial. */
 :where(h1, h2, h3, h4, h5, h6)::first-letter {
     text-transform: uppercase;
 }
 
 @plugin "daisyui" {
+    logs: false;
     exclude: rootscrollgutter;
     themes:
         /* Thèmes clairs */
@@ -740,4 +750,10 @@
     --sidebar-active: #1c3b6b;
     --sidebar-active-content: #eff6ff;
     --sidebar-border: #35609a;
+}
+
+/* Entrée en fondu de la barre latérale et du tableau de bord (connexion, rechargement, fin de la présentation). */
+@keyframes app-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

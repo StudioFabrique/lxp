@@ -7,9 +7,11 @@ import { cn } from "../../../../utils/cn";
 type Props = {
   lastname: string;
   lastnameError: boolean;
+  lastnameMessage?: string | null;
   onLastname: (v: string) => void;
   firstname: string;
   firstnameError: boolean;
+  firstnameMessage?: string | null;
   onFirstname: (v: string) => void;
   nickname: string;
   nicknameError: boolean;
@@ -29,9 +31,11 @@ const inputStyle = (hasError: boolean) =>
 const UserFormInformations = ({
   lastname,
   lastnameError,
+  lastnameMessage,
   onLastname,
   firstname,
   firstnameError,
+  firstnameMessage,
   onFirstname,
   nickname,
   nicknameError,
@@ -56,26 +60,44 @@ const UserFormInformations = ({
     <BoxWrapper>
       <h2 className="font-bold text-xl">Informations</h2>
       <span className="flex flex-col gap-y-2">
-        <label>Prénom *</label>
+        <label htmlFor="user-firstname">Prénom *</label>
         <input
           className={inputStyle(firstnameError)}
           type="text"
           value={firstname}
           onChange={(e) => onFirstname(e.target.value)}
-          autoComplete="off"
+          id="user-firstname"
+          name="firstname"
+          autoComplete="given-name"
           disabled={disabled}
+          aria-invalid={firstnameError}
+          aria-describedby={firstnameError && firstnameMessage ? "user-firstname-error" : undefined}
         />
+        {firstnameError && firstnameMessage ? (
+          <span id="user-firstname-error" role="alert" className="text-error text-sm">
+            {firstnameMessage}
+          </span>
+        ) : null}
       </span>
       <span className="flex flex-col gap-y-2">
-        <label>Nom *</label>
+        <label htmlFor="user-lastname">Nom *</label>
         <input
           className={inputStyle(lastnameError)}
           type="text"
           value={lastname}
           onChange={(e) => onLastname(e.target.value)}
-          autoComplete="off"
+          id="user-lastname"
+          name="lastname"
+          autoComplete="family-name"
           disabled={disabled}
+          aria-invalid={lastnameError}
+          aria-describedby={lastnameError && lastnameMessage ? "user-lastname-error" : undefined}
         />
+        {lastnameError && lastnameMessage ? (
+          <span id="user-lastname-error" role="alert" className="text-error text-sm">
+            {lastnameMessage}
+          </span>
+        ) : null}
       </span>
       <span className="flex flex-col gap-y-2">
         <label>Pseudo</label>
@@ -84,7 +106,8 @@ const UserFormInformations = ({
           type="text"
           value={nickname}
           onChange={(e) => onNickname(e.target.value)}
-          autoComplete="off"
+          name="nickname"
+          autoComplete="nickname"
           disabled={disabled}
         />
       </span>
@@ -95,7 +118,8 @@ const UserFormInformations = ({
           type="text"
           value={email}
           onChange={(e) => onEmail(e.target.value)}
-          autoComplete="off"
+          name="email"
+          autoComplete="email"
           disabled={disabled}
           aria-invalid={emailError}
           aria-describedby={emailMessage ? "user-email-error" : undefined}

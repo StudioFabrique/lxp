@@ -1,7 +1,7 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Upload } from "lucide-react";
+import { LoaderCircle, Upload } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -12,10 +12,8 @@ import { useFormationForm } from "../hooks/useFormationForm";
 import { parcoursApi } from "../../parcours/api/parcours.api";
 import { readParcoursArchiveFormationTitle } from "../../parcours/helpers/read-parcours-archive-formation";
 import ParcoursImportModal from "../../parcours/components/import/ParcoursImportModal";
-import {
-  emitOnboardingEvent,
-  subscribeToOnboardingEvents,
-} from "../../onboarding/onboarding-events";
+import ParcoursCreationModal from "../../parcours/components/create/ParcoursCreationModal";
+import FormationFirstParcoursModal from "./FormationFirstParcoursModal";
 
 type FormationModalProps = {
   formationId?: number | null;
@@ -26,6 +24,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [pendingArchive, setPendingArchive] = useState<File>();
   const [detectedFormationTitle, setDetectedFormationTitle] = useState("");
+  const [isParcoursCreationOpen, setIsParcoursCreationOpen] = useState(false);
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -45,6 +44,8 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     isPending,
     isDeleting,
     formationToEdit,
+    createdFormation,
+    dismissCreatedFormation,
     deleteFormation,
     selectFormation,
     cancelEdit,
@@ -86,20 +87,15 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
 
   const handleClose = () => {
     if (isImporting) return;
-    emitOnboardingEvent({ type: "formation_modal_cancelled" });
     cancelEdit();
     onClose();
   };
 
-  useEffect(
-    () =>
-      subscribeToOnboardingEvents((event) => {
-        if (event.type !== "formation_modal_close_requested") return;
-        cancelEdit();
-        onClose();
-      }),
-    [cancelEdit, onClose],
-  );
+  const closeAfterCreation = () => {
+    dismissCreatedFormation();
+    setIsParcoursCreationOpen(false);
+    onClose();
+  };
 
   const confirmDelete = () => {
     if (!formationToEdit || formationToEdit.parcours > 0) return;
@@ -135,6 +131,21 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     setPendingArchive(undefined);
     setDetectedFormationTitle("");
   };
+
+  if (createdFormation) {
+    return isParcoursCreationOpen ? (
+      <ParcoursCreationModal
+        initialFormationId={createdFormation.id}
+        onClose={closeAfterCreation}
+      />
+    ) : (
+      <FormationFirstParcoursModal
+        formationTitle={createdFormation.title}
+        onAccept={() => setIsParcoursCreationOpen(true)}
+        onDecline={closeAfterCreation}
+      />
+    );
+  }
 
   if (pendingArchive) {
     return (
@@ -212,7 +223,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
               onClick={() => archiveInputRef.current?.click()}
             >
               {isImporting ? (
-                <Loader2 className="size-4 animate-spin" />
+                <LoaderCircle className="size-4 animate-spin" />
               ) : (
                 <Upload className="size-4" />
               )}

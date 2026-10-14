@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { Link } from "react-router";
 
 import Modal from "../../../../../components/UI/modal/modal";
 import TrophyIcon from "../../../../../components/UI/svg/trophy-icon.component";
@@ -56,9 +58,13 @@ export default function AssignModuleSkillsModal({
     >
       <div className="mt-6">
         {availableSkills.length === 0 ? (
-          <p className="rounded-box bg-base-200 p-5 text-sm text-base-content/65">
-            Toutes les compétences du parcours sont déjà associées à ce module.
-          </p>
+          // Aucune compétence à associer : la création se fait à l'étape Compétences du parcours.
+          <div className="flex justify-center rounded-box bg-base-200 p-5">
+            <Link to="?step=3" className="btn btn-primary btn-outline">
+              <Plus className="size-4" aria-hidden="true" />
+              Créer une nouvelle compétence
+            </Link>
+          </div>
         ) : (
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
             {availableSkills.map((skill) => (

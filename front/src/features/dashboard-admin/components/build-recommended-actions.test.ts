@@ -37,7 +37,7 @@ describe("buildRecommendedActions", () => {
       "change-logo",
     ]);
     expect(actions.find(({ id }) => id === "change-logo")?.to).toBe(
-      "/admin/parametres-instance?tutorial=logo",
+      "/admin/parametres-instance",
     );
   });
 

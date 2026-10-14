@@ -8,7 +8,7 @@ import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import TableActionsModal from "../../../components/table/TableActionsModal";
-import { Loader2, RefreshCw, Trash2 } from "lucide-react";
+import { LoaderCircle, RefreshCw, Trash2 } from "lucide-react";
 
 const defaultBackgroundColor = "#ffffff";
 const validBackgroundColor = /^#[0-9a-f]{6}$/i;
@@ -123,7 +123,6 @@ const InstancePictureUpload = () => {
   return (
     <BoxWrapper
       className="h-auto gap-6 overflow-visible"
-      data-recommended-tour="instance-logo"
     >
       <div>
         <h2 className="text-lg font-bold">Logo et apparence</h2>
@@ -163,7 +162,7 @@ const InstancePictureUpload = () => {
 
           {isSaving && (
             <p className="mt-3 flex items-center gap-2 text-xs text-base-content/60">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+              <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
               Enregistrement en cours…
             </p>
           )}

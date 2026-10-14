@@ -33,7 +33,9 @@ export default async function httpCreateUser(
     }
 
     const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
-    const userResponse = await createUser(userDataRequest, roleId, actorRank); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
+    const userResponse = await createUser(userDataRequest, roleId, actorRank, {
+      studentOnly: req.query.creationContext === "group",
+    }); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     await createManyGraduations(
       userResponse!.createdUser._id.toString(),

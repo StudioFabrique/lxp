@@ -64,7 +64,7 @@ const EmptyStatePlaceholder = ({
   children,
   withBorder = true,
 }: EmptyStatePlaceholderProps) => {
-  const iconClassName = "w-40 h-40 text-primary";
+  const iconClassName = "size-28 text-primary sm:size-40";
   const [iconIndex, setIconIndex] = useState(0);
 
   useEffect(() => {
@@ -83,10 +83,10 @@ const EmptyStatePlaceholder = ({
       className={cn(withBorder ? "border border-base-300 bg-transparent select-none" : "")}
     >
       <FadeWrapper>
-        <div className="flex flex-col items-center gap-10 min-h-[50vh] justify-center">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center sm:gap-10">
           <PlaceholderIcon className={iconClassName} />
-          <div className="flex flex-col items-center gap-5">
-            <p className="text-2xl font-bold text-primary">{title}</p>
+          <div className="flex w-full flex-col items-center gap-5">
+            <p className="text-balance text-2xl font-bold text-primary">{title}</p>
             {children}
           </div>
         </div>

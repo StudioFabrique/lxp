@@ -44,6 +44,18 @@ const ModuleContentPreview = ({
   const [previousContentHeight, setPreviousContentHeight] = useState<number>();
   const isActivityContentLoading = store.isActivityContentLoading;
 
+  const handleNextActivity = () => {
+    if (canNavigateAsAdmin) {
+      dispatch({ type: "go_to_next_activity" });
+    } else {
+      smartQuizState.handleNextActivity();
+    }
+  };
+
+  const handlePreviousActivity = () => {
+    dispatch({ type: "go_to_previous_activity" });
+  };
+
   useLayoutEffect(() => {
     const content = contentRef.current;
     if (isActivityContentLoading || mode !== "read" || !content) return;
@@ -84,50 +96,12 @@ const ModuleContentPreview = ({
       </button>
     ) : null;
 
-  if (isActivityContentLoading) {
-    return (
-      <div
-        role="status"
-        aria-label="Chargement de l’activité"
-        className={`flex flex-col gap-6 ${previousContentHeight ? "" : "min-h-[500px]"}`}
-        style={previousContentHeight ? { height: previousContentHeight } : undefined}
-      >
-        <span className="sr-only">Chargement de l’activité…</span>
-        <div className="min-h-0 flex-1 overflow-hidden rounded-lg border border-base-300 bg-base-200 p-6 sm:p-10 space-y-10">
-          <div className="skeleton h-7 w-2/3 max-w-80" aria-hidden="true" />
-          <div className="space-y-4" aria-hidden="true">
-            <div className="skeleton h-4 w-full" />
-            <div className="skeleton h-4 w-11/12" />
-            <div className="skeleton h-4 w-4/5" />
-            <div className="skeleton h-4 w-2/3" />
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <div className="skeleton h-10 w-44" aria-hidden="true" />
-        </div>
-      </div>
-    );
-  }
-
   if (
+    !isActivityContentLoading &&
     !selectedLesson?.activities?.length &&
     !["activity_type_selection", "write"].includes(mode)
   ) {
-    return (
-      <EmptyStatePlaceholder title="Aucune activité">
-        {canNavigateAsAdmin && computed.hasNextLesson && (
-          <button
-            type="button"
-            className="btn btn-primary text-base-100"
-            onClick={lessonActions.nextLesson}
-          >
-            {computed.isLastLessonOfCurrentCourse
-              ? "Cours suivant"
-              : "Leçon suivante"}
-          </button>
-        )}
-      </EmptyStatePlaceholder>
-    );
+    return <EmptyStatePlaceholder title="Aucune activité" />;
   }
 
   if (mode === "activity_type_selection") {
@@ -142,7 +116,10 @@ const ModuleContentPreview = ({
   }
 
   return (
-    <div ref={contentRef}>
+    <div
+      ref={contentRef}
+      style={isActivityContentLoading ? { minHeight: previousContentHeight ?? 500 } : undefined}
+    >
       <FadeWrapper>
       <LessonReaderAndEditor
         isLessonCompleted={computed.isLessonCompleted}
@@ -165,6 +142,7 @@ const ModuleContentPreview = ({
         selectedLesson={selectedLesson}
         showDeleteModal={modalVisibility === "deletionModal"}
         isLoading={isLoading}
+        isActivityContentLoading={isActivityContentLoading}
         onOpenDeleteModal={() =>
           dispatch({
             type: "set_modal_visibility",
@@ -199,10 +177,8 @@ const ModuleContentPreview = ({
               isLastActivitySelected={computed.isLastActivitySelected}
               isLastLessonOfCurrentCourse={computed.isLastLessonOfCurrentCourse}
               hasNextLesson={computed.hasNextLesson}
-              onPreviousActivity={() =>
-                dispatch({ type: "go_to_previous_activity" })
-              }
-              onNextActivity={() => dispatch({ type: "go_to_next_activity" })}
+              onPreviousActivity={handlePreviousActivity}
+              onNextActivity={handleNextActivity}
               onNextLesson={lessonActions.nextLesson}
             />
           ) : (
@@ -213,10 +189,8 @@ const ModuleContentPreview = ({
               isFirstActivitySelected={computed.isFirstActivitySelected}
               isLastActivitySelected={computed.isLastActivitySelected}
               isLastLessonSelected={computed.isLastLessonSelected}
-              onPreviousActivity={() =>
-                dispatch({ type: "go_to_previous_activity" })
-              }
-              onNextActivity={smartQuizState.handleNextActivity}
+              onPreviousActivity={handlePreviousActivity}
+              onNextActivity={handleNextActivity}
               onCompleteLesson={smartQuizState.handleCompleteLesson}
             >
               {quizButton}

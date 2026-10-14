@@ -38,16 +38,28 @@ type ModuleCompletionRequirements = {
   skills?: readonly unknown[];
 };
 
-export const hasCompleteModuleRequirements = ({
+// Libellés des éléments manquants d'un module, dans l'ordre d'affichage.
+export const getMissingModuleRequirements = ({
   duration,
   contacts,
   skills,
-}: ModuleCompletionRequirements) =>
-  duration !== undefined &&
-  contacts !== undefined &&
-  contacts.length > 0 &&
-  skills !== undefined &&
-  skills.length > 0;
+}: ModuleCompletionRequirements): string[] => {
+  const missing: string[] = [];
+
+  if (duration === undefined) missing.push("Durée non renseignée");
+  if (contacts === undefined || contacts.length === 0) {
+    missing.push("Aucune ressource pédagogique affectée");
+  }
+  if (skills === undefined || skills.length === 0) {
+    missing.push("Aucune compétence ajoutée");
+  }
+
+  return missing;
+};
+
+export const hasCompleteModuleRequirements = (
+  requirements: ModuleCompletionRequirements,
+) => getMissingModuleRequirements(requirements).length === 0;
 
 export const isModuleComplete = (module: Module) =>
   hasCompleteModuleRequirements({

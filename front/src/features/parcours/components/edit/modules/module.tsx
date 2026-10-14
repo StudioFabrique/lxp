@@ -91,6 +91,18 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     handleSubmitDuplicateModule,
   ]);
 
+  const moduleHeader = (
+    <ModuleHeader
+      showForm={showForm}
+      parcoursId={parcours?.id}
+      onCreateNew={handleCreateNewModule}
+      onAddExisting={handleDuplicateModule}
+      isSubmitting={isSubmittingModule}
+    />
+  );
+  // Liste vide : les actions passent dans le cadre de l'état vide (voir ModuleGrid).
+  const isModuleListEmpty = !isLoading && modules.length === 0;
+
   useEffect(() => {
     setModuleFormOpened(showForm);
   }, [setModuleFormOpened, showForm]);
@@ -107,13 +119,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
       {/* Main content area */}
       <div className="flex flex-col gap-y-4">
         {/* Header with action buttons */}
-        <ModuleHeader
-          showForm={showForm}
-          parcoursId={parcours?.id}
-          onCreateNew={handleCreateNewModule}
-          onAddExisting={handleDuplicateModule}
-          isSubmitting={isSubmittingModule}
-        />
+        {isModuleListEmpty ? null : moduleHeader}
 
         {/* Module grid display */}
         {error && !parcours && !isLoading ? (
@@ -129,6 +135,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
           removingSkill={removingSkill}
           lockedContactId={lockedContactId}
           highlightedModuleId={highlightedModuleId}
+          emptyStateHeader={moduleHeader}
           emptyMessage={
             isTeacherUser(user) ? "Aucun module affecté" : "Aucun module trouvé"
           }

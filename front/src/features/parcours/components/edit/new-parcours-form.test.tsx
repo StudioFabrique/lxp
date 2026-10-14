@@ -35,7 +35,7 @@ describe("NewParcoursForm", () => {
   it("place le focus sur le nom si la formation est présélectionnée", async () => {
     const { container, cleanup } = await renderForm(7);
     expect(document.activeElement).toBe(
-      container.querySelector('[data-onboarding-field="parcours-title"]'),
+      container.querySelector("input[name=title]"),
     );
     await cleanup();
   });
@@ -44,7 +44,7 @@ describe("NewParcoursForm", () => {
     const { container, cleanup } = await renderForm();
     const select = container.querySelector<HTMLSelectElement>("select[name=menu]");
     const title = container.querySelector<HTMLInputElement>(
-      '[data-onboarding-field="parcours-title"]',
+      "input[name=title]",
     );
     expect(title?.disabled).toBe(true);
 

@@ -42,7 +42,7 @@ const ParcoursFilterBadges = ({
   return (
     <fieldset className="flex flex-col gap-2">
       <div
-        className="flex flex-wrap items-center gap-2"
+        className="flex flex-wrap items-center justify-center gap-2"
         aria-label="Filtres par parcours"
         role="group"
       >

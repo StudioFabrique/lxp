@@ -96,7 +96,6 @@ const CoursesPreview = ({
           title="Seconde étape"
           isSubHeader
           description={headerDescription}
-          alternateBgColor
           hasError={Boolean(error)}
         >
           <div className="flex items-center gap-3">

@@ -1,30 +1,10 @@
 import { useState } from "react";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
-import {
-  formatAlertRuleDescription,
-  formatAlertRuleName,
-  formatMatchedCondition,
-  formatModelIndicatorLabel,
-  formatModelIndicatorValue,
-  formatOutcome,
-  formatProbability,
-  formatRiskLevel,
-  isAlertDriven,
-  isUncertain,
-  outcomeSentence,
-  riskLevel,
-  severityBadgeClass,
-  sortedProbabilities,
-} from "../../helpers/format-prediction";
-import type {
-  FiredAlertRule,
-  IndicatorsPrediction,
-} from "../../interfaces/indicators";
+import { formatOutcome, formatProbability, formatRiskLevel, isAlertDriven, isUncertain, outcomeSentence, riskLevel, severityBadgeClass, sortedProbabilities } from "../../helpers/format-prediction";
 import { cn } from "../../../../utils/cn";
-
-interface PredictionPanelProps {
-  prediction: IndicatorsPrediction;
-}
+import { type PredictionPanelProps } from "./PredictionPanel.types";
+import { FiredRule } from "./FiredRule";
+import { AnalysedData } from "./AnalysedData";
 
 /**
  * Résultat de l'analyse, tel qu'un formateur doit pouvoir le lire.
@@ -125,57 +105,5 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
 
       {showData ? <AnalysedData prediction={prediction} /> : null}
     </section>
-  );
-}
-
-function FiredRule({ rule }: { rule: FiredAlertRule }) {
-  const description = formatAlertRuleDescription(rule.name, rule.description);
-
-  return (
-    <li className="flex flex-col gap-y-1">
-      <div className="flex items-center gap-x-2">
-        <span className={cn("badge badge-xs", severityBadgeClass(rule.level))} />
-        <p className="text-sm font-bold">{formatAlertRuleName(rule.name)}</p>
-      </div>
-
-      {description ? (
-        <p className="text-xs text-base-content/50">{description}</p>
-      ) : null}
-
-      {/* Ce qui a fait basculer la règle, valeur et seuil dans la même unité :
-          le signal doit pouvoir être expliqué à l'apprenant. */}
-      <ul className="text-xs text-base-content/50">
-        {rule.matched.map((condition, index) => (
-          <li key={`${condition.indicator}-${index}`}>
-            {formatMatchedCondition(condition)}
-          </li>
-        ))}
-      </ul>
-    </li>
-  );
-}
-
-/** Les données de la période sur lesquelles l'analyse s'est appuyée. */
-function AnalysedData({ prediction }: PredictionPanelProps) {
-  return (
-    <BoxWrapper>
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {Object.entries(prediction.indicators).map(([key, value]) => (
-          <li key={key} className="flex flex-col gap-y-0.5">
-            <span className="text-xs text-base-content/50">
-              {formatModelIndicatorLabel(key)}
-            </span>
-            <span className="text-sm font-bold">
-              {formatModelIndicatorValue(key, value)}
-            </span>
-            {value === null && prediction.missing[key] ? (
-              <span className="text-xs italic text-base-content/50">
-                {prediction.missing[key]}
-              </span>
-            ) : null}
-          </li>
-        ))}
-      </ul>
-    </BoxWrapper>
   );
 }

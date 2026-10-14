@@ -1,3 +1,6 @@
+import AuthOnboardingBrand from "../../auth/components/AuthOnboardingBrand";
+import AuthOnboardingChatbot from "../../auth/components/AuthOnboardingChatbot";
+import { useAuthIntro } from "../../auth/hooks/useAuthIntro";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFormField } from "../../../components/form/useFormField";
@@ -6,33 +9,30 @@ import {
   onboardingStepSchema,
   type OnboardingValues,
 } from "../onboarding.schema";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import {
+  LoaderCircle,
   ArrowRight,
-  Gauge,
   GraduationCap,
   Rocket,
-  Shapes,
   UsersRound,
 } from "lucide-react";
-import { LayoutGroup, motion, useReducedMotion } from "motion/react";
-import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
-import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { ThemeContext } from "../../../store/ThemeProvider";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "motion/react";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
 import { profileApi } from "../../profile/api/profile.api";
 import ThemeSelectionStep from "../ThemeSelectionStep";
-import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
-import {
-  levelOptions,
-  paceOptions,
-  preferenceOptions,
-} from "../learning-choice-options";
+import AuthIntroLoading from "../../auth/components/AuthIntroLoading";
+import { paceOptions, preferenceOptions } from "../learning-choice-options";
 import {
   LevelChoiceButtons,
   PreferenceCards,
@@ -43,11 +43,12 @@ import {
   learningProfileKey,
 } from "../learning-profile.api";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
+import { cn } from "../../../utils/cn";
 
 type OnboardingStep = {
   key: string;
   label: string;
-  kind: "learning" | "module" | "profile" | "theme" | "summary";
+  kind: "pace" | "preferences" | "module" | "profile" | "theme";
   moduleId?: number;
 };
 
@@ -59,7 +60,6 @@ const availablePreferenceValues = new Set(
 );
 
 export default function StudentLearningOnboarding() {
-  const { theme } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -77,9 +77,14 @@ export default function StudentLearningOnboarding() {
     if (context.onboardingMode === "initial") {
       onboardingSteps.push({ key: "theme", label: "Apparence", kind: "theme" });
       onboardingSteps.push({
-        key: "learning",
-        label: "Votre façon d’apprendre",
-        kind: "learning",
+        key: "pace",
+        label: "Votre rythme",
+        kind: "pace",
+      });
+      onboardingSteps.push({
+        key: "preferences",
+        label: "Vos méthodes d’apprentissage",
+        kind: "preferences",
       });
     }
 
@@ -103,7 +108,6 @@ export default function StudentLearningOnboarding() {
         label: "À propos de vous",
         kind: "profile",
       });
-      onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
     }
     return onboardingSteps;
   }, [context]);
@@ -128,8 +132,13 @@ export default function StudentLearningOnboarding() {
   const [levels, setLevels] = useFormField(form, "levels");
   const [saving, setSaving] = useState(false);
   const [started, setStarted] = useState(false);
-  const [introFinished, setIntroFinished] = useState(false);
   const [welcomeStarted, setWelcomeStarted] = useState(false);
+  // L'intro n'est réservée qu'à la toute première arrivée (redirection automatique) : un onboarding déjà entamé, repris depuis le dashboard, ne la rejoue pas.
+  const showIntro = useAuthIntro(
+    context?.onboardingMode === "initial" && context.onboardingRequired &&
+    context.shouldAutoRedirect &&
+    !context.profile.currentStep && !welcomeStarted,
+  );
   const [hobbies, setHobbies] = useFormField(form, "hobbies");
   const [links, setLinks] = useFormField(form, "links");
   const [profileInformation, setProfileInformation] = useState<Record<
@@ -171,16 +180,25 @@ export default function StudentLearningOnboarding() {
     );
     const savedStep = context.profile.currentStep;
     const resumeKey =
-      savedStep === "pace" || savedStep === "preferences"
-        ? "learning"
-        : savedStep;
+      savedStep === "learning"
+        ? "pace"
+        : savedStep === "summary"
+          ? "profile"
+          : savedStep;
     const resumeIndex = Math.max(
       0,
       steps.findIndex((step) => step.key === resumeKey),
     );
     setIndex(resumeIndex);
     setStarted(true);
-    if (context.onboardingMode !== "initial" || savedStep) {
+    const resumingAdditional =
+      context.onboardingMode === "additional" &&
+      steps.some((step) => step.key === savedStep);
+    if (resumingAdditional) setWelcomeStarted(true);
+    if (
+      resumingAdditional ||
+      (context.onboardingMode === "initial" && savedStep)
+    ) {
       void learningProfileApi.update({
         action: "start",
         currentStep: steps[resumeIndex]?.key ?? steps[0]?.key ?? "",
@@ -188,28 +206,13 @@ export default function StudentLearningOnboarding() {
     }
   }, [context, started, steps, setPace, setPreferences, setLevels]);
 
-  useEffect(() => {
-    if (
-      reduceMotion ||
-      context?.onboardingMode !== "initial" ||
-      !context.onboardingRequired ||
-      context.profile.currentStep
-    )
-      return;
-    const timer = window.setTimeout(() => setIntroFinished(true), 900);
-    return () => window.clearTimeout(timer);
-  }, [
-    context?.onboardingMode,
-    context?.onboardingRequired,
-    context?.profile.currentStep,
-    reduceMotion,
-  ]);
+
 
   useEffect(() => {
     if (contentScrollRef.current) contentScrollRef.current.scrollTop = 0;
   }, [index]);
 
-  if (query.isLoading) return <LearningChoiceCardsPlaceholder />;
+  if (query.isLoading) return <AuthIntroLoading />;
   if (query.isError) {
     return (
       <AuthPageWrapper title="Personnalisons votre parcours">
@@ -231,20 +234,80 @@ export default function StudentLearningOnboarding() {
     return <Navigate to="/student/dashboard" replace />;
   }
 
-  const showIntro =
-    context.onboardingMode === "initial" &&
-    !context.profile.currentStep &&
-    !welcomeStarted &&
-    !reduceMotion &&
-    !introFinished;
+  const isAdditional = context.onboardingMode === "additional";
   const showWelcome =
-    context.onboardingMode === "initial" &&
-    !context.profile.currentStep &&
     !welcomeStarted &&
-    !showIntro;
+    !showIntro &&
+    (isAdditional || !context.profile.currentStep);
+  const welcomeFormations = isAdditional
+    ? context.availableFormations
+        .map((formation) => ({
+          ...formation,
+          parcours: formation.parcours.filter((entry) =>
+            entry.modules.some((module) => !module.assessment),
+          ),
+        }))
+        .filter((formation) => formation.parcours.length > 0)
+    : context.availableFormations;
+  const pendingParcours = welcomeFormations.flatMap(
+    (formation) => formation.parcours,
+  );
+  const welcomeGroupNames = Array.from(new Set(
+    pendingParcours.some((entry) => entry.groupNames !== undefined)
+      ? pendingParcours.flatMap((entry) => entry.groupNames ?? [])
+      : context.groupNames,
+  ));
+  // An assessed module identifies a parcours the student has already started.
+  const newParcoursCount = pendingParcours.filter((entry) =>
+    entry.modules.every((module) => !module.assessment),
+  ).length;
+  const addedModuleCount = pendingParcours
+    .filter((entry) => entry.modules.some((module) => module.assessment))
+    .reduce(
+      (count, entry) =>
+        count + entry.modules.filter((module) => !module.assessment).length,
+      0,
+    );
+  const additionalWelcome =
+    newParcoursCount === 0
+      ? {
+          title:
+            addedModuleCount > 1
+              ? "De nouveaux modules vous attendent"
+              : "Un nouveau module vous attend",
+          description:
+            addedModuleCount > 1
+              ? "De nouveaux modules ont été ajoutés à vos parcours."
+              : "Un nouveau module a été ajouté à votre parcours.",
+          button:
+            addedModuleCount > 1
+              ? "Découvrir les modules"
+              : "Découvrir le module",
+        }
+      : addedModuleCount > 0
+        ? {
+            title: "De nouveaux contenus vous attendent",
+            description:
+              "Vous avez été ajouté à de nouveaux parcours et de nouveaux modules sont disponibles dans vos parcours actuels.",
+            button: "Découvrir les nouveautés",
+          }
+        : {
+            title:
+              newParcoursCount > 1
+                ? "De nouveaux parcours vous attendent"
+                : "Un nouveau parcours vous attend",
+            description:
+              newParcoursCount > 1
+                ? "Vous avez été ajouté à de nouveaux parcours."
+                : "Vous avez été ajouté à un nouveau parcours.",
+            button:
+              newParcoursCount > 1
+                ? "Découvrir mes parcours"
+                : "Découvrir mon parcours",
+          };
   const welcomeTags = Array.from(
     new Map(
-      context.availableFormations.flatMap((formation) =>
+      welcomeFormations.flatMap((formation) =>
         formation.parcours.flatMap((entry) =>
           entry.tags.map((tag) => [tag.id, tag] as const),
         ),
@@ -257,7 +320,7 @@ export default function StudentLearningOnboarding() {
     try {
       await learningProfileApi.update({
         action: "start",
-        currentStep: "theme",
+        currentStep: steps[index]?.key ?? steps[0].key,
       });
       setWelcomeStarted(true);
     } catch {
@@ -274,7 +337,8 @@ export default function StudentLearningOnboarding() {
     .filter((item) => item.kind === "module").length;
   const cannotContinue =
     saving ||
-    (step.kind === "learning" && (!pace || preferences.length === 0)) ||
+    (step.kind === "pace" && !pace) ||
+    (step.kind === "preferences" && preferences.length === 0) ||
     (step.kind === "module" && (!step.moduleId || !levels[step.moduleId]));
   const formation =
     context.availableFormations.find((item) =>
@@ -290,6 +354,18 @@ export default function StudentLearningOnboarding() {
 
   const completeOnboarding = async () => {
     await learningProfileApi.update({ action: "confirm" });
+    // Refresh cached lists before the learning context can redirect to the dashboard.
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ["parcours-as-student"],
+        refetchType: "all",
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["parcours", { asStudent: true }],
+        exact: true,
+        refetchType: "all",
+      }),
+    ]);
     await queryClient.invalidateQueries({ queryKey: learningProfileKey });
     toast.success("Votre profil d’apprentissage est prêt.");
     navigate("/student/dashboard", { replace: true });
@@ -298,11 +374,10 @@ export default function StudentLearningOnboarding() {
   const continueToNext = form.handleSubmit(async (values) => {
     setSaving(true);
     try {
-      if (step.kind === "learning" && pace)
-        await learningProfileApi.update({
-          pace: values.pace!,
-          preferences: values.preferences,
-        });
+      if (step.kind === "pace")
+        await learningProfileApi.update({ pace: values.pace! });
+      if (step.kind === "preferences")
+        await learningProfileApi.update({ preferences: values.preferences });
       if (step.kind === "module" && step.moduleId) {
         await learningProfileApi.updateModule(
           step.moduleId,
@@ -332,7 +407,7 @@ export default function StudentLearningOnboarding() {
       if (next) {
         await learningProfileApi.update({ currentStep: next.key });
         setIndex(index + 1);
-      } else if (context.onboardingMode === "additional") {
+      } else {
         await completeOnboarding();
       }
     } catch {
@@ -342,180 +417,189 @@ export default function StudentLearningOnboarding() {
     }
   }, showFormErrors);
 
-  const confirm = form.handleSubmit(async () => {
-    setSaving(true);
-    try {
-      await completeOnboarding();
-    } catch {
-      toast.error("Vérifiez que toutes les réponses ont été enregistrées.");
-    } finally {
-      setSaving(false);
-    }
-  }, showFormErrors);
-
   return (
     <LayoutGroup>
       <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-4 pb-[9px]">
         {context.onboardingMode === "initial" && (
-          <motion.div
-            layout
-            transition={{
-              duration: reduceMotion ? 0 : 0.9,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className={
-              showIntro
-                ? "my-auto flex flex-col items-center gap-2 text-center"
-                : showWelcome
-                  ? "mb-5 mt-[clamp(2.5rem,7vh,6rem)] flex flex-col items-center gap-2 text-center"
-                  : "mb-3 flex flex-col items-center gap-2 text-center"
-            }
-          >
-            <motion.img
-              className="h-auto w-56"
-              src={theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode}
-              alt="logo ANDRIA"
-              initial={reduceMotion ? false : { opacity: 0, scale: 0.82 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: reduceMotion ? 0 : 5,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            />
-            <span className="mt-2 max-w-xs text-xs font-semibold text-base-content">
-              Apprentissage Numérique &amp; Développement Renforcé par
-              Intelligence Artificielle
-            </span>
-          </motion.div>
+          <AuthOnboardingBrand
+            intro={showIntro}
+            className={cn(!showIntro && (showWelcome ? "mb-5 mt-[clamp(2.5rem,7vh,6rem)]" : "mb-3"))}
+          />
         )}
         {showIntro ? null : showWelcome ? (
           <motion.section
-            className="flex w-full flex-1 flex-col text-center"
+            className={cn("flex w-full flex-1 flex-col text-center", isAdditional ? "mb-[clamp(1rem,6vh,3rem)] overflow-y-auto py-5" : "")}
             initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.5 }}
+            transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="mx-auto w-full max-w-md">
               <h1 className="text-2xl font-bold text-base-content sm:text-3xl">
-                Bienvenue sur{" "}
-                <span
-                  style={{
-                    color:
-                      "color-mix(in oklab, var(--color-primary) 15%, var(--color-base-content))",
-                  }}
-                >
-                  ANDRIA
-                </span>
-              </h1>
-              <p className="mt-2 text-sm leading-5 text-base-content/70 sm:text-base sm:leading-6">
-                Votre parcours commence ici. Personnalisez votre expérience
-                d'apprentissage.
-              </p>
-              <dl className="mx-auto mt-5 flex w-fit max-w-full flex-col gap-3 text-left sm:mt-6 sm:gap-4">
-                {context.availableFormations.flatMap((formation) =>
-                  formation.parcours.map((entry) => (
-                    <div
-                      key={`${formation.id}-${entry.id}`}
-                      className="space-y-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <GraduationCap
-                          className="size-5 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
-                        <div>
-                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                            Formation
-                          </dt>
-                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                            {capitalizeTitle(formation.title)}
-                          </dd>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Rocket
-                          className="size-5 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
-                        <div>
-                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                            Parcours
-                          </dt>
-                          <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content first-letter:uppercase sm:text-lg">
-                            {capitalizeTitle(entry.title)}
-                          </dd>
-                        </div>
-                      </div>
-                    </div>
-                  )),
-                )}
-                {context.groupNames.length > 0 && (
-                  <div className="flex items-center gap-3">
-                    <UsersRound
-                      className="size-5 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <dt className="text-xs font-medium text-base-content/60 sm:text-sm">
-                        {context.groupNames.length === 1 ? "Groupe" : "Groupes"}
-                      </dt>
-                      <dd className="mt-0.5 text-base font-semibold leading-snug text-base-content sm:text-lg">
-                        {context.groupNames.map(capitalizeTitle).join(", ")}
-                      </dd>
-                    </div>
-                  </div>
-                )}
-              </dl>
-              {welcomeTags.length > 0 && (
-                <ul
-                  aria-label="Tags du parcours"
-                  className="mt-5 flex flex-wrap justify-center gap-2 sm:mt-6"
-                >
-                  {welcomeTags.map((tag, tagIndex) => (
-                    <motion.li
-                      key={tag.id}
-                      initial={
-                        reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }
-                      }
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{
-                        duration: reduceMotion ? 0 : 0.3,
-                        delay: reduceMotion ? 0 : 0.35 + tagIndex * 0.12,
+                {isAdditional ? (
+                  additionalWelcome.title
+                ) : (
+                  <>
+                    Bienvenue sur{" "}
+                    <span
+                      style={{
+                        color:
+                          "color-mix(in oklab, var(--color-primary) 15%, var(--color-base-content))",
                       }}
                     >
-                      <TagItem tag={tag} noIcon compact />
-                    </motion.li>
-                  ))}
-                </ul>
-              )}
+                      ANDRIA
+                    </span>
+                  </>
+                )}
+              </h1>
+              <AuthOnboardingChatbot introduction={false} compact message={isAdditional
+                  ? `${additionalWelcome.description} Indiquez votre niveau dans les nouveaux modules pour adapter votre apprentissage.`
+                  : "Votre parcours commence ici. Personnalisez votre expérience d'apprentissage."} />
+            </div>
+            <div
+              className={
+                cn(isAdditional ? "flex flex-1 flex-col justify-center" : "")
+              }
+            >
+              <div className="mx-auto w-full max-w-md">
+                {pendingParcours.length === 1 ? (
+                  <dl className="mx-auto mt-5 flex w-fit max-w-full flex-col gap-3 text-left sm:mt-6 sm:gap-4">
+                    <div className="flex items-center gap-3">
+                      <GraduationCap className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">Formation</dt>
+                        <dd className="mt-0.5 break-words text-base font-semibold leading-snug text-base-content sm:text-lg">
+                          {capitalizeTitle(welcomeFormations[0].title)}
+                        </dd>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Rocket className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <dt className="text-xs font-medium text-base-content/60 sm:text-sm">Parcours</dt>
+                        <dd className="mt-0.5 break-words text-base font-semibold leading-snug text-base-content sm:text-lg">
+                          {capitalizeTitle(pendingParcours[0].title)}
+                        </dd>
+                      </div>
+                    </div>
+                    {welcomeGroupNames.map((name) => (
+                      <div key={name} className="flex items-center gap-3">
+                        <UsersRound className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                        <div className="min-w-0">
+                          <dt className="text-xs font-medium text-base-content/60 sm:text-sm">Groupe</dt>
+                          <dd className="mt-0.5 break-words text-base font-semibold leading-snug text-base-content sm:text-lg">
+                            {capitalizeTitle(name)}
+                          </dd>
+                        </div>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <dl className="mx-auto mt-5 flex w-full flex-col gap-4 text-left">
+                    <div className="flex items-start gap-3">
+                      <Rocket className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div className="min-w-0 flex-1">
+                        <dt className="text-base font-medium text-base-content/60">Vos parcours</dt>
+                        <dd className="mt-2">
+                          <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos parcours">
+                            {pendingParcours.map((entry) => (
+                              <li key={entry.id} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
+                                <span className="break-words">{capitalizeTitle(entry.title)}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </div>
+                    </div>
+                    {welcomeGroupNames.length > 0 && (
+                      <div className="flex items-start gap-3">
+                        <UsersRound className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                        <div className="min-w-0 flex-1">
+                          <dt className="text-base font-medium text-base-content/60">Vos groupes</dt>
+                          <dd className="mt-2">
+                            <ul className="flex flex-wrap gap-1.5 text-lg font-semibold leading-6 text-base-content" aria-label="Vos groupes">
+                              {welcomeGroupNames.map((name) => (
+                                <li key={name} className="min-w-0 max-w-full rounded-md border border-base-content/15 bg-base-100/50 px-2.5 py-1">
+                                  <span className="break-words">{capitalizeTitle(name)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </dd>
+                        </div>
+                      </div>
+                    )}
+                  </dl>
+                )}
+                {welcomeTags.length > 0 && (
+                  <ul
+                    aria-label="Tags du parcours"
+                    className={cn("flex flex-wrap justify-center gap-2", isAdditional ? "mt-4 sm:mt-5" : "mt-5 sm:mt-6")}
+                  >
+                    {welcomeTags.map((tag, tagIndex) => (
+                      <motion.li
+                        key={tag.id}
+                        initial={
+                          reduceMotion
+                            ? false
+                            : { opacity: 0, y: 8, scale: 0.94 }
+                        }
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{
+                          duration: reduceMotion ? 0 : 0.3,
+                          delay: reduceMotion ? 0 : 0.35 + tagIndex * 0.12,
+                        }}
+                      >
+                        <TagItem tag={tag} noIcon compact />
+                      </motion.li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
             <button
               type="button"
-              className="btn btn-primary mx-auto mt-5 w-full max-w-xs gap-2 rounded-lg sm:mt-6 sm:min-h-12 sm:max-w-sm sm:text-base"
+              className="btn btn-primary mx-auto mt-5 shrink-0 w-full max-w-xs gap-2 rounded-lg sm:mt-6 sm:min-h-12 sm:max-w-sm sm:text-base"
               disabled={saving}
               onClick={() => void begin()}
             >
-              Commencer <ArrowRight className="size-4" aria-hidden="true" />
+              {isAdditional ? additionalWelcome.button : "Commencer"}
+              <ArrowRight className="size-4" aria-hidden="true" />
             </button>
           </motion.section>
         ) : (
           <motion.form
             onSubmit={continueToNext}
-            className="flex min-h-0 flex-1 flex-col gap-3"
+            className="flex min-h-0 flex-1 flex-col"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.45 }}
           >
-            {parcours ? (
-              <header className="px-5 py-3 pr-24 sm:px-6 sm:pr-28">
-                <h2 className="mt-1 text-2xl font-extrabold leading-tight text-base-content first-letter:uppercase sm:text-3xl">
-                  {capitalizeTitle(parcours.title)}
-                </h2>
-                <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
-                  {capitalizeTitle(formation.title)}
-                </p>
-              </header>
-            ) : null}
+            <AnimatePresence initial={false}>
+              {parcours && moduleNumber === 0 ? (
+                <motion.header
+                  key="course-heading"
+                  className="shrink-0 overflow-hidden"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{
+                    height: {
+                      duration: reduceMotion ? 0 : 0.5,
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                    opacity: { duration: reduceMotion ? 0 : 0.2 },
+                  }}
+                >
+                  <div className="px-5 pt-3 pb-6 pr-24 sm:px-6 sm:pr-28">
+                    <h2 className="mt-1 text-2xl font-extrabold leading-tight text-base-content first-letter:uppercase sm:text-3xl">
+                      {capitalizeTitle(parcours.title)}
+                    </h2>
+                    <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
+                      {capitalizeTitle(formation.title)}
+                    </p>
+                  </div>
+                </motion.header>
+              ) : null}
+            </AnimatePresence>
 
             <OnboardingProgressPanel
               contentKey={step.key}
@@ -536,82 +620,65 @@ export default function StudentLearningOnboarding() {
                   >
                     Précédent
                   </button>
-                  {step.kind === "summary" ? (
-                    <button
-                      type="button"
-                      className="btn btn-primary text-base normal-case"
-                      disabled={saving}
-                      onClick={() => void confirm()}
-                    >
-                      {saving ? (
-                        <span
-                          className="loading loading-spinner loading-sm"
-                          aria-label="Confirmation en cours"
-                        />
-                      ) : (
-                        "Confirmer"
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
-                      disabled={cannotContinue}
-                    >
-                      Continuer
-                    </button>
-                  )}
+                  <button
+                    type="submit"
+                    className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
+                    disabled={cannotContinue}
+                  >
+                    {saving && index === steps.length - 1 ? (
+                      <LoaderCircle
+                        className="size-4 animate-spin"
+                        aria-label="Confirmation en cours"
+                      />
+                    ) : index === steps.length - 1 ? (
+                      "Terminer"
+                    ) : (
+                      "Continuer"
+                    )}
+                  </button>
                 </div>
               }
             >
-              {step.kind === "learning" ? (
-                <div className="space-y-7">
-                  <section
-                    className="space-y-4"
-                    aria-labelledby="learning-pace-title"
-                  >
-                    <div>
-                      <h1
-                        id="learning-pace-title"
-                        className="text-2xl font-bold"
-                      >
-                        Quel rythme préférez-vous ?
-                      </h1>
-                      <p className="mt-2 text-sm leading-5 text-base-content/65">
-                        Choisissez la proposition qui vous convient. Vous
-                        pourrez la modifier plus tard.
-                      </p>
-                    </div>
-                    <SingleChoiceCards
-                      name="pace"
-                      options={paceOptions}
-                      value={pace}
-                      onChange={setPace}
-                      compact
-                    />
-                  </section>
+              {step.kind === "pace" ? (
+                <section
+                  className="space-y-4"
+                  aria-labelledby="learning-pace-title"
+                >
+                  <div>
+                    <h1 id="learning-pace-title" className="text-2xl font-bold">
+                      Quel rythme préférez-vous ?
+                    </h1>
+                    <AuthOnboardingChatbot introduction={false} compact message="Choisissez la proposition qui vous convient. Vous pourrez la modifier plus tard." />
+                  </div>
+                  <SingleChoiceCards
+                    name="pace"
+                    options={paceOptions}
+                    value={pace}
+                    onChange={setPace}
+                    compact
+                  />
+                </section>
+              ) : null}
 
-                  <section
-                    className="space-y-4"
-                    aria-labelledby="learning-preferences-title"
-                  >
-                    <div>
-                      <h2
-                        id="learning-preferences-title"
-                        className="text-2xl font-bold"
-                      >
-                        Comment aimez-vous apprendre ?
-                      </h2>
-                      <p className="mt-2 text-sm leading-5 text-base-content/70">
-                        Sélectionnez au moins une préférence.
-                      </p>
-                    </div>
-                    <PreferenceCards
-                      value={preferences}
-                      onChange={setPreferences}
-                    />
-                  </section>
-                </div>
+              {step.kind === "preferences" ? (
+                <section
+                  className="space-y-4"
+                  aria-labelledby="learning-preferences-title"
+                >
+                  <div>
+                    <h1
+                      id="learning-preferences-title"
+                      className="text-2xl font-bold"
+                    >
+                      Quelles méthodes vous aident à apprendre ?
+                    </h1>
+                    <AuthOnboardingChatbot introduction={false} compact message="Choisissez les approches qui vous aident à comprendre et à progresser." />
+                  </div>
+                  <PreferenceCards
+                    value={preferences}
+                    onChange={setPreferences}
+                  />
+                </section>
               ) : null}
 
               {step.kind === "module" && module ? (
@@ -632,8 +699,9 @@ export default function StudentLearningOnboarding() {
                         ?
                       </h1>
                     </div>
+                    <AuthOnboardingChatbot key={module.id} introduction={false} compact message="Choisissez le niveau qui correspond le mieux à votre situation actuelle. Si vous hésitez, « Je ne sais pas encore » est un bon choix : nous adapterons le contenu au fil de votre progression." />
                   </div>
-                  <div className="pt-2">
+                  <div>
                     <LevelChoiceButtons
                       name={`level-${module.id}`}
                       value={levels[module.id] ?? null}
@@ -679,12 +747,7 @@ export default function StudentLearningOnboarding() {
                   <h1 className="text-2xl font-bold">
                     Souhaitez-vous en dire un peu plus ?
                   </h1>
-                  <p className="flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                    <span>
-                      Cette étape est entièrement facultative. Vous pouvez la
-                      passer sans rien renseigner.
-                    </span>
-                  </p>
+                  <AuthOnboardingChatbot introduction={false} compact message="Cette étape est entièrement facultative. Vous pouvez la passer sans rien renseigner." />
                   <ProfileItemsEditor
                     hobbies={hobbies}
                     links={links}
@@ -701,85 +764,6 @@ export default function StudentLearningOnboarding() {
               ) : null}
 
               {step.kind === "theme" ? <ThemeSelectionStep /> : null}
-
-              {step.kind === "summary" ? (
-                <div className="space-y-5">
-                  <div>
-                    <h1 className="text-2xl font-bold">Votre profil</h1>
-                    <p className="mt-2 flex min-h-10 items-end text-sm leading-5 text-base-content/65">
-                      <span>
-                        Vérifiez vos réponses avant de commencer. Vous pourrez
-                        les modifier plus tard depuis votre profil.
-                      </span>
-                    </p>
-                  </div>
-                  <dl className="grid gap-3 sm:grid-cols-2">
-                    <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                        <Gauge className="size-5" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <dt className="text-sm text-base-content/65">Rythme</dt>
-                        <dd className="mt-1 font-semibold">
-                          {paceOptions.find((option) => option.value === pace)
-                            ?.label ?? "Non renseigné"}
-                        </dd>
-                      </div>
-                    </div>
-                    {context.availableFormations
-                      .flatMap((item) =>
-                        item.parcours.flatMap((parcours) => parcours.modules),
-                      )
-                      .map((module) => (
-                        <div
-                          key={module.id}
-                          className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4"
-                        >
-                          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                            <GraduationCap
-                              className="size-5"
-                              aria-hidden="true"
-                            />
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <dt className="text-sm text-base-content/65">
-                              {capitalizeTitle(module.title)}
-                            </dt>
-                            <dd className="mt-1 font-semibold">
-                              {levelOptions.find(
-                                (option) => option.value === levels[module.id],
-                              )?.label ?? "Non renseigné"}
-                            </dd>
-                          </div>
-                        </div>
-                      ))}
-                    <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-base-100 p-4 sm:col-span-2">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                        <Shapes className="size-5" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <dt className="text-sm text-base-content/65">
-                          Préférences d’apprentissage
-                        </dt>
-                        <dd className="mt-3 flex flex-wrap gap-2">
-                          {preferenceOptions
-                            .filter((option) =>
-                              preferences.includes(option.value),
-                            )
-                            .map((option) => (
-                              <span
-                                key={option.value}
-                                className="rounded-lg border border-primary/25 bg-base-100 px-3 py-2 text-sm font-semibold"
-                              >
-                                {option.label}
-                              </span>
-                            ))}
-                        </dd>
-                      </div>
-                    </div>
-                  </dl>
-                </div>
-              ) : null}
             </OnboardingProgressPanel>
           </motion.form>
         )}

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
+import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import type Contact from "../../../../../utils/interfaces/contact";
 import type Skill from "../../../../../utils/interfaces/skill";
@@ -22,6 +23,8 @@ type ModuleGridProps = {
   lockedContactId?: number;
   highlightedModuleId?: number | null;
   emptyMessage: string;
+  /** Actions affichées en tête du cadre lorsque la liste est vide. */
+  emptyStateHeader?: ReactNode;
   onUpdate: (module: ModuleData) => void;
   onDelete: (id: number) => void;
   onAssignContacts: (
@@ -45,6 +48,7 @@ export default function ModuleGrid({
   lockedContactId,
   highlightedModuleId,
   emptyMessage,
+  emptyStateHeader,
   onUpdate,
   onDelete,
   onAssignContacts,
@@ -95,12 +99,17 @@ export default function ModuleGrid({
   }
 
   if (modules.length === 0) {
-    return <EmptyStatePlaceholder title={emptyMessage} />;
+    return (
+      <BoxWrapper>
+        {emptyStateHeader}
+        <EmptyStatePlaceholder title={emptyMessage} withBorder={false} />
+      </BoxWrapper>
+    );
   }
 
   return (
     <>
-      <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+      <section className="grid auto-rows-fr gap-5 lg:grid-cols-2 xl:grid-cols-3">
         {modules.map((module) => (
           <ModuleCard
             key={module.id}

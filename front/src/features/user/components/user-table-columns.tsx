@@ -11,8 +11,21 @@ import {
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import type { ColumnBreakpoint } from "../../../components/table/DataTable";
 import { personSelectionColumn } from "../../../components/table/person-selection-column";
 import UserStatusToggle from "./UserStatusToggle";
+
+/**
+ * Colonnes secondaires masquées quand la largeur disponible diminue, pour
+ * éviter le défilement horizontal. Prénom, nom, statut et actions restent
+ * toujours visibles ; le rôle reste filtrable par les onglets.
+ */
+export const USER_COLUMN_BREAKPOINTS: Record<string, ColumnBreakpoint> = {
+  email: "3xl",
+  roles: "5xl",
+  formation: "6xl",
+  parcours: "7xl",
+};
 
 export const getUsersColumns = (
   onDelete: (id: string) => void,

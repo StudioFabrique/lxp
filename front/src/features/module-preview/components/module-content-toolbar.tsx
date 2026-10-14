@@ -1,7 +1,10 @@
 import type React from "react";
+import { useState } from "react";
 import {
   ArrowDownUp,
   CalendarDays,
+  Eye,
+  EyeOff,
   ListChevronsUpDown,
   LoaderCircle,
   PanelLeftClose,
@@ -12,10 +15,10 @@ import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { cn } from "../../../utils/cn";
 import TrophyIcon from "../../../components/UI/svg/trophy-icon.component";
+import Modal from "../../../components/UI/modal/modal";
 
 type ModuleContentToolbarProps = {
   progress: React.ReactNode;
-  progressRef: React.RefObject<HTMLDivElement | null>;
   isSidebarCollapsed: boolean;
   isContentSelected: boolean;
   showCompletionBadge?: boolean;
@@ -26,10 +29,14 @@ type ModuleContentToolbarProps = {
   isReorderingCourses: boolean;
   showPublishAll: boolean;
   isPublishingAll: boolean;
+  showCourseVisibility: boolean;
+  areAllCoursesVisible: boolean;
+  isUpdatingCourseVisibility: boolean;
   onToggleSidebar: () => void;
   onToggleCalendar: () => void;
   onToggleCourseReordering: () => void;
   onPublishAll: () => void;
+  onToggleCourseVisibility: (visibility: boolean) => Promise<void>;
   onCloseContent: () => void;
   onOpenCompletionBadge?: () => void;
 };
@@ -38,7 +45,6 @@ const actionClassName = "btn border-secondary/20";
 
 export default function ModuleContentToolbar({
   progress,
-  progressRef,
   isSidebarCollapsed,
   isContentSelected,
   showCompletionBadge = false,
@@ -49,24 +55,55 @@ export default function ModuleContentToolbar({
   isReorderingCourses,
   showPublishAll,
   isPublishingAll,
+  showCourseVisibility,
+  areAllCoursesVisible,
+  isUpdatingCourseVisibility,
   onToggleSidebar,
   onToggleCalendar,
   onToggleCourseReordering,
   onPublishAll,
+  onToggleCourseVisibility,
   onCloseContent,
   onOpenCompletionBadge,
 }: ModuleContentToolbarProps) {
+  const [pendingVisibility, setPendingVisibility] = useState<boolean | null>(null);
+
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-5">
+      {pendingVisibility !== null && (
+        <Modal
+          title="Visibilité des cours"
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+          isSubmitting={isUpdatingCourseVisibility}
+          onLeftClick={() => setPendingVisibility(null)}
+          onRightClick={async () => {
+            await onToggleCourseVisibility(pendingVisibility);
+            setPendingVisibility(null);
+          }}
+        >
+          <p className="py-4">
+            {pendingVisibility
+              ? "Êtes-vous sûr de rendre visibles tous les cours ?"
+              : "Êtes-vous sûr de rendre invisibles tous les cours ?"}
+          </p>
+        </Modal>
+      )}
       <button
         type="button"
-        className={cn(actionClassName, "btn-primary tooltip tooltip-right")}
+        className={cn(
+          actionClassName,
+          "tooltip tooltip-right",
+          !isSidebarCollapsed && "btn-primary",
+        )}
+        aria-pressed={!isSidebarCollapsed}
         aria-label={
           isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
         }
         data-tip={
           isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
         }
+        disabled={isReorderingCourses}
         onClick={onToggleSidebar}
       >
         {isSidebarCollapsed ? (
@@ -99,8 +136,28 @@ export default function ModuleContentToolbar({
         </PermissionGuard>
       )}
 
+      {showCourseVisibility && (
+        <PermissionGuard object="course" action="update">
+          <button
+            type="button"
+            className={cn(actionClassName, "tooltip tooltip-right")}
+            aria-label={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
+            data-tip={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
+            disabled={isUpdatingCourseVisibility || isReorderingCourses}
+            onClick={() => setPendingVisibility(!areAllCoursesVisible)}
+          >
+            {isUpdatingCourseVisibility ? (
+              <LoaderCircle className="size-5 animate-spin" />
+            ) : areAllCoursesVisible ? (
+              <EyeOff className="size-5" />
+            ) : (
+              <Eye className="size-5" />
+            )}
+          </button>
+        </PermissionGuard>
+      )}
+
       <div
-        ref={progressRef}
         className="flex h-10 min-w-0 flex-1 items-center rounded-lg border border-secondary/20 bg-secondary/20 px-2"
       >
         {progress}
@@ -114,7 +171,7 @@ export default function ModuleContentToolbar({
           })}
           aria-label="Calendrier"
           aria-pressed={isCalendarView}
-          disabled={isCalendarSaving}
+          disabled={isCalendarSaving || isReorderingCourses}
           onClick={onToggleCalendar}
         >
           <CalendarDays className="size-5" /> Calendrier
@@ -129,7 +186,7 @@ export default function ModuleContentToolbar({
               className={cn(actionClassName, "tooltip tooltip-left")}
               aria-label="Tout publier"
               data-tip="Tout publier"
-              disabled={isPublishingAll}
+              disabled={isPublishingAll || isReorderingCourses}
               onClick={onPublishAll}
             >
               {isPublishingAll ? (
@@ -148,6 +205,7 @@ export default function ModuleContentToolbar({
           className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Mes réussites"
           data-tip="Mes réussites"
+          disabled={isReorderingCourses}
           onClick={onOpenCompletionBadge}
         >
           <span className="block size-5" aria-hidden="true">
@@ -161,7 +219,7 @@ export default function ModuleContentToolbar({
           className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Tout réduire"
           data-tip="Tout réduire"
-          disabled={isCalendarView}
+          disabled={isCalendarView || isReorderingCourses}
           onClick={onCloseContent}
         >
           <ListChevronsUpDown className="size-5" />

@@ -5,7 +5,7 @@ import { lessonDetailsSchema } from "../../assignment.schema";
 import { useFormField } from "../../../../components/form/useFormField";
 import { showFormErrors } from "../../../../components/form/form-errors";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
-import { Loader2, X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import type Tag from "../../../../utils/interfaces/tag";
 
@@ -72,7 +72,6 @@ export default function CreateLessonModal({
     >
       <form
         className="modal-box max-w-xl"
-        data-onboarding="lesson-details"
         onSubmit={form.handleSubmit(async (values) => {
           if (isSaving) return;
           if (!courseTags.some((tag) => tag.id === values.tagId)) return;
@@ -97,12 +96,10 @@ export default function CreateLessonModal({
           <label className="flex flex-col gap-2">
             <span
               className="font-semibold"
-              data-onboarding-label="lesson-title"
             >
               Titre <span className="text-error">*</span>
             </span>
             <input
-              data-onboarding-field="lesson-title"
               autoFocus
               className="input input-bordered w-full"
               value={title}
@@ -128,12 +125,10 @@ export default function CreateLessonModal({
             <label className="flex flex-col gap-2">
               <span
                 className="font-semibold"
-                data-onboarding-label="lesson-tag"
               >
                 Tag <span className="text-error">*</span>
               </span>
               <select
-                data-onboarding-field="lesson-tag"
                 className="select select-bordered w-full"
                 value={selectedTagId}
                 disabled={courseTags.length === 0}
@@ -177,7 +172,7 @@ export default function CreateLessonModal({
             className="btn btn-primary"
             disabled={!title.trim() || !selectedTagId || isSaving}
           >
-            {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isSaving && <LoaderCircle className="w-4 h-4 animate-spin" />}
             {isSaving ? "Création…" : "Créer la leçon"}
           </button>
         </div>

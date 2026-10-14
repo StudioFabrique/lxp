@@ -7,11 +7,14 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import Group from "../../../utils/interfaces/group";
 import { useGroupActions } from "../hooks/useGroupActions";
-import { getGroupColumns } from "../components/group-table-columns";
+import {
+  getGroupColumns,
+  GROUP_COLUMN_BREAKPOINTS,
+} from "../components/group-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -22,7 +25,6 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
-import { groupsPageTourSteps } from "../../../components/headers/page-tour-steps";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
 import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
 import { cn } from "../../../utils/cn";
@@ -126,7 +128,6 @@ const GroupList = () => {
       <PageHeader
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
-        tourSteps={groupsPageTourSteps}
       >
         <PermissionGuard object="group" action="write">
           <Link className="btn btn-outline btn-primary" to="/admin/group/add">
@@ -154,7 +155,7 @@ const GroupList = () => {
         unstyled={!isLoading && filteredData.length === 0 && !searchValue}
       >
         {isLoading || filteredData.length > 0 || searchValue ? (
-          <div className="w-full" data-page-tour="filters">
+          <div className="w-full">
             <MultiCriteriaSearch
               value={searchValue ?? ""}
               onChange={onSubmitSearchValue}
@@ -183,9 +184,10 @@ const GroupList = () => {
           </div>
         ) : null}
 
-        <div className="w-full" data-page-tour="table">
+        <div className="w-full">
           <DataTable
             columns={columns}
+            columnBreakpoints={GROUP_COLUMN_BREAKPOINTS}
             data={filteredData}
             isLoading={isLoading}
             isSearching={Boolean(searchValue)}
@@ -202,7 +204,7 @@ const GroupList = () => {
         </div>
 
         {filteredData.length > 0 ? (
-          <div className="w-full mt-5" data-page-tour="pagination">
+          <div className="w-full mt-5">
             <TablePagination
               leftText={`Groupes : ${totalItems}`}
               {...pagination}
@@ -219,10 +221,11 @@ const GroupList = () => {
         descList={groupToDelete ? [groupToDelete.name] : undefined}
       >
         <button
-          className={cn("btn btn-error btn-md", isDeleting && "loading")}
+          className="btn btn-error btn-md"
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
         >
+          {isDeleting && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>

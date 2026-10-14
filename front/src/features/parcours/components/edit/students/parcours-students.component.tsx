@@ -9,6 +9,7 @@ import StudentsList from "./students-list";
 
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import toast from "react-hot-toast";
+import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
 import { useStudentGroupsQuery } from "../../../hooks/useStudentGroupsQuery";
@@ -87,7 +88,7 @@ const ParcoursStudents = () => {
   };
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <div className="flex flex-col">
       {/* Section du drawer pour l'ajout de groupes */}
       <section>
         <RightSideDrawer
@@ -136,7 +137,10 @@ const ParcoursStudents = () => {
               label="Chargement des groupes du parcours"
             />
           ) : groups.length === 0 ? (
-            <p className="py-24 text-center">Aucun groupe d'apprenants ajouté.</p>
+            <EmptyStatePlaceholder
+              title="Aucun groupe d'apprenants ajouté"
+              withBorder={false}
+            />
           ) : groupIds.length > 0 && areStudentsError ? (
             <p role="alert">Impossible de charger les apprenants.</p>
           ) : groupIds.length > 0 && areStudentsPending ? (

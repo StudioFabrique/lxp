@@ -8,16 +8,13 @@ const useChatbotUi = (
   dialog: ChatbotValues[],
   setDialog: React.Dispatch<React.SetStateAction<ChatbotValues[]>>,
 ) => {
-  const { activityTextSelection, setActivityTextSelection } =
-    useContext(ChatbotContext);
+  const { setActivityTextSelection } = useContext(ChatbotContext);
 
   const [showChatbot, setShowChatbot] = useState(false);
 
   const [isLoadingUi, setIsLoadingUi] = useState(false);
 
   const [size, setSize] = useState<chatbotWindowSize>("small");
-  const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
-    useState<boolean>(false);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -123,16 +120,10 @@ const useChatbotUi = (
     }
   }, [dialog.length, setDialog, showChatbot]);
 
-  useEffect(() => {
-    if (activityTextSelection) handleOpenChatbot();
-  }, [activityTextSelection, handleOpenChatbot]);
-
   return {
     showChatbot,
     isLoadingUi,
     size,
-    isSubmitButtonAnimated,
-    setIsSubmitButtonAnimated,
     showScrollTop,
     showScrollBottom,
     scrollContainerRef,

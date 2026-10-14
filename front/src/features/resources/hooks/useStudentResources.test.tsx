@@ -1,4 +1,4 @@
-import { act } from "react";
+import { act, useEffect } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import apiClient from "../../../lib/axios";
@@ -10,7 +10,10 @@ let root: Root;
 let state: ReturnType<typeof useStudentResources>;
 
 function Harness() {
-  state = useStudentResources();
+  const resources = useStudentResources();
+  useEffect(() => {
+    state = resources;
+  }, [resources]);
   return null;
 }
 

@@ -8,8 +8,9 @@ import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { cn } from "../../../../../utils/cn";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import { normalizeImageSource } from "../../../../../utils/images/image-source";
-import { hasCompleteModuleRequirements } from "../../../helpers/parcours-steps-validation";
+import { getMissingModuleRequirements } from "../../../helpers/parcours-steps-validation";
 import type { ModuleData } from "../../../interfaces/new-module";
+import ModuleIncompleteBadge from "./ModuleIncompleteBadge";
 import "./ModuleCard.css";
 
 type ModuleCardProps = {
@@ -41,28 +42,38 @@ export default function ModuleCard({
   onRemoveContact,
   onRemoveSkill,
 }: ModuleCardProps) {
-  const isIncomplete = !hasCompleteModuleRequirements({
+  const missingRequirements = getMissingModuleRequirements({
     duration: module.duration,
     contacts: module.contacts,
     skills: module.skills,
   });
+  const isIncomplete = missingRequirements.length > 0;
 
   return (
     <article
       id={`parcours-module-${module.id}`}
       data-highlighted={highlighted || undefined}
       className={cn(
-        "scroll-m-6 rounded-box transition-shadow duration-500",
+        "relative h-full scroll-m-6 rounded-box transition-shadow duration-500",
         highlighted && "module-card-highlight",
       )}
     >
+      {isIncomplete ? (
+        // Pastille posée sur l'angle supérieur gauche, à cheval sur la bordure.
+        <>
+          <div className="peer/incomplete absolute -left-1 -top-3 z-20">
+            <ModuleIncompleteBadge missingRequirements={missingRequirements} />
+          </div>
+          {/* Halo de la couleur du badge, révélé au survol ou au focus du badge (frère `peer`). */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 rounded-box opacity-0 shadow-[0_0_0_2px_var(--color-warning),0_0_24px_4px_color-mix(in_oklab,var(--color-warning)_55%,transparent)] transition-opacity duration-200 peer-hover/incomplete:opacity-100 peer-focus-within/incomplete:opacity-100"
+          />
+        </>
+      ) : null}
       <HierarchicalListCard
         label="Module"
-        labelAccessory={
-          isIncomplete ? (
-            <span className="badge badge-warning badge-xs">Incomplet</span>
-          ) : undefined
-        }
+        glowIntensity={0.5}
         title={module.title}
         truncateTitle
         headerBackgroundImage={

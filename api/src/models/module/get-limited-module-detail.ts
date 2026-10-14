@@ -1,4 +1,4 @@
-import { all, and } from "@prisma/orm-postgres/orm-client";
+import { all, and, or } from "@prisma/orm-postgres/orm-client";
 
 import {
   calculateCourseProgress,
@@ -22,6 +22,7 @@ export default async function getLimitedModuleDetail(
       "id",
       "title",
       "description",
+      "quizInstructions",
       "image",
       "duration",
       "minDate",
@@ -52,10 +53,13 @@ export default async function getLimitedModuleDetail(
             and(
               course.visibility.eq(true),
               course.isPublished.eq(true),
-              course.lessons.some((lesson) =>
-                and(
-                  lesson.visibility.eq(true),
-                  lesson.activities.some((activity) => activity.id.gt(0)),
+              or(
+                course.assignment.some((assignment) => assignment.id.gt(0)),
+                course.lessons.some((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
                 ),
               ),
             ),
@@ -131,6 +135,13 @@ export default async function getLimitedModuleDetail(
   if (!module) {
     throw { message: "Le module n'existe pas.", statusCode: 404 };
   }
+  const preliminaryQuiz = await prisma.orm.public.Quiz.where((quiz) =>
+    and(
+      quiz.moduleId.eq(module.id),
+      quiz.type.eq("preliminary"),
+      quiz.questions.some(),
+    ),
+  ).select("id").first();
   const skillAchievements = await loadSkillAchievements(userMongoId, {
     skillIds: module.bonusSkills.map(({ bonusSkillId }) => bonusSkillId),
   });
@@ -142,6 +153,8 @@ export default async function getLimitedModuleDetail(
     id: module.id,
     title: module.title,
     description: module.description,
+    quizInstructions: module.quizInstructions,
+    hasPreliminaryQuiz: Boolean(preliminaryQuiz),
     image: module.image
       ? Buffer.from(module.image as any).toString("base64")
       : null,

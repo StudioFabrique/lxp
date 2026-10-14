@@ -1,5 +1,18 @@
-import { FC, HTMLAttributes, ReactNode, useEffect, useRef } from "react";
+import {
+  FC,
+  HTMLAttributes,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { cn } from "../../../utils/cn";
+import { FIRST_FIELD_SELECTOR } from "../../../hooks/useModalAutoFocus";
+
+// Le contenu du panneau reste monté et le panneau est masqué tant que le
+// drawer est fermé : le focus n'est possible qu'une fois l'ouverture effective,
+// et le formulaire peut se monter légèrement après le basculement.
+const FOCUS_RETRY_DELAYS_MS = [0, 50, 150, 350];
 
 type Props = {
   children: ReactNode;
@@ -29,6 +42,33 @@ const RightSideDrawer: FC<Props> = ({
   onCloseDrawer,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const focusTimersRef = useRef<number[]>([]);
+
+  const clearFocusTimers = useCallback(() => {
+    focusTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    focusTimersRef.current = [];
+  }, []);
+
+  const focusFirstField = useCallback(() => {
+    clearFocusTimers();
+    focusTimersRef.current = FOCUS_RETRY_DELAYS_MS.map((delay) =>
+      window.setTimeout(() => {
+        const panel = panelRef.current;
+        if (!panel || !checkboxRef.current?.checked) return;
+        const active = document.activeElement;
+        if (active && panel.contains(active)) {
+          // Un champ du panneau est déjà focalisé : on s'arrête.
+          if (active.matches(FIRST_FIELD_SELECTOR)) clearFocusTimers();
+          return;
+        }
+        const field = panel.querySelector<HTMLElement>(FIRST_FIELD_SELECTOR);
+        if (!field) return;
+        field.focus();
+        if (document.activeElement === field) clearFocusTimers();
+      }, delay),
+    );
+  }, [clearFocusTimers]);
 
   const btnStyle = buttonClassname ?? cn(
     "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none",
@@ -48,8 +88,11 @@ const RightSideDrawer: FC<Props> = ({
   useEffect(() => {
     if (isOpen !== undefined) {
       checkboxRef.current!.checked = isOpen;
+      if (isOpen) focusFirstField();
     }
-  }, [isOpen]);
+  }, [isOpen, focusFirstField]);
+
+  useEffect(() => clearFocusTimers, [clearFocusTimers]);
 
   return (
     <div className="drawer drawer-end relative">
@@ -58,6 +101,9 @@ const RightSideDrawer: FC<Props> = ({
         type="checkbox"
         className="drawer-toggle"
         ref={checkboxRef}
+        onChange={(event) => {
+          if (event.currentTarget.checked) focusFirstField();
+        }}
       />
       <div className="drawer-content sticky top-0 z-0">
         {visible ? (
@@ -105,6 +151,7 @@ const RightSideDrawer: FC<Props> = ({
           className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
         />
         <div
+          ref={panelRef}
           className={cn(
             "flex h-screen min-w-[35rem] flex-col rounded-l-2xl bg-base-200 text-base-content relative",
             panelClassName,
@@ -136,7 +183,7 @@ const RightSideDrawer: FC<Props> = ({
             <div className="divider divider-vertical"></div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+          <div className="scroll-fade-bottom flex-1 overflow-y-auto px-4 pb-4 [--scroll-fade-size:1rem]">{children}</div>
         </div>
       </div>
     </div>

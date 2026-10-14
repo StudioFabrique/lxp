@@ -30,31 +30,31 @@ const ResumeParcours = () => {
           hidePublished
           titlePosition="top"
           bottomAction={parcours ? (
-            <Link
-              to={`/${currentRoute[0]}/parcours/view/${parcours.id}`}
-              className="z-10 btn btn-primary text-white"
-            >
-              <PlayCircleIcon />
-              <p>Accéder au parcours</p>
-            </Link>
+            <div className="flex w-full flex-wrap items-center justify-between gap-2">
+              {parcoursList && parcoursList.length > 1 && (
+                <Link
+                  to={`/${currentRoute[0]}/parcours`}
+                  className="btn btn-sm h-auto min-h-8 max-w-full py-2"
+                >
+                  <List className="shrink-0" />
+                  <span className="min-w-0 whitespace-normal">
+                    Accéder à la liste des autres parcours
+                  </span>
+                </Link>
+              )}
+              <Link
+                to={`/${currentRoute[0]}/parcours/view/${parcours.id}`}
+                className="btn btn-primary ml-auto h-auto min-h-12 max-w-full py-2 text-white"
+              >
+                <PlayCircleIcon className="shrink-0" />
+                <span className="min-w-0 whitespace-normal">Accéder au parcours</span>
+              </Link>
+            </div>
           ) : undefined}
           children={[
-            <div
-              key="title-and-badges"
-              className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
-            />,
+            null,
             <div key="link" className="p-5 w-full flex justify-end">
-              {parcours ? (
-                parcoursList && parcoursList.length > 1 && (
-                  <Link
-                    to={`/${currentRoute[0]}/parcours`}
-                    className="z-10 btn btn-sm"
-                  >
-                    <List />
-                    <p>Accéder à la liste des autres parcours</p>
-                  </Link>
-                )
-              ) : isSuccess ? (
+              {!parcours && isSuccess ? (
                 <FadeWrapper>
                   <p className="text-white text-4xl text-center opacity-95 select-none">
                     Votre formation sera bientôt disponible dans votre espace

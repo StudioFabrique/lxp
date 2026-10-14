@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useState } from "react";
 import { toast } from "react-hot-toast";
+import { autoSaveToastId } from "../../../../../config/auto-submit-timer";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
 import VirtualClass from "../../../../../../src/components/virtual-class";
@@ -51,7 +52,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           endDate,
         });
         if (!data.success) throw new Error(data.message);
-        toast.success(data.message);
+        toast.success(data.message, { id: autoSaveToastId });
       } catch (error) {
         toast.error("Erreur lors de la mise à jour des dates");
         throw error;
@@ -116,7 +117,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     try {
       const data = await updateParcours({ virtualClass: url });
       if (!data.success) throw new Error(data.message);
-      toast.success(data.message);
+      toast.success(data.message, { id: autoSaveToastId });
     } catch (error) { toast.error("Le lien vers la classe virtuelle n'a pas été mis à jour"); throw error; }
   };
 
@@ -124,21 +125,22 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     <div className="flex flex-col gap-y-4">
       <div
         className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8"
-        data-onboarding="parcours-information"
       >
         <BoxWrapper>
-          <div className="flex flex-col gap-y-8">
+          <div className="flex flex-col gap-y-8" id="parcours-field-title">
             <ParcoursInformationsForm
               parcoursId={parcoursId}
               readOnly={readOnly}
             />
-            <DatesSelecter
-              startDateProp={parcoursStartDate}
-              endDateProp={parcoursEndDate}
-              label="Dates de parcours"
-              onSubmitDates={submitDates}
-              disabled={readOnly}
-            />
+            <div id="parcours-field-dates">
+              <DatesSelecter
+                startDateProp={parcoursStartDate}
+                endDateProp={parcoursEndDate}
+                label="Dates de parcours"
+                onSubmitDates={submitDates}
+                disabled={readOnly}
+              />
+            </div>
             <VirtualClass
               onSave={saveVirtualClass}
               value={parcours?.virtualClass ?? ""}
@@ -147,7 +149,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           </div>
         </BoxWrapper>
         <div className="flex flex-col gap-y-8">
-          <BoxWrapper>
+          <BoxWrapper id="parcours-field-contacts">
             <ContactsWithDrawer
               loading={loadingContacts}
               onSubmit={handleUpdateContacts}
@@ -155,7 +157,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
               readOnly={readOnly}
             />
           </BoxWrapper>
-          <BoxWrapper>
+          <BoxWrapper id="parcours-field-tags">
             <TagsWithDrawer
               loading={loadingTags}
               onSubmit={handleUpdateTags}

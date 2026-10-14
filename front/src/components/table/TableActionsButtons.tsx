@@ -1,8 +1,7 @@
-import { RefreshCw } from "lucide-react";
+import { LoaderCircle, RefreshCw } from "lucide-react";
 import ActionsDropdown from "../../components/UI/actions-dropdown/actions-dropdown";
 import TableActionsModal from "./TableActionsModal";
 import { useState } from "react";
-import { cn } from "../../utils/cn";
 
 type Action<TData> = {
   title: string;
@@ -71,9 +70,11 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
           onCancel={handleCloseModal}
         >
           <button
-            className={cn("btn btn-error btn-md", isModalLoading && "loading")}
+            className="btn btn-error btn-md"
             onClick={handleConfirmAction}
+            disabled={isModalLoading}
           >
+            {isModalLoading && <LoaderCircle className="size-5 animate-spin" />}
             Confirmer
           </button>
         </TableActionsModal>
@@ -85,7 +86,7 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
             disabled={props.isLoading}
             className="btn btn-sm btn-ghost disabled:bg-transparent"
           >
-            <RefreshCw />
+            {props.isLoading ? <LoaderCircle className="size-5 animate-spin" /> : <RefreshCw />}
           </button>
         )}
         <ActionsDropdown

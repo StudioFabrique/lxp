@@ -2,6 +2,7 @@ import { act, type ComponentProps } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import QuizModal from "./quiz-modal";
+import type { Quiz } from "../../interfaces/quiz";
 
 let root: Root;
 let container: HTMLDivElement;
@@ -55,4 +56,68 @@ it.each([
   await act(async () => report.click());
   expect(container.querySelector("textarea")).not.toBeNull();
   expect(container.textContent).toContain("Pourquoi cette question est-elle incorrecte ?");
+});
+
+const correctionQuizzes: Quiz[] = [
+  { id: "mcq", type: "mcq", question: "Choisir", data: { options: ["Incorrect", "Correct"], answerIndex: 1 }, trueExplanation: "Oui", falseExplanation: "Non" },
+  { id: "true-false", type: "true_false", question: "Choisir", data: { answer: false }, trueExplanation: "Oui", falseExplanation: "Non" },
+  { id: "ordering", type: "ordering", question: "Ordonner", data: { items: ["Deuxième", "Troisième", "Premier"], order: [2, 0, 1] }, trueExplanation: "Oui", falseExplanation: "Non" },
+  { id: "matching", type: "matching", question: "Associer", data: { pairs: [{ left: "France", right: "Paris" }, { left: "Italie", right: "Rome" }] }, trueExplanation: "Oui", falseExplanation: "Non" },
+];
+
+it.each([
+  { quiz: correctionQuizzes[0], choice: "Incorrect", isCorrect: false },
+  { quiz: correctionQuizzes[0], choice: "Correct", isCorrect: true },
+  { quiz: correctionQuizzes[1], choice: "VRAI", isCorrect: false },
+  { quiz: correctionQuizzes[1], choice: "FAUX", isCorrect: true },
+])("surligne seulement le choix incorrect sélectionné : $choice", async ({ quiz, choice, isCorrect }) => {
+  await render({ quiz, isAnswered: false });
+  const selected = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === choice)!;
+  await act(async () => selected.click());
+  expect(container.querySelector("button.border-error")).toBeNull();
+  const validate = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Valider ma réponse")!;
+  await act(async () => validate.click());
+  expect(props.onAnswer).toHaveBeenCalledWith(isCorrect, quiz.type === "mcq"
+    ? { type: "mcq", selectedIndex: isCorrect ? 1 : 0 }
+    : { type: "true_false", selected: !isCorrect });
+  await render({ isAnswered: true, isCorrect });
+  const wrong = container.querySelector<HTMLButtonElement>("button.border-error");
+  if (isCorrect) {
+    expect(wrong).toBeNull();
+  } else {
+    expect(wrong).toBe(selected);
+    expect(wrong?.disabled).toBe(true);
+    expect(wrong?.textContent).toBe(`${choice}Votre réponse`);
+    expect(wrong?.classList.contains("disabled:bg-error/10")).toBe(true);
+  }
+  expect(container.querySelector("button.border-success")?.textContent).toContain("Bonne réponse");
+});
+
+it.each(correctionQuizzes)("masque la correction avant validation pour $type", async (quiz) => {
+  await render({ quiz, isAnswered: false });
+  expect(container.textContent).not.toContain("Bonne réponse");
+  expect(container.querySelector('[aria-label="Ordre correct"]')).toBeNull();
+  expect(container.querySelector('[aria-label="Associations correctes"]')).toBeNull();
+});
+
+it.each(correctionQuizzes.flatMap((quiz) => [
+  { quiz, type: quiz.type, isCorrect: true },
+  { quiz, type: quiz.type, isCorrect: false },
+]))("affiche la correction pour $type avec isCorrect=$isCorrect", async ({ quiz, isCorrect }) => {
+  await render({ quiz, isAnswered: true, isCorrect });
+  if (quiz.type === "mcq" || quiz.type === "true_false") {
+    const correct = container.querySelector<HTMLButtonElement>("button.border-success")!;
+    expect(correct).not.toBeNull();
+    expect(correct.disabled).toBe(true);
+    expect(correct.classList.contains("disabled:border-success")).toBe(true);
+    expect(correct.textContent).toBe(`${quiz.type === "mcq" ? "Correct" : "FAUX"}Bonne réponse`);
+    expect(container.querySelectorAll("button.border-success")).toHaveLength(1);
+  } else if (quiz.type === "ordering") {
+    const solution = container.querySelector('[aria-label="Ordre correct"]')!;
+    expect(Array.from(solution.querySelectorAll("li"), (item) => item.textContent)).toEqual(["Premier", "Deuxième", "Troisième"]);
+  } else {
+    const solution = container.querySelector('[aria-label="Associations correctes"]')!;
+    expect(Array.from(solution.querySelectorAll("dt"), (item) => item.textContent)).toEqual(["France", "Italie"]);
+    expect(Array.from(solution.querySelectorAll("dd"), (item) => item.textContent)).toEqual(["Paris", "Rome"]);
+  }
 });

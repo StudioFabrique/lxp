@@ -24,7 +24,6 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Pro
         type: "true_false",
         selected: selected,
       });
-      setSelected(null);
     }
   };
 
@@ -37,11 +36,22 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Pro
             className={cn(
               "btn flex-1",
               selected === choice ? "btn-primary" : "btn-outline btn-primary",
+              isAnswered && "disabled:text-base-content",
+              isAnswered && choice === quiz.data.answer &&
+                "border-2 border-success bg-success/10 text-base-content disabled:border-success disabled:bg-success/10",
+              isAnswered && selected === choice && choice !== quiz.data.answer &&
+                "border-2 border-error bg-error/10 text-base-content disabled:border-error disabled:bg-error/10",
             )}
             onClick={() => setSelected(choice)}
             disabled={isAnswered}
           >
             {choice ? "VRAI" : "FAUX"}
+            {isAnswered && choice === quiz.data.answer && (
+              <span className="badge badge-success">Bonne réponse</span>
+            )}
+            {isAnswered && selected === choice && choice !== quiz.data.answer && (
+              <span className="badge badge-error">Votre réponse</span>
+            )}
           </button>
         ))}
       </div>

@@ -32,7 +32,7 @@ export function buildRecommendedActions({
               id: "create-admin",
               title: "Créer un administrateur",
               description: "Ajoutez un administrateur supplémentaire.",
-              to: "/admin/user/add?roleRank=1&tutorial=admin",
+              to: "/admin/user/add?roleRank=1",
               icon: recommendedActionIcons.createAdmin,
             },
           ]
@@ -43,7 +43,7 @@ export function buildRecommendedActions({
               id: "invite-teachers",
               title: "Inviter l'équipe pédagogique",
               description: "Créez le premier compte formateur.",
-              to: "/admin/user/add?roleRank=2&invite=true&tutorial=teacher",
+              to: "/admin/user/add?roleRank=2&invite=true",
               icon: recommendedActionIcons.inviteTeachers,
             },
           ]
@@ -55,7 +55,7 @@ export function buildRecommendedActions({
               title: "Changer le logo de l'organisme",
               description:
                 "Personnalisez l'identité visuelle de la plateforme.",
-              to: "/admin/parametres-instance?tutorial=logo",
+              to: "/admin/parametres-instance",
               icon: recommendedActionIcons.changeLogo,
             },
           ]
@@ -76,7 +76,7 @@ export function buildRecommendedActions({
             id: "invite-students",
             title: "Inviter des apprenants",
             description: "Créez les premiers comptes apprenants.",
-            to: "/admin/user/add?roleRank=3&invite=true&tutorial=student",
+            to: "/admin/user/add?roleRank=3&invite=true",
             icon: recommendedActionIcons.inviteStudents,
           },
         ]
@@ -87,7 +87,7 @@ export function buildRecommendedActions({
             id: "create-group",
             title: "Créer un groupe d'apprenants",
             description: "Réunissez les apprenants dans un groupe.",
-            to: "/admin/group/add?tutorial=group",
+            to: "/admin/group/add",
             icon: recommendedActionIcons.createGroup,
           },
         ]
@@ -98,7 +98,7 @@ export function buildRecommendedActions({
             id: "create-module",
             title: "Créer mon premier module",
             description: "Ajoutez un module à l'un de vos parcours.",
-            to: `/admin/parcours/edit/${firstManagedParcours.id}?step=4&create=true&tutorial=module`,
+            to: `/admin/parcours/edit/${firstManagedParcours.id}?step=4&create=true`,
             icon: recommendedActionIcons.createModule,
           },
         ]

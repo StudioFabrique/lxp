@@ -32,8 +32,14 @@ export const onboardingDraftSchema = learningChoicesSchema.extend({
 });
 export function onboardingStepSchema(kind: string, moduleId?: number) {
   return onboardingDraftSchema.superRefine((values, context) => {
-    if (kind === "learning" || kind === "summary") {
-      const result = learningChoicesSchema.safeParse(values);
+    if (["pace", "preferences", "learning", "summary"].includes(kind)) {
+      const choicesSchema =
+        kind === "pace"
+          ? learningChoicesSchema.pick({ pace: true })
+          : kind === "preferences"
+            ? learningChoicesSchema.pick({ preferences: true })
+            : learningChoicesSchema;
+      const result = choicesSchema.safeParse(values);
       if (!result.success)
         result.error.issues.forEach((issue) =>
           context.addIssue({

@@ -18,7 +18,7 @@ describe("quality logo", () => {
           "#FFFFFF", "#FFFFFF", "currentColor", "currentColor",
         ]);
         expect(svg.getAttribute("style")).toContain(
-          ["rgb(30, 64, 175)", "var(--color-secondary)", "var(--color-accent)"][color],
+          ["var(--color-primary)", "var(--color-secondary)", "var(--color-accent)"][color],
         );
       }
     } finally { act(() => root.unmount()); }

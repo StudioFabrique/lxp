@@ -17,7 +17,7 @@ const SubBoxWrapper = (props: Props) => {
   // Style de base du wrapper
   const baseStyle = "flex flex-col gap-y-4 p-4 rounded-lg bg-secondary/10";
   // Style additionnel en cas d'erreur
-  const errorStyle = "border-2 border-red-500";
+  const errorStyle = "border-2 border-error";
 
   return (
     <div className={cn(baseStyle, props.hasError && errorStyle)}>

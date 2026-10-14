@@ -20,11 +20,11 @@ const TagItem: FC<TagItemProps> = ({
   onClick,
 }) => {
   const style: CSSProperties = {
-    backgroundColor: `color-mix(in srgb, ${tag.color} 45%, white)`,
-    color: "#17202a",
+    backgroundColor: `color-mix(in srgb, ${tag.color} 20%, var(--color-base-100))`,
+    color: "var(--color-base-content)",
   };
   const className = cn(
-    "inline-flex items-center gap-2 rounded-lg border border-black/10 font-bold leading-5",
+    "inline-flex items-center gap-2 rounded-lg border border-base-300 font-bold leading-5",
     compact ? "px-2.5 py-1 text-xs" : "min-h-8 px-4 py-1 text-sm",
     onClick && !disabled ? "cursor-pointer hover:brightness-95" : "cursor-default",
   );

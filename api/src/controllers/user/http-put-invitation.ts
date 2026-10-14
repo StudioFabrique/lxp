@@ -42,7 +42,7 @@ export default async function httpPutInvitation(
         success: true,
         message: mailerDisabled
           ? "L'utilisateur a été activé."
-          : "Invitation email was sent successfully.",
+          : "L'email d'invitation a été envoyé avec succès.",
       },
     };
     next(result);

@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { Link } from "react-router";
 
 import Modal from "../../../../../components/UI/modal/modal";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
@@ -56,10 +58,13 @@ export default function AssignModuleContactsModal({
     >
       <div className="mt-6">
         {availableContacts.length === 0 ? (
-          <p className="rounded-box bg-base-200 p-5 text-sm text-base-content/65">
-            Toutes les ressources pédagogiques du parcours sont déjà affectées
-            à ce module.
-          </p>
+          // Aucune ressource à affecter : elles se gèrent à l'étape Informations du parcours.
+          <div className="flex justify-center rounded-box bg-base-200 p-5">
+            <Link to="?step=1" className="btn btn-primary btn-outline">
+              <Plus className="size-4" aria-hidden="true" />
+              Ajouter une ressource pédagogique
+            </Link>
+          </div>
         ) : (
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
             {availableContacts.map((contact) => (

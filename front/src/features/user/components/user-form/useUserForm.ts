@@ -36,9 +36,12 @@ export function useUserForm(user: User | null, initialSendEmail = false) {
   const [file, setFile] = useState<File | null>(null);
   const [emailValidationRequested, setEmailValidationRequested] =
     useState(false);
+  // Après une soumission refusée, les champs obligatoires vides sont aussi signalés.
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   useEffect(() => {
     reset(defaults(user, initialSendEmail));
     setEmailValidationRequested(false);
+    setSubmitAttempted(false);
   }, [user, initialSendEmail, reset]);
   const [email, setEmail] = useFormField(form, "email");
   const [firstname, setFirstname] = useFormField(form, "firstname");
@@ -67,13 +70,16 @@ export function useUserForm(user: User | null, initialSendEmail = false) {
       setEmailValidationRequested(false);
     },
     emailError: emailValidationRequested && invalid("email"),
-    validateEmail: () => setEmailValidationRequested(true),
+    validateEmail: () => {
+      setEmailValidationRequested(true);
+      setSubmitAttempted(true);
+    },
     firstname,
     setFirstname,
-    firstnameError: Boolean(firstname) && invalid("firstname"),
+    firstnameError: (submitAttempted || Boolean(firstname)) && invalid("firstname"),
     lastname,
     setLastname,
-    lastnameError: Boolean(lastname) && invalid("lastname"),
+    lastnameError: (submitAttempted || Boolean(lastname)) && invalid("lastname"),
     nickname,
     setNickname,
     nicknameError: Boolean(nickname) && invalid("nickname"),

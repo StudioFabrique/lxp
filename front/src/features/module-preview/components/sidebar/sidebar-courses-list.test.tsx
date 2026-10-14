@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type Course from "../../../../utils/interfaces/course";
 import type Lesson from "../../../../utils/interfaces/lesson";
-import { OnboardingContext } from "../../../onboarding/OnboardingContext";
 import SidebarCoursesList from "./sidebar-courses-list";
 
 vi.mock("./course-item", () => ({
@@ -53,7 +52,6 @@ const course = {
 
 const renderCourses = (
   container: HTMLDivElement,
-  step: string,
   disableCourseCreationFloating = false,
   calendarMode = false,
   orphanIds: number[] = [],
@@ -71,41 +69,30 @@ const renderCourses = (
 
   act(() => {
     root.render(
-      <OnboardingContext
-        value={{
-          status: "in_progress",
-          step,
-          isSaving: false,
-          canStart: true,
-          start: vi.fn().mockResolvedValue(undefined),
-          skip: vi.fn().mockResolvedValue(undefined),
-        }}
+      <SidebarCoursesList
+        calendarMode={calendarMode}
+        calendarAdding={calendarAdding}
+        calendarSelectedCourseId={calendarMode ? 1 : undefined}
+        calendarOrphanIds={orphanIds}
+        onAddCalendarCourse={onAddCalendarCourse}
+        onSelectCalendarCourse={onSelectCalendarCourse}
+        courses={displayedCourses}
+        moduleProgress={0}
+        selectedLesson={lesson}
+        isReorderingActivities={isReorderingActivities}
+        onSelectLesson={vi.fn()}
+        onDeleteCourse={vi.fn().mockResolvedValue(undefined)}
+        onEnableCourse={vi.fn().mockResolvedValue(undefined)}
+        onPublishCourse={vi.fn().mockResolvedValue(undefined)}
+        onUpdateCourse={vi.fn().mockResolvedValue(true)}
+        onDeleteLesson={vi.fn().mockResolvedValue(undefined)}
+        onCreateLesson={vi.fn().mockResolvedValue(11)}
+        onUpdateLesson={vi.fn().mockResolvedValue(true)}
+        disableCourseCreationFloating={disableCourseCreationFloating}
       >
-        <SidebarCoursesList
-          calendarMode={calendarMode}
-          calendarAdding={calendarAdding}
-          calendarSelectedCourseId={calendarMode ? 1 : undefined}
-          calendarOrphanIds={orphanIds}
-          onAddCalendarCourse={onAddCalendarCourse}
-          onSelectCalendarCourse={onSelectCalendarCourse}
-          courses={displayedCourses}
-          moduleProgress={0}
-          selectedLesson={lesson}
-          isReorderingActivities={isReorderingActivities}
-          onSelectLesson={vi.fn()}
-          onDeleteCourse={vi.fn().mockResolvedValue(undefined)}
-          onEnableCourse={vi.fn().mockResolvedValue(undefined)}
-          onPublishCourse={vi.fn().mockResolvedValue(undefined)}
-          onUpdateCourse={vi.fn().mockResolvedValue(true)}
-          onDeleteLesson={vi.fn().mockResolvedValue(undefined)}
-          onCreateLesson={vi.fn().mockResolvedValue(11)}
-          onUpdateLesson={vi.fn().mockResolvedValue(true)}
-          disableCourseCreationFloating={disableCourseCreationFloating}
-        >
-          <span>Créer un cours</span>
-          <span>Créer une activité</span>
-        </SidebarCoursesList>
-      </OnboardingContext>,
+        <span>Créer un cours</span>
+        <span>Créer une activité</span>
+      </SidebarCoursesList>,
     );
   });
 };
@@ -133,36 +120,10 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("SidebarCoursesList pendant le tutoriel", () => {
-  it("empêche de replier le cours à l'étape de création d'activité", () => {
-    const container = document.createElement("div");
-    renderCourses(container, "admin-activity-create:42");
-
-    const button = getCourseButton(container);
-    expect(button.dataset.open).toBe("true");
-
-    act(() => button.click());
-
-    expect(button.dataset.open).toBe("true");
-  });
-
-  it("rouvre le cours si cette étape commence après sa fermeture", () => {
-    const container = document.createElement("div");
-    renderCourses(container, "admin-activity-type:42");
-
-    act(() => getCourseButton(container).click());
-    expect(getCourseButton(container).dataset.open).toBe("false");
-
-    renderCourses(container, "admin-activity-create:42");
-
-    expect(getCourseButton(container).dataset.open).toBe("true");
-  });
-});
-
 describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
   it("ne fait pas flotter le bouton de création de cours", () => {
     const container = document.createElement("div");
-    renderCourses(container, "admin-activity-create:42", true);
+    renderCourses(container, true);
 
     const createCourseButton = Array.from(
       container.querySelectorAll("span"),
@@ -178,7 +139,7 @@ describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
 it("désactive les autres cours pendant la réorganisation des leçons", () => {
   const container = document.createElement("div");
   const secondCourse = { id: 2, title: "Deuxième cours", lessons: [] } as unknown as Course;
-  renderCourses(container, "", false, false, [], vi.fn(), false, vi.fn(), [course, secondCourse]);
+  renderCourses(container, false, false, [], vi.fn(), false, vi.fn(), [course, secondCourse]);
 
   const first = getCourseButton(container);
   const second = container.querySelector<HTMLButtonElement>('[data-testid="course-2"]')!;
@@ -198,7 +159,7 @@ it("désactive les autres cours pendant la réorganisation des leçons", () => {
 it("désactive tous les cours pendant la réorganisation des activités", () => {
   const container = document.createElement("div");
   const secondCourse = { id: 2, title: "Deuxième cours", lessons: [] } as unknown as Course;
-  renderCourses(container, "", false, false, [], vi.fn(), false, vi.fn(), [course, secondCourse], true);
+  renderCourses(container, false, false, [], vi.fn(), false, vi.fn(), [course, secondCourse], true);
 
   expect(getCourseButton(container).dataset.disabled).toBe("true");
   expect(container.querySelector<HTMLButtonElement>('[data-testid="course-2"]')?.dataset.disabled).toBe("true");
@@ -208,7 +169,7 @@ it("désactive tous les cours pendant la réorganisation des activités", () => 
 describe("sidebar en mode calendrier", () => {
   it("cache les actions de création et d'import de cours", () => {
     const container = document.createElement("div");
-    renderCourses(container, "", false, true);
+    renderCourses(container, false, true);
 
     expect(container.textContent).not.toContain("Créer un cours");
   });
@@ -216,7 +177,7 @@ describe("sidebar en mode calendrier", () => {
   it("sélectionne le cours du calendrier au clic et le déplie à la demande", () => {
     const container = document.createElement("div");
     const select = vi.fn();
-    renderCourses(container, "", false, true, [], vi.fn(), false, select);
+    renderCourses(container, false, true, [], vi.fn(), false, select);
     const button = getCourseButton(container);
     expect(button.dataset.open).toBe("false");
     act(() => button.click());
@@ -225,16 +186,16 @@ describe("sidebar en mode calendrier", () => {
     act(() => button.click());
     expect(select).toHaveBeenCalledTimes(2);
     expect(button.dataset.open).toBe("false");
-    renderCourses(container, "", false, true, [], vi.fn(), true, select);
+    renderCourses(container, false, true, [], vi.fn(), true, select);
     act(() => button.click());
     expect(select).toHaveBeenCalledTimes(2);
-    renderCourses(container, "", false, false, [], vi.fn(), false, select);
+    renderCourses(container, false, false, [], vi.fn(), false, select);
     act(() => button.click());
     expect(select).toHaveBeenCalledTimes(2);
   });
   it("bloque le dépliage pendant l'ajout et indique où sélectionner un cours", () => {
     const container = document.createElement("div");
-    renderCourses(container, "", false, true);
+    renderCourses(container, false, true);
     const button = getCourseButton(container);
     expect(button.closest("[inert]")).toBeTruthy();
     expect(container.querySelector('[role="status"]')?.textContent).toContain("Cliquez sur un cours disponible ci-dessous");
@@ -247,7 +208,7 @@ describe("sidebar en mode calendrier", () => {
   it("permet seulement de sélectionner les cours orphelins pendant l'ajout", () => {
     const container = document.createElement("div");
     const onAdd = vi.fn();
-    renderCourses(container, "", false, true, [1], onAdd);
+    renderCourses(container, false, true, [1], onAdd);
     const add = container.querySelector<HTMLButtonElement>('[aria-label="Ajouter Premier cours au calendrier"]');
     expect(add).toBeTruthy();
     expect(add?.closest("[inert]")).toBeNull();
@@ -257,9 +218,9 @@ describe("sidebar en mode calendrier", () => {
 });
 
 
-it("permet le dépliage en mode calendrier hors ajout, même pendant le tutoriel", () => {
+it("permet le dépliage en mode calendrier hors ajout", () => {
   const container = document.createElement("div");
-  renderCourses(container, "admin-activity-create:42", false, true, [], vi.fn(), false);
+  renderCourses(container, false, true, [], vi.fn(), false);
   const button = getCourseButton(container);
   expect(button.closest("[inert]")).toBeNull();
   expect(container.querySelector('[role="status"]')).toBeNull();

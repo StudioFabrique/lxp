@@ -1,3 +1,4 @@
+import { Info } from "lucide-react";
 import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { localeDate } from "../../../../../src/utils/helpers/locale-date";
 import { useParams } from "react-router";
@@ -9,7 +10,10 @@ const Informations = () => {
 
   return (
     <BoxWrapper>
-      <h2 className="text-xl font-bold text-primary">Informations</h2>
+      <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+        <Info className="size-5 shrink-0" aria-hidden="true" />
+        Informations
+      </h2>
       <div className="flex flex-col gap-y-2">
         <span className="flex gap-x-5">
           <p className="font-bold">Diplôme</p>
