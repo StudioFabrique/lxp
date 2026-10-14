@@ -52,7 +52,7 @@ describe("IntroLevelDetail", () => {
     expect(container.textContent).not.toContain("(exemple)");
   });
 
-  it("met en avant le composant expliqué par le chatbot", () => {
+  it("met en avant le composant expliqué par l’assistant virtuel", () => {
     render(2, 1);
 
     const active = container.querySelectorAll("[data-intro-detail].ring-2");

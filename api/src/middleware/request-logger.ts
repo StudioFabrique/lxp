@@ -41,8 +41,14 @@ export default function requestLogger(
     // l'ensemble sous `message` rendrait les journaux difficiles à filtrer.
     const label = `${entry.method} ${entry.path} ${entry.status}`;
 
+    // Un 401 sur ces deux routes est le cas normal d'un visiteur sans session :
+    // le frontend les appelle à chaque chargement.
+    const isSessionProbe =
+      res.statusCode === 401 &&
+      (entry.path === "/v1/auth/handshake" || entry.path === "/v1/auth/refresh");
+
     if (res.statusCode >= 500) logger.error(label, entry);
-    else if (res.statusCode >= 400) logger.warn(label, entry);
+    else if (res.statusCode >= 400 && !isSessionProbe) logger.warn(label, entry);
     else logger.info(label, entry);
   });
 

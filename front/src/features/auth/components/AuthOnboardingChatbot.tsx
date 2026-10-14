@@ -12,7 +12,7 @@ export default function AuthOnboardingChatbot(props: Props) {
   useLayoutEffect(() => {
     if (!introduction && host) host.register({ message, help, compact, delay, typingMs, scopeRef: anchorRef, stepId: id });
   }, [host, introduction, message, help, compact, delay, typingMs, id]);
-  // Le layout reste monté d'une page à l'autre : sans ce retrait, le chatbot d'une page quittée reste affiché.
+  // Le layout reste monté d'une page à l'autre : sans ce retrait, l’assistant virtuel d'une page quittée reste affiché.
   useLayoutEffect(() => () => host?.unregister(id), [host, id]);
   if (introduction || !host) return <AuthChatbotDialogue {...props} />;
   return <div ref={anchorRef} aria-hidden="true" />;

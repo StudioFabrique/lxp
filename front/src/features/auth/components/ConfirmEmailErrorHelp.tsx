@@ -4,7 +4,7 @@ type Props = {
   message: string;
 };
 
-/** Explication et solutions, dites par le chatbot d'accueil. */
+/** Explication et solutions, dites par l’assistant virtuel d'accueil. */
 export default function ConfirmEmailErrorHelp({ message }: Props) {
   const { cause, solutions } = getConfirmEmailErrorHelp(message);
 

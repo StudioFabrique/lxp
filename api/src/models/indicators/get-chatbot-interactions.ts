@@ -4,7 +4,7 @@ import { toDayKey, type Indicator, type IndicatorContext } from "./types.ts";
 export const CHATBOT_INTERACTIONS_KEY = "chatbot_interactions";
 
 /**
- * Nombre de questions posées au chatbot sur la période.
+ * Nombre de questions posées à l’assistant virtuel sur la période.
  *
  * La source est `PromptStats` et non `ChatDialogs` : cette dernière ne
  * conserve que les vingt derniers échanges et est vidée quand l'apprenant
@@ -29,7 +29,7 @@ export default async function getChatbotInteractions(
 
   return {
     key: CHATBOT_INTERACTIONS_KEY,
-    label: "Questions posées au chatbot",
+    label: "Questions posées à l'assistant virtuel",
     value: total,
     unit: "count",
     available: true,

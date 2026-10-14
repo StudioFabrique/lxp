@@ -1,13 +1,13 @@
 import type { ChatbotHelp } from "../auth/components/AuthChatbotHostContext";
 
-/** Messages du chatbot au palier d'introduction, avant la découverte des niveaux. */
+/** Messages de l’assistant virtuel au palier d'introduction, avant la découverte des niveaux. */
 export const OVERVIEW_DIALOGUE: readonly string[] = [
   "Bonjour ! Je vais vous montrer comment ANDRIA organise vos contenus.",
   "Tout est emboîté : un organisme contient des formations, qui contiennent des parcours, et ainsi de suite jusqu'aux activités.",
   "Faites défiler vers le bas pour découvrir chaque niveau, un par un.",
 ];
 
-/** Réponses aux questions que l'utilisateur peut poser au chatbot. */
+/** Réponses aux questions que l'utilisateur peut poser à l’assistant virtuel. */
 export const INTRO_HELP: ChatbotHelp = {
   action:
     "Faites défiler vers le bas, ou utilisez les flèches à droite, pour découvrir les niveaux un par un.",
@@ -16,20 +16,20 @@ export const INTRO_HELP: ChatbotHelp = {
 };
 
 /**
- * Le chatbot est monté pendant l'ouverture animée de la pyramide et de
+ * L’assistant virtuel est monté pendant l'ouverture animée de la pyramide et de
  * l'arborescence, mais son placement, qui parcourt tout le DOM et bloque le
  * fil principal, a lieu FIRST_PLACEMENT_MS plus tard : il doit tomber à la fin
  * de l'ouverture (environ 2,3 s) pour ne pas saccader les lignes.
  */
 export const OPENING_ANIMATION_MS = 1000;
 
-/** Le chatbot se place après ce délai la première fois, puis après le second. */
+/** L’assistant virtuel se place après ce délai la première fois, puis après le second. */
 export const FIRST_PLACEMENT_MS = 1300;
 export const NEXT_PLACEMENT_MS = 350;
 /** Temps de lecture d'un message avant le suivant. */
 export const READ_MS = 2800;
 
-/** Temps entre deux explications du chatbot sur les composants d'un niveau. */
+/** Temps entre deux explications de l’assistant virtuel sur les composants d'un niveau. */
 export const GUIDE_STEP_MS = 4500;
 
 /** Points d'attente entre deux niveaux : brefs, pour ne pas ralentir la découverte. */
@@ -48,7 +48,7 @@ export const typingDuration = (message: string): number =>
 
 /**
  * Instant d'apparition de chaque message, depuis l'ouverture : placement du
- * chatbot, points d'attente, lecture, puis le message suivant.
+ * assistant virtuel, points d'attente, lecture, puis le message suivant.
  */
 export const dialogueSchedule = (messages: readonly string[]): number[] => {
   const starts: number[] = [];

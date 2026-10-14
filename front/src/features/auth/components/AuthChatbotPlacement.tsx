@@ -349,7 +349,7 @@ export default function AuthChatbotPlacement({
       host.getAnimations?.().forEach((animation) => animation.cancel());
       if (!desktop)
         host
-          .querySelector<HTMLElement>('[aria-label="Chatbot ANDRIA"]')
+          .querySelector<HTMLElement>('[aria-label="Assistant virtuel ANDRIA"]')
           ?.getAnimations?.()
           .forEach((animation) => animation.cancel());
       x.set(0);
@@ -387,7 +387,7 @@ export default function AuthChatbotPlacement({
         // The avatar rolls along the move, in the direction it travels, with the same timing.
         const turn = previous.left > target.left ? -360 : 360;
         host
-          .querySelector<HTMLElement>('[aria-label="Chatbot ANDRIA"]')
+          .querySelector<HTMLElement>('[aria-label="Assistant virtuel ANDRIA"]')
           ?.animate?.(
             [{ transform: "rotate(0deg)" }, { transform: `rotate(${turn}deg)` }],
             { duration: chatbotMoveDurationMs, easing: chatbotMoveEasing },

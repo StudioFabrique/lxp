@@ -10,7 +10,7 @@ type Source = { x: number; y: number };
 const pageAvatarSelector = `[data-chatbot-placement="page"] ${chatbotAvatarSelector}`;
 const pageBubbleSelector = '[data-chatbot-placement="page"] [data-chatbot-bubble]';
 const pollMs = 100;
-// Position identique sur ce nombre de relevés : le chatbot a fini de glisser.
+// Position identique sur ce nombre de relevés : l’assistant virtuel a fini de glisser.
 const stableChecks = 3;
 const giveUpMs = 10000;
 
@@ -26,7 +26,7 @@ const rewardConfig = {
   position: "absolute",
 } as const;
 
-/** Éclate une seule fois des confettis depuis l'avatar du chatbot affiché sur la page. */
+/** Éclate une seule fois des confettis depuis l'avatar de l’assistant virtuel affiché sur la page. */
 export default function AuthChatbotConfetti() {
   const { confetti } = useVisualPreferences();
   const reducedMotion = useReducedMotion();
@@ -35,7 +35,7 @@ export default function AuthChatbotConfetti() {
   const { reward } = useReward(rewardId, "confetti", rewardConfig);
   const enabled = confetti && !reducedMotion;
 
-  // Les confettis partent une fois le chatbot visible, immobile et son message affiché (plus de points d'attente).
+  // Les confettis partent une fois l’assistant virtuel visible, immobile et son message affiché (plus de points d'attente).
   useEffect(() => {
     if (!enabled) return;
     let last = "";

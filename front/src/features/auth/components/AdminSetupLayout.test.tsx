@@ -36,9 +36,9 @@ describe("introduction de l’accueil", () => {
     expect(container.querySelector("button")).toBeNull();
     expect(frame?.closest(".my-auto")).not.toBeNull();
     expect(frame?.closest(".items-center")?.className).toContain("w-[36rem]");
-    expect(container.querySelector('[title="Salut animé du chatbot ANDRIA"]')).toBeNull();
+    expect(container.querySelector('[title="Salut animé de l’assistant virtuel ANDRIA"]')).toBeNull();
     act(() => vi.advanceTimersByTime(1000));
-    expect(container.querySelector('[title="Salut animé du chatbot ANDRIA"]')).not.toBeNull();
+    expect(container.querySelector('[title="Salut animé de l’assistant virtuel ANDRIA"]')).not.toBeNull();
     expect(container.querySelector('[role="status"]')).not.toBeNull();
     act(() => vi.advanceTimersByTime(authIntroDurationMs - 1001));
     expect(container.querySelector("h1")).toBeNull();
@@ -58,7 +58,7 @@ describe("introduction de l’accueil", () => {
     expect(container.querySelector("button")).not.toBeNull();
   });
 
-  it("confie les instructions de configuration au chatbot après sa présentation", () => {
+  it("confie les instructions de configuration à l’assistant virtuel après sa présentation", () => {
     const onNext = vi.fn();
     act(() => root.render(
       <MemoryRouter>
@@ -72,7 +72,7 @@ describe("introduction de l’accueil", () => {
     const message = Array.from(document.querySelectorAll("[data-chatbot-bubble]")).find(span => span.textContent?.startsWith("Configurez votre plateforme"));
     expect(message?.textContent).toBe("Configurez votre plateforme en créant le premier compte. Il vous permettra de gérer les paramètres de l’instance et les accès à ANDRIA.");
     expect(container.querySelector("p")?.textContent ?? "").not.toContain("Configurez votre plateforme");
-    expect(message?.parentElement?.parentElement?.querySelector('[aria-label="Chatbot ANDRIA"]')).not.toBeNull();
+    expect(message?.parentElement?.parentElement?.querySelector('[aria-label="Assistant virtuel ANDRIA"]')).not.toBeNull();
     act(() => Array.from(container.querySelectorAll("button")).find(button => button.textContent?.includes("Commencer"))?.click());
     expect(onNext).toHaveBeenCalledOnce();
   });

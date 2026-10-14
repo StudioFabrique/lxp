@@ -11,7 +11,7 @@ type Props = {
   card: IntroCard;
   /** Rang du niveau de la carte dans `INTRO_LEVELS`. */
   index: number;
-  /** Composant expliqué par le chatbot : -1 quand il parle du niveau lui-même. */
+  /** Composant expliqué par l’assistant virtuel : -1 quand il parle du niveau lui-même. */
   activeDetail: number;
   /** Ligne des éléments enfants survolée, aussi dans la pile 3D : -1 si aucune. */
   highlightedRow?: number;

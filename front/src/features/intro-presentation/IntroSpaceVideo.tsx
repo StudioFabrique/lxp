@@ -21,7 +21,7 @@ const SPACE_LABELS: Record<IntroSpaceContent["space"], string> = {
 };
 
 /**
- * Joue la séquence Hyperframes de construction de l'interface (avec le chatbot)
+ * Joue la séquence Hyperframes de construction de l'interface (avec l’assistant virtuel)
  * limitée à l'espace du rôle détecté, et prévient à sa fin.
  */
 const IntroSpaceVideo = ({ content, onEnded }: Props) => {
@@ -43,7 +43,7 @@ const IntroSpaceVideo = ({ content, onEnded }: Props) => {
     (action: "initialize" | "color") => {
       // Le contenu du rôle précède toujours le démarrage : la séquence le lit avant sa première image.
       if (action === "initialize") {
-        // Le film se termine sur le bouton du chatbot à la place qu'il aura dans l'application.
+        // Le film se termine sur le bouton de l’assistant virtuel à la place qu'il aura dans l'application.
         const frame = frameRef.current?.getBoundingClientRect();
         frameRef.current?.contentWindow?.postMessage(
           {

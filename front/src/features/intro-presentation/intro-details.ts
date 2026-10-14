@@ -14,7 +14,7 @@ import type { IntroLevelId } from "./intro-levels";
 
 /**
  * Composant d'un niveau qui n'est pas un élément enfant : groupes, tags,
- * objectifs, etc. Le chatbot les explique un à un.
+ * objectifs, etc. L’assistant virtuel les explique un à un.
  */
 export type IntroDetailDefinition = {
   /** Clé de la donnée réelle dans `IntroSource.details`, sous la forme `niveau.détail`. */
@@ -23,7 +23,7 @@ export type IntroDetailDefinition = {
   icon: LucideIcon;
   /** Exemples affichés quand l'utilisateur n'a rien de réel à montrer. */
   placeholders: readonly string[];
-  /** Dit par le chatbot quand il se place à côté de ce composant. */
+  /** Dit par l’assistant virtuel quand il se place à côté de ce composant. */
   explanation: string;
 };
 

@@ -39,7 +39,7 @@ import type Skill from "../../../utils/interfaces/skill";
 import { readModuleContentPosition, saveModuleContentPosition } from "../helpers/module-content-position";
 
 const useModuleContent = () => {
-  // Le contexte du chatbot
+  // Le contexte de l’assistant virtuel
   const { setCurrentActivity } = useContext(ChatbotContext);
   const { user } = useContext(AuthContext);
   const isStudent = getUserArea(user) === "student";
@@ -989,7 +989,7 @@ const useModuleContent = () => {
     });
   }, [moduleId, positionStorageKey, selectedLessonId, selectedActivityId, state.module?.id, state.isSelectedLessonLoading, state.mode]);
 
-  // If a activity is selected, select the title of the current course and set the chatbot activity name
+  // If a activity is selected, select the title of the current course and set the virtual assistant activity name
   useEffect(() => {
     if (
       state.selectedLesson?.courseId &&
@@ -1001,7 +1001,7 @@ const useModuleContent = () => {
         (course) => course.id === state.selectedLesson?.courseId,
       );
 
-      // Attribue le titre du cours au chatbot
+      // Attribue le titre du cours à l’assistant virtuel
       if (currentCourse?.title) {
         setCurrentActivity((prev) => ({
           ...prev,

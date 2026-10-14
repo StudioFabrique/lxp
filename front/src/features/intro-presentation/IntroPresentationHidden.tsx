@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 
 import { useIntroPresentation } from "./useIntroPresentation";
 
-/** Masque son contenu quand la présentation a son propre chatbot : celui, flottant, de l'application. */
+/** Masque son contenu quand la présentation a son propre assistant virtuel : celui, flottant, de l'application. */
 const IntroPresentationHidden = ({ children }: PropsWithChildren) => {
   const { isChatbotHidden } = useIntroPresentation();
 

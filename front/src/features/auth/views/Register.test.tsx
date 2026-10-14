@@ -8,7 +8,7 @@ import PasswordUpdateHome from "../components/PasswordUpdateHome";
 import ThemeToggle from "../../../components/buttons/ThemeToggle";
 import { ThemeProvider } from "../../../store/ThemeProvider";
 
-// Le chatbot flottant dépend du placement dans la page : on rend son message en place.
+// L’assistant virtuel flottant dépend du placement dans la page : on rend son message en place.
 vi.mock("../components/AuthOnboardingChatbot", () => ({
   default: ({ message }: { message?: ReactNode }) => <div>{message}</div>,
 }));

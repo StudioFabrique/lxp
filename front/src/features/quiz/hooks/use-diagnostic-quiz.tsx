@@ -401,7 +401,7 @@ export default function useDiagnosticQuiz(
   useEffect(() => {
     setForceHideChatbot(isOpen);
 
-    // Le destructeur permet de remettre la visibilité du chatbot par défaut
+    // Le destructeur permet de remettre la visibilité de l’assistant virtuel par défaut
     // en changeant de vue. Évite que ça reste bloqué.
     return () => setForceHideChatbot(false);
   }, [isOpen, setForceHideChatbot]);

@@ -9,6 +9,7 @@
 }
 
 @plugin "daisyui" {
+    logs: false;
     exclude: rootscrollgutter;
     themes:
         /* Thèmes clairs */

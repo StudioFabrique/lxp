@@ -32,7 +32,7 @@ export default function HeaderChatbot({
           <Bot className="w-full h-full object-contain" />
         </div>
         <div>
-          <h2 className="text-lg font-bold leading-tight">Chatbot ANDRIA</h2>
+          <h2 className="text-lg font-bold leading-tight">Assistant virtuel ANDRIA</h2>
           <p className="text-xs opacity-80">Assistant virtuel</p>
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function HeaderChatbot({
           type="button"
           className="btn btn-ghost btn-sm text-primary-content hover:bg-primary-content/10 btn-circle"
           onClick={onClose}
-          aria-label="Fermer le chatbot"
+          aria-label="Fermer l’assistant virtuel"
         >
           <X className="w-5 h-5" />
         </button>

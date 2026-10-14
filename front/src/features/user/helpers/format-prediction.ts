@@ -231,7 +231,7 @@ const MODEL_INDICATOR_LABELS: Record<string, string> = {
   days_since_last_activity: "Jours depuis la dernière activité",
   time_on_content: "Temps passé sur les contenus",
   quiz_interaction_count: "Quiz lancés",
-  chatbot_proxy: "Questions posées au chatbot",
+  chatbot_proxy: "Questions posées à l’assistant virtuel",
   score_evolution: "Évolution des résultats",
   assessment_count: "Évaluations rendues sur la période",
   cumul_assessments: "Évaluations rendues au total",

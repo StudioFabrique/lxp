@@ -1,5 +1,5 @@
 /**
- * Bouton du chatbot de l'application (`ChatbotButton`) : pastille de `w-16`, collée à
+ * Bouton de l’assistant virtuel de l'application (`ChatbotButton`) : pastille de `w-16`, collée à
  * `right-6` et `bottom-6` de la fenêtre. La séquence 3D s'y termine par un dézoom.
  */
 const CHATBOT_BUTTON_SIZE = 64;

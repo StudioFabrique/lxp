@@ -23,5 +23,12 @@ export const logger = winston.createLogger({
     }),
     json()
   ),
-  transports: [new winston.transports.Console(), transportInfo],
+  transports: [
+    // En développement, la console ne reçoit que les avertissements et erreurs ;
+    // le détail (info, http) reste disponible dans les fichiers de logs.
+    new winston.transports.Console({
+      level: process.env.NODE_ENV === "development" ? "warn" : "http",
+    }),
+    transportInfo,
+  ],
 });

@@ -19,7 +19,7 @@ export type IntroPresentationContextValue = {
   hasJustRevealed: boolean;
   sidebarPhase: SidebarPhase;
   setSidebarExit: (exit: SidebarExit) => void;
-  /** Vrai quand le chatbot de l'application doit laisser la place à celui de la présentation. */
+  /** Vrai quand l’assistant virtuel de l'application doit laisser la place à celui de la présentation. */
   isChatbotHidden: boolean;
   setChatbotHidden: (hidden: boolean) => void;
   /** Rouvre la présentation (« Revoir la présentation »). */

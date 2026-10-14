@@ -10,7 +10,7 @@ import { ensureDatabaseUrls } from "./database-urls.ts";
 // `dotenv -e .env.test` des scripts npm. Charger aussi `.env` ferait dépendre
 // le résultat des tests de la configuration locale du développeur.
 if (process.env.NODE_ENV !== "test") {
-  dotenv.config();
+  dotenv.config({ quiet: true });
 }
 
 ensureDatabaseUrls(process.env);

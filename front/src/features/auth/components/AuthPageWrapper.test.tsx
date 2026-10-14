@@ -17,14 +17,14 @@ describe("dialogue des étapes de configuration", () => {
     vi.restoreAllMocks();
   });
 
-  it("présente la description dans une bulle reliée au chatbot", () => {
+  it("présente la description dans une bulle reliée à l’assistant virtuel", () => {
     act(() => root.render(<AuthPageWrapper variant="setup" title="Activer le compte root" description="Cette clé sécurise votre instance."><input aria-label="Clé" /></AuthPageWrapper>));
     expect(container.querySelector("h1")?.textContent).toBe("Activer le compte root");
     expect(container.querySelector("p")).toBeNull();
     const bubble = document.querySelector("[data-chatbot-bubble]");
     expect(bubble?.textContent).toBe("Cette clé sécurise votre instance.");
     expect(bubble?.querySelector('[aria-hidden="true"]')).not.toBeNull();
-    expect(document.querySelector('iframe[title="Salut animé du chatbot ANDRIA"]')).not.toBeNull();
+    expect(document.querySelector('iframe[title="Salut animé de l’assistant virtuel ANDRIA"]')).not.toBeNull();
     expect(container.querySelector('[data-chatbot-placement="page"]')).toBeNull();
     expect(document.querySelector('[data-chatbot-placement="page"]')?.parentElement).toBe(document.body);
     expect(container.querySelector('input[aria-label="Clé"]')).not.toBeNull();

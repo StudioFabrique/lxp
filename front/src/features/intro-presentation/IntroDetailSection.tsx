@@ -4,7 +4,7 @@ import IntroSectionFrame from "./IntroSectionFrame";
 
 type Props = {
   detail: IntroDetail;
-  /** Vrai quand le chatbot est en train d'expliquer ce composant. */
+  /** Vrai quand l’assistant virtuel est en train d'expliquer ce composant. */
   isActive: boolean;
 };
 

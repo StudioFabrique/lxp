@@ -6,9 +6,9 @@ import { cn } from "../../utils/cn";
 type Props = {
   icon: LucideIcon;
   title: string;
-  /** Vrai quand le chatbot est en train d'expliquer cette partie. */
+  /** Vrai quand l’assistant virtuel est en train d'expliquer cette partie. */
   isActive?: boolean;
-  /** Identifie un composant du niveau, pour que le chatbot se place à côté. */
+  /** Identifie un composant du niveau, pour que l’assistant virtuel se place à côté. */
   detailId?: string;
   className?: string;
 };

@@ -16,10 +16,13 @@ import {
 } from "./services/content-availability-notifications.ts";
 import { initializeDropoutAnalysis } from "./services/dropout-analysis.ts";
 
+// Couleurs du bandeau de démarrage, désactivées quand NO_COLOR est défini.
+const ansi = (code: string, text: string) =>
+  process.env.NO_COLOR ? text : `\x1b[${code}m${text}\x1b[0m`;
+
 let server: http.Server | https.Server;
 
 // Node comme SERVEUR (pour le frontend)
-console.log("🌐 Starting HTTP server for frontend...");
 server = http.createServer(app);
 
 export const io = new Server(server, {
@@ -47,7 +50,6 @@ io.use(async (socket, next) => {
 mongoInit();
 
 async function mongoInit() {
-  console.log("Connecting to MongoDB...");
   await mongoConnect();
   await normalizeUserRoles();
   await removeLegacyInterfaceRbac();
@@ -57,7 +59,22 @@ async function mongoInit() {
   await initializeContentAvailabilityNotifications();
 
   server.listen(PORT, () => {
-    console.log(`🚀 Serveur démarré sur  http//localhost:${PORT}`);
+    const technologies = "Express / TypeScript / PostgreSQL / MongoDB";
+    const border = ansi("2", "─".repeat(technologies.length));
+    console.log(
+      [
+        "",
+        `  ${ansi("1;30;42", " API ")} ${ansi("32", "données et authentification")}`,
+        "",
+        `  ${border}`,
+        `  ${ansi("2", technologies)}`,
+        `  ${border}`,
+        "",
+        `  ${ansi("1;32", `http://localhost:${PORT}/`)}`,
+        `  ${ansi("2", "Cmd/Ctrl + clic sur le lien pour vérifier que l'API répond")}`,
+        "",
+      ].join("\n"),
+    );
   });
 
   // Le temps réel est coupé en démonstration : ses gestionnaires écrivent en

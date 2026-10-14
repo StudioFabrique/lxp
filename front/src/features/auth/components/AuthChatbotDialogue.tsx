@@ -72,7 +72,7 @@ export default function AuthChatbotDialogue({
     });
     return () => cancelAnimationFrame(frame);
   }, [stepId, typingStep]);
-  // Les points restent affichés typingMs après l'apparition du chatbot, pas depuis le montage :
+  // Les points restent affichés typingMs après l'apparition de l’assistant virtuel, pas depuis le montage :
   // il est caché jusqu'à son placement.
   useEffect(() => {
     if (!typingStep || stepId === undefined) return;

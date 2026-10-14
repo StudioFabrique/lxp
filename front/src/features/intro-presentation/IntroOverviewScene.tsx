@@ -42,7 +42,7 @@ type Props = {
   onComplete: () => void;
 };
 
-/** Palier 0 : présentation et chatbot ; paliers 1 à 7 : un niveau chacun. */
+/** Palier 0 : présentation et assistant virtuel ; paliers 1 à 7 : un niveau chacun. */
 const LAST_STEP = INTRO_PYRAMID_LEVEL_COUNT;
 /** Distance de défilement qui sépare deux paliers, en hauteurs de la zone. */
 const STEP_HEIGHT_CQH = 70;
@@ -53,7 +53,7 @@ const pad = (value: number) => String(value).padStart(2, "0");
 const SETTLE_MS = 800;
 /** Délai entre deux niveaux, où seul un léger mouvement de la pile subsiste. */
 const NEXT_LEVEL_MS = 120;
-/** Zone réservée au chatbot, sous le composant qu'il explique. */
+/** Zone réservée à l’assistant virtuel, sous le composant qu'il explique. */
 const PANEL_WIDTH = 560;
 const PANEL_HEIGHT = 200;
 /** Hauteur de la ligne du titre de la scène, en haut de la zone. */
@@ -72,11 +72,11 @@ const MIN_SIDE_BY_SIDE_WIDTH = 720;
  *
  * Au palier 0, aucun niveau n'est sélectionné : la pyramide est vue du dessus
  * (presque en 2D) devant l'encadré « Organisme de formation », dont le nom est
- * affiché en grand, et le chatbot dialogue. La zone démarre en haut de son
+ * affiché en grand, et l’assistant virtuel dialogue. La zone démarre en haut de son
  * défilement et on progresse en défilant vers le bas. La progression du scroll
  * pilote une timeline GSAP : la pile s'incline
  * puis se range sur le côté, et le détail du niveau se déploie depuis sa plaque
- * sans toucher aux autres plaques. Le chatbot explique le niveau puis chacun de
+ * sans toucher aux autres plaques. L’assistant virtuel explique le niveau puis chacun de
  * ses composants. Les boutons et le clavier déplacent la même zone, il n'y a
  * donc qu'une source de vérité.
  */
@@ -118,7 +118,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
 
   const columnRef = useRef<HTMLDivElement>(null);
   const formationSelectorRef = useRef<HTMLDivElement>(null);
-  // Palier une fois la pyramide immobile : le chatbot ne se déplace qu'alors,
+  // Palier une fois la pyramide immobile : l’assistant virtuel ne se déplace qu'alors,
   // vers la plaque du niveau, et non pendant le défilement.
   const [settledStep, setSettledStep] = useState(0);
   // Élément enfant survolé, dans la pile 3D ou la liste : il ne vaut que pour son palier.
@@ -139,7 +139,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
     return () => clearTimeout(timer);
   }, [activeStep]);
 
-  // Le chatbot attend la fin de l'ouverture animée pour ne pas la saccader.
+  // L’assistant virtuel attend la fin de l'ouverture animée pour ne pas la saccader.
   const [isChatbotReady, setIsChatbotReady] = useState(false);
   useEffect(() => {
     const timer = setTimeout(
@@ -149,7 +149,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
     return () => clearTimeout(timer);
   }, []);
 
-  // Le chatbot explique le niveau, puis chacun de ses composants l'un après l'autre.
+  // L’assistant virtuel explique le niveau, puis chacun de ses composants l'un après l'autre.
   const settledCard = settledStep >= 1 ? cards[settledStep] : undefined;
   const guideStep = useIntroGuide(
     (settledCard?.details.length ?? 0) + 1,
@@ -163,7 +163,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       : undefined;
   const isDetailShown = settledStep >= 1 && activeStep >= 1;
 
-  // Au palier d'un niveau, la zone du chatbot se pose sous le composant expliqué
+  // Au palier d'un niveau, la zone de l’assistant virtuel se pose sous le composant expliqué
   // ; au palier 0, elle reprend sa place de départ.
   useLayoutEffect(() => {
     const column = columnRef.current;
@@ -190,7 +190,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
           margin: 0,
         });
       } else if (column && title) {
-        // Introduction : la zone du chatbot occupe le vide entre la ligne du titre de
+        // Introduction : la zone de l’assistant virtuel occupe le vide entre la ligne du titre de
         // la scène et le titre de l'organisme.
         const columnRect = column.getBoundingClientRect();
         const titleRect = title.getBoundingClientRect();
@@ -576,7 +576,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               ref={columnRef}
               className="relative flex min-w-0 flex-col items-center self-stretch"
             >
-              {/* Les explications des niveaux sont dites par le chatbot. */}
+              {/* Les explications des niveaux sont dites par l’assistant virtuel. */}
               {isCompactSidebar ? (
                 <div className="min-h-24 w-full shrink-0" />
               ) : (
@@ -584,7 +584,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   <IntroSceneHeading className="text-center" />
                 </div>
               )}
-              {/* Zone réservée au chatbot : le calcul de placement de l'onboarding
+              {/* Zone réservée à l’assistant virtuel : le calcul de placement de l'onboarding
                   ignore la pyramide 3D et le restreint à l'espace de ce panneau,
                   vide entre le titre et la pyramide. */}
               <div
@@ -636,7 +636,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               {isDetailShown && settledCard ? (
                 <>
                   <div className={cn("intro-detail-wrap mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
-                      // Sous le titre de la colonne ; le chatbot se place dessous.
+                      // Sous le titre de la colonne ; l’assistant virtuel se place dessous.
                       isCompactSidebar ? "lg:top-0" : "lg:top-32",
                     )}>
                     <IntroLevelDetail

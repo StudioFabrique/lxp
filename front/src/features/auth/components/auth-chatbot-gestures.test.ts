@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { chatbotGestures, chooseChatbotGesture } from "./auth-chatbot-gestures";
 
-describe("gestes du chatbot", () => {
+describe("gestes de l’assistant virtuel", () => {
   it("propose quatre animations différentes", () => {
     expect(new Set([0, .25, .5, .75].map(random => chooseChatbotGesture(null, random))).size).toBe(4);
   });

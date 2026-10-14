@@ -5,7 +5,7 @@ type Props = PropsWithChildren<{
   title: ReactNode;
   titleAccessory?: ReactNode;
   description?: ReactNode;
-  /** Fait précéder la description du chatbot par les trois points d'attente (en ms). */
+  /** Fait précéder la description de l’assistant virtuel par les trois points d'attente (en ms). */
   descriptionTypingMs?: number;
   variant?: "default" | "setup";
 }>;
@@ -44,7 +44,7 @@ const AuthPageWrapper = ({
   }
 
   return (
-    // flex-1 : la section occupe toute la colonne pour que le vide sous le formulaire fasse partie de la zone du chatbot.
+    // flex-1 : la section occupe toute la colonne pour que le vide sous le formulaire fasse partie de la zone de l’assistant virtuel.
     <section className="flex w-full flex-1 flex-col py-10">
       <header className="text-center mb-5">
         <div className="flex items-start justify-center gap-2">

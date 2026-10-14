@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AuthOnboardingChatbot from "./AuthOnboardingChatbot";
 import AuthChatbotProvider from "./AuthChatbotProvider";
 
-describe("questions radiales du chatbot", () => {
+describe("questions radiales de l’assistant virtuel", () => {
   let container: HTMLDivElement;
   let root: Root;
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe("questions radiales du chatbot", () => {
   it("ouvre trois questions séparées et anime le personnage au choix d’une question", async () => {
     vi.useFakeTimers();
     act(() => root.render(<section><AuthOnboardingChatbot introduction={false} message="Indiquez votre clé d’activation." /></section>));
-    const avatar = document.querySelector<HTMLButtonElement>('button[aria-label="Afficher les questions d’aide du chatbot ANDRIA"]')!;
+    const avatar = document.querySelector<HTMLButtonElement>('button[aria-label="Afficher les questions d’aide de l’assistant virtuel ANDRIA"]')!;
     const frame = document.querySelector<HTMLIFrameElement>("iframe")!;
     const replay = vi.spyOn(frame.contentWindow!, "postMessage");
     expect(document.querySelector('ul[aria-label="Questions d’aide"]')).toBeNull();
@@ -63,12 +63,12 @@ describe("questions radiales du chatbot", () => {
     vi.useFakeTimers();
     act(() => root.render(<AuthChatbotProvider><section><AuthOnboardingChatbot key="activation" introduction={false} message="Activez votre compte." /></section></AuthChatbotProvider>));
     await act(async () => { await vi.advanceTimersByTimeAsync(50); });
-    const actor = document.querySelector('[aria-label="Chatbot ANDRIA"]');
+    const actor = document.querySelector('[aria-label="Assistant virtuel ANDRIA"]');
     const frame = actor?.querySelector("iframe");
     expect(frame).not.toBeNull();
     act(() => root.render(<AuthChatbotProvider><section><AuthOnboardingChatbot key="profil" introduction={false} message="Complétez votre profil." /></section></AuthChatbotProvider>));
     await act(async () => { await vi.advanceTimersByTimeAsync(50); });
-    expect(document.querySelector('[aria-label="Chatbot ANDRIA"]')).toBe(actor);
+    expect(document.querySelector('[aria-label="Assistant virtuel ANDRIA"]')).toBe(actor);
     expect(actor?.querySelector("iframe")).toBe(frame);
     expect(document.querySelector('[data-chatbot-bubble]')?.textContent).toBe("Complétez votre profil.");
   });

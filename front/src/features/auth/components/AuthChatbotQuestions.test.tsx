@@ -5,7 +5,7 @@ import AuthChatbotQuestions from "./AuthChatbotQuestions";
 
 afterEach(() => vi.restoreAllMocks());
 
-describe("disposition des questions du chatbot", () => {
+describe("disposition des questions de l’assistant virtuel", () => {
   it.each([390, 1600])("garde les trois pilules séparées près du bord supérieur (%s px)", width => {
     vi.spyOn(window, "innerWidth", "get").mockReturnValue(width);
     vi.spyOn(window, "innerHeight", "get").mockReturnValue(844);

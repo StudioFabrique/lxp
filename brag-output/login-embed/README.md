@@ -2,14 +2,14 @@
 
 Les tuiles jouent les scènes de la version **enregistrée dans Hyperframes**. Elles sont intégrées sous forme d’animations vectorielles, avec le DOM et la timeline GSAP du montage. Le lecteur est local ; il ne charge pas le Studio et n’effectue aucun appel IA/API.
 
-| Qualité | Scènes |
-|---|---|
-| Accessible | Niveaux pédagogiques et thèmes |
-| Novatrice | Chatbot contextualisé et pilotage IA |
-| Dynamique | Éditeur / activités et quiz |
-| Réactive | Calendrier, ressources et accompagnement / décrochage |
-| Intuitive | Sidebar 3D, dashboards progressifs, structure pédagogique et organisation |
-| Adaptative | Reprise, avancement et profil d’apprentissage |
+| Qualité    | Scènes                                                                    |
+| ---------- | ------------------------------------------------------------------------- |
+| Accessible | Niveaux pédagogiques et thèmes                                            |
+| Novatrice  | Assistant virtuel contextualisé et pilotage IA                            |
+| Dynamique  | Éditeur / activités et quiz                                               |
+| Réactive   | Calendrier, ressources et accompagnement / décrochage                     |
+| Intuitive  | Sidebar 3D, dashboards progressifs, structure pédagogique et organisation |
+| Adaptative | Reprise, avancement et profil d’apprentissage                             |
 
 Chaque sélection termine sur sa dernière scène de fonctionnalité, sans séquence de logo. Après 0,3 seconde, le panneau tourne automatiquement vers la qualité suivante. Avec le mouvement réduit, la dernière scène s’affiche immédiatement et la rotation automatique est désactivée.
 

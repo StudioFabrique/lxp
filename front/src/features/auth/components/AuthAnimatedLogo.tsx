@@ -81,12 +81,12 @@ export default function AuthAnimatedLogo({ className, color, transparent = false
       className={cn("relative w-64 max-w-full overflow-hidden text-primary outline-primary-content", mode === "logo" ? cn("aspect-[900/280]", !transparent && "bg-base-100") : "aspect-square bg-transparent", className)}
       style={{ ...(color ? { color } : {}), ...(transparent ? { accentColor: "var(--color-base-100)" } : {}) }}
       role="img"
-      aria-label={mode === "logo" ? "logo ANDRIA" : "Chatbot ANDRIA"}
+      aria-label={mode === "logo" ? "logo ANDRIA" : "Assistant virtuel ANDRIA"}
     >
       <iframe
         ref={frameRef}
         src={`/presentations/andria/brand.html?mode=${mode}&gesture=${initialGesture}`}
-        title={mode === "logo" ? "Animation du logo ANDRIA" : "Salut animé du chatbot ANDRIA"}
+        title={mode === "logo" ? "Animation du logo ANDRIA" : "Salut animé de l’assistant virtuel ANDRIA"}
         className={cn("pointer-events-none relative size-full border-0", !ready && "opacity-0")}
         tabIndex={-1}
         aria-hidden="true"

@@ -29,7 +29,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
   // Les titres réels sont attendus, mais jamais plus de quelques secondes.
   const isReady = useIntroSpaceReady(isLoading);
   const rootRef = useRef<HTMLElement>(null);
-  // Position et geste du chatbot, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
+  // Position et geste de l’assistant virtuel, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
   const memory = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: null });
   const chatbotMemory = useMemo<ChatbotMemoryAccess>(
     () => ({
@@ -43,7 +43,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
     [],
   );
 
-  // Pendant toute la présentation, son chatbot remplace celui de l'application.
+  // Pendant toute la présentation, son assistant virtuel remplace celui de l'application.
   useEffect(() => {
     setChatbotHidden(true);
     return () => setChatbotHidden(false);

@@ -10,7 +10,7 @@ describe("embedded presentation initialization", () => {
   afterEach(() => document.body.replaceChildren());
 
   it.each([[1698, 828], [1000, 760], [390, 844], [1920, 1080]])(
-    "keeps the final chatbot fully inside the film at %s × %s",
+    "keeps the final virtual assistant fully inside the film at %s × %s",
     (width, height) => {
       const root = document.createElement("div");
       root.id = "root";
@@ -94,7 +94,7 @@ describe("embedded presentation initialization", () => {
     assertCentered();
   });
 
-  it.each([[true, false, false], [false, false, false], [true, true, false], [false, true, false], [true, false, true], [false, false, true]])("hides the provisional scene until initialization (autoplay: %s, logo: %s, chatbot: %s)", (autoplay, logoOnly, chatbotOnly) => {
+  it.each([[true, false, false], [false, false, false], [true, true, false], [false, true, false], [true, false, true], [false, false, true]])("hides the provisional scene until initialization (autoplay: %s, logo: %s, assistant virtuel: %s)", (autoplay, logoOnly, chatbotOnly) => {
     const stylesheet = document.createElement("style");
     stylesheet.textContent = styles;
     const root = document.createElement("div");

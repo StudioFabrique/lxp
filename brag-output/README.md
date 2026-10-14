@@ -47,7 +47,7 @@ Le nouvel export MP4 attend la revue de cette timeline, conformément au workflo
 
 Les sources actuelles reprennent les retouches enregistrées dans Studio. `presentation.py` reste le générateur historique : ne pas le relancer sur ces sources. Après une retouche Studio, réconcilier les sources avant `build.py`, puis lancer `python3 brag-output/login-embed/export.py` depuis la racine.
 
-Dernières retouches : logo continu révélé par un masque de cases animé sans traits visibles, sept niveaux pédagogiques en 19 secondes (rythme ralenti ; les scènes suivantes commencent 5 s plus tard que les temps cités plus bas), ouverts par une pyramide 3D des niveaux (3,2 à 6,8 s) et un rail en escalier qui matérialise l’imbrication, puis parcourus carte par carte : chaque carte enfant sort de la ligne cliquée, les parents reculent en pile derrière elle et le niveau courant du rail s’avance en 3D sur une couche de verre, icône Rocket pour Parcours, morphing des humeurs avec curseur et profondeur, calendrier sans Timeline, suggestion de quiz dans le flux du chatbot, curseurs contextuels sur les scènes interactives.
+Dernières retouches : logo continu révélé par un masque de cases animé sans traits visibles, sept niveaux pédagogiques en 19 secondes (rythme ralenti ; les scènes suivantes commencent 5 s plus tard que les temps cités plus bas), ouverts par une pyramide 3D des niveaux (3,2 à 6,8 s) et un rail en escalier qui matérialise l’imbrication, puis parcourus carte par carte : chaque carte enfant sort de la ligne cliquée, les parents reculent en pile derrière elle et le niveau courant du rail s’avance en 3D sur une couche de verre, icône Rocket pour Parcours, morphing des humeurs avec curseur et profondeur, calendrier sans Timeline, suggestion de quiz dans le flux de l'assistant virtuel, curseurs contextuels sur les scènes interactives.
 
 La scène `dashboards` construit les espaces apprenant et pédagogique pendant 13 secondes : sidebar réelle pré-rendue via `SidebarItem` et `sidebarItems`, passage compact/complet, caméra continue sans rebonds, cartes dévoilées progressivement. Les badges DaisyUI indiquent les rôles avec les icônes Lucide du LXP. Les clics superflus ont été retirés ; les clics du chatbot et du calendrier ouvrent des aperçus. La hiérarchie comporte six clics sur la droite, avec des lignes différentes et de courts déplacements locaux.
 
@@ -58,7 +58,6 @@ Le dashboard est présenté sans cadre global, comme le `PageWrapper` du LXP. Le
 La fin du dashboard reprend la bulle d’aide native à sa propre échelle, avec le texte original. Un seul clignement bref utilise deux masques SVG centrés sur les yeux natifs, sans déplacer ni tourner leurs tracés. Les cartes se construisent avec un décalage de 350 ms.
 
 Les pauses finales des scènes éditeur, évaluation, devoirs, organisation, progression, accompagnement et consommation IA sont raccourcies par `compactTime`, sans accélérer les mouvements. `sourceSceneClocks` garde les coordonnées temporelles du montage pour les interactions et les halos ; les métadonnées HTML portent les temps de présentation. L’avatar de la scène chatbot reprend le salut et le clignement du lanceur. La prise en compte de l’alerte utilise les couleurs `success` et affiche sa confirmation.
-
 
 Trois nouvelles séquences de 16 secondes sont intégrées aux qualités Collective,
 Coordonnée et Organisée : `groups` (96,5 s), `trainers` (112,5 s) et `tags` (128,5 s).
@@ -77,7 +76,6 @@ final et propose Rejouer dès le début de celle-ci. La sélection de texte dans
 scène assistant utilise un curseur de texte et un surlignage progressif avant
 l’apparition du bouton Demander à l’IA. Tous ces comportements restent hors ligne.
 
-
 Les séquences Connectée (`emails`, 144,5 s, 18 s) et Personnalisable (`instance`,
 162,5 s, 18 s) montrent les récapitulatifs hebdomadaires/mensuels avec un seuil
 critique, l’annonce d’une formation disponible, puis l’identité de l’organisme,
@@ -85,7 +83,6 @@ les thèmes accessibles et les six modèles email. Les paramètres de l’instan
 sont identifiés comme une fonction de superadministration. Les données et emails
 sont des exemples statiques ; aucun envoi, appel IA ou changement de configuration
 n’est déclenché par le lecteur.
-
 
 La dernière qualité Encourageante utilise `accomplishments` (180,5 s, 16 s).
 L’équipe pédagogique félicite un cours terminé, Camille reçoit le message
@@ -120,7 +117,7 @@ La scène `dashboards` commence par la sidebar compacte en verre liquide (une
 plaque par couche de profondeur, sans jointure), qui se pose comme une plaque
 puis s’étend avant de retrouver l’apparence réelle ; les cartes du tableau de
 bord se posent ensuite une à une, vues sous l’angle de la pyramide des niveaux,
-puis l’interface se redresse face au lecteur et le chatbot arrive en dernier.
+puis l’interface se redresse face au lecteur et l'assistant virtuel arrive en dernier.
 La scène `care` s’ouvre sous ce même angle avant de se redresser ; son curseur
 d’humeur glisse en continu (`step` rendu continu pour l’animation seulement).
 La suite de la scène est resserrée d’environ 10 % pour conserver ses 13 s.

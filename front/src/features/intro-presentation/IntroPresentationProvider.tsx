@@ -56,7 +56,7 @@ export const IntroPresentationProvider = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isRoleRevealOpen, setIsRoleRevealOpen] = useState(false);
   const [isChatbotHidden, setChatbotHidden] = useState(false);
-  // Le temps que l'interface réelle remplace la séquence : le chatbot est déjà en place, sans entrée animée.
+  // Le temps que l'interface réelle remplace la séquence : l’assistant virtuel est déjà en place, sans entrée animée.
   const [hasJustRevealed, setHasJustRevealed] = useState(false);
   useEffect(() => {
     if (!hasJustRevealed) return;
@@ -128,7 +128,7 @@ export const IntroPresentationProvider = ({
     hasJustRevealed,
     sidebarPhase,
     setSidebarExit,
-    // Pendant la découverte du rôle, la séquence joue son propre chatbot.
+    // Pendant la découverte du rôle, la séquence joue son propre assistant virtuel.
     isChatbotHidden: isRoleRevealOpen || (isOpen && isChatbotHidden),
     setChatbotHidden,
     open: () => setReopenedAt(pathname),
