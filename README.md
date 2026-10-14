@@ -30,16 +30,12 @@
 
 &nbsp;
 
-<div align="center">
-
 > [!NOTE]
 > **Bon à savoir**
 >
 > Le **service IA** n'est pas dans ce dépôt. Il se trouve dans le dépôt privé
 > du studio
 > [`StudioFabrique/ANDRIA-IA`](https://github.com/StudioFabrique/ANDRIA-IA).
-
-</div>
 
 ## Démarrage rapide
 
@@ -64,16 +60,12 @@ npm run init
 
 &nbsp;
 
-<div align="center">
-
 > [!NOTE]
 > **Prêt en moins de 2 minutes**
 >
 > Avec une connexion internet stable, l'application est lancée en mode
 > développement en **moins de 2 minutes**, du clonage du dépôt à l'ouverture de
 > l'interface.
-
-</div>
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#8288;Service&#8288;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#8288;Adresse&#8288;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
@@ -91,16 +83,12 @@ npm run init
 
 &nbsp;
 
-<div align="center">
-
 > [!IMPORTANT]
 > **À ne pas oublier**
 >
 > Saisissez cette clé dans `/init`. Un lien est alors envoyé à l'adresse
 > indiquée. Le compte root reste **inactif** tant que ce lien n'a pas été
 > ouvert.
-
-</div>
 
 Lors des initialisations suivantes, `npm run init` vérifie et réutilise chaque
 dossier `node_modules` déjà à jour au lieu de relancer inutilement `npm ci`.
@@ -144,14 +132,10 @@ La page [Variables d'environnement](docs/variables-environnement.md) indique :
 
 &nbsp;
 
-<div align="center">
-
 > [!IMPORTANT]
 > **Aucun secret dans Git**
 >
 > Ne placez **aucune clé ni aucun mot de passe réel** dans Git.
-
-</div>
 
 ## Ajouter le service IA en local
 
@@ -168,8 +152,6 @@ projets/
 trouver les clés Mistral, quelles variables renseigner et comment contrôler le
 service.
 
-<div align="center">
-
 > [!NOTE]
 > **Fonctionner sans le service IA**
 >
@@ -179,8 +161,6 @@ service.
 > ```dotenv
 > DISABLE_AI_FEATURES=true
 > ```
-
-</div>
 
 ## Déployer le LXP
 
