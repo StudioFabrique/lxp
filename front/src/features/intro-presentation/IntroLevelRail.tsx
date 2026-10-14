@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { cn } from "../../utils/cn";
 import { INTRO_LEVELS } from "./intro-levels";
 
@@ -11,7 +13,7 @@ type Props = {
 /** Les sept niveaux, chacun décalé du précédent pour montrer l'emboîtement. */
 const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
   <nav aria-label="Niveaux pédagogiques">
-    <ol className="flex flex-col gap-2">
+    <ol className="flex flex-wrap gap-2 lg:flex-col">
       {INTRO_LEVELS.map((level, index) => {
         const Icon = level.icon;
         const isActive = index === activeIndex;
@@ -20,8 +22,9 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
           <li
             key={level.id}
             hidden={index > selectableUpTo}
-            className="intro-rail-item will-change-transform"
-            style={{ marginLeft: `${index * 1.1}rem` }}
+            className="intro-rail-item will-change-transform lg:ml-(--intro-rail-indent)"
+            // Emboîtement en escalier seulement quand la liste est verticale.
+            style={{ "--intro-rail-indent": `${index * 1.1}rem` } as CSSProperties}
           >
             <button
               type="button"
@@ -49,6 +52,8 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
                 className={cn(
                   "text-base font-semibold transition-colors duration-500 sm:text-lg",
                   !isActive && "text-base-content/70",
+                  // Sur une colonne, seul le niveau actif garde son libellé : la liste reste courte.
+                  !isActive && "max-lg:sr-only",
                 )}
               >
                 {level.label}

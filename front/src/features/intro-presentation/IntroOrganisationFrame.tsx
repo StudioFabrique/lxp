@@ -41,23 +41,26 @@ const IntroOrganisationFrame = ({
             <Building2 className="size-6" aria-hidden="true" />
             <b className="text-xl leading-10">Organisme de formation</b>
           </span>
-          <div
-            style={{ backgroundColor, color: textColor }}
-            className="flex h-28 w-[380px] items-center justify-center rounded-3xl border-[3px] border-dashed border-primary/60 px-8 text-base-content"
-          >
-            {/* Le logo porte déjà le nom de l'organisme : l'un ou l'autre, jamais les deux. */}
-            {logoUrl ? (
+          {/* Le logo porte déjà le nom de l'organisme : l'un ou l'autre, jamais les deux. */}
+          {logoUrl ? (
+            <div
+              style={{ backgroundColor, color: textColor }}
+              className="flex h-28 w-[380px] items-center justify-center rounded-3xl border-[3px] border-dashed border-primary/60 px-8 text-base-content"
+            >
               <img
                 src={logoUrl}
                 alt=""
                 className="h-16 max-w-[16rem] object-contain"
               />
-            ) : (
-              <p className="flex items-center gap-3 text-3xl font-extrabold leading-none">
+            </div>
+          ) : (
+            // Sans logo, le nom seul, sans fond ni bordure.
+            <div className="flex h-28 items-center justify-center px-8">
+              <p className="text-center text-7xl font-extrabold leading-none text-secondary">
                 {name}
               </p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

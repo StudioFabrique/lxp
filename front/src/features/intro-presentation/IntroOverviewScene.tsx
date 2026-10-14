@@ -22,6 +22,7 @@ import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION } from "./intro-stack-layo
 import IntroChatbot from "./IntroChatbot";
 import IntroActivityPreviewModal from "./IntroActivityPreviewModal";
 import IntroChildrenStack from "./IntroChildrenStack";
+import { getIntroInitialShift, useIntroInitialShift } from "./useIntroInitialShift";
 import { introActivityKind, type IntroActivityKind } from "./intro-activity-samples";
 import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
@@ -65,8 +66,6 @@ const DETAIL_MAX_WIDTH = 512;
 const DETAIL_GAP = 24;
 /** Réduction de la pile quand elle laisse la place au détail du niveau. */
 const STACK_SCALE_WITH_DETAIL = 0.85;
-/** Décalage initial vers la gauche (en px) de la pyramide, du texte de défilement et du compteur : 6rem, soit `-translate-x-24`. */
-const INITIAL_SHIFT_PX = 96;
 /** Largeur de colonne en dessous de laquelle le détail passe sous la pyramide. */
 const MIN_SIDE_BY_SIDE_WIDTH = 720;
 
@@ -104,6 +103,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
   const isCompactSidebar = sidebarPhase !== "normal";
   // Aperçu d'un type d'activité ouvert depuis les cartes du dernier niveau.
   const [activityPreview, setActivityPreview] = useState<{ kind: IntroActivityKind; title: string } | null>(null);
+  const initialShift = useIntroInitialShift();
   const scrollRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -467,7 +467,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         {
           y: -70,
           // Le décalage initial de la scène est repris ici : la position finale ne change pas.
-          x: -shift + INITIAL_SHIFT_PX / unit,
+          x: -shift + getIntroInitialShift() / unit,
           scale: sideBySide ? STACK_SCALE_WITH_DETAIL : 1,
           duration: 1,
         },
@@ -610,7 +610,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               </div>
               <div className="flex min-h-0 w-full flex-1 items-center justify-center">
                 <IntroLevelStack
-                  offsetX={-INITIAL_SHIFT_PX}
+                  offsetX={-initialShift}
                   activeIndex={levelIndex}
                   visibleLevelCount={maxStep}
                   organisationName={cards[0].title}
@@ -639,19 +639,6 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   />
                 </IntroLevelStack>
               </div>
-              {/* Centré sur la colonne de la pyramide, pas sur toute la scène. */}
-                <p className="intro-scroll-hint pointer-events-none absolute inset-x-0 -bottom-12 z-30 -translate-x-24 mx-auto flex w-fit max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80">
-                  <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
-                  Faire défiler vers le bas pour naviguer entre les différents niveaux
-                </p>
-                {/* Numérotation du palier, en bas, centrée sur la colonne de la pyramide. */}
-                <p
-                  className="absolute -bottom-[5.75rem] left-1/2 -translate-x-[calc(50%+6rem)] text-sm tabular-nums"
-                  aria-label={`Palier ${activeStep} sur ${maxStep}`}
-                >
-                  <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
-                  <span className="text-base-content/60"> / {pad(maxStep)}</span>
-                </p>
               {isDetailShown && settledCard ? (
                 <>
                   <div className={cn("intro-detail-wrap mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
@@ -669,6 +656,22 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   </div>
                 </>
               ) : null}
+            </div>
+          </div>
+
+          {/* Ancrés au bas de la scène, sur la même grille que la colonne de la pyramide : ils
+              restent visibles et centrés sur elle, quelle que soit la hauteur de la fenêtre. */}
+          <div className="pointer-events-none absolute inset-x-4 bottom-5 z-30 grid gap-6 sm:inset-x-8 lg:grid-cols-[minmax(16rem,22rem)_1fr]">
+            <div className="col-start-1 flex lg:-translate-x-24 flex-col items-center gap-3 lg:col-start-2">
+              <p className="intro-scroll-hint flex max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80">
+                <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
+                Faire défiler vers le bas pour naviguer entre les différents niveaux
+              </p>
+              {/* Numérotation du palier. */}
+              <p className="text-sm tabular-nums" aria-label={`Palier ${activeStep} sur ${maxStep}`}>
+                <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
+                <span className="text-base-content/60"> / {pad(maxStep)}</span>
+              </p>
             </div>
           </div>
 
