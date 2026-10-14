@@ -165,7 +165,8 @@ const LastParcoursItem = ({
               <button
                 type="button"
                 className={cn(
-                  "btn relative",
+                  // h-auto : le libellé peut passer sur deux lignes dans une carte étroite sans coller aux bords du bouton.
+                  "btn relative h-auto min-h-10 py-2.5 text-center",
                   isFirstFormation ? "btn-primary" : "btn-dash",
                 )}
                 onClick={onCreateFormation}

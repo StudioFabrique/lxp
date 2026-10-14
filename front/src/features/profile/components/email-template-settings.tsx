@@ -27,16 +27,20 @@ type Props = {
   onSendTest?: () => void;
 };
 
+// Selon la largeur de la carte (et non de l’écran), les boutons se réduisent à leur icône ; le libellé reste lisible par les lecteurs d’écran.
+const actionButtonClassName = "@max-xl:btn-square";
+const actionLabelClassName = "sr-only @xl:not-sr-only";
+
 const templateName = (id: EmailTemplateId) =>
   emailTemplates.find((template) => template.id === id)?.name ?? id;
 
 export default function EmailTemplateSettings(props: Props) {
   return (
     <>
-      <BoxWrapper className="h-auto w-full overflow-visible">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-4">
-            <span className="rounded-xl bg-primary/10 p-3 text-primary">
+      <BoxWrapper className="@container h-auto w-full shrink-0 overflow-visible">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-4">
+            <span className="shrink-0 rounded-xl bg-primary/10 p-3 text-primary">
               <LayoutTemplate className="size-5" aria-hidden="true" />
             </span>
             <div>
@@ -46,14 +50,14 @@ export default function EmailTemplateSettings(props: Props) {
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {props.onSendTest && <button type="button" className="btn btn-outline btn-primary normal-case" onClick={props.onSendTest} disabled={props.disabled || props.isSaving || props.isSendingTest}>
+          <div className="ml-auto flex flex-wrap justify-end gap-2">
+            {props.onSendTest && <button type="button" className={cn("btn btn-outline btn-primary normal-case", actionButtonClassName)} onClick={props.onSendTest} disabled={props.disabled || props.isSaving || props.isSendingTest}>
               <Mail className={cn("size-4", props.isSendingTest && "animate-pulse")} aria-hidden="true" />
-              {props.isSendingTest ? "Envoi…" : "Envoyer un e-mail de test"}
+              <span className={actionLabelClassName}>{props.isSendingTest ? "Envoi…" : "Envoyer un e-mail de test"}</span>
             </button>}
-            <button type="button" className="btn btn-primary normal-case" onClick={props.onOpen} disabled={props.disabled || props.isSaving}>
+            <button type="button" className={cn("btn btn-primary normal-case", actionButtonClassName)} onClick={props.onOpen} disabled={props.disabled || props.isSaving}>
               <Pencil className="size-4" aria-hidden="true" />
-              Modifier le template
+              <span className={actionLabelClassName}>Modifier le template</span>
             </button>
           </div>
         </div>
@@ -69,12 +73,12 @@ export default function EmailTemplateSettings(props: Props) {
           isSubmitting={props.isSaving}
           rightDisabled={props.draftTemplate === props.selectedTemplate}
           rightClassName="btn-primary"
-          modalBoxStyle="w-11/12 max-w-6xl"
+          modalBoxStyle="w-11/12 max-w-3xl"
         >
           <p className="mt-2 text-sm text-base-content/65">
             Sélectionnez le style utilisé pour les e-mails envoyés par votre instance.
           </p>
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
             {emailTemplates.map((template) => {
               const selected = props.draftTemplate === template.id;
               return (
@@ -86,15 +90,18 @@ export default function EmailTemplateSettings(props: Props) {
                   onClick={() => props.onSelect(template.id)}
                   className={cn("group overflow-hidden rounded-2xl border-2 bg-base-100 text-left transition hover:-translate-y-0.5 hover:shadow-lg", selected ? "border-primary ring-2 ring-primary/20" : "border-base-300")}
                 >
-                  <EmailPreview
-                    template={template}
-                    instanceName={props.instanceName}
-                    website={props.website}
-                    hasInstanceLogo={props.hasInstanceLogo}
-                    instanceColor={props.instanceColor}
-                    instanceLogoUrl={props.instanceLogoUrl}
-                  />
-                  <span className="flex items-center justify-between px-4 py-3 text-sm font-bold">
+                  {/* zoom réduit l’aperçu en conservant ses proportions internes et sa hauteur dans le flux. */}
+                  <div className="[zoom:0.5]">
+                    <EmailPreview
+                      template={template}
+                      instanceName={props.instanceName}
+                      website={props.website}
+                      hasInstanceLogo={props.hasInstanceLogo}
+                      instanceColor={props.instanceColor}
+                      instanceLogoUrl={props.instanceLogoUrl}
+                    />
+                  </div>
+                  <span className="flex items-center justify-between px-3 py-2 text-sm font-bold">
                     {template.name}
                     <span className={cn("flex size-6 items-center justify-center rounded-full", selected ? "bg-primary text-primary-content" : "bg-base-200 text-transparent")}>
                       <Check className="size-4" aria-hidden="true" />

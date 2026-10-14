@@ -97,7 +97,7 @@ export default function CreateCourseDetailsModal({
 
         <form
           id="create-course-details-form"
-          className="flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-5"
+          className="scroll-fade-bottom flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-5"
           onSubmit={handleSubmit}
         >
           <label className="flex flex-col gap-2">

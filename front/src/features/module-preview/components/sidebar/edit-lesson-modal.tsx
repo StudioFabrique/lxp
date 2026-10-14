@@ -90,7 +90,7 @@ export default function EditLessonModal({
 
         <form
           id={`edit-lesson-form-${lesson.id}`}
-          className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5"
+          className="scroll-fade-bottom flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5"
           onSubmit={handleSubmit}
         >
           <label className="flex flex-col gap-2">

@@ -246,7 +246,7 @@ export default function InstanceSetup() {
                 />
               </div>
             </form>
-            <div className="mx-auto mt-5 w-full max-w-xl">
+            <div className="mx-auto mt-5 w-full max-w-xl shrink-0">
               <EmailTemplateSettings
                 selectedTemplate={emailTemplate}
                 draftTemplate={draftEmailTemplate}

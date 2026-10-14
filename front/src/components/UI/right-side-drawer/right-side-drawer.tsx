@@ -183,7 +183,7 @@ const RightSideDrawer: FC<Props> = ({
             <div className="divider divider-vertical"></div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+          <div className="scroll-fade-bottom flex-1 overflow-y-auto px-4 pb-4 [--scroll-fade-size:1rem]">{children}</div>
         </div>
       </div>
     </div>

@@ -65,7 +65,7 @@ export default function CourseContentModal({
 
         <form
           id="course-content-form"
-          className="flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-5"
+          className="scroll-fade-bottom flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-5"
           onSubmit={handleSubmit}
         >
           <CourseContentImport
