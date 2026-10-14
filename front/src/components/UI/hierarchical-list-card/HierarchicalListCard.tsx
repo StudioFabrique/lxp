@@ -33,6 +33,7 @@ type HierarchicalListCardProps = {
   placeholder?: ReactNode;
   fullWidth?: boolean;
   disableHoverScale?: boolean;
+  glowIntensity?: number;
 };
 
 const HierarchicalListCard = ({
@@ -60,6 +61,7 @@ const HierarchicalListCard = ({
   placeholder,
   fullWidth = false,
   disableHoverScale = false,
+  glowIntensity = 1,
 }: HierarchicalListCardProps) => {
   const [showRemainingItems, setShowRemainingItems] = useState(false);
   const visibleItems = items.slice(0, maxItemsShown);
@@ -71,6 +73,7 @@ const HierarchicalListCard = ({
       <CursorGlowCard
         glowColor="secondary"
         glowSize={2.4}
+        glowIntensity={glowIntensity}
         allowOverflow
         disableHoverScale={disableHoverScale}
         className={cn(

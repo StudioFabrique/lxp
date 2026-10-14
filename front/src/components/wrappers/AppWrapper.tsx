@@ -1,4 +1,5 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode, useRef } from "react";
+import { useFormPageAutoFocus } from "../../hooks/useFormPageAutoFocus";
 import { useIntroPresentation } from "../../features/intro-presentation/useIntroPresentation";
 import { useVisualPreferences } from "../../store/VisualPreferences";
 import { cn } from "../../utils/cn";
@@ -11,6 +12,8 @@ type Props = {
 const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
   const { sidebarPhase } = useIntroPresentation();
   const { animations } = useVisualPreferences();
+  const mainRef = useRef<HTMLElement>(null);
+  useFormPageAutoFocus(mainRef);
 
   return (
     <div className="relative flex flex-col h-screen p-2 bg-base-100 box-border">
@@ -35,6 +38,7 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
         </aside>
 
         <main
+          ref={mainRef}
           id="main-scroll-container"
           className="min-w-0 overflow-y-auto w-full h-full relative"
         >

@@ -5,6 +5,8 @@ import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type Props = {
   children?: React.ReactNode;
+  /** Contenu affiché à côté du champ titre (ex. image du module). */
+  titleAside?: React.ReactNode;
   register: UseFormRegister<ModuleCreateFormValues>;
   errors: FieldErrors<ModuleCreateFormValues>;
 };
@@ -13,17 +15,21 @@ function ModuleFields({
   register,
   errors,
   children,
+  titleAside,
 }: Props) {
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <FormInput
-          label="Titre du module *"
-          name="title"
-          placeholder="Ex : Javascript"
-          register={register}
-          error={errors.title}
-        />
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+        <div className="min-w-0 flex-1">
+          <FormInput
+            label="Titre du module *"
+            name="title"
+            placeholder="Ex : Javascript"
+            register={register}
+            error={errors.title}
+          />
+        </div>
+        {titleAside}
       </div>
 
       <div>

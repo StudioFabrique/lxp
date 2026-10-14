@@ -8,6 +8,7 @@ import { useParcoursTagsQuery } from "../../../hooks/useParcoursTagsQuery";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { Plus } from "lucide-react";
+import { splitAvailableTags } from "./tags-selector.helpers";
 
 interface TagsWithDrawerProps {
   loading: boolean;
@@ -42,6 +43,14 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     [onSubmit],
   );
 
+  // Tags hérités (formation) disponibles et pas encore sélectionnés.
+  const missingInheritedTags = useMemo(() => {
+    const selectedIds = new Set(currentTags.map(({ id }) => id));
+    return splitAvailableTags(availableTags ?? [], props.tags).inheritedTags.filter(
+      ({ id }) => !selectedIds.has(id),
+    );
+  }, [availableTags, props.tags, currentTags]);
+
   return (
     <div
       className="flex flex-col justify-between gap-y-4 h-full"
@@ -58,6 +67,23 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
           property="name"
           onSubmit={handleUpdateTags}
           isDisabled={props.readOnly}
+          headerActions={
+            <button
+              className="btn btn-sm btn-outline btn-primary"
+              onClick={() =>
+                handleUpdateTags([...currentTags, ...missingInheritedTags])
+              }
+              type="button"
+              disabled={props.readOnly || missingInheritedTags.length === 0}
+              title={
+                props.readOnly
+                  ? "Lecture seule pour l'équipe pédagogique"
+                  : undefined
+              }
+            >
+              <span>Ajouter tous les tags</span>
+            </button>
+          }
         >
           <CurrentTags />
           <ParcoursTagsSelecter

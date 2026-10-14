@@ -47,6 +47,32 @@ export default function ModuleForm({
     onSetFile(image.file);
   };
 
+  const imageField = (
+  <div className="flex w-full flex-col gap-2 sm:w-60 sm:shrink-0">
+    <p className="text-sm font-bold">
+      {mode === "edit"
+        ? "Modifier l’image du module"
+        : "Image du module"}
+    </p>
+    <ImageFileUpload
+      temporaryImage={temporaryImage}
+      onSetTemporaryImage={handleTemporaryImageChange}
+      existingImage={existingImage ?? undefined}
+      maxSize={headerImageMaxSize}
+      variant="image"
+      compact
+    >
+      Téléverser une image
+    </ImageFileUpload>
+    <span className="text-xs text-base-content/60">
+      JPG, PNG, WebP ou GIF. 1 Mo maximum.
+       <p>{mode === "create" && !temporaryImage.file
+        ? " Une image sera générée automatiquement si aucune image n’est téléversée."
+        : null}</p>
+    </span>
+  </div>
+  );
+
   return (
     <>
       <form
@@ -63,7 +89,11 @@ export default function ModuleForm({
             </p>
           </header>
 
-          <ModuleFields register={register} errors={errors}>
+          <ModuleFields
+            register={register}
+            errors={errors}
+            titleAside={imageField}
+          >
             <div>
               <FormNumberInput
                 label="Durée du module en heures *"
@@ -76,31 +106,6 @@ export default function ModuleForm({
               />
             </div>
           </ModuleFields>
-
-          <div
-            className="flex flex-col gap-3"
-          >
-            <p className="text-sm font-bold">
-              {mode === "edit"
-                ? "Modifier l’image du module"
-                : "Image du module"}
-            </p>
-            <ImageFileUpload
-              temporaryImage={temporaryImage}
-              onSetTemporaryImage={handleTemporaryImageChange}
-              existingImage={existingImage ?? undefined}
-              maxSize={headerImageMaxSize}
-              variant="image"
-            >
-              Téléverser une image
-            </ImageFileUpload>
-            <span className="text-xs text-base-content/60">
-              JPG, PNG, WebP ou GIF. 1 Mo maximum.
-               <p>{mode === "create" && !temporaryImage.file
-                ? " Une image sera générée automatiquement si aucune image n’est téléversée."
-                : null}</p>
-            </span>
-          </div>
 
           {duplicatedSkills ? (
             <div className="rounded-box border border-base-300 bg-base-200/50 p-4">

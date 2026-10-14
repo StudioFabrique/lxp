@@ -24,6 +24,8 @@ interface InheritedItemsProps {
   property: string | string[]; // propriété(s) affichée(s) dans les listes
   onSubmit: (items: any[]) => void;
   titleSize?: "small" | "medium" | "large";
+  /** Actions affichées dans l'en-tête, à gauche du bouton d'ouverture du drawer. */
+  headerActions?: ReactNode;
 }
 
 const InheritedItems = (props: InheritedItemsProps) => {
@@ -116,13 +118,16 @@ const InheritedItems = (props: InheritedItemsProps) => {
             {formatTitle(props.title)}
           </h2>
         ) : null}
-        <ButtonAdd
-          label={props.buttonLabel ?? "Sélectionner"}
-          small={true}
-          loading={props.loading}
-          isDisabled={isDisabled}
-          onClickEvent={() => handleCloseDrawer(props.drawerId)}
-        />
+        <div className="flex items-center gap-x-2 ml-auto">
+          {props.headerActions}
+          <ButtonAdd
+            label={props.buttonLabel ?? "Sélectionner"}
+            small={true}
+            loading={props.loading}
+            isDisabled={isDisabled}
+            onClickEvent={() => handleCloseDrawer(props.drawerId)}
+          />
+        </div>
       </div>
       <div
         className={cn("w-full flex flex-col gap-y-4 mt-4", {

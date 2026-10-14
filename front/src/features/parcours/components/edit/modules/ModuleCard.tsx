@@ -58,6 +58,7 @@ export default function ModuleCard({
     >
       <HierarchicalListCard
         label="Module"
+        glowIntensity={0.5}
         labelAccessory={
           isIncomplete ? (
             <span className="badge badge-warning badge-xs">Incomplet</span>

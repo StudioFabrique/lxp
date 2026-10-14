@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Plus } from "lucide-react";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import TagsList from "./tags-list";
@@ -89,6 +89,17 @@ const ParcoursTagsSelecter = (props: Props) => {
           </p>
         )}
       </section>
+
+      <div className="flex justify-end">
+        <button
+          className="pl-2 text-xs text-primary btn btn-sm btn-ghost underline"
+          onClick={() => document.getElementById("create-tags")?.click()}
+          type="button"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Créer de nouveaux tags</span>
+        </button>
+      </div>
     </div>
   );
 };

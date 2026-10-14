@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from "react";
 
-const FIRST_FIELD_SELECTOR = [
+export const FIRST_FIELD_SELECTOR = [
   'input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([disabled]):not([readonly])',
   "textarea:not([disabled]):not([readonly])",
   "select:not([disabled])",

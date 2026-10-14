@@ -6,6 +6,8 @@ import { useVisualPreferences } from "../../store/VisualPreferences";
 type CursorGlowCardProps = {
   children: ReactNode;
   glowSize?: number;
+  /** Multiplicateur d'opacité du halo (1 = intensité par défaut). */
+  glowIntensity?: number;
   glowColor?:
     | "primary"
     | "secondary"
@@ -24,6 +26,7 @@ type CursorGlowCardProps = {
 const CursorGlowCard = ({
   children,
   glowSize = 1,
+  glowIntensity = 1,
   glowColor = "primary",
   className,
   allowOverflow = false,
@@ -108,7 +111,7 @@ const CursorGlowCard = ({
           }}
           animate={{
             scale: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? glowSize : 0,
-            opacity: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? (glowColor === "accent" ? 0.8 : 0.7) : 0,
+            opacity: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? (glowColor === "accent" ? 0.8 : 0.7) * glowIntensity : 0,
           }}
           transition={{
             scale: {
