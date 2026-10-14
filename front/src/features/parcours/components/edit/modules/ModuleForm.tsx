@@ -48,29 +48,31 @@ export default function ModuleForm({
   };
 
   const imageField = (
-  <div className="flex w-full flex-col gap-2 sm:w-60 sm:shrink-0">
-    <p className="text-sm font-bold">
-      {mode === "edit"
-        ? "Modifier l’image du module"
-        : "Image du module"}
-    </p>
-    <ImageFileUpload
-      temporaryImage={temporaryImage}
-      onSetTemporaryImage={handleTemporaryImageChange}
-      existingImage={existingImage ?? undefined}
-      maxSize={headerImageMaxSize}
-      variant="image"
-      compact
-    >
-      Téléverser une image
-    </ImageFileUpload>
-    <span className="text-xs text-base-content/60">
-      JPG, PNG, WebP ou GIF. 1 Mo maximum.
-       <p>{mode === "create" && !temporaryImage.file
-        ? " Une image sera générée automatiquement si aucune image n’est téléversée."
-        : null}</p>
-    </span>
-  </div>
+    <div className="flex w-full flex-col gap-2 sm:w-60 sm:shrink-0">
+      <p className="text-sm font-bold">
+        {mode === "edit"
+          ? "Modifier l’image du module"
+          : "Image du module (optionnel)"}
+      </p>
+      <ImageFileUpload
+        temporaryImage={temporaryImage}
+        onSetTemporaryImage={handleTemporaryImageChange}
+        existingImage={existingImage ?? undefined}
+        maxSize={headerImageMaxSize}
+        variant="image"
+        compact
+      >
+        Téléverser une image
+      </ImageFileUpload>
+      <span className="text-xs text-base-content/60">
+        JPG, PNG, WebP ou GIF. 1 Mo maximum.
+        <p>
+          {mode === "create" && !temporaryImage.file
+            ? " Une image sera générée automatiquement si aucune image n’est téléversée."
+            : null}
+        </p>
+      </span>
+    </div>
   );
 
   return (
@@ -167,9 +169,7 @@ export default function ModuleForm({
           className="btn btn-primary min-w-44"
           disabled={isSubmitting}
         >
-          {isSubmitting && (
-            <LoaderCircle className="size-4 animate-spin" />
-          )}
+          {isSubmitting && <LoaderCircle className="size-4 animate-spin" />}
           {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
         </button>
       </footer>

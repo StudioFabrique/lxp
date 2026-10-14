@@ -20,7 +20,10 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { profileApi } from "../api/profile.api";
 import ProfileEditorModal from "./ProfileEditorModal";
 import ThemeSelect from "./theme-select";
-import { sidebarControlClassName } from "../../../components/sidebar/sidebar-styles";
+import {
+  sidebarControlClassName,
+  sidebarLabelClassName,
+} from "../../../components/sidebar/sidebar-styles";
 import { useVisualPreferences } from "../../../store/VisualPreferences";
 import { cn } from "../../../utils/cn";
 
@@ -140,7 +143,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
                 />
               </span>
             )}
-            <span className="2xl:block hidden truncate">{fullName}</span>
+            <span className={cn(sidebarLabelClassName, "truncate")}>{fullName}</span>
           </button>
         </Popover.Trigger>
         <Popover.Portal forceMount>

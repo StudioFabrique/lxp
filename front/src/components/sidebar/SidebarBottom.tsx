@@ -12,6 +12,7 @@ import { useIntroPresentation } from "../../features/intro-presentation/useIntro
 import DemoExitConfirmation from "../../features/demo/components/DemoExitConfirmation";
 import {
   sidebarControlClassName,
+  sidebarLabelClassName,
   sidebarListClassName,
 } from "./sidebar-styles";
 import { cn } from "../../utils/cn";
@@ -41,12 +42,12 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   return (
     <ul className={sidebarListClassName}>
       {/* Avatar */}
-      <li className="flex w-full justify-center 2xl:block">
+      <li className="block w-full">
         <ProfilePopover interfaceType={interfaceType} />
       </li>
 
       {interfaceType === "admin" && !aiDisabled && (
-        <li className="flex w-full justify-center 2xl:block">
+        <li className="block w-full">
           <AiConsumptionPopover />
         </li>
       )}
@@ -54,7 +55,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Bouton + modal questionnaire */}
       {!demoMode && interfaceType === "student" && <Questionnaire />}
 
-      <li className="flex w-full justify-center 2xl:block">
+      <li className="block w-full">
         <button
           type="button"
           className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -63,14 +64,14 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           aria-label="Revoir la présentation"
         >
           <Presentation className="size-4 shrink-0" />
-          <span className="2xl:block hidden">Revoir la présentation</span>
+          <span className={sidebarLabelClassName}>Revoir la présentation</span>
         </button>
       </li>
 
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
-        <li className="flex w-full justify-center max-2xl:order-2 2xl:block">
+        <li className="block w-full max-2xl:order-2">
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -79,11 +80,11 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             aria-label="Quitter la démonstration"
           >
             <DoorOpen className="size-4 shrink-0" />
-            <span className="2xl:block hidden">Sortir de la démo</span>
+            <span className={sidebarLabelClassName}>Sortir de la démo</span>
           </button>
         </li>
       ) : (
-        <li className="flex w-full justify-center max-2xl:order-2 2xl:block">
+        <li className="block w-full max-2xl:order-2">
           <button
             type="button"
             className={cn(sidebarControlClassName, "max-2xl:tooltip max-2xl:tooltip-right")}
@@ -92,7 +93,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             aria-label="Déconnexion"
           >
             <LogOutIcon className="size-4 shrink-0" />
-            <span className="2xl:block hidden">Déconnexion</span>
+            <span className={sidebarLabelClassName}>Déconnexion</span>
           </button>
         </li>
       )}
@@ -100,11 +101,11 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* En mode compact, la ligne se défait : thème, puis sortie, puis logo tout en bas. */}
       <li className="flex w-full flex-col-reverse items-center justify-between gap-1 max-2xl:contents 2xl:flex-row">
         {/* Logo */}
-        <div className="flex size-8 items-center justify-center max-2xl:order-3 2xl:w-16">
+        <div className="flex size-8 items-center justify-center max-2xl:order-3 max-2xl:self-center 2xl:w-16">
           <SidebarLogo />
         </div>
         <div
-          className="tooltip tooltip-right max-2xl:order-1 2xl:tooltip-top"
+          className="tooltip tooltip-right max-2xl:order-1 max-2xl:self-center 2xl:tooltip-top"
           data-tip="Mode clair / Mode sombre"
         >
           <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />

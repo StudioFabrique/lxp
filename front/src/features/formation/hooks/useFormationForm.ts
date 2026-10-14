@@ -169,8 +169,9 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
       setCreatedFormation(formation);
       resetForm();
       refetchFormations();
+      void queryClient.invalidateQueries({ queryKey: ["formations"] });
       void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
-      options.onSaved?.();
+      // La modale reste ouverte : elle propose ensuite de créer le premier parcours.
     },
     onError: showFormationMutationError,
   });

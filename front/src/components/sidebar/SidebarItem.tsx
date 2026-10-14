@@ -1,6 +1,9 @@
 import { Link } from "react-router";
 import { PropsWithChildren } from "react";
-import { sidebarControlClassName } from "./sidebar-styles";
+import {
+  sidebarControlClassName,
+  sidebarLabelClassName,
+} from "./sidebar-styles";
 import { cn } from "../../utils/cn";
 
 type Props = {
@@ -28,7 +31,7 @@ const SidebarItem = ({
   );
 
   return (
-    <li className="flex w-full justify-center 2xl:block">
+    <li className="block w-full">
       <Link
         to={linkTo}
         aria-label={tooltipText}
@@ -38,7 +41,7 @@ const SidebarItem = ({
         <span className="flex size-4 shrink-0 items-center justify-center [&>svg]:size-4">
           {icon}
         </span>
-        <span className="2xl:block hidden">{children}</span>
+        <span className={sidebarLabelClassName}>{children}</span>
       </Link>
     </li>
   );

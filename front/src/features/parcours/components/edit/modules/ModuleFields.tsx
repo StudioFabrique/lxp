@@ -4,6 +4,7 @@ import FormTextarea from "../../../../../components/form/FormTextarea";
 import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type Props = {
+  /** Champs affichés sous le titre, dans l'espace libre à côté de l'image. */
   children?: React.ReactNode;
   /** Contenu affiché à côté du champ titre (ex. image du module). */
   titleAside?: React.ReactNode;
@@ -20,7 +21,7 @@ function ModuleFields({
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-5">
           <FormInput
             label="Titre du module *"
             name="title"
@@ -28,6 +29,7 @@ function ModuleFields({
             register={register}
             error={errors.title}
           />
+          {children}
         </div>
         {titleAside}
       </div>
@@ -56,8 +58,6 @@ function ModuleFields({
           questions auto-corrigeables.
         </p>
       </div>
-
-      {children}
     </div>
   );
 }

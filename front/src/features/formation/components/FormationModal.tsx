@@ -12,6 +12,8 @@ import { useFormationForm } from "../hooks/useFormationForm";
 import { parcoursApi } from "../../parcours/api/parcours.api";
 import { readParcoursArchiveFormationTitle } from "../../parcours/helpers/read-parcours-archive-formation";
 import ParcoursImportModal from "../../parcours/components/import/ParcoursImportModal";
+import ParcoursCreationModal from "../../parcours/components/create/ParcoursCreationModal";
+import FormationFirstParcoursModal from "./FormationFirstParcoursModal";
 
 type FormationModalProps = {
   formationId?: number | null;
@@ -22,6 +24,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [pendingArchive, setPendingArchive] = useState<File>();
   const [detectedFormationTitle, setDetectedFormationTitle] = useState("");
+  const [isParcoursCreationOpen, setIsParcoursCreationOpen] = useState(false);
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -41,6 +44,8 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     isPending,
     isDeleting,
     formationToEdit,
+    createdFormation,
+    dismissCreatedFormation,
     deleteFormation,
     selectFormation,
     cancelEdit,
@@ -86,6 +91,12 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     onClose();
   };
 
+  const closeAfterCreation = () => {
+    dismissCreatedFormation();
+    setIsParcoursCreationOpen(false);
+    onClose();
+  };
+
   const confirmDelete = () => {
     if (!formationToEdit || formationToEdit.parcours > 0) return;
     deleteFormation(formationToEdit.id, { onSuccess: onClose });
@@ -120,6 +131,21 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     setPendingArchive(undefined);
     setDetectedFormationTitle("");
   };
+
+  if (createdFormation) {
+    return isParcoursCreationOpen ? (
+      <ParcoursCreationModal
+        initialFormationId={createdFormation.id}
+        onClose={closeAfterCreation}
+      />
+    ) : (
+      <FormationFirstParcoursModal
+        formationTitle={createdFormation.title}
+        onAccept={() => setIsParcoursCreationOpen(true)}
+        onDecline={closeAfterCreation}
+      />
+    );
+  }
 
   if (pendingArchive) {
     return (

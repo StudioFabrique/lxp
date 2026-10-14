@@ -6,6 +6,8 @@ import FormationModal from "./FormationModal";
 
 const mocks = vi.hoisted(() => ({
   cancelEdit: vi.fn(),
+  dismissCreatedFormation: vi.fn(),
+  createdFormation: null as { id: number; title: string } | null,
   importParcours: vi.fn(),
   invalidateQueries: vi.fn(),
   navigate: vi.fn(),
@@ -55,6 +57,8 @@ vi.mock("../hooks/useFormationForm", () => ({
     isPending: false,
     isDeleting: false,
     formationToEdit: null,
+    createdFormation: mocks.createdFormation,
+    dismissCreatedFormation: mocks.dismissCreatedFormation,
     deleteFormation: vi.fn(),
     selectFormation: vi.fn(),
     cancelEdit: mocks.cancelEdit,
@@ -66,8 +70,41 @@ vi.mock("../hooks/useFormationForm", () => ({
 }));
 
 vi.mock("../../../components/UI/modal/modal", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+  default: ({
+    children,
+    title,
+    leftLabel,
+    rightLabel,
+    onLeftClick,
+    onRightClick,
+  }: {
+    children: React.ReactNode;
+    title?: string;
+    leftLabel?: string;
+    rightLabel?: string;
+    onLeftClick?: () => void;
+    onRightClick?: () => void;
+  }) => (
+    <div>
+      <h3>{title}</h3>
+      {children}
+      {onLeftClick && <button onClick={onLeftClick}>{leftLabel}</button>}
+      {onRightClick && <button onClick={onRightClick}>{rightLabel}</button>}
+    </div>
+  ),
+}));
+
+vi.mock("../../parcours/components/create/ParcoursCreationModal", () => ({
+  default: ({
+    initialFormationId,
+    onClose,
+  }: {
+    initialFormationId?: number;
+    onClose: () => void;
+  }) => (
+    <button type="button" onClick={onClose}>
+      Parcours pour la formation {initialFormationId}
+    </button>
   ),
 }));
 
@@ -94,6 +131,8 @@ afterEach(() => {
   if (root) act(() => root?.unmount());
   root = null;
   mocks.cancelEdit.mockReset();
+  mocks.dismissCreatedFormation.mockReset();
+  mocks.createdFormation = null;
   mocks.importParcours.mockReset();
   mocks.invalidateQueries.mockReset();
   mocks.navigate.mockReset();
@@ -148,5 +187,41 @@ describe("FormationModal", () => {
       "Créer automatiquement « Formation de destination »",
     );
     expect(mocks.importParcours).not.toHaveBeenCalled();
+  });
+
+  it("propose de créer le premier parcours après la création de la formation", () => {
+    const container = document.createElement("div");
+    const onClose = vi.fn();
+    mocks.createdFormation = { id: 7, title: "Formation test" };
+    root = createRoot(container);
+
+    act(() => root?.render(<FormationModal onClose={onClose} />));
+
+    expect(container.textContent).toContain("Formation test");
+    expect(container.textContent).toContain("premier parcours");
+    expect(onClose).not.toHaveBeenCalled();
+
+    const acceptButton = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent === "Créer le parcours",
+    );
+    act(() => acceptButton?.click());
+
+    expect(container.textContent).toContain("Parcours pour la formation 7");
+  });
+
+  it("ferme la modale sans créer de parcours lorsque l'utilisateur reporte", () => {
+    const container = document.createElement("div");
+    const onClose = vi.fn();
+    mocks.createdFormation = { id: 7, title: "Formation test" };
+    root = createRoot(container);
+
+    act(() => root?.render(<FormationModal onClose={onClose} />));
+    const laterButton = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent === "Plus tard",
+    );
+    act(() => laterButton?.click());
+
+    expect(mocks.dismissCreatedFormation).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledOnce();
   });
 });
