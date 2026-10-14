@@ -12,6 +12,7 @@ import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
 import { OPENING_ANIMATION_MS } from "./intro-dialogue";
 import {
+  INTRO_LEVELS,
   INTRO_PYRAMID_LEVELS,
   INTRO_PYRAMID_LEVEL_COUNT,
 } from "./intro-levels";
@@ -21,14 +22,14 @@ import IntroFormationSelector from "./IntroFormationSelector";
 import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION } from "./intro-stack-layout";
 import IntroChatbot from "./IntroChatbot";
 import IntroActivityPreviewModal from "./IntroActivityPreviewModal";
-import IntroChildrenStack from "./IntroChildrenStack";
+import IntroChildrenStack, { type IntroChildrenStackHandle } from "./IntroChildrenStack";
 import { getIntroInitialShift, useIntroInitialShift } from "./useIntroInitialShift";
 import { introActivityKind, type IntroActivityKind } from "./intro-activity-samples";
 import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
 import IntroSceneHeading from "./IntroSceneHeading";
-import { useInstanceBranding } from "./useInstanceBranding";
+import { useInstanceBranding } from "../../hooks/useInstanceBranding";
 import { useIntroGuide } from "./useIntroGuide";
 import { useIntroPresentation } from "./useIntroPresentation";
 
@@ -109,6 +110,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
   const stageRef = useRef<HTMLDivElement>(null);
   const chatbotAnchorRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
+  const childrenStackRef = useRef<IntroChildrenStackHandle>(null);
   const [activeStep, setActiveStep] = useState(0);
   // Repli de la pyramide en cours, avant d'enregistrer la fin de la présentation.
   const [isClosing, setIsClosing] = useState(false);
@@ -620,6 +622,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   onSelect={(index) => goToStep(index + 1)}
                 >
                   <IntroChildrenStack
+                    ref={childrenStackRef}
                     card={settledCard}
                     formationSelectorRef={formationSelectorRef}
                     // Dès le retour vers l'introduction, les cartes s'effacent sans attendre
@@ -652,6 +655,16 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                       activeDetail={activeDetail}
                       highlightedRow={hoveredRow}
                       onHighlightRow={(row) => setHover({ step: settledStep, row })}
+                      // Même effet qu'un clic sur la carte correspondante de la pyramide.
+                      onSelectRow={(row) => {
+                        if (settledStep < INTRO_LEVELS.length - 1) {
+                          childrenStackRef.current?.selectRow(row);
+                          return;
+                        }
+                        const title = settledCard.rows[row]?.title;
+                        const kind = title ? introActivityKind(title) : undefined;
+                        if (title && kind) setActivityPreview({ kind, title });
+                      }}
                     />
                   </div>
                 </>

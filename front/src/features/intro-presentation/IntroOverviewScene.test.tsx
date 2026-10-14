@@ -31,7 +31,7 @@ vi.mock("./intro-motion", () => ({
     },
   },
 }));
-vi.mock("./useInstanceBranding", () => ({
+vi.mock("../../hooks/useInstanceBranding", () => ({
   useInstanceBranding: () => ({ logoUrl: null, backgroundColor: undefined }),
 }));
 vi.mock("./useIntroPresentation", () => ({
