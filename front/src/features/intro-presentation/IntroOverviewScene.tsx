@@ -6,7 +6,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
-import { ArrowLeft, ArrowRight, ChevronsDown } from "lucide-react";
+import { ArrowRight, ChevronsDown } from "lucide-react";
 
 import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
@@ -19,11 +19,11 @@ import {
 import { ScrollTrigger, gsap, prefersReducedMotion } from "./intro-motion";
 import type { IntroFormationOption } from "./intro-example-formations";
 import IntroFormationSelector from "./IntroFormationSelector";
-import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION } from "./intro-stack-layout";
+import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION, getIntroStackScale } from "./intro-stack-layout";
 import IntroChatbot from "./IntroChatbot";
 import IntroActivityPreviewModal from "./IntroActivityPreviewModal";
 import IntroChildrenStack, { type IntroChildrenStackHandle } from "./IntroChildrenStack";
-import { getIntroInitialShift, useIntroInitialShift } from "./useIntroInitialShift";
+import { getIntroInitialShift, isWideScreen, useIntroInitialShift } from "./useIntroInitialShift";
 import { introActivityKind, type IntroActivityKind } from "./intro-activity-samples";
 import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
@@ -59,6 +59,14 @@ const NEXT_LEVEL_MS = 120;
 /** Zone réservée à l’assistant virtuel, sous le composant qu'il explique. */
 const PANEL_WIDTH = 560;
 const PANEL_HEIGHT = 200;
+/** Largeur libre minimale, à gauche du détail, pour y loger la bulle et l'avatar de l'assistant virtuel. */
+const MIN_FREE_PANEL_WIDTH = 300;
+/** Largeur de la zone de placement : celle de l'assistant virtuel (420) plus ses marges. L'assistant est calé à droite de sa zone, le vide reste à gauche. */
+const MIN_PANEL_BOX_WIDTH = 460;
+/** Hauteur minimale sous la pyramide pour y poser l'assistant virtuel avec sa bulle et ses boutons. */
+const MIN_PANEL_BELOW_STACK = 130;
+/** Dépassement toléré sous la colonne : le bas de la scène laisse un peu de place avant les repères. */
+const PANEL_BOTTOM_SLACK = 20;
 /** Hauteur de la ligne du titre de la scène, en haut de la zone. */
 const HEADING_ROW_HEIGHT = 60;
 /** Largeur du détail du niveau, en part de la colonne, et son plafond en pixels. */
@@ -67,8 +75,12 @@ const DETAIL_MAX_WIDTH = 512;
 const DETAIL_GAP = 24;
 /** Réduction de la pile quand elle laisse la place au détail du niveau. */
 const STACK_SCALE_WITH_DETAIL = 0.85;
-/** Largeur de colonne en dessous de laquelle le détail passe sous la pyramide. */
-const MIN_SIDE_BY_SIDE_WIDTH = 720;
+/** Largeur (px) en deçà de laquelle la pile devient peu lisible : dans une fenêtre courte, elle est agrandie jusque-là si la place le permet. */
+const MIN_STACK_VISUAL_PX = 300;
+/** Réduction minimale : en deçà, la pile deviendrait illisible, mieux vaut qu'elle déborde un peu. */
+const MIN_STACK_SCALE_WITH_DETAIL = 0.4;
+/** Largeur occupée à l'écran par la pile inclinée, en unités de la scène (700 de base, plus la projection). */
+const STACK_VISUAL_WIDTH = 840;
 
 /**
  * Découverte des niveaux par le défilement.
@@ -153,12 +165,11 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
 
   // L’assistant virtuel explique le niveau, puis chacun de ses composants l'un après l'autre.
   const settledCard = settledStep >= 1 ? cards[settledStep] : undefined;
-  const guideStep = useIntroGuide(
+  const guide = useIntroGuide(
     (settledCard?.details.length ?? 0) + 1,
     `level-${settledStep}-${settledCard?.title ?? ""}`,
-    isChatbotReady && settledStep >= 1,
   );
-  const activeDetail = settledCard ? guideStep - 1 : -1;
+  const activeDetail = settledCard ? guide.step - 1 : -1;
   const detailMessage =
     settledCard && activeDetail >= 0
       ? settledCard.details[activeDetail]?.explanation
@@ -193,7 +204,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         });
       } else if (column && title) {
         // Introduction : la zone de l’assistant virtuel occupe le vide entre la ligne du titre de
-        // la scène et le titre de l'organisme.
+        // la scène et le titre de l'organisme, calée à droite : il démarre loin de la pyramide.
         const columnRect = column.getBoundingClientRect();
         const titleRect = title.getBoundingClientRect();
         const width = Math.min(PANEL_WIDTH, columnRect.width);
@@ -202,7 +213,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
           0,
         );
         setPanelStyle({
-          left: (columnRect.width - width) / 2,
+          left: columnRect.width - width,
           top,
           width,
           height: Math.min(PANEL_HEIGHT, titleRect.top - columnRect.top - top - 8),
@@ -228,13 +239,38 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       columnRect.width - width,
     );
     const below = detailRect.bottom - columnRect.top + 12;
-    const top =
-      below + PANEL_HEIGHT <= columnRect.height
-        ? below
-        : Math.max(detailRect.top - columnRect.top - PANEL_HEIGHT - 12, 0);
+    if (below + PANEL_HEIGHT <= columnRect.height) {
+      setPanelStyle({ left, top: below, width, height: PANEL_HEIGHT, right: "auto", margin: 0 });
+      return;
+    }
+    // Sous un détail haut, il ne reste pas de place en bas : l'assistant prend l'espace libre à gauche du
+    // détail, sous le choix de la formation, et se glisse entre les plaques et les boutons de la pyramide.
+    // Le détail est mesuré comme le fait la pyramide, car son rectangle bouge pendant son apparition.
+    const freeWidth = columnRect.width - Math.min(columnRect.width * DETAIL_SHARE, DETAIL_MAX_WIDTH) - DETAIL_GAP;
+    if (isWideScreen() && freeWidth >= MIN_FREE_PANEL_WIDTH) {
+      const selectorBottom = formationSelectorRef.current?.getBoundingClientRect().bottom ?? columnRect.top;
+      // De préférence sous la pyramide ; sans assez de hauteur, dans toute la zone libre, entre ses plaques.
+      const plates = Array.from(stage?.querySelectorAll<HTMLElement>(".intro-plate, .intro-child-plate, .intro-child-layer") ?? []);
+      const stackBottom = Math.max(selectorBottom, ...plates.map((plate) => plate.getBoundingClientRect().bottom));
+      const belowStack = Math.max(stackBottom - columnRect.top + 8, 0);
+      const freeTop = columnRect.height + PANEL_BOTTOM_SLACK - belowStack >= MIN_PANEL_BELOW_STACK
+        ? belowStack
+        : Math.max(selectorBottom - columnRect.top + 8, 0);
+      const freePanelWidth = Math.max(Math.min(freeWidth, PANEL_WIDTH), MIN_PANEL_BOX_WIDTH);
+      setPanelStyle({
+        // Zone plus large que la place libre : elle déborde à gauche, là où il n'y a que le vide de la zone.
+        left: freeWidth >= freePanelWidth ? (freeWidth - freePanelWidth) / 2 : freeWidth - freePanelWidth,
+        top: freeTop,
+        width: freePanelWidth,
+        height: columnRect.height + PANEL_BOTTOM_SLACK - freeTop,
+        right: "auto",
+        margin: 0,
+      });
+      return;
+    }
     setPanelStyle({
       left,
-      top,
+      top: Math.max(detailRect.top - columnRect.top - PANEL_HEIGHT - 12, 0),
       width,
       height: PANEL_HEIGHT,
       right: "auto",
@@ -460,17 +496,29 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       const column = columnRef.current;
       const container = stack?.parentElement;
       const columnWidth = column?.clientWidth ?? 0;
-      const unit = container ? container.getBoundingClientRect().width / 700 : 1;
-      const sideBySide = columnWidth >= MIN_SIDE_BY_SIDE_WIDTH && unit > 0;
+      // Échelle réelle de la scène, calculée comme `IntroLevelStack` à partir de la zone disponible : au
+      // montage, la scène n'a pas encore pris cette échelle et sa taille affichée n'est pas fiable.
+      const area = container?.parentElement?.getBoundingClientRect();
+      const unit = area && area.width > 0 && area.height > 0 ? getIntroStackScale(area.width, area.height) : 1;
+      // Dès que la scène est sur deux colonnes, le détail occupe la droite : la pile se range à gauche et
+      // se réduit pour tenir dans la place restante, même dans une fenêtre moyenne. Calculé au démarrage.
+      const sideBySide = isWideScreen() && unit > 0;
       const detailWidth = Math.min(columnWidth * DETAIL_SHARE, DETAIL_MAX_WIDTH);
       const shift = sideBySide ? (detailWidth + DETAIL_GAP) / 2 / unit : 0;
+      const freeWidth = columnWidth - detailWidth - DETAIL_GAP;
+      const stackScale = sideBySide
+        ? Math.min(
+            Math.max(STACK_SCALE_WITH_DETAIL, MIN_STACK_VISUAL_PX / (unit * STACK_VISUAL_WIDTH)),
+            Math.max(MIN_STACK_SCALE_WITH_DETAIL, freeWidth / (unit * STACK_VISUAL_WIDTH)),
+          )
+        : 1;
       timeline.to(
         stack,
         {
           y: -70,
           // Le décalage initial de la scène est repris ici : la position finale ne change pas.
           x: -shift + getIntroInitialShift() / unit,
-          scale: sideBySide ? STACK_SCALE_WITH_DETAIL : 1,
+          scale: stackScale,
           duration: 1,
         },
         0,
@@ -592,6 +640,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   vide entre le titre et la pyramide. */}
               <div
                 data-onboarding-panel
+                data-onboarding-panel-fixed
                 aria-hidden="true"
                 style={panelStyle}
                 className={cn(
@@ -601,8 +650,10 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               >
                 <div ref={chatbotAnchorRef} />
               </div>
-              <div ref={formationSelectorRef} className="relative z-20 min-h-20 w-full shrink-0 pt-2 lg:w-[52%] lg:self-start">
-                {activeStep >= 1 && formationOptions && selectedFormationId && onSelectFormation ? (
+              {/* Toujours en place, masqué au palier 0 : la zone de la pyramide a ainsi dès le départ la
+                  hauteur qu'elle gardera, et les mesures du démarrage restent justes. */}
+              <div ref={formationSelectorRef} className={cn("relative z-20 min-h-20 w-full shrink-0 pt-2 lg:w-[52%] lg:self-start", activeStep < 1 && "invisible")}>
+                {formationOptions && selectedFormationId && onSelectFormation ? (
                   <IntroFormationSelector
                     options={formationOptions}
                     selectedId={selectedFormationId}
@@ -699,23 +750,16 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               scopeRef={chatbotAnchorRef}
               step={settledStep}
               detailMessage={detailMessage}
-              guideStep={guideStep}
+              guide={guide}
+              onContinue={() => (settledStep >= maxStep ? handleComplete() : goToStep(settledStep + 1))}
             />
           ) : null}
 
-          {/* En bas à droite : « Précédent », puis « Suivant » (même action que le défilement
-              vers le bas) ou « Continuer la découverte » au dernier niveau. */}
-          <div className="absolute bottom-4 right-4 flex items-center gap-2 sm:right-8">
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              disabled={activeStep === 0}
-              onClick={() => goToStep(activeStep - 1)}
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              Précédent
-            </button>
-            {isLast ? (
+          {/* En bas à droite, au dernier niveau seulement : « Continuer la découverte » termine la présentation.
+              Pour avancer ou reculer, l’assistant virtuel propose « Précédent », « Suivant » et « Continuer »,
+              et le défilement ou les flèches du clavier restent disponibles. */}
+          {isLast ? (
+            <div className="absolute bottom-4 right-4 flex items-center gap-2 sm:right-8">
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
@@ -732,17 +776,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   <ArrowRight className="size-4" aria-hidden="true" />
                 )}
               </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => goToStep(activeStep + 1)}
-              >
-                Suivant
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </button>
-            )}
-          </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

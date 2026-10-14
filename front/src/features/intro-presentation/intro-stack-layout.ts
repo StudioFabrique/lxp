@@ -86,3 +86,7 @@ export const boxStyle = (box: StackBox) => ({
   left: box.x - box.width / 2,
   top: box.y - box.height / 2,
 });
+
+/** Échelle de la scène 3D dans une zone de cette taille : elle inclut le cadre et la projection des six couches, pas seulement leur base à plat. */
+export const getIntroStackScale = (width: number, height: number): number =>
+  Math.min(width / 1000, height / 850, 0.8);

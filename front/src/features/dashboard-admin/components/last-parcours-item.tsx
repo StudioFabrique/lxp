@@ -164,6 +164,8 @@ const LastParcoursItem = ({
               )}
               <button
                 type="button"
+                // Repère de l'assistant virtuel, qui guide vers ce bouton tant que la première formation n'existe pas.
+                data-chatbot-target={isFirstFormation ? "first-formation" : undefined}
                 className={cn(
                   // h-auto : le libellé peut passer sur deux lignes dans une carte étroite sans coller aux bords du bouton.
                   "btn relative h-auto min-h-10 py-2.5 text-center",

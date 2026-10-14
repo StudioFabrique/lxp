@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SkipForward } from "lucide-react";
 
 import {
@@ -9,6 +9,7 @@ import {
 import { useIntroCards } from "./useIntroCards";
 import IntroOverviewScene from "./IntroOverviewScene";
 import IntroSceneHeading from "./IntroSceneHeading";
+import IntroSkipConfirmModal from "./IntroSkipConfirmModal";
 import { useIntroPresentation } from "./useIntroPresentation";
 import { useIntroSpaceReady } from "./useIntroSpaceReady";
 
@@ -29,6 +30,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
   // Les titres réels sont attendus, mais jamais plus de quelques secondes.
   const isReady = useIntroSpaceReady(isLoading);
   const rootRef = useRef<HTMLElement>(null);
+  const [isSkipConfirmOpen, setIsSkipConfirmOpen] = useState(false);
   // Position et geste de l’assistant virtuel, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
   const memory = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: null });
   const chatbotMemory = useMemo<ChatbotMemoryAccess>(
@@ -87,13 +89,20 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
 
       <button
         type="button"
-        className="btn btn-ghost btn-sm absolute bottom-4 left-4 z-10"
+        className="btn btn-ghost btn-xs absolute bottom-4 left-4 z-10 h-6 min-h-0 gap-1 px-2 text-[0.7rem] font-normal"
         disabled={isSaving}
-        onClick={onSkip}
+        onClick={() => setIsSkipConfirmOpen(true)}
       >
-        <SkipForward className="size-4" aria-hidden="true" />
-        Ignorer la présentation
+        <SkipForward className="size-3" aria-hidden="true" />
+        Passer la présentation
       </button>
+      {isSkipConfirmOpen && (
+        <IntroSkipConfirmModal
+          isSaving={isSaving}
+          onCancel={() => setIsSkipConfirmOpen(false)}
+          onConfirm={onSkip}
+        />
+      )}
     </section>
     </AuthChatbotTransitionContext>
   );

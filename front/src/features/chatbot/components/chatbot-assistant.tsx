@@ -16,11 +16,13 @@ import ChatbotTutorialHighlight from "./chatbot-parts/chatbot-tutorial-highlight
 import useChatbot, { AI_UNAVAILABLE_MESSAGE, type ChatbotValues } from "../hooks/use-chatbot";
 import useBubbleInViewport from "../hooks/use-bubble-in-viewport";
 import useChatbotDock from "../hooks/use-chatbot-dock";
+import useChatbotFirstFormation from "../hooks/use-chatbot-first-formation";
 import useChatbotQuiz from "../hooks/use-chatbot-quiz";
 import useChatbotTutorial from "../hooks/use-chatbot-tutorial";
 import useChatbotUi from "../hooks/use-chatbot-ui";
 import { buildChatbotQuestions, chatbotQuestionKey, pickSelectionPrompts, type ChatbotQuestion } from "../chatbot-questions";
 import { chooseTutorialPlacement } from "../chatbot-position";
+import { FIRST_FORMATION_TUTORIAL } from "../chatbot-tutorials";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import { useIntroPresentation } from "../../intro-presentation/useIntroPresentation";
 import { canSuggestActivityQuiz } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
@@ -83,6 +85,16 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     setQuestionsOpen(false);
     setSeenSelection(activityTextSelection);
   }, [activityTextSelection]);
+
+  // Tant que le bouton « Créer ma première formation » est affiché, l'assistant va seul vers lui, le met en
+  // évidence et lui donne le focus : c'est là que démarre la création de contenu.
+  const { startTutorial, stopTutorial: stopTutorialById } = tutorial;
+  const firstFormation = useChatbotFirstFormation(isIntroOpen || hidden, useCallback((button: HTMLElement) => {
+    setQuestionsOpen(false);
+    setAnswer(null);
+    startTutorial(FIRST_FORMATION_TUTORIAL);
+    button.focus({ preventScroll: true });
+  }, [startTutorial]), useCallback(() => stopTutorialById(FIRST_FORMATION_TUTORIAL.id), [stopTutorialById]));
 
   const animateAvatar = useCallback(() => {
     setGesture((current) => chooseChatbotGesture(current, Math.random()));
@@ -185,6 +197,9 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
         onPrevious={tutorial.previous}
         onNext={tutorial.next}
         onStop={tutorial.stop}
+        onNeverShowAgain={tutorial.active.tutorial.id === FIRST_FORMATION_TUTORIAL.id
+          ? () => { firstFormation.hideForever(); tutorial.stop(); }
+          : undefined}
       />
     );
   } else if (answer) {

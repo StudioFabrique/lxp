@@ -4,7 +4,8 @@ import { useSyncExternalStore } from "react";
 const WIDE_SHIFT_PX = 96;
 const WIDE_QUERY = "(min-width: 1024px)";
 
-const isWideScreen = (): boolean =>
+/** Vrai à partir du point de rupture `lg` : la scène est sur deux colonnes et le détail du niveau se pose à droite de la pyramide. */
+export const isWideScreen = (): boolean =>
   typeof window !== "undefined" && window.matchMedia?.(WIDE_QUERY).matches === true;
 
 /** Sous le point de rupture `lg`, la scène tient sur une colonne : aucun décalage latéral. */

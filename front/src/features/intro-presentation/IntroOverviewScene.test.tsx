@@ -37,7 +37,7 @@ vi.mock("../../hooks/useInstanceBranding", () => ({
 vi.mock("./useIntroPresentation", () => ({
   useIntroPresentation: () => ({ sidebarPhase: "normal" }),
 }));
-vi.mock("./useIntroGuide", () => ({ useIntroGuide: () => 0 }));
+vi.mock("./useIntroGuide", () => ({ useIntroGuide: () => ({ step: 0 }) }));
 vi.mock("./IntroChatbot", () => ({ default: () => null }));
 
 let container: HTMLDivElement;
@@ -118,9 +118,11 @@ describe("IntroOverviewScene", () => {
   });
 
   it("montre trois boutons de formation seulement après le premier palier", () => {
-    expect(container.querySelector("[aria-label='Choix de la formation présentée']")).toBeNull();
+    // Présents dès le départ pour garder la mise en page, mais masqués au palier 0.
+    expect(container.querySelector("[aria-label='Choix de la formation présentée']")?.closest(".invisible")).not.toBeNull();
     advanceTo(1);
     const group = container.querySelector("[aria-label='Choix de la formation présentée']");
+    expect(group?.closest(".invisible")).toBeNull();
     expect(group?.querySelectorAll("button")).toHaveLength(3);
     expect(group?.querySelector("button[aria-pressed='true']")?.textContent).toContain("Développeur web");
     advanceTo(4);

@@ -143,6 +143,72 @@ describe("assistant virtuel de l'application", () => {
       expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
     });
 
+    describe("guide vers « Créer ma première formation »", () => {
+      const addFirstFormationButton = (): HTMLButtonElement => {
+        document.body.insertAdjacentHTML("beforeend", '<button data-chatbot-target="first-formation">Créer ma première formation</button>');
+        const button = document.querySelector<HTMLButtonElement>("[data-chatbot-target]");
+        if (!button) throw new Error("bouton introuvable");
+        button.getBoundingClientRect = () => new DOMRect(300, 400, 220, 40);
+        button.scrollIntoView = vi.fn();
+        return button;
+      };
+      const flush = (): Promise<void> => act(async () => { await new Promise((resolve) => setTimeout(resolve, 50)); });
+
+      it("va seul vers le bouton, lui donne le focus et explique que la création de contenu démarre ici", async () => {
+        await render(true);
+        const button = addFirstFormationButton();
+        await flush();
+        expect(bubble()).toContain("La première étape de la création de contenu démarre ici");
+        expect(bubble()).not.toContain("1 / 1");
+        expect(document.activeElement).toBe(button);
+        expect(document.body.textContent).not.toContain("Terminer");
+        await act(async () => { findButton("Quitter le tutoriel").click(); });
+        expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
+      });
+
+      it("ne revient plus une fois « Ne plus afficher » choisi", async () => {
+        await render(true);
+        addFirstFormationButton();
+        await flush();
+        await act(async () => { findButton("Ne plus afficher").click(); });
+        expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
+        document.querySelector("[data-chatbot-target]")?.remove();
+        addFirstFormationButton();
+        await flush();
+        expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
+      });
+
+      it("s'efface quand le bouton disparaît, par exemple une fois la première formation créée", async () => {
+        await render(true);
+        addFirstFormationButton();
+        await flush();
+        expect(bubble()).toContain("La première étape");
+        document.querySelector("[data-chatbot-target]")?.remove();
+        await flush();
+        expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
+      });
+
+      it("s'efface quand l'utilisateur clique le bouton", async () => {
+        await render(true);
+        const button = addFirstFormationButton();
+        await flush();
+        await act(async () => { button.click(); });
+        expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
+      });
+
+      it("revient à chaque nouvel affichage du bouton tant qu'il n'est pas masqué", async () => {
+        await render(true);
+        addFirstFormationButton();
+        await flush();
+        await act(async () => { findButton("Quitter le tutoriel").click(); });
+        document.querySelector("[data-chatbot-target]")?.remove();
+        await flush();
+        addFirstFormationButton();
+        await flush();
+        expect(bubble()).toContain("La première étape de la création de contenu démarre ici");
+      });
+    });
+
     it("annonce qu'il n'y a rien à montrer quand aucun élément n'est affiché", async () => {
       await render(true);
       act(() => document.querySelector<HTMLButtonElement>(`button[aria-label="${avatarLabel}"]`)?.click());

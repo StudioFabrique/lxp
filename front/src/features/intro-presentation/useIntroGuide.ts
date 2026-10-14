@@ -1,24 +1,28 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
-import { GUIDE_STEP_MS } from "./intro-dialogue";
+export type IntroGuide = {
+  /** Rang du message courant, à partir de 0. */
+  step: number;
+  /** Absent au premier message. */
+  previous?: () => void;
+  /** Absent au dernier message. */
+  next?: () => void;
+};
 
 /**
- * Étape du guide du niveau courant : 0 pour le niveau, puis un composant après
- * l'autre. Elle repart de 0 quand `resetKey` change, sans effet de remise à zéro.
+ * Suite de messages de l'assistant virtuel, lue à la demande avec « Précédent » et « Suivant » : rien ne
+ * défile seul. Elle repart du premier message quand `resetKey` change, sans effet de remise à zéro.
  */
-export function useIntroGuide(stepCount: number, resetKey: string, enabled: boolean): number {
+export function useIntroGuide(stepCount: number, resetKey: string): IntroGuide {
   const [state, setState] = useState({ key: resetKey, step: 0 });
+  const step = Math.min(state.key === resetKey ? state.step : 0, Math.max(stepCount - 1, 0));
 
-  useEffect(() => {
-    if (!enabled) return;
-    const timers = Array.from({ length: Math.max(stepCount - 1, 0) }, (_, index) =>
-      setTimeout(
-        () => setState({ key: resetKey, step: index + 1 }),
-        (index + 1) * GUIDE_STEP_MS,
-      ),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [stepCount, resetKey, enabled]);
+  const previous = useCallback(() => setState({ key: resetKey, step: step - 1 }), [resetKey, step]);
+  const next = useCallback(() => setState({ key: resetKey, step: step + 1 }), [resetKey, step]);
 
-  return state.key === resetKey ? state.step : 0;
+  return {
+    step,
+    previous: step > 0 ? previous : undefined,
+    next: step + 1 < stepCount ? next : undefined,
+  };
 }

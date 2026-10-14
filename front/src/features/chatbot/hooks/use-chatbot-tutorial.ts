@@ -15,11 +15,15 @@ export default function useChatbotTutorial() {
   const tutorials = useMemo(() => getChatbotTutorials(pathname), [pathname]);
   const active = state && state.pathname === pathname ? state : null;
 
+  /** Lance un tutoriel, listé ou non dans l'éventail ; sans élément à montrer, l'assistant l'annonce. */
+  const startTutorial = useCallback((tutorial: ChatbotTutorial) => {
+    setState({ pathname, tutorial, steps: resolveTutorialSteps(tutorial), index: 0 });
+  }, [pathname]);
+
   const start = useCallback((id: string) => {
     const tutorial = tutorials.find((entry) => entry.id === id);
-    if (!tutorial) return;
-    setState({ pathname, tutorial, steps: resolveTutorialSteps(tutorial), index: 0 });
-  }, [pathname, tutorials]);
+    if (tutorial) startTutorial(tutorial);
+  }, [tutorials, startTutorial]);
 
   const next = useCallback(() => {
     setState((current) => {
@@ -34,13 +38,20 @@ export default function useChatbotTutorial() {
 
   const stop = useCallback(() => setState(null), []);
 
+  /** Arrête le tutoriel `id` seulement : un autre tutoriel lancé entre-temps continue. */
+  const stopTutorial = useCallback((id: string) => {
+    setState((current) => (current?.tutorial.id === id ? null : current));
+  }, []);
+
   return {
     tutorials,
     active,
     step: active ? (active.steps[active.index] ?? null) : null,
     start,
+    startTutorial,
     next,
     previous,
     stop,
+    stopTutorial,
   };
 }

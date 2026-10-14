@@ -11,8 +11,8 @@ export const OVERVIEW_DIALOGUE: readonly string[] = [
 export const INTRO_HELP: ChatbotHelp = {
   action:
     "Faites défiler vers le bas, ou utilisez les flèches à droite, pour découvrir les niveaux un par un.",
-  next: "Cliquez sur « Suivant », ou faites défiler vers le bas, pour passer au niveau suivant. Au dernier niveau, cliquez sur « Continuer la découverte ».",
-  back: "Faites défiler vers le haut, utilisez la flèche du haut, ou cliquez sur un niveau à gauche, pour revenir en arrière.",
+  next: "Lisez mes explications avec « Suivant », puis cliquez sur « Continuer », ou faites défiler vers le bas, pour passer au niveau suivant. Au dernier niveau, « Continuer » termine la présentation.",
+  back: "Faites défiler vers le haut, utilisez la flèche du haut, cliquez sur un niveau à gauche, ou sur « Précédent » dans ma bulle, pour revenir en arrière.",
 };
 
 /**
@@ -26,12 +26,6 @@ export const OPENING_ANIMATION_MS = 1000;
 /** L’assistant virtuel se place après ce délai la première fois, puis après le second. */
 export const FIRST_PLACEMENT_MS = 1300;
 export const NEXT_PLACEMENT_MS = 350;
-/** Temps de lecture d'un message avant le suivant. */
-export const READ_MS = 2800;
-
-/** Temps entre deux explications de l’assistant virtuel sur les composants d'un niveau. */
-export const GUIDE_STEP_MS = 4500;
-
 /** Points d'attente entre deux niveaux : brefs, pour ne pas ralentir la découverte. */
 export const LEVEL_TYPING_MS = 250;
 
@@ -45,20 +39,3 @@ export const typingDuration = (message: string): number =>
     MAX_TYPING_MS,
     MIN_TYPING_MS + message.length * TYPING_MS_PER_CHARACTER,
   );
-
-/**
- * Instant d'apparition de chaque message, depuis l'ouverture : placement du
- * assistant virtuel, points d'attente, lecture, puis le message suivant.
- */
-export const dialogueSchedule = (messages: readonly string[]): number[] => {
-  const starts: number[] = [];
-  let elapsed = 0;
-  messages.forEach((message, index) => {
-    starts.push(elapsed);
-    elapsed +=
-      (index === 0 ? FIRST_PLACEMENT_MS : NEXT_PLACEMENT_MS) +
-      typingDuration(message) +
-      READ_MS;
-  });
-  return starts;
-};

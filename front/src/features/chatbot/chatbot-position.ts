@@ -12,7 +12,8 @@ export const CHATBOT_EDGE_MARGIN = 20;
 /** Même retrait que l'ancien bouton flottant, repris par la séquence de présentation (`intro-chatbot-spot`). */
 export const CHATBOT_DEFAULT_OFFSET = 24;
 const BUBBLE_GAP = 12;
-const TARGET_CLEARANCE = 16;
+// Le cadre de mise en évidence dépasse déjà l'élément d'une dizaine de pixels : l'assistant garde de l'air au-delà.
+const TARGET_CLEARANCE = 28;
 
 export const clampChatbotPoint = (point: ChatbotPoint, viewport: ChatbotViewport, size = CHATBOT_AVATAR_SIZE): ChatbotPoint => ({
   x: Math.max(CHATBOT_EDGE_MARGIN, Math.min(point.x, viewport.width - size - CHATBOT_EDGE_MARGIN)),

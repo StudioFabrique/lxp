@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { INTRO_PYRAMID_LEVELS } from "./intro-levels";
+import { getIntroStackScale } from "./intro-stack-layout";
 import IntroOrganisationFrame from "./IntroOrganisationFrame";
 import IntroLevelPlate from "./IntroLevelPlate";
 
@@ -45,9 +46,8 @@ const IntroLevelStack = ({
     const root = rootRef.current;
     if (!root) return;
     const measure = (): void => {
-      // Inclut le cadre et la projection des six couches, pas seulement leur base à plat.
       const { width, height } = root.getBoundingClientRect();
-      if (width > 0 && height > 0) setScale(Math.min(width / 1000, height / 850, 0.8));
+      if (width > 0 && height > 0) setScale(getIntroStackScale(width, height));
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -57,17 +57,19 @@ const IntroLevelStack = ({
   return (
     <div
       ref={rootRef}
-      className="grid h-full min-h-0 w-full grid-rows-[minmax(0,1fr)] place-items-center"
+      // La scène 3D (700 x 500) est posée au centre sans compter dans la mise en page : réduite par
+      // `scale`, elle garderait sinon sa taille d'origine et agrandirait la colonne dans une fenêtre courte.
+      className="relative h-full min-h-0 w-full"
     >
       <div
         style={
           {
             "--intro-glass": plateColors.glass,
             "--intro-plate-text": plateColors.text,
-            transform: `translate(${offsetX}px, ${70 * scale}px) scale(${scale})`,
+            transform: `translate(calc(-50% + ${offsetX}px), calc(-50% + ${70 * scale}px)) scale(${scale})`,
           } as CSSProperties
         }
-        className="intro-plate-scope relative h-[500px] w-[700px] [perspective:1500px]">
+        className="intro-plate-scope absolute left-1/2 top-1/2 h-[500px] w-[700px] [perspective:1500px]">
         <IntroOrganisationFrame
           name={organisationName}
           logoUrl={logoUrl}

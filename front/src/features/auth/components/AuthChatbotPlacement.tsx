@@ -274,6 +274,9 @@ export default function AuthChatbotPlacement({
       };
       const columnElement = scopeElement.closest("[data-auth-column]");
       const column = columnElement ? settledRect(columnElement) : null;
+      // A panel marked `data-onboarding-panel-fixed` is the only place the dialogue may take: when it is
+      // crowded, the dialogue stays centred in it rather than jumping to the page gutter, over other content.
+      const stayInPanel = scopeElement.hasAttribute("data-onboarding-panel-fixed");
       const point = desktop
         ? (chooseChatbotPlacement(
             viewport,
@@ -284,6 +287,12 @@ export default function AuthChatbotPlacement({
             undefined,
             previousPosition?.getPosition(),
           ) ??
+          (stayInPanel
+            ? {
+                left: visibleScope.left + (visibleScope.width - size.width) / 2,
+                top: visibleScope.top + (visibleScope.height - size.height) / 2,
+              }
+            : null) ??
           // Colonne plus étroite que la bulle (connexion) : centrer dans le vide de la colonne entière.
           (column
             ? chooseChatbotPlacement(

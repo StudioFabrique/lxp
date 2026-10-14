@@ -11,6 +11,24 @@ export type ChatbotTutorial = {
   steps: ChatbotTutorialStep[];
 };
 
+/** Bouton « Créer ma première formation » du tableau de bord : repère posé par `LastParcoursItem`. */
+export const FIRST_FORMATION_SELECTOR = '[data-chatbot-target="first-formation"]';
+
+/**
+ * Guide lancé seul par l'assistant virtuel quand le bouton est affiché : il n'apparaît pas dans l'éventail
+ * et ne montre que ce bouton, point de départ de la création de contenu.
+ */
+export const FIRST_FORMATION_TUTORIAL: ChatbotTutorial = {
+  id: "first-formation",
+  label: "Créer ma première formation",
+  steps: [
+    {
+      selector: FIRST_FORMATION_SELECTOR,
+      message: "La première étape de la création de contenu démarre ici : créez votre première formation, puis ses parcours, modules et cours.",
+    },
+  ],
+};
+
 const MAIN_CONTAINER = "#main-scroll-container";
 
 const getLayout = (pathname: string): SidebarLayout | null => {
