@@ -25,7 +25,6 @@ import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
 import IntroSceneHeading from "./IntroSceneHeading";
-import { readableTextColor } from "../../utils/helpers/color-helpers";
 import { useInstanceBranding } from "./useInstanceBranding";
 import { useIntroGuide } from "./useIntroGuide";
 import { useIntroPresentation } from "./useIntroPresentation";
@@ -64,6 +63,8 @@ const DETAIL_MAX_WIDTH = 512;
 const DETAIL_GAP = 24;
 /** Réduction de la pile quand elle laisse la place au détail du niveau. */
 const STACK_SCALE_WITH_DETAIL = 0.85;
+/** Décalage initial vers la gauche (en px) de la pyramide, du texte de défilement et du compteur : 6rem, soit `-translate-x-24`. */
+const INITIAL_SHIFT_PX = 96;
 /** Largeur de colonne en dessous de laquelle le détail passe sous la pyramide. */
 const MIN_SIDE_BY_SIDE_WIDTH = 720;
 
@@ -94,13 +95,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
     ScrollTrigger.refresh();
   }, [maxStep]);
   const { logoUrl, backgroundColor } = useInstanceBranding();
-  // Sur un fond coloré (blanc, par exemple) les plaques de verre et leur texte prennent
-  // ce fond et un texte lisible dessus, pour ne pas dépendre du thème clair ou sombre.
-  const plateText = backgroundColor ? readableTextColor(backgroundColor) : undefined;
-  const plateColors =
-    backgroundColor && plateText
-      ? { glass: backgroundColor, text: plateText }
-      : THEME_PLATE_COLORS;
+  // Le fond coloré n'entoure plus que le logo : les plaques reposent sur la page et gardent les couleurs du thème.
+  const plateColors = THEME_PLATE_COLORS;
   // Avec la barre réduite de la première présentation, le titre prend la ligne libre à sa droite.
   const { sidebarPhase } = useIntroPresentation();
   const isCompactSidebar = sidebarPhase !== "normal";
@@ -466,7 +462,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         stack,
         {
           y: -70,
-          x: -shift,
+          // Le décalage initial de la scène est repris ici : la position finale ne change pas.
+          x: -shift + INITIAL_SHIFT_PX / unit,
           scale: sideBySide ? STACK_SCALE_WITH_DETAIL : 1,
           duration: 1,
         },
@@ -609,6 +606,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               </div>
               <div className="flex min-h-0 w-full flex-1 items-center justify-center">
                 <IntroLevelStack
+                  offsetX={-INITIAL_SHIFT_PX}
                   activeIndex={levelIndex}
                   visibleLevelCount={maxStep}
                   organisationName={cards[0].title}
@@ -633,6 +631,19 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   />
                 </IntroLevelStack>
               </div>
+              {/* Centré sur la colonne de la pyramide, pas sur toute la scène. */}
+                <p className="intro-scroll-hint pointer-events-none absolute inset-x-0 -bottom-12 z-30 -translate-x-24 mx-auto flex w-fit max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80">
+                  <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
+                  Faire défiler vers le bas pour naviguer entre les différents niveaux
+                </p>
+                {/* Numérotation du palier, en bas, centrée sur la colonne de la pyramide. */}
+                <p
+                  className="absolute -bottom-[5.75rem] left-1/2 -translate-x-[calc(50%+6rem)] text-sm tabular-nums"
+                  aria-label={`Palier ${activeStep} sur ${maxStep}`}
+                >
+                  <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
+                  <span className="text-base-content/60"> / {pad(maxStep)}</span>
+                </p>
               {isDetailShown && settledCard ? (
                 <>
                   <div className={cn("intro-detail-wrap mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
@@ -653,11 +664,6 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
             </div>
           </div>
 
-          <p className="intro-scroll-hint pointer-events-none absolute inset-x-4 bottom-16 z-30 mx-auto flex w-fit max-w-[calc(100%-2rem)] items-center justify-center gap-2 text-center text-sm text-base-content/80">
-            <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
-            Faire défiler vers le bas pour naviguer entre les différents niveaux
-          </p>
-
           {isChatbotReady ? (
             <IntroChatbot
               scopeRef={chatbotAnchorRef}
@@ -666,15 +672,6 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               guideStep={guideStep}
             />
           ) : null}
-
-          {/* Numérotation du palier, en bas au milieu de la page. */}
-          <p
-            className="absolute bottom-5 left-1/2 -translate-x-1/2 text-sm tabular-nums"
-            aria-label={`Palier ${activeStep} sur ${maxStep}`}
-          >
-            <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
-            <span className="text-base-content/60"> / {pad(maxStep)}</span>
-          </p>
 
           {/* En bas à droite : « Précédent », puis « Suivant » (même action que le défilement
               vers le bas) ou « Continuer la découverte » au dernier niveau. */}

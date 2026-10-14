@@ -16,6 +16,8 @@ type Props = {
   plateColors: { glass: string; text: string };
   /** Appelé avec l'indice (dans la pyramide) de la plaque cliquée. */
   onSelect: (index: number) => void;
+  /** Décalage horizontal (px) de toute la scène, cadre de l'organisme compris. */
+  offsetX?: number;
   /** Pile des éléments enfants, posée dans le même repère 3D que les plaques : même caméra par construction. */
   children?: ReactNode;
 };
@@ -34,6 +36,7 @@ const IntroLevelStack = ({
   backgroundColor,
   plateColors,
   onSelect,
+  offsetX = 0,
   children,
 }: Props) => {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -61,7 +64,7 @@ const IntroLevelStack = ({
           {
             "--intro-glass": plateColors.glass,
             "--intro-plate-text": plateColors.text,
-            transform: `translateY(${70 * scale}px) scale(${scale})`,
+            transform: `translate(${offsetX}px, ${70 * scale}px) scale(${scale})`,
           } as CSSProperties
         }
         className="intro-plate-scope relative h-[500px] w-[700px] [perspective:1500px]">

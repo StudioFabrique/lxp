@@ -3,7 +3,17 @@ import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { INTRO_ROW_COUNT, type IntroCard } from "./intro-content";
 import { INTRO_LEVELS } from "./intro-levels";
 import { gsap, prefersReducedMotion } from "./intro-motion";
-import { STACK_DEPTH, activityFacingTransform, activityTypeBox, childBox, layerBox } from "./intro-stack-layout";
+import {
+  FINAL_STACK_ROTATION,
+  LEAF_STACK_PITCH,
+  LEAF_STACK_SHIFT_X,
+  LEAF_STACK_YAW,
+  STACK_DEPTH,
+  activityFacingTransform,
+  activityTypeBox,
+  childBox,
+  layerBox,
+} from "./intro-stack-layout";
 import IntroStackPlate from "./IntroStackPlate";
 
 type Props = {
@@ -19,6 +29,12 @@ type Props = {
   onSelectLevel: (level: number) => void;
   onSelectChild: (rowIndex: number) => void;
 };
+
+/** Remontée du sélecteur de formation quand les cartes d'activité se relèvent. */
+const SELECTOR_LIFT = -56;
+
+/** Roulis supplémentaire (en degrés, négatif = sens antihoraire) qui redresse la pyramide au dernier niveau. */
+const STRAIGHTEN_ROLL = -4;
 
 type Shown = { levelIndex: number; card: IntroCard };
 
@@ -141,7 +157,14 @@ const IntroChildrenStack = ({
   // couche qui les porte, en montant l'une après l'autre.
   useLayoutEffect(() => {
     const root = rootRef.current;
-    if (!root || !shownLevel) return;
+    if (!root) return;
+    // Hors du dernier niveau, la pyramide retrouve sa place d'origine, même si une
+    // animation interrompue a laissé son décalage ou ses rotations.
+    const pyramid = root.closest<HTMLElement>(".intro-tilt");
+    if (shownLevel !== INTRO_LEVELS.length - 1 && pyramid) {
+      gsap.set(pyramid, { x: 0, rotation: 0, rotationY: 0 });
+    }
+    if (!shownLevel) return;
     const plates = gsap.utils.toArray<HTMLElement>(
       ".intro-layer-plate, .intro-child-plate",
       root,
@@ -156,11 +179,26 @@ const IntroChildrenStack = ({
     if (selector) gsap.set(selector, { y: 0 });
     const childLayer = root.querySelector<HTMLElement>(".intro-child-layer");
     const isLeaf = shownLevel === INTRO_LEVELS.length - 1;
-    gsap.set(childLayer, { z: isLeaf ? shownLevel * STACK_DEPTH : 0, rotationX: 0, rotationY: 0, rotation: 0 });
+    // Au dernier niveau, le roulis de la pile est annulé, puis ajusté par STRAIGHTEN_ROLL : les bords
+    // paraissent plus verticaux, donc plus droits face au lecteur.
+    const tilt = root.closest<HTMLElement>(".intro-tilt");
+    const straightRoll = -FINAL_STACK_ROTATION + STRAIGHTEN_ROLL;
+    gsap.set(childLayer, {
+      z: isLeaf ? shownLevel * STACK_DEPTH : 0,
+      rotationX: 0,
+      rotationY: 0,
+      rotation: 0,
+    });
     if (prefersReducedMotion()) {
       if (isLeaf) {
-        gsap.set(childLayer, { transform: activityFacingTransform(shownLevel) });
-        if (selector) gsap.set(selector, { y: -24 });
+        gsap.set(childLayer, {
+          transform: activityFacingTransform(shownLevel),
+        });
+        if (selector) gsap.set(selector, { y: SELECTOR_LIFT });
+        gsap.set(tilt, { rotation: straightRoll, rotationX: LEAF_STACK_PITCH, rotationY: LEAF_STACK_YAW, x: LEAF_STACK_SHIFT_X });
+        return () => {
+          gsap.set(tilt, { rotation: 0, rotationX: 0, rotationY: 0, x: 0 });
+        };
       }
       return;
     }
@@ -192,19 +230,35 @@ const IntroChildrenStack = ({
             : -Number(plate.dataset.x) * 0.85,
         z: (_index: number, plate: HTMLElement) =>
           Number(plate.dataset.depth) - (isBack ? 0 : STACK_DEPTH),
-        duration: 0.8,
+        duration: isLeaf ? 0.5 : 0.8,
         ease: "power3.out",
-        stagger: 0.12,
+        stagger: isLeaf ? 0.07 : 0.12,
       });
       if (isLeaf) {
-        const facingDelay = delay + 0.8 + Math.max(children.length - 1, 0) * 0.12;
+        const facingDelay =
+          delay + 0.5 + Math.max(children.length - 1, 0) * 0.07;
         gsap.to(childLayer, {
           transform: activityFacingTransform(shownLevel),
           delay: facingDelay,
+          duration: 0.6,
+          ease: "power2.inOut",
+        });
+        gsap.to(tilt, {
+          rotation: straightRoll,
+          rotationX: LEAF_STACK_PITCH,
+          rotationY: LEAF_STACK_YAW,
+          x: LEAF_STACK_SHIFT_X,
+          delay: facingDelay - 0.2,
           duration: 0.8,
           ease: "power2.inOut",
         });
-        if (selector) gsap.to(selector, { y: -24, delay: facingDelay, duration: 0.8, ease: "power2.inOut" });
+        if (selector)
+          gsap.to(selector, {
+            y: SELECTOR_LIFT,
+            delay: facingDelay,
+            duration: 0.6,
+            ease: "power2.inOut",
+          });
       }
     }, root);
     return () => context.revert();
@@ -248,9 +302,15 @@ const IntroChildrenStack = ({
                 variant="child"
                 label={row.title}
                 icon={childLevel.icon}
-                box={displayed.levelIndex === INTRO_LEVELS.length - 1
-                  ? activityTypeBox(index, displayed.card.rows.length)
-                  : childBox(displayed.levelIndex, index, displayed.card.rows.length)}
+                box={
+                  displayed.levelIndex === INTRO_LEVELS.length - 1
+                    ? activityTypeBox(index, displayed.card.rows.length)
+                    : childBox(
+                        displayed.levelIndex,
+                        index,
+                        displayed.card.rows.length,
+                      )
+                }
                 isActive={isCurrent && index === highlightedRow}
                 onSelect={
                   displayed.levelIndex < INTRO_LEVELS.length - 1

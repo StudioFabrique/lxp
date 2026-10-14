@@ -19,15 +19,33 @@ export const STACK_DEPTH = 60;
 export const FINAL_STACK_ROTATION_X = 46;
 export const FINAL_STACK_ROTATION = -4;
 
-/** Ordre inverse des rotations de la pile : les cartes regardent exactement l’écran. */
+/** Rabat (en degrés) de la pile au dernier niveau : elle se redresse pour faire davantage face au lecteur. */
+export const LEAF_STACK_PITCH = -14;
+
+/** Rotation (en degrés) autour de l'axe vertical : la pile se tourne légèrement vers la droite de l'écran. */
+export const LEAF_STACK_YAW = 4;
+
+/** Décalage (unités de la scène) de la pyramide vers la droite au dernier niveau. */
+export const LEAF_STACK_SHIFT_X = 70;
+
+/** Contre-rotation X (en degrés) des cartes d'activité : plus faible que l'inclinaison de la pile, elles restent donc un peu penchées. */
+export const LEAF_CARD_PITCH = 22;
+
+/** Relève les cartes face au lecteur (rotation X inverse) en gardant l’inclinaison latérale de la pile, pour rester alignées avec les couches. */
 export const activityFacingTransform = (level: number): string =>
-  `translateZ(${level * STACK_DEPTH}px) rotateX(${-FINAL_STACK_ROTATION_X}deg) rotateZ(${-FINAL_STACK_ROTATION}deg) translateY(-48px)`;
+  `translateZ(${level * STACK_DEPTH}px) rotateX(${-LEAF_CARD_PITCH}deg) translateY(-48px)`;
 
 /** Quatre cartes de taille lisible, alignées dans leur propre plan face au lecteur. */
 export const activityTypeBox = (index: number, count: number): StackBox => {
   const width = 160;
   const gap = 16;
-  return { x: (index - (count - 1) / 2) * (width + gap), y: 0, width, height: 150, z: 0 };
+  return {
+    x: (index - (count - 1) / 2) * (width + gap),
+    y: 0,
+    width,
+    height: 150,
+    z: 0,
+  };
 };
 const ROW_GAP = 14;
 const ROW_HEIGHT_SHARE = 0.62;
@@ -42,7 +60,11 @@ export const layerBox = (level: number): StackBox => ({
 });
 
 /** Carte `index` sur `count`, posée côte à côte sur la couche du niveau `level`. */
-export const childBox = (level: number, index: number, count: number): StackBox => {
+export const childBox = (
+  level: number,
+  index: number,
+  count: number,
+): StackBox => {
   const layer = layerBox(level);
   const width = (layer.width - (count + 1) * ROW_GAP) / count;
   return {

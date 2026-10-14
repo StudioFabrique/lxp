@@ -11,7 +11,7 @@ type Props = {
 };
 
 /**
- * Encadré à plat posé derrière la pyramide au palier d'introduction.
+ * Encadré posé au-dessus de la pyramide au palier d'introduction : il entoure uniquement le logo (ou le nom) de l'organisme.
  *
  * L'élément extérieur (`.intro-organisation`) est masqué par le défilement ;
  * l'intérieur (`.intro-organisation-fade`) apparaît après l'animation initiale.
@@ -29,7 +29,7 @@ const IntroOrganisationFrame = ({
   return (
     <div
       aria-hidden="true"
-      className="intro-organisation pointer-events-none absolute left-1/2 top-1/2 h-[700px] w-[960px] -translate-x-1/2 -translate-y-1/2"
+      className="intro-organisation pointer-events-none absolute left-1/2 top-[-150px] h-28 w-[380px] -translate-x-1/2"
     >
       <div className="intro-organisation-fade relative size-full">
         {/* Titre juste au-dessus du cadre, sur le fond de la page. */}
@@ -41,7 +41,7 @@ const IntroOrganisationFrame = ({
         </div>
         <div
           style={{ backgroundColor, color: textColor }}
-          className="flex size-full flex-col items-center gap-4 rounded-3xl border-2 border-dashed border-primary/40 px-8 pt-8 text-base-content"
+          className="flex size-full items-center justify-center rounded-3xl border-2 border-dashed border-primary/40 px-8 text-base-content"
         >
           {/* Le logo porte déjà le nom de l'organisme : l'un ou l'autre, jamais les deux. */}
           {logoUrl ? (
@@ -51,7 +51,7 @@ const IntroOrganisationFrame = ({
               className="h-16 max-w-[16rem] object-contain"
             />
           ) : (
-            <p className="flex items-center gap-3 text-5xl font-extrabold leading-none">
+            <p className="flex items-center gap-3 text-3xl font-extrabold leading-none">
               {name}
 
             </p>

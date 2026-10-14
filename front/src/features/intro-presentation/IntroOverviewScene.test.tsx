@@ -145,10 +145,10 @@ describe("IntroOverviewScene", () => {
     advanceTo(6);
     const layer = container.querySelector<HTMLElement>(".intro-child-layer");
     expect(layer?.querySelectorAll(".intro-child-plate")).toHaveLength(4);
-    expect(layer?.style.transform).toContain("rotateX(-46deg) rotateZ(4deg)");
+    expect(layer?.style.transform).toContain("rotateX(-22deg)");
     expect(layer?.style.transform).toContain("translateY(-48px)");
     const selector = container.querySelector("[aria-label='Choix de la formation présentée']")?.closest("fieldset")?.parentElement;
-    expect(selector?.style.translate).toBe("0 -24px");
+    expect(selector?.style.translate).toBe("0 -56px");
     advanceTo(5);
     expect(selector?.style.translate).toBe("0 0px");
   });
