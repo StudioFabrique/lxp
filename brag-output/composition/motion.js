@@ -719,7 +719,8 @@ for(const element of document.querySelectorAll('#dashboards .dash-build,#dashboa
     // unfolded and opaque, before the camera pulls back and the board is built. The player holds
     // here while the tutorial walks through each sidebar entry, then resumes. Everything that
     // follows is pushed back so the sequence stays whole; the sidebar's own tweens stay in place.
-    const settle=tl.getChildren(false,true,false).find(t=>inScene(t)&&has(t,'.sidebar-glass-front')&&t.vars.opacity===0);
+    // Only the glass fade after the landing: the opacity sets at time 0 target the same panes.
+    const settle=tl.getChildren(false,true,false).find(t=>inScene(t)&&t.startTime()>S+.2&&has(t,'.sidebar-glass-front')&&t.vars.opacity===0);
     if(settle){
       const holdAt=settle.startTime()+settle.duration()+.1,delta=holdAt-pull;
       const sidebarPart=(t)=>t.targets().some(x=>x instanceof Element&&(x.closest('.floating-sidebar')||x.matches('.sidebar-glass-pane,.sidebar-solid-pane')));
