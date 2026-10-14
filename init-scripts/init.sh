@@ -10,7 +10,6 @@ dump_dir="./dumps"
 . ./init-scripts/ui.sh
 # Les scripts appelés ici n'affichent pas leur propre en-tête.
 export ANDRIA_INIT=1
-show_cancel_hint
 
 case "${1:-}" in
   "") ;;
@@ -30,6 +29,7 @@ if [ "$demo_mode" = true ]; then init_mode="demonstration"
 elif [ "$restore_data" = true ]; then init_mode="avec données"
 else init_mode="installation à partir de zéro"; fi
 box "$c_cyan$c_bold" "ANDRIA  Initialisation du projet" "Mode : $init_mode"
+show_cancel_hint
 
 install_dependencies() {
   label="$1"
@@ -373,7 +373,6 @@ while true; do
   read -r -p "Lancer npm run dev maintenant ? [y/N] : " start_dev
   case "$start_dev" in
     o|O|oui|Oui|OUI|y|Y|yes|YES)
-      clear_cancel_hint
       exec npm run dev
       ;;
     ""|n|N|non|Non|NON|no|NO)

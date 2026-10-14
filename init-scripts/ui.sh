@@ -53,29 +53,9 @@ has_project_volumes() {
   [ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-api 2> /dev/null)" ]
 }
 
-# Rappel discret épinglé sur la dernière ligne du terminal : la zone de défilement
-# s'arrête juste au-dessus, le reste de l'affichage n'est pas gêné.
-hint_rows=0
+# Rappel discret, affiché une fois sous l'en-tête. Volontairement pas épinglé en bas avec une
+# zone de défilement : les commandes lancées ensuite (docker, concurrently) réécrivent l'écran.
 show_cancel_hint() {
-  [ -t 0 ] && [ -t 1 ] || return 0
-  hint_rows=$(tput lines 2> /dev/null) || return 0
-  [ "$hint_rows" -gt 5 ] || { hint_rows=0; return 0; }
-  # Une ligne de marge vide sépare le défilement du rappel (dernière ligne). Deux sauts
-  # de ligne puis retour : le curseur reste là où il était, au-dessus de la marge.
-  printf '\n\n\033[2A\0337\033[1;%dr\0338' "$((hint_rows - 2))"
-  printf '\0337\033[%d;1H%s ctrl+C %s%s pour annuler à tout moment%s\0338' \
-    "$hint_rows" $'\033[47;30m' "$c_reset" "$c_dim" "$c_reset"
-  trap clear_cancel_hint EXIT
-}
-clear_cancel_hint() {
-  [ "$hint_rows" -gt 0 ] || return 0
-  printf '\033[r\0337\033[%d;1H\033[2K\0338' "$hint_rows"
-  hint_rows=0
-}
-
-# Variante sans zone de défilement, pour les scripts qui lancent des commandes
-# réécrivant l'écran (docker) : le rappel s'affiche une fois, sous l'en-tête.
-show_inline_cancel_hint() {
   [ -t 1 ] || return 0
   printf '  %s ctrl+C %s%s pour annuler à tout moment%s\n' $'\033[47;30m' "$c_reset" "$c_dim" "$c_reset"
 }

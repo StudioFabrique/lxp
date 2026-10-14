@@ -2,7 +2,7 @@
 . ./init-scripts/ui.sh
 
 box "$c_cyan$c_bold" "ANDRIA  Sauvegarde des données" "Destination : api/dumps"
-show_inline_cancel_hint
+show_cancel_hint
 
 step "PostgreSQL"
 

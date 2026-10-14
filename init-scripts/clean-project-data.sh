@@ -5,7 +5,7 @@
 # a déjà été posée et l'en-tête de l'étape est déjà affiché.
 if [ -z "$ANDRIA_INIT" ]; then
     box "$c_cyan$c_bold" "ANDRIA  Nettoyage des données" "Conteneurs, volumes Docker, fichiers d'activités"
-  show_inline_cancel_hint
+  show_cancel_hint
   if [ -t 0 ] && has_project_volumes; then
     echo
     if [ -f ./api/dumps/dump-pgsql.sql ] || [ -d ./api/dumps/dump-mongo ]; then
