@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCourseDispatch } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
+import { autoSaveToastId } from "../../../../../config/auto-submit-timer";
 
 import { infosCourseSchema } from "../../../course.schema";
 import FormInput from "../../../../../../src/components/form/FormInput";
@@ -70,7 +71,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
               visibility: boolean;
             },
           });
-          toast.success(response.message);
+          toast.success(response.message, { id: autoSaveToastId });
         }
       } catch (err: unknown) {
         toast.error(getApiErrorMessage(err, "Erreur inconnue"));

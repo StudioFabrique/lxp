@@ -27,6 +27,7 @@ import Selecter from "../../../../components/UI/selecter/selecter.component";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { parcoursApi } from "../../api/parcours.api";
+import { parcoursKeys } from "../../api/parcours.keys";
 import NewParcoursForm from "../edit/new-parcours-form";
 import ParcoursImportModal, {
   type ImportFormationChoice,
@@ -72,6 +73,15 @@ export default function ParcoursCreationModal({
     queryFn: parcoursApi.queries.getFormations,
   });
   const formationList: Item[] = Array.isArray(formations) ? formations : [];
+
+  // Sans parcours existant, aucun modèle n'est disponible : l'option est grisée.
+  const { data: existingParcours, isPending: isExistingParcoursPending } =
+    useQuery({
+      queryKey: [...parcoursKeys.all, "list"],
+      queryFn: () => parcoursApi.queries.getAll(),
+    });
+  const hasNoTemplate =
+    isExistingParcoursPending || (existingParcours ?? []).length === 0;
 
   const {
     data: parcoursList = [],
@@ -236,14 +246,23 @@ export default function ParcoursCreationModal({
               </BoxWrapper>
             </div>
             <div className="divider">ou</div>
-            <button
-              className="btn btn-outline btn-secondary w-full min-h-14"
-              type="button"
-              onClick={() => setMode("template")}
+            <span
+              className={cn(
+                "w-full",
+                hasNoTemplate && !isExistingParcoursPending && "tooltip",
+              )}
+              data-tip="Aucun parcours existant à utiliser comme modèle"
             >
-              <Layers3 className="h-5 w-5" />
-              Créer un parcours à partir d'un modèle
-            </button>
+              <button
+                className="btn btn-outline btn-secondary w-full min-h-14"
+                type="button"
+                disabled={hasNoTemplate}
+                onClick={() => setMode("template")}
+              >
+                <Layers3 className="h-5 w-5" />
+                Créer un parcours à partir d'un modèle
+              </button>
+            </span>
             <RoleRankGuard ranks={[0, 1]}>
               <PermissionGuard action="write" object="parcours">
                 <input

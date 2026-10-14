@@ -34,6 +34,9 @@ function useGroupManage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [managedUsers, setManagedUsers] = useState<User[] | null>(null);
+  // Valeurs en attente de confirmation lorsque le groupe ne contient aucun étudiant.
+  const [pendingEmptySubmit, setPendingEmptySubmit] =
+    useState<GroupFormValues | null>(null);
   const [searchParams] = useSearchParams();
   const fromParcours = searchParams.get("parcours");
   const searchParamsString = searchParams.toString();
@@ -133,7 +136,7 @@ function useGroupManage() {
     },
   });
 
-  const handleSubmit = (data: GroupFormValues) => {
+  const submitGroup = (data: GroupFormValues) => {
     form.clearErrors("name");
 
     const usersIdWithActiveState = usersToAdd.map((user) => ({
@@ -156,6 +159,20 @@ function useGroupManage() {
     );
 
     mutation.mutate(formData);
+  };
+
+  const handleSubmit = (data: GroupFormValues) => {
+    if (usersToAdd.length === 0) {
+      setPendingEmptySubmit(data);
+      return;
+    }
+    submitGroup(data);
+  };
+
+  const handleConfirmEmptySubmit = () => {
+    const data = pendingEmptySubmit;
+    setPendingEmptySubmit(null);
+    if (data) submitGroup(data);
   };
 
   const handleAddUsers = (users: Array<User>) => {
@@ -192,6 +209,9 @@ function useGroupManage() {
     isEditing: Boolean(id),
     usersToAdd,
     isLoading: isLoading || isLoadingDraftUsers || mutation.isPending,
+    isEmptyGroupWarningOpen: pendingEmptySubmit !== null,
+    onConfirmEmptyGroup: handleConfirmEmptySubmit,
+    onCancelEmptyGroup: () => setPendingEmptySubmit(null),
     onSubmit: handleSubmit,
     onAddUsers: handleAddUsers,
     onDeleteUser: handleDeleteUser,

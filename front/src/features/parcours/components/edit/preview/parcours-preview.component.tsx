@@ -7,7 +7,9 @@ import PreviewObjectives from "../../../../../../src/components/preview/preview-
 import PreviewSkills from "../../../../../../src/components/preview/preview-skills";
 import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../hooks/useValidateParcours";
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
+import { showParcoursValidationToast } from "../../../helpers/show-parcours-validation-toast";
+import PublishParcoursModal from "./PublishParcoursModal";
 import { parcoursApi } from "../../../api/parcours.api";
 import FloatingBottomNavigation from "../../../../../components/buttons/FloatingBottomNavigation";
 import { useParcoursStudentsQuery } from "../../../hooks/useParcoursStudentsQuery";
@@ -38,11 +40,26 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
   );
   const { data: students } = useParcoursStudentsQuery(groupIds);
 
+  const [isPublishModalOpen, setPublishModalOpen] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  // Les erreurs de validation sont signalées avant de demander confirmation.
+  const handleRequestPublish = () => {
+    const validationsErrors = validateParcours();
+    if (validationsErrors && validationsErrors.length !== 0) {
+      showParcoursValidationToast(validationsErrors, props.onEdit);
+      return;
+    }
+    setPublishModalOpen(true);
+  };
+
   const handlePublishParcours = async (value: boolean) => {
     const validationsErrors = validateParcours();
     if (validationsErrors && validationsErrors.length !== 0) {
-      toast.error(Object.values(validationsErrors![0]).toString());
+      showParcoursValidationToast(validationsErrors, props.onEdit);
+      setPublishModalOpen(false);
     } else {
+      setIsPublishing(true);
       try {
         const data = await parcoursApi.mutations.publishParcours(id!, value);
         if (data.success) {
@@ -51,6 +68,9 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         }
       } catch {
         toast.error("Erreur lors de la publication");
+      } finally {
+        setIsPublishing(false);
+        setPublishModalOpen(false);
       }
     }
   };
@@ -98,6 +118,18 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         }
         endActions={
           <>
+            {(parcours?.isPublished || !isTeacher) && (
+              <button
+                className="btn btn-primary"
+                onClick={() =>
+                  parcours?.isPublished
+                    ? handleNavigateToParcoursPreview()
+                    : handleRequestPublish()
+                }
+              >
+                {!parcours?.isPublished ? "Publier" : "Consulter le parcours"}
+              </button>
+            )}
             {!parcours?.isPublished && (
               <button
                 className="btn btn-secondary"
@@ -106,21 +138,16 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
                 Sauvegarder comme brouillon
               </button>
             )}
-            {(parcours?.isPublished || !isTeacher) && (
-              <button
-                className="btn btn-primary"
-                onClick={() =>
-                  parcours?.isPublished
-                    ? handleNavigateToParcoursPreview()
-                    : handlePublishParcours(true)
-                }
-              >
-                {!parcours?.isPublished ? "Publier" : "Consulter le parcours"}
-              </button>
-            )}
           </>
         }
       />
+      {isPublishModalOpen ? (
+        <PublishParcoursModal
+          isSubmitting={isPublishing}
+          onConfirm={() => void handlePublishParcours(true)}
+          onCancel={() => setPublishModalOpen(false)}
+        />
+      ) : null}
     </div>
   );
 };

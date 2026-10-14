@@ -2,6 +2,7 @@ import { FC, useCallback, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
+import { autoSaveToastId } from "../../../../../config/auto-submit-timer";
 
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import { infosParCoursSchema } from "../../../parcours.schema";
@@ -59,7 +60,7 @@ const ParcoursInformationsForm: FC<Props> = ({
           description: data.description ?? "",
         });
         if (!response.success) throw new Error(response.message);
-        toast.success(response.message);
+        toast.success(response.message, { id: autoSaveToastId });
       } catch (error) {
         toast.error("Erreur lors de la sauvegarde");
         throw error;

@@ -32,6 +32,9 @@ describe("ParcoursCreationModal", () => {
     vi.spyOn(parcoursApi.queries, "getFormations").mockResolvedValue([
       { id: 7, title: "Formation test" },
     ]);
+    vi.spyOn(parcoursApi.queries, "getAll").mockResolvedValue([
+      { id: 12, title: "Parcours modèle" },
+    ] as Awaited<ReturnType<typeof parcoursApi.queries.getAll>>);
     vi.spyOn(parcoursApi.queries, "getByFormation").mockResolvedValue({
       data: [{ id: 12, title: "Parcours modèle" }],
     });
@@ -60,6 +63,13 @@ describe("ParcoursCreationModal", () => {
     await renderModal(root, container);
 
     expect(container.textContent).toContain("Créer un nouveau parcours");
+    await vi.waitFor(() =>
+      expect(
+        [...container.querySelectorAll("button")].find((button) =>
+          button.textContent?.includes("Créer un parcours à partir d'un modèle"),
+        )?.disabled,
+      ).toBe(false),
+    );
     const templateButton = [...container.querySelectorAll("button")].find((button) =>
       button.textContent?.includes("Créer un parcours à partir d'un modèle"),
     );
@@ -75,6 +85,19 @@ describe("ParcoursCreationModal", () => {
     await act(async () => backButton?.click());
     expect(container.querySelectorAll("dialog")).toHaveLength(1);
     expect(container.textContent).toContain("Créer un nouveau parcours");
+  });
+
+  it("grise la création depuis un modèle quand aucun parcours n'existe", async () => {
+    vi.spyOn(parcoursApi.queries, "getAll").mockResolvedValue([]);
+    await renderModal(root, container);
+
+    await vi.waitFor(() => {
+      const templateButton = [...container.querySelectorAll("button")].find(
+        (button) =>
+          button.textContent?.includes("Créer un parcours à partir d'un modèle"),
+      );
+      expect(templateButton?.disabled).toBe(true);
+    });
   });
 
   it("remplace le formulaire par l'import après sélection d'une archive", async () => {
