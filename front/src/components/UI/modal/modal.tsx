@@ -1,8 +1,9 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import { useRef, type PropsWithChildren, type ReactNode } from "react";
 import { LoaderCircle, Minimize2, X } from "lucide-react";
 import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 import { cn } from "../../../utils/cn";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import { useModalAutoFocus } from "../../../hooks/useModalAutoFocus";
 
 type ModalProps = {
   title?: string;
@@ -26,13 +27,15 @@ type ModalProps = {
 const Modal = (props: PropsWithChildren<ModalProps>) => {
   const isSubmitting =
     props.isSubmitting !== undefined ? props.isSubmitting : false;
+  const modalBoxRef = useRef<HTMLDivElement>(null);
+  useModalAutoFocus(modalBoxRef);
 
   return (
     <dialog
       id="my_modal_4"
       className={cn("modal modal-open", props.dialogAdditionalClass)}
     >
-      <div className={cn("modal-box", props.modalBoxStyle)}>
+      <div ref={modalBoxRef} className={cn("modal-box", props.modalBoxStyle)}>
         {props.buttonsBothTopBottom && !props.closeButtonAtTop && (
           <div className={cn("modal-action mb-4", props.actionsClassName ?? "")}>
             {props.leftLabel && (
