@@ -12,6 +12,7 @@ import ModuleTimelineDetailsPopover, {
 import { useParams, useSearchParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
+import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 
 const Calendrier = () => {
@@ -103,26 +104,48 @@ const Calendrier = () => {
     );
   }
 
+  const parcoursDateRange = `${formatDate(datesParcours.startDate)} - ${formatDate(datesParcours.endDate)}`;
+  const parcoursDates = (
+    <>
+      <span className="font-semibold">Dates du parcours : </span>
+      {parcoursDateRange}
+    </>
+  );
+
   return (
     <div ref={containerRef} className="relative flex flex-col gap-y-5 h-full">
-      <BoxWrapper className="flex flex-row self-end gap-2 text-sm">
-        <span className="font-semibold">Dates du parcours : </span>
-        {`${formatDate(datesParcours.startDate)} -
-          ${formatDate(datesParcours.endDate)}`}
-      </BoxWrapper>
+      {modulesTimelineEvents.length > 0 ? (
+        <BoxWrapper className="flex flex-row self-end gap-2 text-sm">
+          {parcoursDates}
+        </BoxWrapper>
+      ) : null}
 
-      <div className="flex-1 min-h-0 rounded-xl overflow-hidden">
-        <Calendar
-          currentDate={currentDate}
-          events={[]}
-          startHour={8}
-          endHour={18}
-          view={"year-timeline"}
-          timelineEvents={modulesTimelineEvents}
-          onClickTimelineYearEventDetails={handleShowModuleDetails}
-          onClickEditTimelineYearEvent={handleEditModuleDates}
-        />
-      </div>
+      {modulesTimelineEvents.length === 0 ? (
+        <BoxWrapper>
+          <div className="flex min-h-12 flex-wrap items-center justify-between gap-3">
+            <h4 className="text-sm font-semibold">Dates du parcours</h4>
+            <span className="text-sm">{parcoursDateRange}</span>
+          </div>
+          <EmptyStatePlaceholder
+            title="Aucun événement à afficher"
+            withBorder={false}
+          />
+        </BoxWrapper>
+      ) : (
+        <div className="flex-1 min-h-0 rounded-xl overflow-hidden">
+          <Calendar
+            className="bg-base-200"
+            currentDate={currentDate}
+            events={[]}
+            startHour={8}
+            endHour={18}
+            view={"year-timeline"}
+            timelineEvents={modulesTimelineEvents}
+            onClickTimelineYearEventDetails={handleShowModuleDetails}
+            onClickEditTimelineYearEvent={handleEditModuleDates}
+          />
+        </div>
+      )}
 
       {/* DETAILS MODAL */}
       <ModuleTimelineDetailsPopover

@@ -19,6 +19,8 @@ type Props = {
   items: ChatbotRadialItem[];
   anchorRef: RefObject<HTMLElement | null>;
   bubbleRef?: RefObject<HTMLDivElement | null>;
+  /** Côté de la bulle : l'entrée épinglée s'y place, les autres entrées passent de l'autre côté quand il y a la place. */
+  pinnedSide?: "left" | "right";
   onOverlapChange?: (overlap: boolean) => void;
 };
 
@@ -27,7 +29,7 @@ type Props = {
  * gauche près du bord droit de l'écran, se décale pour rester visible et signale
  * s'il recouvre la bulle de l'assistant, que l'appelant peut alors masquer.
  */
-export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, onOverlapChange }: Props) {
+export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange }: Props) {
   const reducedMotion = useReducedMotion();
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
   const count = items.length;
@@ -37,19 +39,26 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
   useEffect(() => {
     let frame = 0;
     let previousOverlap: boolean | null = null;
-    const radius = radialRadius(count);
-    const fan = radialAngles(count, pinnedIndex);
+    const compact = pinnedSide !== undefined;
+    const radius = radialRadius(count, compact);
+    const fan = radialAngles(count, pinnedIndex, compact);
     const positionItems = (): void => {
       const rect = anchorRef.current?.getBoundingClientRect();
       if (rect) {
         const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const towardsLeft = center.x + radius + 104 + 12 > window.innerWidth;
+        const roomRight = center.x + radius + 104 + 12 <= window.innerWidth;
+        const roomLeft = center.x - radius - 104 - 12 >= 0;
+        // Sans côté imposé, l'éventail va à droite et passe à gauche près du bord droit de l'écran.
+        // Avec la bulle à gauche, les questions préfèrent la droite, et inversement ; faute de place, elles se replient du côté libre.
+        const fanTowardsLeft = pinnedSide === undefined
+          ? !roomRight
+          : pinnedSide === "right" ? roomLeft || !roomRight : !roomRight && roomLeft;
         const halfHeight = Math.max(...itemsRef.current.map(item => (item?.offsetHeight ?? 0) / 2));
         const extent = radius * Math.sin(Math.max(...fan.map(Math.abs)) * Math.PI / 180) + halfHeight;
         // Avec une entrée épinglée, c'est elle qui reste à hauteur de l'assistant : les autres s'écartent, l'éventail ne se décale pas.
         const verticalShift = pinnedIndex >= 0 ? 0 : Math.max(12 - center.y + extent,
           Math.min(0, window.innerHeight - 12 - center.y - extent));
-        const angles = towardsLeft ? fan.map(angle => 180 - angle) : fan;
+        const angles = fanTowardsLeft ? fan.map(angle => 180 - angle) : fan;
         const bubble = bubbleRef?.current?.getBoundingClientRect();
         const elements = itemsRef.current.map(item => item ?? null);
         const slots = elements.map((item, index) => {
@@ -57,11 +66,14 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           return { top: center.y + Math.sin(angles[index] * Math.PI / 180) * radius + verticalShift - height / 2, height };
         });
         const tops: number[] = [];
-        if (pinnedIndex >= 0 && elements[pinnedIndex]) {
+        // Entrée épinglée et éventail de part et d'autre de l'assistant : ils ne se gênent pas, l'éventail peut rester serré.
+        const separateSides = pinnedIndex >= 0 && pinnedSide !== undefined && (pinnedSide === "left") !== fanTowardsLeft;
+        if (pinnedIndex >= 0 && elements[pinnedIndex] && !separateSides) {
           arrangeRadialSlots(slots, pinnedIndex, 12, window.innerHeight - 12, 8, pinnedOverhang).forEach((top, index) => { tops[index] = top; });
         } else {
           // Les entrées se séparent de haut en bas, quel que soit leur ordre dans la liste.
-          const order = slots.map((_, index) => index).sort((a, b) => slots[a].top - slots[b].top);
+          if (separateSides) tops[pinnedIndex] = Math.max(12, Math.min(slots[pinnedIndex].top, window.innerHeight - 12 - slots[pinnedIndex].height));
+          const order = slots.map((_, index) => index).filter(index => index !== pinnedIndex || !separateSides).sort((a, b) => slots[a].top - slots[b].top);
           const spread = spreadRadialSlots(order.map(index => slots[index]), 12, window.innerHeight - 12);
           order.forEach((index, rank) => { tops[index] = spread[rank]; });
         }
@@ -74,6 +86,7 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           const onCircle = Math.sqrt(Math.max(radius * radius - offsetY * offsetY, 0));
           const clear = Math.abs(offsetY) < avatarHalf + item.offsetHeight / 2 + 8 ? avatarHalf + item.offsetWidth / 2 + 12 : 0;
           const reach = Math.max(onCircle, clear);
+          const towardsLeft = index === pinnedIndex && pinnedSide !== undefined ? pinnedSide === "left" : fanTowardsLeft;
           const left = center.x + (towardsLeft ? -reach : reach) - item.offsetWidth / 2;
           const nextLeft = `${Math.max(12, Math.min(left, window.innerWidth - item.offsetWidth - 12))}px`;
           const nextTop = `${tops[index]}px`;
@@ -95,7 +108,7 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
     };
     positionItems();
     return () => window.cancelAnimationFrame(frame);
-  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, onOverlapChange]);
+  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange]);
 
   return createPortal(
     <ul id={id} aria-label={label} className="pointer-events-none fixed inset-0 z-50">

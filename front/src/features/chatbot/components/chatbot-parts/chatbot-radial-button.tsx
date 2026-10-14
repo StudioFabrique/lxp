@@ -7,7 +7,7 @@ export default function ChatbotRadialButton({ label, icon, onClick }: Props) {
   return (
     <button
       type="button"
-      className="btn btn-secondary h-auto min-h-11 w-full gap-2 whitespace-normal rounded-full border border-secondary-content/40 px-4 py-3 text-sm font-normal shadow-md"
+      className="btn btn-primary h-auto min-h-11 w-full gap-2 whitespace-normal rounded-full border border-primary-content/40 px-4 py-3 text-sm font-normal shadow-md"
       onClick={onClick}
     >
       {icon}

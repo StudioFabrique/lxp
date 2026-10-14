@@ -3,8 +3,10 @@ import { useCallback, useState } from "react";
 import type Step from "../utils/interfaces/step";
 import { sortArray } from "../utils/helpers/sort-array";
 
-const useSteps = (steps: Step[]) => {
-  const [actualStep, setActualStep] = useState<Step>(steps[0]);
+const useSteps = (steps: Step[], initialStepId?: number) => {
+  const [actualStep, setActualStep] = useState<Step>(
+    () => steps.find((item) => item.id === initialStepId) ?? steps[0],
+  );
   const [stepsList, setStepsList] = useState<Array<Step>>(steps);
 
   const updateStep = useCallback(

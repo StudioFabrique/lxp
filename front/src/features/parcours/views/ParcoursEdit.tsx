@@ -1,4 +1,5 @@
 import { useContext, useMemo, useState } from "react";
+import { ArrowRight, Send } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
@@ -199,6 +200,7 @@ const EditParcours = () => {
                           onClick={handlePublishParcours}
                           disabled={isPublishing}
                         >
+                          <Send className="size-4" aria-hidden="true" />
                           Publier
                         </button>
                       )}
@@ -207,6 +209,7 @@ const EditParcours = () => {
                         onClick={() => handleUpdateStep(actualStep.id)}
                       >
                         Étape suivante
+                        <ArrowRight className="size-4" aria-hidden="true" />
                       </button>
                     </>
                   }

@@ -4,6 +4,7 @@ import { cn } from "../../../../utils/cn";
 
 type CollapsibleSectionProps = {
   title: string;
+  icon?: ReactNode;
   preview: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
@@ -14,6 +15,7 @@ type CollapsibleSectionProps = {
 
 const CollapsibleSection = ({
   title,
+  icon,
   preview,
   children,
   defaultOpen = false,
@@ -27,13 +29,14 @@ const CollapsibleSection = ({
       open={open ?? defaultOpen}
       onToggle={(event) => onOpenChange?.(event.currentTarget.open)}
     >
-      <summary className="min-h-28 cursor-pointer list-none px-5 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-open:min-h-14 [&::-webkit-details-marker]:hidden">
+      <summary className="min-h-28 cursor-pointer list-none px-5 py-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary group-open:min-h-14 [&::-webkit-details-marker]:hidden">
         <span className="flex items-center justify-between gap-4">
           <span
             role="heading"
             aria-level={2}
-            className="text-xl font-bold text-primary"
+            className="flex min-w-0 items-center gap-2 text-xl font-bold text-primary"
           >
+            {icon}
             {title}
           </span>
           <ChevronDown

@@ -230,8 +230,8 @@ const ActivityHeader = ({
               type="text"
               aria-label="Titre de l’activité"
               aria-invalid={Boolean(titleError)}
-              value={title}
-              onChange={(e) => onEditTitle?.(e.target.value)}
+              value={formatTitle(title)}
+              onChange={(e) => onEditTitle?.(formatTitle(e.target.value))}
               className={cn(titleClassName, "flex-1 min-w-0 w-full truncate border-0 bg-transparent p-0 rounded-none shadow-none outline-none focus:outline-none focus:ring-0 text-primary", titleError && "text-error", inputClassName ?? "")}
               placeholder={titlePlaceholder}
               title={title}
@@ -242,8 +242,8 @@ const ActivityHeader = ({
               rows={1}
               aria-label="Titre de l’activité"
               aria-invalid={Boolean(titleError)}
-              value={title}
-              onChange={(e) => onEditTitle?.(e.target.value)}
+              value={formatTitle(title)}
+              onChange={(e) => onEditTitle?.(formatTitle(e.target.value))}
               className={cn(titleClassName, "flex-1 min-w-0 w-full resize-none overflow-hidden border-0 bg-transparent p-0 rounded-none shadow-none outline-none focus:outline-none focus:ring-0 text-primary", titleError && "text-error", inputClassName ?? "")}
               placeholder={titlePlaceholder}
               autoFocus={autoFocusTitle}

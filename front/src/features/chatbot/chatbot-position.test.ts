@@ -35,9 +35,17 @@ describe("position de repos de l'assistant virtuel", () => {
     expect(point).toEqual({ x: 400 - 64 - 20, y: 20 });
   });
 
-  it("place la bulle du côté qui a le plus de place", () => {
-    expect(chatbotBubbleSide({ x: 1300, y: 100 }, viewport)).toBe("left");
-    expect(chatbotBubbleSide({ x: 50, y: 100 }, viewport)).toBe("right");
+  it("place la bulle à gauche par défaut, y compris dans la moitié gauche de l'écran", () => {
+    expect(chatbotBubbleSide({ x: 1300, y: 100 })).toBe("left");
+    expect(chatbotBubbleSide({ x: 400, y: 100 })).toBe("left");
+  });
+
+  it("place la bulle à droite seulement quand elle ne tient pas à gauche", () => {
+    const minimumX = CHATBOT_BUBBLE_WIDTH + 12 + 20;
+
+    expect(chatbotBubbleSide({ x: minimumX, y: 100 })).toBe("left");
+    expect(chatbotBubbleSide({ x: minimumX - 1, y: 100 })).toBe("right");
+    expect(chatbotBubbleSide({ x: 50, y: 100 })).toBe("right");
   });
 });
 

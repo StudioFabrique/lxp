@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "react-hot-toast";
 import { useParams } from "react-router";
 
@@ -7,12 +7,17 @@ import SkillForm from "./skill-form";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import FadeWrapper from "../../../../../../src/components/wrappers/FadeWrapper";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
+import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
 import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutations";
 import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
-const SkillsList = () => {
+type SkillsListProps = {
+  header?: ReactNode;
+};
+
+const SkillsList = ({ header }: SkillsListProps) => {
   const { id } = useParams();
   const parcoursId = Number(id);
   const { skills: skillList, isPending, isError } = useParcoursSkills(parcoursId);
@@ -101,24 +106,28 @@ const SkillsList = () => {
       ) : isError ? (
         <p role="alert">Impossible de charger les compétences.</p>
       ) : (
-        <p>Compétences non renseignées</p>
+        <EmptyStatePlaceholder
+          title="Aucune compétence renseignée"
+          withBorder={false}
+        />
       )}
     </>
   );
 
   return (
     <>
-      <FadeWrapper>
-        <div className="w-full flex flex-col gap-y-4 mt-4">{content}</div>
-      </FadeWrapper>
-
-      <div className="mt-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">{header}</div>
         <ButtonAdd
           label="Ajouter une compétence"
           outline={true}
           onClickEvent={handleAddSkill}
         />
       </div>
+
+      <FadeWrapper>
+        <div className="w-full flex flex-col gap-y-4">{content}</div>
+      </FadeWrapper>
 
       <RightSideDrawer
         visible={false}

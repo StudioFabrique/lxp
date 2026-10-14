@@ -5,6 +5,8 @@ describe("éventail des questions de l’assistant virtuel", () => {
   it("garde l'écart historique de 45° pour trois entrées", () => {
     expect(radialAngles(3)).toEqual([-45, 0, 45]);
     expect(radialRadius(3)).toBe(160);
+    expect(radialRadius(3, true)).toBeLessThan(160);
+    expect(radialAngles(3, -1, true)).toEqual([-24, 0, 24]);
   });
 
   it("resserre l'éventail dans 150° et l'éloigne au-delà de trois entrées", () => {

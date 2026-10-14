@@ -89,6 +89,28 @@ const queries = {
       },
     }),
 
+  /** Leçons de tous les tags, bornées par `limit` (par source), quand aucun tag n'est choisi. */
+  lessonsToImport: (
+    limit: number,
+    includeCourseContents = false,
+    supplementaryResources = false,
+  ) =>
+    queryOptions({
+      queryKey: [
+        "lessons",
+        "import",
+        limit,
+        includeCourseContents,
+        supplementaryResources,
+      ],
+      queryFn: async (): Promise<{ data: LessonWithActivitiesCount[] }> => {
+        const res = await apiClient.get("/lesson/tag", {
+          params: { limit, includeCourseContents, supplementaryResources },
+        });
+        return res.data;
+      },
+    }),
+
   parcoursSelect: () =>
     queryOptions({
       queryKey: ["parcours", "select"],

@@ -117,14 +117,7 @@ export const putLessonValidator = [
   checkValidatorResult,
 ];
 
-export const getLessonsByTagValidator = [
-  param("tagId")
-    .notEmpty()
-    .withMessage("L'identifiant du tag est requis")
-    .isNumeric()
-    .withMessage("L'identifiant du tag doit être un nombre")
-    .trim()
-    .escape(),
+const lessonsToImportQueryValidators = [
   query("includeCourseContents")
     .optional()
     .isBoolean()
@@ -135,6 +128,31 @@ export const getLessonsByTagValidator = [
     .withMessage(
       "Le filtre des ressources supplémentaires doit être un booléen",
     ),
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 50 })
+    .withMessage("La limite doit être un entier compris entre 1 et 50")
+    .toInt(),
+];
+
+export const getLessonsByTagValidator = [
+  param("tagId")
+    .notEmpty()
+    .withMessage("L'identifiant du tag est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du tag doit être un nombre")
+    .trim()
+    .escape(),
+  ...lessonsToImportQueryValidators,
+  checkValidatorResult,
+];
+
+// Leçons de tous les tags, toujours bornées : la limite est alors obligatoire.
+export const getLessonsToImportValidator = [
+  ...lessonsToImportQueryValidators,
+  query("limit")
+    .exists()
+    .withMessage("La limite est requise sans tag"),
   checkValidatorResult,
 ];
 

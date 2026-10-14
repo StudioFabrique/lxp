@@ -52,8 +52,13 @@ const ContenuItem = ({
     >
       <div
         className={cn(
-          "flex min-h-20 w-24 shrink-0 flex-col items-center justify-center rounded-lg bg-primary p-4 text-primary-content shadow-sm transition-colors",
-          { "bg-base-100 text-base-content": !isSelected },
+          "flex min-h-20 w-24 shrink-0 flex-col items-center justify-center rounded-lg p-4 shadow-sm transition-colors",
+          // Sans date, la tuile garde une teinte neutre : l'état sélectionné reste porté par la carte du module.
+          minDate.day === null
+            ? "bg-base-300 text-base-content"
+            : isSelected
+              ? "bg-primary text-primary-content"
+              : "bg-base-100 text-base-content",
           isLocked && "opacity-60",
         )}
       >

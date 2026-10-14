@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, Users } from "lucide-react";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../hooks/useParcoursQuery";
@@ -56,6 +56,7 @@ const Contacts = ({ open, onOpenChange }: ContactsProps) => {
     <BoxWrapper className="h-auto gap-0 overflow-hidden p-0">
       <CollapsibleSection
         title="Ressources pédagogiques"
+        icon={<Users className="size-5 shrink-0" aria-hidden="true" />}
         className="bg-transparent"
         defaultOpen={contacts.length <= 2}
         open={open}

@@ -21,3 +21,5 @@ html,body{background:var(--embed-page-background);width:100%;height:100%;overflo
 
 /* The welcome avatar keeps only its colored circle, without launcher shadows. */
 #root[data-chatbot-only] #dashboard-chatbot>button{box-shadow:none!important;filter:none!important;transition:none!important}
+/* Le crop est réduit à environ 1/5 : le liseré d'origine (3px) y disparaît. On l'épaissit, collé au disque, pour détacher l'avatar d'un contenu de même couleur ; le padding compense pour garder la taille de l'icône. */
+#root[data-chatbot-only] #dashboard-chatbot>button{border:8px solid color-mix(in srgb,var(--color-primary-content) 85%,var(--color-base-100));padding:45px}

@@ -8,6 +8,7 @@ import { courseApi } from "../../../course/api/course.api";
 import type Tag from "../../../../utils/interfaces/tag";
 import { cn } from "../../../../utils/cn";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import TagItem from "../../../../components/UI/tag-item/tag-item";
 
 type Props = {
   /** Tags du module, proposés pour rechercher du contenu existant. */
@@ -19,6 +20,9 @@ type Props = {
     ) => LessonWithActivitiesCount[],
   ) => void;
 };
+
+/** Nombre maximal de contenus proposés par source tant qu'aucun tag n'est choisi. */
+const ALL_CONTENTS_LIMIT = 20;
 
 const emptyStateClassName = "py-6 text-center text-sm text-base-content/60";
 
@@ -32,14 +36,26 @@ export default function CourseContentImport({
   const [contentTagId, setContentTagId] = useState(0);
   const hasTags = parcoursTags.length > 0;
 
-  const { data: lessonsResponse, isLoading: isLoadingLessons } = useQuery({
+  const hasTagFilter = contentTagId > 0;
+  const { data: lessonsByTagResponse, isLoading: isLoadingByTag } = useQuery({
     ...courseApi.queries.lessonsByTag(
       contentTagId,
       includeCourseContents,
       true,
     ),
-    enabled: contentTagId > 0,
+    enabled: hasTagFilter,
   });
+  // Sans tag choisi, on propose les contenus de tous les tags, en nombre limité.
+  const { data: allLessonsResponse, isLoading: isLoadingAll } = useQuery({
+    ...courseApi.queries.lessonsToImport(
+      ALL_CONTENTS_LIMIT,
+      includeCourseContents,
+      true,
+    ),
+    enabled: !hasTagFilter,
+  });
+  const isLoadingLessons = hasTagFilter ? isLoadingByTag : isLoadingAll;
+  const lessonsResponse = hasTagFilter ? lessonsByTagResponse : allLessonsResponse;
   const availableContents = useMemo(
     () => lessonsResponse?.data ?? [],
     [lessonsResponse?.data],
@@ -78,15 +94,16 @@ export default function CourseContentImport({
   );
 
   // Un seul message d'état vide, selon la situation, pour un rendu homogène.
-  const emptyMessage = !hasTags
-    ? "Aucun tag n'est associé à ce module : ajoutez-en pour retrouver des leçons à importer."
-    : selectedContents.length > 0 || pendingContents.length > 0
+  const emptyMessage =
+    selectedContents.length > 0 || pendingContents.length > 0
       ? null
-      : contentTagId === 0
-        ? "Choisissez un tag pour afficher ses leçons."
-        : includeCourseContents
+      : hasTagFilter
+        ? includeCourseContents
           ? "Aucune leçon disponible pour ce tag."
-          : "Aucune ressource supplémentaire disponible pour ce tag.";
+          : "Aucune ressource supplémentaire disponible pour ce tag."
+        : hasTags
+          ? "Aucun contenu disponible pour le moment."
+          : "Aucun tag n'est associé à ce module : ajoutez-en pour retrouver des leçons à importer.";
 
   const renderContent = (
     content: LessonWithActivitiesCount,
@@ -105,16 +122,22 @@ export default function CourseContentImport({
         checked={selected}
         onChange={() => toggleExistingLesson(content)}
       />
-      <span className="flex-1">
-        <span className="block font-medium">{formatTitle(content.title)}</span>
-        <span className="text-xs text-base-content/50">
-          {content.source === "resource"
-            ? "Ressource supplémentaire"
-            : content.sourceTitle}
+      <span className="grid flex-1 grid-cols-[1fr_auto_1fr] items-center gap-4">
+        <span className="min-w-0">
+          <span className="block font-medium">{formatTitle(content.title)}</span>
+          <span className="text-xs text-base-content/50">
+            {content.source === "resource"
+              ? "Ressource supplémentaire"
+              : content.sourceTitle}
+          </span>
         </span>
-      </span>
-      <span className="shrink-0 text-xs text-base-content/50">
-        {content.activitiesCount ?? 0} activité(s)
+        {/* Tag au centre : il situe le contenu quand la liste couvre plusieurs tags. */}
+        <span className="flex justify-center">
+          {content.tag ? <TagItem tag={content.tag} compact /> : null}
+        </span>
+        <span className="justify-self-end text-xs text-base-content/50">
+          {content.activitiesCount ?? 0} activité(s)
+        </span>
       </span>
     </label>
   );

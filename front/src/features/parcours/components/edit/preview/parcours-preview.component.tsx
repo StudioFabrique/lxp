@@ -1,3 +1,4 @@
+import { Save, Send } from "lucide-react";
 import toast from "react-hot-toast";
 
 import ParcoursPreviewInfos from "./parcours-preview-infos.component";
@@ -127,7 +128,14 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
                     : handleRequestPublish()
                 }
               >
-                {!parcours?.isPublished ? "Publier" : "Consulter le parcours"}
+                {!parcours?.isPublished ? (
+                  <>
+                    <Send className="size-4" aria-hidden="true" />
+                    Publier
+                  </>
+                ) : (
+                  "Consulter le parcours"
+                )}
               </button>
             )}
             {!parcours?.isPublished && (
@@ -135,6 +143,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
                 className="btn btn-secondary"
                 onClick={handleNavigateToParcoursPreview}
               >
+                <Save className="size-4" aria-hidden="true" />
                 Sauvegarder comme brouillon
               </button>
             )}

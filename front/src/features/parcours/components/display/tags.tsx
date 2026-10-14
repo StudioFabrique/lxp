@@ -1,3 +1,4 @@
+import { Tags as TagsIcon } from "lucide-react";
 import TagItem from "../../../../components/UI/tag-item/tag-item";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../hooks/useParcoursQuery";
@@ -26,6 +27,7 @@ const Tags = ({ open, onOpenChange }: TagsProps) => {
     <BoxWrapper className="h-auto gap-0 overflow-hidden p-0">
       <CollapsibleSection
         title="Tags"
+        icon={<TagsIcon className="size-5 shrink-0" aria-hidden="true" />}
         className="bg-transparent"
         open={open}
         onOpenChange={onOpenChange}

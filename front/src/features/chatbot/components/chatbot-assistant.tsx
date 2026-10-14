@@ -143,11 +143,35 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       if (placement) moveForTutorial(placement.point, placement.side);
       else returnToRest();
     };
-    stepElement.scrollIntoView({ block: "center", inline: "nearest" });
-    place();
+    // Un élément déjà visible ne fait pas défiler la page ; sinon le défilement est fluide, et l'assistant
+    // ne se place qu'une fois la page arrêtée (aucun `scroll` pendant 120 ms), sa position dépendant de celle de l'élément.
+    const rect = stepElement.getBoundingClientRect();
+    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    let settleTimer: number | undefined;
+    const settle = (): void => {
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(place, 120);
+    };
+    if (isVisible) {
+      // Déjà à l'écran : « nearest » ne bouge rien, l'assistant se place sans attendre.
+      stepElement.scrollIntoView({ block: "nearest", inline: "nearest" });
+      place();
+    } else if (reducedMotion) {
+      stepElement.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
+      place();
+    } else {
+      // En phase de capture : le défilement d'un conteneur interne ne remonte pas jusqu'à `window`.
+      window.addEventListener("scroll", settle, true);
+      stepElement.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+      settle();
+    }
     window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
-  }, [stepElement, hidden, moveForTutorial, returnToRest]);
+    return () => {
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("scroll", settle, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [stepElement, hidden, reducedMotion, moveForTutorial, returnToRest]);
 
   useEffect(() => {
     if (!tutorialActive) return;
@@ -273,7 +297,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       </motion.div>
       <AnimatePresence>
         {radialOpen && (
-          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} onOverlapChange={setBubbleObstructed} />
+          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} onOverlapChange={setBubbleObstructed} />
         )}
       </AnimatePresence>
       {tutorial.step && !hidden && <ChatbotTutorialHighlight element={tutorial.step.element} />}

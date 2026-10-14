@@ -6,7 +6,10 @@ import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 type Props = {
   title: string;
-  children: [ReactNode, ReactElement<{ onCloseDrawer?: (id: string) => void }>];
+  children: [
+    ReactElement<{ header?: ReactNode }>,
+    ReactElement<{ onCloseDrawer?: (id: string) => void }>,
+  ];
   onResetList: () => void;
   readOnly?: boolean;
 };
@@ -32,12 +35,16 @@ const ParcoursSection: FC<Props> = ({
   return (
     <div className="w-full">
       <BoxWrapper>
-        <ParcoursSectionHeader
-          label={title}
-          onImport={handleOpenImportDrawer}
-          disabled={readOnly}
-        />
-        {children[0]}
+        {/* L'en-tête d'import est rendu par la liste, sur la même ligne que son bouton d'ajout. */}
+        {React.cloneElement(children[0], {
+          header: (
+            <ParcoursSectionHeader
+              label={title}
+              onImport={handleOpenImportDrawer}
+              disabled={readOnly}
+            />
+          ),
+        })}
         {!readOnly ? (
           <RightSideDrawer
             title={title}

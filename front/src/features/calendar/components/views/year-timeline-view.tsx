@@ -1,8 +1,10 @@
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useMemo } from "react";
+import { ArrowRight, CalendarPlus } from "lucide-react";
 import { theme, TimelineEvent } from "../calendar-configuration";
 import { formatDate } from "../calendar-utils";
 import { cn } from "../../../../utils/cn";
+import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 
 type Props = {
   events: TimelineEvent[];
@@ -66,11 +68,10 @@ const YearTimelineView = ({
 
   if (events.length === 0) {
     return (
-      <div
-        className={cn("flex items-center justify-center h-full my-10", theme.subText)}
-      >
-        Aucun événements à afficher
-      </div>
+      <EmptyStatePlaceholder
+        title="Aucun événement à afficher"
+        withBorder={false}
+      />
     );
   }
 
@@ -124,25 +125,40 @@ const YearTimelineView = ({
             const leftPercent = (startOffset / safeTotal) * 100;
             const widthPercent = Math.max((duration / safeTotal) * 100, 0.5);
 
+            // Un module sans dates est attribuable d'un clic sur toute sa ligne.
+            const canAssignDates = !(event.startDate && event.endDate) && Boolean(onClickEdit);
+
             return (
               <div
                 key={event.id}
-                className="flex items-center gap-4 group rounded-lg p-2 transition-colors hover:bg-base-200"
+                className={cn(
+                  "relative flex items-center gap-4 group rounded-lg p-2 transition-all duration-200 hover:bg-primary/10 hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_45%,transparent)] focus-within:bg-primary/10",
+                  // Emplacement à remplir : bordure en pointillés, qui devient pleine et se soulève au survol.
+                  canAssignDates &&
+                    "cursor-pointer border border-dashed border-base-content/25 bg-base-100/30 p-3 hover:-translate-y-0.5 hover:border-solid hover:border-primary/60 hover:shadow-lg",
+                )}
               >
                 {/* LEFT: Info */}
                 <button
                   type="button"
+                  aria-label={canAssignDates ? `Attribuer des dates à ${formatTitle(event.title)}` : undefined}
                   onClick={(e) =>
-                    onClickDetails?.(
-                      event.id,
-                      e.currentTarget.getBoundingClientRect(),
-                      e.currentTarget,
-                    )
+                    canAssignDates
+                      ? onClickEdit?.(event.id)
+                      : onClickDetails?.(
+                          event.id,
+                          e.currentTarget.getBoundingClientRect(),
+                          e.currentTarget,
+                        )
                   }
-                  className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left"
+                  className={cn(
+                    "w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left",
+                    // Étend la zone cliquable à toute la ligne.
+                    canAssignDates && "after:absolute after:inset-0 after:rounded-lg after:content-['']",
+                  )}
                 >
                   <div
-                    className={cn("w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0", theme.border, "bg-base-300")}
+                    className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border border-base-content/30 flex-shrink-0 bg-base-content/15"
                   >
                     {event.image ? (
                       <img
@@ -164,13 +180,13 @@ const YearTimelineView = ({
                     }
                   >
                     <div
-                      className={cn("text-sm font-semibold truncate", theme.text)}
+                      className={cn("text-sm font-semibold truncate transition-colors group-hover:text-primary", theme.text)}
                     >
                       {formatTitle(event.title)}
                     </div>
                     {event.startDate && event.endDate && (
                       <div
-                        className={cn("text-[10px] truncate group-hover:text-secondary", theme.subText)}
+                        className={cn("text-[10px] truncate group-hover:text-base-content", theme.subText)}
                       >
                         {`${formatDate(event.startDate)} - ${formatDate(
                           event.endDate
@@ -182,8 +198,13 @@ const YearTimelineView = ({
 
                 {/* RIGHT: Bar */}
                 {event.startDate && event.endDate ? (
+                  // Toute la piste déclenche la barre (le clic ne cible pas la barre précisément), dont l'animation suit le survol de la ligne entière.
                   <div
-                    className="flex-1 relative h-8 flex items-center"
+                    className="flex-1 relative self-stretch min-h-8 flex items-center cursor-pointer"
+                    onClick={(e) => {
+                      if ((e.target as HTMLElement).closest("button")) return;
+                      e.currentTarget.querySelector("button")?.click();
+                    }}
                   >
                     {/* Background Track */}
                     <div
@@ -195,7 +216,7 @@ const YearTimelineView = ({
                       type="button"
                       aria-label={`Détails de ${formatTitle(event.title)}`}
                       onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect(), e.currentTarget)}
-                      className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
+                      className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer transition-all duration-200 opacity-90 group-hover:h-5 group-hover:opacity-100 flex items-center"
                       style={{
                         left: `${leftPercent}%`,
                         width: `${widthPercent}%`,
@@ -210,17 +231,21 @@ const YearTimelineView = ({
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-end gap-5 w-full mr-10 opacity-60">
-                    <span className={cn("text-xs", theme.subText)}>
-                      Date manquante
-                    </span>
-                    {onClickEdit && (
-                      <button
-                        className="btn btn-sm btn-ghost border text-xs h-8 min-h-0"
-                        onClick={() => onClickEdit(event.id)}
-                      >
-                        Attribuer
-                      </button>
+                  <div className={cn("flex items-center justify-end gap-5 w-full", canAssignDates ? "mr-2" : "mr-10")}>
+                    {canAssignDates ? (
+                      <span className="flex items-center gap-2 text-sm font-semibold text-primary">
+                        <CalendarPlus className="size-4" aria-hidden="true" />
+                        Attribuer des dates
+                        <ArrowRight
+                          className="size-4 transition-transform duration-200 group-hover:translate-x-1"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    ) : (
+                      // En lecture seule, rien ne permet d'attribuer : on signale seulement l'absence de dates.
+                      <span className="text-xs text-base-content">
+                        Date manquante
+                      </span>
                     )}
                   </div>
                 )}

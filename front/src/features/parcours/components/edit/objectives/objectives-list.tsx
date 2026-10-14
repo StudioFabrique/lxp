@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useParams } from "react-router";
 
 import Objective from "../../../../../../src/utils/interfaces/objective";
@@ -6,12 +6,18 @@ import ObjectiveItem from "./objective-item";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import FormObjective from "./form-objective";
 import toast from "react-hot-toast";
+import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
 
-const ObjectivesList = ({ readOnly = false }: { readOnly?: boolean }) => {
+type ObjectivesListProps = {
+  readOnly?: boolean;
+  header?: ReactNode;
+};
+
+const ObjectivesList = ({ readOnly = false, header }: ObjectivesListProps) => {
   const { id } = useParams();
   const parcoursId = Number(id);
   const { data: parcours, isPending, isError } = useParcoursQuery(parcoursId);
@@ -76,9 +82,19 @@ const ObjectivesList = ({ readOnly = false }: { readOnly?: boolean }) => {
 
   return (
     <>
-      <ul className="flex flex-col gap-y-2">
-        {objectivesList && objectivesList.length > 0 ? (
-          objectivesList.map((item: Objective) => (
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">{header}</div>
+        <ButtonAdd
+          label="Ajouter un objectif"
+          outline={true}
+          onClickEvent={() => handleOpenDrawer("add-objective")}
+          isDisabled={readOnly}
+        />
+      </div>
+
+      {objectivesList.length > 0 ? (
+        <ul className="flex flex-col gap-y-2">
+          {objectivesList.map((item: Objective) => (
             <li key={item.id}>
               <ObjectiveItem
                 objective={item}
@@ -87,23 +103,18 @@ const ObjectivesList = ({ readOnly = false }: { readOnly?: boolean }) => {
                 readOnly={readOnly}
               />
             </li>
-          ))
-        ) : isPending ? (
-          <LoadingSkeleton variant="rows" label="Chargement des objectifs" />
-        ) : isError ? (
-          <p role="alert">Impossible de charger les objectifs.</p>
-        ) : (
-          <p>Objectifs non renseignés</p>
-        )}
-      </ul>
-
-      <div className="w-fit">
-        <ButtonAdd
-          label="Ajouter un objectif"
-          onClickEvent={() => handleOpenDrawer("add-objective")}
-          isDisabled={readOnly}
+          ))}
+        </ul>
+      ) : isPending ? (
+        <LoadingSkeleton variant="rows" label="Chargement des objectifs" />
+      ) : isError ? (
+        <p role="alert">Impossible de charger les objectifs.</p>
+      ) : (
+        <EmptyStatePlaceholder
+          title="Aucun objectif renseigné"
+          withBorder={false}
         />
-      </div>
+      )}
 
       {/* Ajout d'un objectif */}
       {!readOnly ? (

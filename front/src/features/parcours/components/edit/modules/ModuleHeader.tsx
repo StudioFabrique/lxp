@@ -30,7 +30,7 @@ export default function ModuleHeader({
           Créer un nouveau module
         </button>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-outline"
           disabled={isSubmitting}
           onClick={onAddExisting}
         >

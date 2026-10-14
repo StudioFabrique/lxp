@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { ListChecks } from "lucide-react";
 
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../../UI/button-add/button-add";
@@ -122,6 +123,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           {props.headerActions}
           <ButtonAdd
             label={props.buttonLabel ?? "Sélectionner"}
+            icon={<ListChecks className="size-4" aria-hidden="true" />}
             small={true}
             loading={props.loading}
             isDisabled={isDisabled}

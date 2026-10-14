@@ -1,15 +1,18 @@
 const baseRadius = 160;
 const baseStep = 45;
 const maxSpan = 150;
+// Éventail resserré : les questions restent groupées près de l'assistant virtuel, de l'autre côté de son champ de saisie.
+const compactRadius = 120;
+const compactStep = 24;
 
 /**
  * Éventail centré sur l'horizontale : trois entrées gardent l'écart historique de 45°, davantage se resserrent dans 150°.
  * L'entrée `pinned` se place exactement sur l'horizontale, à hauteur de l'assistant virtuel, et les autres se
  * répartissent au-dessus puis en dessous d'elle, dans leur ordre.
  */
-export const radialAngles = (count: number, pinned = -1): number[] => {
+export const radialAngles = (count: number, pinned = -1, compact = false): number[] => {
   if (count <= 1) return [0];
-  const step = Math.min(baseStep, maxSpan / (count - 1));
+  const step = Math.min(compact ? compactStep : baseStep, maxSpan / (count - 1));
   if (pinned < 0 || pinned >= count) return Array.from({ length: count }, (_, index) => (index - (count - 1) / 2) * step);
   const above = Math.ceil((count - 1) / 2);
   let others = 0;
@@ -21,7 +24,8 @@ export const radialAngles = (count: number, pinned = -1): number[] => {
 };
 
 /** Chaque entrée supplémentaire éloigne un peu l'éventail pour que les pilules ne se chevauchent pas. */
-export const radialRadius = (count: number): number => baseRadius + Math.max(count - 3, 0) * 24;
+export const radialRadius = (count: number, compact = false): number =>
+  (compact ? compactRadius : baseRadius) + Math.max(count - 3, 0) * 24;
 
 export type RadialSlot = { top: number; height: number };
 

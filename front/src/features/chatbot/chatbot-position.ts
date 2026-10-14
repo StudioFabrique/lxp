@@ -40,9 +40,9 @@ export const restingChatbotPoint = (
   return clampChatbotPoint(centered ? { x: point.x, y: (viewport.height - size) / 2 } : point, viewport, size);
 };
 
-/** La bulle se place du côté de l'écran qui a le plus de place. */
-export const chatbotBubbleSide = (point: ChatbotPoint, viewport: ChatbotViewport, size = CHATBOT_AVATAR_SIZE): ChatbotBubbleSide =>
-  point.x + size / 2 > viewport.width / 2 ? "left" : "right";
+/** La bulle se place à gauche de l'assistant virtuel, sauf si elle n'y tient pas : elle passe alors à droite. */
+export const chatbotBubbleSide = (point: ChatbotPoint): ChatbotBubbleSide =>
+  point.x - BUBBLE_GAP - CHATBOT_BUBBLE_WIDTH >= CHATBOT_EDGE_MARGIN ? "left" : "right";
 
 const overlaps = (a: ChatbotRect, b: ChatbotRect): boolean =>
   a.left < b.left + b.width && a.left + a.width > b.left && a.top < b.top + b.height && a.top + a.height > b.top;
