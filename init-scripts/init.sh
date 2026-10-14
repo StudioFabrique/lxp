@@ -7,6 +7,11 @@ demo_mode=false
 # versionné, contrairement aux dumps de travail qui restent locaux.
 dump_dir="./dumps"
 
+. ./init-scripts/ui.sh
+# Les scripts appelés ici n'affichent pas leur propre en-tête.
+export ANDRIA_INIT=1
+show_cancel_hint
+
 case "${1:-}" in
   "") ;;
   --with-data) restore_data=true ;;
@@ -21,6 +26,11 @@ case "${1:-}" in
     ;;
 esac
 
+if [ "$demo_mode" = true ]; then init_mode="demonstration"
+elif [ "$restore_data" = true ]; then init_mode="avec données"
+else init_mode="installation à partir de zéro"; fi
+box "$c_cyan$c_bold" "ANDRIA  Initialisation du projet" "Mode : $init_mode"
+
 install_dependencies() {
   label="$1"
   directory="$2"
@@ -28,12 +38,12 @@ install_dependencies() {
 
   if [ -d "$directory/node_modules" ] \
     && npm ls --depth=0 --prefix "$directory" > /dev/null 2>&1; then
-    echo "Dépendances $label déjà présentes et à jour, installation ignorée."
+    ok "Dépendances $label à jour"
     return
   fi
 
-  echo "Installation des dépendances $label..."
-  npm ci "$@" || { echo -e "\033[1;31m Échec: Installation des dépendances $label"; exit 1; }
+  info "Installation des dépendances $label"
+  npm ci "$@" || { fail "Installation des dépendances $label"; exit 1; }
 }
 
 read_env_value() {
@@ -98,14 +108,14 @@ prompt_env_value() {
       write_env_value "$key" "$value" "$file"
       return
     fi
-    echo "Une valeur est requise pour $key."
+    warn "Une valeur est requise pour $key"
   done
 }
 
 configure_development_mailer() {
   file="$1"
   if [ ! -t 0 ]; then
-    echo -e "\033[1;31mÉchec: la configuration du mailer en développement nécessite un terminal interactif.\033[0m"
+    fail "la configuration du mailer en développement nécessite un terminal interactif."
     exit 1
   fi
 
@@ -120,9 +130,8 @@ configure_development_mailer() {
         ;;
       ""|n|N|non|Non|NON|no|NO)
         write_env_value "MAILER_DISABLED" "true" "$file"
-        echo "Mailer désactivé : les comptes sont activés sans vérification par email."
-        echo "Configuration enregistrée dans api/.env."
-        echo
+        ok "Mailer désactivé : les comptes sont activés sans vérification par email."
+        ok "Configuration enregistrée dans api/.env"
         return
         ;;
       *) echo "Répondez par y ou n." ;;
@@ -135,8 +144,7 @@ configure_development_mailer() {
   prompt_env_value "MAILER_SMTP_PORT" "Port SMTP" false "$file"
   prompt_env_value "MAILER_FROM" "Expéditeur (nom et adresse)" false "$file"
   write_env_value "MAILER_DISABLED" "false" "$file"
-  echo "Configuration enregistrée dans api/.env."
-  echo
+  ok "Configuration enregistrée dans api/.env"
 }
 
 configure_development_password() {
@@ -176,49 +184,75 @@ configure_development_env() {
     return
   fi
   if [ ! -t 0 ]; then
-    echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
+    fail "la création de api/.env en développement nécessite un terminal interactif."
     exit 1
   fi
 
-  echo
-  echo "Configuration des services de développement"
-  echo
+  step "Services de développement"
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash (optionnel)" false "$file" true
   configure_development_mailer "$file"
   configure_development_password "$file"
 }
 
 if [ "$restore_data" = false ]; then
-  echo "Nettoyage des données existantes..."
-  ./init-scripts/clean-project-data.sh || { echo -e "\033[1;31m Échec: Nettoyage des données"; exit 1; }
+  # Une sauvegarde locale (npm run dump) permet de proposer sa récupération.
+  # Sans terminal interactif, le nettoyage reste automatique comme avant.
+  work_dump_dir="./api/dumps"
+  has_backup=false
+  if [ -f "$work_dump_dir/dump-pgsql.sql" ] || [ -d "$work_dump_dir/dump-mongo" ]; then
+    has_backup=true
+  fi
+
+  # Sans volume Docker existant, il n'y a aucune donnée à perdre : pas de question.
+  if [ -t 0 ] && has_project_volumes; then
+    echo
+    if [ "$has_backup" = true ]; then
+      warn "Une sauvegarde de données a été détectée dans api/dumps"
+      read -r -p "Supprimer toutes les données existantes ? [y/N] (N : récupérer les données sauvegardées) : " wipe_data
+      if [[ ! "$wipe_data" =~ ^[Yy]$ ]]; then
+        # Les volumes sont tout de même recréés : la restauration cible des bases vides.
+        restore_data=true
+        init_mode="avec données (sauvegarde récupérée)"
+        info "Les données sauvegardées seront récupérées"
+      fi
+    else
+      warn "Aucune sauvegarde réalisée"
+      read -r -p "Êtes-vous sûr de réinitialiser les volumes des conteneurs ? [y/N] : " confirm_reset
+      if [[ ! "$confirm_reset" =~ ^[Yy]$ ]]; then
+        echo "Initialisation annulée, aucune donnée supprimée."
+        exit 0
+      fi
+    fi
+  fi
+
+  step "Nettoyage des données existantes"
+  ./init-scripts/clean-project-data.sh || { fail "Nettoyage des données"; exit 1; }
 fi
 
 install_dependencies "racine" "." --ignore-scripts
 install_dependencies "API" "api" --prefix api
 install_dependencies "frontend" "front" --prefix front
 
-echo "Copie des fichiers .env..."
+step "Configuration de l'environnement"
 # If .env in api does not exist, copy .env.example to .env
 api_env_created=false
 if [ ! -f "./api/.env" ]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
-    echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
+    fail "la création de api/.env en développement nécessite un terminal interactif."
     exit 1
   fi
-  cp ./api/env.example ./api/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
+  cp ./api/env.example ./api/.env || { fail "Copie des variables d'environnement"; exit 1; }
   api_env_created=true
   configure_development_env "./api/.env"
 fi
 if [ "$api_env_created" = false ] \
   && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
   && development_mailer_needs_configuration "./api/.env"; then
-  echo
-  echo "Configuration du mailer de développement"
-  echo
+  step "Mailer de développement"
   configure_development_mailer "./api/.env"
   configure_development_password "./api/.env"
 fi
-cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
+cp ./front/env.example ./front/.env || { fail "Copie des variables d'environnement"; exit 1; }
 
 # Chargement des variables d'environnement (sélectif pour éviter les erreurs
 # de syntaxe sur des lignes comme MAILER_SMTP ou MAILER_FROM qui ne sont pas du bash).
@@ -237,42 +271,42 @@ database_build_urls localhost 5500 localhost 27000
 # Naviguer vers le repertoire api pour la suite
 cd api
 
-echo "Démarrage des containers Docker..."
-docker compose up -d || { echo -e "\033[1;31m Échec: Démarrage des containers"; exit 1; }
+step_cmd "Conteneurs Docker"
+docker compose --progress plain up -d || { fail "Démarrage des containers"; exit 1; }
 
-echo "Émission du contrat Prisma..."
-npx prisma contract emit || { echo -e "\033[1;31m Échec: Émission du contrat Prisma"; exit 1; }
+step_cmd "Contrat Prisma"
+npx prisma contract emit || { fail "Émission du contrat Prisma"; exit 1; }
 
-echo "Attente de l'initialisation complète de PostgreSQL..."
+step_cmd "Base de données PostgreSQL"
 # Utilisation de la variable POSTGRES_USER issue du .env (avec "postgres" comme fallback)
 tries=0
 max_tries=30
 until docker exec lxp-prisma pg_isready -U "${POSTGRES_USER:-postgres}" > /dev/null 2>&1; do
   tries=$((tries + 1))
   if ! docker inspect -f '{{.State.Running}}' lxp-prisma 2>/dev/null | grep -q true; then
-    echo -e "\033[1;31mÉchec: le conteneur PostgreSQL lxp-prisma n'est pas en cours d'exécution.\033[0m"
+    fail "le conteneur PostgreSQL lxp-prisma n'est pas en cours d'exécution."
     docker compose logs --tail=80 db-pg
     exit 1
   fi
   if [ "$tries" -ge "$max_tries" ]; then
-    echo -e "\033[1;31mÉchec: PostgreSQL n'est pas prêt après $((max_tries * 2)) secondes.\033[0m"
+    fail "PostgreSQL n'est pas prêt après $((max_tries * 2)) secondes."
     docker compose logs --tail=80 db-pg
     exit 1
   fi
-  echo "PostgreSQL n'est pas encore prêt..."
+  info "PostgreSQL n est pas encore prêt"
   sleep 2
 done
+ok "PostgreSQL prêt"
 
-echo "Exécution des migrations..."
-npx prisma db migrate || { echo -e "\033[1;31m Échec: Migrations"; exit 1; }
+step_cmd "Migrations"
+npx prisma db migrate || { fail "Migrations"; exit 1; }
 
-echo "PostgreSQL est prêt !"
 if [ "$restore_data" = true ]; then
-  echo "Restauration des données de démonstration..."
+  step_cmd "Restauration des données"
 
   # Restauration PostgreSQL
   if [[ -f "$dump_dir/dump-pgsql.sql" ]]; then
-    echo "Dump PostgreSQL trouvé, injection en cours..."
+    info "Injection du dump PostgreSQL"
     # Prisma 7 exposait Course.dates comme une liste non nullable, mais sa DDL
     # PostgreSQL autorisait encore NULL. Prisma 8 aligne le stockage sur le type.
     # La restauration normalise ces anciennes lignes dans une transaction unique.
@@ -282,54 +316,56 @@ if [ "$restore_data" = true ]; then
       -c 'ALTER TABLE public."Course" ALTER COLUMN "dates" DROP NOT NULL' \
       -f - \
       -c 'UPDATE public."Course" SET "dates" = ARRAY[]::jsonb[] WHERE "dates" IS NULL; ALTER TABLE public."Course" ALTER COLUMN "dates" SET NOT NULL' \
-      < "$dump_dir/dump-pgsql.sql" || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
+      < "$dump_dir/dump-pgsql.sql" || { fail "Import SQL"; exit 1; }
   else
-    echo "Aucun fichier $dump_dir/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
+    warn "Aucun fichier $dump_dir/dump-pgsql.sql, import PostgreSQL ignoré"
   fi
 
   # Restauration MongoDB
   if [[ -d "$dump_dir/dump-mongo" ]]; then
-    echo "Dossier de dump MongoDB trouvé, injection en cours..."
-    docker cp "$dump_dir/dump-mongo" lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
-    docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
+    info "Injection du dump MongoDB"
+    docker cp "$dump_dir/dump-mongo" lxp-mongo:/dump-mongo || { fail "Copie du dump Mongo"; exit 1; }
+    docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { fail "Import MongoDB"; exit 1; }
   else
-    echo "Aucun dossier $dump_dir/dump-mongo trouvé. L'import MongoDB est ignoré."
+    warn "Aucun dossier $dump_dir/dump-mongo, import MongoDB ignoré"
   fi
 
-  echo "Restauration des fichiers d'activités..."
+  info "Restauration des fichiers d'activités"
   if [[ -d "$dump_dir/activities" ]]; then
     mkdir -p ./uploads/
     rm -rf ./uploads/activities
-    cp -R "$dump_dir/activities" ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers activités"; exit 1; }
-    echo -e "\033[0;32m Activités restaurées.\033[0m"
+    cp -R "$dump_dir/activities" ./uploads/ || { fail "Copie fichiers activités"; exit 1; }
+    ok "Activités restaurées"
   else
-    echo -e "\033[1;33m Dossier $dump_dir/activities introuvable, restauration ignorée."
+    warn "Dossier $dump_dir/activities introuvable, restauration ignorée"
   fi
 fi
 
 if [ "$demo_mode" = true ]; then
-  echo "Préparation des comptes de démonstration..."
-  npm run demo:seed || { echo -e "\033[1;31m Échec: Comptes de démonstration"; exit 1; }
+  step_cmd "Comptes de démonstration"
+  npm run demo:seed || { fail "Comptes de démonstration"; exit 1; }
 fi
 
-echo "🔧 Notification des triggers pour le serveur IA..."
-npm run notify-triggers || { echo -e "\033[1;31m Échec: Notification des triggers"; exit 1; }
+step_cmd "Triggers du serveur IA"
+npm run notify-triggers || { fail "Notification des triggers"; exit 1; }
 
 if [ "$restore_data" = false ]; then
-  echo "Génération de la clé JWT de la création du premier utilisateur admin..."
-  npm run generate-activation-key || { echo -e "\033[1;31m Échec: Génération de la clé d'activation"; exit 1; }
+  step_cmd "Clé d'activation du premier administrateur"
+  npm run generate-activation-key || { fail "Génération de la clé d'activation"; exit 1; }
 fi
 
+close_step
+echo
 if [ "$demo_mode" = true ]; then
-  echo -e "\033[0;32mInstance de démonstration ANDRIA prête.\033[0m"
+  box "$c_green$c_bold" "TERMINÉ  Instance de démonstration ANDRIA prête"
 elif [ "$restore_data" = true ]; then
-  echo -e "\033[0;32mConfiguration du projet ANDRIA avec les données de démonstration terminée avec succès.\033[0m"
+  box "$c_green$c_bold" "TERMINÉ  ANDRIA configuré avec les données de démonstration"
 else
-  echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
+  box "$c_green$c_bold" "TERMINÉ  ANDRIA configuré"
 fi
 cd ..
 if [ ! -t 0 ]; then
-  echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
+  info "Prochaine étape : lancer npm run dev à la racine du projet"
   exit 0
 fi
 
@@ -337,10 +373,11 @@ while true; do
   read -r -p "Lancer npm run dev maintenant ? [y/N] : " start_dev
   case "$start_dev" in
     o|O|oui|Oui|OUI|y|Y|yes|YES)
+      clear_cancel_hint
       exec npm run dev
       ;;
     ""|n|N|non|Non|NON|no|NO)
-      echo -e "Vous pouvez lancer \033[30;47m npm run dev \033[0m plus tard à la racine du projet."
+      info "Lancer npm run dev plus tard à la racine du projet"
       break
       ;;
     *) echo "Répondez par y ou n." ;;
