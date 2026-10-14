@@ -58,6 +58,8 @@ const IntroStackPlate = ({
         isActive
           ? "border-primary bg-primary/10 ring-2 ring-primary/50"
           : "border-(--intro-plate-text)/35",
+        // Le dégradé de verre masque la couleur de fond : une couche mise en avant le remplace.
+        isActive && variant === "layer" && "from-primary/45 via-primary/30 to-primary/20 ring-4 ring-primary/60 duration-[600ms]",
         !isActive && onSelect && "hover:border-primary",
         onSelect && "cursor-pointer focus-visible:outline-2 focus-visible:outline-primary",
       )}

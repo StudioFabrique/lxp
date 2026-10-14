@@ -11,7 +11,8 @@ type Props = {
 };
 
 /**
- * Encadré posé au-dessus de la pyramide au palier d'introduction : il entoure uniquement le logo (ou le nom) de l'organisme.
+ * Au palier d'introduction : un cadre en tirets entoure la pyramide, et l'en-tête
+ * (titre et logo de l'organisme) est relevé au-dessus.
  *
  * L'élément extérieur (`.intro-organisation`) est masqué par le défilement ;
  * l'intérieur (`.intro-organisation-fade`) apparaît après l'animation initiale.
@@ -29,33 +30,34 @@ const IntroOrganisationFrame = ({
   return (
     <div
       aria-hidden="true"
-      className="intro-organisation pointer-events-none absolute left-1/2 top-[-150px] h-28 w-[380px] -translate-x-1/2"
+      className="intro-organisation pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[860px] -translate-x-1/2 -translate-y-1/2"
     >
       <div className="intro-organisation-fade relative size-full">
-        {/* Titre juste au-dessus du cadre, sur le fond de la page. */}
-        <div className="absolute inset-x-0 -top-12 flex justify-center">
+        {/* Cadre en tirets autour de la pyramide, de la même couleur que celui du logo. */}
+        <div className="size-full rounded-3xl border-[3px] border-dashed border-primary/60" />
+        {/* En-tête relevé au-dessus du cadre : titre, puis logo (ou nom) de l'organisme. */}
+        <div className="absolute inset-x-0 bottom-full mb-6 flex flex-col items-center gap-3">
           <span className="flex items-center gap-2 text-primary">
             <Building2 className="size-6" aria-hidden="true" />
             <b className="text-xl leading-10">Organisme de formation</b>
           </span>
-        </div>
-        <div
-          style={{ backgroundColor, color: textColor }}
-          className="flex size-full items-center justify-center rounded-3xl border-2 border-dashed border-primary/40 px-8 text-base-content"
-        >
-          {/* Le logo porte déjà le nom de l'organisme : l'un ou l'autre, jamais les deux. */}
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt=""
-              className="h-16 max-w-[16rem] object-contain"
-            />
-          ) : (
-            <p className="flex items-center gap-3 text-3xl font-extrabold leading-none">
-              {name}
-
-            </p>
-          )}
+          <div
+            style={{ backgroundColor, color: textColor }}
+            className="flex h-28 w-[380px] items-center justify-center rounded-3xl border-[3px] border-dashed border-primary/60 px-8 text-base-content"
+          >
+            {/* Le logo porte déjà le nom de l'organisme : l'un ou l'autre, jamais les deux. */}
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt=""
+                className="h-16 max-w-[16rem] object-contain"
+              />
+            ) : (
+              <p className="flex items-center gap-3 text-3xl font-extrabold leading-none">
+                {name}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

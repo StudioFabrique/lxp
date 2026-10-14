@@ -1,7 +1,8 @@
-import { ArrowDownUp, LogOutIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { useContext, useLayoutEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 
+import ThemeToggle from "../buttons/ThemeToggle";
 import SidebarLogo from "./SidebarLogo";
 import ThemeSelect from "../../features/profile/components/theme-select";
 import { AuthContext } from "../../store/AuthProvider";
@@ -16,7 +17,6 @@ const SidebarIntroBar = () => {
   const { logout } = useContext(AuthContext);
   const {
     theme,
-    toggleTheme,
     chooseTheme,
     availableLightThemes,
     availableDarkThemes,
@@ -77,14 +77,8 @@ const SidebarIntroBar = () => {
               reserveWidthFor={[...availableLightThemes, ...availableDarkThemes]}
               compact
             />
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm btn-square text-(--sidebar-content) hover:bg-(--sidebar-hover)"
-              onClick={toggleTheme}
-              aria-label="Changer de mode d'affichage"
-            >
-              <ArrowDownUp className="size-4" aria-hidden="true" />
-            </button>
+            {/* Même interrupteur animé (soleil / lune) que dans la barre latérale complète. */}
+            <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 text-(--sidebar-content) transition-colors hover:bg-(--sidebar-hover)" />
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ vi.mock("./intro-motion", () => ({
       if (typeof vars.y === "number") target.style.translate = `0 ${vars.y}px`;
     },
     from: vi.fn(), fromTo: vi.fn(), to: vi.fn(),
+    delayedCall: (_delay: number, callback: () => void) => { callback(); return { kill: vi.fn() }; },
     timeline: () => {
       const timeline = {
         to: (...args: unknown[]) => { motion.timelineTo(...args); return timeline; },
@@ -146,9 +147,12 @@ describe("IntroOverviewScene", () => {
     const layer = container.querySelector<HTMLElement>(".intro-child-layer");
     expect(layer?.querySelectorAll(".intro-child-plate")).toHaveLength(4);
     expect(layer?.style.transform).toContain("rotateX(-22deg)");
-    expect(layer?.style.transform).toContain("translateY(-48px)");
+    expect(layer?.style.transform).toContain("translateY(-110px)");
     const selector = container.querySelector("[aria-label='Choix de la formation présentée']")?.closest("fieldset")?.parentElement;
     expect(selector?.style.translate).toBe("0 -56px");
+    // Les cartes posées, la couche « Activités » est mise en avant.
+    expect(container.querySelector("button[aria-label='Revenir au niveau Activités']")?.getAttribute("data-active")).toBe("true");
+    expect(container.querySelector("button[aria-label='Revenir au niveau Leçon']")?.getAttribute("data-active")).toBeNull();
     advanceTo(5);
     expect(selector?.style.translate).toBe("0 0px");
   });
@@ -177,6 +181,9 @@ describe("IntroOverviewScene", () => {
       .flatMap(([target]) => Array.isArray(target) ? target : [target]);
     expect(fadedTargets).not.toContain(hint);
     advanceTo(6);
-    expect(container.querySelectorAll("button.intro-child-plate")).toHaveLength(0);
+    // Au dernier niveau, chaque type d'activité est une carte cliquable qui ouvre un aperçu.
+    const plates = container.querySelectorAll<HTMLButtonElement>("button.intro-child-plate");
+    expect(plates).toHaveLength(4);
+    expect(plates[0].getAttribute("aria-label")).toBe("Voir un exemple : Texte");
   });
 });

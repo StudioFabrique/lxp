@@ -28,12 +28,15 @@ export const LEAF_STACK_YAW = 4;
 /** Décalage (unités de la scène) de la pyramide vers la droite au dernier niveau. */
 export const LEAF_STACK_SHIFT_X = 70;
 
+/** Hauteur (unités de la scène) dont les cartes d'activité sont relevées au-dessus de la pile. */
+export const LEAF_CARD_LIFT = 110;
+
 /** Contre-rotation X (en degrés) des cartes d'activité : plus faible que l'inclinaison de la pile, elles restent donc un peu penchées. */
 export const LEAF_CARD_PITCH = 22;
 
 /** Relève les cartes face au lecteur (rotation X inverse) en gardant l’inclinaison latérale de la pile, pour rester alignées avec les couches. */
 export const activityFacingTransform = (level: number): string =>
-  `translateZ(${level * STACK_DEPTH}px) rotateX(${-LEAF_CARD_PITCH}deg) translateY(-48px)`;
+  `translateZ(${level * STACK_DEPTH}px) rotateX(${-LEAF_CARD_PITCH}deg) translateY(${-LEAF_CARD_LIFT}px)`;
 
 /** Quatre cartes de taille lisible, alignées dans leur propre plan face au lecteur. */
 export const activityTypeBox = (index: number, count: number): StackBox => {

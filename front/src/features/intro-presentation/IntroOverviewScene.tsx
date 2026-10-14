@@ -20,7 +20,9 @@ import type { IntroFormationOption } from "./intro-example-formations";
 import IntroFormationSelector from "./IntroFormationSelector";
 import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION } from "./intro-stack-layout";
 import IntroChatbot from "./IntroChatbot";
+import IntroActivityPreviewModal from "./IntroActivityPreviewModal";
 import IntroChildrenStack from "./IntroChildrenStack";
+import { introActivityKind, type IntroActivityKind } from "./intro-activity-samples";
 import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
@@ -100,6 +102,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
   // Avec la barre réduite de la première présentation, le titre prend la ligne libre à sa droite.
   const { sidebarPhase } = useIntroPresentation();
   const isCompactSidebar = sidebarPhase !== "normal";
+  // Aperçu d'un type d'activité ouvert depuis les cartes du dernier niveau.
+  const [activityPreview, setActivityPreview] = useState<{ kind: IntroActivityKind; title: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -624,6 +628,10 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                     highlightedRow={hoveredRow}
                     onHighlightRow={(row) => setHover({ step: settledStep, row })}
                     onSelectLevel={goToStep}
+                    onSelectActivity={(title) => {
+                      const kind = introActivityKind(title);
+                      if (kind) setActivityPreview({ kind, title });
+                    }}
                     onSelectChild={(rowIndex) => {
                       onSelectChild?.(settledStep, rowIndex);
                       goToStep(settledStep + 1);
@@ -663,6 +671,12 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               ) : null}
             </div>
           </div>
+
+          <IntroActivityPreviewModal
+            kind={activityPreview?.kind ?? null}
+            title={activityPreview?.title ?? ""}
+            onClose={() => setActivityPreview(null)}
+          />
 
           {isChatbotReady ? (
             <IntroChatbot

@@ -28,6 +28,8 @@ type Props = {
   /** Sélection d’une couche existante ou découverte du niveau enfant. */
   onSelectLevel: (level: number) => void;
   onSelectChild: (rowIndex: number) => void;
+  /** Au dernier niveau, clic sur la carte d'un type d'activité (son intitulé). */
+  onSelectActivity?: (title: string) => void;
 };
 
 /** Remontée du sélecteur de formation quand les cartes d'activité se relèvent. */
@@ -63,12 +65,15 @@ const IntroChildrenStack = ({
   onHighlightRow,
   onSelectLevel,
   onSelectChild,
+  onSelectActivity,
 }: Props) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const target: Shown | null =
     card && levelIndex >= 1 ? { levelIndex, card } : null;
   // Niveau dont les cartes sont posées : il suit `target` après l'animation de sortie.
   const [shown, setShown] = useState<Shown | null>(null);
+  // Niveau dont la couche est mise en avant, une fois les cartes d'activité posées.
+  const [accentLevel, setAccentLevel] = useState<number | null>(null);
   const targetRef = useRef(target);
   const shownRef = useRef<Shown | null>(null);
   const selectedChildRef = useRef(0);
@@ -196,7 +201,10 @@ const IntroChildrenStack = ({
         });
         if (selector) gsap.set(selector, { y: SELECTOR_LIFT });
         gsap.set(tilt, { rotation: straightRoll, rotationX: LEAF_STACK_PITCH, rotationY: LEAF_STACK_YAW, x: LEAF_STACK_SHIFT_X });
+        const accent = gsap.delayedCall(0, () => setAccentLevel(shownLevel));
         return () => {
+          accent.kill();
+          setAccentLevel(null);
           gsap.set(tilt, { rotation: 0, rotationX: 0, rotationY: 0, x: 0 });
         };
       }
@@ -259,9 +267,15 @@ const IntroChildrenStack = ({
             duration: 0.6,
             ease: "power2.inOut",
           });
+        // La couche « Activités » passe en couleur d'accent pendant le relevé des cartes,
+        // au même rythme que lui.
+        gsap.delayedCall(facingDelay, () => setAccentLevel(shownLevel));
       }
     }, root);
-    return () => context.revert();
+    return () => {
+      context.revert();
+      setAccentLevel(null);
+    };
   }, [shownLevel, formationSelectorRef]);
 
   const isCurrent = target !== null && shown?.levelIndex === target.levelIndex;
@@ -290,6 +304,7 @@ const IntroChildrenStack = ({
                 icon={level.icon}
                 box={layerBox(index + 2)}
                 onSelect={() => onSelectLevel(index + 2)}
+                isActive={isCurrent && accentLevel === displayed.levelIndex && index === displayed.levelIndex - 2}
                 disabled={!isCurrent}
                 selectionLabel={`Revenir au niveau ${level.label}`}
               />
@@ -318,10 +333,16 @@ const IntroChildrenStack = ({
                         selectedChildRef.current = index;
                         onSelectChild(index);
                       }
-                    : undefined
+                    : onSelectActivity
+                      ? () => onSelectActivity(row.title)
+                      : undefined
                 }
                 disabled={!isCurrent}
-                selectionLabel={`Découvrir ${row.title}`}
+                selectionLabel={
+                  displayed.levelIndex < INTRO_LEVELS.length - 1
+                    ? `Découvrir ${row.title}`
+                    : `Voir un exemple : ${row.title}`
+                }
                 onHoverChange={(isHovered) =>
                   onHighlightRow(isHovered ? index : -1)
                 }
