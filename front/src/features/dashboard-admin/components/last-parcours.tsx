@@ -1,11 +1,7 @@
-import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useContext, useState, type ReactNode } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
 import { MoveUpRight } from "lucide-react";
-import toast from "react-hot-toast";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
-import type ParcoursSummary from "../interfaces/parcours-summary";
 import LastParcoursItem from "./last-parcours-item";
 import QuickActions from "./quick-actions";
 import FormationModal from "../../formation/components/FormationModal";
@@ -13,9 +9,6 @@ import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
 import ParcoursCreationModal from "../../parcours/components/create/ParcoursCreationModal";
-import Modal from "../../../components/UI/modal/modal";
-import { parcoursApi } from "../../parcours/api/parcours.api";
-import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { cn } from "../../../utils/cn";
 
 type LastParcoursProps = {
@@ -32,7 +25,6 @@ export default function LastParcours({
   sideContent,
 }: LastParcoursProps) {
   const { user } = useContext(AuthContext);
-  const queryClient = useQueryClient();
   const isTeacher = isTeacherUser(user);
   const displayedFormations = parcours.slice(0, 6);
   const usesFullWidthLayout = isTeacher && displayedFormations.length === 1;
@@ -50,8 +42,6 @@ export default function LastParcours({
     formationId: null,
   });
   const [parcoursFormationId, setParcoursFormationId] = useState<number | null>(null);
-  const [parcoursToDelete, setParcoursToDelete] = useState<ParcoursSummary | null>(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const isParcoursModalOpen =
     parcoursFormationId !== null || searchParams.get("createParcours") === "true";
   const requestedFormationId = Number(searchParams.get("formationId"));
@@ -82,49 +72,6 @@ export default function LastParcours({
       nextSearchParams.delete("createFormation");
       setSearchParams(nextSearchParams, { replace: true });
     }
-  };
-
-  const deleteParcoursMutation = useMutation({
-    mutationFn: parcoursApi.mutations.deleteParcours,
-    onSuccess: (response) => {
-      toast.success(response.message);
-      setParcoursToDelete(null);
-      setDeleteConfirmation("");
-      void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
-    },
-    onError: (error) => {
-      toast.error(getApiErrorMessage(error, "Le parcours n'a pas pu être supprimé."));
-    },
-  });
-
-  const exportParcoursMutation = useMutation({
-    mutationFn: (item: ParcoursSummary) => parcoursApi.mutations.exportParcours(item.id),
-    onSuccess: ({ archive, contentDisposition }, item) => {
-      const encodedFilename = contentDisposition?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
-      const plainFilename = contentDisposition?.match(/filename="?([^";]+)"?/i)?.[1];
-      const fallbackFilename = `${item.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "parcours"}.zip`;
-      const url = URL.createObjectURL(archive);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = encodedFilename ? decodeURIComponent(encodedFilename) : plainFilename || fallbackFilename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      toast.success("Archive du parcours téléchargée.");
-    },
-    onError: () => toast.error("Le parcours n'a pas pu être exporté."),
-  });
-
-  const closeParcoursDeletion = () => {
-    if (deleteParcoursMutation.isPending) return;
-    setParcoursToDelete(null);
-    setDeleteConfirmation("");
-  };
-
-  const confirmParcoursDeletion = () => {
-    if (!parcoursToDelete || deleteConfirmation.trim() !== parcoursToDelete.title) return;
-    deleteParcoursMutation.mutate(parcoursToDelete.id);
   };
 
   return (
@@ -165,16 +112,13 @@ export default function LastParcours({
                   disableHoverScale
                   isManagementView
                   onCreateParcours={setParcoursFormationId}
-                  onDeleteParcours={(item) => {
-                    setParcoursToDelete(item);
-                    setDeleteConfirmation("");
-                  }}
-                  onExportParcours={(item) => exportParcoursMutation.mutate(item)}
-                  exportingParcoursId={exportParcoursMutation.isPending ? exportParcoursMutation.variables?.id : null}
                 />
               ))}
               <PermissionGuard action="write" object="parcours">
-                <LastParcoursItem onCreateFormation={openFormationModal} />
+                <LastParcoursItem
+                  onCreateFormation={openFormationModal}
+                  isFirstFormation={displayedFormations.length === 0}
+                />
               </PermissionGuard>
             </div>
           )}
@@ -199,33 +143,6 @@ export default function LastParcours({
           initialFormationId={initialFormationId}
           onClose={closeParcoursModal}
         />
-      ) : null}
-      {parcoursToDelete ? (
-        <Modal
-          title={`Supprimer le parcours « ${formatTitle(parcoursToDelete.title)} »`}
-          leftLabel="Annuler"
-          rightLabel="Supprimer"
-          rightDisabled={deleteConfirmation.trim() !== parcoursToDelete.title}
-          isSubmitting={deleteParcoursMutation.isPending}
-          onLeftClick={closeParcoursDeletion}
-          onRightClick={confirmParcoursDeletion}
-          modalBoxStyle="max-w-xl"
-        >
-          <div className="flex flex-col gap-4 py-5">
-            <p>Le parcours, ses modules, cours, leçons, activités et rattachements seront définitivement supprimés.</p>
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-semibold">Saisissez « {parcoursToDelete.title} » pour confirmer.</span>
-              <input
-                className="input input-bordered w-full"
-                value={deleteConfirmation}
-                onChange={(event) => setDeleteConfirmation(event.target.value)}
-                autoComplete="off"
-                autoFocus
-                disabled={deleteParcoursMutation.isPending}
-              />
-            </label>
-          </div>
-        </Modal>
       ) : null}
     </div>
   );

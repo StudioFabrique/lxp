@@ -181,9 +181,11 @@ const UserForm = ({
             <UserFormInformations
               lastname={lastname}
               lastnameError={lastnameError}
+              lastnameMessage={form.formState.errors.lastname?.message}
               onLastname={setLastname}
               firstname={firstname}
               firstnameError={firstnameError}
+              firstnameMessage={form.formState.errors.firstname?.message}
               onFirstname={setFirstname}
               nickname={nickname}
               nicknameError={nicknameError}

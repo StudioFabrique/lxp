@@ -16,6 +16,7 @@ type Props = {
   /** Ligne des éléments enfants survolée, aussi dans la pile 3D : -1 si aucune. */
   highlightedRow?: number;
   onHighlightRow?: (row: number) => void;
+  onSelectRow?: (row: number) => void;
   ref?: Ref<HTMLDivElement>;
 };
 
@@ -24,7 +25,7 @@ type Props = {
  * enfants, puis ses composants (groupes, tags...), chacun dans son cadre.
  * Il se déploie à côté de la plaque du niveau dans la pyramide.
  */
-const IntroLevelDetail = ({ card, index, activeDetail, highlightedRow, onHighlightRow, ref }: Props) => (
+const IntroLevelDetail = ({ card, index, activeDetail, highlightedRow, onHighlightRow, onSelectRow, ref }: Props) => (
   <div
     ref={ref}
     aria-label={`${INTRO_LEVELS[index].label} : ${card.title}`}
@@ -45,6 +46,7 @@ const IntroLevelDetail = ({ card, index, activeDetail, highlightedRow, onHighlig
         index={index}
         highlightedRow={highlightedRow}
         onHighlightRow={onHighlightRow}
+        onSelectRow={onSelectRow}
       />
     </div>
     {card.details.length ? (

@@ -9,7 +9,10 @@ export type CourseFormValues = {
 
 export type CreateCourseFormValues = CourseFormValues & {
   tagIds: number[];
-  lessonTitles: string[];
+};
+
+/** Contenus existants importés dans un cours déjà créé. */
+export type CourseContentValues = {
   lessonIds: number[];
   resourceIds: number[];
 };

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useImperativeHandle, useLayoutEffect, useRef, useState, type Ref, type RefObject } from "react";
 
 import { INTRO_ROW_COUNT, type IntroCard } from "./intro-content";
 import { INTRO_LEVELS } from "./intro-levels";
@@ -16,7 +16,13 @@ import {
 } from "./intro-stack-layout";
 import IntroStackPlate from "./IntroStackPlate";
 
+/** Actions déclenchables depuis la liste de droite, comme un clic sur la carte correspondante. */
+export type IntroChildrenStackHandle = {
+  selectRow: (rowIndex: number) => void;
+};
+
 type Props = {
+  ref?: Ref<IntroChildrenStackHandle>;
   /** Carte du niveau expliqué ; absente tant que la pyramide complète est affichée. */
   card?: IntroCard;
   formationSelectorRef?: RefObject<HTMLDivElement | null>;
@@ -58,6 +64,7 @@ const toBoxProps = (box: ReturnType<typeof layerBox>) => ({
  * sur le côté.
  */
 const IntroChildrenStack = ({
+  ref,
   card,
   formationSelectorRef,
   levelIndex,
@@ -77,6 +84,16 @@ const IntroChildrenStack = ({
   const targetRef = useRef(target);
   const shownRef = useRef<Shown | null>(null);
   const selectedChildRef = useRef(0);
+  const onSelectChildRef = useRef(onSelectChild);
+  useLayoutEffect(() => {
+    onSelectChildRef.current = onSelectChild;
+  });
+  useImperativeHandle(ref, () => ({
+    selectRow: (rowIndex) => {
+      selectedChildRef.current = rowIndex;
+      onSelectChildRef.current(rowIndex);
+    },
+  }), []);
   // Nature de la dernière bascule : au retour, la couche rétrécie devient la première
   // carte ; lors d'un saut de plusieurs niveaux, toutes les couches se reposent.
   const transitionRef = useRef<"forward" | "back" | "jump">("jump");

@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { getValidationStep, goToValidationTarget } from "./parcours-validation-target";
 
 /**
- * Signale la première erreur de validation du parcours en bas de l'écran,
+ * Signale la première erreur de validation du parcours comme les autres toasts,
  * avec un bouton « Corriger » qui mène à l'étape et au bloc concernés.
  * Utilise `toast.error` pour conserver l'apparence et l'animation des toasts.
  */
@@ -31,9 +31,6 @@ export const showParcoursValidationToast = (
     ),
     {
       id: "parcours-validation",
-      position: "bottom-center",
-      // Marge basse : le toast reste au-dessus de la barre de navigation flottante.
-      style: { marginBottom: "6rem" },
       duration: getValidationStep(key) === undefined ? 4000 : 8000,
     },
   );

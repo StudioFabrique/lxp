@@ -54,8 +54,7 @@ export const courseDetailsSchema = z.object({
     .min(1, "Sélectionnez au moins un tag."),
   assignment: assignmentFormSchema,
 });
-export const courseCreationSchema = courseDetailsSchema.extend({
-  lessonTitles: z.array(requiredText()),
+export const courseContentSchema = z.object({
   selectedContents: z.array(
     z.custom<LessonWithActivitiesCount>((value) =>
       Boolean(

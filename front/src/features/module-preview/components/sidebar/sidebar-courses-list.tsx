@@ -11,7 +11,8 @@ import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
-import type { UpdateCourseFormValues } from "./course-form.types";
+import type { CourseContentValues, UpdateCourseFormValues } from "./course-form.types";
+import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonFormValues } from "./lesson-form.types";
 import { cn } from "../../../../utils/cn";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -43,6 +44,11 @@ type SidebarCoursesListProps = {
     courseId: number,
     values: UpdateCourseFormValues,
   ) => Promise<boolean>;
+  onAddCourseContent?: (
+    courseId: number,
+    values: CourseContentValues,
+  ) => Promise<boolean>;
+  parcoursTags?: Tag[];
   onCourseReorder?: (args: BaseEventPayload<ElementDragType>) => void;
   isReorderingCourses?: boolean;
   isReorderingActivities?: boolean;
@@ -83,6 +89,8 @@ const SidebarCoursesList = ({
   onEnableCourse,
   onPublishCourse,
   onUpdateCourse,
+  onAddCourseContent,
+  parcoursTags,
   onCourseReorder,
   isReorderingCourses = false,
   isReorderingActivities = false,
@@ -241,6 +249,8 @@ const SidebarCoursesList = ({
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
               onUpdateCourse={onUpdateCourse}
+              onAddCourseContent={onAddCourseContent}
+              parcoursTags={parcoursTags}
               openEditOnMount={!calendarMode && course.id === editCourseId}
               editLessonId={calendarMode ? undefined : editLessonId}
               isOpen={!calendarAdding && !isReorderingCourses && course.id === openCourseId}

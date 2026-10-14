@@ -30,6 +30,7 @@ import {
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import useValidateParcours from "../hooks/useValidateParcours";
 import { parcoursApi } from "../api/parcours.api";
+import { showParcoursValidationToast } from "../helpers/show-parcours-validation-toast";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
@@ -85,7 +86,7 @@ const EditParcours = () => {
 
     const validationErrors = validateParcours();
     if (validationErrors.length > 0) {
-      toast.error(Object.values(validationErrors[0]).toString());
+      showParcoursValidationToast(validationErrors, updateStep);
       return;
     }
 
@@ -186,21 +187,12 @@ const EditParcours = () => {
               {actualStep.id !== stepsList.length && !moduleFormOpened ? (
                 <FloatingBottomNavigation
                   startActions={
-                    <button
-                      className="btn btn-outline"
-                      onClick={handleRetour}
-                    >
+                    <button className="btn btn-outline" onClick={handleRetour}>
                       Retour
                     </button>
                   }
                   endActions={
                     <>
-                      <button
-                        className="btn btn-info px-6"
-                        onClick={() => handleUpdateStep(actualStep.id)}
-                      >
-                        Étape suivante
-                      </button>
                       {!isTeacher && !infos?.isPublished && (
                         <button
                           className="btn btn-primary"
@@ -210,6 +202,12 @@ const EditParcours = () => {
                           Publier
                         </button>
                       )}
+                      <button
+                        className="btn btn-info px-6"
+                        onClick={() => handleUpdateStep(actualStep.id)}
+                      >
+                        Étape suivante
+                      </button>
                     </>
                   }
                 />

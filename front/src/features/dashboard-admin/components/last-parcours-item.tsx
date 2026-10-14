@@ -33,6 +33,7 @@ type LastParcoursItemProps = {
   isManagementView?: boolean;
   baseRoute?: "admin" | "student";
   onCreateFormation?: () => void;
+  isFirstFormation?: boolean;
   onCreateParcours?: (formationId: number) => void;
   onEditFormation?: (formationId: number) => void;
   onDeleteParcours?: (
@@ -52,6 +53,7 @@ const LastParcoursItem = ({
   isManagementView = false,
   baseRoute = "admin",
   onCreateFormation,
+  isFirstFormation = false,
   onCreateParcours,
   onEditFormation,
   onDeleteParcours,
@@ -153,14 +155,29 @@ const LastParcoursItem = ({
       placeholder={
         !formation ? (
           <PermissionGuard action="write" object="formation">
-            <button
-              type="button"
-              className="btn btn-dash"
-              onClick={onCreateFormation}
-            >
-              <Plus className="size-[1.2em]" />
-              <span>Créer une formation</span>
-            </button>
+            <div className="relative w-fit">
+              {isFirstFormation && (
+                <span
+                  className="pointer-events-none absolute -inset-1 rounded-field bg-primary/30 blur-md motion-safe:animate-pulse"
+                  aria-hidden="true"
+                />
+              )}
+              <button
+                type="button"
+                className={cn(
+                  "btn relative",
+                  isFirstFormation ? "btn-primary" : "btn-dash",
+                )}
+                onClick={onCreateFormation}
+              >
+                <Plus className="size-[1.2em]" />
+                <span>
+                  {isFirstFormation
+                    ? "Créer ma première formation"
+                    : "Créer une formation"}
+                </span>
+              </button>
+            </div>
           </PermissionGuard>
         ) : undefined
       }

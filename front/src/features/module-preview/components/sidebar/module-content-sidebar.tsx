@@ -93,6 +93,8 @@ const ModuleContentSidebar = ({
           onEnableCourse={courseActions.enableCourse}
           onPublishCourse={courseActions.publishCourse}
           onUpdateCourse={courseActions.updateCourse}
+          onAddCourseContent={courseActions.addCourseContent}
+          parcoursTags={module.tags}
           onCourseReorder={courseActions.courseReorder}
           isReorderingCourses={isReorderingCourses}
           isReorderingActivities={isReorderingActivities}
@@ -120,6 +122,7 @@ const ModuleContentSidebar = ({
                 moduleId={module.id || 0}
                 parcoursTags={module.tags}
                 onCreate={courseActions.createCourse}
+                onAddContent={courseActions.addCourseContent}
                 onCreated={id => setOpenedCourse({ key: location.key, id })}
                 openDetailsOnMount={!calendar && createCourse}
               />

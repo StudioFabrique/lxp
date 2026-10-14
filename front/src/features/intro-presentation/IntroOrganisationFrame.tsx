@@ -37,7 +37,7 @@ const IntroOrganisationFrame = ({
         <div className="size-full rounded-3xl border-[3px] border-dashed border-primary/60" />
         {/* En-tête relevé au-dessus du cadre : titre, puis logo (ou nom) de l'organisme. */}
         <div className="absolute inset-x-0 bottom-full mb-6 flex flex-col items-center gap-3">
-          <span className="flex items-center gap-2 text-primary">
+          <span className="flex items-center gap-2 text-base-content/80">
             <Building2 className="size-6" aria-hidden="true" />
             <b className="text-xl leading-10">Organisme de formation</b>
           </span>
@@ -56,7 +56,7 @@ const IntroOrganisationFrame = ({
           ) : (
             // Sans logo, le nom seul, sans fond ni bordure.
             <div className="flex h-28 items-center justify-center px-8">
-              <p className="text-center text-7xl font-extrabold leading-none text-secondary">
+              <p className="text-center text-7xl font-extrabold leading-none text-primary">
                 {name}
               </p>
             </div>

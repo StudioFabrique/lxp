@@ -230,7 +230,7 @@ const UserHome = () => {
 
       {roles.length > 0 && currentRole ? (
         <div
-          className="mb-4 flex w-full flex-wrap justify-start gap-2"
+          className="mb-4 flex w-full flex-wrap items-center justify-center gap-2"
         >
           {roles.map((role) => (
             <button

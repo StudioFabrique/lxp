@@ -16,13 +16,14 @@ const IntroDetailSection = ({ detail, isActive }: Props) => (
     detailId={detail.id}
     isActive={isActive}
   >
-    <ul className="mt-2 flex flex-wrap gap-1.5">
+    <ul className="mt-3 flex flex-wrap gap-2">
       {detail.items.map((item, index) => (
         <li
           key={`${item.title}-${index}`}
           className={cn(
-            "badge badge-outline max-w-full",
-            item.isPlaceholder && "border-dashed",
+            "badge badge-outline h-auto max-w-full px-3 py-1.5",
+            // Valeur d'exemple : distinguée par le texte atténué, pas par une bordure en tirets.
+            item.isPlaceholder && "text-base-content/70",
           )}
         >
           <span className="truncate">{item.title}</span>

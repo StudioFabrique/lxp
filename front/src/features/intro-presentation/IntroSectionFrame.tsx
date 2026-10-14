@@ -26,7 +26,7 @@ const IntroSectionFrame = ({
     data-intro-detail={detailId}
     aria-label={title}
     className={cn(
-      "min-w-0 rounded-2xl border border-base-300 bg-base-200 p-3 shadow-md transition-[box-shadow,border-color] duration-300",
+      "min-w-0 rounded-2xl border border-base-300 bg-base-200 p-4 shadow-md transition-[box-shadow,border-color] duration-300",
       isActive && "border-primary shadow-lg ring-2 ring-primary/40",
       className,
     )}
@@ -34,7 +34,6 @@ const IntroSectionFrame = ({
     <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold">
       <Icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
       {title}
-
     </h3>
     {children}
   </section>

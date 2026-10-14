@@ -91,13 +91,19 @@ export default function ModuleContentToolbar({
       )}
       <button
         type="button"
-        className={cn(actionClassName, "btn-primary tooltip tooltip-right")}
+        className={cn(
+          actionClassName,
+          "tooltip tooltip-right",
+          !isSidebarCollapsed && "btn-primary",
+        )}
+        aria-pressed={!isSidebarCollapsed}
         aria-label={
           isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
         }
         data-tip={
           isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
         }
+        disabled={isReorderingCourses}
         onClick={onToggleSidebar}
       >
         {isSidebarCollapsed ? (
@@ -137,7 +143,7 @@ export default function ModuleContentToolbar({
             className={cn(actionClassName, "tooltip tooltip-right")}
             aria-label={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
             data-tip={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
-            disabled={isUpdatingCourseVisibility}
+            disabled={isUpdatingCourseVisibility || isReorderingCourses}
             onClick={() => setPendingVisibility(!areAllCoursesVisible)}
           >
             {isUpdatingCourseVisibility ? (
@@ -165,7 +171,7 @@ export default function ModuleContentToolbar({
           })}
           aria-label="Calendrier"
           aria-pressed={isCalendarView}
-          disabled={isCalendarSaving}
+          disabled={isCalendarSaving || isReorderingCourses}
           onClick={onToggleCalendar}
         >
           <CalendarDays className="size-5" /> Calendrier
@@ -180,7 +186,7 @@ export default function ModuleContentToolbar({
               className={cn(actionClassName, "tooltip tooltip-left")}
               aria-label="Tout publier"
               data-tip="Tout publier"
-              disabled={isPublishingAll}
+              disabled={isPublishingAll || isReorderingCourses}
               onClick={onPublishAll}
             >
               {isPublishingAll ? (
@@ -199,6 +205,7 @@ export default function ModuleContentToolbar({
           className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Mes réussites"
           data-tip="Mes réussites"
+          disabled={isReorderingCourses}
           onClick={onOpenCompletionBadge}
         >
           <span className="block size-5" aria-hidden="true">
@@ -212,7 +219,7 @@ export default function ModuleContentToolbar({
           className={cn(actionClassName, "tooltip tooltip-left")}
           aria-label="Tout réduire"
           data-tip="Tout réduire"
-          disabled={isCalendarView}
+          disabled={isCalendarView || isReorderingCourses}
           onClick={onCloseContent}
         >
           <ListChevronsUpDown className="size-5" />

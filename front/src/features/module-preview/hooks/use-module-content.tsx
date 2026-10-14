@@ -26,6 +26,7 @@ import {
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
 import { modulePreviewApi } from "../api/module-preview.api";
 import type {
+  CourseContentValues,
   CreateCourseFormValues,
   UpdateCourseFormValues,
 } from "../components/sidebar/course-form.types";
@@ -456,29 +457,6 @@ const useModuleContent = () => {
             values.tagIds,
           );
         }
-        if (values.lessonTitles.length > 0) {
-          const tagId = values.tagIds[0];
-          for (const lessonTitle of values.lessonTitles) {
-            await modulePreviewApi.mutations.createLesson(data.course.id, {
-              title: lessonTitle,
-              description: "",
-              modalite: "distanciel",
-              tagId,
-            });
-          }
-        }
-        if (values.lessonIds.length > 0) {
-          await modulePreviewApi.mutations.duplicateLessons(
-            data.course.id,
-            values.lessonIds,
-          );
-        }
-        if (values.resourceIds.length > 0) {
-          await modulePreviewApi.mutations.duplicateResources(
-            data.course.id,
-            values.resourceIds,
-          );
-        }
         await fetchModuleData();
         toast.success("Cours créé");
         return data.course.id;
@@ -488,6 +466,34 @@ const useModuleContent = () => {
       }
     },
     [fetchModuleData, moduleId],
+  );
+
+  const addCourseContent = useCallback(
+    async (courseId: number, values: CourseContentValues): Promise<boolean> => {
+      try {
+        if (values.lessonIds.length > 0) {
+          await modulePreviewApi.mutations.duplicateLessons(
+            courseId,
+            values.lessonIds,
+          );
+        }
+        if (values.resourceIds.length > 0) {
+          await modulePreviewApi.mutations.duplicateResources(
+            courseId,
+            values.resourceIds,
+          );
+        }
+        await fetchModuleData();
+        toast.success("Contenu ajouté au cours");
+        return true;
+      } catch {
+        // Une partie du contenu a pu être ajoutée avant l'échec.
+        await fetchModuleData();
+        toast.error("Impossible d'ajouter le contenu au cours");
+        return false;
+      }
+    },
+    [fetchModuleData],
   );
 
   const updateCourse = useCallback(
@@ -1060,6 +1066,7 @@ const useModuleContent = () => {
       publishAllCourses,
       deleteCourse,
       createCourse,
+      addCourseContent,
       updateCourse,
       courseReorder,
     },

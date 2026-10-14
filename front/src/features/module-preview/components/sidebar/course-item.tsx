@@ -33,8 +33,10 @@ import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-con
 import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import { cn } from "../../../../utils/cn";
 import CreateLessonModal from "./create-lesson-modal";
-import type { UpdateCourseFormValues } from "./course-form.types";
+import type { CourseContentValues, UpdateCourseFormValues } from "./course-form.types";
+import type Tag from "../../../../utils/interfaces/tag";
 import EditCourseModal from "./edit-course-modal";
+import CourseContentModal from "./course-content-modal";
 import type { LessonFormValues } from "./lesson-form.types";
 import { getUserArea } from "../../../../utils/helpers/user-role";
 
@@ -53,6 +55,13 @@ type CourseItemProps = {
     courseId: number,
     values: UpdateCourseFormValues,
   ) => Promise<boolean>;
+  /** Importe des leçons ou ressources existantes dans le cours. */
+  onAddCourseContent?: (
+    courseId: number,
+    values: CourseContentValues,
+  ) => Promise<boolean>;
+  /** Tags du module, pour rechercher le contenu à importer. */
+  parcoursTags?: Tag[];
   openEditOnMount?: boolean;
   editLessonId?: number;
   isOpen: boolean;
@@ -99,6 +108,8 @@ const CourseItem = ({
   onEnableCourse,
   onPublishCourse,
   onUpdateCourse,
+  onAddCourseContent,
+  parcoursTags = [],
   openEditOnMount = false,
   editLessonId,
   isOpen: isCourseOpen,
@@ -135,6 +146,8 @@ const CourseItem = ({
   const [isSavingLesson, setIsSavingLesson] = useState(false);
   const [isEditingCourse, setIsEditingCourse] = useState(openEditOnMount);
   const [isSavingCourse, setIsSavingCourse] = useState(false);
+  const [isImportingContent, setIsImportingContent] = useState(false);
+  const [isSavingContent, setIsSavingContent] = useState(false);
 
   useEffect(() => {
     if (!isReorderingLessons || !onLessonReorder) return;
@@ -159,6 +172,15 @@ const CourseItem = ({
       onLessonCreated?.(lessonId);
     }
     return lessonId !== false;
+  };
+
+  const handleAddContent = async (values: CourseContentValues) => {
+    if (!onAddCourseContent) return false;
+    setIsSavingContent(true);
+    const added = await onAddCourseContent(course.id, values);
+    setIsSavingContent(false);
+    if (added) onOpen();
+    return added;
   };
 
   const handleUpdateCourse = async (values: UpdateCourseFormValues) => {
@@ -269,6 +291,14 @@ const CourseItem = ({
           isSubmitting={isSavingCourse}
           onClose={() => setIsEditingCourse(false)}
           onSubmit={handleUpdateCourse}
+        />
+      )}
+      {!calendarMode && isImportingContent && (
+        <CourseContentModal
+          parcoursTags={parcoursTags}
+          isSubmitting={isSavingContent}
+          onClose={() => setIsImportingContent(false)}
+          onSubmit={handleAddContent}
         />
       )}
       <CourseActionsModal
@@ -387,6 +417,14 @@ const CourseItem = ({
                         event.stopPropagation();
                         setIsEditingCourse(true);
                       }}
+                      onImportContent={
+                        onAddCourseContent
+                          ? (event) => {
+                              event.stopPropagation();
+                              setIsImportingContent(true);
+                            }
+                          : undefined
+                      }
                       onClickMenu={handleClickMenu}
                     />
                   </PermissionGuard>
