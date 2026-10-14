@@ -9,7 +9,15 @@ export type { ChatbotSource, ChatbotValues } from "../interfaces/chatbot";
 export const AI_UNAVAILABLE_MESSAGE =
   "L'assistant est temporairement indisponible. Veuillez réessayer plus tard.";
 
-const useChatbot = () => {
+type Options = {
+  /** Faux quand les fonctionnalités IA sont désactivées : l'historique n'est pas chargé et aucune question n'est envoyée. */
+  enabled?: boolean;
+};
+
+/** Résultat d'une question : la réponse à afficher, et si elle est un échec (le brouillon est alors conservé). */
+export type ChatbotReply = { message: ChatbotValues; failed: boolean };
+
+const useChatbot = ({ enabled = true }: Options = {}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [prompt, setPrompt] = useState<string>("");
@@ -39,24 +47,31 @@ const useChatbot = () => {
     setPendingReset(true);
   }, []);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendPrompt = async (text: string): Promise<ChatbotReply> => {
+    const trimmed = text.trim();
     const message = activityTextSelection
-      ? `${prompt}. J'ai besoin d'aide concernant : ${activityTextSelection}`
-      : prompt.trim();
+      ? `${text}. J'ai besoin d'aide concernant : ${activityTextSelection}`
+      : trimmed;
     const beginningDate = new Date();
 
     setDialog((prevState) => [
       ...prevState,
       {
         origin: "user",
-        message: prompt,
+        message: text,
         date: beginningDate,
         textSelection: activityTextSelection || undefined,
       },
     ]);
 
-    if (aiUnavailable) return;
+    const unavailable: ChatbotValues = {
+      origin: "bot",
+      message: AI_UNAVAILABLE_MESSAGE,
+      date: new Date(),
+      type: "error",
+    };
+
+    if (aiUnavailable) return { message: unavailable, failed: true };
 
     const targetTextSelection = activityTextSelection;
     setActivityTextSelection("");
@@ -68,28 +83,28 @@ const useChatbot = () => {
     try {
       setIsLoading(true);
       const data = await chatbotApi.mutations.sendPrompt({
-        prompt: prompt.trim(),
+        prompt: trimmed,
         fullPrompt: message,
         courseId: currentActivity?.courseId,
         clearHistory: pendingReset,
         textSelection: targetTextSelection || null,
       });
-      const processedText = data.text;
 
       setAiUnavailable(false);
+      const reply: ChatbotValues = {
+        origin: "bot",
+        message: data.text,
+        date: new Date(),
+        type: data.type || "normal",
+        mode: data.mode,
+        sources: data.sources,
+      };
       setDialog((prevState) =>
         prevState
           .filter((entry) => !(entry.origin === "bot" && entry.type === "error"))
-          .concat({
-            origin: "bot",
-            message: processedText,
-            date: new Date(),
-            type: data.type || "normal",
-            mode: data.mode,
-            sources: data.sources,
-          }),
+          .concat(reply),
       );
-      setPrompt("");
+      return { message: reply, failed: false };
     } catch (error) {
       if (isAiServerError(error)) {
         setAiUnavailable(true);
@@ -101,28 +116,28 @@ const useChatbot = () => {
               entry.message === AI_UNAVAILABLE_MESSAGE,
           )
             ? prevState
-            : prevState.concat({
-                origin: "bot",
-                message: AI_UNAVAILABLE_MESSAGE,
-                date: new Date(),
-                type: "error",
-              }),
+            : prevState.concat(unavailable),
         );
-      } else {
-        setDialog((prevState) => [
-          ...prevState,
-          {
-            origin: "bot",
-            message:
-              "L'assistant ne peut pas vous répondre pour l'instant, réessayez plus tard.",
-            date: new Date(),
-            type: "error",
-          },
-        ]);
+        return { message: unavailable, failed: true };
       }
+      const failure: ChatbotValues = {
+        origin: "bot",
+        message:
+          "L'assistant ne peut pas vous répondre pour l'instant, réessayez plus tard.",
+        date: new Date(),
+        type: "error",
+      };
+      setDialog((prevState) => [...prevState, failure]);
+      return { message: failure, failed: true };
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { failed } = await sendPrompt(prompt);
+    if (!failed) setPrompt("");
   };
 
   const retryAi = useCallback(() => {
@@ -148,8 +163,8 @@ const useChatbot = () => {
   }, [setAiUnavailable]);
 
   useEffect(() => {
-    getConversationData();
-  }, [getConversationData]);
+    if (enabled) getConversationData();
+  }, [enabled, getConversationData]);
 
   return {
     prompt,
@@ -173,6 +188,7 @@ const useChatbot = () => {
         : dialog,
     setDialog,
     onSubmit,
+    sendPrompt,
     handleNewChat,
     aiUnavailable,
     retryAi,

@@ -4,15 +4,12 @@ import MessageChatbot from "./chatbot-parts/message-chatbot";
 import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 
-import PrebuiltPrompt from "./chatbot-parts/prebuilt-prompt";
 import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
 import useChatbotUi from "../hooks/use-chatbot-ui";
 import useChatbot, { AI_UNAVAILABLE_MESSAGE } from "../hooks/use-chatbot";
-import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
 import useChatbotQuiz from "../hooks/use-chatbot-quiz";
 import { useContext } from "react";
 import SelectedContentBlocChatbot from "./chatbot-parts/selected-content-bloc-chatbot";
-import { prebuiltPrompt } from "../../../config/ai/ai-texts.json";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 type Props = {
@@ -33,15 +30,9 @@ export default function DrawerChatbot({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    chatbotUi.setIsSubmitButtonAnimated(false);
     chatbotUi.handleResizeChatbot();
     chatbotUi.handleScrollToBottom();
     onSubmit(e);
-  };
-
-  const handleSetPrebuiltPrompt = (prompt: string) => {
-    setPrompt(prompt);
-    chatbotUi.setIsSubmitButtonAnimated(true);
   };
 
   const handleNewChat = () => {
@@ -116,27 +107,11 @@ export default function DrawerChatbot({
             );
           })}
           <AnimatePresence>
-            {!isLoading &&
-              !activityTextSelection &&
-              !chatbotUi.isLoadingUi &&
-              chatbotQuiz.showQuizMessage && (
-                <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
-              )}
             {activityTextSelection && (
-              <>
-                <SelectedContentBlocChatbot
-                  textSelection={activityTextSelection}
-                  onDismiss={chatbotUi.handleRemoveTextSelected}
-                />
-                <PrebuiltPrompt
-                  title="Une question sur ce contenu ?"
-                  prebuiltPromptsMessages={
-                    prebuiltPrompt.suggestedContentBlocPrompts
-                  }
-                  setPrebuiltPrompt={handleSetPrebuiltPrompt}
-                  maxPromptsMessagesShown={2}
-                />
-              </>
+              <SelectedContentBlocChatbot
+                textSelection={activityTextSelection}
+                onDismiss={chatbotUi.handleRemoveTextSelected}
+              />
             )}
           </AnimatePresence>
         </div>
@@ -168,7 +143,6 @@ export default function DrawerChatbot({
 
       <TextInputChatbot
         prompt={prompt}
-        isSubmitButtonAnimated={chatbotUi.isSubmitButtonAnimated}
         setPrompt={setPrompt}
         isLoading={isLoading}
         aiUnavailable={chatbot.aiUnavailable}

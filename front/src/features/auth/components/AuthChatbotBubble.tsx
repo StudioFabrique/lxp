@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode, RefObject } from "react";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   message: ReactNode;
@@ -7,13 +8,15 @@ type Props = {
   hidden: boolean;
   delay: number;
   bubbleRef: RefObject<HTMLDivElement | null>;
+  /** Côté de l'assistant virtuel où se trouve la bulle : la pointe regarde vers lui. */
+  side?: "left" | "right";
 };
 
-export default function AuthChatbotBubble({ message, waiting, hidden, delay, bubbleRef }: Props) {
+export default function AuthChatbotBubble({ message, waiting, hidden, delay, bubbleRef, side = "left" }: Props) {
   const reducedMotion = useReducedMotion();
   return (
     <motion.div ref={bubbleRef} data-chatbot-bubble layout aria-hidden={hidden || undefined}
-      className="relative col-start-1 row-start-1 min-w-0 self-center justify-self-end rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-left leading-6 text-primary"
+      className={cn("relative col-start-1 row-start-1 min-w-0 self-center rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-left leading-6 text-primary", side === "left" ? "justify-self-end" : "justify-self-start")}
       style={{ width: waiting ? 76 : "100%" }}
       initial={reducedMotion ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: hidden ? 0 : 1, y: 0 }}
@@ -28,7 +31,7 @@ export default function AuthChatbotBubble({ message, waiting, hidden, delay, bub
           {message}
         </motion.div>}
 
-      <span aria-hidden="true" className="absolute -right-[7px] top-1/2 size-3 -translate-y-1/2 rotate-45 border-r border-t border-base-300 bg-base-100" />
+      <span aria-hidden="true" style={{ top: "clamp(16px, calc(50% - var(--chatbot-bubble-shift, 0px)), calc(100% - 16px))" }} className={cn("absolute size-3 -translate-y-1/2 rotate-45 border-base-300 bg-base-100", side === "left" ? "-right-[7px] border-r border-t" : "-left-[7px] border-b border-l")} />
     </motion.div>
   );
 }

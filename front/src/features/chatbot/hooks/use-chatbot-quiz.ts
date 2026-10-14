@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { chatbotWindowSize } from "./use-chatbot-ui";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import useCourseQuiz from "../../quiz/hooks/use-course-quiz";
 import { canSuggestActivityQuiz } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
@@ -10,7 +9,6 @@ type TimerTriggerType = "modulePreview" | "chatbot" | "disabled";
 
 export default function useChatbotQuiz(
   isChatbotOpened: boolean,
-  onOpenChatbot: (overrideSize?: chatbotWindowSize) => void,
   onCloseChatbot: () => void,
   isQuizSuggestionEnabled: boolean,
 ) {
@@ -50,6 +48,8 @@ export default function useChatbotQuiz(
     setShowQuizMessage(false);
   };
 
+  const onDismissQuizMessage = useCallback(() => setShowQuizMessage(false), []);
+
   const onResetTimer = useCallback(() => {
     switch (triggerType) {
       case "chatbot":
@@ -72,7 +72,7 @@ export default function useChatbotQuiz(
         onCloseChatbot();
         break;
       case "modulePreview":
-        onOpenChatbot("small");
+        // L'assistant virtuel affiche la proposition dans sa bulle, sans ouvrir la fenêtre de conversation.
         setShowQuizMessage(true);
         setHasMessageBeenShown(true);
         setActivityTextSelection("");
@@ -81,7 +81,7 @@ export default function useChatbotQuiz(
         setShowQuizMessage(false);
         break;
     }
-  }, [triggerType, onOpenChatbot, onCloseChatbot, setActivityTextSelection]);
+  }, [triggerType, onCloseChatbot, setActivityTextSelection]);
 
   useEffect(() => {
     onResetTimer();
@@ -106,6 +106,7 @@ export default function useChatbotQuiz(
 
   return {
     onTriggerQuiz,
+    onDismissQuizMessage,
     showQuizMessage: isQuizSuggestionEnabled && showQuizMessage,
     isQuizModalOpened: quizState.isOpen,
     onResetTimer,

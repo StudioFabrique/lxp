@@ -1,10 +1,8 @@
 import { KeyboardEvent, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
-import { cn } from "../../../../utils/cn";
 
 type Props = {
   prompt: string;
-  isSubmitButtonAnimated: boolean;
   setPrompt: (prompt: string) => void;
   isLoading: boolean;
   aiUnavailable: boolean;
@@ -14,7 +12,6 @@ type Props = {
 
 export default function TextInputChatbot({
   prompt,
-  isSubmitButtonAnimated,
   setPrompt,
   isLoading,
   aiUnavailable,
@@ -59,13 +56,7 @@ export default function TextInputChatbot({
           />
 
           <button
-            className={cn(
-              "absolute right-2 bottom-2 btn btn-sm btn-primary btn-ghost btn-circle",
-              {
-                "animate-pulse transition ease-in-out duration-75":
-                  isSubmitButtonAnimated,
-              },
-            )}
+            className="absolute right-2 bottom-2 btn btn-sm btn-primary btn-ghost btn-circle"
             type="submit"
             aria-label="Envoyer"
             disabled={isLoading || aiUnavailable || !prompt.trim()}

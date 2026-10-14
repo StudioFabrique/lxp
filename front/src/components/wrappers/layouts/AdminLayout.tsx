@@ -11,7 +11,7 @@ import { useDemoMode } from "../../../store/DemoContext";
 import { Outlet } from "react-router";
 
 const AdminLayout = () => {
-  const { aiDisabled, isConfigLoaded } = useDemoMode();
+  const { isConfigLoaded } = useDemoMode();
 
   return (
     <ChatbotProvider>
@@ -26,7 +26,7 @@ const AdminLayout = () => {
             </IntroPresentationGate>
           </FadeWrapper>
         </AppWrapper>
-        {isConfigLoaded && !aiDisabled && (
+        {isConfigLoaded && (
           <IntroPresentationHidden>
             <Chatbot />
           </IntroPresentationHidden>

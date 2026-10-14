@@ -17,7 +17,7 @@ import {
 import { Outlet } from "react-router";
 
 const StudentLayout = () => {
-  const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
+  const { demoMode, isConfigLoaded } = useDemoMode();
   const learningContext = useQuery({
     queryKey: learningProfileKey,
     queryFn: learningProfileApi.get,
@@ -47,7 +47,7 @@ const StudentLayout = () => {
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
-        {isConfigLoaded && !aiDisabled && (
+        {isConfigLoaded && (
           <IntroPresentationHidden>
             <Chatbot enableQuizSuggestion />
           </IntroPresentationHidden>
