@@ -8,8 +8,10 @@ import {
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Eye, LoaderCircle, Plus, X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Eye, LoaderCircle, Plus, Settings, X } from "lucide-react";
 import toast from "react-hot-toast";
+import Header from "../../../components/headers/Header";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
 import InstanceLogoControls from "../../../components/UI/instance-logo-controls";
@@ -27,6 +29,12 @@ import EmailTemplateSettings, {
   type EmailTemplateId,
 } from "./email-template-settings";
 import { cn } from "../../../utils/cn";
+import RoleLabelsSettings from "./role-labels-settings";
+import { profileKeys } from "../api/profile.keys";
+import {
+  resolveRoleLabels,
+  type RoleLabels,
+} from "../../role/helpers/role-labels";
 
 const emptySettings: InstanceSettings = {
   name: "",
@@ -42,6 +50,7 @@ const validBackgroundColor = /^#[0-9a-f]{6}$/i;
 
 export default function InstanceGeneralSettings() {
   const { chooseTheme } = useContext(ThemeContext);
+  const queryClient = useQueryClient();
   const [initialSettings, setInitialSettings] = useState(emptySettings);
 
   const identityForm = useForm({
@@ -141,20 +150,31 @@ export default function InstanceGeneralSettings() {
     setBackgroundColor,
   ]);
 
-  const save = async (scope: "identity" | "interface" | "email") => {
-    if (isSaving || isLoading) return;
-    const activeForm =
-      scope === "identity"
-        ? identityForm
-        : scope === "interface"
-          ? themesForm
-          : emailForm;
-    if (!(await activeForm.trigger())) {
-      showFormErrors(activeForm.formState.errors);
-      return;
+  const save = async (
+    scope: "general" | "email" | "roles",
+    roleLabels?: RoleLabels,
+  ): Promise<boolean> => {
+    if (isSaving || isLoading) return false;
+    if (scope === "general") {
+      // Les deux formulaires sont validés avant l'écriture : aucune sauvegarde partielle.
+      const [identityValid, themesValid] = await Promise.all([
+        identityForm.trigger(),
+        themesForm.trigger(),
+      ]);
+      if (!identityValid || !themesValid) {
+        showFormErrors(
+          identityValid
+            ? themesForm.formState.errors
+            : identityForm.formState.errors,
+        );
+        return false;
+      }
+    } else if (scope === "email" && !(await emailForm.trigger())) {
+      showFormErrors(emailForm.formState.errors);
+      return false;
     }
     const identity =
-      scope === "identity"
+      scope === "general"
         ? instanceIdentitySchema.parse(identityForm.getValues())
         : { ...initialSettings, color: initialBackgroundColor };
     setIsSaving(true);
@@ -165,18 +185,22 @@ export default function InstanceGeneralSettings() {
       payload.append(
         "enabledThemes",
         JSON.stringify(
-          scope === "interface"
+          scope === "general"
             ? settings.enabledThemes
             : initialSettings.enabledThemes,
         ),
       );
       payload.append("color", identity.color);
-      payload.append("deleteLogo", String(scope === "identity" && deleteLogo));
+      payload.append("deleteLogo", String(scope === "general" && deleteLogo));
       payload.append(
         "emailTemplate",
         scope === "email" ? draftEmailTemplate : initialSettings.emailTemplate,
       );
-      if (scope === "identity" && logo.file) payload.append("image", logo.file);
+      if (scope === "general" && logo.file) payload.append("image", logo.file);
+      // Seule la modale des rôles envoie les libellés : les autres enregistrements les conservent.
+      if (scope === "roles" && roleLabels) {
+        payload.append("roleLabels", JSON.stringify(roleLabels));
+      }
 
       const updatedSettings =
         await profileApi.mutations.updateInstanceSettings(payload);
@@ -185,11 +209,20 @@ export default function InstanceGeneralSettings() {
         setDraftEmailTemplate(updatedSettings.emailTemplate);
         setIsEmailTemplateModalOpen(false);
         toast.success("Le template d’e-mail a été mis à jour.");
+      } else if (scope === "roles") {
+        setInitialSettings(updatedSettings);
+        // Les écrans qui affichent un rôle relisent les libellés enregistrés.
+        await queryClient.invalidateQueries({
+          queryKey: profileKeys.instanceSettings(),
+        });
+        toast.success("Les noms des rôles ont été mis à jour.");
       } else {
         window.location.reload();
       }
+      return true;
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, "L’enregistrement a échoué."));
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -255,6 +288,22 @@ export default function InstanceGeneralSettings() {
 
   return (
     <div className="flex flex-col gap-4">
+      <Header
+        title="Paramètres de l’instance"
+        description="Personnalisez l’identité et l’accueil de votre organisme."
+        icon={Settings}
+      >
+        <button
+          type="button"
+          className="btn btn-primary min-w-32 normal-case"
+          data-chatbot-target="instance-save"
+          disabled={isLoading || isSaving}
+          onClick={() => void save("general")}
+        >
+          {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+          {isSaving ? "Sauvegarde…" : "Tout sauvegarder"}
+        </button>
+      </Header>
       <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-2">
         <BoxWrapper className="h-auto gap-6 overflow-visible">
           <form
@@ -262,7 +311,7 @@ export default function InstanceGeneralSettings() {
             noValidate
             onSubmit={(event) => {
               event.preventDefault();
-              void save("identity");
+              void save("general");
             }}
           >
             <div>
@@ -347,17 +396,6 @@ export default function InstanceGeneralSettings() {
                 />
               </div>
             </fieldset>
-
-            <div className="mt-auto flex justify-end pt-5">
-              <button
-                type="submit"
-                className="btn btn-primary min-w-32 normal-case"
-                disabled={isLoading || isSaving}
-              >
-                {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                {isSaving ? "Sauvegarde…" : "Sauvegarder"}
-              </button>
-            </div>
           </form>
         </BoxWrapper>
 
@@ -366,7 +404,7 @@ export default function InstanceGeneralSettings() {
             className="flex h-full flex-col gap-6"
             onSubmit={(event) => {
               event.preventDefault();
-              void save("interface");
+              void save("general");
             }}
           >
             <div>
@@ -558,17 +596,6 @@ export default function InstanceGeneralSettings() {
                 </aside>
               </div>
             </div>
-
-            <div className="mt-auto flex justify-end pt-5">
-              <button
-                type="submit"
-                className="btn btn-primary min-w-32 normal-case"
-                disabled={isLoading || isSaving}
-              >
-                {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                {isSaving ? "Sauvegarde…" : "Sauvegarder"}
-              </button>
-            </div>
           </form>
         </BoxWrapper>
       </div>
@@ -590,6 +617,11 @@ export default function InstanceGeneralSettings() {
         onSelect={setDraftEmailTemplate}
         onSave={() => void save("email")}
         onSendTest={() => void sendTestEmail()}
+      />
+      <RoleLabelsSettings
+        labels={resolveRoleLabels(settings.roleLabels)}
+        disabled={isLoading || isSaving}
+        onSave={(labels) => save("roles", labels)}
       />
     </div>
   );

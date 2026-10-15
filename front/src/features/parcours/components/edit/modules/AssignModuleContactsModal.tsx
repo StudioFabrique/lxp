@@ -6,6 +6,7 @@ import Modal from "../../../../../components/UI/modal/modal";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import type Contact from "../../../../../utils/interfaces/contact";
 import type { ModuleData } from "../../../interfaces/new-module";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 type Props = {
   module: ModuleData;
@@ -22,6 +23,7 @@ export default function AssignModuleContactsModal({
   onClose,
   onSubmit,
 }: Props) {
+  const { teamLabel } = useRoleLabels();
   const [selectedContactIds, setSelectedContactIds] = useState<number[]>([]);
   const assignedContactIds = useMemo(
     () => new Set(module.contacts.flatMap(({ id }) => (id ? [id] : []))),
@@ -62,7 +64,7 @@ export default function AssignModuleContactsModal({
           <div className="flex justify-center rounded-box bg-base-200 p-5">
             <Link to="?step=1" className="btn btn-primary btn-outline">
               <Plus className="size-4" aria-hidden="true" />
-              Ajouter une ressource pédagogique
+              Ajouter un membre « {teamLabel} »
             </Link>
           </div>
         ) : (

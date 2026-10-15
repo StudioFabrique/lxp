@@ -14,6 +14,7 @@ const ViewSelector = ({
 }: Props) => {
   return (
     <div
+      data-chatbot-target="calendar-view-selector"
       className={cn("flex rounded-lg p-1 space-x-1", theme.controlBg)}
     >
       {allowedViews.map((v) => (

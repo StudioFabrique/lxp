@@ -96,6 +96,7 @@ const UserFormCertifications = ({
   return (
     <BoxWrapper className="@container">
       <div
+        data-chatbot-target="user-certifications"
         className={cn(
           "grid grid-cols-1 gap-5 @min-[40rem]:gap-x-10",
           graduations.length > 0 && "@min-[40rem]:grid-cols-2",

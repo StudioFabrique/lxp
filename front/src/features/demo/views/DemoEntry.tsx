@@ -11,6 +11,7 @@ import ThemeToggle from "../../../components/buttons/ThemeToggle";
 import AuthLayout from "../../auth/components/AuthLayout";
 import DemoCaptcha from "../components/DemoCaptcha";
 import { demoApi, type DemoProfile } from "../api/demo-client";
+import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 import { solveChallenge, type DemoSolution } from "../lib/altcha-solver";
 
 import logoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
@@ -18,20 +19,21 @@ import logoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 
 const PROFILES: {
   profile: DemoProfile;
-  label: string;
+  /** Rang du rôle dont le libellé d'instance donne son titre à la carte. */
+  roleRank: number;
   description: string;
   icon: typeof Users;
 }[] = [
   {
     profile: "admin",
-    label: "Équipe pédagogique",
+    roleRank: 2,
     description:
       "Le catalogue de formations, la construction des parcours et des modules, le suivi des apprenants.",
     icon: Users,
   },
   {
     profile: "student",
-    label: "Apprenant",
+    roleRank: 3,
     description:
       "L'espace d'apprentissage : parcours, modules, activités et progression.",
     icon: GraduationCap,
@@ -43,6 +45,7 @@ const DemoEntry = () => {
   const { handshake } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const { getRoleLabel } = useRoleLabels();
 
   const [solution, setSolution] = useState<DemoSolution | null>(null);
   const [progress, setProgress] = useState(0);
@@ -196,7 +199,7 @@ const DemoEntry = () => {
         )}
 
         <div className="grid grid-cols-1 w-full gap-4 sm:grid-cols-2">
-          {PROFILES.map(({ profile, label, description, icon: Icon }) => (
+          {PROFILES.map(({ profile, roleRank, description, icon: Icon }) => (
             <button
               key={profile}
               type="button"
@@ -205,7 +208,7 @@ const DemoEntry = () => {
               onClick={() => void enterDemo(profile)}
             >
               <Icon className="h-8 w-8 text-primary" />
-              <h2 className="mt-4 text-lg font-bold">{label}</h2>
+              <h2 className="mt-4 text-lg font-bold">{getRoleLabel(roleRank)}</h2>
               <p className="mt-2 text-sm text-base-content/70">{description}</p>
               <span className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
                 {pending === profile && (

@@ -25,7 +25,7 @@ export default function GroupTeachers({
 }: Props) {
   return (
     <BoxWrapper className="h-auto">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3" data-chatbot-target="group-teachers">
         <div>
           <h2 className="flex items-center gap-2 text-lg font-bold">
             <Users className="size-6" aria-hidden="true" /> Formateurs liés au groupe

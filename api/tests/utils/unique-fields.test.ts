@@ -19,14 +19,18 @@ describe("normalizeEmail", () => {
 
 describe("exactInsensitive", () => {
   it("reconnaît la même valeur écrite dans une autre casse", () => {
-    expect(exactInsensitive("Promo 2025").test("promo 2025")).toBe(true);
-    expect(exactInsensitive(" promo 2025 ").test("PROMO 2025")).toBe(true);
+    expect(exactInsensitive("Promotion 2025").test("promotion 2025")).toBe(
+      true,
+    );
+    expect(exactInsensitive(" promotion 2025 ").test("PROMOTION 2025")).toBe(
+      true,
+    );
   });
 
   it("reste ancrée : un nom plus long n'est pas un doublon", () => {
     const matcher = exactInsensitive("Promo");
-    expect(matcher.test("Promo 2025")).toBe(false);
-    expect(matcher.test("Ancienne Promo")).toBe(false);
+    expect(matcher.test("Promotion 2025")).toBe(false);
+    expect(matcher.test("Ancienne Promotion")).toBe(false);
   });
 
   it("traite les caractères spéciaux littéralement", () => {

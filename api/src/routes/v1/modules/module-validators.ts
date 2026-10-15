@@ -27,11 +27,11 @@ export const assignContactsToModulesValidator = [
     .withMessage("Un identifiant de module n'est pas valide."),
   body("contactIds")
     .isArray({ min: 1, max: 500 })
-    .withMessage("Au moins une ressource pédagogique doit être sélectionnée."),
+    .withMessage("Au moins un membre de l'équipe pédagogique doit être sélectionné."),
   body("contactIds.*")
     .isInt({ min: 1 })
     .withMessage(
-      "Un identifiant de ressource pédagogique n'est pas valide.",
+      "Un identifiant de membre de l'équipe pédagogique n'est pas valide.",
     ),
   checkValidatorResult,
 ];
@@ -64,7 +64,7 @@ export const removeContactFromModuleValidator = [
     .withMessage("Identifiant de module non valide"),
   param("contactId")
     .isInt({ min: 1 })
-    .withMessage("Identifiant de ressource pédagogique non valide"),
+    .withMessage("Identifiant de membre de l'équipe pédagogique non valide"),
   checkValidatorResult,
 ];
 

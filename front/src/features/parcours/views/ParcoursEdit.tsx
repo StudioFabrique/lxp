@@ -38,6 +38,9 @@ const EditParcours = () => {
   const navigate = useNavigate();
   const { validateParcours } = useValidateParcours();
   const [isPublishing, setIsPublishing] = useState(false);
+  // Emplacement, à droite du titre, où les étapes 4 et 5 placent leur barre d'actions.
+  const [titleActionsTarget, setTitleActionsTarget] =
+    useState<HTMLDivElement | null>(null);
   const {
     id,
     moduleFormOpened,
@@ -140,9 +143,14 @@ const EditParcours = () => {
           />
         );
       case 4:
-        return <ModuleComponent setModuleFormOpened={setModuleFormOpened} />;
+        return (
+          <ModuleComponent
+            setModuleFormOpened={setModuleFormOpened}
+            titleActionsTarget={titleActionsTarget}
+          />
+        );
       case 5:
-        return <Calendrier />;
+        return <Calendrier titleActionsTarget={titleActionsTarget} />;
       case 6:
         return <ParcoursStudents />;
       case 7:
@@ -180,9 +188,12 @@ const EditParcours = () => {
                 stepsList={contextualStepsList}
                 updateStep={updateStep}
               />
-              <div className="mt-4 w-full md:mt-8">
-                <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
-                <div className="mt-4">{renderActualStep()}</div>
+              <div className="mt-4 w-full md:mt-8" data-chatbot-target="parcours-step-content">
+                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+                  <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
+                  <div ref={setTitleActionsTarget} className="empty:hidden" />
+                </div>
+                <div className="mt-6 md:mt-8">{renderActualStep()}</div>
               </div>
               {actualStep.id !== stepsList.length && !moduleFormOpened ? (
                 <FloatingBottomNavigation
@@ -191,6 +202,7 @@ const EditParcours = () => {
                     <button
                       type="button"
                       className="btn btn-outline max-md:btn-square"
+                      data-chatbot-target="parcours-back"
                       onClick={handleRetour}
                     >
                       <ArrowLeft className="size-4 md:hidden" aria-hidden="true" />
@@ -202,6 +214,7 @@ const EditParcours = () => {
                       {!isTeacher && !infos?.isPublished && (
                         <button
                           className="btn btn-primary max-md:btn-square"
+                          data-chatbot-target="parcours-publish"
                           onClick={handlePublishParcours}
                           disabled={isPublishing}
                         >
@@ -211,6 +224,7 @@ const EditParcours = () => {
                       )}
                       <button
                         className="btn btn-info px-3 md:px-6"
+                        data-chatbot-target="parcours-next-step"
                         onClick={() => handleUpdateStep(actualStep.id)}
                       >
                         Étape suivante

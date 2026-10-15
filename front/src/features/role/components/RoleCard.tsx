@@ -14,6 +14,7 @@ import PermissionGuard from "../../../components/guards/PermissionGuard";
 import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import type { PermissionTypes, RoleCounts } from "../api/role.api";
 import { roleModelIcons } from "../helpers/role-models";
+import { useRoleLabels } from "../hooks/useRoleLabels";
 
 type PermissionSummary = {
   type: PermissionTypes;
@@ -45,6 +46,7 @@ export default function RoleCard({
   onViewUsers,
   onOpenPermissions,
 }: RoleCardProps) {
+  const { getRoleLabel } = useRoleLabels();
   const RoleIcon = roleModelIcons[role.rank] ?? ShieldCheck;
   const summaries: PermissionSummary[] = [
     {
@@ -89,7 +91,7 @@ export default function RoleCard({
           </span>
         ) : undefined
       }
-      description={<span className="capitalize">Modèle {role.model}</span>}
+      description={<span className="capitalize">Modèle {getRoleLabel(role.rank, role.model)}</span>}
       action={
         <div className="flex items-center gap-0.5">
           <PermissionGuard action="read" object="user">

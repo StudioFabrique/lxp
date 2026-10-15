@@ -150,6 +150,7 @@ const CreateCourseItem = ({
             <button
               type="button"
               onClick={() => setShowTitleInput(true)}
+              data-chatbot-target="module-add-course"
               className="btn btn-success flex-1 justify-between rounded-xl text-base-100"
             >
               Ajouter un cours

@@ -59,8 +59,12 @@ const CourseActions = ({
     <div onClick={onClickMenu} className="select-none">
       <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenu.Trigger asChild>
-          <button type="button" className="flex cursor-pointer">
-            <MoreVertical className="stroke-primary-content w-7 h-7 hover:bg-secondary/20 px-1 rounded-lg transition-colors" />
+          <button
+            type="button"
+            className="btn btn-xs btn-square btn-ghost border-none text-primary-content shadow-none hover:bg-primary-content/20"
+            aria-label="Actions du cours"
+          >
+            <MoreVertical className="size-4" />
           </button>
         </DropdownMenu.Trigger>
 

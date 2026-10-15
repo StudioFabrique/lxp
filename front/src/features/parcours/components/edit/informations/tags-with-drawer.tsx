@@ -9,6 +9,7 @@ import { useParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { Plus } from "lucide-react";
 import { splitAvailableTags } from "./tags-selector.helpers";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 interface TagsWithDrawerProps {
   loading: boolean;
@@ -20,6 +21,7 @@ interface TagsWithDrawerProps {
 }
 
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
+  const { teamLabel } = useRoleLabels();
   const { onSubmit } = props;
   const { data: availableTags } = useParcoursTagsQuery();
   const { id } = useParams();
@@ -77,7 +79,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
               disabled={props.readOnly || missingInheritedTags.length === 0}
               title={
                 props.readOnly
-                  ? "Lecture seule pour l'équipe pédagogique"
+                  ? `Lecture seule pour le rôle « ${teamLabel} »`
                   : undefined
               }
             >
@@ -103,7 +105,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
           disabled={props.readOnly}
           title={
             props.readOnly
-              ? "Lecture seule pour l'équipe pédagogique"
+              ? `Lecture seule pour le rôle « ${teamLabel} »`
               : undefined
           }
         >

@@ -39,15 +39,13 @@ describe("group form draft", () => {
     expect(returnTo.searchParams.get("groupStudents")).toBe(
       "student-1,student-2",
     );
-    expect(returnTo.searchParams.get("groupActiveStudents")).toBe(
-      "student-1",
-    );
+    expect(returnTo.searchParams.get("groupActiveStudents")).toBe("student-1");
   });
 
   it("restores fields and students from search params", () => {
     const draft = readGroupFormDraft(
       new URLSearchParams({
-        groupName: "Promo 2027",
+        groupName: "Promotion 2027",
         groupDescription: "Description",
         groupFormation: "5",
         groupParcours: "9",
@@ -58,7 +56,7 @@ describe("group form draft", () => {
 
     expect(draft).toEqual({
       values: {
-        name: "Promo 2027",
+        name: "Promotion 2027",
         desc: "Description",
         formationId: 5,
         parcoursId: 9,
@@ -74,9 +72,7 @@ describe("group form draft", () => {
       "student-1",
     );
 
-    expect(returnPath).toBe(
-      "/admin/group/add?groupStudents=student-1",
-    );
+    expect(returnPath).toBe("/admin/group/add?groupStudents=student-1");
   });
 
   it("rejects external and unrelated return paths", () => {

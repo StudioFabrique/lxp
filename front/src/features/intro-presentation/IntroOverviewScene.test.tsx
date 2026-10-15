@@ -142,6 +142,7 @@ describe("IntroOverviewScene", () => {
     expect(container.querySelectorAll("button[data-intro-plate]:not([hidden])")).toHaveLength(2);
     expect(container.querySelectorAll(".intro-rail-item:not([hidden])")).toHaveLength(3);
     expect(container.textContent).toContain("Continuer la découverte");
+    expect(container.querySelector(".intro-scroll-hint")?.classList.contains("invisible")).toBe(true);
   });
 
   it("présente quatre activités face à l’écran et relève le sélecteur au dernier palier", () => {
@@ -171,12 +172,13 @@ describe("IntroOverviewScene", () => {
     expect(parcours?.style.transform).toBe("translateZ(60px)");
   });
 
-  it("conserve la consigne demandée à tous les paliers sans l'effacer dans l'animation", () => {
+  it("masque la consigne au dernier palier et la réaffiche en revenant en arrière", () => {
     const hint = container.querySelector(".intro-scroll-hint");
     expect(hint?.textContent).toContain("Faire défiler vers le bas");
     for (const step of [1, 3, 6, 0]) {
       advanceTo(step);
       expect(container.querySelector(".intro-scroll-hint")).toBe(hint);
+      expect(hint?.classList.contains("invisible")).toBe(step === 6);
     }
     const fadedTargets = motion.timelineTo.mock.calls
       .filter(([, vars]) => typeof vars === "object" && vars !== null && "autoAlpha" in vars && vars.autoAlpha === 0)

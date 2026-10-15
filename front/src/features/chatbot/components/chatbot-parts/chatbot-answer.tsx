@@ -20,9 +20,11 @@ export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, o
   return (
     <div className="relative text-sm text-base-content">
       <div className="absolute -right-2 -top-2 z-10 flex">
-        <button type="button" className="btn btn-ghost btn-circle size-6 min-h-0 p-0" onClick={onExpand} aria-label="Agrandir la réponse dans la fenêtre de conversation">
-          <Maximize2 className="size-3" />
-        </button>
+        {!message.preset && (
+          <button type="button" className="btn btn-ghost btn-circle size-6 min-h-0 p-0" onClick={onExpand} aria-label="Agrandir la réponse dans la fenêtre de conversation">
+            <Maximize2 className="size-3" />
+          </button>
+        )}
         <button type="button" className="btn btn-ghost btn-circle size-6 min-h-0 p-0" onClick={onDismiss} aria-label="Fermer la réponse">
           <X className="size-3.5" />
         </button>

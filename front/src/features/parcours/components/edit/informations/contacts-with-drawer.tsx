@@ -8,6 +8,7 @@ import { useParcoursContactsQuery } from "../../../hooks/useParcoursContactsQuer
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { ListPlus } from "lucide-react";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 interface ContactsWithDrawerProps {
   loading: boolean;
@@ -17,6 +18,7 @@ interface ContactsWithDrawerProps {
 }
 
 const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
+  const { teamLabel } = useRoleLabels();
   const [submit, setSubmit] = useState<boolean>(false);
   const { data: availableContacts } = useParcoursContactsQuery();
   const { id } = useParams();
@@ -50,7 +52,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           capitalize
           drawerId="add-contacts"
           drawerTitle="Ajouter des Contacts"
-          title="Ressources Pédagogiques"
+          title={teamLabel}
           loading={isSaving}
           initialList={availableContacts}
           selectedItems={currentContacts}
@@ -84,7 +86,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
       ) : null}
       {isSaving && (
         <p className="mt-2 text-sm text-base-content/70" role="status">
-          Enregistrement des ressources pédagogiques en cours…
+          Enregistrement des membres « {teamLabel} » en cours…
         </p>
       )}
     </>

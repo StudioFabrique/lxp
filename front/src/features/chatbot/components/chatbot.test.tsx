@@ -64,7 +64,7 @@ describe("assistant virtuel de l'application", () => {
     await render(true);
     expect(chatbotApi.queries.getDialogs).not.toHaveBeenCalled();
     act(() => document.querySelector<HTMLButtonElement>(`button[aria-label="${avatarLabel}"]`)?.click());
-    expect(menuLabels()).toEqual(["À quoi sert cette page ?", "À quoi servent les menus ?"]);
+    expect(menuLabels()).toEqual(["À quoi sert cette page ?", "À quoi servent les menus ?", "Comment créer une formation ?", "Autres questions"]);
     expect(menu()?.querySelector("input")).toBeNull();
   });
 
@@ -73,15 +73,18 @@ describe("assistant virtuel de l'application", () => {
     expect(chatbotApi.queries.getDialogs).toHaveBeenCalledTimes(1);
     act(() => document.querySelector<HTMLButtonElement>(`button[aria-label="${avatarLabel}"]`)?.click());
     // La première entrée est la question libre : son libellé n'est lu que par les lecteurs d'écran.
-    expect(menuLabels()).toEqual(["Poser une question à l’assistant virtuel", "À quoi sert cette page ?", "À quoi servent les menus ?"]);
+    expect(menuLabels()).toEqual(["Poser une question à l’assistant virtuel", "À quoi sert cette page ?", "À quoi servent les menus ?", "Comment créer une formation ?", "Autres questions"]);
   });
 
-  it("n'appelle pas l'IA pour une question vide et signale l'erreur près du champ", async () => {
+  it("n'appelle pas l'IA pour une question vide et signale l'erreur par la bordure du champ", async () => {
     await render(false);
     act(() => document.querySelector<HTMLButtonElement>(`button[aria-label="${avatarLabel}"]`)?.click());
     await act(async () => { findButton("Envoyer la question").click(); });
     expect(menu()?.querySelector('[role="alert"]')?.textContent).toBe("Saisissez votre question.");
     expect(menu()?.querySelector("input")?.getAttribute("aria-invalid")).toBe("true");
+    // Aucun message visible : le champ passe en bordure d'erreur, le texte reste réservé aux lecteurs d'écran.
+    expect(menu()?.querySelector('[role="alert"]')?.classList.contains("sr-only")).toBe(true);
+    expect(menu()?.querySelector("input")?.parentElement?.className).toContain("border-error");
     expect(chatbotApi.mutations.sendPrompt).not.toHaveBeenCalled();
   });
 

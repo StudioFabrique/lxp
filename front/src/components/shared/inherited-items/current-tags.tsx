@@ -3,6 +3,7 @@ import Tag from "../../../utils/interfaces/tag";
 import { sortArray } from "../../../utils/helpers/sort-array";
 import TagItem from "../../UI/tag-item/tag-item";
 import SubBoxWrapper from "../../wrappers/SubBoxWrapper";
+import { useRoleLabels } from "../../../features/role/hooks/useRoleLabels";
 
 interface CurrentTagsProps {
   list?: Tag[];
@@ -12,6 +13,7 @@ interface CurrentTagsProps {
 }
 
 const CurrentTags = (props: CurrentTagsProps) => {
+  const { labels, teamLabel } = useRoleLabels();
   return (
     <>
       {props.list && props.list.length > 0 ? (
@@ -24,7 +26,7 @@ const CurrentTags = (props: CurrentTagsProps) => {
                 key={item.id}
                 title={
                   isLocked
-                    ? "Ce tag a été ajouté par un administrateur ou une autre équipe pédagogique"
+                    ? `Ce tag a été ajouté par un autre rôle (« ${labels[1]} » ou « ${teamLabel} »)`
                     : undefined
                 }
               >

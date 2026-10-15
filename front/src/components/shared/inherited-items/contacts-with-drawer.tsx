@@ -3,6 +3,7 @@ import Contact from "../../../utils/interfaces/contact";
 import InheritedItems from "./inherited-items";
 import InheritedTextList from "./inherited-text-list";
 import NotSelectedContacts from "./not-selected-contacts";
+import { useRoleLabels } from "../../../features/role/hooks/useRoleLabels";
 
 interface ContactsWithDrawerProps {
   loading: boolean;
@@ -13,11 +14,12 @@ interface ContactsWithDrawerProps {
 }
 
 const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
+  const { teamLabel } = useRoleLabels();
   return (
     <InheritedItems
       drawerId="add-contacts"
-      drawerTitle="Ajouter des ressources pédagogiques"
-      title="Ressources pédagogiques"
+      drawerTitle={`Ajouter des membres « ${teamLabel} »`}
+      title={teamLabel}
       loading={props.loading}
       initialList={props.initialList}
       selectedItems={props.currentItems}

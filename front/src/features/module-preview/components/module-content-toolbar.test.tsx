@@ -51,6 +51,19 @@ afterEach(() => {
 });
 
 describe("ModuleContentToolbar", () => {
+  it.each([false, true])("désactive la visibilité des cours en vue calendrier (visible : %s)", (visible) => {
+    const container = document.createElement("div");
+    const onToggleCourseVisibility = vi.fn();
+    renderToolbar(container, { isCalendarView: true, areAllCoursesVisible: visible, onToggleCourseVisibility });
+    const label = visible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles";
+    const button = container.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`);
+
+    expect(button?.disabled).toBe(true);
+    act(() => button?.click());
+    expect(container.querySelector("dialog")).toBeNull();
+    expect(onToggleCourseVisibility).not.toHaveBeenCalled();
+  });
+
   it.each([false, true])("demande confirmation avant de changer la visibilité (visible : %s)", async (visible) => {
     const container = document.createElement("div");
     const onToggleCourseVisibility = vi.fn().mockResolvedValue(undefined);

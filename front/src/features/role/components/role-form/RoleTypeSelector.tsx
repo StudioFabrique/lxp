@@ -1,5 +1,6 @@
 import { type Dispatch, type SetStateAction, useId } from "react";
 import { roleModels } from "../../helpers/role-models";
+import { useRoleLabels } from "../../hooks/useRoleLabels";
 import RoleRadioCard from "../RoleRadioCard";
 
 const RoleTypeSelector = ({
@@ -18,6 +19,7 @@ const RoleTypeSelector = ({
   id?: string;
 }) => {
   const radioGroupId = useId();
+  const { getRoleLabel } = useRoleLabels();
   const availableRoleTypes = roleModels.filter(
     ({ rank }) => rank > minimumRank,
   );
@@ -37,7 +39,7 @@ const RoleTypeSelector = ({
             name={radioGroupId}
             value={rank}
             rank={rank}
-            label={name}
+            label={getRoleLabel(rank, name)}
             checked={currentRoleType === rank}
             onChange={() => onSetCurrentRoleType(rank)}
             disabled={disabled}

@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { parcoursApi } from "../api/parcours.api";
 import { parcoursKeys } from "../api/parcours.keys";
+import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 
 export function useRemoveModuleContact(parcoursId: number) {
+  const { teamLabel } = useRoleLabels();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -22,7 +24,7 @@ export function useRemoveModuleContact(parcoursId: number) {
       toast.error(
         getApiErrorMessage(
           error,
-          "La ressource pédagogique n'a pas pu être retirée du module.",
+          `Le membre « ${teamLabel} » n'a pas pu être retiré du module.`,
         ),
       );
     },

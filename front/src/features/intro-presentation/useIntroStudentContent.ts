@@ -14,10 +14,12 @@ import {
 } from "./intro-space-content";
 import { getSidebarHelp } from "./intro-sidebar-help";
 import { useIntroSpaceReady } from "./useIntroSpaceReady";
+import { useRoleLabels } from "../role/hooks/useRoleLabels";
 
 /** Contenu du dashboard apprenant, lu avec les mêmes requêtes que le vrai dashboard. */
 export const useIntroStudentContent = (role: IntroRoleOption) => {
   const ability = useContext(AbilityContext);
+  const { teamLabel } = useRoleLabels();
   const { user } = useContext(AuthContext);
   const { welcomeTitle, welcomeMessage, lastLesson, learningContext } =
     useStudentDashboard();
@@ -41,7 +43,7 @@ export const useIntroStudentContent = (role: IntroRoleOption) => {
         nav: buildNavEntries(sidebarItems.student, {
           canRead: (item) => ability.can("read", item.subject),
           isTeacher: false,
-          description: (item) => getSidebarHelp("student", item),
+          description: (item) => getSidebarHelp("student", item, teamLabel),
         }),
         lastLesson: lastLesson
           ? {
@@ -54,7 +56,7 @@ export const useIntroStudentContent = (role: IntroRoleOption) => {
           formation: item.formation?.title,
         })),
       }),
-    [ability, lastLesson, parcours.data, role, user, welcomeMessage, welcomeTitle],
+    [ability, lastLesson, parcours.data, role, teamLabel, user, welcomeMessage, welcomeTitle],
   );
 
   return { content, isReady };

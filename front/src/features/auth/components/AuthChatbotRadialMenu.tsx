@@ -26,6 +26,8 @@ type Props = {
   stacked?: boolean;
   /** En pile : la question libre laisse de la place à gauche (barre du bas de la page, réduite en cercle). */
   pinnedInset?: boolean;
+  /** Les entrées non épinglées forment une colonne alignée contre l'assistant virtuel, au lieu de suivre le cercle de l'éventail. */
+  aligned?: boolean;
 };
 
 /**
@@ -33,7 +35,7 @@ type Props = {
  * gauche près du bord droit de l'écran, se décale pour rester visible et signale
  * s'il recouvre la bulle de l'assistant, que l'appelant peut alors masquer.
  */
-export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange, stacked = false, pinnedInset = false }: Props) {
+export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange, stacked = false, pinnedInset = false, aligned = false }: Props) {
   const reducedMotion = useReducedMotion();
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
   const count = items.length;
@@ -62,14 +64,15 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         const fanTowardsLeft = pinnedSide === undefined
           ? !roomRight
           : pinnedSide === "right" ? roomLeft || !roomRight : !roomRight && roomLeft;
-        const halfHeight = Math.max(...itemsRef.current.map(item => (item?.offsetHeight ?? 0) / 2));
+        // La liste garde des cases vides quand le nombre d'entrées diminue : seules les entrées affichées comptent.
+        const elements = itemsRef.current.slice(0, count).map(item => item ?? null);
+        const halfHeight = Math.max(...elements.map(item => (item?.offsetHeight ?? 0) / 2));
         const extent = radius * Math.sin(Math.max(...fan.map(Math.abs)) * Math.PI / 180) + halfHeight;
         // Avec une entrée épinglée, c'est elle qui reste à hauteur de l'assistant : les autres s'écartent, l'éventail ne se décale pas.
         const verticalShift = pinnedIndex >= 0 ? 0 : Math.max(12 - center.y + extent,
           Math.min(0, window.innerHeight - 12 - center.y - extent));
         const angles = fanTowardsLeft ? fan.map(angle => 180 - angle) : fan;
         const bubble = bubbleRef?.current?.getBoundingClientRect();
-        const elements = itemsRef.current.map(item => item ?? null);
         const slots = elements.map((item, index) => {
           const height = item?.offsetHeight ?? 0;
           return { top: center.y + Math.sin(angles[index] * Math.PI / 180) * radius + verticalShift - height / 2, height };
@@ -94,7 +97,8 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           const offsetY = tops[index] + item.offsetHeight / 2 - center.y;
           const onCircle = Math.sqrt(Math.max(radius * radius - offsetY * offsetY, 0));
           const clear = Math.abs(offsetY) < avatarHalf + item.offsetHeight / 2 + 8 ? avatarHalf + item.offsetWidth / 2 + 12 : 0;
-          const reach = Math.max(onCircle, clear);
+          // En colonne, toutes les entrées s'alignent à la même distance de l'assistant, au ras de son bord.
+          const reach = aligned && index !== pinnedIndex ? avatarHalf + item.offsetWidth / 2 + 12 : Math.max(onCircle, clear);
           const towardsLeft = index === pinnedIndex && pinnedSide !== undefined ? pinnedSide === "left" : fanTowardsLeft;
           const left = center.x + (towardsLeft ? -reach : reach) - item.offsetWidth / 2;
           const nextLeft = `${Math.max(12, Math.min(left, window.innerWidth - item.offsetWidth - 12))}px`;
@@ -117,7 +121,7 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
     };
     positionItems();
     return () => window.cancelAnimationFrame(frame);
-  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange, stacked]);
+  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange, stacked, aligned]);
 
   return createPortal(
     <ul id={id} aria-label={label} className={cn("pointer-events-none fixed z-50", stacked ? "inset-x-3 bottom-6 flex max-h-[calc(100dvh-3rem)] flex-col gap-2 overflow-y-auto overflow-x-hidden" : "inset-0")}>

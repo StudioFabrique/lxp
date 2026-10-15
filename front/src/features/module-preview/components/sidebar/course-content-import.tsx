@@ -2,6 +2,7 @@ import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/les
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { courseApi } from "../../../course/api/course.api";
@@ -9,6 +10,7 @@ import type Tag from "../../../../utils/interfaces/tag";
 import { cn } from "../../../../utils/cn";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import TagItem from "../../../../components/UI/tag-item/tag-item";
+import CourseContentTagCombobox from "./course-content-tag-combobox";
 
 type Props = {
   /** Tags du module, proposés pour rechercher du contenu existant. */
@@ -20,6 +22,9 @@ type Props = {
     ) => LessonWithActivitiesCount[],
   ) => void;
 };
+
+/** Déplacement fluide d'un contenu vers le bas de la liste quand on le coche (ou de retour quand on le décoche). */
+const REORDER_TRANSITION = { type: "spring", duration: 0.45, bounce: 0.1 } as const;
 
 /** Nombre maximal de contenus proposés par source tant qu'aucun tag n'est choisi. */
 const ALL_CONTENTS_LIMIT = 20;
@@ -33,6 +38,7 @@ export default function CourseContentImport({
   onSelectedContentsChange: setSelectedContents,
 }: Props) {
   const [includeCourseContents, setIncludeCourseContents] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const [contentTagId, setContentTagId] = useState(0);
   const hasTags = parcoursTags.length > 0;
 
@@ -109,8 +115,10 @@ export default function CourseContentImport({
     content: LessonWithActivitiesCount,
     selected: boolean,
   ) => (
-    <label
+    <motion.label
       key={`${content.source}-${content.id}`}
+      layout={prefersReducedMotion ? false : "position"}
+      transition={REORDER_TRANSITION}
       className={cn(
         "flex w-full cursor-pointer items-center gap-4 rounded-lg border border-base-300 px-4 py-3 text-sm select-none",
         selected && "bg-info/10",
@@ -139,7 +147,7 @@ export default function CourseContentImport({
           {content.activitiesCount ?? 0} activité(s)
         </span>
       </span>
-    </label>
+    </motion.label>
   );
 
   return (
@@ -149,25 +157,12 @@ export default function CourseContentImport({
                   Rechercher par tag
                 </span>
                 <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2">
-                  <label className="flex flex-col gap-2">
-                    <select
-                      className="select select-sm select-bordered w-full"
-                      disabled={!hasTags}
-                      value={contentTagId}
-                      onChange={(event) =>
-                        setContentTagId(Number(event.target.value))
-                      }
-                    >
-                      <option value={0}>
-                        {hasTags ? "Choisir un tag" : "Aucun tag disponible"}
-                      </option>
-                      {parcoursTags.map((tag) => (
-                        <option key={tag.id} value={tag.id}>
-                          {tag.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <CourseContentTagCombobox
+                    tags={parcoursTags}
+                    value={contentTagId}
+                    onChange={setContentTagId}
+                    disabled={!hasTags}
+                  />
 
                   <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-base-300 px-3 h-full">
                     <span className="flex items-center gap-2">
@@ -204,12 +199,15 @@ export default function CourseContentImport({
                   <p className={emptyStateClassName}>{emptyMessage}</p>
                 ) : (
                   <div className="flex flex-col gap-3">
-                    {pendingContents.map((content) =>
-                      renderContent(content, false),
-                    )}
-                    {selectedContents.map((content) =>
-                      renderContent(content, true),
-                    )}
+                    {/* Une seule liste à clés stables : l'élément coché glisse vers le bas au lieu d'être remonté. */}
+                    {[
+                      ...pendingContents.map((content) =>
+                        renderContent(content, false),
+                      ),
+                      ...selectedContents.map((content) =>
+                        renderContent(content, true),
+                      ),
+                    ]}
                   </div>
                 )}
               </div>

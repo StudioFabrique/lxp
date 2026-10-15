@@ -9,7 +9,7 @@ export type AssignContactsToModulesInput = {
 };
 
 /**
- * Ajoute des ressources pédagogiques à plusieurs modules d'un même parcours.
+ * Ajoute des membres de l'équipe pédagogique à plusieurs modules d'un même parcours.
  * Les associations existantes sont conservées.
  */
 export default async function assignContactsToModules(
@@ -52,7 +52,7 @@ export default async function assignContactsToModules(
       throw {
         statusCode: 400,
         message:
-          "Une ou plusieurs ressources pédagogiques n'appartiennent pas au parcours.",
+          "Un ou plusieurs membres de l'équipe pédagogique n'appartiennent pas au parcours.",
       };
     }
 

@@ -5,6 +5,7 @@ import { formatWelcomeTitle } from "../../../utils/helpers/welcome-title";
 import { profileApi } from "../../profile/api/profile.api";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { buildRecommendedActions } from "../components/build-recommended-actions";
+import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 
 const defaultTitle = "Bonjour {firstname} !";
 const adminDescription =
@@ -14,6 +15,7 @@ const teacherDescription =
 
 export function useAdminDashboard() {
   const { user } = useContext(AuthContext);
+  const { labels: roleLabels } = useRoleLabels();
   const userRank = user?.roles.length ? (user.roles[0]?.rank ?? 4) : 4;
   const isAdministrator = userRank <= 1;
   const isRoot = userRank === 0;
@@ -66,6 +68,7 @@ export function useAdminDashboard() {
     studentsCount: studentsCount.data,
     groupsCount: groupsCount.data,
     hasLogo: instanceSettings?.hasLogo,
+    roleLabels,
     parcours,
   });
 

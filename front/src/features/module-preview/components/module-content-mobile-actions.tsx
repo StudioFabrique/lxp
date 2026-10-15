@@ -98,7 +98,7 @@ export default function ModuleContentMobileActions({
           <button
             type="button"
             className={actionClassName}
-            disabled={isUpdatingCourseVisibility}
+            disabled={isCalendarView || isUpdatingCourseVisibility}
             onClick={() => onRequestCourseVisibility(!areAllCoursesVisible)}
           >
             {isUpdatingCourseVisibility ? (

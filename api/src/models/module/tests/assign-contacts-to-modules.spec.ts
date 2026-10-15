@@ -37,7 +37,7 @@ jest.unstable_mockModule("../../../utils/db.ts", () => ({
 const { default: assignContactsToModules } =
   await import("../assign-contacts-to-modules.ts");
 
-describe("affectation rapide des ressources pédagogiques", () => {
+describe("affectation rapide de l'équipe pédagogique", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     existingAssignments.mockResolvedValue([]);

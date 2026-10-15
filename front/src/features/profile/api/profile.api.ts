@@ -1,6 +1,9 @@
 import apiClient from "../../../lib/axios";
 import type Skill from "../../../utils/interfaces/skill";
 
+/** Libellé affiché par rang de rôle (1 à 4), tel que saisi lors de l'onboarding. */
+export type InstanceRoleLabels = Partial<Record<"1" | "2" | "3" | "4", string>>;
+
 export type InstanceLogoResponse = { message: string };
 export type InstanceSettings = {
   name: string;
@@ -9,6 +12,7 @@ export type InstanceSettings = {
   hasLogo: boolean;
   enabledThemes: string[];
   emailTemplate: "minimal" | "gradient" | "editorial" | "soft" | "contrast" | "compact";
+  roleLabels?: InstanceRoleLabels;
 };
 
 const queries = {

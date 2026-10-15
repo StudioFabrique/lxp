@@ -24,7 +24,7 @@ const createContacts = (count: number) =>
     phone: "",
   }));
 
-describe("Ressources pédagogiques du parcours", () => {
+describe("Équipe pédagogique du parcours", () => {
   let container: HTMLDivElement;
   let root: Root;
 

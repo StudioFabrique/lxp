@@ -1,0 +1,2054 @@
+{
+  "layouts": {
+    "admin": {
+      "questions": [
+        {
+          "id": "menu",
+          "label": "À quoi servent les menus ?",
+          "steps": [
+            {
+              "selector": "aside",
+              "message": "Ce menu donne accès à toutes les sections de la plateforme. Je vous les présente une par une."
+            },
+            {
+              "selector": "aside a[href=\"/admin/dashboard\"]",
+              "message": "Accueil. Votre tableau de bord : les actions recommandées, les derniers modules et parcours créés, et les retours des apprenants."
+            },
+            {
+              "selector": "aside a[href=\"/admin/user\"]",
+              "message": "Utilisateurs. Créez et gérez les comptes utilisateurs, leurs rôles et leurs accès."
+            },
+            {
+              "selector": "aside a[href=\"/admin/group\"]",
+              "message": "Groupes. Organisez les apprenants et l'équipe en groupes, et rattachez-les à vos formations."
+            },
+            {
+              "selector": "aside a[href=\"/admin/parcours\"]",
+              "message": "Parcours. Construisez les parcours de vos formations et gardez la main sur leur contenu."
+            },
+            {
+              "selector": "aside a[href=\"/admin/module\"]",
+              "message": "Modules. Découpez un parcours en modules pour structurer la progression des apprenants."
+            },
+            {
+              "selector": "aside a[href=\"/admin/course\"]",
+              "message": "Cours. Rédigez les cours avec leurs leçons et leurs activités, puis publiez-les."
+            },
+            {
+              "selector": "aside a[href=\"/admin/calendrier\"]",
+              "message": "Calendrier. Planifiez les séances et consultez le calendrier de vos groupes."
+            },
+            {
+              "selector": "aside a[href=\"/admin/teacher/evaluations\"]",
+              "message": "Évaluations. Corrigez les travaux remis par les apprenants et donnez vos retours pédagogiques."
+            },
+            {
+              "selector": "aside a[href=\"/admin/resources\"]",
+              "message": "Ressources supplémentaires. Ajoutez des ressources complémentaires à proposer aux apprenants."
+            },
+            {
+              "selector": "aside a[href=\"/admin/roles\"]",
+              "message": "Rôles. Définissez les rôles et les permissions associées à chaque profil."
+            },
+            {
+              "selector": "aside a[href=\"/admin/tags\"]",
+              "message": "Tags. Classez vos contenus avec des tags pour les retrouver plus vite."
+            },
+            {
+              "selector": "aside a[href=\"/admin/mediatheque\"]",
+              "message": "Médiathèque. Retrouvez et réutilisez les images, vidéos et fichiers déjà importés."
+            },
+            {
+              "selector": "aside [data-tip=\"Consommation IA\"]",
+              "message": "Suivez ici la consommation des fonctionnalités d'intelligence artificielle de votre organisme."
+            },
+            {
+              "selector": "aside [data-tip=\"Revoir la présentation\"]",
+              "message": "Revoyez à tout moment la présentation de la plateforme."
+            },
+            {
+              "selector": "aside [data-tip=\"Mode clair / Mode sombre\"]",
+              "message": "Basculez entre le mode clair et le mode sombre selon votre confort de lecture."
+            },
+            {
+              "selector": "aside [data-tip=\"Déconnexion\"]",
+              "message": "Quittez votre session en toute sécurité lorsque vous avez terminé."
+            }
+          ]
+        }
+      ]
+    },
+    "student": {
+      "questions": [
+        {
+          "id": "menu",
+          "label": "À quoi servent les menus ?",
+          "steps": [
+            {
+              "selector": "aside",
+              "message": "Ce menu donne accès à toutes les sections de la plateforme. Je vous les présente une par une."
+            },
+            {
+              "selector": "aside a[href=\"/student/dashboard\"]",
+              "message": "Accueil. Votre tableau de bord : reprenez votre dernière leçon et suivez votre avancement."
+            },
+            {
+              "selector": "aside a[href=\"/student/parcours\"]",
+              "message": "Parcours. Retrouvez vos parcours, avec leurs modules, leurs cours et leurs leçons."
+            },
+            {
+              "selector": "aside a[href=\"/student/calendrier\"]",
+              "message": "Calendrier. Consultez vos prochaines séances."
+            },
+            {
+              "selector": "aside a[href=\"/student/remises-evaluations\"]",
+              "message": "Remises & évaluations. Remettez vos travaux et consultez les retours de l'équipe pédagogique."
+            },
+            {
+              "selector": "aside a[href=\"/student/ressources\"]",
+              "message": "Ressources supplémentaires. Accédez aux ressources complémentaires proposées pour vos formations."
+            },
+            {
+              "selector": "aside [data-tip=\"Consommation IA\"]",
+              "message": "Suivez ici la consommation des fonctionnalités d'intelligence artificielle de votre organisme."
+            },
+            {
+              "selector": "aside [data-tip=\"Revoir la présentation\"]",
+              "message": "Revoyez à tout moment la présentation de la plateforme."
+            },
+            {
+              "selector": "aside [data-tip=\"Mode clair / Mode sombre\"]",
+              "message": "Basculez entre le mode clair et le mode sombre selon votre confort de lecture."
+            },
+            {
+              "selector": "aside [data-tip=\"Déconnexion\"]",
+              "message": "Quittez votre session en toute sécurité lorsque vous avez terminé."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "pages": [
+    {
+      "id": "admin-dashboard",
+      "title": "Accueil administrateur",
+      "routes": [
+        "/admin/dashboard"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/dashboard\"]",
+              "message": "Vous êtes dans la section « Accueil ». Votre tableau de bord : les actions recommandées, les derniers modules et parcours créés, et les retours des apprenants."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Les actions recommandées et les raccourcis de création sont regroupés ici."
+            }
+          ]
+        },
+        {
+          "id": "create-formation",
+          "label": "Comment créer une formation ?",
+          "steps": [
+            {
+              "target": "quick-actions",
+              "message": "Ouvrez « Actions rapides » puis choisissez « Créer une formation »."
+            },
+            {
+              "selector": "[data-chatbot-target=\"first-formation\"]",
+              "message": "Tant que vous n'avez aucune formation, ce bouton la crée directement."
+            }
+          ]
+        },
+        {
+          "id": "create-parcours",
+          "label": "Comment créer un parcours ?",
+          "steps": [
+            {
+              "target": "quick-actions",
+              "message": "Ouvrez « Actions rapides » puis choisissez « Créer un parcours » : il sera rattaché à une formation existante."
+            },
+            {
+              "target": "formation-add-parcours",
+              "message": "Vous pouvez aussi cliquer sur « Ajouter un parcours » directement dans la carte de la formation."
+            }
+          ]
+        },
+        {
+          "id": "recommended",
+          "label": "Que sont les actions recommandées ?",
+          "steps": [
+            {
+              "selector": "button[aria-label^=\"Actions recommandées\"]",
+              "message": "Cette cloche liste les prochaines étapes utiles, par exemple un parcours à compléter ou un feedback à traiter. Le chiffre indique leur nombre."
+            }
+          ]
+        },
+        {
+          "id": "all-parcours",
+          "label": "Comment retrouver tous mes parcours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href=\"/admin/parcours\"]",
+              "message": "« Voir tous les parcours » ouvre la liste complète, avec recherche et pagination."
+            }
+          ]
+        },
+        {
+          "id": "edit-module",
+          "label": "Comment modifier un module récent ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container [data-tip=\"Modifier dans le parcours\"]",
+              "message": "Ce crayon ouvre le parcours à l'étape des modules, sur le module choisi."
+            },
+            {
+              "selector": "#main-scroll-container a[href=\"/admin/module\"]",
+              "message": "« Voir tous les modules » ouvre la liste complète des modules."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-user-list",
+      "title": "Liste des utilisateurs",
+      "routes": [
+        "/admin/user"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/user\"]",
+              "message": "Vous êtes dans la section « Utilisateurs ». Créez et gérez les comptes utilisateurs, leurs rôles et leurs accès."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Le bouton « Créer un utilisateur » se trouve ici."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer un utilisateur ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href=\"/admin/user/add\"]",
+              "message": "Cliquez sur « Créer un utilisateur » pour ouvrir le formulaire. Prénom, nom, email et type d'utilisateur sont obligatoires."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un utilisateur ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez un prénom, un nom ou un email : la liste se filtre au fur et à mesure."
+            },
+            {
+              "selector": "#main-scroll-container .data-table",
+              "message": "Cliquez sur un en-tête de colonne pour trier la liste."
+            }
+          ]
+        },
+        {
+          "id": "filter-role",
+          "label": "Comment filtrer par rôle ?",
+          "steps": [
+            {
+              "target": "user-role-filter",
+              "message": "Choisissez un rôle pour n'afficher que ses utilisateurs. Le premier bouton affiche tout le monde."
+            }
+          ]
+        },
+        {
+          "id": "row-actions",
+          "label": "Comment modifier un compte ou renvoyer une invitation ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .data-table [data-tip=\"Modifier\"]",
+              "message": "Le crayon ouvre le formulaire de modification du compte."
+            },
+            {
+              "selector": "#main-scroll-container .data-table [data-tip=\"Envoyer une invitation\"], #main-scroll-container .data-table [data-tip=\"Renvoyer une invitation\"]",
+              "message": "Cette icône envoie ou renvoie l'email d'invitation permettant de choisir son mot de passe."
+            },
+            {
+              "selector": "#main-scroll-container .data-table [data-tip=\"Envoyer une demande de réinitialisation de mot de passe\"]",
+              "message": "Celle-ci envoie un lien de réinitialisation du mot de passe."
+            }
+          ]
+        },
+        {
+          "id": "student-data",
+          "label": "Comment consulter la progression d'un apprenant ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .data-table tbody tr",
+              "message": "Cliquez sur la ligne d'un apprenant pour ouvrir sa fiche : progression, analyses et profil d'apprentissage. Les autres rôles n'ont pas de fiche."
+            }
+          ]
+        },
+        {
+          "id": "delete",
+          "label": "Comment supprimer des utilisateurs ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .data-table",
+              "message": "Cochez les lignes à supprimer, ou utilisez la corbeille d'une ligne."
+            },
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Le bouton de suppression de la sélection se trouve à droite de la recherche ; une confirmation vous est demandée."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-user-form",
+      "title": "Formulaire utilisateur",
+      "routes": [
+        "/admin/user/add",
+        "/admin/user/edit/:id"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "target": "user-informations",
+              "message": "Renseignez ici l'identité de l'utilisateur : prénom, nom et adresse email sont obligatoires."
+            },
+            {
+              "target": "user-role",
+              "message": "Choisissez son type d'utilisateur, qui détermine ce qu'il pourra faire sur la plateforme."
+            },
+            {
+              "target": "user-save",
+              "message": "Enregistrez quand vous avez terminé."
+            }
+          ]
+        },
+        {
+          "id": "role",
+          "label": "Comment changer le rôle ?",
+          "steps": [
+            {
+              "target": "user-role",
+              "message": "Sélectionnez un autre type d'utilisateur dans cette liste. Seuls les rôles que vous avez le droit d'attribuer sont proposés."
+            },
+            {
+              "target": "user-save",
+              "message": "Cliquez sur « Sauvegarder » pour appliquer le changement."
+            }
+          ]
+        },
+        {
+          "id": "invite",
+          "label": "Comment inviter l'utilisateur par email ?",
+          "steps": [
+            {
+              "target": "user-invitation",
+              "message": "Activez cette option : un email lui permettra de choisir son mot de passe dès la création."
+            }
+          ]
+        },
+        {
+          "id": "certifications",
+          "label": "Comment ajouter une certification ?",
+          "steps": [
+            {
+              "target": "user-certifications",
+              "message": "Saisissez le titre, le niveau et la date du diplôme, puis validez : la certification apparaît dans la liste des certifications enregistrées."
+            }
+          ]
+        },
+        {
+          "id": "cancel",
+          "label": "Comment quitter sans enregistrer ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main a.btn-outline",
+              "message": "« Annuler » vous ramène à la liste sans enregistrer vos modifications."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-user-data",
+      "title": "Fiche d'un apprenant",
+      "routes": [
+        "/admin/user/data/:studentId"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/user\"]",
+              "message": "Vous êtes dans la section « Utilisateurs ». Cette fiche rassemble la progression, les analyses et le profil d'apprentissage de l'apprenant."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Lancez ou relancez l'analyse de l'apprenant depuis ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "analysis",
+          "label": "Comment lancer une analyse de l'apprenant ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Ce bouton lance une analyse de l'apprenant. Le nombre d'analyses par jour est limité : un message vous le signale quand la limite est atteinte."
+            }
+          ]
+        },
+        {
+          "id": "history",
+          "label": "Où retrouver les analyses précédentes ?",
+          "answer": "L'historique des analyses se trouve plus bas sur la fiche, sous l'analyse en cours : ouvrez une entrée pour en voir le détail et donner votre retour."
+        }
+      ]
+    },
+    {
+      "id": "admin-group-list",
+      "title": "Liste des groupes",
+      "routes": [
+        "/admin/group"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/group\"]",
+              "message": "Vous êtes dans la section « Groupes ». Organisez les apprenants et l'équipe en groupes, et rattachez-les à vos formations."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Le bouton « Créer un groupe » se trouve ici."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer un groupe ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href=\"/admin/group/add\"]",
+              "message": "Cliquez sur « Créer un groupe » : donnez-lui un nom, associez un parcours puis ajoutez ses apprenants."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un groupe ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le nom du groupe : la liste se filtre au fur et à mesure."
+            },
+            {
+              "selector": "#main-scroll-container [aria-label=\"Page suivante\"]",
+              "message": "Utilisez la pagination pour parcourir les groupes."
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "label": "Comment modifier un groupe ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .data-table [data-tip=\"Modifier\"]",
+              "message": "Le crayon ouvre le formulaire du groupe : nom, parcours et apprenants."
+            }
+          ]
+        },
+        {
+          "id": "delete",
+          "label": "Comment supprimer un groupe ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .data-table",
+              "message": "Cochez les groupes à supprimer, ou utilisez la corbeille d'une ligne. Une confirmation vous est demandée."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-group-form",
+      "title": "Formulaire groupe",
+      "routes": [
+        "/admin/group/add",
+        "/admin/group/edit/:id"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "input[name=\"name\"]",
+              "message": "Donnez un titre au groupe, par exemple une promotion."
+            },
+            {
+              "target": "group-parcours",
+              "message": "Associez le groupe à une formation puis à un parcours, maintenant ou plus tard."
+            },
+            {
+              "target": "group-add-students",
+              "message": "Ajoutez ici les apprenants du groupe."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main button[type=\"submit\"]",
+              "message": "Enregistrez quand vous avez terminé."
+            }
+          ]
+        },
+        {
+          "id": "parcours",
+          "label": "Comment associer un parcours au groupe ?",
+          "steps": [
+            {
+              "target": "group-parcours",
+              "message": "Choisissez d'abord la formation, puis l'un de ses parcours. Le groupe suivra le contenu de ce parcours."
+            }
+          ]
+        },
+        {
+          "id": "students",
+          "label": "Comment ajouter des apprenants ?",
+          "steps": [
+            {
+              "target": "group-add-students",
+              "message": "Sélectionnez des apprenants existants, créez-en un nouveau, ou importez une liste depuis un fichier CSV."
+            },
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Une fois ajoutés, retrouvez un apprenant par son nom, prénom ou email."
+            }
+          ]
+        },
+        {
+          "id": "teachers",
+          "label": "Comment modifier les formateurs du groupe ?",
+          "steps": [
+            {
+              "target": "group-teachers",
+              "message": "Les formateurs viennent du parcours associé : modifiez-les depuis le parcours, via le bouton « Modifier » (il s'ouvre dans un nouvel onglet)."
+            }
+          ]
+        },
+        {
+          "id": "cancel",
+          "label": "Comment quitter sans enregistrer ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main a.btn-outline",
+              "message": "« Annuler » vous ramène à la liste des groupes sans enregistrer."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-parcours-list",
+      "title": "Gestion des parcours",
+      "routes": [
+        "/admin/parcours"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/parcours\"]",
+              "message": "Vous êtes dans la section « Parcours ». Construisez les parcours de vos formations et gardez la main sur leur contenu."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Créez une formation ou un parcours depuis ces boutons."
+            }
+          ]
+        },
+        {
+          "id": "create-formation",
+          "label": "Comment créer une formation ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Cliquez sur « Créer une formation » : une formation regroupe plusieurs parcours."
+            }
+          ]
+        },
+        {
+          "id": "create-parcours",
+          "label": "Comment créer un parcours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Cliquez sur « Créer un parcours » en choisissant sa formation."
+            },
+            {
+              "target": "formation-add-parcours",
+              "message": "Ou utilisez « Ajouter un parcours » dans la carte de la formation concernée."
+            }
+          ]
+        },
+        {
+          "id": "edit-parcours",
+          "label": "Comment modifier un parcours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Modifier le parcours\"]",
+              "message": "Ce crayon ouvre l'édition du parcours, en plusieurs étapes."
+            }
+          ]
+        },
+        {
+          "id": "edit-formation",
+          "label": "Comment modifier une formation ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Modifier la formation\"]",
+              "message": "Ce crayon modifie le titre, le niveau et les tags de la formation."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un parcours ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le titre d'un parcours, d'une formation ou son niveau."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-parcours-edit",
+      "title": "Édition d'un parcours",
+      "routes": [
+        "/admin/parcours/edit/:id"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "target": "parcours-stepper",
+              "message": "L'édition d'un parcours se fait en étapes : informations, objectifs, compétences, modules, calendrier, groupe d'apprenants et aperçu. Cliquez sur une étape pour y aller."
+            },
+            {
+              "target": "parcours-step-content",
+              "message": "Le contenu de l'étape courante s'affiche ici."
+            },
+            {
+              "target": "parcours-next-step",
+              "message": "« Étape suivante » enregistre l'étape et passe à la suivante."
+            },
+            {
+              "target": "parcours-back",
+              "message": "« Retour » revient à l'étape précédente."
+            }
+          ]
+        },
+        {
+          "id": "publish",
+          "label": "Comment publier un parcours ?",
+          "steps": [
+            {
+              "target": "parcours-stepper",
+              "message": "Parcourez les étapes pour compléter le parcours : un parcours incomplet ne peut pas être publié."
+            },
+            {
+              "target": "parcours-publish",
+              "message": "Quand tout est renseigné, « Publier » le rend visible pour les apprenants. Les erreurs éventuelles sont listées pour vous guider."
+            }
+          ]
+        },
+        {
+          "id": "modules",
+          "label": "Comment ajouter des modules ?",
+          "steps": [
+            {
+              "target": "parcours-stepper",
+              "message": "Rendez-vous à l'étape « Modules » du parcours."
+            },
+            {
+              "target": "module-create",
+              "message": "« Créer un nouveau module » ouvre le formulaire de création."
+            },
+            {
+              "target": "module-add-existing",
+              "message": "« Ajouter un module existant » rattache un module déjà créé."
+            }
+          ]
+        },
+        {
+          "id": "dates",
+          "label": "Comment définir les dates du parcours ?",
+          "steps": [
+            {
+              "target": "parcours-stepper",
+              "message": "Rendez-vous à l'étape « Informations »."
+            },
+            {
+              "selector": "#parcours-field-dates",
+              "message": "Choisissez ici la date de début et de fin du parcours."
+            }
+          ]
+        },
+        {
+          "id": "groups",
+          "label": "Comment affecter un groupe d'apprenants ?",
+          "steps": [
+            {
+              "target": "parcours-stepper",
+              "message": "Rendez-vous à l'étape « Groupe d'apprenants »."
+            },
+            {
+              "selector": "#parcours-field-groups",
+              "message": "« Ajouter un groupe d'apprenants » rattache un groupe existant à ce parcours."
+            }
+          ]
+        },
+        {
+          "id": "objectives",
+          "label": "Comment ajouter des objectifs et des compétences ?",
+          "answer": "Aux étapes « Objectifs » et « Compétences », saisissez-les un par un ou importez une liste depuis un fichier. Les compétences peuvent ensuite être associées aux modules."
+        }
+      ]
+    },
+    {
+      "id": "admin-parcours-view",
+      "title": "Aperçu d'un parcours",
+      "routes": [
+        "/admin/parcours/view/:id"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/parcours\"]",
+              "message": "Vous êtes dans la section « Parcours ». Cet aperçu présente le parcours tel que ses apprenants le découvrent."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "label": "Comment modifier ce parcours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main a[href^=\"/admin/parcours/edit/\"]",
+              "message": "Ce bouton ouvre l'édition du parcours."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-module-list",
+      "title": "Liste des modules",
+      "routes": [
+        "/admin/module"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/module\"]",
+              "message": "Vous êtes dans la section « Modules ». Découpez un parcours en modules pour structurer la progression des apprenants."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "open",
+          "label": "Comment accéder au contenu d'un module ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Accéder au module\"]",
+              "message": "Cette flèche ouvre le module : ses cours, leçons et activités."
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "label": "Comment modifier un module ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Modifier le module\"]",
+              "message": "Ce crayon ouvre le parcours à l'étape des modules, sur le module choisi."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un module ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le titre d'un module pour filtrer la liste."
+            }
+          ]
+        },
+        {
+          "id": "delete",
+          "label": "Comment supprimer un module ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Supprimer le module\"]",
+              "message": "La corbeille supprime le module après confirmation."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer un module ?",
+          "answer": "Les modules se créent depuis un parcours : ouvrez-le en modification, rendez-vous à l'étape « Modules » puis cliquez sur « Créer un nouveau module »."
+        }
+      ]
+    },
+    {
+      "id": "admin-course-list",
+      "title": "Liste des cours",
+      "routes": [
+        "/admin/course"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/course\"]",
+              "message": "Vous êtes dans la section « Cours ». Rédigez les cours avec leurs leçons et leurs activités, puis publiez-les."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Importez des cours depuis ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "import",
+          "label": "Comment importer des cours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href$=\"/admin/course/import\"], #main-scroll-container .header-actions-main a.btn",
+              "message": "« Importer des cours » reprend des cours Moodle avec leurs leçons et activités."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un cours ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le titre d'un cours pour filtrer la liste."
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "label": "Comment modifier un cours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Modifier le cours\"]",
+              "message": "Ce crayon ouvre le module du cours, prêt à être modifié."
+            },
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Accéder au cours\"]",
+              "message": "Cette flèche ouvre simplement le module qui contient le cours."
+            }
+          ]
+        },
+        {
+          "id": "publish",
+          "label": "Comment publier un cours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Publier le cours\"]",
+              "message": "Ce bouton rend le cours visible pour les apprenants."
+            }
+          ]
+        },
+        {
+          "id": "delete",
+          "label": "Comment supprimer un cours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Supprimer le cours\"]",
+              "message": "La corbeille supprime le cours et ses leçons après confirmation."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer un cours ?",
+          "answer": "Les cours se créent depuis un module : ouvrez-le, puis cliquez sur « Ajouter un cours » dans la colonne de gauche."
+        }
+      ]
+    },
+    {
+      "id": "admin-course-import",
+      "title": "Import de cours",
+      "routes": [
+        "/admin/course/import"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/course\"]",
+              "message": "Vous êtes dans la section « Cours ». L'import reprend des cours depuis Moodle, avec toutes leurs leçons et activités."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "steps",
+          "label": "Comment importer des cours Moodle ?",
+          "answer": "Téléversez d'abord le dossier compressé (.zip) exporté de Moodle, puis choisissez le parcours auquel les modules seront rattachés. Un récapitulatif s'affiche à la fin de l'import."
+        }
+      ]
+    },
+    {
+      "id": "admin-calendar",
+      "title": "Calendrier",
+      "routes": [
+        "/admin/calendrier"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/calendrier\"]",
+              "message": "Vous êtes dans la section « Calendrier ». Planifiez les séances et consultez le calendrier de vos groupes."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "view",
+          "label": "Comment changer l'affichage du calendrier ?",
+          "steps": [
+            {
+              "target": "calendar-view-selector",
+              "message": "Choisissez l'affichage par jour, par semaine ou par mois."
+            }
+          ]
+        },
+        {
+          "id": "navigate",
+          "label": "Comment aller à une autre date ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Mois précédent\"], button[aria-label=\"Période précédente\"]",
+              "message": "Les flèches font défiler les périodes."
+            },
+            {
+              "selector": "button[aria-label=\"Revenir à la date d'aujourd'hui\"]",
+              "message": "Ce bouton revient à aujourd'hui."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-evaluations",
+      "title": "Évaluations",
+      "routes": [
+        "/admin/teacher/evaluations"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/teacher/evaluations\"]",
+              "message": "Vous êtes dans la section « Évaluations ». Corrigez les travaux remis par les apprenants et donnez vos retours pédagogiques."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "grade",
+          "label": "Comment corriger un devoir ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Ouvrir l’évaluation\"]",
+              "message": "Ouvrez l'évaluation pour lire le travail remis, le noter et donner votre retour."
+            }
+          ]
+        },
+        {
+          "id": "filter",
+          "label": "Comment distinguer les devoirs à corriger ?",
+          "steps": [
+            {
+              "selector": "[aria-label=\"État des devoirs\"]",
+              "message": "Basculez entre les devoirs à évaluer et ceux déjà notés."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un devoir ?",
+          "steps": [
+            {
+              "selector": "input[placeholder^=\"Rechercher une évaluation\"]",
+              "message": "Tapez le titre d'une évaluation ou le nom d'un étudiant."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-resources-list",
+      "title": "Ressources supplémentaires",
+      "routes": [
+        "/admin/resources"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/resources\"]",
+              "message": "Vous êtes dans la section « Ressources supplémentaires ». Ajoutez des ressources complémentaires à proposer aux apprenants."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Créez une ressource depuis ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer une ressource ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "« Créer une ressource » ouvre une fenêtre pour lui donner un titre, une description et des tags. Vous pourrez ensuite y ajouter des activités."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver une ressource ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Cherchez par titre, description, auteur ou tag."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-resource-form",
+      "title": "Édition d'une ressource",
+      "routes": [
+        "/admin/resources/add",
+        "/admin/resources/edit/:resourceId"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/resources\"]",
+              "message": "Vous êtes dans la section « Ressources supplémentaires ». Composez la ressource avec des activités que les apprenants consulteront librement."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Modifiez les détails de la ressource depuis ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "details",
+          "label": "Comment modifier les détails de la ressource ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "« Modifier les détails de la ressource » permet de changer son titre, sa description et ses tags."
+            }
+          ]
+        },
+        {
+          "id": "back",
+          "label": "Comment revenir à la liste ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main a[href=\"/admin/resources\"]",
+              "message": "Ce bouton ramène à la liste des ressources."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-roles",
+      "title": "Gestion des rôles",
+      "routes": [
+        "/admin/roles"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/roles\"]",
+              "message": "Vous êtes dans la section « Rôles ». Définissez les rôles et les permissions associées à chaque profil."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Créez un rôle depuis ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer un rôle ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "« Créer un rôle » ouvre le formulaire : nom, modèle de départ et droits."
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "label": "Comment modifier un rôle ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Modifier les détails du rôle\"]",
+              "message": "Ce bouton modifie le nom et les détails du rôle."
+            }
+          ]
+        },
+        {
+          "id": "duplicate",
+          "label": "Comment dupliquer un rôle ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Dupliquer le rôle\"]",
+              "message": "Dupliquer crée une copie du rôle, avec ses permissions, à adapter ensuite."
+            }
+          ]
+        },
+        {
+          "id": "reset",
+          "label": "Comment rétablir les permissions d'origine ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Réinitialiser les permissions\"]",
+              "message": "Ce bouton remet les permissions du rôle à leur valeur d'origine, après confirmation."
+            }
+          ]
+        },
+        {
+          "id": "users",
+          "label": "Comment voir les utilisateurs d'un rôle ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label^=\"Voir les utilisateurs associés\"]",
+              "message": "Ce bouton ouvre la liste des utilisateurs qui ont ce rôle."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un rôle ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le nom du rôle pour filtrer la liste."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-tags",
+      "title": "Liste des tags",
+      "routes": [
+        "/admin/tags"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/tags\"]",
+              "message": "Vous êtes dans la section « Tags ». Classez vos contenus avec des tags pour les retrouver plus vite."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Créez un tag depuis ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "create",
+          "label": "Comment créer un tag ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href$=\"?openModal=true\"]",
+              "message": "« Créer un nouveau tag » ouvre une fenêtre : saisissez un ou plusieurs tags, séparés par des virgules."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un tag ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le nom du tag pour filtrer la liste."
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "label": "Comment modifier ou supprimer un tag ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .data-table [data-tip=\"Modifier\"]",
+              "message": "Le crayon renomme le tag."
+            },
+            {
+              "selector": "#main-scroll-container .data-table [data-tip=\"Supprimer\"]",
+              "message": "La corbeille le supprime après confirmation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-mediatheque",
+      "title": "Médiathèque",
+      "routes": [
+        "/admin/mediatheque"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/mediatheque\"]",
+              "message": "Vous êtes dans la section « Médiathèque ». Retrouvez et réutilisez les images, vidéos et fichiers déjà importés."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "type",
+          "label": "Comment filtrer par type de média ?",
+          "steps": [
+            {
+              "selector": "[role=\"group\"][aria-label=\"Type de média\"]",
+              "message": "Choisissez images, vidéos ou fichiers pour restreindre la liste."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un média ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le nom du fichier."
+            },
+            {
+              "selector": "select[aria-label=\"Trier les médias\"]",
+              "message": "Triez par date d'ajout, nom ou taille."
+            }
+          ]
+        },
+        {
+          "id": "copy",
+          "label": "Comment copier le lien d'un média ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container [data-tip=\"Copier\"]",
+              "message": "Ce bouton copie l'adresse du média pour la coller dans un contenu."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-feedbacks",
+      "title": "Feedbacks des apprenants",
+      "routes": [
+        "/admin/feedbacks"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container h1",
+              "message": "Retrouvez ici les retours laissés par les apprenants sur les contenus. Survolez un commentaire pour le lire en entier."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-dashboard-ia",
+      "title": "Tableau de bord IA",
+      "routes": [
+        "/admin/dashboard-ia"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/dashboard-ia\"]",
+              "message": "Vous êtes dans la section « Tableau de bord IA ». Ce tableau de bord présente la consommation de l'IA par vos apprenants et l'analyse du décrochage par groupe."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "tokens",
+          "label": "Que sont les tokens consommés ?",
+          "answer": "Les tokens mesurent le volume de texte traité par l'IA, en questions et en réponses. Le tableau de bord les totalise, avec le détail du mois en cours."
+        }
+      ]
+    },
+    {
+      "id": "admin-dropout",
+      "title": "Analyse d'un groupe",
+      "routes": [
+        "/admin/dashboard-ia/group/:groupId"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/group\"]",
+              "message": "Vous êtes dans la section « Groupes ». Cette analyse IA repère les apprenants du groupe qui risquent de décrocher."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "student",
+          "label": "Comment voir le détail d'un apprenant ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Voir les détails et analyses de\"]",
+              "message": "Ce lien ouvre la fiche complète de l'apprenant."
+            }
+          ]
+        },
+        {
+          "id": "alert",
+          "label": "Comment désactiver une alerte ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container button[aria-label*=\"l’alerte pour\"]",
+              "message": "Ce bouton active ou désactive les alertes pour cet apprenant."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-instance",
+      "title": "Paramètres de l'instance",
+      "routes": [
+        "/admin/parametres-instance"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "target": "instance-logo",
+              "message": "Personnalisez ici l'identité de votre organisme : logo et apparence."
+            },
+            {
+              "target": "instance-save",
+              "message": "Enregistrez toutes vos modifications avec ce bouton."
+            }
+          ]
+        },
+        {
+          "id": "logo",
+          "label": "Comment changer le logo ?",
+          "steps": [
+            {
+              "target": "instance-logo",
+              "message": "Importez un nouveau logo ou supprimez l'actuel, puis réglez son fond d'affichage."
+            },
+            {
+              "target": "instance-save",
+              "message": "N'oubliez pas de sauvegarder."
+            }
+          ]
+        },
+        {
+          "id": "theme",
+          "label": "Comment changer le thème de la plateforme ?",
+          "steps": [
+            {
+              "selector": "button[aria-label^=\"Appliquer le thème\"]",
+              "message": "Choisissez un thème : il s'applique à l'ensemble de la plateforme."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-activate-superadmin",
+      "title": "Activer le super administrateur",
+      "routes": [
+        "/admin/activer-superadmin"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "input[aria-label=\"Clé d'activation root\"]",
+              "message": "Saisissez ici la clé d'activation fournie à l'installation pour obtenir les droits de super administrateur."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-dashboard",
+      "title": "Accueil apprenant",
+      "routes": [
+        "/student/dashboard"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/dashboard\"]",
+              "message": "Vous êtes dans la section « Accueil ». Votre tableau de bord : reprenez votre dernière leçon et suivez votre avancement."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            },
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Retrouvez ici l'accès à votre avancement."
+            }
+          ]
+        },
+        {
+          "id": "resume",
+          "label": "Comment reprendre ma dernière leçon ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label=\"Reprendre\"], #main-scroll-container a[aria-label=\"Démarrer\"]",
+              "message": "Ce bouton rouvre la leçon là où vous vous étiez arrêté, ou démarre la première."
+            }
+          ]
+        },
+        {
+          "id": "progress",
+          "label": "Comment suivre mon avancement ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href=\"/student/mon-avancement\"]",
+              "message": "« Mon avancement » détaille votre progression, votre journal et vos badges."
+            }
+          ]
+        },
+        {
+          "id": "timeline",
+          "label": "Où voir mon emploi du temps ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Mon emploi du temps\"]",
+              "message": "Vos prochaines séances sont listées ici."
+            }
+          ]
+        },
+        {
+          "id": "popular",
+          "label": "Quels sont les cours les plus consultés ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[aria-label^=\"Ouvrir le cours\"]",
+              "message": "Cette liste montre les cours les plus lus par les apprenants : cliquez pour y accéder."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-parcours-list",
+      "title": "Mes parcours",
+      "routes": [
+        "/student/parcours"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/parcours\"]",
+              "message": "Vous êtes dans la section « Parcours ». Retrouvez vos parcours, avec leurs modules, leurs cours et leurs leçons."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "open",
+          "label": "Comment ouvrir un parcours ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href^=\"/student/parcours/view/\"]",
+              "message": "Cliquez sur un parcours pour découvrir ses modules, ses objectifs et ses dates."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver un parcours ?",
+          "steps": [
+            {
+              "selector": "section[aria-label=\"Rechercher et filtrer la liste\"]",
+              "message": "Tapez le titre d'un parcours ou d'une formation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-parcours-view",
+      "title": "Aperçu du parcours",
+      "routes": [
+        "/student/parcours/view/:id"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/parcours\"]",
+              "message": "Vous êtes dans la section « Parcours ». Cet aperçu présente le parcours : ses objectifs, ses compétences et ses modules."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "module",
+          "label": "Comment accéder à un module ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container a[href^=\"/student/parcours/module/\"]",
+              "message": "Cliquez sur un module pour lire ses cours, leçons et activités."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin-module-content",
+      "title": "Contenu du module",
+      "routes": [
+        "/admin/parcours/module/:moduleId"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/admin/parcours\"]",
+              "message": "Vous êtes dans un module de la section « Parcours »."
+            },
+            {
+              "target": "module-sidebar",
+              "message": "La colonne de gauche liste les cours du module, avec leurs leçons et leurs activités."
+            },
+            {
+              "target": "module-content",
+              "message": "L'activité sélectionnée s'affiche ici."
+            }
+          ]
+        },
+        {
+          "id": "calendar",
+          "label": "Comment voir le calendrier du module ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Calendrier\"]",
+              "message": "Ce bouton affiche les séances planifiées du module."
+            }
+          ]
+        },
+        {
+          "id": "collapse",
+          "label": "Comment réduire la liste des cours ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Tout réduire\"]",
+              "message": "Ce bouton replie tous les cours de la colonne de gauche."
+            }
+          ]
+        },
+        {
+          "id": "add-course",
+          "label": "Comment ajouter un cours ?",
+          "steps": [
+            {
+              "target": "module-add-course",
+              "message": "« Ajouter un cours » demande un titre puis crée le cours. L'icône voisine importe des cours depuis Moodle."
+            }
+          ]
+        },
+        {
+          "id": "add-lesson",
+          "label": "Comment créer une leçon ?",
+          "steps": [
+            {
+              "selector": "[data-tip=\"Créer une leçon\"]",
+              "message": "Ouvrez un cours puis cliquez sur ce « + » pour créer une leçon dans ce cours."
+            }
+          ]
+        },
+        {
+          "id": "add-activity",
+          "label": "Comment ajouter une activité ?",
+          "steps": [
+            {
+              "target": "module-add-activity",
+              "message": "Ouvrez une leçon puis cliquez sur « Ajouter une activité » : texte, vidéo, quiz ou autre contenu pédagogique."
+            }
+          ]
+        },
+        {
+          "id": "publish-all",
+          "label": "Comment publier tout le contenu ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Tout publier\"]",
+              "message": "Ce bouton publie en une fois les cours prêts à l'être."
+            }
+          ]
+        },
+        {
+          "id": "visibility",
+          "label": "Comment masquer un cours aux apprenants ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Rendre tous les cours invisibles\"], button[aria-label=\"Rendre tous les cours visibles\"]",
+              "message": "Ce bouton rend tous les cours visibles ou invisibles d'un coup ; chaque cours a aussi son propre réglage."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-module-content",
+      "title": "Contenu du module",
+      "routes": [
+        "/student/parcours/module/:moduleId"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/parcours\"]",
+              "message": "Vous êtes dans un module de la section « Parcours »."
+            },
+            {
+              "target": "module-sidebar",
+              "message": "La colonne de gauche liste les cours du module, avec leurs leçons et leurs activités. Votre progression s'y affiche."
+            },
+            {
+              "target": "module-content",
+              "message": "L'activité sélectionnée s'affiche ici."
+            }
+          ]
+        },
+        {
+          "id": "calendar",
+          "label": "Comment voir le calendrier du module ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Calendrier\"]",
+              "message": "Ce bouton affiche les séances planifiées du module."
+            }
+          ]
+        },
+        {
+          "id": "collapse",
+          "label": "Comment réduire la liste des cours ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Tout réduire\"]",
+              "message": "Ce bouton replie tous les cours de la colonne de gauche."
+            }
+          ]
+        },
+        {
+          "id": "achievements",
+          "label": "Comment voir mes réussites ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Mes réussites\"]",
+              "message": "Ce bouton affiche les badges et réussites gagnés dans ce module."
+            }
+          ]
+        },
+        {
+          "id": "progress",
+          "label": "Comment suivre ma progression dans le module ?",
+          "steps": [
+            {
+              "target": "module-sidebar",
+              "message": "Le cercle de progression indique la part du module que vous avez terminée. Chaque activité lue s'ajoute à votre avancement."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-resources-list",
+      "title": "Ressources supplémentaires",
+      "routes": [
+        "/student/ressources"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/ressources\"]",
+              "message": "Vous êtes dans la section « Ressources supplémentaires ». Accédez aux ressources complémentaires proposées pour vos formations."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver une ressource ?",
+          "steps": [
+            {
+              "selector": "input[placeholder^=\"Rechercher une ressource\"]",
+              "message": "Tapez un titre, un auteur ou un tag."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-resource-details",
+      "title": "Détail d'une ressource",
+      "routes": [
+        "/student/ressources/details/:resourceId"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/ressources\"]",
+              "message": "Vous êtes dans la section « Ressources supplémentaires ». Cette ressource regroupe des activités à consulter librement."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "back",
+          "label": "Comment revenir à la liste ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main a[href=\"/student/ressources\"]",
+              "message": "Ce bouton ramène à la liste des ressources."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-calendar",
+      "title": "Calendrier",
+      "routes": [
+        "/student/calendrier"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/calendrier\"]",
+              "message": "Vous êtes dans la section « Calendrier ». Consultez vos prochaines séances."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "view",
+          "label": "Comment changer l'affichage du calendrier ?",
+          "steps": [
+            {
+              "target": "calendar-view-selector",
+              "message": "Choisissez l'affichage par jour, par semaine ou par mois."
+            }
+          ]
+        },
+        {
+          "id": "navigate",
+          "label": "Comment aller à une autre date ?",
+          "steps": [
+            {
+              "selector": "button[aria-label=\"Mois précédent\"], button[aria-label=\"Période précédente\"]",
+              "message": "Les flèches font défiler les périodes."
+            },
+            {
+              "selector": "button[aria-label=\"Revenir à la date d'aujourd'hui\"]",
+              "message": "Ce bouton revient à aujourd'hui."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-assignments",
+      "title": "Remises et évaluations",
+      "routes": [
+        "/student/remises-evaluations"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "aside a[href=\"/student/remises-evaluations\"]",
+              "message": "Vous êtes dans la section « Remises & évaluations ». Remettez vos travaux et consultez les retours de l'équipe pédagogique."
+            },
+            {
+              "selector": "#main-scroll-container .themed-page-header",
+              "message": "Le titre de la page rappelle où vous vous trouvez."
+            }
+          ]
+        },
+        {
+          "id": "period",
+          "label": "Comment distinguer les devoirs à venir et passés ?",
+          "steps": [
+            {
+              "selector": "[aria-label=\"Filtrer les évaluations par période\"]",
+              "message": "Basculez entre les évaluations à venir et celles déjà passées."
+            }
+          ]
+        },
+        {
+          "id": "search",
+          "label": "Comment retrouver une évaluation ?",
+          "steps": [
+            {
+              "selector": "input[placeholder^=\"Rechercher une évaluation\"]",
+              "message": "Tapez le titre d'une évaluation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-profile",
+      "title": "Mon profil",
+      "routes": [
+        "/student/profil"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "[aria-label=\"Filtrer par module\"]",
+              "message": "Votre profil d'apprentissage se présente module par module : choisissez un module pour voir votre niveau et vos progrès."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "student-progress",
+      "title": "Mon avancement",
+      "routes": [
+        "/student/mon-avancement"
+      ],
+      "questions": [
+        {
+          "id": "what",
+          "label": "À quoi sert cette page ?",
+          "steps": [
+            {
+              "selector": "section[aria-labelledby=\"module-progress-title\"]",
+              "message": "Votre progression est détaillée module par module."
+            },
+            {
+              "selector": "section[aria-label=\"Journal\"]",
+              "message": "Le journal retrace vos accomplissements, cours par cours."
+            },
+            {
+              "selector": "section[aria-label=\"Badges et compétences\"]",
+              "message": "Vos badges et compétences gagnés apparaissent ici."
+            }
+          ]
+        },
+        {
+          "id": "settings",
+          "label": "Comment régler mes préférences d'apprentissage ?",
+          "steps": [
+            {
+              "selector": "#main-scroll-container .header-actions-main > *",
+              "message": "Ce bouton ouvre vos réglages d'apprentissage : vous pouvez les modifier à tout moment."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

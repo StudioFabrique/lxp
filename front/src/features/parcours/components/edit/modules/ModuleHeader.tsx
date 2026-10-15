@@ -23,6 +23,7 @@ export default function ModuleHeader({
       <span className="flex flex-wrap items-center justify-end gap-2 md:gap-x-4">
         <button
           className="btn btn-primary"
+          data-chatbot-target="module-create"
           disabled={showForm || isSubmitting}
           onClick={onCreateNew}
         >
@@ -31,6 +32,7 @@ export default function ModuleHeader({
         </button>
         <button
           className="btn btn-primary btn-outline"
+          data-chatbot-target="module-add-existing"
           disabled={isSubmitting}
           onClick={onAddExisting}
         >

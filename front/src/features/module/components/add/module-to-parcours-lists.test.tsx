@@ -23,7 +23,7 @@ afterEach(() => {
 });
 
 describe("listes de sélection de ModuleToParcours", () => {
-  it("affiche toutes les ressources pédagogiques disponibles", () => {
+  it("affiche toute l'équipe pédagogique disponibles", () => {
     const contacts = Array.from({ length: 18 }, (_, index) => ({
       id: index + 1,
       idMdb: `contact-${index + 1}`,

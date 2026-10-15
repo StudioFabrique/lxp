@@ -61,7 +61,7 @@ export default async function removeContactFromModule(
     if (result.count === 0) {
       throw {
         statusCode: 404,
-        message: "Cette ressource pédagogique n'est pas affectée au module.",
+        message: "Ce membre de l'équipe pédagogique n'est pas affecté au module.",
       };
     }
 

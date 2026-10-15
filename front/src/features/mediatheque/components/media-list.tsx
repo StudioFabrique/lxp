@@ -1,4 +1,4 @@
-import { Eye, File, Image, ListTree, Music, Video } from "lucide-react";
+import { File, Image, ListTree, Music, Video } from "lucide-react";
 import { HierarchicalListRow } from "../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import { displaySize } from "../../../utils/helpers/size-unit-conversion";
 import type Media from "../interfaces/media";
@@ -51,20 +51,12 @@ export default function MediaList({
                 ? { src: getMediaUrl(media), alt: "" }
                 : undefined,
             icon: media.type === "image" ? undefined : mediaIcon(media.type),
+            onClick: () => onPreview(media),
             action: (
               <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  className="btn btn-square btn-sm h-10 min-h-10 w-10 btn-ghost tooltip tooltip-left"
-                  data-tip="Afficher un aperçu"
-                  aria-label={`Afficher un aperçu de ${media.name}`}
-                  onClick={() => onPreview(media)}
-                >
-                  <Eye className="size-[1.125rem]" />
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm h-10 min-h-10 gap-1.5 px-3 btn-ghost tooltip tooltip-left"
+                  className="btn btn-sm pointer-events-auto h-10 min-h-10 gap-1.5 px-3 btn-ghost tooltip tooltip-left"
                   data-tip="Voir les activités associées"
                   aria-label={`Voir les activités associées à ${media.name}`}
                   onClick={() => onShowActivities(media)}

@@ -90,6 +90,19 @@ afterEach(() => {
 });
 
 describe("ModuleContentToolbar sur mobile", () => {
+  it.each([false, true])("désactive la visibilité des cours en vue calendrier (visible : %s)", (visible) => {
+    mockViewport(true);
+    const onToggleCourseVisibility = vi.fn();
+    renderToolbar({ isCalendarView: true, areAllCoursesVisible: visible, onToggleCourseVisibility });
+    const label = visible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles";
+    const button = drawerButtons().find((candidate) => candidate.textContent?.trim() === label);
+
+    expect(button?.disabled).toBe(true);
+    act(() => button?.click());
+    expect(document.querySelector("dialog")).toBeNull();
+    expect(onToggleCourseVisibility).not.toHaveBeenCalled();
+  });
+
   it("retire la barre d'actions de la page et ne garde que la progression", () => {
     mockViewport(true);
     renderToolbar();

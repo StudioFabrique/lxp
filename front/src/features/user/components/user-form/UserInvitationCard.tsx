@@ -17,6 +17,7 @@ export default function UserInvitationCard({ sendEmail, onSetSendEmail, disabled
     <label
       htmlFor={id}
       data-testid="user-invitation"
+      data-chatbot-target="user-invitation"
       className={cn(
         "flex min-w-0 items-center gap-3 transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
         compact ? "rounded py-1" : "card flex-row border p-3",

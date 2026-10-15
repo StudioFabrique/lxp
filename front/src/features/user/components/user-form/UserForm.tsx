@@ -163,6 +163,7 @@ const UserForm = ({
           className="btn btn-primary normal-case"
           disabled={disabled}
           data-testid="user-save"
+          data-chatbot-target="user-save"
         >
           {isLoading ? (
             <span className="flex items-center gap-x-2">
@@ -177,7 +178,7 @@ const UserForm = ({
       {groupCreationContext?.(!editMode ? <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact /> : null)}
       <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-1 gap-5 @min-[40rem]:grid-cols-2 @min-[64rem]:grid-cols-3">
-          <div className="min-w-0" data-testid="user-informations">
+          <div className="min-w-0" data-testid="user-informations" data-chatbot-target="user-informations">
             <UserFormInformations
               lastname={lastname}
               lastnameError={lastnameError}
@@ -223,7 +224,7 @@ const UserForm = ({
                 <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact />
               </BoxWrapper>
             )}
-            <div className="min-w-0 flex-1" data-testid="user-role">
+            <div className="min-w-0 flex-1" data-testid="user-role" data-chatbot-target="user-role">
             <UserFormTypeUser
               roleId={roleId}
               onSetRoleId={setRoleId}

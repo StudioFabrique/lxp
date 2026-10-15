@@ -5,6 +5,7 @@ import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
 import Modal from "../../../../../components/UI/modal/modal";
+import { createPortal } from "react-dom";
 import {
   Dispatch,
   SetStateAction,
@@ -17,6 +18,8 @@ import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 
 type Props = {
   setModuleFormOpened: Dispatch<SetStateAction<boolean>>;
+  /** Emplacement à droite du titre de l'étape où afficher les actions (sinon, au-dessus de la grille). */
+  titleActionsTarget?: HTMLElement | null;
 };
 
 /**
@@ -33,7 +36,10 @@ type Props = {
  *
  * @returns JSX.Element - The complete module management interface
  */
-export default function ModuleComponent({ setModuleFormOpened }: Props) {
+export default function ModuleComponent({
+  setModuleFormOpened,
+  titleActionsTarget = null,
+}: Props) {
   const { user } = useContext(AuthContext);
   const {
     currentSkills,
@@ -119,7 +125,11 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
       {/* Main content area */}
       <div className="flex flex-col gap-y-4">
         {/* Header with action buttons */}
-        {isModuleListEmpty ? null : moduleHeader}
+        {isModuleListEmpty
+          ? null
+          : titleActionsTarget
+            ? createPortal(moduleHeader, titleActionsTarget)
+            : moduleHeader}
 
         {/* Module grid display */}
         {error && !parcours && !isLoading ? (

@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -10,7 +10,7 @@ import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useEffect, useState, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { Building2, LoaderCircle } from "lucide-react";
+import { Building2, LoaderCircle, UserCog } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import InstanceLogoControls from "../../../components/UI/instance-logo-controls";
@@ -20,12 +20,20 @@ import AuthPageWrapper from "../components/AuthPageWrapper";
 import { cn } from "../../../utils/cn";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
 import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
+import RoleLabelsFields from "../../role/components/role-labels/RoleLabelsFields";
+import {
+  DEFAULT_ROLE_LABELS,
+  formValuesToRoleLabels,
+  resolveRoleLabels,
+  roleLabelsToFormValues,
+} from "../../role/helpers/role-labels";
 import EmailTemplateSettings, {
   type EmailTemplateId,
 } from "../../profile/components/email-template-settings";
 
 const DEFAULT_NAME = "ANDRIA";
 const DEFAULT_LOGO_BACKGROUND = "#ffffff";
+const LAST_STEP = 3;
 
 export default function InstanceSetup() {
   const navigate = useNavigate();
@@ -44,6 +52,7 @@ export default function InstanceSetup() {
       color: DEFAULT_LOGO_BACKGROUND,
       emailTemplate: "minimal",
       logo: { file: null, url: null },
+      roleLabels: roleLabelsToFormValues(DEFAULT_ROLE_LABELS),
     },
   });
   const [name, setName] = useFormField(form, "name");
@@ -60,6 +69,7 @@ export default function InstanceSetup() {
     form,
     "color",
   );
+  const roleLabelValues = useWatch({ control: form.control, name: "roleLabels" });
   const [step, setStep] = useState(1);
   const initialized = useRef(false);
   const { reset } = form;
@@ -77,6 +87,7 @@ export default function InstanceSetup() {
       color: DEFAULT_LOGO_BACKGROUND,
       emailTemplate: settings.emailTemplate,
       logo: { file: null, url: null },
+      roleLabels: roleLabelsToFormValues(resolveRoleLabels(settings.roleLabels)),
     });
   }, [settings, reset, navigate]);
 
@@ -103,9 +114,20 @@ export default function InstanceSetup() {
     payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
     payload.append("color", values.color);
     payload.append("emailTemplate", values.emailTemplate);
+    // Les rangs 1 à 4 portent les libellés ; le rang 0 (root) n'est pas renommable.
+    payload.append(
+      "roleLabels",
+      JSON.stringify(formValuesToRoleLabels(values.roleLabels)),
+    );
     if (values.logo.file) payload.append("image", values.logo.file);
     await saveMutation.mutateAsync(payload).catch(() => undefined);
   }, showFormErrors);
+
+  // L'identité de l'organisme est validée avant d'aborder les rôles ; le
+  // schéma complet l'est de nouveau à l'enregistrement final.
+  const goToRoleLabels = async () => {
+    if (await form.trigger(["name", "website", "color", "logo"])) setStep(3);
+  };
 
   return (
     <motion.div
@@ -120,7 +142,7 @@ export default function InstanceSetup() {
       <OnboardingProgressPanel
         contentKey={String(step)}
         currentStep={step}
-        stepCount={2}
+        stepCount={LAST_STEP}
         progressLabel="Progression de la personnalisation"
         className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"
         animateProgressOnMount={step === 1}
@@ -137,12 +159,11 @@ export default function InstanceSetup() {
                 Continuer
               </button>
             </div>
-          ) : (
+          ) : step === 2 ? (
             <div className="mt-5 flex items-center justify-between gap-3 border-t border-base-300 pt-4">
               <button
                 type="button"
                 className="btn btn-ghost text-base normal-case"
-                disabled={isSaving}
                 onClick={() => setStep(1)}
               >
                 Précédent
@@ -150,6 +171,25 @@ export default function InstanceSetup() {
               <button
                 type="submit"
                 form="instance-setup-form"
+                disabled={!settings}
+                className="btn btn-primary text-base normal-case"
+              >
+                Continuer
+              </button>
+            </div>
+          ) : (
+            <div className="mt-5 flex items-center justify-between gap-3 border-t border-base-300 pt-4">
+              <button
+                type="button"
+                className="btn btn-ghost text-base normal-case"
+                disabled={isSaving}
+                onClick={() => setStep(2)}
+              >
+                Précédent
+              </button>
+              <button
+                type="submit"
+                form="instance-roles-form"
                 disabled={!settings || isSaving}
                 className="btn btn-primary rounded-lg text-base normal-case text-base-100"
               >
@@ -162,6 +202,27 @@ export default function InstanceSetup() {
       >
         {step === 1 ? (
           <ThemeSelectionStep />
+        ) : step === 3 ? (
+          <AuthPageWrapper
+            title="Nommez les rôles de votre espace"
+            titleAccessory={<UserCog className="mt-0.5 h-6 w-6 text-primary" />}
+            description="Choisissez les noms affichés pour chaque rôle dans la plateforme. Les valeurs par défaut conviennent à la plupart des organismes."
+            variant="setup"
+          >
+            <form
+              id="instance-roles-form"
+              className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-5"
+              noValidate
+              onSubmit={completeSetup}
+            >
+              <RoleLabelsFields
+                register={(field) => form.register(`roleLabels.${field}`)}
+                errors={form.formState.errors.roleLabels}
+                values={roleLabelValues}
+                disabled={!settings || isSaving}
+              />
+            </form>
+          </AuthPageWrapper>
         ) : (
           <AuthPageWrapper
             title="Personnalisez votre espace"
@@ -187,7 +248,10 @@ export default function InstanceSetup() {
               id="instance-setup-form"
               className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-5"
               noValidate
-              onSubmit={completeSetup}
+              onSubmit={(event) => {
+                event.preventDefault();
+                void goToRoleLabels();
+              }}
             >
               <label className="flex w-full flex-col gap-2 text-center">
                 <span className="text-sm font-semibold text-base-content">

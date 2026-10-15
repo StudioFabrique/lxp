@@ -80,33 +80,18 @@ const ParcoursImportModal = ({
   const content = (
     <>
       <div className="mt-6 flex flex-col gap-5">
-        <p className="text-sm text-base-content/70">
+        <p className="break-all text-sm text-base-content/70">
           Archive sélectionnée : {archive.name}
         </p>
-        <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-base-300 p-4">
-          <span>
-            <span className="block text-sm font-semibold">
-              Publier tous les cours
-            </span>
-            <span className="mt-1 block text-xs text-base-content/60">
-              Les cours importés seront immédiatement publiés.
-            </span>
-          </span>
-          <input
-            type="checkbox"
-            className="toggle toggle-primary"
-            checked={publishCourses}
-            onChange={(event) => setPublishCourses(event.currentTarget.checked)}
-          />
-        </label>
+
         <div>
-          <div className="mb-2 flex items-center justify-between gap-4">
+          <div className="mb-2 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <label className="text-sm font-semibold" htmlFor="import-formation">
               Formation de destination
             </label>
             <button
               type="button"
-              className="btn btn-sm btn-primary btn-soft"
+              className="btn btn-sm btn-primary btn-soft w-full sm:w-auto"
               aria-pressed={formationChoice === "create"}
               onClick={() => {
                 setShowAutomaticFormationOption(true);
@@ -119,7 +104,7 @@ const ParcoursImportModal = ({
           </div>
           <select
             id="import-formation"
-            className="select select-primary w-full border border-neutral/50 focus:outline-none"
+            className="mb-4 select select-primary w-full min-w-0 truncate border border-neutral/50 pr-10 focus:outline-none"
             value={formationChoice ?? ""}
             onChange={(event) => {
               if (event.currentTarget.value === "create") {
@@ -144,6 +129,24 @@ const ParcoursImportModal = ({
               </option>
             ))}
           </select>
+          <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-base-300 p-4">
+            <span>
+              <span className="block text-sm font-semibold">
+                Publier tous les cours
+              </span>
+              <span className="mt-1 block text-xs text-base-content/60">
+                Les cours importés seront immédiatement publiés.
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              className="toggle toggle-primary"
+              checked={publishCourses}
+              onChange={(event) =>
+                setPublishCourses(event.currentTarget.checked)
+              }
+            />
+          </label>
           {formationChoice === "create" ? (
             <p className="mt-2 text-xs text-base-content/60">
               Le nom, les informations et les tags de la formation seront repris
@@ -169,7 +172,9 @@ const ParcoursImportModal = ({
             onClick={handleImport}
             disabled={isImporting || formationChoice === undefined}
           >
-            {isImporting ? <LoaderCircle className="size-5 animate-spin" /> : null}
+            {isImporting ? (
+              <LoaderCircle className="size-5 animate-spin" />
+            ) : null}
             Importer le parcours
           </button>
         </div>

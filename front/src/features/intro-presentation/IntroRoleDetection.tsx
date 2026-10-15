@@ -5,6 +5,8 @@ import { INTRO_ROLES, type IntroRoleOption } from "./intro-role";
 
 type Props = {
   role: IntroRoleOption;
+  /** Rôles de la roue, nommés selon l'instance (même ordre que `INTRO_ROLES`). */
+  roles: readonly IntroRoleOption[];
   onDone: () => void;
 };
 
@@ -28,7 +30,7 @@ const ringDistance = (row: number, position: number): number =>
  * autour d'un halo flou inspiré de `CursorGlowCard` (aucun cadre), puis elle
  * s'arrête sur le rôle de l'utilisateur.
  */
-const IntroRoleDetection = ({ role, onDone }: Props) => {
+const IntroRoleDetection = ({ role, roles, onDone }: Props) => {
   const targetIndex = INTRO_ROLES.findIndex((item) => item.rank === role.rank);
   const [isMatched, setIsMatched] = useState(false);
   const rowRefs = useRef<Array<HTMLLIElement | null>>([]);
@@ -159,7 +161,7 @@ const IntroRoleDetection = ({ role, onDone }: Props) => {
         </div>
         <ul className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
           {Array.from({ length: RING_SIZE }, (_, row) => {
-            const item = INTRO_ROLES[row % INTRO_ROLES.length];
+            const item = roles[row % roles.length];
             const Icon = item.icon;
             return (
               <li

@@ -219,13 +219,19 @@ const ActivityHeader = ({
           cn(
             className,
             isSticky && "sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 bg-base-200 transition-all duration-300",
-            titleEditable && "items-start",
+            // Collé en haut, l'en-tête tient sur une ligne : tout se centre ; sinon le titre peut s'étendre sur plusieurs lignes.
+            titleEditable && !isSticky && "items-start",
           )
         }
       >
         <div className="flex gap-3 items-center min-w-0 flex-1">
           {activityType && (
-            <span className="w-6 shrink-0 self-start mt-1.5 text-primary">
+            <span
+              className={cn(
+                "w-6 shrink-0 text-primary",
+                isSticky ? "self-center" : "mt-1.5 self-start",
+              )}
+            >
               {activityIconType(activityType)}
             </span>
           )}

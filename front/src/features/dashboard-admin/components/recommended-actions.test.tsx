@@ -1,6 +1,5 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import RecommendedActions from "./recommended-actions";
@@ -35,48 +34,77 @@ const actions: RecommendedAction[] = [
 
 describe("RecommendedActions", () => {
   let root: Root | null = null;
+  let container: HTMLDivElement;
 
-  beforeEach(() => localStorage.clear());
+  const render = (props: Partial<Parameters<typeof RecommendedActions>[0]> = {}) => {
+    act(() => {
+      root = createRoot(container);
+      root.render(
+        <MemoryRouter>
+          <RecommendedActions userId="root-id" actions={actions} {...props} />
+        </MemoryRouter>,
+      );
+    });
+  };
+
+  const bellButton = () =>
+    container.querySelector<HTMLButtonElement>(
+      'button[aria-label^="Actions recommandées"]',
+    );
+
+  beforeEach(() => {
+    localStorage.clear();
+    container = document.createElement("div");
+    document.body.appendChild(container);
+  });
 
   afterEach(() => {
     if (root) act(() => root?.unmount());
     root = null;
+    container.remove();
     localStorage.clear();
   });
 
-  it("conserve l'ordre fourni pour les actions visibles", () => {
-    const markup = renderToStaticMarkup(
-      <MemoryRouter>
-        <RecommendedActions userId="root-id" actions={actions} />
-      </MemoryRouter>,
-    );
+  it("affiche un bouton de notification avec le nombre d'actions", () => {
+    render();
 
-    expect(markup.indexOf(`href="${actions[0].to}"`)).toBeLessThan(
-      markup.indexOf(`href="${actions[1].to}"`),
+    expect(bellButton()?.getAttribute("aria-label")).toBe(
+      "Actions recommandées, 3 à réaliser",
     );
-    expect(markup.indexOf(`href="${actions[1].to}"`)).toBeLessThan(
-      markup.indexOf(`href="${actions[2].to}"`),
-    );
+    expect(bellButton()?.textContent).toContain("3");
   });
 
-  it("masque durablement le bloc pour l'utilisateur courant", () => {
-    const container = document.createElement("div");
-    root = createRoot(container);
+  it("n'affiche rien pendant le chargement ou sans action", () => {
+    render({ isLoading: true });
+    expect(bellButton()).toBeNull();
 
-    act(() => {
-      root?.render(
-        <MemoryRouter>
-          <RecommendedActions userId="teacher-id" actions={actions} />
-        </MemoryRouter>,
-      );
-    });
+    act(() => root?.unmount());
+    render({ actions: [] });
+    expect(bellButton()).toBeNull();
+  });
 
-    const skipButton = container.querySelector<HTMLButtonElement>(
+  it("liste les actions dans l'ordre fourni dans le tiroir", () => {
+    render();
+    act(() => bellButton()?.click());
+
+    const links = Array.from(
+      document.body.querySelectorAll<HTMLAnchorElement>(
+        `#recommended-actions-drawer ~ .drawer-side ol a`,
+      ),
+    ).map((link) => link.getAttribute("href"));
+    expect(links).toEqual(actions.map((action) => action.to));
+  });
+
+  it("masque durablement le bouton pour l'utilisateur courant", () => {
+    render({ userId: "teacher-id" });
+    act(() => bellButton()?.click());
+
+    const skipButton = document.body.querySelector<HTMLButtonElement>(
       'button[aria-label="Masquer les actions recommandées"]',
     );
     act(() => skipButton?.click());
 
-    expect(container.textContent).toBe("");
+    expect(bellButton()).toBeNull();
     expect(
       localStorage.getItem("lxp:recommended-actions:hidden:teacher-id"),
     ).toBe("true");

@@ -4,7 +4,7 @@ import type { TransactionClient } from "../../utils/db.ts";
 
 /**
  * Retire des modules du parcours les formateurs qui viennent d'être retirés
- * de ses ressources pédagogiques globales.
+ * de son équipe pédagogique globale.
  *
  * Sans ce nettoyage, l'affectation résiduelle au module continue d'ouvrir le
  * parcours parent au formateur dans son dashboard et dans sa liste.

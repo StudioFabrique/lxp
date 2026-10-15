@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 // Node 26 expose un localStorage expérimental, vide sans l'option dédiée.
 // Il masque donc celui de JSDOM injecté par Vitest.
 const jsdomWindow = (
@@ -18,3 +20,20 @@ if (jsdomWindow) {
     value: jsdomWindow.localStorage,
   });
 }
+
+// Les composants lisent les libellés de rôles via une requête. Les tests
+// qui n'installent pas de QueryClient reçoivent les libellés par défaut ;
+// le hook réel est testé via `vi.importActual`.
+vi.mock("../features/role/hooks/useRoleLabels", async () => {
+  const { DEFAULT_ROLE_LABELS, getRoleLabelForRank, toInlineRoleLabel } =
+    await import("../features/role/helpers/role-labels");
+  return {
+    useRoleLabels: () => ({
+      labels: DEFAULT_ROLE_LABELS,
+      getRoleLabel: (rank: number, fallback?: string) =>
+        getRoleLabelForRank(DEFAULT_ROLE_LABELS, rank, fallback),
+      teamLabel: DEFAULT_ROLE_LABELS[2],
+      teamInlineLabel: toInlineRoleLabel(DEFAULT_ROLE_LABELS[2]),
+    }),
+  };
+});

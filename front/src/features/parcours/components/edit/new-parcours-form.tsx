@@ -112,7 +112,7 @@ const NewParcoursForm: FC<Props> = ({
             onChange={form.register("title").onChange}
             onBlur={form.register("title").onBlur}
             name="title"
-            placeholder={`Exemple: CDA - Promo ${new Date().getFullYear()}`}
+            placeholder={`Exemple: CDA - Promotion ${new Date().getFullYear()}`}
             disabled={!formationId}
           />
         </div>

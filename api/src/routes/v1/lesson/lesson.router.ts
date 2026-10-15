@@ -56,7 +56,6 @@ lessonRouter.get(
   "/tag/:tagId",
   checkPermissions("lesson"),
   getLessonsByTagValidator,
-  getLessonsToImportValidator,
   httpGetLessonsByTag
 );
 

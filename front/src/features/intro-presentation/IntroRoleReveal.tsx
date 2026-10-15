@@ -8,6 +8,7 @@ import IntroRoleDetection from "./IntroRoleDetection";
 import IntroStudentSpace from "./IntroStudentSpace";
 import IntroTeamSpace from "./IntroTeamSpace";
 import { findIntroRole, getIntroSpace } from "./intro-role";
+import { useIntroRoles } from "./useIntroRoles";
 
 type Props = {
   onDone: () => void;
@@ -27,7 +28,8 @@ const IntroRoleReveal = ({ onDone }: Props) => {
   const [step, setStep] = useState<Step>("detection");
   const { setSidebarExit } = useIntroPresentation();
   const rootRef = useRef<HTMLElement>(null);
-  const role = findIntroRole(user?.roles);
+  const introRoles = useIntroRoles();
+  const role = findIntroRole(user?.roles, introRoles);
 
   // Sans rôle connu, il n'y a rien à présenter.
   useEffect(() => {
@@ -65,6 +67,7 @@ const IntroRoleReveal = ({ onDone }: Props) => {
       {step === "detection" ? (
         <IntroRoleDetection
           role={role}
+          roles={introRoles}
           onDone={() => setStep("leaving")}
         />
       ) : null}

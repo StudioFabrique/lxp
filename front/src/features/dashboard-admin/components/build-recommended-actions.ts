@@ -3,6 +3,10 @@ import {
   recommendedActionIcons,
   type RecommendedAction,
 } from "./recommended-action-config";
+import {
+  DEFAULT_ROLE_LABELS,
+  type RoleLabels,
+} from "../../role/helpers/role-labels";
 
 type Options = {
   userRank: number;
@@ -11,6 +15,8 @@ type Options = {
   studentsCount?: number;
   groupsCount?: number;
   hasLogo?: boolean;
+  /** Libellés des rôles de l'instance ; les valeurs par défaut s'appliquent sans eux. */
+  roleLabels?: RoleLabels;
   parcours: FormationParcoursSummary[];
 };
 
@@ -22,6 +28,7 @@ export function buildRecommendedActions({
   studentsCount,
   groupsCount,
   hasLogo,
+  roleLabels = DEFAULT_ROLE_LABELS,
   parcours,
 }: Options): RecommendedAction[] {
   if (userRank <= 1) {
@@ -30,8 +37,8 @@ export function buildRecommendedActions({
         ? [
             {
               id: "create-admin",
-              title: "Créer un administrateur",
-              description: "Ajoutez un administrateur supplémentaire.",
+              title: `Créer un compte « ${roleLabels[1]} »`,
+              description: `Ajoutez un compte « ${roleLabels[1]} » supplémentaire.`,
               to: "/admin/user/add?roleRank=1",
               icon: recommendedActionIcons.createAdmin,
             },
@@ -41,8 +48,8 @@ export function buildRecommendedActions({
         ? [
             {
               id: "invite-teachers",
-              title: "Inviter l'équipe pédagogique",
-              description: "Créez le premier compte formateur.",
+              title: `Inviter les membres « ${roleLabels[2]} »`,
+              description: `Créez le premier compte « ${roleLabels[2]} ».`,
               to: "/admin/user/add?roleRank=2&invite=true",
               icon: recommendedActionIcons.inviteTeachers,
             },

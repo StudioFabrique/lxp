@@ -38,7 +38,7 @@ afterEach(() => {
 });
 
 describe("Liste de la médiathèque", () => {
-  it("affiche les informations dans une ligne et expose ses deux actions", () => {
+  it("affiche les informations dans une ligne et expose ses actions", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
@@ -59,13 +59,12 @@ describe("Liste de la médiathèque", () => {
     expect(container.textContent).not.toContain("2 utilisations");
 
     const previewButton = container.querySelector(
-      'button[aria-label="Afficher un aperçu de illustration.png"]',
+      'button[aria-label^="Ouvrir"]',
     );
     const activitiesButton = container.querySelector(
       'button[aria-label="Voir les activités associées à illustration.png"]',
     );
     expect(activitiesButton?.textContent).toBe("1");
-    expect(previewButton?.className).toContain("h-10");
     expect(activitiesButton?.className).toContain("h-10");
 
     act(() =>
@@ -79,6 +78,34 @@ describe("Liste de la médiathèque", () => {
 
     expect(onPreview).toHaveBeenCalledWith(media);
     expect(onShowActivities).toHaveBeenCalledWith(media);
+  });
+
+  it("ouvre l'aperçu depuis toute la ligne sans déclencher les autres actions", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    const onPreview = vi.fn();
+    const onShowActivities = vi.fn();
+
+    act(() => {
+      root?.render(
+        <MediaList
+          medias={[media]}
+          onPreview={onPreview}
+          onShowActivities={onShowActivities}
+        />,
+      );
+    });
+
+    const rowButton = container.querySelector(
+      'button[aria-label^="Ouvrir"]',
+    );
+    act(() =>
+      rowButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
+    );
+
+    expect(onPreview).toHaveBeenCalledWith(media);
+    expect(onShowActivities).not.toHaveBeenCalled();
   });
 
   it("produit un aperçu adapté au type de média", () => {

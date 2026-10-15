@@ -11,7 +11,7 @@ const associationModel = createModelMock(
 const { removeParcoursContactsFromModules } =
   await import("../remove-parcours-contacts-from-modules.ts");
 
-describe("retrait des ressources pédagogiques d'un parcours", () => {
+describe("retrait de l'équipe pédagogique d'un parcours", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

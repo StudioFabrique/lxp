@@ -225,7 +225,7 @@ const UserHome = () => {
       </div>
 
       {roles.length > 0 && currentRole ? (
-        <div className="mb-4 flex w-full flex-wrap items-center justify-center gap-2">
+        <div data-chatbot-target="user-role-filter" className="mb-4 flex w-full flex-wrap items-center justify-center gap-2">
           {roles.map((role) => (
             <button
               key={role._id}

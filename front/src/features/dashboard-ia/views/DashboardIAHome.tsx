@@ -16,8 +16,10 @@ import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import { groupAnalysisNameLines } from "../helpers/group-analysis-name";
+import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 
 const DashboardIAHome = () => {
+  const { labels } = useRoleLabels();
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -142,7 +144,7 @@ const DashboardIAHome = () => {
           </h2>
           <BoxWrapper>
             <div className="grid grid-cols-2 text-xs font-semibold text-primary">
-              <p>Apprenant</p>
+              <p>{labels[3]}</p>
               <p>Quantité</p>
             </div>
             {isLoading ? (

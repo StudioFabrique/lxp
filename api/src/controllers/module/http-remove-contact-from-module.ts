@@ -24,7 +24,7 @@ export default async function httpRemoveContactFromModule(
       statusCode: 200,
       data: {
         success: true,
-        message: "Ressource pédagogique retirée du module avec succès",
+        message: "Membre de l'équipe pédagogique retiré du module avec succès",
       },
     });
   } catch (error) {
@@ -33,7 +33,7 @@ export default async function httpRemoveContactFromModule(
       statusCode: apiError.statusCode ?? 500,
       message:
         apiError.message ??
-        "La ressource pédagogique n'a pas pu être retirée du module.",
+        "Le membre de l'équipe pédagogique n'a pas pu être retiré du module.",
     });
   }
 }

@@ -17,7 +17,9 @@ describe("buildIntroCards", () => {
       expect(card.rows).toHaveLength(INTRO_ROW_COUNT);
       expect(card.rows.every((row) => row.isPlaceholder)).toBe(true);
     });
-    expect(cards[cards.length - 1].rows.every((row) => !row.isPlaceholder)).toBe(true);
+    expect(
+      cards[cards.length - 1].rows.every((row) => !row.isPlaceholder),
+    ).toBe(true);
   });
 
   it("utilise le contenu réel et complète par des exemples", () => {
@@ -28,8 +30,14 @@ describe("buildIntroCards", () => {
       moduleTitles: ["Module A"],
     });
 
-    expect(cards[0]).toMatchObject({ title: "Mon école", isPlaceholder: false });
-    expect(cards[1]).toMatchObject({ title: "Formation A", isPlaceholder: false });
+    expect(cards[0]).toMatchObject({
+      title: "Mon école",
+      isPlaceholder: false,
+    });
+    expect(cards[1]).toMatchObject({
+      title: "Formation A",
+      isPlaceholder: false,
+    });
     expect(cards[2].title).toBe("Parcours A");
     expect(cards[1].rows.map((row) => row.title)).toEqual([
       "Parcours A",
@@ -48,7 +56,10 @@ describe("buildIntroCards", () => {
   it("nomme les activités par leur titre puis par leur type", () => {
     const cards = buildIntroCards({
       lessonTitles: ["Leçon A"],
-      activities: [{ title: "  Lire le cours ", type: "text" }, { type: "video" }],
+      activities: [
+        { title: "  Lire le cours ", type: "text" },
+        { type: "video" },
+      ],
     });
 
     expect(cards[5].rows.map((row) => row.title)).toEqual([
@@ -73,17 +84,23 @@ describe("buildIntroCards", () => {
       details: { "parcours.tags": ["  Web ", ""] },
     });
 
-    const tags = cards[2].details.find((detail) => detail.id === "parcours.tags");
+    const tags = cards[2].details.find(
+      (detail) => detail.id === "parcours.tags",
+    );
     expect(tags).toMatchObject({ isPlaceholder: false });
     expect(tags?.items.map((item) => item.title)).toEqual(["Web"]);
-    const groups = cards[2].details.find((detail) => detail.id === "parcours.groupes");
+    const groups = cards[2].details.find(
+      (detail) => detail.id === "parcours.groupes",
+    );
     expect(groups?.isPlaceholder).toBe(true);
     expect(groups?.items.every((item) => item.isPlaceholder)).toBe(true);
     // L'organisme n'a que son titre : pas de composants.
     expect(cards[0].details).toEqual([]);
     // Le dernier niveau n'a que ses types d'activités.
     expect(cards[6].details).toEqual([]);
-    cards.slice(1, -1).forEach((card) => expect(card.details.length).toBeGreaterThan(0));
+    cards
+      .slice(1, -1)
+      .forEach((card) => expect(card.details.length).toBeGreaterThan(0));
   });
 
   it("met la première lettre des titres réels en majuscule, sans toucher au reste", () => {
@@ -93,10 +110,10 @@ describe("buildIntroCards", () => {
     });
 
     expect(cards[1].title).toBe("Réceptionniste en hôtellerie");
-    expect(cards[2].title).toBe("Promo réceptionniste 2026 - 2027");
+    expect(cards[2].title).toBe("Promotion réceptionniste 2026 - 2027");
     // Les lignes d'une carte sont les éléments du niveau suivant.
     expect(cards[1].rows.map((row) => row.title).slice(0, 2)).toEqual([
-      "Promo réceptionniste 2026 - 2027",
+      "Promotion réceptionniste 2026 - 2027",
       "Autre",
     ]);
   });

@@ -1,6 +1,4 @@
 import { useContext } from "react";
-import { Settings } from "lucide-react";
-import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import { AuthContext } from "../../../store/AuthProvider";
 import InstanceGeneralSettings from "../components/instance-general-settings";
@@ -15,14 +13,7 @@ export default function InstanceSettings() {
 
   return (
     <PageWrapper>
-      <Header
-        title="Paramètres de l’instance"
-        description="Personnalisez l’identité et l’accueil de votre organisme."
-        icon={Settings}
-      />
-      <div className="flex w-full flex-col gap-4">
-        <InstanceGeneralSettings />
-      </div>
+      <InstanceGeneralSettings />
     </PageWrapper>
   );
 }

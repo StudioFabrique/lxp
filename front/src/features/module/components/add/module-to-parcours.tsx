@@ -5,6 +5,7 @@ import InheritedTextList from "../../../../components/shared/inherited-items/inh
 import NotSelectedContacts from "../../../../components/shared/inherited-items/not-selected-contacts";
 import NotSelectedSkills from "./not-selected-skills";
 import { CircleQuestionMark } from "lucide-react";
+import { useRoleLabels } from "../../../role/hooks/useRoleLabels";
 
 type Props = {
   contacts: Contact[];
@@ -42,14 +43,15 @@ export default function ModuleToParcours({
   skills,
   isDisabled = false,
 }: Props) {
+  const { teamLabel } = useRoleLabels();
   return (
     <div className="flex flex-col gap-y-8">
       {/* Composant qui permet de selectionner des contacts */}
       <InheritedItems
         capitalize
         drawerId="add-contacts"
-        drawerTitle="Ajouter des Ressources Pédagogiques"
-        title="Ressources Pédagogiques"
+        drawerTitle={`Ajouter des membres « ${teamLabel} »`}
+        title={teamLabel}
         loading={isLoading}
         initialList={contacts}
         selectedItems={currentContacts}
@@ -85,7 +87,7 @@ export default function ModuleToParcours({
       </InheritedItems>
       <div className="flex items-start gap-x-2 text-xs text-primary justify-between">
         <CircleQuestionMark className="text-primary" />
-        Vous pourrez toujours ajouter ou modifier les ressources pédagogiques et
+        Vous pourrez toujours ajouter ou modifier les membres « {teamLabel} » et
         les compétences plus tard.
       </div>
     </div>

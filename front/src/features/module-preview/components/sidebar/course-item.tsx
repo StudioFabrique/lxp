@@ -398,7 +398,12 @@ const CourseItem = ({
                     <PermissionGuard action="update" object="lesson">
                       <button
                         type="button"
-                        className={cn("btn btn-xs tooltip", isReorderingLessons ? "btn-secondary" : "btn-ghost text-primary-content")}
+                        className={cn(
+                          "btn btn-xs tooltip",
+                          isReorderingLessons
+                            ? "btn-secondary"
+                            : "btn-ghost border-none text-primary-content shadow-none hover:bg-primary-content/20",
+                        )}
                         data-tip={isReorderingLessons ? "Terminer" : "Réorganiser les leçons"}
                         aria-label={isReorderingLessons ? "Terminer la réorganisation des leçons" : "Réorganiser les leçons"}
                         aria-pressed={isReorderingLessons}
