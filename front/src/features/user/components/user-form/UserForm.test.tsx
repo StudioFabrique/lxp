@@ -120,7 +120,7 @@ describe("rôles du formulaire utilisateur", () => {
 
   it("place le suivi sous le header avec l'invitation et une seule sauvegarde", () => {
     renderForm(3, true);
-    const header = container.querySelector('[data-testid="user-save"]')?.parentElement;
+    const header = container.querySelector('[data-testid="user-save"]')?.closest('[data-testid="sticky-form-header"]');
     const context = container.querySelector('[data-testid="group-context"]');
     expect(header?.nextElementSibling).toBe(context);
     expect(container.querySelector("form")?.firstElementChild).toBe(header);

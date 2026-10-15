@@ -136,11 +136,23 @@
       #boot-skeleton .boot-bar-icon{width:32px;height:32px}
       /* Compte jamais vu par ce navigateur : aucune barre plutôt que la mauvaise. */
       .boot-intro-unknown #boot-skeleton aside{visibility:hidden}
+      /* Mobile : la navigation est une barre en haut de l'écran (menu, section, logo), pas une colonne. */
+      #boot-skeleton .boot-top{display:none}
+      @media(max-width:767px){
+        #boot-skeleton{flex-direction:column}
+        html:not(.boot-intro) #boot-skeleton aside{width:auto;height:48px;padding:8px;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px}
+        html:not(.boot-intro) #boot-skeleton aside>div{display:none}
+        html:not(.boot-intro) #boot-skeleton .boot-top{display:block}
+        #boot-skeleton .boot-top-menu{width:32px;height:32px;border-radius:8px;flex:none}
+        #boot-skeleton .boot-top-title{width:128px;height:16px}
+        #boot-skeleton .boot-top-logo{width:64px;height:20px;margin-left:auto;flex:none}
+        #boot-skeleton .boot-content{margin-top:16px}
+      }
       @media(min-width:1280px){#boot-skeleton .boot-content{width:80%}}
       @media(min-width:1536px){#boot-skeleton aside{width:320px;padding:16px}#boot-skeleton .boot-logo{width:50px;height:50px}#boot-skeleton .boot-nav{width:100%;justify-content:flex-start;padding:0 8px}#boot-skeleton .boot-label{display:block}}
     </style>
     <div id="boot-skeleton" role="status" aria-label="Chargement de l’application">
-      <aside aria-hidden="true"><i class="skeleton boot-bar boot-bar-logo"></i><i class="skeleton boot-bar boot-bar-theme"></i><i class="skeleton boot-bar boot-bar-icon"></i><div><div class="skeleton boot-logo"></div><div id="boot-nav-top"></div></div><div id="boot-nav-bottom"></div></aside>
+      <aside aria-hidden="true"><i class="skeleton boot-top boot-top-menu"></i><i class="skeleton boot-top boot-top-title"></i><i class="skeleton boot-top boot-top-logo"></i><i class="skeleton boot-bar boot-bar-logo"></i><i class="skeleton boot-bar boot-bar-theme"></i><i class="skeleton boot-bar boot-bar-icon"></i><div><div class="skeleton boot-logo"></div><div id="boot-nav-top"></div></div><div id="boot-nav-bottom"></div></aside>
       <div class="boot-veil" aria-hidden="true"><i></i></div>
       <main aria-hidden="true"><div class="boot-content">
         <div class="boot-header"><div class="skeleton boot-header-icon"></div><div><div class="skeleton boot-title"></div><div class="skeleton boot-subtitle"></div></div></div>

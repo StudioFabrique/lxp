@@ -82,8 +82,9 @@ const ObjectivesList = ({ readOnly = false, header }: ObjectivesListProps) => {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0 flex-1">{header}</div>
+      {/* Mobile : l'en-tête d'import et le bouton d'ajout s'empilent, chacun sur toute la largeur. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 sm:flex-1">{header}</div>
         <ButtonAdd
           label="Ajouter un objectif"
           outline={true}

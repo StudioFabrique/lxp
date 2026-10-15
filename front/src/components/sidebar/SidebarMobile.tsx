@@ -6,10 +6,12 @@ import SidebarActionsDrawer from "./SidebarActionsDrawer";
 import SidebarDrawer from "./SidebarDrawer";
 import SidebarLogo from "./SidebarLogo";
 import SidebarNavigationPanel from "./SidebarNavigationPanel";
+import SidebarOrganisationLogo from "./SidebarOrganisationLogo";
 import { getSidebarItemForPath } from "../../config/sidebarItems";
 import { cn } from "../../utils/cn";
 import { useHasChildElements } from "../../hooks/useHasChildElements";
 import { useMobileHeaderActions } from "../../hooks/useMobileHeaderActions";
+import { useInstanceBranding } from "../../hooks/useInstanceBranding";
 
 type Props = {
   interfaceType: string;
@@ -34,6 +36,7 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
   const navigation = headerActions?.navigation ?? null;
   const navigationOpen = Boolean(navigation) && headerActions?.isNavigationOpen === true;
   const hasActions = useHasChildElements(headerActions?.container ?? null);
+  const { logoUrl, backgroundColor, websiteUrl } = useInstanceBranding();
   const currentItem = getSidebarItemForPath(pathname);
   const CurrentIcon = currentItem?.icon;
 
@@ -50,6 +53,14 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
         >
           <Menu className="size-4" aria-hidden="true" />
         </button>
+        {logoUrl && (
+          <SidebarOrganisationLogo
+            logoUrl={logoUrl}
+            backgroundColor={backgroundColor}
+            websiteUrl={websiteUrl}
+            variant="bar"
+          />
+        )}
         <p className="flex min-w-0 flex-1 items-center gap-2 text-sm font-medium">
           {CurrentIcon && (
             <CurrentIcon className="size-4 shrink-0" aria-hidden="true" />

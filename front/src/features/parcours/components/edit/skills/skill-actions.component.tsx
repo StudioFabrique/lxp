@@ -14,7 +14,7 @@ const SkillActions: FC<Props> = ({ skill, onUpdateSkill, onDeleteSkill }) => {
   return (
     <>
       {skill.isBonus ? (
-        <div className="h-full flex flex-col justify-between items-center gap-y-1">
+        <div className="flex h-full flex-col items-center justify-center gap-2">
           <button
             className="btn btn-sm btn-circle rounded-md btn-primary"
             onClick={() => onUpdateSkill(skill.id!)}

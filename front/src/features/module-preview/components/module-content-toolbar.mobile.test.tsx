@@ -20,6 +20,10 @@ vi.mock("../../../store/VisualPreferences", () => ({
   useVisualPreferences: () => ({ animations: false }),
 }));
 
+vi.mock("../../../hooks/useInstanceBranding", () => ({
+  useInstanceBranding: () => ({ logoUrl: null, backgroundColor: undefined, websiteUrl: null }),
+}));
+
 const roots: Root[] = [];
 
 const mockViewport = (isMobile: boolean) => {

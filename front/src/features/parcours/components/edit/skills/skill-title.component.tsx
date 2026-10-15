@@ -6,8 +6,8 @@ type Props = {
 
 const SkillTitle: FC<Props> = ({ title }) => {
   return (
-    <div className="flex-1 h-16 rounded-lg bg-secondary/10 flex items-center p-2">
-      <p className="first-letter:uppercase">{title}</p>
+    <div className="flex min-h-16 min-w-0 flex-1 items-center rounded-lg bg-secondary/10 p-2">
+      <p className="min-w-0 wrap-break-word first-letter:uppercase">{title}</p>
     </div>
   );
 };

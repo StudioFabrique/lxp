@@ -256,9 +256,7 @@ export default function InstanceGeneralSettings() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid items-stretch gap-4 xl:grid-cols-2">
-        <BoxWrapper
-          className="h-auto gap-6 overflow-visible"
-        >
+        <BoxWrapper className="h-auto gap-6 overflow-visible">
           <form
             className="flex h-full flex-col gap-6"
             noValidate
@@ -345,7 +343,7 @@ export default function InstanceGeneralSettings() {
                         }
                       : undefined
                   }
-                  helpText="JPG ou PNG, 500 Ko maximum."
+                  helpText="JPG ou PNG, 500 Ko maximum"
                 />
               </div>
             </fieldset>

@@ -26,7 +26,7 @@ const ParcoursPreviewStudent = (props: ParcoursPreviewStudentProps) => {
           <span className="w-full flex justify-between items-center">
             <span className="flex flex-col gap-y-2">
               <h2 className="text-xl font-bold">Apprenants</h2>
-              <ul className="flex gap-x-2">
+              <ul className="flex flex-wrap gap-2">
                 {groups.map((item: Group) => (
                   <li
                     className="badge badge-outline badge-primary text-xs"

@@ -14,11 +14,11 @@ type Props = {
 const SkillItem: FC<Props> = ({ skill, onUpdateSkill, onDeleteSkill }) => {
   return (
     <>
-      <div className="w-full h-full flex items-center gap-x-2 gap-y-2">
+      <div className="flex h-full w-full items-stretch gap-x-2">
         <SkillBadge badge={skill.badge} />
         <SkillTitle title={skill.description} />
 
-        <div className="h-full flex gap-x-8 items-center">
+        <div className="flex h-full shrink-0 items-center gap-x-8">
           <SkillActions
             skill={skill}
             onUpdateSkill={onUpdateSkill}

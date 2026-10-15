@@ -91,7 +91,8 @@ const YearTimelineView = ({
       <div className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {/* --- TODAY INDICATOR OVERLAY --- */}
         {todayPosition !== null && (
-          <div className="absolute inset-0 pointer-events-none flex p-4 z-50">
+          // Mobile : le titre passe au-dessus de la barre, la colonne de repère n'existe plus et le repère du jour est masqué.
+          <div className="absolute inset-0 pointer-events-none hidden p-4 z-50 md:flex">
             <div className="w-48 gap-4 flex-shrink-0 mr-4"></div>
 
             {/* The Timeline Area */}
@@ -132,7 +133,7 @@ const YearTimelineView = ({
               <div
                 key={event.id}
                 className={cn(
-                  "relative flex items-center gap-4 group rounded-lg p-2 transition-all duration-200 hover:bg-primary/10 hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_45%,transparent)] focus-within:bg-primary/10",
+                  "relative flex flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-4 group rounded-lg p-2 transition-all duration-200 hover:bg-primary/10 hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_45%,transparent)] focus-within:bg-primary/10",
                   // Emplacement à remplir : bordure en pointillés, qui devient pleine et se soulève au survol.
                   canAssignDates &&
                     "cursor-pointer border border-dashed border-base-content/25 bg-base-100/30 p-3 hover:-translate-y-0.5 hover:border-solid hover:border-primary/60 hover:shadow-lg",
@@ -152,7 +153,7 @@ const YearTimelineView = ({
                         )
                   }
                   className={cn(
-                    "w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left",
+                    "w-full md:w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left",
                     // Étend la zone cliquable à toute la ligne.
                     canAssignDates && "after:absolute after:inset-0 after:rounded-lg after:content-['']",
                   )}
@@ -176,7 +177,7 @@ const YearTimelineView = ({
                     className={
                       cn(event.startDate && event.endDate
                         ? "min-w-0"
-                        : "max-w-[15vw]")
+                        : "md:max-w-[15vw]")
                     }
                   >
                     <div

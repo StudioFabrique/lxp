@@ -1,7 +1,8 @@
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { avatarImageMaxSize } from "../../config/images-sizes";
 import ColorPicker from "./color-picker";
+import InstanceLogoAdvice from "./instance-logo-advice";
 import ImageFileUpload, {
   type TemporaryImage,
 } from "./image-file-upload/image-file-upload";
@@ -28,6 +29,7 @@ export default function InstanceLogoControls({
   helpText,
 }: Props) {
   const [hasPreview, setHasPreview] = useState(false);
+  const adviceId = useId();
 
   return (
     <div className="w-full min-w-0 max-w-sm text-center">
@@ -42,7 +44,11 @@ export default function InstanceLogoControls({
         </span>
       </div>
 
-      <div className="flex items-end justify-center gap-2">
+      <div
+        className="flex items-end justify-center gap-2"
+        role="group"
+        aria-describedby={adviceId}
+      >
         <div className="relative w-full min-w-0 max-w-72">
           <ImageFileUpload
             temporaryImage={temporaryImage}
@@ -87,9 +93,9 @@ export default function InstanceLogoControls({
         )}
       </div>
 
-      <p className="mt-2 text-center text-xs text-base-content/60">
-        {helpText}
-      </p>
+      <div className="mx-auto mt-2 w-fit">
+        <InstanceLogoAdvice id={adviceId} formatHint={helpText} />
+      </div>
     </div>
   );
 }

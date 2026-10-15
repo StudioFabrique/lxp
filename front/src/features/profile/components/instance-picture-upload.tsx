@@ -4,6 +4,7 @@ import ImageFileUpload from "../../../components/UI/image-file-upload/image-file
 import { useCallback, useEffect, useRef, useState } from "react";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
 import ColorPicker from "../../../components/UI/color-picker";
+import InstanceLogoAdvice from "../../../components/UI/instance-logo-advice";
 import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
@@ -121,9 +122,7 @@ const InstancePictureUpload = () => {
   };
 
   return (
-    <BoxWrapper
-      className="h-auto gap-6 overflow-visible"
-    >
+    <BoxWrapper className="h-auto gap-6 overflow-visible">
       <div>
         <h2 className="text-lg font-bold">Logo et apparence</h2>
         <p className="text-sm text-base-content/70">
@@ -147,8 +146,11 @@ const InstancePictureUpload = () => {
             </ImageFileUpload>
           </div>
           <p className="mt-2 text-xs text-base-content/60">
-            JPG ou PNG. Cliquez sur l’aperçu pour remplacer le logo.
+            Cliquez sur l’aperçu pour remplacer le logo.
           </p>
+          <div className="mt-1">
+            <InstanceLogoAdvice formatHint="JPG ou PNG, 500 Ko maximum" />
+          </div>
         </div>
 
         <div className="flex min-h-32 flex-col">
@@ -162,7 +164,10 @@ const InstancePictureUpload = () => {
 
           {isSaving && (
             <p className="mt-3 flex items-center gap-2 text-xs text-base-content/60">
-              <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+              <LoaderCircle
+                className="h-3.5 w-3.5 animate-spin"
+                aria-hidden="true"
+              />
               Enregistrement en cours…
             </p>
           )}
