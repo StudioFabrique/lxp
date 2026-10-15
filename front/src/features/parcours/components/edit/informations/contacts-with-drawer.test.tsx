@@ -28,7 +28,7 @@ const contact = {
   role: "formatrice",
 };
 
-describe("Affectation des ressources pédagogiques aux modules", () => {
+describe("Affectation de l'équipe pédagogique aux modules", () => {
   let container: HTMLDivElement;
   let root: Root;
 
@@ -101,7 +101,7 @@ describe("Affectation des ressources pédagogiques aux modules", () => {
     await renderWithModules([{ id: 10, contacts: [] }], true);
 
     expect(container.querySelector('[role="status"]')?.textContent).toContain(
-      "Enregistrement des ressources pédagogiques en cours",
+      "Enregistrement de l'équipe pédagogique en cours",
     );
   });
 

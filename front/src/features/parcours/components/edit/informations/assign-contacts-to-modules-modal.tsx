@@ -77,7 +77,7 @@ export default function AssignContactsToModulesModal({
         </p>
         {assignableModules.length === 0 ? (
           <p className="rounded-box bg-base-200 p-5 text-sm text-base-content/65">
-            Cette ressource pédagogique est déjà affectée à tous les modules.
+            Ce membre de l'équipe pédagogique est déjà affecté à tous les modules.
           </p>
         ) : (
           <>

@@ -16,8 +16,8 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
   return (
     <InheritedItems
       drawerId="add-contacts"
-      drawerTitle="Ajouter des ressources pédagogiques"
-      title="Ressources pédagogiques"
+      drawerTitle="Ajouter des membres à l'équipe pédagogique"
+      title="Équipe pédagogique"
       loading={props.loading}
       initialList={props.initialList}
       selectedItems={props.currentItems}

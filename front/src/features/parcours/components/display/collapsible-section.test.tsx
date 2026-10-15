@@ -46,7 +46,7 @@ describe("CollapsibleSection", () => {
     await act(async () => {
       root.render(
         <CollapsibleSection
-          title="Ressources pédagogiques"
+          title="Équipe pédagogique"
           preview={<span>Aperçu des ressources</span>}
           defaultOpen
         >
@@ -73,7 +73,7 @@ describe("CollapsibleSection", () => {
             <p>Tous les tags</p>
           </CollapsibleSection>
           <CollapsibleSection
-            title="Ressources pédagogiques"
+            title="Équipe pédagogique"
             preview={<span>Aperçu des ressources</span>}
             open={open}
             onOpenChange={setOpen}

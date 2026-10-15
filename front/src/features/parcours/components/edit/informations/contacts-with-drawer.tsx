@@ -50,7 +50,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           capitalize
           drawerId="add-contacts"
           drawerTitle="Ajouter des Contacts"
-          title="Ressources Pédagogiques"
+          title="Équipe Pédagogique"
           loading={isSaving}
           initialList={availableContacts}
           selectedItems={currentContacts}
@@ -84,7 +84,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
       ) : null}
       {isSaving && (
         <p className="mt-2 text-sm text-base-content/70" role="status">
-          Enregistrement des ressources pédagogiques en cours…
+          Enregistrement de l'équipe pédagogique en cours…
         </p>
       )}
     </>

@@ -2,6 +2,7 @@ import { LoaderCircle, Save } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../../../utils/cn";
+import { useChatbotDockSnapshot } from "../../../features/chatbot/chatbot-dock-store";
 
 const FLOATING_SIZE = 32;
 const BUTTON_TRANSITION = {
@@ -17,6 +18,9 @@ type SaveButtonProps = {
 };
 
 const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
+  // Mobile : la barre du bas du module (et l'assistant virtuel, au même niveau) occupe le bas de l'écran ;
+  // le bouton flottant se colle au-dessus au lieu de passer dessous.
+  const { hasBottomBar } = useChatbotDockSnapshot();
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(true);
   const [naturalWidth, setNaturalWidth] = useState<number>();
   const [canAnimate, setCanAnimate] = useState(false);
@@ -100,7 +104,11 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   return (
     <>
       <div
-        className={cn("relative z-30 mt-4 h-8 w-full", isAtNaturalPosition ? "" : "sticky bottom-4")}
+        className={cn(
+          "relative z-30 mt-4 h-8 w-full",
+          !isAtNaturalPosition &&
+            (hasBottomBar ? "sticky bottom-4 max-md:bottom-26" : "sticky bottom-4"),
+        )}
         data-floating={isAtNaturalPosition ? "false" : "true"}
       >
         <motion.div

@@ -62,7 +62,7 @@ export default function AssignModuleContactsModal({
           <div className="flex justify-center rounded-box bg-base-200 p-5">
             <Link to="?step=1" className="btn btn-primary btn-outline">
               <Plus className="size-4" aria-hidden="true" />
-              Ajouter une ressource pédagogique
+              Ajouter un membre de l'équipe pédagogique
             </Link>
           </div>
         ) : (

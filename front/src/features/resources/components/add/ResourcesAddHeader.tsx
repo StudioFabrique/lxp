@@ -8,7 +8,7 @@ export default function ResourcesAddHeader() {
       {/* Main header component with title and description */}
       <Header
         title="Gestion des ressources supplémentaires"
-        description="Mettre à jour une ressource pédagogique supplémentaire"
+        description="Mettre à jour un membre de l'équipe pédagogique supplémentaire"
       >
         {/* Create new lesson button that navigates to creation page */}
         <Link className="btn btn-outline btn-primary" to="..">

@@ -213,7 +213,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           {canCreateTeacher ? (
             <RightSideDrawer
               id="new-contact"
-              title="Ajouter une ressource pédagogique"
+              title="Ajouter un membre de l'équipe pédagogique"
               visible={false}
             >
               <UserQuickCreate
@@ -237,7 +237,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
               </button>
               <RightSideDrawer
                 id="new-contact"
-                title="Ajouter une ressource pédagogique"
+                title="Ajouter un membre de l'équipe pédagogique"
                 visible={false}
               >
                 <UserQuickCreate

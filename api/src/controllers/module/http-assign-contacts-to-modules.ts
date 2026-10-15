@@ -23,7 +23,7 @@ export default async function httpAssignContactsToModules(
       statusCode: 200,
       data: {
         success: true,
-        message: "Ressources pédagogiques affectées avec succès",
+        message: "Équipe pédagogique affectée avec succès",
         assignmentsCreated: result.count,
       },
     });
@@ -33,7 +33,7 @@ export default async function httpAssignContactsToModules(
       statusCode: apiError.statusCode ?? 500,
       message:
         apiError.message ??
-        "Les ressources pédagogiques n'ont pas pu être affectées.",
+        "Les membres de l'équipe pédagogique n'ont pas pu être affectés.",
     });
   }
 }

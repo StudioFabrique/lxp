@@ -75,7 +75,7 @@ export default function MobileModuleBottomBar({
       </button>
       <div
         ref={onNavigationSlotChange}
-        className={cn("flex items-center gap-2", reduced && "hidden")}
+        className={cn("flex min-w-0 flex-1 items-center gap-2", reduced && "hidden")}
       />
     </div>
   );

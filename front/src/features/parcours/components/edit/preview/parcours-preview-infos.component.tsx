@@ -66,7 +66,7 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
           {/* Colonne #2 */}
           <article className="flex flex-col gap-y-8">
             <BoxWrapper>
-              <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
+              <h2 className="text-xl font-bold">Équipe pédagogique</h2>
               <ContactsList contactsList={contacts} />
             </BoxWrapper>
             {props.isTeacher && (

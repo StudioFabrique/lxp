@@ -48,7 +48,7 @@ export const getMissingModuleRequirements = ({
 
   if (duration === undefined) missing.push("Durée non renseignée");
   if (contacts === undefined || contacts.length === 0) {
-    missing.push("Aucune ressource pédagogique affectée");
+    missing.push("Aucun membre de l'équipe pédagogique affecté");
   }
   if (skills === undefined || skills.length === 0) {
     missing.push("Aucune compétence ajoutée");

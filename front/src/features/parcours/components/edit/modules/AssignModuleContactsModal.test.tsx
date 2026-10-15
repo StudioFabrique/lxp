@@ -35,7 +35,7 @@ describe("AssignModuleContactsModal", () => {
   it("propose d'ajouter une ressource, vers l'étape Informations, quand il n'y en a aucune à affecter", () => {
     const markup = renderModal([]);
 
-    expect(markup).toContain("Ajouter une ressource pédagogique");
+    expect(markup).toContain("Ajouter un membre de l&#x27;équipe pédagogique");
     expect(markup).toContain('href="/admin/parcours/edit/12?step=1"');
     expect(markup).not.toContain("déjà affectées");
   });
@@ -48,6 +48,6 @@ describe("AssignModuleContactsModal", () => {
     ]);
 
     expect(markup).toContain('type="checkbox"');
-    expect(markup).not.toContain("Ajouter une ressource pédagogique");
+    expect(markup).not.toContain("Ajouter un membre de l&#x27;équipe pédagogique");
   });
 });

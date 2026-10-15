@@ -32,7 +32,7 @@ function userRoleRank(userRoles: IRole[]): number {
  *
  * `null` signifie « aucune restriction » : c'est le cas des administrateurs.
  * Les formateurs sont bornés aux parcours auxquels ils sont directement
- * affectés comme ressources pédagogiques. Une affectation orpheline à un
+ * affectés à l'équipe pédagogique. Une affectation orpheline à un
  * module ou à un cours ne doit jamais rendre son parcours parent visible.
  */
 export async function resolveAccessScope(auth: {

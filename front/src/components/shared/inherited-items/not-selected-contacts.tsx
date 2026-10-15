@@ -118,7 +118,9 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           </div>
         </>
       ) : (
-        <p>Toutes les ressources pédagogiques ont déja été ajoutées</p>
+        <p>
+          Tous les membres de l'équipe pédagogique ont déjà été ajoutés
+        </p>
       )}
     </>
   );

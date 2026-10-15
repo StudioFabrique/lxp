@@ -48,8 +48,8 @@ export default function ModuleToParcours({
       <InheritedItems
         capitalize
         drawerId="add-contacts"
-        drawerTitle="Ajouter des Ressources Pédagogiques"
-        title="Ressources Pédagogiques"
+        drawerTitle="Ajouter des membres à l'équipe pédagogique"
+        title="Équipe Pédagogique"
         loading={isLoading}
         initialList={contacts}
         selectedItems={currentContacts}
@@ -85,8 +85,8 @@ export default function ModuleToParcours({
       </InheritedItems>
       <div className="flex items-start gap-x-2 text-xs text-primary justify-between">
         <CircleQuestionMark className="text-primary" />
-        Vous pourrez toujours ajouter ou modifier les ressources pédagogiques et
-        les compétences plus tard.
+        Vous pourrez toujours ajouter ou modifier l'équipe pédagogique et les
+        compétences plus tard.
       </div>
     </div>
   );

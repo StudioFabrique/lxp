@@ -67,9 +67,9 @@ describe("ParcoursPreviewModules", () => {
     expect(markup).toContain("Ada Lovelace");
     expect(markup).toContain("skill-badge");
     expect(markup).toContain("Compétence illustrée");
-    expect(markup).not.toContain("Affecter des ressources pédagogiques");
+    expect(markup).not.toContain("Affecter l&#x27;équipe pédagogique");
     expect(markup).not.toContain("Ajouter des compétences");
-    expect(markup).not.toContain("Retirer la ressource pédagogique");
+    expect(markup).not.toContain("Retirer le membre de l&#x27;équipe pédagogique");
     expect(markup).not.toContain("Retirer la compétence");
     expect(markup).toContain("?step=4&amp;moduleId=7");
   });

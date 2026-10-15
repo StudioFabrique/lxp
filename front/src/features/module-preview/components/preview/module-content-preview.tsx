@@ -86,6 +86,15 @@ const ModuleContentPreview = ({
             onClick: smartQuizState.handleCompleteLesson,
           };
 
+  const lessonActivities = selectedLesson?.activities ?? [];
+  const selectedActivityIndex = selectedActivity
+    ? lessonActivities.findIndex((activity) => activity.id === selectedActivity.id)
+    : -1;
+  const mobileActivityPosition =
+    selectedActivityIndex >= 0
+      ? { current: selectedActivityIndex + 1, total: lessonActivities.length }
+      : null;
+
   useLayoutEffect(() => {
     const content = contentRef.current;
     if (isActivityContentLoading || mode !== "read" || !content) return;
@@ -155,6 +164,7 @@ const ModuleContentPreview = ({
         createPortal(
           <MobileActivityNavigation
             isFirstActivitySelected={computed.isFirstActivitySelected}
+            position={mobileActivityPosition}
             next={mobileNext}
             onPreviousActivity={handlePreviousActivity}
           />,

@@ -42,6 +42,13 @@ const AdminDashboard = () => {
         containerClassname="z-20"
         showTitleInTopBar
       >
+        {user ? (
+          <RecommendedActions
+            userId={user._id}
+            actions={recommendedActions}
+            isLoading={areRecommendationsLoading}
+          />
+        ) : null}
         {isTeacher && (
           <QuickActions
             onCreateFormation={() => openCreateModal("createFormation")}
@@ -52,13 +59,6 @@ const AdminDashboard = () => {
 
       {/* --- Contenu Principal --- */}
       <section className="flex w-full flex-col gap-10">
-        {user ? (
-          <RecommendedActions
-            userId={user._id}
-            actions={recommendedActions}
-            isLoading={areRecommendationsLoading}
-          />
-        ) : null}
         <LastParcours
           parcours={parcours}
           isLoading={isParcoursLoading}

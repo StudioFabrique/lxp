@@ -8,7 +8,7 @@ interface ContactListProps {
 
 const ContactsList = (props: ContactListProps) => {
   if (props.contactsList.length === 0) {
-    return <SubWrapper>Aucune ressource pédagogique renseignée</SubWrapper>;
+    return <SubWrapper>Aucun membre de l'équipe pédagogique renseigné</SubWrapper>;
   }
 
   return (

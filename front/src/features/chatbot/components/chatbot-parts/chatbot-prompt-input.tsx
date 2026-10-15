@@ -46,7 +46,7 @@ export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disa
       >
         {historyIcon}
       </button>
-      <div className={cn("flex items-center gap-2 rounded-full border bg-base-100 py-3 pl-6 pr-3 shadow-md max-md:py-1.5 max-md:pl-4 max-md:pr-1.5 focus-within:border-primary", error ? "border-error" : "border-base-300", disabled && "opacity-60")}>
+      <div className={cn("flex items-center gap-2 rounded-full border bg-base-100 py-3 pl-6 pr-3 shadow-md max-md:py-1.5 max-md:pl-4 max-md:pr-1.5", error ? "border-error focus-within:border-error" : "border-base-300 focus-within:border-primary", disabled && "opacity-60")}>
         <label htmlFor={inputId} className="sr-only">Poser une question à l’assistant virtuel</label>
         <input
           id={inputId}
@@ -74,7 +74,8 @@ export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disa
           <Send className="size-4" />
         </button>
       </div>
-      {error && <p id={errorId} role="alert" className="px-3 text-xs text-error">{error}</p>}
+      {/* Erreur signalée par la bordure du champ ; le message reste lu par les lecteurs d'écran. */}
+      {error && <p id={errorId} role="alert" className="sr-only">{error}</p>}
     </form>
   );
 }

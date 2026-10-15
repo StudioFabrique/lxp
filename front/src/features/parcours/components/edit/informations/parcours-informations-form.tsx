@@ -97,15 +97,13 @@ const ParcoursInformationsForm: FC<Props> = ({
                 void onSave().catch(() => undefined);
               }}
             >
-              <div
-                className="flex flex-col gap-y-8"
-              >
+              <div className="flex flex-col gap-y-8">
                 <FormInput
                   label="Titre *"
                   name="title"
                   register={register}
                   error={errors.title}
-                  placeholder={`Ex : CDA - Promo ${new Date().getFullYear()}`}
+                  placeholder={`Ex : CDA - Promotion ${new Date().getFullYear()}`}
                   disabled={readOnly}
                 />
 

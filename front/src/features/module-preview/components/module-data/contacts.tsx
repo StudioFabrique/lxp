@@ -13,7 +13,7 @@ const Contacts = ({ contacts }: ContactsProps) => {
       <div className="flex flex-col gap-2 p-2">
         <div className="flex gap-2">
           <ContactIcon />
-          <h3 className="text-xl font-bold">Ressources pédagogiques</h3>
+          <h3 className="text-xl font-bold">Équipe pédagogique</h3>
         </div>
         <ul className="list-disc pl-5">
           {contacts.map((contact) => (

@@ -80,7 +80,7 @@ const ParcoursImportModal = ({
   const content = (
     <>
       <div className="mt-6 flex flex-col gap-5">
-        <p className="text-sm text-base-content/70">
+        <p className="break-all text-sm text-base-content/70">
           Archive sélectionnée : {archive.name}
         </p>
         <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-base-300 p-4">
@@ -100,13 +100,13 @@ const ParcoursImportModal = ({
           />
         </label>
         <div>
-          <div className="mb-2 flex items-center justify-between gap-4">
+          <div className="mb-2 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <label className="text-sm font-semibold" htmlFor="import-formation">
               Formation de destination
             </label>
             <button
               type="button"
-              className="btn btn-sm btn-primary btn-soft"
+              className="btn btn-sm btn-primary btn-soft w-full sm:w-auto"
               aria-pressed={formationChoice === "create"}
               onClick={() => {
                 setShowAutomaticFormationOption(true);
@@ -119,7 +119,7 @@ const ParcoursImportModal = ({
           </div>
           <select
             id="import-formation"
-            className="select select-primary w-full border border-neutral/50 focus:outline-none"
+            className="select select-primary w-full min-w-0 truncate border border-neutral/50 pr-10 focus:outline-none"
             value={formationChoice ?? ""}
             onChange={(event) => {
               if (event.currentTarget.value === "create") {

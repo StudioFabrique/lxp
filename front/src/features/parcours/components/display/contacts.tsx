@@ -55,7 +55,7 @@ const Contacts = ({ open, onOpenChange }: ContactsProps) => {
   return (
     <BoxWrapper className="h-auto gap-0 overflow-hidden p-0">
       <CollapsibleSection
-        title="Ressources pédagogiques"
+        title="Équipe pédagogique"
         icon={<Users className="size-5 shrink-0" aria-hidden="true" />}
         className="bg-transparent"
         defaultOpen={contacts.length <= 2}

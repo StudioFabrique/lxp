@@ -85,7 +85,7 @@ describe("parcoursApi.mutations.importParcours", () => {
     expect((body as FormData).get("createFormation")).toBe("true");
   });
 
-  it("affecte des ressources pédagogiques aux modules sélectionnés", async () => {
+  it("affecte des membres de l'équipe pédagogique aux modules sélectionnés", async () => {
     await parcoursApi.mutations.assignModuleContacts({
       parcoursId: 12,
       moduleIds: [2, 3],
@@ -111,7 +111,7 @@ describe("parcoursApi.mutations.importParcours", () => {
     );
   });
 
-  it("retire une ressource pédagogique d'un module", async () => {
+  it("retire un membre de l'équipe pédagogique d'un module", async () => {
     await parcoursApi.mutations.removeModuleContact({
       parcoursId: 12,
       moduleId: 2,

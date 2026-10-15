@@ -22,7 +22,7 @@ export const resourcesRbac = [
   },
   {
     name: "resource",
-    description: "Gestion des ressources pédagogiques",
+    description: "Gestion de l'équipe pédagogique",
   },
   {
     name: "stats",

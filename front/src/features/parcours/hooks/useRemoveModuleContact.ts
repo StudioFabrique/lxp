@@ -22,7 +22,7 @@ export function useRemoveModuleContact(parcoursId: number) {
       toast.error(
         getApiErrorMessage(
           error,
-          "La ressource pédagogique n'a pas pu être retirée du module.",
+          "Le membre de l'équipe pédagogique n'a pas pu être retiré du module.",
         ),
       );
     },

@@ -89,7 +89,7 @@ describe("HTTP /user", () => {
         })
         .set("Cookie", [`${authToken}`])
         .expect(201);
-      expect(response.body.message).toBe("Ressource pédagogique créée.");
+      expect(response.body.message).toBe("Membre de l'équipe pédagogique créé.");
       const createdTeacher = await User.findOne({ email: "toto@toto.fr" });
       expect(createdTeacher?.invitationSent).toBe(false);
       expect(createdTeacher?.invitationPendingSince).toBeUndefined();

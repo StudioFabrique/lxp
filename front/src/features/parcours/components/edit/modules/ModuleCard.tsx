@@ -101,9 +101,9 @@ export default function ModuleCard({
                         data-tip={
                           contact.id === lockedContactId
                             ? "Cette affectation est requise"
-                            : "Retirer la ressource pédagogique"
+                            : "Retirer le membre de l'équipe pédagogique"
                         }
-                        aria-label={`Retirer la ressource pédagogique ${contactName} du module ${module.title}`}
+                        aria-label={`Retirer le membre de l'équipe pédagogique ${contactName} du module ${module.title}`}
                         disabled={
                           isRemovingContact || contact.id === lockedContactId
                         }
@@ -124,7 +124,7 @@ export default function ModuleCard({
           };
         })}
         maxItemsShown={3}
-        emptyMessage="Aucune ressource pédagogique affectée"
+        emptyMessage="Aucun membre de l'équipe pédagogique affecté"
         moreItemsLabel={(count) => `Afficher plus de ressources (${count})`}
         overflowTitle={`Autres ressources de ${module.title}`}
         footerAtBottom
@@ -203,12 +203,12 @@ export default function ModuleCard({
                   <button
                     type="button"
                     className="btn btn-sm btn-ghost text-primary"
-                    aria-label={`Affecter des ressources pédagogiques au module ${module.title}`}
+                    aria-label={`Affecter l'équipe pédagogique au module ${module.title}`}
                     disabled={isRemovingContact}
                     onClick={() => onAssignContacts(module)}
                   >
                     <UserPlus className="size-4" />
-                    Affecter des ressources pédagogiques
+                    Affecter l'équipe pédagogique
                   </button>
                 </PermissionGuard>
               </div>

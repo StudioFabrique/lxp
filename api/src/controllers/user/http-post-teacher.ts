@@ -28,8 +28,8 @@ async function httpPostTeacher(req: CustomRequest, res: Response) {
       success: true,
       message:
         teacher.invitationSent === true && !mailerDisabled
-          ? "Ressource pédagogique créée. Le mail d'activation est en cours d'envoi."
-          : "Ressource pédagogique créée.",
+          ? "Membre de l'équipe pédagogique créé. Le mail d'activation est en cours d'envoi."
+          : "Membre de l'équipe pédagogique créé.",
       contact: response,
     });
   } catch (error: any) {

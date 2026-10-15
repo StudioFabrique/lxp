@@ -22,7 +22,7 @@ export function useAssignModuleContacts(parcoursId: number) {
       toast.error(
         getApiErrorMessage(
           error,
-          "Les ressources pédagogiques n'ont pas pu être affectées.",
+          "Les membres de l'équipe pédagogique n'ont pas pu être affectés.",
         ),
       );
     },

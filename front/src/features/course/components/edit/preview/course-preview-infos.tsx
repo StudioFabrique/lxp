@@ -1,5 +1,5 @@
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
- 
+
 import { useCourseSelector } from "../../../store/CourseContext";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
@@ -13,9 +13,7 @@ interface CoursePreviewInfosProps {
 }
 
 const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
-  const course = useCourseSelector(
-    (state) => state.course
-  ) as Course;
+  const course = useCourseSelector((state) => state.course) as Course;
 
   return (
     <BoxWrapper>
@@ -33,9 +31,17 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
           <article className="flex flex-col gap-y-4">
             <BoxWrapper>
               <h2 className="text-xl font-bold">Module</h2>
-              <SubWrapper><span className="inline-block first-letter:uppercase">{formatTitle(course?.module?.title)}</span></SubWrapper>
+              <SubWrapper>
+                <span className="inline-block first-letter:uppercase">
+                  {formatTitle(course?.module?.title)}
+                </span>
+              </SubWrapper>
               <h2 className="text-xl font-bold">Titre du cours</h2>
-              <SubWrapper><span className="inline-block first-letter:uppercase">{formatTitle(course?.title)}</span></SubWrapper>
+              <SubWrapper>
+                <span className="inline-block first-letter:uppercase">
+                  {formatTitle(course?.title)}
+                </span>
+              </SubWrapper>
               <h2 className="text-xl font-bold">Description du cours</h2>
               <div className="text-xs max-h-[35vh] overflow-auto scrollbar scrollbar-thumb-secondary scrollbar-track-primary">
                 <SubWrapper>
@@ -52,7 +58,7 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
           </article>
           <article className="flex flex-col gap-y-8">
             <BoxWrapper>
-              <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
+              <h2 className="text-xl font-bold">Équipe pédagogique</h2>
               <ContactsList contactsList={course?.contacts ?? []} />
             </BoxWrapper>
             <BoxWrapper>

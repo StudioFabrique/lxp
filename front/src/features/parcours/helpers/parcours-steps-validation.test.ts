@@ -16,7 +16,7 @@ describe("getMissingModuleRequirements", () => {
       }),
     ).toEqual([
       "Durée non renseignée",
-      "Aucune ressource pédagogique affectée",
+      "Aucun membre de l'équipe pédagogique affecté",
       "Aucune compétence ajoutée",
     ]);
   });
@@ -25,7 +25,7 @@ describe("getMissingModuleRequirements", () => {
     const requirements = { duration: 15, contacts: [], skills: [{}] };
 
     expect(getMissingModuleRequirements(requirements)).toEqual([
-      "Aucune ressource pédagogique affectée",
+      "Aucun membre de l'équipe pédagogique affecté",
     ]);
     expect(hasCompleteModuleRequirements(requirements)).toBe(false);
   });

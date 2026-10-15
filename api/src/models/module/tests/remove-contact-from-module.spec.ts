@@ -36,7 +36,7 @@ jest.unstable_mockModule("../../../utils/db.ts", () => ({
 const { default: removeContactFromModule } =
   await import("../remove-contact-from-module.ts");
 
-describe("retrait d'une ressource pédagogique d'un module", () => {
+describe("retrait d'un membre de l'équipe pédagogique d'un module", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

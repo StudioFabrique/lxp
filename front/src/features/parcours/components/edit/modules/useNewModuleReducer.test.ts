@@ -33,7 +33,7 @@ const moduleData: ModuleData = {
 };
 
 describe("moduleReducer", () => {
-  it("préremplit la ressource pédagogique du formateur à la création", () => {
+  it("préremplit l'équipe pédagogique avec le formateur à la création", () => {
     const creationState = moduleReducer(initialState, {
       type: "START_CREATE",
       payload: contacts,
@@ -42,7 +42,7 @@ describe("moduleReducer", () => {
     expect(creationState.currentContacts).toEqual(contacts);
   });
 
-  it("réinsère la ressource pédagogique verrouillée si elle est retirée", () => {
+  it("réinsère le formateur verrouillé de l'équipe pédagogique s'il est retiré", () => {
     expect(withRequiredContact([], contacts[0])).toEqual(contacts);
   });
 
