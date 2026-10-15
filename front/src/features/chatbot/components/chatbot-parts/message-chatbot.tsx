@@ -127,7 +127,7 @@ export default function MessageChatbot({
           >
             <ChatbotMarkdown>{message.message}</ChatbotMarkdown>
             {isGeneralKnowledge && (
-              <span className="text-xs italic font-light text-neutral-content/40">
+              <span className="text-xs italic font-light text-base-content/80">
                 Cette réponse utilise des connaissances générales externes au
                 cours.
               </span>
