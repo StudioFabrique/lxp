@@ -80,7 +80,7 @@ export default function ModuleCompletionModal({
               <h4 className="text-lg font-semibold">{group.title}</h4>
               <ul
                 aria-label={group.title}
-                className="grid gap-6 py-6 sm:grid-cols-2"
+                className="grid grid-cols-1 gap-6 py-6 sm:grid-cols-2"
               >
                 {group.items.map((badge, index) => (
                   <motion.li

@@ -51,7 +51,7 @@ export default function LoadingSkeleton({
       {variant === "detail" ? (
         <div className="space-y-5" aria-hidden="true">
           <div className="skeleton h-44 w-full rounded-box" />
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <div className="skeleton h-72 rounded-box" />
             <div className="skeleton h-72 rounded-box lg:col-span-2" />
           </div>

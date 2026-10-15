@@ -34,7 +34,8 @@ const StudentActivityNavigation = ({
 
   return (
     <div className="flex w-full items-center justify-between gap-5">
-      <div className="flex flex-1 justify-start">
+      {/* Mobile : précédent / suivant sont dans la barre du bas de la page (seul le quiz reste ici). */}
+      <div className="flex flex-1 justify-start max-md:hidden">
         {!isFirstActivitySelected && (
           <button
             type="button"
@@ -51,7 +52,7 @@ const StudentActivityNavigation = ({
         {children}
       </div>
 
-      <div className="mr-5 flex flex-1 justify-end">
+      <div className="mr-5 flex flex-1 justify-end max-md:hidden">
         {isLastActivitySelected ? (
           (!isLastLessonSelected || !isLessonCompleted) && (
             <div

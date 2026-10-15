@@ -12,7 +12,7 @@ import UserInvitationCard from "./UserInvitationCard";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import UserFormPresentation from "./UserFormPresentation";
 import UserFormCertifications from "./UserFormCertifications";
-import StickyFormHeader from "../../../../../src/components/headers/StickyFormHeader";
+import Header from "../../../../../src/components/headers/Header";
 import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
@@ -144,7 +144,7 @@ const UserForm = ({
 
   return (
     <PageWrapper as="form" className="@container min-w-0" onSubmit={handleSubmit} autoComplete="on" data-testid="user-form">
-      <StickyFormHeader
+      <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
           editMode
@@ -173,7 +173,7 @@ const UserForm = ({
             "Sauvegarder"
           )}
         </button>
-      </StickyFormHeader>
+      </Header>
       {groupCreationContext?.(!editMode ? <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact /> : null)}
       <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-1 gap-5 @min-[40rem]:grid-cols-2 @min-[64rem]:grid-cols-3">

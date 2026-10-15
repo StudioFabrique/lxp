@@ -34,6 +34,12 @@ const Page = ({ label }: { label: string | null }) => {
   return (
     <>
       <p>Contenu de la page</p>
+      {/* Le panneau est ouvert par la page, depuis son propre bouton (barre du bas du module). */}
+      {panel.active && (
+        <button type="button" data-testid="page-open" onClick={panel.open}>
+          Ouvrir la navigation
+        </button>
+      )}
       {panel.container &&
         createPortal(
           <button type="button" onClick={panel.close}>
@@ -68,9 +74,7 @@ const renderBar = (label: string | null = "Navigation du module") => {
 };
 
 const openButton = () =>
-  document.querySelector<HTMLButtonElement>(
-    'button[aria-label="Ouvrir : Navigation du module"]',
-  );
+  document.querySelector<HTMLButtonElement>('[data-testid="page-open"]');
 
 // Le tiroir d'actions reste monté, fermé : on cible le panneau par son nom.
 const panel = () =>
@@ -88,7 +92,7 @@ afterEach(() => {
 });
 
 describe("Panneau de navigation plein écran de la barre mobile", () => {
-  it("n'affiche pas le bouton sans page qui propose un panneau", () => {
+  it("ne propose rien sans page qui demande un panneau", () => {
     mockViewport(true);
     renderBar(null);
 
@@ -102,11 +106,11 @@ describe("Panneau de navigation plein écran de la barre mobile", () => {
     expect(openButton()).toBeNull();
   });
 
-  it("ouvre la navigation de la page en plein écran depuis la barre du haut", () => {
+  it("ouvre la navigation de la page en plein écran, depuis le bouton de la page", () => {
     mockViewport(true);
     renderBar();
 
-    expect(openButton()?.getAttribute("aria-expanded")).toBe("false");
+    expect(openButton()).not.toBeNull();
     expect(panel()).toBeNull();
 
     act(() => openButton()!.click());
@@ -148,7 +152,7 @@ describe("Panneau de navigation plein écran de la barre mobile", () => {
     expect(panel()).toBeNull();
   });
 
-  it("referme le panneau et retire le bouton quand la page ne le propose plus", async () => {
+  it("referme le panneau quand la page ne le propose plus", async () => {
     mockViewport(true);
     const { render } = renderBar();
 

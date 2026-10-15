@@ -1,9 +1,12 @@
 import { useEffect, useState, type RefObject } from "react";
 
+/** La barre commence à se transformer un peu avant d'atteindre le haut : la transformation se fond dans le défilement. */
+const EARLY_PX = 24;
+
 /**
  * Vrai tant qu'un élément `sticky` est collé en haut de la zone de défilement de l'application.
  * `topOffset` est la valeur de son `top` (en px) : le haut de la zone observée est rogné d'autant
- * (+ 4 px de marge), si bien que l'élément n'est plus entièrement visible dès qu'il se colle.
+ * (+ une marge d'anticipation), si bien que l'élément n'est plus entièrement visible dès qu'il se colle.
  * Aucun élément sentinelle : l'élément s'observe lui-même, et ne décale donc pas la mise en page.
  */
 export const useIsStuck = (
@@ -21,7 +24,7 @@ export const useIsStuck = (
       ([entry]) => setIsStuck(entry.intersectionRatio < 1),
       {
         root: document.getElementById("main-scroll-container"),
-        rootMargin: `-${topOffset + 4}px 0px 0px 0px`,
+        rootMargin: `-${topOffset + EARLY_PX}px 0px 0px 0px`,
         threshold: [1],
       },
     );

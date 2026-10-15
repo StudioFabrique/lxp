@@ -29,7 +29,7 @@ export default function DeclaredLearningProfile({ data }: { data: DeclaredProfil
             Informations déclarées par l’apprenant, distinctes des indicateurs mesurés.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-base-300 p-4">
             <h3 className="text-sm font-bold">Rythme préféré</h3>
             <p className="mt-2">{labelFor(paceOptions, data?.profile.pace)}</p>

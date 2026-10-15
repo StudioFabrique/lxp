@@ -10,6 +10,8 @@ import TimelineView from "./views/timeline-view";
 import YearTimelineView from "./views/year-timeline-view";
 
 import PlanningView from "./views/planning-view";
+import AgendaView from "./views/agenda-view";
+import { useIsMobile } from "../../../hooks/useMediaQuery";
 
 import CalendarOverflowModal from "./calendar-overflow-modal";
 import { cn } from "../../../utils/cn";
@@ -58,6 +60,8 @@ const Calendar = ({
   className,
 }: Props) => {
   const [overflow, setOverflow] = useState<CalendarEvent[] | null>(null);
+  // Mobile : la semaine et le jour passent en liste par jour, plus lisible que sept colonnes horaires.
+  const isMobile = useIsMobile();
   // Render the body
   const renderBody = () => {
     switch (view) {
@@ -93,6 +97,16 @@ const Calendar = ({
       case "week":
       case "day":
       default:
+        if (isMobile) {
+          return (
+            <AgendaView
+              events={events}
+              view={view}
+              currentDate={currentDate}
+              onClickEventDetails={onClickEventDetails}
+            />
+          );
+        }
         return (
           <TimelineView
             onSelectDay={onSelectDay}

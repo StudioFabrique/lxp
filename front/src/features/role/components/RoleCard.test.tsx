@@ -71,7 +71,8 @@ describe("RoleCard", () => {
     expect(markup).toContain("text-error");
     expect(markup).toContain("group/row");
     expect(markup).toContain("group-hover/row:opacity-100");
-    expect(markup).toContain("transition-opacity");
+    expect(markup).toContain("lucide-chevron-right");
+    expect(markup).not.toContain("lucide-panel-right-open");
     expect(markup).not.toContain("group-hover:visible");
   });
 

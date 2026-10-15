@@ -20,7 +20,7 @@ const TopFiveUsers = ({ topUsers }: Props) => (
               <span className="w-full grid grid-cols-2 text-xs">
                 <Link
                   to={`/admin/teacher/student/${user._id}`}
-                  className="w-32"
+                  className="min-w-0 truncate pr-2"
                 >
                   {user.name}
                 </Link>

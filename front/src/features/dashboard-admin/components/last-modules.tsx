@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { ExternalLink, MoveUpRight, Pencil } from "lucide-react";
+import { ChevronRight, MoveUpRight, Pencil } from "lucide-react";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import { cn } from "../../../utils/cn";
 
 import type { ModuleSummary } from "../api/dashboard-admin.api";
 import { localeDate } from "../../../utils/helpers/locale-date";
@@ -32,8 +33,19 @@ export default function LastModules({ modules, isLoading }: Props) {
         {getModulesLabel(user, "Derniers modules créés")}
       </h3>
       <ul className="list border border-base-300 rounded-box overflow-hidden bg-base-200 mt-4">
-        {modules.map((module) => (
-          <li className="list-row" key={module.id}>
+        {modules.map((module) => {
+          const title = <div className="font-semibold truncate">{formatTitle(module.title)}</div>;
+          const previewPath = `/admin/parcours/module/${module.id}`;
+
+          return (
+          <li
+            // Toute la ligne mène à l'aperçu du module (lien étiré sur le titre) ; les actions restent au-dessus.
+            className={cn(
+              "list-row group relative transition-colors",
+              module.parcoursId && "hover:bg-base-300/40 focus-within:bg-base-300/40",
+            )}
+            key={module.id}
+          >
             <div className="self-center">
               <img
                 src={normalizeImageSource(module.thumb) ?? defaultModuleImage}
@@ -43,7 +55,19 @@ export default function LastModules({ modules, isLoading }: Props) {
             </div>
 
             <div className="list-col-grow min-w-0 self-center">
-              <div className="font-semibold truncate">{formatTitle(module.title)}</div>
+              {module.parcoursId ? (
+                <PermissionGuard action="read" object="module" fallback={title}>
+                  <Link
+                    to={previewPath}
+                    aria-label={`Prévisualiser ${module.title}`}
+                    className="block rounded after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
+                  >
+                    {title}
+                  </Link>
+                </PermissionGuard>
+              ) : (
+                title
+              )}
               <div className="truncate text-xs text-base-content/80">
                 {module.parcours ?? "Non rattaché"}
               </div>
@@ -58,7 +82,7 @@ export default function LastModules({ modules, isLoading }: Props) {
                 <>
                   <PermissionGuard action="update" object="module">
                     <Link
-                      className="btn btn-ghost btn-sm btn-square tooltip tooltip-left"
+                      className="btn btn-ghost btn-sm btn-square tooltip tooltip-left relative z-10"
                       data-tip="Modifier dans le parcours"
                       to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`}
                       aria-label={`Modifier ${module.title}`}
@@ -67,13 +91,10 @@ export default function LastModules({ modules, isLoading }: Props) {
                     </Link>
                   </PermissionGuard>
                   <PermissionGuard action="read" object="module">
-                    <Link
-                      className="btn btn-ghost btn-sm btn-square"
-                      to={`/admin/parcours/module/${module.id}`}
-                      aria-label={`Prévisualiser ${module.title}`}
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Link>
+                    <ChevronRight
+                      className="size-5 -translate-x-2 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-focus-within:translate-x-0 group-focus-within:opacity-100 motion-reduce:transition-none"
+                      aria-hidden="true"
+                    />
                   </PermissionGuard>
                 </>
               ) : (
@@ -83,7 +104,8 @@ export default function LastModules({ modules, isLoading }: Props) {
               )}
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
       <div className="flex justify-end mt-2">
         <Link

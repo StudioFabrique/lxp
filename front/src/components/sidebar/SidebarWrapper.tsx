@@ -35,7 +35,8 @@ const SidebarWrapper = ({
       aria-label={isDrawer ? "Navigation principale" : undefined}
       className={cn(
         "group/sidebar h-full flex flex-col justify-between gap-4 p-4 rounded-xl border bg-(--sidebar-bg) text-(--sidebar-content) border-(--sidebar-border) shadow-sm transition-colors duration-200",
-        isDrawer ? "w-full overflow-y-auto" : "w-[calc(4rem+2px)] 2xl:w-[20rem]",
+        // Tiroir mobile : défilement vertical seulement, jamais de barre horizontale.
+        isDrawer ? "w-full overflow-y-auto overflow-x-hidden" : "w-[calc(4rem+2px)] 2xl:w-[20rem]",
         animations &&
           !isDrawer &&
           cn("transition-[width,background-color,border-color]", sidebarTransitionClassName),

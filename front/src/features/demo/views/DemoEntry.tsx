@@ -195,7 +195,7 @@ const DemoEntry = () => {
           </div>
         )}
 
-        <div className="grid w-full gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 w-full gap-4 sm:grid-cols-2">
           {PROFILES.map(({ profile, label, description, icon: Icon }) => (
             <button
               key={profile}

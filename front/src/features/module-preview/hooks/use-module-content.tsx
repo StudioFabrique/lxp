@@ -317,7 +317,7 @@ const useModuleContent = () => {
       toast.success("L'activité a été supprimé");
       dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
     } catch {
-      // silently fail
+      toast.error("Erreur lors de la suppression de l'activité");
     }
   }, [state.selectedActivity]);
 

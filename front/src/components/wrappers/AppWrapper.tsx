@@ -4,6 +4,7 @@ import { useIntroPresentation } from "../../features/intro-presentation/useIntro
 import { useVisualPreferences } from "../../store/VisualPreferences";
 import { cn } from "../../utils/cn";
 import { MobileHeaderActionsProvider } from "../../store/MobileHeaderActionsProvider";
+import { StickyBarStackProvider } from "../headers/sticky-bar-stack";
 
 type Props = {
   sidebar: ReactNode;
@@ -49,11 +50,13 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
         >
           {/* Children */}
 
-          <div className="flex min-w-0 justify-center">
-            <div className="min-w-0 mt-4 md:mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
-              {children}
+          <StickyBarStackProvider>
+            <div className="flex min-w-0 justify-center">
+              <div className="min-w-0 mt-4 md:mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
+                {children}
+              </div>
             </div>
-          </div>
+          </StickyBarStackProvider>
         </main>
       </div>
     </div>

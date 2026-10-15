@@ -97,7 +97,7 @@ const ModuleHomeList = ({
       ) : null}
 
       {list && list.length > 0 ? (
-        <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <section className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {(list as ModuleListItem[]).map((module) => (
             <HierarchicalListCard
               key={module.id}

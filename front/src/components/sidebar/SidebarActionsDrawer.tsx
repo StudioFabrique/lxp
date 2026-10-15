@@ -83,7 +83,10 @@ const SidebarActionsDrawer = ({ open, onClose, setContainer }: Props) => {
           <div
             ref={setContainer}
             onClick={handleActionClick}
-            className="header-actions header-actions-main flex flex-col items-stretch gap-2 [&_.btn]:w-full"
+            // Toutes les actions de toutes les pages ont le même gabarit : pleine largeur, icône puis libellé alignés à gauche,
+            // libellé qui passe à la ligne sans changer la hauteur minimale ni décentrer l'icône. `text-left!` (important) est nécessaire :
+            // la règle `.header-actions-main .btn` d'index.css, qui centre le texte, est hors des couches Tailwind et l'emporte sinon.
+            className="header-actions header-actions-main flex flex-col items-stretch gap-2 [&_.btn]:h-auto [&_.btn]:min-h-11 [&_.btn]:w-full [&_.btn]:justify-start [&_.btn]:gap-2 [&_.btn]:py-2 [&_.btn:not(.btn-circle)]:text-left! [&_.btn]:leading-snug [&_.btn_svg]:shrink-0"
           />
         </section>
       </div>

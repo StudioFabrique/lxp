@@ -6,7 +6,7 @@ import { LoaderCircle } from "lucide-react";
 import Informations from "./GroupFormInformations";
 import Details from "./GroupFormDetails";
 import FromParcoursWarning from "./GroupFormParcoursWarning";
-import StickyFormHeader from "../../../../../src/components/headers/StickyFormHeader";
+import Header from "../../../../../src/components/headers/Header";
 import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import type { GroupFormValues } from "../../group.schema";
 import { cn } from "../../../../utils/cn";
@@ -46,7 +46,7 @@ const GroupForm = ({
         autoComplete="off"
         onSubmit={form.handleSubmit(onSubmitForm)}
       >
-        <StickyFormHeader
+        <Header
           title={isEditing ? "Modifier un groupe" : "Créer un groupe"}
           description="Renseignez les informations du groupe et choisissez les apprenants qui le composent"
         >
@@ -64,7 +64,7 @@ const GroupForm = ({
               {isLoading ? "Sauvegarde…" : "Sauvegarder"}
             </button>
           </div>
-        </StickyFormHeader>
+        </Header>
 
         <div
           className={cn("grid", gridType === "rows" ? "grid-rows-2" : "grid-cols-2", "max-lg:grid-cols-1 gap-5")}

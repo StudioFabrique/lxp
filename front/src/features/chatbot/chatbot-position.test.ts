@@ -7,6 +7,7 @@ import {
   chooseTutorialPlacement,
   clampChatbotPoint,
   restingChatbotPoint,
+  snapChatbotToSide,
   toEdgeOffset,
 } from "./chatbot-position";
 
@@ -86,5 +87,21 @@ describe("placement de l'assistant virtuel face à un élément", () => {
     expect(chatbotBubbleWidth(393)).toBeLessThan(CHATBOT_BUBBLE_WIDTH);
     expect(chatbotBubbleSide(avatar)).toBe("right");
     expect(chatbotBubbleSide(avatar, 393)).toBe("left");
+  });
+});
+
+describe("assistant virtuel collé aux bords sur mobile", () => {
+  const phone = { width: 400, height: 800 };
+
+  it("se colle au bord gauche quand il est déposé dans la moitié gauche, sans changer de hauteur", () => {
+    expect(snapChatbotToSide({ x: 100, y: 500 }, phone)).toEqual({ x: 20, y: 500 });
+  });
+
+  it("se colle au bord droit quand il est déposé dans la moitié droite", () => {
+    expect(snapChatbotToSide({ x: 250, y: 300 }, phone)).toEqual({ x: 400 - 64 - 20, y: 300 });
+  });
+
+  it("ne change rien sur un grand écran", () => {
+    expect(snapChatbotToSide({ x: 600, y: 300 }, viewport)).toEqual({ x: 600, y: 300 });
   });
 });

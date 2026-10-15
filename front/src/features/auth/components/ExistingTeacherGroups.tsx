@@ -26,7 +26,7 @@ export default function ExistingTeacherGroups({
       </button>
     </div>
   ) : groups.data.length ? (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {groups.data.map((group) => (
         <ExistingGroup key={group._id} group={group} />
       ))}

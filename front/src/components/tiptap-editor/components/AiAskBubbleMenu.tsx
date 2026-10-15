@@ -7,7 +7,7 @@ import {
 } from "react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { EditorState, NodeSelection } from "@tiptap/pm/state";
-import { Sparkles } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 type Props = {
@@ -48,6 +48,26 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     editor.commands.setTextSelection(0);
   };
 
+  // Point d'ancrage : l'emprise visuelle de toute la sélection (toutes ses lignes), pour centrer l'infobulle sur le texte.
+  // Par défaut, Tiptap n'utilise que les positions de début et de fin, ce qui décale l'infobulle sur un texte à plusieurs lignes.
+  const getSelectionReference = useCallback(() => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return null;
+    const range = selection.getRangeAt(0);
+    const bounds = range.getBoundingClientRect();
+    if (bounds.width === 0 && bounds.height === 0) return null;
+    return {
+      getBoundingClientRect: () => range.getBoundingClientRect(),
+      getClientRects: () => range.getClientRects(),
+    };
+  }, []);
+
+  // Referme l'infobulle en retirant la sélection (le texte reste intact).
+  const handleClose = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    editor.commands.setTextSelection(editor.state.selection.to);
+  };
+
   useEffect(() => {
     if (!editor) return;
 
@@ -79,6 +99,11 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
               view.state.selection.from === start &&
               view.state.selection.to === end
             ) {
+              // Au doigt, un nouvel appui sur le bloc déjà sélectionné referme l'infobulle.
+              if (window.matchMedia?.("(pointer: coarse)").matches) {
+                editor.commands.setTextSelection(end);
+                return true;
+              }
               return false;
             }
 
@@ -109,16 +134,28 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
       updateDelay={200}
       editor={editor}
       shouldShow={shouldShow}
+      getReferencedVirtualElement={getSelectionReference}
     >
-      <button
-        type="button"
-        className="btn btn-primary flex items-center gap-2 shadow-lg"
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={handleClick}
-      >
-        <Sparkles className="w-4 h-4" />
-        <span>Demander à l'assistant</span>
-      </button>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          className="btn btn-primary flex items-center gap-2 shadow-lg"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={handleClick}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Demander à l'assistant</span>
+        </button>
+        <button
+          type="button"
+          className="btn btn-circle btn-sm bg-base-100 shadow-lg"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={handleClose}
+          aria-label="Fermer"
+        >
+          <X className="w-4 h-4" aria-hidden="true" />
+        </button>
+      </div>
     </BubbleMenu>
   );
 };

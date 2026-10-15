@@ -55,13 +55,13 @@ export default function RecommendedActions({
       </div>
 
       {isLoading ? (
-        <div className="grid gap-3 lg:grid-cols-3" aria-busy="true">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3" aria-busy="true">
           {[0, 1, 2].map((item) => (
             <div key={item} className="h-28 skeleton rounded-xl" />
           ))}
         </div>
       ) : (
-        <ol className="grid gap-3 lg:grid-cols-3">
+        <ol className="grid grid-cols-1 gap-3 lg:grid-cols-3">
           {actions.map((action) => {
             const Icon = action.icon;
             return (

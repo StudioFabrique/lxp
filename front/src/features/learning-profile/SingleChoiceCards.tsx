@@ -22,7 +22,7 @@ export function SingleChoiceCards<T extends string>({
 }) {
   return (
     <div
-      className={cn("grid sm:grid-cols-2", compact ? "gap-2" : "gap-3")}
+      className={cn("grid grid-cols-1 sm:grid-cols-2", compact ? "gap-2" : "gap-3")}
       role="radiogroup"
       aria-label="Choix unique"
     >

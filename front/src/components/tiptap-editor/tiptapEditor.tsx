@@ -41,7 +41,7 @@ export default function TiptapEditor({
     isMenuBarSticky,
     readTimeMinutes,
   } = useTiptapEditor(
-    "prose min-h-[12vh] m-1 w-full focus:outline-none transition-all duration-200",
+    "prose max-md:prose-sm min-h-[12vh] m-1 w-full focus:outline-none transition-all duration-200",
     editorRef,
     mode !== "read",
     initialValue,
@@ -73,7 +73,7 @@ export default function TiptapEditor({
           </span>
         </div>
       )}
-      <div className="editor relative w-[90%] mx-auto" ref={menuContainerRef}>
+      <div className="editor relative w-full md:w-[90%] mx-auto" ref={menuContainerRef}>
         <div
           ref={stickyMarkerRef}
           className="absolute -top-6 left-0 w-full h-4 pointer-events-none"

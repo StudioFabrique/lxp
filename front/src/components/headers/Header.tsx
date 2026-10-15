@@ -10,6 +10,7 @@ import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 import { formatTitle } from "../../utils/helpers/text-helpers";
 import { useMobilePageHeader } from "./useMobilePageHeader";
+import StickyPageHeader from "./StickyPageHeader";
 
 interface HeaderProps {
   title: ReactNode;
@@ -25,6 +26,8 @@ interface HeaderProps {
   onClick?: () => void;
   /** Mobile : le titre prend la place du nom de la section dans la barre du haut. */
   showTitleInTopBar?: boolean;
+  /** Faux sur les pages qui ont leurs propres éléments collants : l'en-tête reste alors fixe dans la page. */
+  sticky?: boolean;
 }
 
 const Header = ({
@@ -40,6 +43,7 @@ const Header = ({
   containerClassname,
   onClick,
   showTitleInTopBar = false,
+  sticky = true,
   children,
 }: PropsWithChildren<HeaderProps>) => {
   const isPageTitle =
@@ -56,6 +60,25 @@ const Header = ({
         <h2 className="sr-only">{title}</h2>
         {children && mobile.container ? createPortal(children, mobile.container) : null}
       </>
+    );
+  }
+
+  // Titre de page ou sous-en-tête d'étape : il reste accessible au défilement (barre flottante) ;
+  // un sous-en-tête prend la place de l'en-tête de la page quand il se colle à son tour.
+  const isStickable =
+    !alternateBgColor && !successBgColor && !hasError && !disabled && !onClick;
+  if (isStickable && sticky) {
+    return (
+      <StickyPageHeader
+        title={typeof title === "string" ? formatTitle(title) : title}
+        description={description}
+        icon={Icon}
+        variant={isSubHeader ? "sub" : "page"}
+        titleClassName={classname}
+        className={containerClassname}
+      >
+        {children}
+      </StickyPageHeader>
     );
   }
 

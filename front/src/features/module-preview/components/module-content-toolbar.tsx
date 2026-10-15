@@ -137,7 +137,7 @@ export default function ModuleContentToolbar({
         type="button"
         className={cn(
           actionClassName,
-          "tooltip tooltip-right",
+          "tooltip tooltip-top",
           !isSidebarCollapsed && "btn-primary",
         )}
         aria-pressed={!isSidebarCollapsed}
@@ -161,7 +161,7 @@ export default function ModuleContentToolbar({
         <PermissionGuard object="course" action="update">
           <button
             type="button"
-            className={cn(actionClassName, "tooltip tooltip-right", {
+            className={cn(actionClassName, "tooltip tooltip-top", {
               "btn-primary": isReorderingCourses,
             })}
             aria-label={
@@ -184,7 +184,7 @@ export default function ModuleContentToolbar({
         <PermissionGuard object="course" action="update">
           <button
             type="button"
-            className={cn(actionClassName, "tooltip tooltip-right")}
+            className={cn(actionClassName, "tooltip tooltip-top")}
             aria-label={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
             data-tip={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
             disabled={isUpdatingCourseVisibility || isReorderingCourses}
@@ -227,7 +227,7 @@ export default function ModuleContentToolbar({
           <PermissionGuard object="course" action="update">
             <button
               type="button"
-              className={cn(actionClassName, "tooltip tooltip-left")}
+              className={cn(actionClassName, "tooltip tooltip-top")}
               aria-label="Tout publier"
               data-tip="Tout publier"
               disabled={isPublishingAll || isReorderingCourses}
@@ -246,7 +246,7 @@ export default function ModuleContentToolbar({
       {showCompletionBadge && (
         <button
           type="button"
-          className={cn(actionClassName, "tooltip tooltip-left")}
+          className={cn(actionClassName, "tooltip tooltip-top")}
           aria-label="Mes réussites"
           data-tip="Mes réussites"
           disabled={isReorderingCourses}
@@ -260,7 +260,7 @@ export default function ModuleContentToolbar({
       {isContentSelected && (
         <button
           type="button"
-          className={cn(actionClassName, "tooltip tooltip-left")}
+          className={cn(actionClassName, "tooltip tooltip-top")}
           aria-label="Tout réduire"
           data-tip="Tout réduire"
           disabled={isCalendarView || isReorderingCourses}

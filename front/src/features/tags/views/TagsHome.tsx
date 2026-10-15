@@ -9,7 +9,7 @@ import { LoaderCircle, PlusCircle } from "lucide-react";
 
 import type { TagRow } from "../api/tag.api";
 import { useTagActions } from "../hooks/useTagActions";
-import { getTagColumns } from "../components/tag-table-columns";
+import { getTagColumns, TAG_COLUMN_BREAKPOINTS } from "../components/tag-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -201,6 +201,7 @@ const TagsHome = () => {
         <div className="w-full">
           <DataTable
             columns={columns}
+            columnBreakpoints={TAG_COLUMN_BREAKPOINTS}
             data={data}
             isLoading={isLoading}
             isSearching={Boolean(searchValue)}
@@ -227,6 +228,7 @@ const TagsHome = () => {
       <TableActionsModal
         isOpen={idToDelete !== null}
         onCancel={() => setIdToDelete(null)}
+        isPending={isDeleting}
         title="Confirmation de suppression"
         description="Êtes-vous sûr de vouloir supprimer ce tag ?"
         descList={tagToDelete ? [tagToDelete.name] : undefined}

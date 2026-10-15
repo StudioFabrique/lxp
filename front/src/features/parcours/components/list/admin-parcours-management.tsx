@@ -249,7 +249,7 @@ const AdminParcoursManagement = ({
       ) : null}
 
       <section
-        className={cn("grid items-start gap-5", usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3")}
+        className={cn("grid items-start gap-5", usesFullWidthLayout ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-2 xl:grid-cols-3")}
       >
         {paginatedFormations?.length === 0 ? (
           <div className="col-span-full">

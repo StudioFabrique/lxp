@@ -12,7 +12,7 @@ export function PreferenceCards({
 }) {
   return (
     <div
-      className="grid gap-3 sm:grid-cols-2"
+      className="grid grid-cols-1 gap-3 sm:grid-cols-2"
       role="group"
       aria-label="Préférences d’apprentissage"
     >

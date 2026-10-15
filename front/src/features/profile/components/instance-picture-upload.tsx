@@ -130,7 +130,7 @@ const InstancePictureUpload = () => {
         </p>
       </div>
 
-      <div className="grid items-start gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
         <div className="min-w-0">
           <span className="mb-2 block text-sm font-bold">Aperçu du logo</span>
           <div className="max-w-md">
@@ -206,6 +206,7 @@ const InstancePictureUpload = () => {
       <TableActionsModal
         isOpen={showDeleteConfirmation}
         onCancel={() => setShowDeleteConfirmation(false)}
+        isPending={isDeleting}
         title="Supprimer le logo"
         description="Êtes-vous sûr de vouloir supprimer le logo de l'organisme ?"
         alertMessageBottom="La couleur de fond associée sera également supprimée."

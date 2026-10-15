@@ -255,7 +255,7 @@ export default function InstanceGeneralSettings() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid items-stretch gap-4 xl:grid-cols-2">
+      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-2">
         <BoxWrapper className="h-auto gap-6 overflow-visible">
           <form
             className="flex h-full flex-col gap-6"
@@ -401,7 +401,7 @@ export default function InstanceGeneralSettings() {
                       </span>
                     </div>
 
-                    <div className="grid gap-2 sm:grid-cols-2 2xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 2xl:grid-cols-4">
                       {enabledThemes.map((theme) => (
                         <div
                           key={theme}
@@ -501,7 +501,7 @@ export default function InstanceGeneralSettings() {
                       );
 
                       return disabledThemes.length > 0 ? (
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           {disabledThemes.map((theme) => (
                             <article
                               key={theme}

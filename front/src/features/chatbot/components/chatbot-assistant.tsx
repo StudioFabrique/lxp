@@ -22,6 +22,7 @@ import useChatbotTutorial from "../hooks/use-chatbot-tutorial";
 import useChatbotUi from "../hooks/use-chatbot-ui";
 import { buildChatbotQuestions, chatbotQuestionKey, pickSelectionPrompts, type ChatbotQuestion } from "../chatbot-questions";
 import { CHATBOT_BUBBLE_WIDTH_CLASS, chooseTutorialPlacement } from "../chatbot-position";
+import { onChatbotQuestionsCloseRequest, publishChatbotDock, useChatbotDockSnapshot } from "../chatbot-dock-store";
 import { FIRST_FORMATION_TUTORIAL } from "../chatbot-tutorials";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import { useIntroPresentation } from "../../intro-presentation/useIntroPresentation";
@@ -54,6 +55,12 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
   const reducedMotion = useReducedMotion();
   const narrowScreen = useMediaQuery("(max-width: 639px)");
   const dock = useChatbotDock(isIntroOpen);
+  // Les éléments fixes à côté de l'assistant (barre du bas du mobile) se placent d'après sa présence à l'écran.
+  useEffect(() => {
+    publishChatbotDock({ visible: !hidden });
+    return () => publishChatbotDock({ visible: false });
+  }, [hidden]);
+  const { hasBottomBar } = useChatbotDockSnapshot();
   const { moveForTutorial, returnToRest } = dock;
   const tutorial = useChatbotTutorial();
   const [questionsOpen, setQuestionsOpen] = useState(false);
@@ -73,6 +80,10 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
   const selectionPending = hasSelection && activityTextSelection !== seenSelection;
   const tutorialActive = tutorial.active !== null;
   const radialOpen = !hidden && !tutorialActive && (questionsOpen || selectionPending);
+  useEffect(() => {
+    publishChatbotDock({ questionsOpen: radialOpen });
+    return () => publishChatbotDock({ questionsOpen: false });
+  }, [radialOpen]);
 
   const questions = useMemo(() => buildChatbotQuestions({
     aiEnabled,
@@ -87,6 +98,9 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     setQuestionsOpen(false);
     setSeenSelection(activityTextSelection);
   }, [activityTextSelection]);
+
+  // Un élément de la page réduit tant que les questions sont ouvertes (barre du bas du mobile) peut les refermer.
+  useEffect(() => onChatbotQuestionsCloseRequest(closeRadial), [closeRadial]);
 
   // Tant que le bouton « Créer ma première formation » est affiché, l'assistant va seul vers lui, le met en
   // évidence et lui donne le focus : c'est là que démarre la création de contenu.
@@ -246,7 +260,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     // Le bouton d'historique dépasse au-dessus du champ.
     overhang: question.kind === "input" ? 24 : 0,
     node: question.kind === "input"
-      ? <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable && !narrowScreen} />
+      ? <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable} />
       : <ChatbotRadialButton label={question.label} onClick={() => select(question)} />,
   }));
 
@@ -254,7 +268,8 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     <AuthChatbotDragContext value={dock.dragContext}>
       <motion.div
         data-chatbot-dock
-        className={cn("fixed left-0 top-0 z-45 size-16", hidden && "invisible")}
+        // Sur petit écran, la pile de questions occupe le bas de l'écran : l'avatar s'efface tant qu'elle est ouverte (un appui ailleurs la referme).
+        className={cn("fixed left-0 top-0 z-45 size-16", (hidden || (radialOpen && narrowScreen)) && "invisible")}
         style={{ x: dock.x, y: dock.y }}
         initial={reducedMotion || hasJustRevealed ? false : { opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -299,7 +314,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       </motion.div>
       <AnimatePresence>
         {radialOpen && (
-          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} onOverlapChange={setBubbleObstructed} stacked={narrowScreen} />
+          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} onOverlapChange={setBubbleObstructed} stacked={narrowScreen} pinnedInset={hasBottomBar} />
         )}
       </AnimatePresence>
       {tutorial.step && !hidden && <ChatbotTutorialHighlight element={tutorial.step.element} />}

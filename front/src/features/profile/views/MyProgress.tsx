@@ -106,7 +106,7 @@ export default function MyProgress() {
           <div className="rounded-xl border border-base-300 bg-base-200 p-5">
             <h3 className="mb-4 font-semibold">{formatTitle(selectedParcours.title)}</h3>
             {selectedParcours.modules?.length ? (
-              <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {selectedParcours.modules.map((module) => {
                   const progress = Math.min(
                     100,

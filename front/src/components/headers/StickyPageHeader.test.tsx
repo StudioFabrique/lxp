@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import StickyFormHeader from "./StickyFormHeader";
+import Header from "./Header";
 
 vi.mock("./SidebarRouteIcon", () => ({ default: () => <svg data-testid="route-icon" /> }));
 
@@ -43,9 +43,9 @@ const renderHeader = () => {
   act(() =>
     root.render(
       <MemoryRouter>
-        <StickyFormHeader title="Créer un utilisateur" description="Renseignez les informations">
+        <Header title="Créer un utilisateur" description="Renseignez les informations">
           <button type="button">Sauvegarder</button>
-        </StickyFormHeader>
+        </Header>
       </MemoryRouter>,
     ),
   );
@@ -72,7 +72,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("StickyFormHeader", () => {
+describe("En-tête de page collant", () => {
   it("affiche le titre, la description et les actions, collé en haut de la zone de défilement", () => {
     mockViewport(false);
     const container = renderHeader();
@@ -80,9 +80,9 @@ describe("StickyFormHeader", () => {
     expect(container.textContent).toContain("Créer un utilisateur");
     expect(container.textContent).toContain("Renseignez les informations");
     expect(container.textContent).toContain("Sauvegarder");
-    expect(container.firstElementChild?.className).toContain("sticky");
-    // Se détecte lui-même : le haut de la zone observée est rogné de la valeur de `top` (+ 4 px).
-    expect(observerOptions?.rootMargin).toBe("-20px 0px 0px 0px");
+    expect(container.firstElementChild?.className).toContain("md:sticky");
+    // Se détecte lui-même : le haut de la zone observée est rogné de la valeur de `top` .
+    expect(observerOptions?.rootMargin).toBe("-24px 0px 0px 0px");
     expect(observerOptions?.threshold).toEqual([1]);
   });
 
@@ -97,13 +97,19 @@ describe("StickyFormHeader", () => {
     setStuck(true);
 
     expect(bar().dataset.floating).toBe("true");
-    expect(bar().className).toContain("w-[60vw]");
+    // L'en-tête garde la largeur de la page : il n'est pas réduit à 60 %.
+    expect(bar().className).toContain("w-full");
+    expect(bar().className).not.toContain("w-[60vw]");
     expect(bar().className).toContain("backdrop-blur");
+    // Collée au bord de l'écran : seuls les coins du bas sont arrondis.
+    expect(bar().className).toContain("rounded-t-none");
+    expect(bar().className).toContain("rounded-b-2xl");
+    expect(container.firstElementChild?.className).toContain("md:top-0");
     expect(bar().className).not.toContain("themed-page-header");
     expect(container.querySelector("h2")?.textContent).toBe("Créer un utilisateur");
     expect(container.textContent).toContain("Sauvegarder");
-    // La description est repliée, pas retirée.
-    expect(container.querySelector("p")?.className).toContain("max-h-0");
+    // La description reste affichée.
+    expect(container.querySelector("p")?.textContent).toBe("Renseignez les informations");
   });
 
   it("retrouve l'en-tête habituel quand il redescend", () => {
@@ -116,14 +122,55 @@ describe("StickyFormHeader", () => {
     const bar = container.querySelector<HTMLElement>("[data-floating]")!;
     expect(bar.dataset.floating).toBe("false");
     expect(bar.className).toContain("w-full");
-    expect(container.querySelector("p")?.className).toContain("max-h-10");
+    expect(container.querySelector("p")?.textContent).toBe("Renseignez les informations");
   });
 
-  it("garde l'en-tête habituel sur mobile, sans observer le défilement", () => {
+  it("ne colle pas l'en-tête sur mobile, sans observer le défilement", () => {
     mockViewport(true);
     const container = renderHeader();
 
-    expect(container.firstElementChild?.className).not.toContain("sticky");
+    expect(container.querySelector("h2")?.textContent).toBe("Créer un utilisateur");
+    expect(observerCallback).toBeNull();
+    expect((container.firstElementChild as HTMLElement).style.height).toBe("");
+  });
+
+  it("rend collant un sous-en-tête, mais pas un en-tête désactivé", () => {
+    mockViewport(false);
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    roots.push(root);
+    act(() =>
+      root.render(
+        <MemoryRouter>
+          <Header title="Première étape" isSubHeader />
+          <Header title="Seconde étape" isSubHeader disabled />
+        </MemoryRouter>,
+      ),
+    );
+
+    expect(container.querySelectorAll('[data-testid="sticky-page-header"]')).toHaveLength(1);
+    expect(container.textContent).toContain("Seconde étape");
+  });
+
+  it("reste fixe dans la page quand `sticky` est désactivé", () => {
+    mockViewport(false);
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    roots.push(root);
+    act(() =>
+      root.render(
+        <MemoryRouter>
+          <Header title="Contenu du module" sticky={false}>
+            <button type="button">Modifier le module</button>
+          </Header>
+        </MemoryRouter>,
+      ),
+    );
+
+    expect(container.querySelector('[data-testid="sticky-page-header"]')).toBeNull();
+    expect(container.textContent).toContain("Modifier le module");
     expect(observerCallback).toBeNull();
   });
 });

@@ -54,7 +54,8 @@ export default function InstanceSetup() {
   const [emailTemplate, setEmailTemplate] = useFormField(form, "emailTemplate");
   const [draftEmailTemplate, setDraftEmailTemplate] =
     useState<EmailTemplateId>("minimal");
-  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] = useState(false);
+  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] =
+    useState(false);
   const [logoBackgroundColor, setLogoBackgroundColor] = useFormField(
     form,
     "color",
@@ -83,7 +84,9 @@ export default function InstanceSetup() {
     mutationFn: profileApi.mutations.updateInstanceSettings,
     onSuccess: (saved) => {
       queryClient.setQueryData(profileKeys.instanceSettings(), saved);
-      void queryClient.invalidateQueries({ queryKey: profileKeys.instanceLogo() });
+      void queryClient.invalidateQueries({
+        queryKey: profileKeys.instanceLogo(),
+      });
       navigate("/admin", { replace: true });
     },
     onError: (error: unknown) => {
@@ -171,7 +174,13 @@ export default function InstanceSetup() {
             {settingsQuery.isError && (
               <div role="alert" className="alert alert-error mb-4">
                 <span>La configuration de l’instance est indisponible.</span>
-                <button type="button" className="btn btn-sm" onClick={() => void settingsQuery.refetch()}>Réessayer</button>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  onClick={() => void settingsQuery.refetch()}
+                >
+                  Réessayer
+                </button>
               </div>
             )}
             <form
@@ -194,10 +203,14 @@ export default function InstanceSetup() {
                   onChange={(event) => setName(event.target.value)}
                   className="input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-                {nameError && <span id="setup-name-error" className="text-sm text-error">{nameError}</span>}
+                {nameError && (
+                  <span id="setup-name-error" className="text-sm text-error">
+                    {nameError}
+                  </span>
+                )}
               </label>
 
-              <div className="grid w-full gap-5 sm:grid-cols-2 sm:items-start">
+              <div className="grid grid-cols-1 w-full gap-5 sm:grid-cols-2 sm:items-start">
                 <label className="flex min-w-0 flex-col gap-2 text-center">
                   <span className="text-sm font-semibold text-base-content">
                     Site internet{" "}
@@ -242,7 +255,7 @@ export default function InstanceSetup() {
                   backgroundColor={logoBackgroundColor}
                   onBackgroundColorChange={setLogoBackgroundColor}
                   optional
-                  helpText="JPG ou PNG, 500 Ko maximum."
+                  helpText="JPG ou PNG, 500 Ko maximum"
                 />
               </div>
             </form>
@@ -252,7 +265,9 @@ export default function InstanceSetup() {
                 draftTemplate={draftEmailTemplate}
                 instanceName={name}
                 website={website}
-                hasInstanceLogo={Boolean(logo.url) || Boolean(settings?.hasLogo)}
+                hasInstanceLogo={
+                  Boolean(logo.url) || Boolean(settings?.hasLogo)
+                }
                 instanceLogoUrl={logo.url ?? undefined}
                 instanceColor={logoBackgroundColor}
                 isOpen={isEmailTemplateModalOpen}

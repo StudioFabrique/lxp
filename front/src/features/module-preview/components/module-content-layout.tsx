@@ -1,4 +1,5 @@
 import type React from "react";
+import type { RefObject } from "react";
 import { motion } from "motion/react";
 import { cn } from "../../../utils/cn";
 
@@ -14,6 +15,8 @@ type ModuleContentLayoutProps = {
    * et le contenu occupe toute la largeur.
    */
   showSidebarOnMobile?: boolean;
+  /** Début de la zone de contenu (barre d'outils) : la page y amène le défilement après une navigation depuis l'extérieur. */
+  startRef?: RefObject<HTMLDivElement | null>;
 };
 
 /**
@@ -27,12 +30,15 @@ const ModuleContentLayout = ({
   children,
   isSidebarCollapsed = false,
   showSidebarOnMobile = false,
+  startRef,
 }: ModuleContentLayoutProps) => {
   return (
     <div className="w-full overflow-x-clip">
       {header}
 
-      {toolbar}
+      <div ref={startRef} className="scroll-mt-4">
+        {toolbar}
+      </div>
 
       <div
         className={cn(

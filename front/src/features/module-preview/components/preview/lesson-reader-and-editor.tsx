@@ -44,7 +44,7 @@ type Props = {
   onRateActivity?: (rating: number) => void;
   onEditActivity: () => void;
   onOpenDeleteModal: () => void;
-  onDeleteActivity: () => void;
+  onDeleteActivity: () => void | Promise<unknown>;
   onCloseDeleteModal?: () => void;
   onClose: () => void;
   onBack: () => void;
@@ -122,9 +122,10 @@ const LessonReaderAndEditor = ({
     textActivityTitle,
   ]);
 
-  const handleConfirmDelete = useCallback(() => {
-    onDeleteActivity();
-  }, [onDeleteActivity]);
+  const handleConfirmDelete = useCallback(
+    () => onDeleteActivity(),
+    [onDeleteActivity],
+  );
 
   return (
     <>
@@ -151,7 +152,7 @@ const LessonReaderAndEditor = ({
 
         {/* Rendu de l'activité */}
         <div
-          className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm relative"
+          className="bg-base-200 border border-base-300 rounded-lg p-3 md:p-6 mb-4 shadow-sm relative"
         >
           {/* Header de l'activité : titre et menu contextuel */}
           {isResourceEditor ? (
@@ -163,7 +164,7 @@ const LessonReaderAndEditor = ({
               titleError={textActivityTitleError}
               onEditTitle={onEditTitle}
               className="font-semibold text-primary flex justify-between items-center mb-6"
-              titleClassName="text-2xl font-bold first-letter:uppercase"
+              titleClassName="text-lg md:text-2xl font-bold first-letter:uppercase"
               cancelLabel={mode === "edit" ? "Terminer" : "Annuler"}
               cancelClassName={
                 mode === "edit"
@@ -184,7 +185,7 @@ const LessonReaderAndEditor = ({
               titleError={textActivityTitleError}
               onEditTitle={onEditTitle}
               className="font-semibold flex justify-between items-center mb-4"
-              titleClassName="text-2xl font-bold flex-1"
+              titleClassName="text-lg md:text-2xl font-bold flex-1"
               cancelLabel="Annuler"
               cancelClassName="btn btn-sm btn-error text-base-100"
               cancelDisabled={isLoading}
@@ -199,7 +200,7 @@ const LessonReaderAndEditor = ({
               title={textActivityTitle ?? ""}
               activityType={activityType}
               className="font-semibold text-primary flex justify-between items-center mb-6"
-              titleClassName="text-2xl font-bold first-letter:uppercase"
+              titleClassName="text-lg md:text-2xl font-bold first-letter:uppercase"
               enableSticky
               fadeScrollButtonsOnly={fadeScrollButtonsOnly}
               hideScrollButtons={hideScrollButtons}

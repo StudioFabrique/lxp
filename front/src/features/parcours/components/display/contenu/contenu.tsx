@@ -80,7 +80,7 @@ const Contenu = ({ modules }: ContenuProps) => {
         </span>
         <div
           data-testid="contenu-section"
-          className="grid lg:grid-cols-2 gap-x-10 gap-y-5"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-5"
         >
           <div className="flex flex-col gap-y-2">
             {displayedModules.map((module, i) => (

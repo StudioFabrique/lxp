@@ -1,6 +1,8 @@
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { LoaderCircle } from "lucide-react";
+import { usePendingAction } from "../../../../../hooks/usePendingAction";
 
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { formatDateToYYYYMMDD } from "../../../../../utils/helpers/convert-date";
@@ -33,6 +35,7 @@ const ModuleTimelineDateModal = ({
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const { isPending: isSaving, run } = usePendingAction();
 
   const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -65,24 +68,27 @@ const ModuleTimelineDateModal = ({
     );
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (error || !currentModule?.id) return;
+    if (error || !currentModule?.id || isSaving) return;
+    const moduleId = currentModule.id;
 
-    try {
-      await parcoursApi.mutations.updateModuleCalendarDates({
-        moduleId: currentModule.id,
-        minDate: datesModule.minDate,
-        maxDate: datesModule.maxDate,
-      });
-      await queryClient.invalidateQueries({
-        queryKey: parcoursKeys.detail(Number(id)),
-      });
-      toast.success("Dates mises à jour");
-      modalRef.current?.close();
-    } catch {
-      toast.error("Erreur lors de la mise à jour des dates");
-    }
+    void run(async () => {
+      try {
+        await parcoursApi.mutations.updateModuleCalendarDates({
+          moduleId,
+          minDate: datesModule.minDate,
+          maxDate: datesModule.maxDate,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(Number(id)),
+        });
+        toast.success("Dates mises à jour");
+        modalRef.current?.close();
+      } catch {
+        toast.error("Erreur lors de la mise à jour des dates");
+      }
+    });
   };
 
   useEffect(() => {
@@ -98,7 +104,16 @@ const ModuleTimelineDateModal = ({
   if (!currentModule) return null;
 
   return (
-    <dialog id={modalId} className="modal" ref={modalRef} onClose={onClose}>
+    <dialog
+      id={modalId}
+      className="modal"
+      ref={modalRef}
+      onClose={onClose}
+      // Pas de fermeture (Échap) pendant l'enregistrement.
+      onCancel={(event) => {
+        if (isSaving) event.preventDefault();
+      }}
+    >
       <div className="modal-box p-0 bg-transparent shadow-none w-full max-w-md overflow-visible">
         <div className="card bg-base-100 shadow-xl w-full">
           {/* --- CARD IMAGE --- */}
@@ -151,15 +166,16 @@ const ModuleTimelineDateModal = ({
             {/* --- CARD ACTIONS --- */}
             <div className="card-actions justify-end mt-4">
               <form method="dialog">
-                <button className="btn btn-ghost hover:bg-base-200">
+                <button className="btn btn-ghost hover:bg-base-200" disabled={isSaving}>
                   Annuler
                 </button>
               </form>
               <button
                 onClick={handleSubmit}
                 className="btn btn-primary text-primary-content"
-                disabled={!!error}
+                disabled={!!error || isSaving}
               >
+                {isSaving && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
                 Sauvegarder
               </button>
             </div>
@@ -169,7 +185,7 @@ const ModuleTimelineDateModal = ({
 
       {/* Backdrop to close */}
       <form method="dialog" className="modal-backdrop">
-        <button>close</button>
+        <button disabled={isSaving}>close</button>
       </form>
     </dialog>
   );

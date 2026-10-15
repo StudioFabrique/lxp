@@ -26,8 +26,9 @@ const HeaderMenu = ({
   return (
     <>
       <SearchModal isModalOpen={isModalOpen} setModalState={setModalState} />
-      <div className="absolute flex justify-end w-full h-full p-5 px-10">
-        <div className="flex flex-col gap-4 justify-between z-10">
+      <div className="absolute flex justify-end w-full h-full p-5 px-10 max-md:p-2">
+        {/* Mobile : les actions passent en haut à droite, pour ne pas recouvrir les titres en bas de l'image. */}
+        <div className="flex flex-col gap-4 justify-between z-10 max-md:flex-col-reverse">
           <span className="flex-1" />
           <div className="self-end flex flex-col gap-4">
             <PermissionGuard action="write" object="group">

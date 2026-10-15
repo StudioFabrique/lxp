@@ -201,7 +201,7 @@ export default function CourseList({
       ) : null}
 
       {list && list.length > 0 ? (
-        <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <section className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {(list as CustomCourse[]).map((course) => (
             <HierarchicalListCard
               key={course.id}
@@ -232,7 +232,8 @@ export default function CourseList({
                 </div>
               }
               action={
-                <div className="flex items-center gap-1">
+                // Mobile : les icônes d'action s'empilent à droite du titre au lieu de le serrer.
+                <div className="flex flex-col items-center gap-1 md:flex-row">
                   <PermissionGuard action="read" object="course">
                     <Link
                       className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"

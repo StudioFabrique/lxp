@@ -136,5 +136,5 @@ export function testParcoursStep(data: any) {
         "Le parcours doit avoir au moins un groupe d'apprenants rattachés",
     });
   }
-  return [];
+  return validationErrors;
 }

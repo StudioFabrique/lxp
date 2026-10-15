@@ -58,6 +58,7 @@ const CourseActionsModal = ({
     <TableActionsModal
       isOpen={showModal}
       onCancel={onCancel}
+      isPending={isModalLoading}
       title={title}
       description={description}
       descList={lesson ? [lesson.title] : [course.title]}

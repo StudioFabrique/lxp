@@ -68,6 +68,7 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
           descList={descList}
           isOpen={showModal}
           onCancel={handleCloseModal}
+          isPending={isModalLoading}
         >
           <button
             className="btn btn-error btn-md"

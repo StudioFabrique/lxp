@@ -20,7 +20,7 @@ import Error404 from "../../../components/error404";
 import ImageHeaderMutable from "../../../../src/components/image-header/image-header-mutable";
 
 import ModuleComponent from "../components/edit/modules/module";
-import Stepper from "../../../components/UI/stepper-component/stepper-component";
+import ParcoursStickyStepper from "../components/edit/parcours-sticky-stepper";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -28,7 +28,6 @@ import {
   getModulesLabel,
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
-import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import useValidateParcours from "../hooks/useValidateParcours";
 import { parcoursApi } from "../api/parcours.api";
 import { showParcoursValidationToast } from "../helpers/show-parcours-validation-toast";
@@ -113,6 +112,7 @@ const EditParcours = () => {
         return (
           <ParcoursSection
             title="Importer une liste d'objectifs"
+            fieldKey="objectives"
             onResetList={handleResetImportedObjectives}
             readOnly={isTeacher}
             children={[
@@ -128,6 +128,7 @@ const EditParcours = () => {
         return (
           <ParcoursSection
             title="Importer des compétences"
+            fieldKey="skills"
             onResetList={handleResetImportedSkills}
             children={[
               <SkillsList />,
@@ -174,14 +175,12 @@ const EditParcours = () => {
             ) : null}
 
             <ParcoursStepContent stepId={actualStep.id}>
-              <BoxWrapper className="w-full h-auto">
-                <Stepper
-                  actualStep={actualStep}
-                  stepsList={contextualStepsList}
-                  updateStep={updateStep}
-                />
-              </BoxWrapper>
-              <div className="mt-4 w-full md:mt-12">
+              <ParcoursStickyStepper
+                actualStep={actualStep}
+                stepsList={contextualStepsList}
+                updateStep={updateStep}
+              />
+              <div className="mt-4 w-full md:mt-8">
                 <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
                 <div className="mt-4">{renderActualStep()}</div>
               </div>

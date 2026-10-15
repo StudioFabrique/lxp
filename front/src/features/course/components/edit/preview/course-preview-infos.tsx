@@ -29,7 +29,7 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
             <EditIcon />
           </div>
         </span>
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <article className="flex flex-col gap-y-4">
             <BoxWrapper>
               <h2 className="text-xl font-bold">Module</h2>

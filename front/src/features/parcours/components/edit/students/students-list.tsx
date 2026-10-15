@@ -15,9 +15,11 @@ interface StudentsListProps {
   groups: Group[];
   parcoursId: number;
   onRemoveGroup: (groupId: string) => void;
+  /** Enregistrement en cours : on ne détache pas un autre groupe avant la fin. */
+  disabled?: boolean;
 }
 
-const StudentsList = ({ initalList, groups, parcoursId, onRemoveGroup }: StudentsListProps) => {
+const StudentsList = ({ initalList, groups, parcoursId, onRemoveGroup, disabled = false }: StudentsListProps) => {
   const [groupId, setGroupId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -93,6 +95,7 @@ const StudentsList = ({ initalList, groups, parcoursId, onRemoveGroup }: Student
                   type="button"
                   className="btn btn-sm btn-ghost h-8 min-h-8 gap-1.5 whitespace-nowrap px-2.5 text-error"
                   aria-label={`Détacher le groupe ${group.name}`}
+                  disabled={disabled}
                   onClick={() => {
                     setGroupId(null);
                     setPage(1);

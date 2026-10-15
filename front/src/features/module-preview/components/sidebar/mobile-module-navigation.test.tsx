@@ -87,12 +87,12 @@ describe("MobileModuleNavigation", () => {
     expect(handlers.onNavigated).toHaveBeenCalledOnce();
   });
 
-  it("reste ouverte au choix d'une leçon, pour en choisir ensuite une activité", () => {
+  it("signale aussi la fin de la navigation au choix d'une leçon", () => {
     const { container, handlers } = renderNavigation();
 
     act(() => buttonByLabel(container, "Leçon 2 : Seconde leçon").click());
 
     expect(handlers.onSelectLesson).toHaveBeenCalledWith(22);
-    expect(handlers.onNavigated).not.toHaveBeenCalled();
+    expect(handlers.onNavigated).toHaveBeenCalledOnce();
   });
 });

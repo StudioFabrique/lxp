@@ -186,7 +186,7 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0">
+    <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0 md:max-h-[calc(100dvh-1rem)] md:overflow-y-auto">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <RoleRankGuard ranks={[3]}>
         {courses.length > 0 ? (
@@ -295,14 +295,18 @@ const SidebarCoursesList = ({
         <PermissionGuard action="update" object="course">
           <div
             className={cn(
-              "z-30 w-full rounded-xl transition-all duration-300",
+              // Même géométrie collée ou non (pied de carte pleine largeur : il annule le padding de la carte) :
+              // seuls le fond, le filet et l'ombre changent, en fondu, pour que la barre ne saute pas en changeant d'état.
+              "z-30 -mb-3 -mx-2 w-[calc(100%+1rem)] border-t border-transparent px-2 py-3 transition-[background-color,border-color,box-shadow] duration-300 sm:-mx-3 sm:w-[calc(100%+1.5rem)] sm:px-3 lg:-mx-5 lg:w-[calc(100%+2.5rem)] lg:px-5",
               {
-                "sticky bottom-1": !disableCourseCreationFloating,
+                // Le `bottom` négatif compense le padding de la carte, que `sticky` respecte : la barre se pose tout en bas.
+                "sticky -bottom-2 sm:-bottom-3 lg:-bottom-5": !disableCourseCreationFloating,
                 "bg-transparent shadow-none":
                   disableCourseCreationFloating || isAtNaturalPosition,
-                "border border-base-300 px-2 py-2 backdrop-blur":
+                // Collée : fond quasi opaque et ombre vers le haut, pour ne pas laisser voir la liste qui passe dessous.
+                "border-base-300 bg-base-200/95 shadow-[0_-12px_16px_-12px_rgb(0_0_0/0.4)] backdrop-blur-md":
                   !disableCourseCreationFloating && !isAtNaturalPosition,
-                "mt-5": courses.length > 0,
+                "mt-2": courses.length > 0,
               },
             )}
           >

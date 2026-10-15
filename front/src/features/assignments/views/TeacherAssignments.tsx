@@ -125,7 +125,7 @@ export default function TeacherAssignments() {
         />
       ) : (
         <section
-          className="grid items-start gap-5 lg:grid-cols-2 2xl:grid-cols-3"
+          className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 2xl:grid-cols-3"
           aria-label={`${assignments.length} devoir${assignments.length > 1 ? "s" : ""} ${evaluationFilter === "graded" ? "évalués" : "non évalués"}`}
         >
           {assignments.map((assignment) => {

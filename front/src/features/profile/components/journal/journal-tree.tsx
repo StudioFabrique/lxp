@@ -45,7 +45,7 @@ const JournalTree = ({ parcoursList }: Props) => {
   }
 
   return (
-    <div className="grid min-h-80 overflow-hidden rounded-2xl border border-base-300 bg-base-100 lg:max-h-[70vh] lg:grid-cols-[minmax(16rem,22rem)_1fr]">
+    <div className="grid grid-cols-1 min-h-80 overflow-hidden rounded-2xl border border-base-300 bg-base-100 lg:max-h-[70vh] lg:grid-cols-[minmax(16rem,22rem)_1fr]">
       <nav
         className="border-b border-base-300 bg-base-200/60 p-3 lg:overflow-y-auto lg:border-r lg:border-b-0"
         aria-label="Cours avec accomplissements"

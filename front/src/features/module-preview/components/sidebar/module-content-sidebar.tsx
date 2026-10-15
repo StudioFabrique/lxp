@@ -52,7 +52,8 @@ const ModuleContentSidebar = ({
 
   return (
     <>
-      <div className={cn(calendar ? "block" : "hidden md:block")}>
+      {/* Pleine hauteur de la colonne : la liste (`sticky`) reste visible pendant le défilement du contenu. */}
+      <div className={cn("md:h-full", calendar ? "block" : "hidden md:block")}>
         <SidebarCoursesList
           calendarMode={Boolean(calendar)}
           calendarSelectedCourseId={calendar?.selection?.courseId}

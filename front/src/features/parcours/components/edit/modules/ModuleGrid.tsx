@@ -76,7 +76,7 @@ export default function ModuleGrid({
       <section
         role="status"
         aria-label="Chargement des modules associés"
-        className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
+        className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
       >
         <span className="sr-only">Chargement des modules associés…</span>
         {Array.from({ length: 3 }, (_, index) => (
@@ -109,7 +109,7 @@ export default function ModuleGrid({
 
   return (
     <>
-      <section className="grid auto-rows-fr gap-5 lg:grid-cols-2 xl:grid-cols-3">
+      <section className="grid grid-cols-1 auto-rows-fr gap-5 lg:grid-cols-2 xl:grid-cols-3">
         {modules.map((module) => (
           <ModuleCard
             key={module.id}

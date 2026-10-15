@@ -1,4 +1,4 @@
-import { act } from "react";
+import { act, createRef } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import ModuleContentLayout from "./module-content-layout";
@@ -74,5 +74,27 @@ describe("ModuleContentLayout", () => {
     const content = container.querySelector(".min-h-\\[80vh\\]");
     expect(content?.classList.contains("col-span-1")).toBe(true);
     expect(content?.classList.contains("col-span-2")).toBe(false);
+  });
+
+  it("expose le début de la zone de contenu pour y amener le défilement", () => {
+    const container = document.createElement("div");
+    const startRef = createRef<HTMLDivElement>();
+    const root = createRoot(container);
+    roots.push(root);
+    act(() => {
+      root.render(
+        <ModuleContentLayout
+          header={<div>En-tête</div>}
+          toolbar={<div>Actions</div>}
+          sidebar={<div>Liste des cours</div>}
+          startRef={startRef}
+        >
+          <div>Contenu principal</div>
+        </ModuleContentLayout>,
+      );
+    });
+
+    expect(startRef.current?.textContent).toBe("Actions");
+    expect(startRef.current?.className).toContain("scroll-mt-4");
   });
 });

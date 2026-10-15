@@ -129,7 +129,7 @@ const RoleForm = ({
   const form = (
     <form
       autoComplete="off"
-      className="grid w-full min-w-0 gap-5 md:grid-cols-2"
+      className="grid grid-cols-1 w-full min-w-0 gap-5 md:grid-cols-2"
       onSubmit={handleSubmitRole}
     >
       <div className="flex min-w-0 flex-col gap-y-1">

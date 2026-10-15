@@ -64,7 +64,7 @@ export default function ProfileItemsEditor({
   };
 
   return (
-    <div className="mt-6 grid gap-6 border-t border-base-300 pt-6 sm:grid-cols-2">
+    <div className="mt-6 grid grid-cols-1 gap-6 border-t border-base-300 pt-6 sm:grid-cols-2">
       <section className="space-y-3" aria-labelledby="passions-title">
         <div>
           <h3 id="passions-title" className="font-bold">

@@ -17,7 +17,7 @@ type MobileModuleNavigationProps = {
   onSelectActivity: (activity: Activity) => void;
   onSelectAssignment: (courseId?: number) => void;
   onLessonScrolled: (lessonId: number) => void;
-  /** Appelé une fois une activité ou un devoir choisi, la navigation n'ayant alors plus rien à proposer. */
+  /** Appelé une fois une leçon, une activité ou un devoir choisi : la navigation a fait son office. */
   onNavigated?: () => void;
 };
 
@@ -111,7 +111,11 @@ export default function MobileModuleNavigation({
                         title={`Leçon ${lessonIndex + 1} : ${formatTitle(lesson.title)}`}
                         aria-label={`Leçon ${lessonIndex + 1} : ${formatTitle(lesson.title)}`}
                         aria-current={isSelectedLesson ? "step" : undefined}
-                        onClick={() => lesson.id && onSelectLesson(lesson.id)}
+                        onClick={() => {
+                          if (!lesson.id) return;
+                          onSelectLesson(lesson.id);
+                          onNavigated?.();
+                        }}
                         className={cn("h-10 w-full truncate rounded-lg px-3 text-left text-sm font-medium text-primary-content transition-colors", isSelectedLesson
                             ? "bg-primary"
                             : "bg-primary/50 hover:bg-primary/80")}

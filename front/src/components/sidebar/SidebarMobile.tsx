@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useLocation } from "react-router";
 import { AnimatePresence } from "motion/react";
-import { EllipsisVertical, ListTree, Menu } from "lucide-react";
+import { EllipsisVertical, Menu } from "lucide-react";
 import SidebarActionsDrawer from "./SidebarActionsDrawer";
 import SidebarDrawer from "./SidebarDrawer";
 import SidebarLogo from "./SidebarLogo";
@@ -32,7 +32,7 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
   const [actionsOpenedAt, setActionsOpenedAt] = useState<string | null>(null);
   const actionsOpen = actionsOpenedAt === pathname;
   const headerActions = useMobileHeaderActions();
-  // Le panneau plein écran est proposé par la page (ex. navigation des activités) ; il se referme avec elle.
+  // Le panneau plein écran est proposé par la page (ex. navigation des activités), qui l'ouvre depuis son propre bouton ; il se referme avec elle.
   const navigation = headerActions?.navigation ?? null;
   const navigationOpen = Boolean(navigation) && headerActions?.isNavigationOpen === true;
   const hasActions = useHasChildElements(headerActions?.container ?? null);
@@ -69,18 +69,6 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
             {headerActions?.topBarTitle?.text ?? currentItem?.label}
           </span>
         </p>
-        {navigation && (
-          <button
-            type="button"
-            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-(--sidebar-hover)"
-            onClick={() => headerActions?.setIsNavigationOpen(true)}
-            aria-label={`Ouvrir : ${navigation.label}`}
-            aria-haspopup="dialog"
-            aria-expanded={navigationOpen}
-          >
-            <ListTree className="size-4" aria-hidden="true" />
-          </button>
-        )}
         <div className="w-16 shrink-0 pr-1">
           <SidebarLogo />
         </div>
