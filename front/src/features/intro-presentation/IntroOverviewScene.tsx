@@ -722,7 +722,10 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               restent visibles et centrés sur elle, quelle que soit la hauteur de la fenêtre. */}
           <div className="pointer-events-none absolute inset-x-4 bottom-5 z-30 grid gap-6 sm:inset-x-8 lg:grid-cols-[minmax(16rem,22rem)_1fr]">
             <div className="col-start-1 flex lg:-translate-x-24 flex-col items-center gap-3 lg:col-start-2">
-              <p className="intro-scroll-hint flex max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80">
+              <p className={cn(
+                "intro-scroll-hint flex max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80",
+                activeStep >= maxStep && "invisible",
+              )}>
                 <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
                 Faire défiler vers le bas pour naviguer entre les différents niveaux
               </p>

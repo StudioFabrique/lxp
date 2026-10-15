@@ -187,7 +187,7 @@ export default function ModuleContentToolbar({
             className={cn(actionClassName, "tooltip tooltip-top")}
             aria-label={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
             data-tip={areAllCoursesVisible ? "Rendre tous les cours invisibles" : "Rendre tous les cours visibles"}
-            disabled={isUpdatingCourseVisibility || isReorderingCourses}
+            disabled={isCalendarView || isUpdatingCourseVisibility || isReorderingCourses}
             onClick={() => setPendingVisibility(!areAllCoursesVisible)}
           >
             {isUpdatingCourseVisibility ? (

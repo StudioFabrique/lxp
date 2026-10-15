@@ -23,7 +23,7 @@ export const FINAL_STACK_ROTATION = -4;
 export const LEAF_STACK_PITCH = -14;
 
 /** Rotation (en degrés) autour de l'axe vertical : la pile se tourne légèrement vers la droite de l'écran. */
-export const LEAF_STACK_YAW = 4;
+export const LEAF_STACK_YAW = 3.5;
 
 /** Décalage (unités de la scène) de la pyramide vers la droite au dernier niveau. */
 export const LEAF_STACK_SHIFT_X = 70;
