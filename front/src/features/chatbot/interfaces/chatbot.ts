@@ -17,4 +17,6 @@ export type ChatbotValues = {
   mode?: string;
   sources?: ChatbotSource[];
   textSelection?: string;
+  /** Réponse préenregistrée du guide : elle n'est pas dans l'historique de la conversation, rien à agrandir. */
+  preset?: boolean;
 };

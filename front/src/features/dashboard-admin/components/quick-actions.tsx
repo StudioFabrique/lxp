@@ -76,7 +76,7 @@ export default function QuickActions({
   }
 
   return (
-    <details className="dropdown dropdown-end shrink-0 ml-auto">
+    <details data-chatbot-target="quick-actions" className="dropdown dropdown-end shrink-0 ml-auto">
       <summary className="btn flex gap-2 items-center">
         <span>Actions rapides</span>
         <EllipsisVertical className="w-4 h-4" />

@@ -123,7 +123,7 @@ const InstancePictureUpload = () => {
 
   return (
     <BoxWrapper className="h-auto gap-6 overflow-visible">
-      <div>
+      <div data-chatbot-target="instance-logo">
         <h2 className="text-lg font-bold">Logo et apparence</h2>
         <p className="text-sm text-base-content/70">
           Modifiez le logo de l’organisme et son fond d’affichage.

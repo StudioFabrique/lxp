@@ -27,6 +27,14 @@ describe("questions de l'assistant virtuel", () => {
     expect(kinds({ ...base, aiUnavailable: true, canSuggestQuiz: true, hasTextSelection: true })).toEqual(["input", "tutorial"]);
   });
 
+  it("fait défiler les questions du guide au-delà de trois, avec « Autres questions »", () => {
+    const many: ChatbotTutorial[] = ["a", "b", "c", "d"].map((id) => ({ id, label: id, steps: [] }));
+    const labels = (guidePage: number) => buildChatbotQuestions({ ...base, tutorials: many, guidePage }).flatMap((question) => question.kind === "input" ? [] : [question.kind === "tutorial" ? question.label : question.kind]);
+    expect(labels(0)).toEqual(["a", "b", "c", "more"]);
+    expect(labels(1)).toEqual(["d", "more"]);
+    expect(labels(2)).toEqual(["a", "b", "c", "more"]);
+  });
+
   it("donne une clé distincte à chaque entrée", () => {
     const keys = buildChatbotQuestions({ ...base, canSuggestQuiz: true }).map(chatbotQuestionKey);
     expect(new Set(keys).size).toBe(keys.length);

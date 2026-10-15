@@ -141,6 +141,7 @@ const LastParcoursItem = ({
           <PermissionGuard action="write" object="parcours">
             <button
               type="button"
+              data-chatbot-target="formation-add-parcours"
               onClick={() => onCreateParcours?.(formation.id)}
               className={cn("btn btn-sm btn-dash mx-5", {
                 "self-end": formation.parcours.length > 0,

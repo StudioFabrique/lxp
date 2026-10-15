@@ -186,7 +186,7 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0 md:max-h-[calc(100dvh-1rem)] md:overflow-y-auto">
+    <div data-chatbot-target="module-sidebar" className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0 md:max-h-[calc(100dvh-1rem)] md:overflow-y-auto">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <RoleRankGuard ranks={[3]}>
         {courses.length > 0 ? (

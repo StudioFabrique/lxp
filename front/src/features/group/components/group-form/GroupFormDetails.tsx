@@ -39,7 +39,7 @@ const GroupFormDetails = () => {
 
   return (
     <BoxWrapper>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6" data-chatbot-target="group-parcours">
         <div>
           <h2 className="font-bold text-xl">Parcours associé</h2>
           <p className="mt-1 text-sm text-base-content/65">

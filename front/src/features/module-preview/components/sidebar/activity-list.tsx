@@ -132,6 +132,7 @@ export default function ActivityList({
                 activities && activities.length === 0 ? "mt-0" : "mt-2",
               )}
               disabled={newActivityButtonDisabled}
+              data-chatbot-target="module-add-activity"
               onClick={onClickCreateActivity}
             >
               <Plus className="h-3.5 w-3.5" />

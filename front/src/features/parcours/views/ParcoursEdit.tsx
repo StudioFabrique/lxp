@@ -180,7 +180,7 @@ const EditParcours = () => {
                 stepsList={contextualStepsList}
                 updateStep={updateStep}
               />
-              <div className="mt-4 w-full md:mt-8">
+              <div className="mt-4 w-full md:mt-8" data-chatbot-target="parcours-step-content">
                 <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
                 <div className="mt-4">{renderActualStep()}</div>
               </div>
@@ -191,6 +191,7 @@ const EditParcours = () => {
                     <button
                       type="button"
                       className="btn btn-outline max-md:btn-square"
+                      data-chatbot-target="parcours-back"
                       onClick={handleRetour}
                     >
                       <ArrowLeft className="size-4 md:hidden" aria-hidden="true" />
@@ -202,6 +203,7 @@ const EditParcours = () => {
                       {!isTeacher && !infos?.isPublished && (
                         <button
                           className="btn btn-primary max-md:btn-square"
+                          data-chatbot-target="parcours-publish"
                           onClick={handlePublishParcours}
                           disabled={isPublishing}
                         >
@@ -211,6 +213,7 @@ const EditParcours = () => {
                       )}
                       <button
                         className="btn btn-info px-3 md:px-6"
+                        data-chatbot-target="parcours-next-step"
                         onClick={() => handleUpdateStep(actualStep.id)}
                       >
                         Étape suivante

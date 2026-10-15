@@ -120,7 +120,7 @@ const GroupUserList = ({
           </p>
         </div>
 
-        <div className="flex flex-nowrap items-center justify-end gap-2">
+        <div className="flex flex-nowrap items-center justify-end gap-2" data-chatbot-target="group-add-students">
           <GroupManageUserList
             onAddUsers={onAddUsers}
             usersToAdd={usersToAdd}

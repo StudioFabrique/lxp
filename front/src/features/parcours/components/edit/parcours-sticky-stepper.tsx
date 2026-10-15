@@ -29,6 +29,7 @@ const ParcoursStickyStepper = ({ actualStep, stepsList, updateStep }: Props) => 
     <div
       ref={slotRef}
       data-testid="sticky-stepper"
+      data-chatbot-target="parcours-stepper"
       className={stickySlotClassName}
       style={{ height: slotHeight }}
     >

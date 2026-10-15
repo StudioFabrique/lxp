@@ -7,6 +7,7 @@ import AuthChatbotRadialMenu from "../../auth/components/AuthChatbotRadialMenu";
 import { AuthChatbotDragContext } from "../../auth/components/AuthChatbotDragContext";
 import { chooseChatbotGesture, type ChatbotGesture } from "../../auth/components/auth-chatbot-gestures";
 import ChatbotAnswer from "./chatbot-parts/chatbot-answer";
+import ChatbotMoreQuestions from "./chatbot-parts/chatbot-more-questions";
 import ChatbotPromptInput from "./chatbot-parts/chatbot-prompt-input";
 import ChatbotQuizSuggestion from "./chatbot-parts/chatbot-quiz-suggestion";
 import ChatbotRadialButton from "./chatbot-parts/chatbot-radial-button";
@@ -20,7 +21,7 @@ import useChatbotFirstFormation from "../hooks/use-chatbot-first-formation";
 import useChatbotQuiz from "../hooks/use-chatbot-quiz";
 import useChatbotTutorial from "../hooks/use-chatbot-tutorial";
 import useChatbotUi from "../hooks/use-chatbot-ui";
-import { buildChatbotQuestions, chatbotQuestionKey, pickSelectionPrompts, type ChatbotQuestion } from "../chatbot-questions";
+import { buildChatbotQuestions, chatbotQuestionKey, guidePageCount, pickSelectionPrompts, type ChatbotQuestion } from "../chatbot-questions";
 import { CHATBOT_BUBBLE_WIDTH_CLASS, chooseTutorialPlacement } from "../chatbot-position";
 import { onChatbotQuestionsCloseRequest, publishChatbotDock, useChatbotDockSnapshot } from "../chatbot-dock-store";
 import { FIRST_FORMATION_TUTORIAL } from "../chatbot-tutorials";
@@ -66,6 +67,9 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
   const [questionsOpen, setQuestionsOpen] = useState(false);
   // Passage déjà présenté : l'éventail s'ouvre seul pour une nouvelle sélection, pas pour une sélection laissée de côté.
   const [seenSelection, setSeenSelection] = useState("");
+  // Série de questions du guide montrée sur une page : elle repart de la première au changement de page.
+  const [guideView, setGuideView] = useState({ pathname, page: 0 });
+  const guidePage = guideView.pathname === pathname ? guideView.page : 0;
   const [answer, setAnswer] = useState<ChatbotValues | null>(null);
   const [gesture, setGesture] = useState<ChatbotGesture>(() => chooseChatbotGesture(null, Math.random()));
   const [replaySignal, setReplaySignal] = useState(0);
@@ -91,8 +95,9 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     hasTextSelection: hasSelection,
     canSuggestQuiz: enableQuizSuggestion && aiEnabled && currentActivity !== undefined && canSuggestActivityQuiz(currentActivity.readTimeMs),
     tutorials: tutorial.tutorials,
+    guidePage,
     selectionPrompts: pickSelectionPrompts(prebuiltPrompt.suggestedContentBlocPrompts, seed, activityTextSelection),
-  }), [aiEnabled, chatbot.aiUnavailable, hasSelection, enableQuizSuggestion, currentActivity, tutorial.tutorials, seed, activityTextSelection]);
+  }), [aiEnabled, chatbot.aiUnavailable, hasSelection, enableQuizSuggestion, currentActivity, tutorial.tutorials, guidePage, seed, activityTextSelection]);
 
   const closeRadial = useCallback(() => {
     setQuestionsOpen(false);
@@ -132,10 +137,22 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       void ask(question.label);
       return;
     }
+    if (question.kind === "more") {
+      // L'éventail reste ouvert : les questions suivantes prennent la place des précédentes.
+      setGuideView({ pathname, page: (guidePage + 1) % guidePageCount(tutorial.tutorials.length) });
+      return;
+    }
     closeRadial();
     if (question.kind === "tutorial") {
-      setAnswer(null);
-      tutorial.start(question.tutorialId);
+      const entry = tutorial.tutorials.find((candidate) => candidate.id === question.tutorialId);
+      // Réponse préenregistrée du guide : affichée dans la bulle, sans tutoriel ni appel à l'IA.
+      if (entry?.answer !== undefined) {
+        animateAvatar();
+        setAnswer({ origin: "bot", message: entry.answer, date: new Date(), preset: true });
+      } else {
+        setAnswer(null);
+        tutorial.start(question.tutorialId);
+      }
     } else if (question.kind === "quiz") {
       chatbotQuiz.onTriggerQuiz();
     }
@@ -261,7 +278,9 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
     overhang: question.kind === "input" ? 24 : 0,
     node: question.kind === "input"
       ? <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable} />
-      : <ChatbotRadialButton label={question.label} onClick={() => select(question)} />,
+      : question.kind === "more"
+        ? <ChatbotMoreQuestions label={question.label} onMore={() => select(question)} onReset={guidePage > 0 ? () => setGuideView({ pathname, page: 0 }) : undefined} />
+        : <ChatbotRadialButton label={question.label} onClick={() => select(question)} />,
   }));
 
   return (
@@ -314,7 +333,7 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       </motion.div>
       <AnimatePresence>
         {radialOpen && (
-          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} onOverlapChange={setBubbleObstructed} stacked={narrowScreen} pinnedInset={hasBottomBar} />
+          <AuthChatbotRadialMenu id={menuId} label="Questions pour l’assistant virtuel" items={items} anchorRef={avatarRef} bubbleRef={bubbleRef} pinnedSide={dock.side} aligned onOverlapChange={setBubbleObstructed} stacked={narrowScreen} pinnedInset={hasBottomBar} />
         )}
       </AnimatePresence>
       {tutorial.step && !hidden && <ChatbotTutorialHighlight element={tutorial.step.element} />}

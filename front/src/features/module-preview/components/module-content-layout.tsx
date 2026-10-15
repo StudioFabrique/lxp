@@ -60,6 +60,7 @@ const ModuleContentLayout = ({
           </motion.div>
         )}
         <div
+          data-chatbot-target="module-content"
           className={cn(
             "flex flex-col gap-2 min-w-0 min-h-[80vh]",
             isSidebarCollapsed

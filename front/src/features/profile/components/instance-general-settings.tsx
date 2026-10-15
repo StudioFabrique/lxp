@@ -272,6 +272,7 @@ export default function InstanceGeneralSettings() {
         <button
           type="button"
           className="btn btn-primary min-w-32 normal-case"
+          data-chatbot-target="instance-save"
           disabled={isLoading || isSaving}
           onClick={() => void save("general")}
         >

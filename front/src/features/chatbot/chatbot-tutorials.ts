@@ -1,14 +1,20 @@
-import { getSidebarItemForPath, sidebarItems, type SidebarLayout } from "../../config/sidebarItems";
-import { getSidebarHelp } from "../intro-presentation/intro-sidebar-help";
+import { matchPath } from "react-router";
+import guideData from "../../config/chatbot/chatbot-guide.json";
+import { chatbotGuideSchema, type ChatbotGuide, type ChatbotGuideQuestion, type ChatbotGuideStep } from "./chatbot-guide.schema";
 
 /** Étape d'un tutoriel : l'assistant virtuel se place près de l'élément désigné par `selector` et lit `message`. */
 export type ChatbotTutorialStep = { selector: string; message: string };
 
+/**
+ * Entrée de l'éventail issue du guide : un tutoriel (`steps`) ou une réponse préenregistrée (`answer`,
+ * sans étape). Les deux s'affichent sans appel à l'IA.
+ */
 export type ChatbotTutorial = {
   id: string;
   /** Question posée par l'utilisateur dans l'éventail de l'assistant virtuel. */
   label: string;
   steps: ChatbotTutorialStep[];
+  answer?: string;
 };
 
 /** Bouton « Créer ma première formation » du tableau de bord : repère posé par `LastParcoursItem`. */
@@ -29,72 +35,40 @@ export const FIRST_FORMATION_TUTORIAL: ChatbotTutorial = {
   ],
 };
 
-const MAIN_CONTAINER = "#main-scroll-container";
+/** Le fichier est une donnée de contenu : il est contrôlé au chargement pour qu'une faute de frappe échoue en test et non chez l'utilisateur. */
+export const chatbotGuide: ChatbotGuide = chatbotGuideSchema.parse(guideData);
 
-const getLayout = (pathname: string): SidebarLayout | null => {
+const getLayout = (pathname: string): "admin" | "student" | null => {
   const [layout] = pathname.split("/").filter(Boolean);
   return layout === "admin" || layout === "student" ? layout : null;
 };
 
-const sidebarLinkSelector = (layout: SidebarLayout, path: string): string =>
-  `aside a[href="/${layout}/${path}"]`;
+/** Sélecteur CSS d'un repère `data-chatbot-target` ; les valeurs du guide sont des identifiants simples, sans guillemet. */
+export const chatbotTargetSelector = (target: string): string => `[data-chatbot-target="${target}"]`;
 
-/** Les entrées ou boutons absents du menu (droits, rôle, mode démonstration) sont ignorés au lancement du tutoriel. */
-const controlSteps: ChatbotTutorialStep[] = [
-  { selector: 'aside [data-tip="Consommation IA"]', message: "Suivez ici la consommation des fonctionnalités d'intelligence artificielle de votre organisme." },
-  { selector: 'aside [data-tip="Revoir la présentation"]', message: "Revoyez à tout moment la présentation de la plateforme." },
-  { selector: 'aside [data-tip="Mode clair / Mode sombre"]', message: "Basculez entre le mode clair et le mode sombre selon votre confort de lecture." },
-  { selector: 'aside [data-tip="Déconnexion"]', message: "Quittez votre session en toute sécurité lorsque vous avez terminé." },
-];
-
-const menuTutorial = (layout: SidebarLayout): ChatbotTutorial => ({
-  id: "menu",
-  label: "À quoi servent les menus ?",
-  steps: [
-    {
-      selector: "aside",
-      message: "Ce menu donne accès à toutes les sections de la plateforme. Je vous les présente une par une.",
-    },
-    ...sidebarItems[layout].flatMap((item) => {
-      const help = getSidebarHelp(layout, item);
-      return help
-        ? [{ selector: sidebarLinkSelector(layout, item.path), message: `${item.label}. ${help}` }]
-        : [];
-    }),
-    ...controlSteps,
-  ],
+const toStep = (step: ChatbotGuideStep): ChatbotTutorialStep => ({
+  selector: step.target === undefined ? (step.selector ?? "") : chatbotTargetSelector(step.target),
+  message: step.message,
 });
 
-const pageTutorial = (layout: SidebarLayout, pathname: string): ChatbotTutorial | null => {
-  const item = getSidebarItemForPath(pathname);
-  if (!item) return null;
-  return {
-    id: "page",
-    label: "À quoi sert cette page ?",
-    steps: [
-      {
-        selector: sidebarLinkSelector(layout, item.path),
-        message: `Vous êtes dans la section « ${item.label} ». ${getSidebarHelp(layout, item)}`.trim(),
-      },
-      {
-        selector: `${MAIN_CONTAINER} .themed-page-header`,
-        message: "Le titre de la page rappelle où vous vous trouvez.",
-      },
-      {
-        selector: `${MAIN_CONTAINER} .header-actions-main > *`,
-        message: "Les actions principales de la page se trouvent ici.",
-      },
-    ],
-  };
-};
+const toTutorial = (scope: string, question: ChatbotGuideQuestion): ChatbotTutorial => ({
+  id: `${scope}:${question.id}`,
+  label: question.label,
+  steps: question.steps?.map(toStep) ?? [],
+  answer: question.answer,
+});
 
 /**
- * Tutoriels proposés sur la page courante, sans IA : ils reposent sur les éléments réellement affichés.
- * Pour en ajouter un, déclarer ses étapes ici ; une étape dont l'élément est absent est ignorée.
+ * Questions proposées sur la page courante, sans IA : la première de la page (« À quoi sert cette page ? »),
+ * celles de son interface (menus), puis les autres questions de la page. Les tutoriels reposent sur les éléments
+ * réellement affichés : une étape dont l'élément est absent (droits, rôle, écran étroit) est ignorée au lancement.
+ * Pour en ajouter, éditer `config/chatbot/chatbot-guide.json`.
  */
-export const getChatbotTutorials = (pathname: string): ChatbotTutorial[] => {
+export const getChatbotTutorials = (pathname: string, guide: ChatbotGuide = chatbotGuide): ChatbotTutorial[] => {
   const layout = getLayout(pathname);
   if (!layout) return [];
-  const page = pageTutorial(layout, pathname);
-  return [...(page ? [page] : []), menuTutorial(layout)];
+  const page = guide.pages.find((entry) => entry.routes.some((route) => matchPath({ path: route, end: true }, pathname)));
+  const [overview, ...pageQuestions] = page?.questions.map((question) => toTutorial(page.id, question)) ?? [];
+  const layoutQuestions = guide.layouts[layout].questions.map((question) => toTutorial(layout, question));
+  return [...(overview ? [overview] : []), ...layoutQuestions, ...pageQuestions];
 };
