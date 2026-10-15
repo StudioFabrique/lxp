@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
@@ -15,7 +16,12 @@ import { useParcoursModules } from "../../../hooks/useParcoursModules";
 import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 
-const Calendrier = () => {
+type Props = {
+  /** Emplacement à droite du titre de l'étape où afficher les dates (sinon, au-dessus du calendrier). */
+  titleActionsTarget?: HTMLElement | null;
+};
+
+const Calendrier = ({ titleActionsTarget = null }: Props) => {
   const currentDate = new Date();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -115,9 +121,18 @@ const Calendrier = () => {
   return (
     <div ref={containerRef} className="relative flex flex-col gap-y-5 h-full">
       {modulesTimelineEvents.length > 0 ? (
-        <BoxWrapper className="flex flex-row self-end gap-2 text-sm">
-          {parcoursDates}
-        </BoxWrapper>
+        titleActionsTarget ? (
+          createPortal(
+            <BoxWrapper className="flex flex-row gap-2 text-sm">
+              {parcoursDates}
+            </BoxWrapper>,
+            titleActionsTarget,
+          )
+        ) : (
+          <BoxWrapper className="flex flex-row self-end gap-2 text-sm">
+            {parcoursDates}
+          </BoxWrapper>
+        )
       ) : null}
 
       {modulesTimelineEvents.length === 0 ? (
