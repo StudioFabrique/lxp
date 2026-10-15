@@ -16,7 +16,7 @@ describe("getMissingModuleRequirements", () => {
       }),
     ).toEqual([
       "Durée non renseignée",
-      "Aucun membre de l'équipe pédagogique affecté",
+      "Aucun membre « Équipe pédagogique » affecté",
       "Aucune compétence ajoutée",
     ]);
   });
@@ -25,9 +25,18 @@ describe("getMissingModuleRequirements", () => {
     const requirements = { duration: 15, contacts: [], skills: [{}] };
 
     expect(getMissingModuleRequirements(requirements)).toEqual([
-      "Aucun membre de l'équipe pédagogique affecté",
+      "Aucun membre « Équipe pédagogique » affecté",
     ]);
     expect(hasCompleteModuleRequirements(requirements)).toBe(false);
+  });
+
+  it("reprend le libellé personnalisé du rôle de l'équipe", () => {
+    expect(
+      getMissingModuleRequirements(
+        { duration: 15, contacts: [], skills: [{}] },
+        "Ressources pédagogiques",
+      ),
+    ).toEqual(["Aucun membre « Ressources pédagogiques » affecté"]);
   });
 
   it("considère un module complet sans cause", () => {

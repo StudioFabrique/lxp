@@ -4,6 +4,7 @@ import Modal from "../../../../../components/UI/modal/modal";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import type Contact from "../../../../../utils/interfaces/contact";
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 type ModuleChoice = {
   id: number;
@@ -26,6 +27,7 @@ export default function AssignContactsToModulesModal({
   onClose,
   onSubmit,
 }: Props) {
+  const { teamLabel } = useRoleLabels();
   const assignableModules = useMemo(
     () =>
       modules.filter((module) =>
@@ -77,7 +79,7 @@ export default function AssignContactsToModulesModal({
         </p>
         {assignableModules.length === 0 ? (
           <p className="rounded-box bg-base-200 p-5 text-sm text-base-content/65">
-            Ce membre de l'équipe pédagogique est déjà affecté à tous les modules.
+            Ce membre « {teamLabel} » est déjà affecté à tous les modules.
           </p>
         ) : (
           <>

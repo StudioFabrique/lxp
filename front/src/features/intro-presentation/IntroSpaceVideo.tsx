@@ -15,10 +15,6 @@ type Props = {
 /** Index de la séquence « Tableaux de bord par rôle » dans `manifest.json`. */
 const DASHBOARDS_SEQUENCE = 8;
 const LOAD_TIMEOUT_MS = 10_000;
-const SPACE_LABELS: Record<IntroSpaceContent["space"], string> = {
-  student: "l'espace apprenant",
-  team: "l'espace de l'équipe pédagogique",
-};
 
 /**
  * Joue la séquence Hyperframes de construction de l'interface (avec l’assistant virtuel)
@@ -146,7 +142,7 @@ const IntroSpaceVideo = ({ content, onEnded }: Props) => {
         key={attempt}
         ref={frameRef}
         src={`/presentations/andria/index.html?quality=${DASHBOARDS_SEQUENCE}&role=${space}`}
-        title={`Présentation animée de ${SPACE_LABELS[space]}`}
+        title={`Présentation animée de l'${content.spaceLabel.toLocaleLowerCase("fr")}`}
         className={cn(
           "size-full border-0 transition-opacity duration-300",
           !isLoaded && "opacity-0",

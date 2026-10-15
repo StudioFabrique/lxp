@@ -6,6 +6,7 @@ import SearchBar from "../../../components/UI/search-bar/search-bar";
 import TablePagination from "../../../components/table/TablePagination";
 import type { TopUser } from "../types";
 import { cn } from "../../../utils/cn";
+import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 
 type Props = {
   dataList: TopUser[];
@@ -34,6 +35,7 @@ const TopUsersTable = ({
   onSort,
   onSearch,
 }: Props) => {
+  const { labels, teamLabel } = useRoleLabels();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -100,9 +102,7 @@ const TopUsersTable = ({
                   )}
                 </td>
                 <td>
-                  {user.role === "student"
-                    ? "Apprenant"
-                    : "Équipe pédagogique"}
+                  {user.role === "student" ? labels[3] : teamLabel}
                 </td>
                 <td className={cn(user.groupName ? "" : "text-center")}>
                   {user.groupName ?? " - "}

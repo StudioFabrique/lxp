@@ -9,6 +9,7 @@ import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import type Group from "../../../../../utils/interfaces/group";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 interface ParcoursPreviewInfosProps {
   onEdit: (id: number) => void;
@@ -18,6 +19,7 @@ interface ParcoursPreviewInfosProps {
 
 /* Informations générales du parcours */
 const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
+  const { teamLabel } = useRoleLabels();
   const { id } = useParams();
   const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
   const contacts = parcours?.contacts ?? [];
@@ -66,7 +68,7 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
           {/* Colonne #2 */}
           <article className="flex flex-col gap-y-8">
             <BoxWrapper>
-              <h2 className="text-xl font-bold">Équipe pédagogique</h2>
+              <h2 className="text-xl font-bold">{teamLabel}</h2>
               <ContactsList contactsList={contacts} />
             </BoxWrapper>
             {props.isTeacher && (

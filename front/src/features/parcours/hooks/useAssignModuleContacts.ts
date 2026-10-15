@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { parcoursApi } from "../api/parcours.api";
 import { parcoursKeys } from "../api/parcours.keys";
+import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 
 export function useAssignModuleContacts(parcoursId: number) {
+  const { teamLabel } = useRoleLabels();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -22,7 +24,7 @@ export function useAssignModuleContacts(parcoursId: number) {
       toast.error(
         getApiErrorMessage(
           error,
-          "Les membres de l'équipe pédagogique n'ont pas pu être affectés.",
+          `Les membres « ${teamLabel} » n'ont pas pu être affectés.`,
         ),
       );
     },

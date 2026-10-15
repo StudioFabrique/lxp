@@ -4,9 +4,11 @@ import {
   instanceEmailSchema,
   instanceIdentitySchema,
 } from "../../profile/schemas/instance-schema";
+import { roleLabelsSchema } from "../../role/role-labels.schema";
 
 export const instanceSetupSchema = instanceIdentitySchema.extend({
   ...instanceEmailSchema.shape,
+  roleLabels: roleLabelsSchema,
   logo: z.object({
     file: z.instanceof(File)
       .refine((file) => file.size <= avatarImageMaxSize, "Le logo ne doit pas dépasser 500 Ko.")

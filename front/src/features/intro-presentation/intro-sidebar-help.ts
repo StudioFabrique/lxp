@@ -1,10 +1,13 @@
 import type { SidebarItemConfig, SidebarLayout } from "../../config/sidebarItems";
+import { DEFAULT_ROLE_LABELS } from "../role/helpers/role-labels";
 
 /**
  * Explication de chaque entrée de la barre latérale, lue par le tutoriel qui
  * interrompt la séquence 3D. Les clés sont celles de `sidebarItems`.
  */
-const SIDEBAR_HELP: Record<SidebarLayout, Record<string, string>> = {
+const buildSidebarHelp = (
+  teamLabel: string,
+): Record<SidebarLayout, Record<string, string>> => ({
   admin: {
     home: "Votre tableau de bord : les actions recommandées, les derniers modules et parcours créés, et les retours des apprenants.",
     user: "Créez et gérez les comptes utilisateurs, leurs rôles et leurs accès.",
@@ -23,12 +26,13 @@ const SIDEBAR_HELP: Record<SidebarLayout, Record<string, string>> = {
     home: "Votre tableau de bord : reprenez votre dernière leçon et suivez votre avancement.",
     parcours: "Retrouvez vos parcours, avec leurs modules, leurs cours et leurs leçons.",
     calendar: "Consultez vos prochaines séances.",
-    assignments: "Remettez vos travaux et consultez les retours de l'équipe pédagogique.",
+    assignments: `Remettez vos travaux et consultez les retours des membres « ${teamLabel} ».`,
     resources: "Accédez aux ressources complémentaires proposées pour vos formations.",
   },
-};
+});
 
 export const getSidebarHelp = (
   layout: SidebarLayout,
   item: SidebarItemConfig,
-): string => SIDEBAR_HELP[layout][item.key] ?? "";
+  teamLabel: string = DEFAULT_ROLE_LABELS[2],
+): string => buildSidebarHelp(teamLabel)[layout][item.key] ?? "";

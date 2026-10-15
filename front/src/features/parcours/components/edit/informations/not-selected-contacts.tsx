@@ -11,6 +11,7 @@ import { parcoursKeys } from "../../../api/parcours.keys";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import { AuthContext } from "../../../../../store/AuthProvider";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -31,6 +32,7 @@ type Teacher = {
 };
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
+  const { teamLabel } = useRoleLabels();
   const { user } = useContext(AuthContext);
   const canCreateTeacher = (user?.roles[0]?.rank ?? 4) < 2;
   const [selectedContactIds, setSelectedContactIds] = useState<Set<number>>(
@@ -213,7 +215,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           {canCreateTeacher ? (
             <RightSideDrawer
               id="new-contact"
-              title="Ajouter un membre de l'équipe pédagogique"
+              title={`Ajouter un membre « ${teamLabel} »`}
               visible={false}
             >
               <UserQuickCreate
@@ -237,7 +239,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
               </button>
               <RightSideDrawer
                 id="new-contact"
-                title="Ajouter un membre de l'équipe pédagogique"
+                title={`Ajouter un membre « ${teamLabel} »`}
                 visible={false}
               >
                 <UserQuickCreate

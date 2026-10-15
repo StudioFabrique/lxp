@@ -93,7 +93,7 @@ describe("ModuleGrid", () => {
     );
 
     expect(markup).toContain("module-image");
-    expect(markup).toContain("Affecter l&#x27;équipe pédagogique");
+    expect(markup).toContain("Affecter les membres « Équipe pédagogique »");
     expect(markup).toContain("Ajouter des compétences");
     expect(markup).toContain('data-tip="Compétence avec badge"');
     expect(markup).toContain('data-tip="Compétence sans badge"');
@@ -104,7 +104,7 @@ describe("ModuleGrid", () => {
     expect(markup).toContain("py-2");
     expect(markup).toContain("after:hidden");
     expect(markup).toContain(
-      "Retirer le membre de l&#x27;équipe pédagogique Ada Lovelace du module Module illustré",
+      "Retirer le membre « Équipe pédagogique » Ada Lovelace du module Module illustré",
     );
     expect(markup).toContain(
       "Retirer la compétence Compétence avec badge du module Module illustré",
@@ -115,7 +115,7 @@ describe("ModuleGrid", () => {
 
     const contactPosition = markup.indexOf("Ada Lovelace");
     const contactButtonPosition = markup.indexOf(
-      "Affecter l&#x27;équipe pédagogique",
+      "Affecter les membres « Équipe pédagogique »",
     );
     const skillPosition = markup.indexOf("Compétence avec badge");
     const skillButtonPosition = markup.indexOf("Ajouter des compétences");
@@ -131,9 +131,9 @@ describe("ModuleGrid", () => {
 
     expect(markup).toContain("Ada Lovelace");
     expect(markup).toContain('data-tip="Compétence avec badge"');
-    expect(markup).not.toContain("Affecter l&#x27;équipe pédagogique");
+    expect(markup).not.toContain("Affecter les membres « Équipe pédagogique »");
     expect(markup).not.toContain("Ajouter des compétences");
-    expect(markup).not.toContain("Retirer le membre de l&#x27;équipe pédagogique");
+    expect(markup).not.toContain("Retirer le membre « Équipe pédagogique »");
     expect(markup).not.toContain("Retirer la compétence");
   });
 
@@ -189,7 +189,7 @@ describe("ModuleGrid", () => {
     });
 
     const removeContactButton = container.querySelector<HTMLButtonElement>(
-      `[aria-label="Retirer le membre de l'équipe pédagogique Ada Lovelace du module Module illustré"]`,
+      `[aria-label="Retirer le membre « Équipe pédagogique » Ada Lovelace du module Module illustré"]`,
     );
     const removeSkillButton = container.querySelector<HTMLButtonElement>(
       '[aria-label="Retirer la compétence Compétence avec badge du module Module illustré"]',

@@ -12,6 +12,7 @@ import { getMissingModuleRequirements } from "../../../helpers/parcours-steps-va
 import type { ModuleData } from "../../../interfaces/new-module";
 import ModuleIncompleteBadge from "./ModuleIncompleteBadge";
 import "./ModuleCard.css";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 type ModuleCardProps = {
   module: ModuleData;
@@ -42,11 +43,15 @@ export default function ModuleCard({
   onRemoveContact,
   onRemoveSkill,
 }: ModuleCardProps) {
-  const missingRequirements = getMissingModuleRequirements({
-    duration: module.duration,
-    contacts: module.contacts,
-    skills: module.skills,
-  });
+  const { teamLabel } = useRoleLabels();
+  const missingRequirements = getMissingModuleRequirements(
+    {
+      duration: module.duration,
+      contacts: module.contacts,
+      skills: module.skills,
+    },
+    teamLabel,
+  );
   const isIncomplete = missingRequirements.length > 0;
 
   return (
@@ -101,9 +106,9 @@ export default function ModuleCard({
                         data-tip={
                           contact.id === lockedContactId
                             ? "Cette affectation est requise"
-                            : "Retirer le membre de l'équipe pédagogique"
+                            : `Retirer le membre « ${teamLabel} »`
                         }
-                        aria-label={`Retirer le membre de l'équipe pédagogique ${contactName} du module ${module.title}`}
+                        aria-label={`Retirer le membre « ${teamLabel} » ${contactName} du module ${module.title}`}
                         disabled={
                           isRemovingContact || contact.id === lockedContactId
                         }
@@ -124,7 +129,7 @@ export default function ModuleCard({
           };
         })}
         maxItemsShown={3}
-        emptyMessage="Aucun membre de l'équipe pédagogique affecté"
+        emptyMessage={`Aucun membre « ${teamLabel} » affecté`}
         moreItemsLabel={(count) => `Afficher plus de ressources (${count})`}
         overflowTitle={`Autres ressources de ${module.title}`}
         footerAtBottom
@@ -203,12 +208,12 @@ export default function ModuleCard({
                   <button
                     type="button"
                     className="btn btn-sm btn-ghost text-primary"
-                    aria-label={`Affecter l'équipe pédagogique au module ${module.title}`}
+                    aria-label={`Affecter les membres « ${teamLabel} » au module ${module.title}`}
                     disabled={isRemovingContact}
                     onClick={() => onAssignContacts(module)}
                   >
                     <UserPlus className="size-4" />
-                    Affecter l'équipe pédagogique
+                    Affecter les membres « {teamLabel} »
                   </button>
                 </PermissionGuard>
               </div>

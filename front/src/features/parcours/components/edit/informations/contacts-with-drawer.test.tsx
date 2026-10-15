@@ -101,7 +101,7 @@ describe("Affectation de l'équipe pédagogique aux modules", () => {
     await renderWithModules([{ id: 10, contacts: [] }], true);
 
     expect(container.querySelector('[role="status"]')?.textContent).toContain(
-      "Enregistrement de l'équipe pédagogique en cours",
+      "Enregistrement des membres « Équipe pédagogique » en cours",
     );
   });
 

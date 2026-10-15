@@ -8,8 +8,10 @@ import {
   emailTemplateIds,
   instanceLogoPath,
   readInstanceSettings,
+  parseRoleLabels,
   writeInstanceSettings,
 } from "../../services/instance-settings.ts";
+import { syncSystemRoleLabels } from "../../models/permission/sync-system-role-labels.ts";
 
 const allowedThemes = new Set([
   "classic",
@@ -104,6 +106,11 @@ export async function httpPutInstanceSettings(
       .json({ message: "Sélectionnez au moins un thème clair et un thème sombre." });
   }
 
+  const roleLabels = parseRoleLabels(req.body?.roleLabels, currentSettings.roleLabels);
+  if ("error" in roleLabels) {
+    return res.status(400).json({ message: roleLabels.error });
+  }
+
   const settings = {
     name: name.trim(),
     website: trimmedWebsite,
@@ -113,8 +120,14 @@ export async function httpPutInstanceSettings(
         : currentSettings.setupCompleted,
     enabledThemes: [...new Set(enabledThemes as string[])],
     emailTemplate,
+    roleLabels: roleLabels.labels,
   };
 
+  // Les rôles sont mis à jour avant le fichier : l'opération est idempotente,
+  // un nouvel enregistrement répare donc un échec survenu entre les deux.
+  if (req.body?.roleLabels !== undefined) {
+    await syncSystemRoleLabels(settings.roleLabels);
+  }
   await writeInstanceSettings(settings);
 
   if (req.body?.deleteLogo === "true" && !req.file) {

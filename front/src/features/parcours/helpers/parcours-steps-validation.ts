@@ -1,4 +1,5 @@
 import { regexGeneric } from "../../../config/constantes";
+import { DEFAULT_ROLE_LABELS } from "../../role/helpers/role-labels";
 import type Contact from "../../../utils/interfaces/contact";
 import type Group from "../../../utils/interfaces/group";
 import type Module from "../../../utils/interfaces/module";
@@ -39,16 +40,15 @@ type ModuleCompletionRequirements = {
 };
 
 // Libellés des éléments manquants d'un module, dans l'ordre d'affichage.
-export const getMissingModuleRequirements = ({
-  duration,
-  contacts,
-  skills,
-}: ModuleCompletionRequirements): string[] => {
+export const getMissingModuleRequirements = (
+  { duration, contacts, skills }: ModuleCompletionRequirements,
+  teamLabel: string = DEFAULT_ROLE_LABELS[2],
+): string[] => {
   const missing: string[] = [];
 
   if (duration === undefined) missing.push("Durée non renseignée");
   if (contacts === undefined || contacts.length === 0) {
-    missing.push("Aucun membre de l'équipe pédagogique affecté");
+    missing.push(`Aucun membre « ${teamLabel} » affecté`);
   }
   if (skills === undefined || skills.length === 0) {
     missing.push("Aucune compétence ajoutée");

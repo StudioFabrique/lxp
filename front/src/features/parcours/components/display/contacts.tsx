@@ -7,6 +7,7 @@ import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import { getContactFullName } from "../../../../utils/helpers/contact-full-name";
 import CollapsibleSection from "./collapsible-section";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
+import { useRoleLabels } from "../../../role/hooks/useRoleLabels";
 
 type ContactsProps = {
   open?: boolean;
@@ -14,6 +15,7 @@ type ContactsProps = {
 };
 
 const Contacts = ({ open, onOpenChange }: ContactsProps) => {
+  const { teamLabel } = useRoleLabels();
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const { id } = useParams();
@@ -55,7 +57,7 @@ const Contacts = ({ open, onOpenChange }: ContactsProps) => {
   return (
     <BoxWrapper className="h-auto gap-0 overflow-hidden p-0">
       <CollapsibleSection
-        title="Équipe pédagogique"
+        title={teamLabel}
         icon={<Users className="size-5 shrink-0" aria-hidden="true" />}
         className="bg-transparent"
         defaultOpen={contacts.length <= 2}

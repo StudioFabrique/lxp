@@ -3,6 +3,7 @@ import { FC } from "react";
 import Objective from "../../../../../../src/utils/interfaces/objective";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import DeleteIcon from "../../../../../../src/components/UI/svg/delete-icon.component";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 type Props = {
   objective: Objective;
@@ -17,6 +18,7 @@ const ObjectiveItem: FC<Props> = ({
   onUpdate,
   readOnly,
 }) => {
+  const { teamLabel } = useRoleLabels();
   const handleUpdate = () => {
     onUpdate(objective.id!);
   };
@@ -36,7 +38,7 @@ const ObjectiveItem: FC<Props> = ({
           aria-label="modification de l'objectif"
           disabled={readOnly}
           title={
-            readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
+            readOnly ? `Lecture seule pour le rôle « ${teamLabel} »` : undefined
           }
         >
           <div className="size-4 md:size-6">
@@ -49,7 +51,7 @@ const ObjectiveItem: FC<Props> = ({
           aria-label="suppression de l'objectif"
           disabled={readOnly}
           title={
-            readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
+            readOnly ? `Lecture seule pour le rôle « ${teamLabel} »` : undefined
           }
         >
           <div className="size-4 md:size-6">

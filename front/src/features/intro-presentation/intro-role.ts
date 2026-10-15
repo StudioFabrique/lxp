@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { BookOpen, GraduationCap, ShieldCheck, Terminal } from "lucide-react";
 
 import type Role from "../../utils/interfaces/role";
+import type { RoleLabels } from "../role/helpers/role-labels";
 
 /** Espaces montrés par la séquence « dashboards » : apprenant ou équipe (rangs 0 à 2). */
 export type IntroSpace = "student" | "team";
@@ -29,11 +30,29 @@ export const INTRO_ROLES: readonly IntroRoleOption[] = [
 const STUDENT_RANK = 3;
 
 /** Rôle principal de l'utilisateur, ou `null` s'il n'est pas dans la liste connue. */
+/**
+ * Applique les libellés de l'instance aux rôles personnalisables (rangs 1 à 3).
+ * Root garde son nom : il n'est pas renommable.
+ */
+export const withInstanceRoleLabels = (
+  labels: RoleLabels,
+): readonly IntroRoleOption[] =>
+  INTRO_ROLES.map((role) => {
+    if (role.rank < 1 || role.rank > 3) return role;
+    const label = labels[role.rank as 1 | 2 | 3];
+    return {
+      ...role,
+      label,
+      spaceLabel: `Espace ${label.toLocaleLowerCase("fr")}`,
+    };
+  });
+
 export const findIntroRole = (
   roles: ReadonlyArray<Pick<Role, "rank">> | undefined,
+  options: readonly IntroRoleOption[] = INTRO_ROLES,
 ): IntroRoleOption | null => {
   const rank = roles?.[0]?.rank;
-  return INTRO_ROLES.find((role) => role.rank === rank) ?? null;
+  return options.find((role) => role.rank === rank) ?? null;
 };
 
 export const getIntroSpace = (role: IntroRoleOption): IntroSpace =>

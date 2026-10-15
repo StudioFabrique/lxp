@@ -7,12 +7,14 @@ import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Course from "../../../../../../src/utils/interfaces/course";
 import ContactsList from "../../../../parcours/components/edit/preview/contacts-list.component";
 import TagsList from "../../../../parcours/components/edit/preview/tags-list.component";
+import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 
 interface CoursePreviewInfosProps {
   onEdit: (id: number) => void;
 }
 
 const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
+  const { teamLabel } = useRoleLabels();
   const course = useCourseSelector((state) => state.course) as Course;
 
   return (
@@ -58,7 +60,7 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
           </article>
           <article className="flex flex-col gap-y-8">
             <BoxWrapper>
-              <h2 className="text-xl font-bold">Équipe pédagogique</h2>
+              <h2 className="text-xl font-bold">{teamLabel}</h2>
               <ContactsList contactsList={course?.contacts ?? []} />
             </BoxWrapper>
             <BoxWrapper>

@@ -40,6 +40,7 @@ describe("Personnalisez votre espace", () => {
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
       emailTemplate: "minimal",
+      roleLabels: { "1": "Administrateur", "2": "Équipe pédagogique", "3": "Apprenant", "4": "Visiteur" },
     });
     vi.mocked(profileApi.mutations.updateInstanceSettings).mockResolvedValue({
       name: "ANDRIA",
@@ -75,11 +76,8 @@ describe("Personnalisez votre espace", () => {
     });
     expect(container.textContent).toContain("Personnalisez votre espace");
 
-    await act(async () => {
-      container.querySelector("form")?.dispatchEvent(
-        new Event("submit", { bubbles: true, cancelable: true }),
-      );
-    });
+    await goToRoles();
+    await submit();
 
     const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
     expect(payload?.get("website")).toBe("https://step.eco");
@@ -89,6 +87,26 @@ describe("Personnalisez votre espace", () => {
   async function nextStep(): Promise<void> {
     await act(async () => {
       Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Continuer")?.click();
+    });
+  }
+
+  /** Étape 2 (identité) vers étape 3 (libellés des rôles) : le formulaire de l'étape 2 est validé puis on avance. */
+  async function goToRoles(): Promise<void> {
+    await act(async () => container.querySelector("form")?.dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true }),
+    ));
+  }
+
+  function roleInput(name: string): HTMLInputElement {
+    const input = container.querySelector<HTMLInputElement>(`input[name="roleLabels.${name}"]`);
+    expect(input).not.toBeNull();
+    return input as HTMLInputElement;
+  }
+
+  async function typeInto(input: HTMLInputElement, value: string): Promise<void> {
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, value);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
     });
   }
 
@@ -102,6 +120,12 @@ describe("Personnalisez votre espace", () => {
     await act(async () => container.querySelector("form")?.dispatchEvent(
       new Event("submit", { bubbles: true, cancelable: true }),
     ));
+  }
+
+  /** Depuis l'étape 2, passe à l'étape des rôles puis enregistre. */
+  async function finish(): Promise<void> {
+    await goToRoles();
+    await submit();
   }
 
   it("applique le modèle au formulaire sans terminer la configuration", async () => {
@@ -118,7 +142,7 @@ describe("Personnalisez votre espace", () => {
     expect(document.querySelector("dialog")).toBeNull();
     expect(container.textContent).toContain("Modèle sélectionné : Bannière");
     expect(profileApi.mutations.updateInstanceSettings).not.toHaveBeenCalled();
-    await submit();
+    await finish();
     expect(vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0].get("emailTemplate")).toBe("contrast");
   });
 
@@ -136,7 +160,7 @@ describe("Personnalisez votre espace", () => {
     await clickButton("Modifier le template");
     expect(document.querySelector('button[aria-pressed="true"]')?.textContent).toContain("Invitation");
     await clickButton("Annuler");
-    await submit();
+    await finish();
     expect(vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0].get("emailTemplate")).toBe("soft");
   });
 
@@ -146,10 +170,11 @@ describe("Personnalisez votre espace", () => {
     await clickButton("Éditorial");
     await clickButton("Appliquer le template");
     vi.mocked(profileApi.mutations.updateInstanceSettings).mockRejectedValueOnce(new Error("indisponible"));
-    await submit();
+    await finish();
     expect(toast.error).toHaveBeenCalled();
+    await clickButton("Précédent");
     expect(container.textContent).toContain("Modèle sélectionné : Éditorial");
-    await submit();
+    await finish();
     expect(profileApi.mutations.updateInstanceSettings).toHaveBeenCalledTimes(2);
     expect(vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[1]?.[0].get("emailTemplate")).toBe("editorial");
   });
@@ -163,7 +188,72 @@ describe("Personnalisez votre espace", () => {
     });
     await submit();
     expect(input?.getAttribute("aria-invalid")).toBe("true");
+    expect(container.textContent).not.toContain("Nommez les rôles");
     expect(profileApi.mutations.updateInstanceSettings).not.toHaveBeenCalled();
+  });
+
+  it("propose les libellés de rôles par défaut et les envoie à l'enregistrement", async () => {
+    await nextStep();
+    await goToRoles();
+    expect(container.textContent).toContain("Nommez les rôles");
+    expect(roleInput("admin").value).toBe("Administrateur");
+    expect(roleInput("team").value).toBe("Équipe pédagogique");
+    expect(roleInput("student").value).toBe("Apprenant");
+    expect(roleInput("visitor").value).toBe("Visiteur");
+
+    expect(container.textContent).toContain("Aperçu dans l’application");
+    expect(container.textContent).toContain("Aucun membre « Équipe pédagogique » renseigné");
+
+    await typeInto(roleInput("team"), "  Ressources   pédagogiques ");
+    // L'aperçu suit la saisie, espaces superflus compris tant qu'elle n'est pas normalisée.
+    expect(container.textContent).toContain("Aucun membre « Ressources   pédagogiques » renseigné");
+    await submit();
+
+    const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
+    expect(JSON.parse(String(payload?.get("roleLabels")))).toEqual({
+      "1": "Administrateur",
+      "2": "Ressources pédagogiques",
+      "3": "Apprenant",
+      "4": "Visiteur",
+    });
+  });
+
+  it("bloque l'enregistrement d'un libellé vide ou en doublon", async () => {
+    await nextStep();
+    await goToRoles();
+
+    await typeInto(roleInput("team"), " ");
+    await submit();
+    expect(roleInput("team").getAttribute("aria-invalid")).toBe("true");
+    expect(profileApi.mutations.updateInstanceSettings).not.toHaveBeenCalled();
+
+    await typeInto(roleInput("team"), "apprenant");
+    await submit();
+    expect(container.textContent).toContain("Chaque rôle doit porter un libellé différent.");
+    expect(profileApi.mutations.updateInstanceSettings).not.toHaveBeenCalled();
+  });
+
+  it("reprend les libellés déjà enregistrés par l'instance", async () => {
+    vi.mocked(profileApi.queries.getInstanceSettings).mockResolvedValue({
+      name: "ANDRIA",
+      website: "",
+      setupCompleted: false,
+      hasLogo: false,
+      enabledThemes: ["classic", "classic-dark"],
+      emailTemplate: "minimal",
+      roleLabels: { "2": "Formateurs" },
+    });
+    await act(async () => root.unmount());
+    root = createRoot(container);
+    await act(async () => root.render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <InstanceSetup />
+      </QueryClientProvider>,
+    ));
+    await nextStep();
+    await goToRoles();
+    expect(roleInput("team").value).toBe("Formateurs");
+    expect(roleInput("admin").value).toBe("Administrateur");
   });
 
 });

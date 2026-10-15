@@ -8,6 +8,7 @@ import {
 import { useFormField } from "../../../components/form/useFormField";
 import { showFormErrors } from "../../../components/form/form-errors";
 import { useContext, useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Eye, LoaderCircle, Plus, Settings, X } from "lucide-react";
 import toast from "react-hot-toast";
 import Header from "../../../components/headers/Header";
@@ -28,6 +29,12 @@ import EmailTemplateSettings, {
   type EmailTemplateId,
 } from "./email-template-settings";
 import { cn } from "../../../utils/cn";
+import RoleLabelsSettings from "./role-labels-settings";
+import { profileKeys } from "../api/profile.keys";
+import {
+  resolveRoleLabels,
+  type RoleLabels,
+} from "../../role/helpers/role-labels";
 
 const emptySettings: InstanceSettings = {
   name: "",
@@ -43,6 +50,7 @@ const validBackgroundColor = /^#[0-9a-f]{6}$/i;
 
 export default function InstanceGeneralSettings() {
   const { chooseTheme } = useContext(ThemeContext);
+  const queryClient = useQueryClient();
   const [initialSettings, setInitialSettings] = useState(emptySettings);
 
   const identityForm = useForm({
@@ -142,8 +150,11 @@ export default function InstanceGeneralSettings() {
     setBackgroundColor,
   ]);
 
-  const save = async (scope: "general" | "email") => {
-    if (isSaving || isLoading) return;
+  const save = async (
+    scope: "general" | "email" | "roles",
+    roleLabels?: RoleLabels,
+  ): Promise<boolean> => {
+    if (isSaving || isLoading) return false;
     if (scope === "general") {
       // Les deux formulaires sont validés avant l'écriture : aucune sauvegarde partielle.
       const [identityValid, themesValid] = await Promise.all([
@@ -156,11 +167,11 @@ export default function InstanceGeneralSettings() {
             ? themesForm.formState.errors
             : identityForm.formState.errors,
         );
-        return;
+        return false;
       }
-    } else if (!(await emailForm.trigger())) {
+    } else if (scope === "email" && !(await emailForm.trigger())) {
       showFormErrors(emailForm.formState.errors);
-      return;
+      return false;
     }
     const identity =
       scope === "general"
@@ -186,6 +197,10 @@ export default function InstanceGeneralSettings() {
         scope === "email" ? draftEmailTemplate : initialSettings.emailTemplate,
       );
       if (scope === "general" && logo.file) payload.append("image", logo.file);
+      // Seule la modale des rôles envoie les libellés : les autres enregistrements les conservent.
+      if (scope === "roles" && roleLabels) {
+        payload.append("roleLabels", JSON.stringify(roleLabels));
+      }
 
       const updatedSettings =
         await profileApi.mutations.updateInstanceSettings(payload);
@@ -194,11 +209,20 @@ export default function InstanceGeneralSettings() {
         setDraftEmailTemplate(updatedSettings.emailTemplate);
         setIsEmailTemplateModalOpen(false);
         toast.success("Le template d’e-mail a été mis à jour.");
+      } else if (scope === "roles") {
+        setInitialSettings(updatedSettings);
+        // Les écrans qui affichent un rôle relisent les libellés enregistrés.
+        await queryClient.invalidateQueries({
+          queryKey: profileKeys.instanceSettings(),
+        });
+        toast.success("Les noms des rôles ont été mis à jour.");
       } else {
         window.location.reload();
       }
+      return true;
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, "L’enregistrement a échoué."));
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -593,6 +617,11 @@ export default function InstanceGeneralSettings() {
         onSelect={setDraftEmailTemplate}
         onSave={() => void save("email")}
         onSendTest={() => void sendTestEmail()}
+      />
+      <RoleLabelsSettings
+        labels={resolveRoleLabels(settings.roleLabels)}
+        disabled={isLoading || isSaving}
+        onSave={(labels) => save("roles", labels)}
       />
     </div>
   );

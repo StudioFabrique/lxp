@@ -4,6 +4,7 @@ import Contact from "../../../utils/interfaces/contact";
 import SortColumnIcon from "../../UI/sort-column-icon/sort-column-icon";
 import useEagerLoadingList from "../../../hooks/useEagerLoadingList";
 import { getContactFullName } from "../../../utils/helpers/contact-full-name";
+import { useRoleLabels } from "../../../features/role/hooks/useRoleLabels";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -12,6 +13,7 @@ interface NotSelectedContactsProps {
 }
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
+  const { teamLabel } = useRoleLabels();
   const {
     allChecked,
     list,
@@ -119,7 +121,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         </>
       ) : (
         <p>
-          Tous les membres de l'équipe pédagogique ont déjà été ajoutés
+          Tous les membres « {teamLabel} » ont déjà été ajoutés
         </p>
       )}
     </>
