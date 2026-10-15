@@ -1,5 +1,6 @@
 import type React from "react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import {
   ArrowDownUp,
   CalendarDays,
@@ -16,8 +17,11 @@ import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { cn } from "../../../utils/cn";
 import TrophyIcon from "../../../components/UI/svg/trophy-icon.component";
 import Modal from "../../../components/UI/modal/modal";
+import { useIsMobile } from "../../../hooks/useMediaQuery";
+import { useMobileHeaderActions } from "../../../hooks/useMobileHeaderActions";
+import ModuleContentMobileActions from "./module-content-mobile-actions";
 
-type ModuleContentToolbarProps = {
+export type ModuleContentToolbarProps = {
   progress: React.ReactNode;
   isSidebarCollapsed: boolean;
   isContentSelected: boolean;
@@ -67,28 +71,68 @@ export default function ModuleContentToolbar({
   onOpenCompletionBadge,
 }: ModuleContentToolbarProps) {
   const [pendingVisibility, setPendingVisibility] = useState<boolean | null>(null);
+  const mobileActions = useMobileHeaderActions();
+  const isMobile = useIsMobile();
+
+  const visibilityConfirmation = pendingVisibility !== null && (
+    <Modal
+      title="Visibilité des cours"
+      leftLabel="Annuler"
+      rightLabel="Confirmer"
+      isSubmitting={isUpdatingCourseVisibility}
+      onLeftClick={() => setPendingVisibility(null)}
+      onRightClick={async () => {
+        await onToggleCourseVisibility(pendingVisibility);
+        setPendingVisibility(null);
+      }}
+    >
+      <p className="py-4">
+        {pendingVisibility
+          ? "Êtes-vous sûr de rendre visibles tous les cours ?"
+          : "Êtes-vous sûr de rendre invisibles tous les cours ?"}
+      </p>
+    </Modal>
+  );
+
+  // Mobile : la barre d'outils disparaît, ses actions passent dans le tiroir de la barre du haut.
+  // Seule la progression, qui n'est pas une action, reste affichée.
+  if (isMobile && mobileActions) {
+    return (
+      <>
+        {visibilityConfirmation}
+        {mobileActions.container &&
+          createPortal(
+            <ModuleContentMobileActions
+              isSidebarCollapsed={isSidebarCollapsed}
+              isContentSelected={isContentSelected}
+              showCompletionBadge={showCompletionBadge}
+              canPlanCourses={canPlanCourses}
+              isCalendarView={isCalendarView}
+              isCalendarSaving={isCalendarSaving}
+              showPublishAll={showPublishAll}
+              isPublishingAll={isPublishingAll}
+              showCourseVisibility={showCourseVisibility}
+              areAllCoursesVisible={areAllCoursesVisible}
+              isUpdatingCourseVisibility={isUpdatingCourseVisibility}
+              onToggleSidebar={onToggleSidebar}
+              onToggleCalendar={onToggleCalendar}
+              onPublishAll={onPublishAll}
+              onCloseContent={onCloseContent}
+              onOpenCompletionBadge={onOpenCompletionBadge}
+              onRequestCourseVisibility={setPendingVisibility}
+            />,
+            mobileActions.container,
+          )}
+        <div className="mt-5 flex h-10 items-center rounded-lg border border-secondary/20 bg-secondary/20 px-2 empty:hidden">
+          {progress}
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-5">
-      {pendingVisibility !== null && (
-        <Modal
-          title="Visibilité des cours"
-          leftLabel="Annuler"
-          rightLabel="Confirmer"
-          isSubmitting={isUpdatingCourseVisibility}
-          onLeftClick={() => setPendingVisibility(null)}
-          onRightClick={async () => {
-            await onToggleCourseVisibility(pendingVisibility);
-            setPendingVisibility(null);
-          }}
-        >
-          <p className="py-4">
-            {pendingVisibility
-              ? "Êtes-vous sûr de rendre visibles tous les cours ?"
-              : "Êtes-vous sûr de rendre invisibles tous les cours ?"}
-          </p>
-        </Modal>
-      )}
+      {visibilityConfirmation}
       <button
         type="button"
         className={cn(

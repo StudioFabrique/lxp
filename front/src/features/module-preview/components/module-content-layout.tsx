@@ -8,6 +8,12 @@ type ModuleContentLayoutProps = {
   sidebar: React.ReactNode;
   children: React.ReactNode;
   isSidebarCollapsed?: boolean;
+  /**
+   * Mobile : la colonne de gauche n'est gardée que lorsqu'elle sert à autre chose que naviguer
+   * (vue calendrier). Sinon la navigation s'ouvre en plein écran depuis la barre du haut
+   * et le contenu occupe toute la largeur.
+   */
+  showSidebarOnMobile?: boolean;
 };
 
 /**
@@ -20,6 +26,7 @@ const ModuleContentLayout = ({
   sidebar,
   children,
   isSidebarCollapsed = false,
+  showSidebarOnMobile = false,
 }: ModuleContentLayoutProps) => {
   return (
     <div className="w-full overflow-x-clip">
@@ -27,10 +34,17 @@ const ModuleContentLayout = ({
 
       {toolbar}
 
-      <div className="mt-5 grid grid-cols-[minmax(7.5rem,1fr)_minmax(0,2fr)] gap-2 sm:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)] sm:gap-3 lg:grid-cols-3 lg:gap-5 w-full">
+      <div
+        className={cn(
+          "mt-5 grid w-full gap-2 sm:gap-3 lg:grid-cols-3 lg:gap-5",
+          showSidebarOnMobile
+            ? "grid-cols-[minmax(7.5rem,1fr)_minmax(0,2fr)] sm:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)]"
+            : "grid-cols-1 md:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)]",
+        )}
+      >
         {!isSidebarCollapsed && (
           <motion.div
-            className="min-w-0"
+            className={cn("min-w-0", !showSidebarOnMobile && "hidden md:block")}
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: "auto", opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
@@ -40,9 +54,14 @@ const ModuleContentLayout = ({
           </motion.div>
         )}
         <div
-          className={cn("flex flex-col gap-2 min-w-0 min-h-[80vh]", isSidebarCollapsed
-              ? "col-span-2 lg:col-span-3"
-              : "col-span-1 lg:col-span-2")}
+          className={cn(
+            "flex flex-col gap-2 min-w-0 min-h-[80vh]",
+            isSidebarCollapsed
+              ? showSidebarOnMobile
+                ? "col-span-2 lg:col-span-3"
+                : "col-span-1 md:col-span-2 lg:col-span-3"
+              : "col-span-1 lg:col-span-2",
+          )}
         >
           {children}
         </div>

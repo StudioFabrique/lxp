@@ -9,7 +9,6 @@ import { cn } from "../../../../utils/cn";
 
 type MobileModuleNavigationProps = {
   module: Module;
-  hidden?: boolean;
   selectedLesson?: Lesson;
   selectedActivity?: Activity;
   selectedAssignmentCourseId?: number;
@@ -18,11 +17,12 @@ type MobileModuleNavigationProps = {
   onSelectActivity: (activity: Activity) => void;
   onSelectAssignment: (courseId?: number) => void;
   onLessonScrolled: (lessonId: number) => void;
+  /** Appelé une fois une activité ou un devoir choisi, la navigation n'ayant alors plus rien à proposer. */
+  onNavigated?: () => void;
 };
 
 export default function MobileModuleNavigation({
   module,
-  hidden = false,
   selectedLesson,
   selectedActivity,
   selectedAssignmentCourseId,
@@ -31,6 +31,7 @@ export default function MobileModuleNavigation({
   onSelectActivity,
   onSelectAssignment,
   onLessonScrolled,
+  onNavigated,
 }: MobileModuleNavigationProps) {
   const selectedLessonRef = useRef<HTMLButtonElement>(null);
 
@@ -50,12 +51,10 @@ export default function MobileModuleNavigation({
     return () => window.cancelAnimationFrame(animationFrame);
   }, [lessonIdToScroll, onLessonScrolled, selectedLesson?.id]);
 
-  if (hidden) return null;
-
   return (
     <nav
-      className="sticky top-0 flex flex-col gap-3 rounded-lg border border-base-300 bg-base-200 p-2 shadow-sm md:hidden"
-      aria-label="Navigation compacte du module"
+      className="flex flex-col gap-3 rounded-lg border border-base-300 bg-base-200 p-3 shadow-sm"
+      aria-label="Navigation du module"
     >
       {module.courses.map((course, courseIndex) => {
         const isSelectedCourse =
@@ -80,15 +79,16 @@ export default function MobileModuleNavigation({
                   if (firstLessonId) onSelectLesson(firstLessonId);
                   else if (course.assignment) onSelectAssignment(course.id);
                 }}
-                className="flex w-full items-center gap-1 px-2 py-2 text-secondary-content/80"
+                className="flex w-full items-center gap-2 px-3 py-3 text-secondary-content/80"
               >
                 {isSelectedCourse ? (
-                  <ChevronDown className="size-4 shrink-0" />
+                  <ChevronDown className="size-5 shrink-0" />
                 ) : (
-                  <ChevronRight className="size-4 shrink-0" />
+                  <ChevronRight className="size-5 shrink-0" />
                 )}
-                <span className="truncate text-xs font-semibold">
+                <span className="truncate text-sm font-semibold">
                   Cours {courseIndex + 1}
+                  {course.title && ` : ${formatTitle(course.title)}`}
                 </span>
               </button>
               <progress
@@ -112,15 +112,16 @@ export default function MobileModuleNavigation({
                         aria-label={`Leçon ${lessonIndex + 1} : ${formatTitle(lesson.title)}`}
                         aria-current={isSelectedLesson ? "step" : undefined}
                         onClick={() => lesson.id && onSelectLesson(lesson.id)}
-                        className={cn("h-8 w-full truncate rounded-lg px-2 text-left text-[0.65rem] font-medium text-primary-content transition-colors", isSelectedLesson
+                        className={cn("h-10 w-full truncate rounded-lg px-3 text-left text-sm font-medium text-primary-content transition-colors", isSelectedLesson
                             ? "bg-primary"
                             : "bg-primary/50 hover:bg-primary/80")}
                       >
                         Leçon {lessonIndex + 1}
+                        {lesson.title && ` : ${formatTitle(lesson.title)}`}
                       </button>
 
                       {isSelectedLesson && lesson.activities?.length ? (
-                        <div className="flex flex-col gap-0.5 px-1 pt-1">
+                        <div className="flex flex-col gap-1 px-1 pt-1">
                           {lesson.activities.map((activity, activityIndex) => (
                             <button
                               type="button"
@@ -132,16 +133,20 @@ export default function MobileModuleNavigation({
                                   ? "step"
                                   : undefined
                               }
-                              onClick={() => onSelectActivity(activity)}
-                              className={cn("flex h-7 w-full items-center gap-1 rounded-md px-1 text-left text-[0.58rem] transition-colors", activity.id === selectedActivity?.id
+                              onClick={() => {
+                                onSelectActivity(activity);
+                                onNavigated?.();
+                              }}
+                              className={cn("flex h-10 w-full items-center gap-2 rounded-md px-2 text-left text-sm transition-colors", activity.id === selectedActivity?.id
                                   ? "bg-base-300 font-semibold text-base-content"
                                   : "hover:bg-base-300/70")}
                             >
                               <span className="shrink-0">
-                                {activityIconType(activity.type, 3)}
+                                {activityIconType(activity.type, 4)}
                               </span>
                               <span className="truncate">
                                 Activité {activityIndex + 1}
+                                {activity.title && ` : ${formatTitle(activity.title)}`}
                               </span>
                             </button>
                           ))}
@@ -159,13 +164,16 @@ export default function MobileModuleNavigation({
                         ? "step"
                         : undefined
                     }
-                    onClick={() => onSelectAssignment(course.id)}
-                    className={cn("flex h-8 w-full items-center justify-between gap-1 rounded-lg px-2 text-left text-[0.65rem] font-medium transition-colors", selectedAssignmentCourseId === course.id
+                    onClick={() => {
+                      onSelectAssignment(course.id);
+                      onNavigated?.();
+                    }}
+                    className={cn("flex h-10 w-full items-center justify-between gap-2 rounded-lg px-3 text-left text-sm font-medium transition-colors", selectedAssignmentCourseId === course.id
                         ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
                         : "bg-warning/25 text-warning-content hover:bg-warning/40")}
                   >
                     <span className="flex min-w-0 items-center gap-1">
-                      <ClipboardCheck className="size-3.5 shrink-0" />
+                      <ClipboardCheck className="size-4 shrink-0" />
                       <span className="truncate">Devoir</span>
                     </span>
                     {course.assignment.submissions.some(

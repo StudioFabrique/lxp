@@ -6,7 +6,6 @@ import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
 import { useLocation, useSearchParams } from "react-router";
-import MobileModuleNavigation from "./mobile-module-navigation";
 
 import type { ModuleCalendarStore } from "../../hooks/use-module-calendar";
 import { cn } from "../../../../utils/cn";
@@ -53,24 +52,6 @@ const ModuleContentSidebar = ({
 
   return (
     <>
-      <MobileModuleNavigation
-        module={module}
-        hidden={Boolean(calendar)}
-        selectedLesson={selectedLesson}
-        selectedActivity={selectedActivity}
-        selectedAssignmentCourseId={selectedAssignmentCourseId}
-        lessonIdToScroll={lessonIdToScroll}
-        onSelectLesson={(lessonId) => {
-          onSelectAssignment(undefined);
-          dispatch({ type: "select_lesson_by_id", id: lessonId });
-        }}
-        onSelectActivity={(activity) =>
-          dispatch({ type: "select_activity", activity })
-        }
-        onSelectAssignment={onSelectAssignment}
-        onLessonScrolled={acknowledgeLessonScroll}
-      />
-
       <div className={cn(calendar ? "block" : "hidden md:block")}>
         <SidebarCoursesList
           calendarMode={Boolean(calendar)}

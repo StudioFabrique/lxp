@@ -24,6 +24,7 @@ import ModuleContentToolbar from "../components/module-content-toolbar";
 import ModuleContentDialogs from "../components/module-content-dialogs";
 import ModuleContentPageHeader from "../components/module-content-page-header";
 import ModuleContentBody from "../components/module-content-body";
+import MobileModuleNavigationPanel from "../components/sidebar/mobile-module-navigation-panel";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant.
@@ -218,6 +219,13 @@ const ModuleContent = () => {
         onOpenAssignment={handleSelectAssignment}
       />
 
+      <MobileModuleNavigationPanel
+        store={contentStore}
+        selectedAssignmentCourseId={selectedAssignmentCourseId}
+        enabled={!isCalendarView}
+        onSelectAssignment={handleSelectAssignment}
+      />
+
       <ModuleContentPageHeader
         module={state.module}
         isStudentView={isStudentView}
@@ -281,6 +289,7 @@ const ModuleContent = () => {
             />
           }
           isSidebarCollapsed={state.isPanelClosed}
+          showSidebarOnMobile={isCalendarView}
         >
           <ModuleContentBody
             module={state.module}

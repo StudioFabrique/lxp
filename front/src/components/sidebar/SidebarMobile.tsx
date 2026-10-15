@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from "react";
 import { useLocation } from "react-router";
 import { AnimatePresence } from "motion/react";
-import { EllipsisVertical, Menu } from "lucide-react";
+import { EllipsisVertical, ListTree, Menu } from "lucide-react";
 import SidebarActionsDrawer from "./SidebarActionsDrawer";
 import SidebarDrawer from "./SidebarDrawer";
 import SidebarLogo from "./SidebarLogo";
+import SidebarNavigationPanel from "./SidebarNavigationPanel";
 import { getSidebarItemForPath } from "../../config/sidebarItems";
 import { cn } from "../../utils/cn";
 import { useHasChildElements } from "../../hooks/useHasChildElements";
@@ -29,6 +30,9 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
   const [actionsOpenedAt, setActionsOpenedAt] = useState<string | null>(null);
   const actionsOpen = actionsOpenedAt === pathname;
   const headerActions = useMobileHeaderActions();
+  // Le panneau plein écran est proposé par la page (ex. navigation des activités) ; il se referme avec elle.
+  const navigation = headerActions?.navigation ?? null;
+  const navigationOpen = Boolean(navigation) && headerActions?.isNavigationOpen === true;
   const hasActions = useHasChildElements(headerActions?.container ?? null);
   const currentItem = getSidebarItemForPath(pathname);
   const CurrentIcon = currentItem?.icon;
@@ -54,6 +58,18 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
             {headerActions?.topBarTitle?.text ?? currentItem?.label}
           </span>
         </p>
+        {navigation && (
+          <button
+            type="button"
+            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-(--sidebar-hover)"
+            onClick={() => headerActions?.setIsNavigationOpen(true)}
+            aria-label={`Ouvrir : ${navigation.label}`}
+            aria-haspopup="dialog"
+            aria-expanded={navigationOpen}
+          >
+            <ListTree className="size-4" aria-hidden="true" />
+          </button>
+        )}
         <div className="w-16 shrink-0 pr-1">
           <SidebarLogo />
         </div>
@@ -78,8 +94,17 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
         />
       )}
       <AnimatePresence>
+        {navigation && navigationOpen && headerActions && (
+          <SidebarNavigationPanel
+            key="page-navigation-panel"
+            label={navigation.label}
+            onClose={() => headerActions.setIsNavigationOpen(false)}
+            setContainer={headerActions.setNavigationContainer}
+          />
+        )}
         {open && (
           <SidebarDrawer
+            key="menu-drawer"
             interfaceType={interfaceType}
             onClose={() => setOpenedAt(null)}
           >
