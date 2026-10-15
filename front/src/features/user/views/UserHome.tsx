@@ -35,10 +35,7 @@ const UserHome = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedRoleId = searchParams.get("role");
   const currentUserRank = useMemo(
-    () =>
-      currentUser
-        ? (currentUser.roles[0]?.rank ?? 4)
-        : undefined,
+    () => (currentUser ? (currentUser.roles[0]?.rank ?? 4) : undefined),
     [currentUser],
   );
 
@@ -85,6 +82,8 @@ const UserHome = () => {
     onDeleteSelected,
     onSendInvitation,
     onSendResetPassword,
+    isSendingInvitation,
+    isSendingResetPassword,
     isDeleting,
     deleteError,
     resetDeleteError,
@@ -174,24 +173,20 @@ const UserHome = () => {
 
   const handleConfirmResetPassword = async () => {
     if (idToResetPassword) {
-      onSendResetPassword(idToResetPassword);
-      setIdToResetPassword(null);
+      // La modale reste ouverte, avec son loader, jusqu'à la réponse du serveur.
+      onSendResetPassword(idToResetPassword, () => setIdToResetPassword(null));
     }
   };
 
   const handleConfirmResendInvitation = async () => {
     if (idToResendInvitation) {
-      onSendInvitation(idToResendInvitation);
-      setIdToResendInvitation(null);
+      onSendInvitation(idToResendInvitation, () => setIdToResendInvitation(null));
     }
   };
 
   // Les statistiques n'existent que pour les étudiants : les autres lignes
   // n'ouvrent rien.
-  const isStudent = useCallback(
-    (user: User) => user.roles[0]?.rank === 3,
-    [],
-  );
+  const isStudent = useCallback((user: User) => user.roles[0]?.rank === 3, []);
 
   const handleRowClick = useCallback(
     (user: User) => {
@@ -230,17 +225,16 @@ const UserHome = () => {
       </div>
 
       {roles.length > 0 && currentRole ? (
-        <div
-          className="mb-4 flex w-full flex-wrap items-center justify-center gap-2"
-        >
+        <div className="mb-4 flex w-full flex-wrap items-center justify-center gap-2">
           {roles.map((role) => (
             <button
               key={role._id}
               type="button"
               onClick={() => handleRoleSwitch(role)}
-              className={cn("btn btn-sm cursor-pointer", currentRole._id === role._id
-                  ? "btn-primary"
-                  : "btn-outline")}
+              className={cn(
+                "btn btn-sm cursor-pointer",
+                currentRole._id === role._id ? "btn-primary" : "btn-outline",
+              )}
             >
               {role.label}
             </button>
@@ -249,7 +243,10 @@ const UserHome = () => {
       ) : null}
 
       <BoxWrapper
-        className={cn((data.length > 0 || isLoading || searchValue) && "px-10", "items-center")}
+        className={cn(
+          data.length > 0 || isLoading || searchValue,
+          "items-center",
+        )}
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
@@ -261,35 +258,41 @@ const UserHome = () => {
               criteria={["prénom", "nom", "email"]}
               actions={
                 <>
-              <button
-                type="button"
-                onClick={() => onRefreshData()}
-                disabled={isLoading}
-                className="btn btn-sm btn-ghost disabled:bg-transparent"
-                aria-label="Rafraîchir la liste des utilisateurs"
-              >
-                {isLoading ? <LoaderCircle className="size-5 animate-spin" /> : <RefreshCw />}
-              </button>
-              <PermissionGuard object="user" action="delete">
-                <TableActionsButtons<User>
-                  isLoading={isLoading || isDeleting}
-                  isDisabled={selectedIds.length === 0}
-                  onRefreshData={onRefreshData}
-                  showRefresh={false}
-                  actions={[
-                    {
-                      title: "Supprimer les utilisateurs sélectionnés",
-                      description: `${selectedIds.length} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
-                      rightButtonTitle: "Supprimer",
-                      alertMessageBottom:
-                        "Les données liées aux comptes sélectionnés seront également supprimées ou transférées selon leur rôle.",
-                      onConfirm: () => onDeleteSelected(selectedIds),
-                    },
-                  ]}
-                  retreiveItemsProperty="lastname"
-                  onRetreiveItemsValuesByPropertyFromIdList={selectedUserNames}
-                />
-              </PermissionGuard>
+                  <button
+                    type="button"
+                    onClick={() => onRefreshData()}
+                    disabled={isLoading}
+                    className="btn btn-sm btn-ghost disabled:bg-transparent"
+                    aria-label="Rafraîchir la liste des utilisateurs"
+                  >
+                    {isLoading ? (
+                      <LoaderCircle className="size-5 animate-spin" />
+                    ) : (
+                      <RefreshCw />
+                    )}
+                  </button>
+                  <PermissionGuard object="user" action="delete">
+                    <TableActionsButtons<User>
+                      isLoading={isLoading || isDeleting}
+                      isDisabled={selectedIds.length === 0}
+                      onRefreshData={onRefreshData}
+                      showRefresh={false}
+                      actions={[
+                        {
+                          title: "Supprimer les utilisateurs sélectionnés",
+                          description: `${selectedIds.length} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
+                          rightButtonTitle: "Supprimer",
+                          alertMessageBottom:
+                            "Les données liées aux comptes sélectionnés seront également supprimées ou transférées selon leur rôle.",
+                          onConfirm: () => onDeleteSelected(selectedIds),
+                        },
+                      ]}
+                      retreiveItemsProperty="lastname"
+                      onRetreiveItemsValuesByPropertyFromIdList={
+                        selectedUserNames
+                      }
+                    />
+                  </PermissionGuard>
                 </>
               }
             />
@@ -333,6 +336,7 @@ const UserHome = () => {
       <TableActionsModal
         isOpen={!!idToDelete}
         onCancel={handleCancelSingleDelete}
+        isPending={isDeleting}
         title="Confirmation de suppression"
         description="Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible."
         descList={
@@ -356,6 +360,7 @@ const UserHome = () => {
       <TableActionsModal
         isOpen={!!idToResetPassword}
         onCancel={() => setIdToResetPassword(null)}
+        isPending={isSendingResetPassword}
         title="Envoi d'un mail de réinitialisation"
         description="Êtes-vous sûr de vouloir envoyer un mail de réinitialisation de mot de passe à cet utilisateur ?"
         descList={
@@ -369,7 +374,9 @@ const UserHome = () => {
         <button
           className="btn btn-warning btn-md"
           onClick={handleConfirmResetPassword}
+          disabled={isSendingResetPassword}
         >
+          {isSendingResetPassword && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>
@@ -377,6 +384,7 @@ const UserHome = () => {
       <TableActionsModal
         isOpen={!!idToResendInvitation}
         onCancel={() => setIdToResendInvitation(null)}
+        isPending={isSendingInvitation}
         title={
           userToResendInvitation?.invitationSent
             ? "Renvoi d'une invitation"
@@ -398,7 +406,9 @@ const UserHome = () => {
         <button
           className="btn btn-primary btn-md"
           onClick={handleConfirmResendInvitation}
+          disabled={isSendingInvitation}
         >
+          {isSendingInvitation && <LoaderCircle className="size-5 animate-spin" />}
           Confirmer
         </button>
       </TableActionsModal>

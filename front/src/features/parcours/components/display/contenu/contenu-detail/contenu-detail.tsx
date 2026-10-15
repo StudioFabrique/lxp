@@ -5,6 +5,7 @@ import Course from "../../../../../../../src/utils/interfaces/course";
 import { Link, useLocation, useNavigate } from "react-router";
 import {
   ArrowRight,
+  ChevronRight,
   CloudOff,
   EyeOff,
   Import,
@@ -87,7 +88,7 @@ const ContenuDetail: FC<{
             })
           }
           key={course?.id}
-          className="relative flex justify-between items-center bg-base-100 hover:bg-base-300 text-base-content p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
+          className="group relative flex justify-between items-center bg-base-100 hover:bg-base-300 text-base-content p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
         >
           <span className="w-12 h-12 shrink-0 text-primary">
             <BookIcon />
@@ -112,6 +113,12 @@ const ContenuDetail: FC<{
               )}
             </div>
           </PermissionGuard>
+
+          {/* La ligne mène au cours : un chevron glisse en place au survol. */}
+          <ChevronRight
+            className="size-5 shrink-0 -translate-x-2 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
+            aria-hidden="true"
+          />
 
           {!course.isPublished || !course.visibility ? (
             <div

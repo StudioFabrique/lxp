@@ -9,6 +9,8 @@ type TableActionsModalProps = {
   alertMessageBottom?: string;
   isOpen: boolean;
   onCancel: () => void;
+  /** Action en cours : « Annuler » et Échap sont désactivés jusqu'à sa fin. */
+  isPending?: boolean;
 };
 
 const TableActionsModal = ({
@@ -20,16 +22,17 @@ const TableActionsModal = ({
   alertMessageBottom,
   isOpen,
   onCancel,
+  isPending = false,
 }: PropsWithChildren<TableActionsModalProps>) => {
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isPending) return;
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") onCancel();
     };
     document.body.addEventListener("keydown", handleEscape);
     return () => document.body.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onCancel]);
+  }, [isOpen, isPending, onCancel]);
 
   const modal = (
     <dialog
@@ -58,6 +61,7 @@ const TableActionsModal = ({
         <div className="modal-action flex justify-end overflow-hidden">
           <button
             className="btn btn-outline btn-primary btn-md"
+            disabled={isPending}
             onClick={onCancel}
           >
             Annuler

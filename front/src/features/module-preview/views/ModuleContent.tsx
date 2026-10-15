@@ -2,7 +2,7 @@ import useModuleContent from "../hooks/use-module-content";
 import useContentTracking from "../hooks/use-content-tracking";
 import ModuleContentSkeleton from "./ModuleContentSkeleton";
 import { useLocation, useNavigate } from "react-router";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { calculateActivityReadTime } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
 import { AuthContext } from "../../../store/AuthProvider";
 import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contacts";
@@ -24,6 +24,7 @@ import ModuleContentToolbar from "../components/module-content-toolbar";
 import ModuleContentDialogs from "../components/module-content-dialogs";
 import ModuleContentPageHeader from "../components/module-content-page-header";
 import ModuleContentBody from "../components/module-content-body";
+import MobileModuleNavigationPanel from "../components/sidebar/mobile-module-navigation-panel";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant.
@@ -35,6 +36,8 @@ const ModuleContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const navigationState = location.state as {
+    courseId?: number;
+    lessonId?: number;
     assignmentCourseId?: number;
     assignmentSubmissionId?: number;
   } | null;
@@ -47,6 +50,10 @@ const ModuleContent = () => {
   const isAdminView = firstPathSegment === "admin";
 
   const contentStore = useModuleContent();
+  const contentStartRef = useRef<HTMLDivElement>(null);
+  // Mobile : zone de la barre du bas où l'aperçu dépose ses boutons précédent / suivant.
+  const [mobileNavigationSlot, setMobileNavigationSlot] = useState<HTMLElement | null>(null);
+  const scrolledLocationKey = useRef<string>(undefined);
   const {
     state,
     computed,
@@ -149,6 +156,23 @@ const ModuleContent = () => {
     aiIndexed: isSelectedCourseAiIndexed,
   });
 
+  // Arrivée depuis l'extérieur sur un cours ou une leçon (liste des cours, tableau de bord…) :
+  // la page défile en douceur jusqu'à la zone de contenu, au lieu de rester sur l'en-tête du module.
+  const hasExternalSelection = Boolean(navigationState?.courseId || navigationState?.lessonId);
+  const isContentReady = Boolean(state.module?.id && state.module.parcoursId) && !diagnosticQuiz.isOpen;
+  useEffect(() => {
+    if (!hasExternalSelection || !isContentReady || scrolledLocationKey.current === location.key) return;
+    const timer = setTimeout(() => {
+      scrolledLocationKey.current = location.key;
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      contentStartRef.current?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [hasExternalSelection, isContentReady, location.key]);
+
   const handleSelectAssignment = (courseId?: number) => {
     setSelectedAssignmentCourseId(courseId);
     if (courseId) dispatch({ type: "select_lesson", lesson: undefined });
@@ -209,13 +233,22 @@ const ModuleContent = () => {
   }
 
   return (
-    <PageWrapper>
+    // Mobile : la page occupe toute la largeur, sans la marge de 5 % de chaque côté du conteneur de l'application.
+    <PageWrapper className="max-md:-mx-[5.5556%] max-md:w-[111.1111%] max-md:pb-20">
       <ModuleContentDialogs
         store={contentStore}
         selectedCourse={selectedCourse}
         quiz={quizState}
         smartQuiz={smartQuizState}
         onOpenAssignment={handleSelectAssignment}
+      />
+
+      <MobileModuleNavigationPanel
+        store={contentStore}
+        selectedAssignmentCourseId={selectedAssignmentCourseId}
+        enabled={!isCalendarView}
+        onSelectAssignment={handleSelectAssignment}
+        onNavigationSlotChange={setMobileNavigationSlot}
       />
 
       <ModuleContentPageHeader
@@ -281,6 +314,8 @@ const ModuleContent = () => {
             />
           }
           isSidebarCollapsed={state.isPanelClosed}
+          showSidebarOnMobile={isCalendarView}
+          startRef={contentStartRef}
         >
           <ModuleContentBody
             module={state.module}
@@ -295,6 +330,7 @@ const ModuleContent = () => {
             canNavigateAsAdmin={isAdminView}
             isStaff={userArea === "staff"}
             onSelectAssignment={handleSelectAssignment}
+            mobileNavigationSlot={mobileNavigationSlot}
           />
         </ModuleContentLayout>
       ) : (

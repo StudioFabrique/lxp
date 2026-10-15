@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { LoaderCircle } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router";
 
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
@@ -53,8 +54,14 @@ const ParcoursStudents = () => {
     () => groups.map((group) => group._id).filter(Boolean) as string[],
     [groups],
   );
-  const { data: students = [], isPending: areStudentsPending, isError: areStudentsError } = useParcoursStudentsQuery(groupIds);
-  const { mutate: updateGroups } = useUpdateParcoursGroups(parcoursId);
+  const { data: fetchedStudents = [], isPending: areStudentsPending, isFetching: areStudentsFetching, isError: areStudentsError } = useParcoursStudentsQuery(groupIds);
+  // Pendant le rechargement, la liste précédente reste affichée : on en retire aussitôt les apprenants des groupes détachés.
+  const students = useMemo(
+    () => fetchedStudents.filter((student) => groupIds.includes(student.group._id)),
+    [fetchedStudents, groupIds],
+  );
+  const { mutate: updateGroups, isPending: isSavingGroups } = useUpdateParcoursGroups(parcoursId);
+  const isUpdating = isSavingGroups || areStudentsFetching;
 
   useEffect(() => {
     if (!refreshGroupsOnReturn || areGroupsPending || areGroupsFetching) return;
@@ -119,10 +126,19 @@ const ParcoursStudents = () => {
           </div>
         </RightSideDrawer>
       </section>
-      <section>
+      <section id="parcours-field-groups">
         <BoxWrapper>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
+            <div className="flex items-center gap-3">
+              <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
+              {/* Mise à jour en cours : un témoin discret, sans remplacer la liste. */}
+              {isUpdating && (
+                <span role="status" className="flex items-center gap-2 text-xs text-base-content/60">
+                  <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+                  {isSavingGroups ? "Enregistrement…" : "Mise à jour…"}
+                </span>
+              )}
+            </div>
             <ButtonAdd
               label="Ajouter un groupe d'apprenants"
               outline={true}
@@ -150,6 +166,7 @@ const ParcoursStudents = () => {
               initalList={students}
               groups={groups}
               parcoursId={parcoursId}
+              disabled={isSavingGroups}
               onRemoveGroup={(groupId) =>
                 setDraftGroups(
                   groups.filter((group) => group._id !== groupId),

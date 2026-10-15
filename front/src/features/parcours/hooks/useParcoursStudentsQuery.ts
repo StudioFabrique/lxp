@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import type Group from "../../../utils/interfaces/group";
 import type User from "../../../utils/interfaces/user";
@@ -36,5 +36,8 @@ export function useParcoursStudentsQuery(groupIds: string[]) {
       );
     },
     enabled: groupIds.length > 0,
+    // Ajouter ou détacher un groupe change la clé : on garde la liste affichée le temps du rechargement
+    // au lieu de la remplacer par un squelette (la page clignotait).
+    placeholderData: keepPreviousData,
   });
 }

@@ -96,7 +96,7 @@ export default function DropoutPreferencesForm({
             <Mail className="size-4 text-primary" aria-hidden="true" /> Recevoir
             un récapitulatif par email
           </div>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {(["weekly", "monthly"] as const).map((value) => (
               <label
                 key={value}
@@ -120,7 +120,7 @@ export default function DropoutPreferencesForm({
           <legend className="mb-3 font-semibold">
             Seuil d’alerte par groupe
           </legend>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {([1, 2] as const).map((value) => (
               <label
                 key={value}

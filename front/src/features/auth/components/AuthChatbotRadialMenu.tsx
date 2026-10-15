@@ -24,6 +24,8 @@ type Props = {
   onOverlapChange?: (overlap: boolean) => void;
   /** Petit écran : pas la place d'un éventail, les entrées s'empilent en bas de l'écran, la question libre en dernier. */
   stacked?: boolean;
+  /** En pile : la question libre laisse de la place à gauche (barre du bas de la page, réduite en cercle). */
+  pinnedInset?: boolean;
 };
 
 /**
@@ -31,7 +33,7 @@ type Props = {
  * gauche près du bord droit de l'écran, se décale pour rester visible et signale
  * s'il recouvre la bulle de l'assistant, que l'appelant peut alors masquer.
  */
-export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange, stacked = false }: Props) {
+export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange, stacked = false, pinnedInset = false }: Props) {
   const reducedMotion = useReducedMotion();
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
   const count = items.length;
@@ -118,12 +120,12 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
   }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange, stacked]);
 
   return createPortal(
-    <ul id={id} aria-label={label} className={cn("pointer-events-none fixed z-50", stacked ? "inset-x-3 bottom-3 flex max-h-[calc(100dvh-1.5rem)] flex-col gap-2 overflow-y-auto" : "inset-0")}>
+    <ul id={id} aria-label={label} className={cn("pointer-events-none fixed z-50", stacked ? "inset-x-3 bottom-6 flex max-h-[calc(100dvh-3rem)] flex-col gap-2 overflow-y-auto overflow-x-hidden" : "inset-0")}>
       {items.map((item, index) => (
         <motion.li key={item.key} ref={element => { itemsRef.current[index] = element; }}
           className={cn(
             "pointer-events-auto",
-            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
+            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
           )}
           initial={reducedMotion ? false : { opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9, transition: { duration: reducedMotion ? 0 : .12, delay: 0 } }}
           transition={{ duration: reducedMotion ? 0 : .3, delay: reducedMotion ? 0 : index * .12, ease: [.22, 1, .36, 1] }}>

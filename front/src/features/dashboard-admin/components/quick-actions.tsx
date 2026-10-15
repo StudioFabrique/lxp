@@ -1,5 +1,6 @@
 import { EllipsisVertical } from "lucide-react";
 import { useContext } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -26,7 +27,8 @@ export default function QuickActions({
 }) {
   const { user } = useContext(AuthContext);
   // Mobile : l'en-tête de page est remplacé par le tiroir d'actions de la barre, qui est déjà le menu :
-  // les entrées s'y affichent directement, sans second bouton déroulant.
+  // les entrées s'y affichent directement, sans second bouton déroulant. Elles y sont déposées ici même,
+  // car ce composant n'est pas toujours rendu par l'en-tête de page (accueil administrateur : liste des parcours).
   const isMobile = useIsMobile();
   const headerActions = useMobileHeaderActions();
   const isInActionsDrawer = isMobile && headerActions !== null;
@@ -63,11 +65,14 @@ export default function QuickActions({
   );
 
   if (isInActionsDrawer) {
-    return (
-      <ul className="menu w-full gap-1 p-0 text-base" aria-label="Actions rapides">
-        {items}
-      </ul>
-    );
+    return headerActions.container
+      ? createPortal(
+          <ul className="menu w-full gap-1 p-0 text-base" aria-label="Actions rapides">
+            {items}
+          </ul>,
+          headerActions.container,
+        )
+      : null;
   }
 
   return (

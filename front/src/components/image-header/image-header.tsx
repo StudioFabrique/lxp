@@ -17,6 +17,8 @@ interface ImageHeaderProps {
   reserveActionSpace?: boolean;
   bottomAction?: ReactNode;
   titlePosition?: "top" | "bottom";
+  /** Mobile : image deux fois moins haute, titres plus petits et marges réduites (pages à contenu dense). */
+  compactOnMobile?: boolean;
   children?: ReactNode[];
 }
 
@@ -24,7 +26,6 @@ const ImageHeader = (props: ImageHeaderProps) => {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(props.imageUrl),
     width: "100%",
-    height: "20rem",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
@@ -32,13 +33,14 @@ const ImageHeader = (props: ImageHeaderProps) => {
   };
 
   return (
-    <div className="overflow-hidden" style={classImage}>
+    <div className={cn("overflow-hidden", props.compactOnMobile ? "h-40 md:h-80" : "h-80")} style={classImage}>
       <div className="w-full h-full flex flex-col justify-end items-start relative select-none">
         <div className="rounded-xl absolute top-0 left-0 w-full h-full bg-neutral/50 z-0" />
         {props.children ? props.children[1] : null}
         <div
           className={cn(
             "absolute bottom-2 right-2 left-2 z-5 flex min-w-0 items-end justify-between gap-x-2 px-4 py-5 font-bold",
+            props.compactOnMobile && "max-md:bottom-1 max-md:left-1 max-md:right-1 max-md:px-2 max-md:py-2 max-md:text-sm",
             props.bottomAction && "flex-col gap-y-3",
             props.titlePosition === "top" && "top-2",
             props.reserveActionSpace && "pr-20 sm:pr-48",
@@ -71,10 +73,10 @@ const ImageHeader = (props: ImageHeaderProps) => {
               ) : null}
 
               {props.title ? (
-                <div className="flex min-w-0 items-center gap-2 pl-5">
+                <div className={cn("flex min-w-0 items-center gap-2 pl-5", props.compactOnMobile && "max-md:pl-2")}>
                   <CornerDownRight className="shrink-0 stroke-white" />
                   <span className="shrink-0">{props.titleIcon}</span>
-                  <h1 className="min-w-0 max-w-full flex-1 truncate text-xl text-white first-letter:uppercase">
+                  <h1 className={cn("min-w-0 max-w-full flex-1 truncate text-xl text-white first-letter:uppercase", props.compactOnMobile && "max-md:text-base")}>
                     {typeof props.title === "string" ? formatTitle(props.title) : props.title}
                     {!props.hidePublished &&
                       (props.isPublished ? "-(Publié)" : "-(Brouillon)")}

@@ -95,3 +95,17 @@ export const chooseTutorialPlacement = (
     return fitsViewport && !overlaps(avatar, clearTarget);
   }) ?? null;
 };
+
+/** Sous cette largeur (barre de navigation du mobile), l'assistant virtuel se colle à gauche ou à droite de l'écran. */
+export const CHATBOT_SNAP_MAX_WIDTH = 768;
+
+/**
+ * Sur mobile, l'assistant virtuel ne reste jamais entre les deux bords : il se colle au bord le plus proche
+ * (sa hauteur ne change pas), ce qui laisse la barre du bas de l'écran se placer à côté de lui.
+ */
+export const snapChatbotToSide = (point: ChatbotPoint, viewport: ChatbotViewport, size = CHATBOT_AVATAR_SIZE): ChatbotPoint => {
+  if (viewport.width >= CHATBOT_SNAP_MAX_WIDTH) return point;
+  const leftX = CHATBOT_EDGE_MARGIN;
+  const rightX = viewport.width - size - CHATBOT_EDGE_MARGIN;
+  return { ...point, x: point.x + size / 2 < viewport.width / 2 ? leftX : rightX };
+};

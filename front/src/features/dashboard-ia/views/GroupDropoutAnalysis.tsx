@@ -123,7 +123,7 @@ export default function GroupDropoutAnalysis() {
           </BoxWrapper>
         ) : summary ? (
           <>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <BoxWrapper className="h-auto">
                 <div className="flex items-center gap-2">
                   <Users className="size-6 text-primary" aria-hidden="true" />
@@ -193,7 +193,7 @@ export default function GroupDropoutAnalysis() {
                   ))}
               </div>
               {summary.students.length ? (
-                <ul className="grid gap-4 lg:grid-cols-2">
+                <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   {summary.students.map((student) => (
                     <StudentAnalysis
                       key={student.userId}

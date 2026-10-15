@@ -20,7 +20,7 @@ export default function ModuleHeader({
 }: ModuleHeaderProps) {
   return (
     <div className="flex items-center justify-end">
-      <span className="flex gap-x-4 items-center">
+      <span className="flex flex-wrap items-center justify-end gap-2 md:gap-x-4">
         <button
           className="btn btn-primary"
           disabled={showForm || isSubmitting}

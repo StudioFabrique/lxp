@@ -2,11 +2,17 @@ import type { ColumnDef, StockFeatures, SortingState, Updater } from "@tanstack/
 import { useMemo } from "react";
 import { useParams } from "react-router";
 import { AvatarSmall } from "../../../../../components/avatar/AvatarSmall";
-import { DataTable } from "../../../../../components/table/DataTable";
+import { DataTable, type ColumnBreakpoint } from "../../../../../components/table/DataTable";
 import { formatTitle, toTitleCase } from "../../../../../utils/helpers/text-helpers";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
 import type { StudentWithGroup } from "../../../hooks/useParcoursStudentsQuery";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+
+const STUDENTS_COLUMN_BREAKPOINTS: Record<string, ColumnBreakpoint> = {
+  email: "3xl",
+  formation: "4xl",
+  createdAt: "4xl",
+};
 
 interface StudentsListTableProps {
   list: StudentWithGroup[];
@@ -79,6 +85,8 @@ const StudentsListTable = ({ list, fieldSort, direction, sortData, emptyMessage 
       setSorting={handleSortingChange}
       isSearching={Boolean(emptyMessage)}
       emptyMessage={emptyMessage}
+      // Étroit (mobile) : on ne garde que l'identité et le groupe, pour éviter le défilement horizontal.
+      columnBreakpoints={STUDENTS_COLUMN_BREAKPOINTS}
     />
   );
 };

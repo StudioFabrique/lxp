@@ -4,6 +4,7 @@ import { useIntroPresentation } from "../../features/intro-presentation/useIntro
 import { useVisualPreferences } from "../../store/VisualPreferences";
 import { cn } from "../../utils/cn";
 import { MobileHeaderActionsProvider } from "../../store/MobileHeaderActionsProvider";
+import { StickyBarStackProvider } from "../headers/sticky-bar-stack";
 
 type Props = {
   sidebar: ReactNode;
@@ -18,7 +19,9 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
 
   return (
     <MobileHeaderActionsProvider>
-    <div className="relative flex flex-col h-screen p-2 bg-base-100 box-border">
+    {/* `dvh` et non `vh` : sur mobile, `100vh` dépasse la zone visible tant que la barre du navigateur est affichée,
+        la page défilait alors en plus de `main` et la barre du haut partait avec elle. */}
+    <div className="relative flex flex-col h-dvh overflow-hidden p-2 bg-base-100 box-border">
       <div className="flex flex-col md:flex-row gap-2 h-full overflow-hidden">
         {/* Sidebar */}
         {/* Sous `md`, la barre latérale devient une barre de navigation en haut de l'écran. */}
@@ -47,11 +50,13 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
         >
           {/* Children */}
 
-          <div className="flex min-w-0 justify-center">
-            <div className="min-w-0 mt-4 md:mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
-              {children}
+          <StickyBarStackProvider>
+            <div className="flex min-w-0 justify-center">
+              <div className="min-w-0 mt-4 md:mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
+                {children}
+              </div>
             </div>
-          </div>
+          </StickyBarStackProvider>
         </main>
       </div>
     </div>

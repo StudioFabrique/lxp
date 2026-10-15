@@ -1,7 +1,9 @@
-import { BadgeQuestionMark } from "lucide-react";
+import { BadgeQuestionMark, Check, LockKeyhole } from "lucide-react";
+import { createPortal } from "react-dom";
 import useCourseQuiz from "../../../quiz/hooks/use-course-quiz";
 import useSmartQuizPrompt from "../../../quiz/hooks/use-smart-quiz-prompt";
 import AdminActivityNavigation from "./admin-activity-navigation";
+import MobileActivityNavigation, { type MobileNextAction } from "./mobile-activity-navigation";
 import ActivityTypeSelection from "./activity-type-selection";
 import LessonReaderAndEditor from "./lesson-reader-and-editor";
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
@@ -17,6 +19,7 @@ const ModuleContentPreview = ({
   canEditSelectedLesson,
   canNavigateAsAdmin = false,
   aiIndexed = true,
+  mobileNavigationSlot = null,
 }: {
   store: ModuleContentStore;
   smartQuizState: ReturnType<typeof useSmartQuizPrompt>;
@@ -24,6 +27,8 @@ const ModuleContentPreview = ({
   canEditSelectedLesson?: boolean;
   canNavigateAsAdmin?: boolean;
   aiIndexed?: boolean;
+  /** Mobile : zone de la barre du bas où déposer les boutons précédent / suivant. */
+  mobileNavigationSlot?: HTMLElement | null;
 }) => {
   const {
     state,
@@ -55,6 +60,31 @@ const ModuleContentPreview = ({
   const handlePreviousActivity = () => {
     dispatch({ type: "go_to_previous_activity" });
   };
+
+  // Mobile : même enchaînement que les boutons de la page (activité suivante, puis leçon ou cours suivant).
+  const isStudentLessonLocked = !computed.isLessonCompleted && !computed.areAllActivitiesRead;
+  const mobileNext: MobileNextAction | null = !computed.isLastActivitySelected
+    ? { label: "Activité suivante", onClick: handleNextActivity }
+    : canNavigateAsAdmin
+      ? computed.hasNextLesson
+        ? {
+            label: computed.isLastLessonOfCurrentCourse ? "Cours suivant" : "Leçon suivante",
+            disabled: modalVisibility !== "none",
+            onClick: lessonActions.nextLesson,
+          }
+        : null
+      : computed.isLastLessonSelected && computed.isLessonCompleted
+        ? null
+        : {
+            label: computed.isLessonCompleted ? "Leçon suivante" : "Marquer la leçon comme terminée",
+            icon: computed.isLessonCompleted
+              ? undefined
+              : isStudentLessonLocked
+                ? <LockKeyhole className="size-5" aria-hidden="true" />
+                : <Check className="size-5" aria-hidden="true" />,
+            disabled: modalVisibility !== "none" || isStudentLessonLocked,
+            onClick: smartQuizState.handleCompleteLesson,
+          };
 
   useLayoutEffect(() => {
     const content = contentRef.current;
@@ -121,6 +151,15 @@ const ModuleContentPreview = ({
       style={isActivityContentLoading ? { minHeight: previousContentHeight ?? 500 } : undefined}
     >
       <FadeWrapper>
+      {mode === "read" && mobileNavigationSlot &&
+        createPortal(
+          <MobileActivityNavigation
+            isFirstActivitySelected={computed.isFirstActivitySelected}
+            next={mobileNext}
+            onPreviousActivity={handlePreviousActivity}
+          />,
+          mobileNavigationSlot,
+        )}
       <LessonReaderAndEditor
         isLessonCompleted={computed.isLessonCompleted}
         canEdit={canEditSelectedLesson}

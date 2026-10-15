@@ -23,6 +23,8 @@ type ModuleContentBodyProps = {
   canNavigateAsAdmin: boolean;
   isStaff: boolean;
   onSelectAssignment: (courseId?: number) => void;
+  /** Mobile : zone de la barre du bas où déposer les boutons précédent / suivant de l'activité. */
+  mobileNavigationSlot?: HTMLElement | null;
 };
 
 export default function ModuleContentBody({
@@ -38,6 +40,7 @@ export default function ModuleContentBody({
   canNavigateAsAdmin,
   isStaff,
   onSelectAssignment,
+  mobileNavigationSlot,
 }: ModuleContentBodyProps) {
   const { scrollTopRef } = store;
 
@@ -83,6 +86,7 @@ export default function ModuleContentBody({
         smartQuizState={smartQuiz}
         canEditSelectedLesson={canEditSelectedLesson}
         canNavigateAsAdmin={canNavigateAsAdmin}
+        mobileNavigationSlot={mobileNavigationSlot}
       />
     </div>
   );

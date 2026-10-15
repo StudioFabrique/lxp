@@ -2,12 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } 
 import { animate, useDragControls, useMotionValue, useReducedMotion, type AnimationPlaybackControls } from "motion/react";
 import { z } from "zod";
 import { chatbotMoveDurationMs, chatbotMoveEase } from "../../auth/components/auth-chatbot-motion";
+import { publishChatbotDock } from "../chatbot-dock-store";
 import {
   CHATBOT_AVATAR_SIZE,
   CHATBOT_EDGE_MARGIN,
   chatbotBubbleSide,
   clampChatbotPoint,
   restingChatbotPoint,
+  snapChatbotToSide,
   toEdgeOffset,
   type ChatbotBubbleSide,
   type ChatbotEdgeOffset,
@@ -19,6 +21,10 @@ const STORAGE_KEY = "andria-chatbot-position";
 const edgeOffsetSchema = z.object({ right: z.number().finite(), bottom: z.number().finite() });
 
 const readViewport = (): ChatbotViewport => ({ width: window.innerWidth, height: window.innerHeight });
+
+/** Place de repos, collée à un bord de l'écran sur mobile. */
+const restingPoint = (viewport: ChatbotViewport, saved: ChatbotEdgeOffset | null, centered: boolean): ChatbotPoint =>
+  snapChatbotToSide(restingChatbotPoint(viewport, saved, centered), viewport);
 
 // Le stockage peut être absent ou refusé (navigation privée) : la position n'est alors simplement pas mémorisée.
 const readSavedOffset = (): ChatbotEdgeOffset | null => {
@@ -56,7 +62,7 @@ export default function useChatbotDock(centered: boolean) {
   const atRest = useRef(true);
   const [viewport, setViewport] = useState(readViewport);
   const [dragging, setDragging] = useState(false);
-  const [initial] = useState(() => restingChatbotPoint(readViewport(), initialOffset, centered));
+  const [initial] = useState(() => restingPoint(readViewport(), initialOffset, centered));
   const x = useMotionValue(initial.x);
   const y = useMotionValue(initial.y);
   const [side, setSide] = useState<ChatbotBubbleSide>(() => chatbotBubbleSide(initial, window.innerWidth));
@@ -81,7 +87,7 @@ export default function useChatbotDock(centered: boolean) {
 
   const returnToRest = useCallback(() => {
     atRest.current = true;
-    moveTo(restingChatbotPoint(readViewport(), saved.current, centeredRef.current));
+    moveTo(restingPoint(readViewport(), saved.current, centeredRef.current));
   }, [moveTo]);
 
   /** Va vers un point choisi par un tutoriel ; la position mémorisée reste celle de l'utilisateur. */
@@ -93,7 +99,7 @@ export default function useChatbotDock(centered: boolean) {
   // La présentation ouvre ou ferme : l'assistant virtuel rejoint la place de repos qui lui correspond.
   useEffect(() => {
     centeredRef.current = centered;
-    if (atRest.current) moveTo(restingChatbotPoint(readViewport(), saved.current, centered));
+    if (atRest.current) moveTo(restingPoint(readViewport(), saved.current, centered));
   }, [centered, moveTo]);
 
   useEffect(() => {
@@ -101,7 +107,7 @@ export default function useChatbotDock(centered: boolean) {
       const next = readViewport();
       setViewport(next);
       const point = atRest.current
-        ? restingChatbotPoint(next, saved.current, centeredRef.current)
+        ? restingPoint(next, saved.current, centeredRef.current)
         : clampChatbotPoint({ x: x.get(), y: y.get() }, next);
       stopAnimations();
       x.set(point.x);
@@ -135,12 +141,28 @@ export default function useChatbotDock(centered: boolean) {
   const onDragEnd = useCallback(() => {
     setDragging(false);
     const current = readViewport();
-    const point = { x: x.get(), y: y.get() };
+    // Sur mobile, déposé entre les deux bords, il se colle au plus proche.
+    const point = snapChatbotToSide({ x: x.get(), y: y.get() }, current);
+    if (point.x !== x.get()) moveTo(point);
     // Déposé par l'utilisateur : c'est sa nouvelle place de repos.
     atRest.current = true;
     saved.current = toEdgeOffset(point, current);
     writeSavedOffset(saved.current);
     setSide(chatbotBubbleSide(point, window.innerWidth));
+  }, [moveTo, x, y]);
+
+  // Publie la position (suivie à chaque image, y compris pendant les déplacements) pour les éléments qui s'y adaptent.
+  useEffect(() => {
+    const publish = (): void => publishChatbotDock({ x: x.get(), y: y.get(), viewportWidth: window.innerWidth, viewportHeight: window.innerHeight });
+    publish();
+    const stopX = x.on("change", publish);
+    const stopY = y.on("change", publish);
+    window.addEventListener("resize", publish);
+    return () => {
+      stopX();
+      stopY();
+      window.removeEventListener("resize", publish);
+    };
   }, [x, y]);
 
   const dragBounds = useMemo(() => ({

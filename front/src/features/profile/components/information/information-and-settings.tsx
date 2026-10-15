@@ -30,8 +30,10 @@ const InformationAndSettings: FC<{
   formRef: Ref<HTMLFormElement>;
   onSaved?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
+  /** Suit l'enregistrement en cours, pour que le conteneur (modale) désactive ses boutons. */
+  onSubmittingChange?: (submitting: boolean) => void;
   isStudent?: boolean;
-}> = ({ formRef, onSaved, onDirtyChange, isStudent = false }) => {
+}> = ({ formRef, onSaved, onDirtyChange, onSubmittingChange, isStudent = false }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm({
@@ -112,6 +114,10 @@ const InformationAndSettings: FC<{
   useEffect(() => {
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSubmittingChange?.(isSubmitting);
+  }, [isSubmitting, onSubmittingChange]);
 
   if (isLoading) return <Loader />;
 

@@ -35,7 +35,7 @@ const ParcoursTagsSelecter = (props: Props) => {
   };
 
   return (
-    <div className="w-[35rem] flex flex-col gap-y-4">
+    <div className="w-full sm:w-[35rem] flex flex-col gap-y-4">
       <div className="flex gap-x-4 items-center">
         <SearchTag
           searchTerm={searchTerm}

@@ -4,13 +4,15 @@ import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip"
 import { cn } from "../../../utils/cn";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useModalAutoFocus } from "../../../hooks/useModalAutoFocus";
+import { usePendingAction } from "../../../hooks/usePendingAction";
 
 type ModalProps = {
   title?: string;
   headerActions?: ReactNode;
   titleTooltip?: string;
   onLeftClick?: () => void;
-  onRightClick?: () => void;
+  /** Une action asynchrone (promesse renvoyée) met la modale en traitement : loader et boutons désactivés jusqu'à sa fin. */
+  onRightClick?: () => void | Promise<unknown>;
   onMinimizeClick?: () => void;
   leftLabel?: string;
   rightLabel?: string;
@@ -25,8 +27,14 @@ type ModalProps = {
 };
 
 const Modal = (props: PropsWithChildren<ModalProps>) => {
-  const isSubmitting =
-    props.isSubmitting !== undefined ? props.isSubmitting : false;
+  // Traitement d'une action asynchrone, suivi ici pour que toutes les modales aient leur état de chargement.
+  const { isPending, run } = usePendingAction();
+  const isSubmitting = (props.isSubmitting ?? false) || isPending;
+  const handleRightClick = () => {
+    if (isSubmitting) return;
+    // L'erreur reste visible en console, sans interrompre la page ; l'action gère son propre message à l'utilisateur.
+    run(props.onRightClick).catch((error: unknown) => console.error(error));
+  };
   const modalBoxRef = useRef<HTMLDivElement>(null);
   useModalAutoFocus(modalBoxRef);
 
@@ -51,7 +59,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
               <button
                 className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-warning")}
                 disabled={isSubmitting || props.rightDisabled}
-                onClick={props.onRightClick}
+                onClick={handleRightClick}
               >
                 {isSubmitting ? <LoaderCircle className="size-5 animate-spin" /> : null}
                 <span>{props.rightLabel}</span>
@@ -114,7 +122,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
               <button
                 className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-warning")}
                 disabled={isSubmitting || props.rightDisabled}
-                onClick={props.onRightClick}
+                onClick={handleRightClick}
               >
                 {isSubmitting ? <LoaderCircle className="size-5 animate-spin" /> : null}
                 <span>{props.rightLabel}</span>

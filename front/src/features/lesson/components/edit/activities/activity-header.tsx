@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import type { Activity } from "../../../../../utils/interfaces/activity";
 import { cn } from "../../../../../utils/cn";
+import { useIsMobile } from "../../../../../hooks/useMediaQuery";
 
 type Props = {
   title: string;
@@ -54,6 +55,9 @@ const ActivityHeader = ({
   const [isAtPageBottom, setIsAtPageBottom] = useState(false);
   const [isAtActivityTop, setIsAtActivityTop] = useState(true);
   const reduceMotion = useReducedMotion();
+  // Mobile : pas de boutons flottants de navigation (haut / bas de page), ils recouvrent le contenu.
+  const isMobile = useIsMobile();
+  const showScrollButtons = !hideScrollButtons && !isMobile;
   const skipScaleAnimation = reduceMotion || fadeScrollButtonsOnly;
   const stickyMarkerRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLTextAreaElement>(null);
@@ -167,7 +171,7 @@ const ActivityHeader = ({
     <>
       {typeof document !== "undefined" && createPortal(
         <AnimatePresence custom={skipScaleAnimation}>
-          {enableSticky && isSticky && !hideScrollButtons && [
+          {enableSticky && isSticky && showScrollButtons && [
             { key: "top", label: isAtActivityTop ? "Revenir en haut de la page" : "Revenir au début de l’activité", Icon: ArrowUp, position: "top-6" },
             { key: "bottom", label: "Aller en bas de la page", Icon: ArrowDown, position: "bottom-32" },
           ].filter(({ key }) => key === "top" || !isAtPageBottom).map(({ key, label, Icon, position }) => (

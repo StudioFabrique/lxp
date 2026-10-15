@@ -114,7 +114,7 @@ export default function AdminNotFound() {
               Rejoignez directement une rubrique de l’administration.
             </p>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {availableShortcuts.map(
               ({ label, description, to, icon: Icon }) => (
                 <BoxWrapper key={to} className="h-auto gap-3">

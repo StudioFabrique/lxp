@@ -137,7 +137,7 @@ export function StaffAssignment({
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
       <aside className="rounded-2xl border border-base-300 bg-base-100 p-3">
         <h3 className="px-2 pb-1 font-bold">Rendus ({submitted.length})</h3>
         {(assignment.expectedStudents?.length ?? 0) > 0 && (

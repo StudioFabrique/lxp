@@ -216,6 +216,7 @@ const GroupList = () => {
       <TableActionsModal
         isOpen={!!idToDelete}
         onCancel={() => setIdToDelete(null)}
+        isPending={isDeleting}
         title="Confirmation de suppression"
         description="Êtes-vous sûr de vouloir supprimer ce groupe ?"
         descList={groupToDelete ? [groupToDelete.name] : undefined}

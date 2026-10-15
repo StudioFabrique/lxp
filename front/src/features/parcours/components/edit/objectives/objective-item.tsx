@@ -22,39 +22,41 @@ const ObjectiveItem: FC<Props> = ({
   };
 
   return (
-    <article className="flex gap-x-2 items-center">
-      <div className="flex-1 h-12 rounded-lg bg-secondary/10 flex items-center pl-2">
-        <span className="flex gap-x-2 items-center">
-          <p className="first-letter:uppercase">{objective.description}</p>
-        </span>
+    <article className="flex items-stretch gap-x-2">
+      {/* Hauteur minimale et non fixe : un objectif long passe à la ligne au lieu de déborder. */}
+      <div className="flex min-h-12 min-w-0 flex-1 items-center rounded-lg bg-secondary/10 px-2 py-2">
+        <p className="min-w-0 wrap-break-word first-letter:uppercase">{objective.description}</p>
       </div>
-      <button
-        className="btn btn-primary btn-circle rounded-lg"
-        type="button"
-        onClick={handleUpdate}
-        aria-label="modification de l'objectif"
-        disabled={readOnly}
-        title={
-          readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
-        }
-      >
-        <div className="w-6 h-6">
-          <EditIcon />
-        </div>
-      </button>
-      <button
-        className="btn btn-primary btn-circle rounded-lg"
-        onClick={() => onDelete(objective.id!)}
-        aria-label="suppression de l'objectif"
-        disabled={readOnly}
-        title={
-          readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
-        }
-      >
-        <div className="w-6 h-6">
-          <DeleteIcon />
-        </div>
-      </button>
+      {/* Mobile : les deux actions s'empilent, centrées sur la hauteur du texte, comme pour les compétences. */}
+      <div className="flex shrink-0 flex-col items-center justify-center gap-2 md:flex-row">
+        <button
+          className="btn btn-primary btn-circle max-md:btn-sm rounded-lg"
+          type="button"
+          onClick={handleUpdate}
+          aria-label="modification de l'objectif"
+          disabled={readOnly}
+          title={
+            readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
+          }
+        >
+          <div className="size-4 md:size-6">
+            <EditIcon />
+          </div>
+        </button>
+        <button
+          className="btn btn-primary btn-circle max-md:btn-sm rounded-lg"
+          onClick={() => onDelete(objective.id!)}
+          aria-label="suppression de l'objectif"
+          disabled={readOnly}
+          title={
+            readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
+          }
+        >
+          <div className="size-4 md:size-6">
+            <DeleteIcon />
+          </div>
+        </button>
+      </div>
     </article>
   );
 };

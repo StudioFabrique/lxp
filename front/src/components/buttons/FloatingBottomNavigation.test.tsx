@@ -133,4 +133,37 @@ describe("FloatingBottomNavigation", () => {
     expect(observerOptions?.rootMargin).toBeUndefined();
     expect(container.firstElementChild?.className).toContain("sticky bottom-4");
   });
+
+  it("reprend toute la largeur une fois ancrée, y compris sur grand écran", () => {
+    const callbacks: IntersectionObserverCallback[] = [];
+
+    class IntersectionObserverMock {
+      constructor(callback: IntersectionObserverCallback) {
+        callbacks.push(callback);
+      }
+
+      observe = vi.fn();
+      disconnect = vi.fn();
+    }
+
+    vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
+
+    const container = document.createElement("div");
+    root = createRoot(container);
+    act(() => root?.render(<FloatingBottomNavigation />));
+    const navigation = container.firstElementChild!;
+
+    // Flottante : 60 % de la largeur de l'écran dès `md`.
+    expect(navigation.className).toContain("md:w-[60vw]");
+
+    act(() =>
+      callbacks[0](
+        [{ isIntersecting: true } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      ),
+    );
+
+    expect(navigation.className).toContain("md:w-full");
+    expect(navigation.className).not.toContain("md:w-[60vw]");
+  });
 });

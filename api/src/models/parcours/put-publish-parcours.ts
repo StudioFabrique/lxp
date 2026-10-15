@@ -11,6 +11,22 @@ async function putPublishParcours(parcoursId: number, isPublished: boolean) {
     throw error;
   }
 
+  // Un parcours publié doit avoir au moins un groupe d'apprenants : sans groupe, personne n'y accède.
+  // Le brouillon (isPublished = false) reste toujours possible.
+  if (isPublished) {
+    const linkedGroup = await prisma.orm.public.GroupsOnParcours.where({
+      parcoursId,
+    }).first();
+    if (!linkedGroup) {
+      const error = {
+        message:
+          "Le parcours doit avoir au moins un groupe d'apprenants rattaché pour être publié",
+        statusCode: 409,
+      };
+      throw error;
+    }
+  }
+
   const publishedParcours = await prisma.orm.public.Parcours.where({
     id: parcoursId,
   })

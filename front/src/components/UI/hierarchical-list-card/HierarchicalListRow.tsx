@@ -1,5 +1,5 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
-import { ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
 import { type Key, type ReactNode, useState } from "react";
 import { Link, type LinkProps } from "react-router";
 import { cn } from "../../../utils/cn";
@@ -97,9 +97,9 @@ export const HierarchicalListRow = ({
         ) : null}
       </div>
 
-      {itemAction || item.to ? (
+      {itemAction || item.to || item.onClick ? (
         <div
-          className={cn("relative z-10 ml-auto self-center justify-self-end", item.onClick && "pointer-events-none")}
+          className={cn("relative z-10 flex items-center gap-1 ml-auto self-center justify-self-end", item.onClick && "pointer-events-none")}
         >
           {itemAction ??
             (item.to ? (
@@ -112,6 +112,13 @@ export const HierarchicalListRow = ({
                 <ExternalLink className="size-[1.2em]" />
               </Link>
             ) : null)}
+          {/* La ligne entière est cliquable : un chevron glisse en place au survol ou au focus pour le signaler. */}
+          {item.to || item.onClick ? (
+            <ChevronRight
+              className="pointer-events-none size-5 shrink-0 -translate-x-2 text-primary opacity-0 transition-all duration-200 ease-out group-hover/row:translate-x-0 group-hover/row:opacity-100 group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 motion-reduce:transition-none"
+              aria-hidden="true"
+            />
+          ) : null}
         </div>
       ) : null}
 

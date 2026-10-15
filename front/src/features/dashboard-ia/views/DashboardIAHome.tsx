@@ -85,17 +85,18 @@ const DashboardIAHome = () => {
           <DropoutPreferencesForm initial={preferences} onSaved={() => setSettingsOpen(false)} />
         </BoxWrapper>
       </div>}
-      <section className="flex justify-start gap-x-4 items-center w-full">
-        <div className="border border-primary/50 rounded-lg p-4">
-          <article className="flex gap-x-2 items-center">
+      {/* Mobile : les deux totaux s'empilent ; ils se placent côte à côte dès `sm`. */}
+      <section className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="min-w-0 rounded-lg border border-primary/50 p-4">
+          <article className="flex flex-wrap items-center justify-between gap-x-2">
             <h2 className="font-semibold">Tokens consommés</h2>
             <h3 className="text-lg font-bold text-primary">
               {totals?.totalTokens ?? 0}
             </h3>
           </article>
         </div>
-        <div className="border border-primary/50 rounded-lg p-4">
-          <article className="flex gap-x-2 items-center">
+        <div className="min-w-0 rounded-lg border border-primary/50 p-4">
+          <article className="flex flex-wrap items-center justify-between gap-x-2">
             <h2 className="font-semibold">Tokens consommés ce mois-ci</h2>
             <h3 className="text-lg font-bold text-primary">
               {totals?.totalCurrentMonthTokens ?? 0}

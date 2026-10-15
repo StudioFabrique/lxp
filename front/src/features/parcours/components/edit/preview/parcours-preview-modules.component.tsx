@@ -47,7 +47,7 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
           </span>
         </button>
       </span>
-      <section className="grid auto-rows-fr gap-5 lg:grid-cols-2 xl:grid-cols-3">
+      <section className="grid grid-cols-1 auto-rows-fr gap-5 lg:grid-cols-2 xl:grid-cols-3">
         {modules.map((module) =>
           module.id == null ? null : (
             <ModuleCard

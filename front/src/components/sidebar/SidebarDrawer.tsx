@@ -48,7 +48,8 @@ const SidebarDrawer = ({ interfaceType, onClose, children }: Props) => {
         role="dialog"
         aria-modal="true"
         aria-label="Menu de navigation"
-        className="absolute inset-y-0 left-0 w-[min(20rem,calc(100vw-2rem))] p-2"
+        // Largeur en vw : le menu suit la taille de l'écran (et le nombre de cartes par ligne avec lui), plafonnée sur tablette.
+        className="absolute inset-y-0 left-0 w-[90vw] max-w-md p-2"
         initial={{ x: instant ? 0 : "-105%" }}
         animate={{ x: 0 }}
         exit={{ x: instant ? 0 : "-105%" }}

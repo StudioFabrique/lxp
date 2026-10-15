@@ -21,7 +21,8 @@ const AdminActivityNavigation = ({
   onNextActivity,
   onNextLesson,
 }: Props) => (
-  <div className="flex w-full items-center justify-between gap-5">
+  // Mobile : précédent / suivant sont dans la barre du bas de la page.
+  <div className="flex w-full items-center justify-between gap-5 max-md:hidden">
     <div className="flex flex-1 justify-start">
       {!isFirstActivitySelected && (
         <button

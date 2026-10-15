@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from "react";
-import { ArrowRight, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Send } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
@@ -20,7 +20,7 @@ import Error404 from "../../../components/error404";
 import ImageHeaderMutable from "../../../../src/components/image-header/image-header-mutable";
 
 import ModuleComponent from "../components/edit/modules/module";
-import Stepper from "../../../components/UI/stepper-component/stepper-component";
+import ParcoursStickyStepper from "../components/edit/parcours-sticky-stepper";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -28,7 +28,6 @@ import {
   getModulesLabel,
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
-import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import useValidateParcours from "../hooks/useValidateParcours";
 import { parcoursApi } from "../api/parcours.api";
 import { showParcoursValidationToast } from "../helpers/show-parcours-validation-toast";
@@ -113,6 +112,7 @@ const EditParcours = () => {
         return (
           <ParcoursSection
             title="Importer une liste d'objectifs"
+            fieldKey="objectives"
             onResetList={handleResetImportedObjectives}
             readOnly={isTeacher}
             children={[
@@ -128,6 +128,7 @@ const EditParcours = () => {
         return (
           <ParcoursSection
             title="Importer des compétences"
+            fieldKey="skills"
             onResetList={handleResetImportedSkills}
             children={[
               <SkillsList />,
@@ -159,7 +160,7 @@ const EditParcours = () => {
         </div>
       ) : error.length === 0 ? (
         <FadeWrapper>
-          <div className="w-full flex flex-col items-center gap-y-8">
+          <div className="w-full flex flex-col items-center gap-y-4 md:gap-y-8">
             {infos?.title && formation ? (
               <ImageHeaderMutable
                 defaultImage="/images/parcours-default.webp"
@@ -174,38 +175,42 @@ const EditParcours = () => {
             ) : null}
 
             <ParcoursStepContent stepId={actualStep.id}>
-              <BoxWrapper className="w-full h-auto">
-                <Stepper
-                  actualStep={actualStep}
-                  stepsList={contextualStepsList}
-                  updateStep={updateStep}
-                />
-              </BoxWrapper>
-              <div className="mt-8 w-full md:mt-12">
+              <ParcoursStickyStepper
+                actualStep={actualStep}
+                stepsList={contextualStepsList}
+                updateStep={updateStep}
+              />
+              <div className="mt-4 w-full md:mt-8">
                 <h1 className="text-2xl font-extrabold md:text-3xl">{actualStepTitle}</h1>
                 <div className="mt-4">{renderActualStep()}</div>
               </div>
               {actualStep.id !== stepsList.length && !moduleFormOpened ? (
                 <FloatingBottomNavigation
                   startActions={
-                    <button className="btn btn-outline" onClick={handleRetour}>
-                      Retour
+                    // Mobile : « Retour » et « Publier » se réduisent à leur icône, le texte reste pour les lecteurs d'écran.
+                    <button
+                      type="button"
+                      className="btn btn-outline max-md:btn-square"
+                      onClick={handleRetour}
+                    >
+                      <ArrowLeft className="size-4 md:hidden" aria-hidden="true" />
+                      <span className="max-md:sr-only">Retour</span>
                     </button>
                   }
                   endActions={
                     <>
                       {!isTeacher && !infos?.isPublished && (
                         <button
-                          className="btn btn-primary"
+                          className="btn btn-primary max-md:btn-square"
                           onClick={handlePublishParcours}
                           disabled={isPublishing}
                         >
                           <Send className="size-4" aria-hidden="true" />
-                          Publier
+                          <span className="max-md:sr-only">Publier</span>
                         </button>
                       )}
                       <button
-                        className="btn btn-info px-6"
+                        className="btn btn-info px-3 md:px-6"
                         onClick={() => handleUpdateStep(actualStep.id)}
                       >
                         Étape suivante

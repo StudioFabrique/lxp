@@ -14,6 +14,9 @@ type Props = {
   autoFocus?: boolean;
 };
 
+const historyButtonClassName =
+  "btn btn-circle group z-10 size-8 min-h-0 border-base-300 bg-base-100 p-0 shadow-md transition-all duration-200 hover:scale-110 hover:border-secondary hover:bg-secondary hover:text-secondary-content hover:shadow-lg focus-visible:scale-110 focus-visible:border-secondary focus-visible:bg-secondary focus-visible:text-secondary-content";
+
 /** Question libre de l'éventail : une seule ligne, validée comme les autres formulaires avant tout appel à l'IA. */
 export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disabled = false, autoFocus = true }: Props) {
   const inputId = useId();
@@ -23,6 +26,7 @@ export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disa
     defaultValues: { prompt: "" },
   });
   const error = errors.prompt?.message;
+  const historyIcon = <History className="size-4 transition-transform duration-300 group-hover:-rotate-[60deg] group-focus-visible:-rotate-[60deg]" aria-hidden="true" />;
 
   return (
     <form
@@ -33,15 +37,16 @@ export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disa
         onSubmitPrompt(prompt);
       })}
     >
+      {/* Bureau : le bouton d'historique dépasse du coin du champ. */}
       <button
         type="button"
-        className="btn btn-circle group absolute -right-2 -top-4 z-10 size-8 min-h-0 border-base-300 bg-base-100 p-0 shadow-md transition-all duration-200 hover:scale-110 hover:border-secondary hover:bg-secondary hover:text-secondary-content hover:shadow-lg focus-visible:scale-110 focus-visible:border-secondary focus-visible:bg-secondary focus-visible:text-secondary-content"
+        className={cn(historyButtonClassName, "absolute -right-2 -top-4 max-md:hidden")}
         onClick={onOpenHistory}
         aria-label="Afficher l’historique de la conversation"
       >
-        <History className="size-4 transition-transform duration-300 group-hover:-rotate-[60deg] group-focus-visible:-rotate-[60deg]" aria-hidden="true" />
+        {historyIcon}
       </button>
-      <div className={cn("flex items-center gap-2 rounded-full border bg-base-100 py-3 pl-6 pr-3 shadow-md focus-within:border-primary", error ? "border-error" : "border-base-300", disabled && "opacity-60")}>
+      <div className={cn("flex items-center gap-2 rounded-full border bg-base-100 py-3 pl-6 pr-3 shadow-md max-md:py-1.5 max-md:pl-4 max-md:pr-1.5 focus-within:border-primary", error ? "border-error" : "border-base-300", disabled && "opacity-60")}>
         <label htmlFor={inputId} className="sr-only">Poser une question à l’assistant virtuel</label>
         <input
           id={inputId}
@@ -56,7 +61,16 @@ export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disa
           className="min-w-0 flex-1 bg-transparent text-base text-base-content outline-none placeholder:text-base-content/50"
           {...register("prompt")}
         />
-        <button type="submit" className="btn btn-primary btn-circle" aria-label="Envoyer la question" disabled={disabled || isSubmitting}>
+        {/* Mobile : dans le champ, à côté de l'envoi, plutôt qu'en débord qui sort de l'écran. */}
+        <button
+          type="button"
+          className={cn(historyButtonClassName, "shrink-0 md:hidden")}
+          onClick={onOpenHistory}
+          aria-label="Afficher l’historique de la conversation"
+        >
+          {historyIcon}
+        </button>
+        <button type="submit" className="btn btn-primary btn-circle max-md:btn-sm" aria-label="Envoyer la question" disabled={disabled || isSubmitting}>
           <Send className="size-4" />
         </button>
       </div>

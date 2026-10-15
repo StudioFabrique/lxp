@@ -44,6 +44,7 @@ const GroupEdit = () => {
             isEditing={isEditing}
             onConfirm={onConfirmEmptyGroup}
             onCancel={onCancelEmptyGroup}
+            isSubmitting={isLoading}
           />
         ) : null}
       </GroupForm>

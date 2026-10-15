@@ -127,7 +127,7 @@ export default function MessageChatbot({
           >
             <ChatbotMarkdown>{message.message}</ChatbotMarkdown>
             {isGeneralKnowledge && (
-              <span className="text-xs italic font-light text-neutral/70">
+              <span className="text-xs italic font-light text-neutral-content/40">
                 Cette réponse utilise des connaissances générales externes au
                 cours.
               </span>
@@ -135,7 +135,11 @@ export default function MessageChatbot({
           </motion.div>
 
           {hasSources && message.sources && (
-            <ChatbotSources sources={message.sources} routeRoot={currentRoute[0]} onNavigate={onCloseChatbot} />
+            <ChatbotSources
+              sources={message.sources}
+              routeRoot={currentRoute[0]}
+              onNavigate={onCloseChatbot}
+            />
           )}
         </div>
         {!isUser && onRetry && (

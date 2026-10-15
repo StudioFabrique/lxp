@@ -11,15 +11,15 @@ const GroupsStats = ({ stats, groupsTotalTokens }: Props) => (
     {stats.map((stat) => (
       <li key={stat._id}>
         <SubWrapper>
-          <span className="w-ful grid grid-cols-5 text-xs gap-2">
-            <h3 className="w-32 col-span-2">{stat.groupName}</h3>
-            <div className="flex items-center gap-x-4 col-span-2">
+          <span className="grid w-full grid-cols-5 gap-2 text-xs">
+            <h3 className="col-span-2 min-w-0 break-words">{stat.groupName}</h3>
+            <div className="col-span-2 flex min-w-0 items-center gap-x-2 sm:gap-x-4">
               <progress
-                className="progress progress-primary w-36"
+                className="progress progress-primary w-full min-w-0 sm:w-36"
                 value={stat.totalTokens}
                 max={groupsTotalTokens}
               />
-              <p className="flex">{stat.totalTokens}</p>
+              <p className="flex shrink-0">{stat.totalTokens}</p>
             </div>
             <p className="text-left">
               (

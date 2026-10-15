@@ -103,7 +103,8 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* En mode compact, la ligne se défait : thème, puis sortie, puis logo tout en bas. */}
       <li
         className={cn(
-          "flex w-full items-center justify-between gap-1",
+          // Tiroir mobile : le logo et le thème deviennent des cartes de la grille, à la suite de « Déconnexion ».
+          "flex w-full items-center justify-between gap-1 group-data-[variant=drawer]/sidebar:contents",
           expanded
             ? "flex-row"
             : "flex-col-reverse max-2xl:contents 2xl:flex-row",
@@ -114,6 +115,8 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           className={cn(
             "flex size-8 items-center justify-center",
             expanded ? "w-16" : "max-2xl:order-3 max-2xl:self-center 2xl:w-16",
+            // Tiroir mobile : le logo seul, sans carte autour, plus grand, sur deux colonnes à côté de « Déconnexion ».
+            "group-data-[variant=drawer]/sidebar:col-span-2 group-data-[variant=drawer]/sidebar:size-auto group-data-[variant=drawer]/sidebar:w-full group-data-[variant=drawer]/sidebar:px-3 group-data-[variant=drawer]/sidebar:[&>svg]:max-w-36",
           )}
         >
           <SidebarLogo />
@@ -124,10 +127,12 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             expanded
               ? "tooltip-top"
               : "max-2xl:order-1 max-2xl:self-center 2xl:tooltip-top",
+            // Tiroir mobile : une carte carrée dont le bouton occupe toute la surface, calée dans la dernière colonne (à droite).
+            "group-data-[variant=drawer]/sidebar:col-end-[-1] group-data-[variant=drawer]/sidebar:flex group-data-[variant=drawer]/sidebar:aspect-square group-data-[variant=drawer]/sidebar:items-center group-data-[variant=drawer]/sidebar:justify-center group-data-[variant=drawer]/sidebar:rounded-xl group-data-[variant=drawer]/sidebar:border group-data-[variant=drawer]/sidebar:border-(--sidebar-border) group-data-[variant=drawer]/sidebar:[&>div]:size-full group-data-[variant=drawer]/sidebar:hover:bg-(--sidebar-hover)",
           )}
           data-tip="Mode clair / Mode sombre"
         >
-          <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />
+          <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover) group-data-[variant=drawer]/sidebar:size-full" />
         </div>
       </li>
       {isExitOpen && (

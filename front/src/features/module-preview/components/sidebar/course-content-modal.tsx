@@ -48,7 +48,8 @@ export default function CourseContentModal({
 
   return createPortal(
     <dialog className="modal modal-open z-100">
-      <div className="modal-box flex min-h-[36rem] max-h-[90vh] w-11/12 max-w-3xl flex-col overflow-hidden p-0">
+      {/* Hauteur fixe : la modale garde la même taille, liste vide, chargée ou filtrée ; seul le contenu défile. */}
+      <div className="modal-box flex h-[min(40rem,90dvh)] max-h-none w-11/12 max-w-3xl flex-col overflow-hidden p-0">
         <div className="flex items-center justify-between px-6 py-4">
           <div>
             <h3 className="text-lg font-bold">Importer du contenu</h3>
@@ -65,7 +66,7 @@ export default function CourseContentModal({
 
         <form
           id="course-content-form"
-          className="scroll-fade-bottom flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-5"
+          className="scroll-fade-bottom flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5"
           onSubmit={handleSubmit}
         >
           <CourseContentImport

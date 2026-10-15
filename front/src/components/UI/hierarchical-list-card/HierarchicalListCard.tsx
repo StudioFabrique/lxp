@@ -144,7 +144,8 @@ const HierarchicalListCard = ({
                       </div>
                     ) : null}
                   </div>
-                  {action ? <div className="shrink-0">{action}</div> : null}
+                  {/* Mobile : les icônes d'action s'empilent en colonne à droite du titre au lieu de le serrer. */}
+                  {action ? <div className="shrink-0 max-md:[&>div]:flex-col max-md:[&>div]:items-center">{action}</div> : null}
                 </div>
               </li>
 

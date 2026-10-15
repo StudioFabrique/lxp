@@ -85,7 +85,7 @@ export default function ResourceAdd({
         <div role="status" aria-label="Chargement de la ressource" className="space-y-5">
           <span className="sr-only">Chargement de la ressource…</span>
           <div className="skeleton h-44 w-full rounded-box" />
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <div className="skeleton h-72 rounded-box" />
             <div className="skeleton h-72 rounded-box lg:col-span-2" />
           </div>
@@ -116,7 +116,7 @@ export default function ResourceAdd({
             </div>
           </div>
           <div
-            className={cn("grid items-start gap-5", panelClosed ? "" : "lg:grid-cols-3")}
+            className={cn("grid grid-cols-1 items-start gap-5", !panelClosed && "lg:grid-cols-3")}
           >
             {!panelClosed && (
               <aside className="min-w-0 rounded-lg border border-base-300 bg-base-200 p-3">

@@ -19,7 +19,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
         <h2 className="font-bold text-xl">
           Reprendre mes activités là où je m'étais arrêté
         </h2>
-        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
           {lastLessons.map((item) => {
             // Progression du cours, calculée par l'API.
             const courseProgress = item.lesson.course.stats?.progress ?? 0;

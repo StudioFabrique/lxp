@@ -18,6 +18,8 @@ export default function ModuleContentPageHeader({
   return (
     <Header
       title="Contenu du module"
+      // La page a déjà ses propres éléments collants (liste des cours, barre d'actions).
+      sticky={false}
       description={
         isStudentView
           ? "Parcourir les leçons et les activités pour valider vos compétences"

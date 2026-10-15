@@ -91,8 +91,8 @@ export function useUserActions(onSuccessCallback: () => void) {
     },
   });
 
-  const handleSendInvitation = (userId: string) => {
-    sendInvitationMutation.mutate(userId);
+  const handleSendInvitation = (userId: string, onSettled?: () => void) => {
+    sendInvitationMutation.mutate(userId, { onSettled });
   };
 
   const sendManyInvitationsMutation = useMutation({
@@ -116,8 +116,8 @@ export function useUserActions(onSuccessCallback: () => void) {
     },
   });
 
-  const handleSendResetPassword = (userId: string) => {
-    sendResetPasswordMutation.mutate(userId);
+  const handleSendResetPassword = (userId: string, onSettled?: () => void) => {
+    sendResetPasswordMutation.mutate(userId, { onSettled });
   };
 
   return {
@@ -134,6 +134,8 @@ export function useUserActions(onSuccessCallback: () => void) {
     onSendInvitation: handleSendInvitation,
     onSendManyInvitations: handleSendManyInvitations,
     onSendResetPassword: handleSendResetPassword,
+    isSendingInvitation: sendInvitationMutation.isPending,
+    isSendingResetPassword: sendResetPasswordMutation.isPending,
     isPending:
       deleteOneMutation.isPending ||
       deleteManyMutation.isPending ||

@@ -143,17 +143,17 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      <div className="drawer-side h-screen overflow-hidden" style={{ zIndex }}>
+      <div className="drawer-side h-dvh overflow-hidden" style={{ zIndex }}>
         <button
           type="button"
           aria-label="Fermer le panneau"
           onClick={handleCloseDrawer}
-          className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
+          className="drawer-overlay fixed top-0 left-0 w-screen h-dvh"
         />
         <div
           ref={panelRef}
           className={cn(
-            "flex h-screen min-w-[35rem] flex-col rounded-l-2xl bg-base-200 text-base-content relative",
+            "flex h-dvh w-full min-w-0 flex-col rounded-l-2xl sm:w-auto sm:min-w-[35rem] bg-base-200 text-base-content relative",
             panelClassName,
           )}
         >

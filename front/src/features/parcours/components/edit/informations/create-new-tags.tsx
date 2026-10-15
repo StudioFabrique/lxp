@@ -76,7 +76,7 @@ function CreateNewTag(props: Props) {
   return (
     <RightSideDrawer id="create-tags" visible={false} title="Créer des tags">
       <BoxWrapper>
-        <span className="w-[30rem] flex flex-col gap-y-4">
+        <span className="w-full sm:w-[30rem] flex flex-col gap-y-4">
           <AddTag
             tag={tag}
             error={false}
@@ -90,7 +90,7 @@ function CreateNewTag(props: Props) {
               Ce nom de tag est déjà utilisé.
             </p>
           )}
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex flex-wrap justify-between items-center gap-2 mt-4">
             <button
               className="btn btn-outline btn-primary"
               onClick={handleCancel}

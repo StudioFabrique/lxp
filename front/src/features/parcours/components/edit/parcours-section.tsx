@@ -12,6 +12,8 @@ type Props = {
   ];
   onResetList: () => void;
   readOnly?: boolean;
+  /** Clé de validation du bloc : « Corriger » (voir `goToValidationTarget`) y amène la page. */
+  fieldKey?: string;
 };
 
 const ParcoursSection: FC<Props> = ({
@@ -19,6 +21,7 @@ const ParcoursSection: FC<Props> = ({
   children,
   onResetList,
   readOnly = false,
+  fieldKey,
 }) => {
   // gère la fermeture du drawer
   const handleCloseDrawer = (id: string) => {
@@ -34,7 +37,7 @@ const ParcoursSection: FC<Props> = ({
 
   return (
     <div className="w-full">
-      <BoxWrapper>
+      <BoxWrapper id={fieldKey ? `parcours-field-${fieldKey}` : undefined}>
         {/* L'en-tête d'import est rendu par la liste, sur la même ligne que son bouton d'ajout. */}
         {React.cloneElement(children[0], {
           header: (

@@ -13,7 +13,7 @@ export default function GroupUserCreationProgress({ returnTo, action }: GroupUse
   if (!context.safeReturnTo) return null;
 
   return (
-    <section aria-labelledby={titleId} className={cn("grid items-stretch gap-4", Boolean(action) && "@min-[56rem]:grid-cols-[minmax(0,1fr)_20rem]")}>
+    <section aria-labelledby={titleId} className={cn("grid grid-cols-1 items-stretch gap-4", Boolean(action) && "@min-[56rem]:grid-cols-[minmax(0,1fr)_20rem]")}>
       <BoxWrapper className="min-h-28 justify-between gap-4 border-primary/30 bg-primary/5 p-5 shadow-none">
           <div className="flex min-w-0 items-start gap-3">
             <UsersRound className="mt-1 size-5 shrink-0 text-primary" aria-hidden="true" />

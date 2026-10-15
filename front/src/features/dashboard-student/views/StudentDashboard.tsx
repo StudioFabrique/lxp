@@ -84,7 +84,7 @@ const StudentDashboard = () => {
       {!learningContext.isError &&
       learningContext.data?.hasAvailableContent &&
       (demoMode || !learningContext.data.shouldAutoRedirect) ? (
-      <div className="grid gap-16 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 md:gap-16 xl:grid-cols-3">
         <div
           className="flex flex-col gap-5 xl:col-span-2"
         >

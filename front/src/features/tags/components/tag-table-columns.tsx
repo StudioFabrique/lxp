@@ -4,6 +4,15 @@ import { Link } from "react-router";
 import type { TagRow } from "../api/tag.api";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
+import type { ColumnBreakpoint } from "../../../components/table/DataTable";
+
+/**
+ * Sans en-tête (affichage en cartes sous 48rem), un nombre seul n'a plus de sens :
+ * le nombre d'utilisations n'est affiché que lorsque son titre l'est aussi.
+ */
+export const TAG_COLUMN_BREAKPOINTS: Record<string, ColumnBreakpoint> = {
+  totalUses: "3xl",
+};
 
 export const getTagColumns = (
   onDelete: (id: number) => void,

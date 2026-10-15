@@ -195,7 +195,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
       {list && list.length > 0 ? (
         <>
           {table}
-          <div className="w-full flex justify-between mt-4">
+          <div className="w-full flex flex-wrap justify-between gap-2 mt-4">
             {canCreateTeacher ? (
               <button
                 className="btn btn-accent"

@@ -25,7 +25,7 @@ export default function ResourcesListCard({
   const list = Array.isArray(resourcesList) ? resourcesList : [];
   if (!list.length) return <>{children}</>;
   return (
-    <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+    <section className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
       {list.map((resource) => {
         const path = adminView
           ? `/admin/resources/edit/${resource.id}`

@@ -10,6 +10,19 @@ type InstanceBranding = {
   logoUrl: string | null;
   /** Fond coloré associé au logo, tel que configuré pour l'instance. */
   backgroundColor?: string;
+  /** Site de l'organisme, `null` s'il n'est pas renseigné ou n'est pas une adresse http(s). */
+  websiteUrl: string | null;
+};
+
+/** Le site vient de la configuration de l'instance : seules les adresses http(s) sont proposées en lien. */
+const toWebUrl = (value: string | undefined): string | null => {
+  if (!value) return null;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "http:" || url.protocol === "https:" ? url.href : null;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -40,5 +53,6 @@ export const useInstanceBranding = (): InstanceBranding => {
   return {
     logoUrl: hasLogo ? INSTANCE_LOGO : null,
     backgroundColor: hasLogo ? backgroundColor : undefined,
+    websiteUrl: toWebUrl(settings?.website),
   };
 };

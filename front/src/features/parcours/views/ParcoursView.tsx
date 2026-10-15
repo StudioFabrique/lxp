@@ -255,7 +255,7 @@ const ParcoursView = () => {
             <PermissionGuard object="cursus" action="read">
               <Contenu modules={modules} />
             </PermissionGuard>
-            <div className="grid items-stretch gap-4 lg:grid-cols-3">
+            <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
               <div
                 className={
                   cn(hasSupplementaryContent ? "h-full" : "h-full lg:col-span-3")
@@ -275,7 +275,7 @@ const ParcoursView = () => {
                 </div>
               ) : null}
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Competences />
               <Objectifs />
             </div>

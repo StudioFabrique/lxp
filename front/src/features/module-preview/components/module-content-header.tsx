@@ -33,6 +33,7 @@ const ModuleContentHeader = ({
         />,
       ]}
       hidePublished
+      compactOnMobile
     />
   );
 };

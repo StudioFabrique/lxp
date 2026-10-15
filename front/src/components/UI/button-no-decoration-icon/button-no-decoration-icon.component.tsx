@@ -15,7 +15,7 @@ const ButtonNoDecorationIcon: FC<Props> = ({
 }) => {
   return (
     <button
-      className="w-fit flex gap-x-1 items-center disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-fit max-w-full flex gap-x-1 items-center text-left [&>svg]:shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
       onClick={onClickEvent}
       disabled={disabled}
       type="button"

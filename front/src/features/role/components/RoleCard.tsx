@@ -2,7 +2,6 @@ import {
   Copy,
   Eye,
   FilePlus2,
-  PanelRightOpen,
   Pencil,
   RefreshCcw,
   ShieldCheck,
@@ -165,12 +164,6 @@ export default function RoleCard({
           </span>
         ),
         icon: summary.icon,
-        action: (
-          <PanelRightOpen
-            className="mr-5 size-4 opacity-0 transition-opacity duration-200 ease-out group-hover/row:opacity-100 group-focus-within/row:opacity-100"
-            aria-hidden="true"
-          />
-        ),
         onClick: () => onOpenPermissions(role, summary.type, summary.label),
         ariaLabel: `Gérer les permissions de ${summary.label.toLowerCase()} du rôle ${role.label}`,
       }))}

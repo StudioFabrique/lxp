@@ -168,7 +168,7 @@ const RoleList = () => {
         <Loader variant="cards" label="Chargement des rôles" />
       ) : (
         <section
-          className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
+          className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
         >
           {roles.length === 0 ? (
             <div className="col-span-full">
@@ -304,6 +304,7 @@ const RoleList = () => {
             setRoleToDelete(null);
             resetDeleteError();
           }}
+          isPending={isDeleting}
           title="Confirmation de suppression"
           description="Êtes-vous sûr de vouloir supprimer ce rôle ?"
           descList={roleToDelete ? [roleToDelete.label] : undefined}

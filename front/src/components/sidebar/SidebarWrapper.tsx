@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import SidebarBottom from "./SidebarBottom";
+import SidebarOrganisationLogo from "./SidebarOrganisationLogo";
 import { useInstanceBranding } from "../../hooks/useInstanceBranding";
 import { useDemoMode } from "../../store/DemoContext";
 import DemoModeIndicator from "../../features/demo/components/DemoModeIndicator";
@@ -22,7 +23,7 @@ const SidebarWrapper = ({
   const { demoMode } = useDemoMode();
   const { animations } = useVisualPreferences();
 
-  const { logoUrl, backgroundColor } = useInstanceBranding();
+  const { logoUrl, backgroundColor, websiteUrl } = useInstanceBranding();
   const isDrawer = variant === "drawer";
 
   return (
@@ -34,7 +35,8 @@ const SidebarWrapper = ({
       aria-label={isDrawer ? "Navigation principale" : undefined}
       className={cn(
         "group/sidebar h-full flex flex-col justify-between gap-4 p-4 rounded-xl border bg-(--sidebar-bg) text-(--sidebar-content) border-(--sidebar-border) shadow-sm transition-colors duration-200",
-        isDrawer ? "w-full overflow-y-auto" : "w-[calc(4rem+2px)] 2xl:w-[20rem]",
+        // Tiroir mobile : défilement vertical seulement, jamais de barre horizontale.
+        isDrawer ? "w-full overflow-y-auto overflow-x-hidden" : "w-[calc(4rem+2px)] 2xl:w-[20rem]",
         animations &&
           !isDrawer &&
           cn("transition-[width,background-color,border-color]", sidebarTransitionClassName),
@@ -42,17 +44,12 @@ const SidebarWrapper = ({
     >
       <div>
         {logoUrl && (
-          <img
-            className={cn(
-              "self-start rounded-full border object-contain p-1 mb-3 bg-white border-(--sidebar-border)",
-              isDrawer ? "h-12.5 w-12.5" : "2xl:h-12.5 2xl:w-12.5 h-8 w-8",
-              animations &&
-                !isDrawer &&
-                cn("transition-[width,height]", sidebarTransitionClassName),
-            )}
-            src={logoUrl}
-            style={{ backgroundColor }}
-            alt="Logo de l’organisme"
+          <SidebarOrganisationLogo
+            logoUrl={logoUrl}
+            backgroundColor={backgroundColor}
+            websiteUrl={websiteUrl}
+            variant={isDrawer ? "drawer" : "rail"}
+            animated={animations}
           />
         )}
         {demoMode && <DemoModeIndicator />}

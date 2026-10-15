@@ -9,7 +9,7 @@ import {
   RowSelectionState,
   SortingState,
 } from "@tanstack/react-table";
-import { SortAsc, SortDesc } from "lucide-react";
+import { ChevronRight, SortAsc, SortDesc } from "lucide-react";
 import EmptyStatePlaceholder from "../UI/empty-state-placeholder";
 import TableOverflowContainer from "./TableOverflowContainer";
 import "./DataTable.css";
@@ -164,7 +164,7 @@ export function DataTable<TData extends RowData>({
                     : undefined
                 }
               >
-                {row.getVisibleCells().map((cell) => (
+                {row.getVisibleCells().map((cell, cellIndex, cells) => (
                   <td
                     key={cell.id}
                     className={cn("@max-3xl:border-0 @max-3xl:first:border-l-0 @max-3xl:last:border-r-0 @max-3xl:rounded-none @max-3xl:first:rounded-none @max-3xl:last:rounded-none @max-3xl:bg-transparent @max-3xl:group-hover:bg-transparent @max-3xl:p-0 @max-3xl:pl-0 border-y border-base-300/50 pl-3 @3xl:pl-6 bg-base-100 text-base-content first:rounded-l-xl first:border-l last:rounded-r-xl last:border-r group-hover:bg-base-100/60 transition-colors", cell.column.id === "actions" && "data-table-actions w-[1%] whitespace-nowrap pr-3 text-center @3xl:pr-6 @max-3xl:ml-auto @max-3xl:w-auto @max-3xl:pr-0", columnBreakpoints[cell.column.id] && SHOW_FROM_CLASSNAMES[columnBreakpoints[cell.column.id]])}
@@ -178,7 +178,18 @@ export function DataTable<TData extends RowData>({
                         : undefined
                     }
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {isClickable && cellIndex === cells.length - 1 ? (
+                      // Ligne cliquable : un chevron glisse en place au survol ou au focus de la ligne.
+                      <div className="flex items-center justify-center gap-1">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <ChevronRight
+                          className="size-5 shrink-0 -translate-x-2 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 motion-reduce:transition-none"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}
                   </td>
                 ))}
               </tr>

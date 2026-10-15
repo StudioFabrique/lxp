@@ -1,9 +1,12 @@
 import { useRef, useEffect } from "react";
+import { LoaderCircle } from "lucide-react";
+import { usePendingAction } from "../../../../hooks/usePendingAction";
 
 type Props = {
   textActivityTitle: string;
   onCloseDeleteModal: () => void;
-  onConfirmDelete: () => void;
+  /** Une promesse renvoyée met la modale en traitement : loader, boutons désactivés. */
+  onConfirmDelete: () => void | Promise<unknown>;
   isOpen: boolean;
 };
 
@@ -14,6 +17,7 @@ const ActivityDeleteModal = ({
   isOpen,
 }: Props) => {
   const modalRef = useRef<HTMLDialogElement>(null);
+  const { isPending, run } = usePendingAction();
 
   useEffect(() => {
     if (isOpen) {
@@ -32,13 +36,21 @@ const ActivityDeleteModal = ({
           Cette action est irréversible.
         </p>
         <div className="modal-action">
-          <button className="btn btn-ghost" onClick={onCloseDeleteModal}>
+          <button
+            className="btn btn-ghost"
+            disabled={isPending}
+            onClick={onCloseDeleteModal}
+          >
             Annuler
           </button>
           <button
             className="btn btn-error text-base-100"
-            onClick={onConfirmDelete}
+            disabled={isPending}
+            onClick={() => {
+              run(onConfirmDelete).catch((error: unknown) => console.error(error));
+            }}
           >
+            {isPending && <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />}
             Supprimer
           </button>
         </div>

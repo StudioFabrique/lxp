@@ -14,7 +14,7 @@ export default function AppLoadingSkeleton() {
   const isSidebarUnknown = introHint === null;
 
   return (
-    <div role="status" aria-label="Chargement de l’application" className="relative flex h-dvh gap-2 bg-base-100 p-2">
+    <div role="status" aria-label="Chargement de l’application" className="relative flex h-dvh flex-col gap-2 bg-base-100 p-2 md:flex-row">
       <span className="sr-only">Chargement de l’application…</span>
       {isSidebarUnknown ? null : isIntroFirstRun ? (
         <div
@@ -26,7 +26,17 @@ export default function AppLoadingSkeleton() {
           <div className="skeleton size-8 rounded-lg opacity-60" />
         </div>
       ) : (
-      <aside className="flex w-16 shrink-0 flex-col justify-between rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) p-4 2xl:w-80" aria-hidden="true">
+      <>
+      {/* Mobile : la navigation est une barre en haut de l'écran (menu, section, logo), pas une colonne. */}
+      <div
+        aria-hidden="true"
+        className="flex h-12 shrink-0 items-center gap-2 rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) p-2 md:hidden"
+      >
+        <div className="skeleton size-8 shrink-0 rounded-lg opacity-60" />
+        <div className="skeleton h-4 w-32 rounded opacity-60" />
+        <div className="skeleton ml-auto h-5 w-16 rounded opacity-60" />
+      </div>
+      <aside className="hidden w-16 shrink-0 flex-col justify-between md:flex rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) p-4 2xl:w-80" aria-hidden="true">
         <div>
           <div className="skeleton mb-5 size-8 rounded-full opacity-60 2xl:size-12.5" />
           <div className="space-y-1">
@@ -47,6 +57,7 @@ export default function AppLoadingSkeleton() {
           ))}
         </div>
       </aside>
+      </>
       )}
       {/* La présentation remplace le contenu de la page : un voile et un spinner, pas de squelette de page. */}
       {isIntroFirstRun ? (
@@ -55,7 +66,7 @@ export default function AppLoadingSkeleton() {
         </div>
       ) : null}
       <main className={cn("min-w-0 flex-1 overflow-hidden", isIntroFirstRun && "invisible")} aria-hidden="true">
-        <div className="mx-auto mt-[8vh] mb-[4vh] w-[90%] space-y-6 xl:w-[80%]">
+        <div className="mx-auto mt-4 mb-[4vh] md:mt-[8vh] w-[90%] space-y-6 xl:w-[80%]">
           <div className="flex min-h-20 items-center gap-3 rounded-lg border border-base-300 bg-base-200 px-4">
             <div className="skeleton size-7 rounded-lg" />
             <div className="space-y-2"><div className="skeleton h-5 w-40" /><div className="skeleton h-3 w-52 max-w-[45vw]" /></div>
