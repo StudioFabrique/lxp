@@ -6,6 +6,7 @@ import Permission, {
 } from "../utils/interfaces/db/permission.ts";
 import { permDefsActions } from "../utils/rbac/config/fixtures-permissions.ts";
 import { env } from "../config/env.ts";
+import { renderAndriaLogo } from "./andria-logo.ts";
 
 const MONGO_URL = env.MONGO_LOCAL_URL;
 const secret = env.REGISTER_SECRET;
@@ -139,20 +140,7 @@ async function main() {
 
   console.log("[3/3] Génération de la clé d'activation...");
   console.log(`
-                                   @@@@@@@@@@@@@@@
-     @@   @@@   @@ @@@@@@  @@@@@@  @@@@@@@@@@@@@@@@
-     @@@   @@@   @@@@@@@@@@ @@@@@@@ @@   @@@   @@@@@
-    @@@@@@ @@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@
-   @@@@@@@@@@@@@ @@@@@  @@@@@@@ @@@@@@@@@@   @@  @@@
-   @@   @@@@@@@@ @@@@@@  @@@@@@  @@@@@   @  @@@  @@@
-   @@   @@@@@@@@ @@@@@@  @@@@@@@@@@@@@   @  @@@  @@@
-   @@@@@@@@@@ @@@@@@@@@  @@@@@@@@@@ @@   @       @@@
-   @@@@@@@@@@  @@@@@@@@  @@@@@@@@@@ @@   @       @@@
-   @@   @@@@@  @@@@@@@  @@@@@@   @@@@@   @  @@@  @@@
-   @@   @@@@@  @@@@@@@@@@@@ @@   @@@@@   @  @@@  @@@
-   @@   @@@@@   @@@@@@@@@@  @@   @@@@@   @  @@@  @@@
-                                   @@@@@@@@@@@@@@@@
-                                    @@@@@@@@@@@@@@`);
+${renderAndriaLogo()}`);
 
   console.log("\n══════════════════════════════════════════════════");
   console.log("  Clé d'activation du premier administrateur");

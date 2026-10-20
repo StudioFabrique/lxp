@@ -41,6 +41,8 @@ step() {
 # Étape dont les commandes écrivent elles-mêmes à l'écran : jamais considérée comme vide.
 step_cmd() { step "$1"; step_has_output=true; }
 info() { step_has_output=true; printf '  %s•%s %s\n' "$c_cyan" "$c_reset" "$1"; }
+# cmd <commande> : commande mise en évidence sur fond blanc, comme le rappel ctrl+C.
+cmd() { printf '%s %s %s' $'\033[47;30m' "$1" "$c_reset"; }
 ok()   { step_has_output=true; printf '  %sOK%s %s\n' "$c_green$c_bold" "$c_reset" "$1"; }
 warn() { step_has_output=true; printf '  %s!!%s %s\n' "$c_yellow$c_bold" "$c_reset" "$1"; }
 fail() {
