@@ -78,8 +78,11 @@ npm run init
 2. Copie `api/env.example` vers `api/.env`.
 3. Copie `front/env.example` vers `front/.env`.
 4. Démarre PostgreSQL, pgvector et MongoDB.
-5. Applique les migrations et affiche la **clé de création du premier compte
-   administrateur**.
+5. Applique les migrations.
+
+Pour créer le premier compte administrateur, lancez ensuite
+`npm run generate-activation-key` : la commande crée les rôles et permissions
+système puis affiche la **clé de création du premier compte administrateur**.
 
 &nbsp;
 

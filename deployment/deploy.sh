@@ -492,9 +492,6 @@ else
 fi
 
 if [ "$DEMO_ENABLED" = "false" ]; then
-    echo "Génération de la clé d'activation..."
-    compose exec -T app npm run generate-activation-key
-
     if [ -n "${ROOT_ACCOUNT_EMAIL:-}" ]; then
         echo "Envoi de l'invitation de création d'un compte root..."
         compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"

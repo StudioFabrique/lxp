@@ -349,11 +349,6 @@ fi
 step_cmd "Triggers du serveur IA"
 npm run notify-triggers || { fail "Notification des triggers"; exit 1; }
 
-if [ "$restore_data" = false ]; then
-  step_cmd "Clé d'activation du premier administrateur"
-  npm run generate-activation-key || { fail "Génération de la clé d'activation"; exit 1; }
-fi
-
 close_step
 echo
 if [ "$demo_mode" = true ]; then
@@ -363,20 +358,23 @@ elif [ "$restore_data" = true ]; then
 else
   box "$c_green$c_bold" "TERMINÉ  ANDRIA configuré"
 fi
+if [ "$demo_mode" = false ] && [ "$restore_data" = false ]; then
+  info "Rôles, permissions et clé du premier administrateur : $(cmd "npm run generate-activation-key")"
+fi
 cd ..
 if [ ! -t 0 ]; then
-  info "Prochaine étape : lancer npm run dev à la racine du projet"
+  info "Prochaine étape : lancer $(cmd "npm run dev") à la racine du projet"
   exit 0
 fi
 
 while true; do
-  read -r -p "Lancer npm run dev maintenant ? [y/N] : " start_dev
+  read -r -p "Voulez-vous lancer le serveur de développement maintenant ? [y/N] : " start_dev
   case "$start_dev" in
     o|O|oui|Oui|OUI|y|Y|yes|YES)
       exec npm run dev
       ;;
     ""|n|N|non|Non|NON|no|NO)
-      info "Lancer npm run dev plus tard à la racine du projet"
+      info "Lancer $(cmd "npm run dev") plus tard à la racine du projet"
       break
       ;;
     *) echo "Répondez par y ou n." ;;
