@@ -10,7 +10,12 @@ type Props = {
   disabled?: boolean;
 };
 
-const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep, disabled }) => {
+const Stepper: FC<Props> = ({
+  actualStep,
+  stepsList,
+  updateStep,
+  disabled,
+}) => {
   const content = (
     <>
       <ul className="w-full rounded-lg steps">
@@ -25,7 +30,10 @@ const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep, disabled }) => 
         ))}
       </ul>
       {/* Mobile : les libellés ne tiennent pas sous les numéros, l'étape courante est nommée ici. */}
-      <p className="mt-3 text-center text-sm font-semibold md:hidden" aria-hidden="true">
+      <p
+        className="mt-3 text-center text-sm font-semibold md:hidden"
+        aria-hidden="true"
+      >
         Étape {actualStep.id} sur {stepsList.length} : {actualStep.label}
       </p>
     </>
