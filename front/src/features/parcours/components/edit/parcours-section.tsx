@@ -37,7 +37,11 @@ const ParcoursSection: FC<Props> = ({
 
   return (
     <div className="w-full">
-      <BoxWrapper id={fieldKey ? `parcours-field-${fieldKey}` : undefined}>
+      {/* gap-y-0 : chaque liste empile son contenu elle-même, les tiroirs (sans hauteur) ne créent plus d'espace sous la boîte. */}
+      <BoxWrapper
+        id={fieldKey ? `parcours-field-${fieldKey}` : undefined}
+        className="gap-y-0"
+      >
         {/* L'en-tête d'import est rendu par la liste, sur la même ligne que son bouton d'ajout. */}
         {React.cloneElement(children[0], {
           header: (

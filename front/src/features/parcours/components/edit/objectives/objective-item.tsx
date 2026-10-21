@@ -24,15 +24,15 @@ const ObjectiveItem: FC<Props> = ({
   };
 
   return (
-    <article className="flex items-stretch gap-x-2">
+    <article className="flex items-stretch gap-x-2 rounded-lg border border-base-300 bg-base-100 p-2 shadow-sm transition-colors hover:border-primary/40">
       {/* Hauteur minimale et non fixe : un objectif long passe à la ligne au lieu de déborder. */}
-      <div className="flex min-h-12 min-w-0 flex-1 items-center rounded-lg bg-secondary/10 px-2 py-2">
+      <div className="flex min-h-10 min-w-0 flex-1 items-center">
         <p className="min-w-0 wrap-break-word first-letter:uppercase">{objective.description}</p>
       </div>
       {/* Mobile : les deux actions s'empilent, centrées sur la hauteur du texte, comme pour les compétences. */}
-      <div className="flex shrink-0 flex-col items-center justify-center gap-2 md:flex-row">
+      <div className="flex shrink-0 flex-col items-center justify-center gap-1 md:flex-row">
         <button
-          className="btn btn-primary btn-circle max-md:btn-sm rounded-lg"
+          className="btn btn-ghost btn-square btn-sm text-primary"
           type="button"
           onClick={handleUpdate}
           aria-label="modification de l'objectif"
@@ -41,12 +41,13 @@ const ObjectiveItem: FC<Props> = ({
             readOnly ? `Lecture seule pour le rôle « ${teamLabel} »` : undefined
           }
         >
-          <div className="size-4 md:size-6">
+          <div className="size-5">
             <EditIcon />
           </div>
         </button>
         <button
-          className="btn btn-primary btn-circle max-md:btn-sm rounded-lg"
+          className="btn btn-ghost btn-square btn-sm text-error"
+          type="button"
           onClick={() => onDelete(objective.id!)}
           aria-label="suppression de l'objectif"
           disabled={readOnly}
@@ -54,7 +55,7 @@ const ObjectiveItem: FC<Props> = ({
             readOnly ? `Lecture seule pour le rôle « ${teamLabel} »` : undefined
           }
         >
-          <div className="size-4 md:size-6">
+          <div className="size-5">
             <DeleteIcon />
           </div>
         </button>

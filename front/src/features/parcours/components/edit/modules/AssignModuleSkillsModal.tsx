@@ -59,12 +59,10 @@ export default function AssignModuleSkillsModal({
       <div className="mt-6">
         {availableSkills.length === 0 ? (
           // Aucune compétence à associer : la création se fait à l'étape Compétences du parcours.
-          <div className="flex justify-center rounded-box bg-base-200 p-5">
-            <Link to="?step=3" className="btn btn-primary btn-outline">
-              <Plus className="size-4" aria-hidden="true" />
-              Créer une nouvelle compétence
-            </Link>
-          </div>
+          <Link to="?step=3" className="btn btn-primary btn-outline flex">
+            <Plus className="size-4" aria-hidden="true" />
+            Créer une nouvelle compétence
+          </Link>
         ) : (
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
             {availableSkills.map((skill) => (

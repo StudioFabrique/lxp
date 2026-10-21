@@ -11,6 +11,7 @@ import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
+import DeleteConfirmationModal from "../delete-confirmation-modal";
 
 type ObjectivesListProps = {
   readOnly?: boolean;
@@ -24,6 +25,9 @@ const ObjectivesList = ({ readOnly = false, header }: ObjectivesListProps) => {
   const objectivesList = parcours?.objectives ?? [];
   const updateParcours = useUpdateParcours(parcoursId);
   const [itemToUpdate, setItemToUpdate] = useState<Objective | null>(null);
+  const [objectiveToDelete, setObjectiveToDelete] = useState<Objective | null>(
+    null,
+  );
 
   const saveObjectives = (descriptions: string[], successMessage: string) => {
     updateParcours.mutate(
@@ -45,12 +49,25 @@ const ObjectivesList = ({ readOnly = false, header }: ObjectivesListProps) => {
   };
 
   const handleDeletion = (id: number) => {
-    saveObjectives(
-      objectivesList
-        .filter((objective) => objective.id !== id)
-        .map((objective) => objective.description),
-      "Objectif supprimé",
+    setObjectiveToDelete(
+      objectivesList.find((objective) => objective.id === id) ?? null,
     );
+  };
+
+  // La modale reste ouverte tant que le serveur n'a pas confirmé la suppression.
+  const handleConfirmDeletion = async () => {
+    if (!objectiveToDelete) return;
+    try {
+      await updateParcours.mutateAsync({
+        objectives: objectivesList
+          .filter((objective) => objective.id !== objectiveToDelete.id)
+          .map((objective) => objective.description),
+      });
+      toast.success("Objectif supprimé");
+      setObjectiveToDelete(null);
+    } catch {
+      toast.error("Erreur lors de la suppression de l'objectif");
+    }
   };
 
   const handleUpdateObjective = (id: number) => {
@@ -82,40 +99,43 @@ const ObjectivesList = ({ readOnly = false, header }: ObjectivesListProps) => {
 
   return (
     <>
-      {/* Mobile : l'en-tête d'import et le bouton d'ajout s'empilent, chacun sur toute la largeur. */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 sm:flex-1">{header}</div>
-        <ButtonAdd
-          label="Ajouter un objectif"
-          outline={true}
-          onClickEvent={() => handleOpenDrawer("add-objective")}
-          isDisabled={readOnly}
-        />
-      </div>
+      {/* Pile propre à la liste : les tiroirs ci-dessous, sans hauteur, n'ajoutent pas d'espace sous la boîte. */}
+      <div className="flex flex-col gap-y-4">
+        {/* Mobile : l'en-tête d'import et le bouton d'ajout s'empilent, chacun sur toute la largeur. */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 sm:flex-1">{header}</div>
+          <ButtonAdd
+            label="Ajouter un objectif"
+            outline={true}
+            onClickEvent={() => handleOpenDrawer("add-objective")}
+            isDisabled={readOnly}
+          />
+        </div>
 
-      {objectivesList.length > 0 ? (
-        <ul className="flex flex-col gap-y-2">
-          {objectivesList.map((item: Objective) => (
-            <li key={item.id}>
-              <ObjectiveItem
-                objective={item}
-                onDelete={handleDeletion}
-                onUpdate={handleUpdateObjective}
-                readOnly={readOnly}
-              />
-            </li>
-          ))}
-        </ul>
-      ) : isPending ? (
-        <LoadingSkeleton variant="rows" label="Chargement des objectifs" />
-      ) : isError ? (
-        <p role="alert">Impossible de charger les objectifs.</p>
-      ) : (
-        <EmptyStatePlaceholder
-          title="Aucun objectif renseigné"
-          withBorder={false}
-        />
-      )}
+        {objectivesList.length > 0 ? (
+          <ul className="flex flex-col gap-y-2">
+            {objectivesList.map((item: Objective) => (
+              <li key={item.id}>
+                <ObjectiveItem
+                  objective={item}
+                  onDelete={handleDeletion}
+                  onUpdate={handleUpdateObjective}
+                  readOnly={readOnly}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : isPending ? (
+          <LoadingSkeleton variant="rows" label="Chargement des objectifs" />
+        ) : isError ? (
+          <p role="alert">Impossible de charger les objectifs.</p>
+        ) : (
+          <EmptyStatePlaceholder
+            title="Aucun objectif renseigné"
+            withBorder={false}
+          />
+        )}
+      </div>
 
       {/* Ajout d'un objectif */}
       {!readOnly ? (
@@ -148,6 +168,15 @@ const ObjectivesList = ({ readOnly = false, header }: ObjectivesListProps) => {
             />
           ) : null}
         </RightSideDrawer>
+      ) : null}
+
+      {objectiveToDelete ? (
+        <DeleteConfirmationModal
+          title="Suppression de l'objectif"
+          itemLabel={objectiveToDelete.description}
+          onConfirm={handleConfirmDeletion}
+          onCancel={() => setObjectiveToDelete(null)}
+        />
       ) : null}
     </>
   );

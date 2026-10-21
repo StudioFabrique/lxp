@@ -61,12 +61,10 @@ export default function AssignModuleContactsModal({
       <div className="mt-6">
         {availableContacts.length === 0 ? (
           // Aucune ressource à affecter : elles se gèrent à l'étape Informations du parcours.
-          <div className="flex justify-center rounded-box bg-base-200 p-5">
-            <Link to="?step=1" className="btn btn-primary btn-outline">
-              <Plus className="size-4" aria-hidden="true" />
-              Ajouter un membre « {teamLabel} »
-            </Link>
-          </div>
+          <Link to="?step=1" className="btn btn-primary btn-outline flex">
+            <Plus className="size-4" aria-hidden="true" />
+            Ajouter un membre « {teamLabel} »
+          </Link>
         ) : (
           <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
             {availableContacts.map((contact) => (
