@@ -14,21 +14,25 @@ const SkillActions: FC<Props> = ({ skill, onUpdateSkill, onDeleteSkill }) => {
   return (
     <>
       {skill.isBonus ? (
-        <div className="flex h-full flex-col items-center justify-center gap-2">
+        <div className="flex shrink-0 flex-col items-center justify-center gap-1 md:flex-row">
           <button
-            className="btn btn-sm btn-circle rounded-md btn-primary"
+            className="btn btn-ghost btn-square btn-sm text-primary"
+            type="button"
             onClick={() => onUpdateSkill(skill.id!)}
+            aria-label="modification de la compétence"
           >
-            <div className="w-4 h-4">
+            <div className="size-5">
               <EditIcon />
             </div>
           </button>
 
           <button
-            className="btn btn-sm btn-circle rounded-md btn-primary"
+            className="btn btn-ghost btn-square btn-sm text-error"
+            type="button"
             onClick={() => onDeleteSkill(skill.id!)}
+            aria-label="suppression de la compétence"
           >
-            <div className="h-4 w-4">
+            <div className="size-5">
               <DeleteIcon />
             </div>
           </button>

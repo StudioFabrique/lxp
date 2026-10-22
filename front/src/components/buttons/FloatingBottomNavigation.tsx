@@ -68,7 +68,7 @@ const FloatingBottomNavigation = ({
     <>
       <div
         className={cn(isSticky ? "sticky bottom-4 w-full md:w-[60vw]" : "w-full", "z-30 mt-12 p-3 md:p-4 rounded-2xl flex flex-wrap justify-between gap-3 mx-auto items-center border transition-all duration-500 ease-in-out", isDocked
-            ? "bg-transparent backdrop-blur-none border-transparent shadow-none w-full md:w-full"
+            ? "bg-transparent backdrop-blur-none border-transparent shadow-none w-full md:w-full px-0 md:px-0"
             : "bg-base-200/90 backdrop-blur border-base-300 shadow-xl")}
       >
         <div className="flex items-center gap-2 md:gap-4">{startActions}</div>

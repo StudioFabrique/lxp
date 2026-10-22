@@ -202,8 +202,8 @@ export default function ModuleCard({
               </div>
             )}
 
-            {onAssignContacts ? (
-              <div className="flex justify-end">
+            <div className="flex flex-col gap-4 mt-4">
+              {onAssignContacts ? (
                 <PermissionGuard action="update" object="module">
                   <button
                     type="button"
@@ -216,11 +216,9 @@ export default function ModuleCard({
                     Affecter les membres « {teamLabel} »
                   </button>
                 </PermissionGuard>
-              </div>
-            ) : null}
+              ) : null}
 
-            {onAssignSkills ? (
-              <div className="flex justify-end">
+              {onAssignSkills ? (
                 <PermissionGuard action="update" object="module">
                   <button
                     type="button"
@@ -233,8 +231,8 @@ export default function ModuleCard({
                     Ajouter des compétences
                   </button>
                 </PermissionGuard>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
         }
       />
