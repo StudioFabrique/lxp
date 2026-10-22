@@ -22,7 +22,11 @@ const collapseClassName =
  * elles se réduisent en barre flottante (même effet que les en-têtes de page) avec l'étape courante
  * et un tiret cliquable par étape. Sur mobile, rien ne se colle.
  */
-const ParcoursStickyStepper = ({ actualStep, stepsList, updateStep }: Props) => {
+const ParcoursStickyStepper = ({
+  actualStep,
+  stepsList,
+  updateStep,
+}: Props) => {
   const { isStuck, slotRef, barRef, slotHeight } = useStickyBar();
 
   return (
@@ -42,19 +46,27 @@ const ParcoursStickyStepper = ({ actualStep, stepsList, updateStep }: Props) => 
         <div
           className={cn(
             collapseClassName,
-            isStuck ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100 delay-100",
+            isStuck
+              ? "grid-rows-[0fr] opacity-0"
+              : "grid-rows-[1fr] opacity-100 delay-100",
           )}
           inert={isStuck}
         >
           <div className="min-h-0 overflow-hidden">
-            <Stepper actualStep={actualStep} stepsList={stepsList} updateStep={updateStep} />
+            <Stepper
+              actualStep={actualStep}
+              stepsList={stepsList}
+              updateStep={updateStep}
+            />
           </div>
         </div>
         {/* Réduit : l'étape courante et la progression. */}
         <div
           className={cn(
             collapseClassName,
-            isStuck ? "grid-rows-[1fr] opacity-100 delay-100" : "grid-rows-[0fr] opacity-0",
+            isStuck
+              ? "grid-rows-[1fr] opacity-100 delay-100"
+              : "grid-rows-[0fr] opacity-0",
           )}
           inert={!isStuck}
         >
@@ -64,14 +76,20 @@ const ParcoursStickyStepper = ({ actualStep, stepsList, updateStep }: Props) => 
                 Étape {actualStep.id} sur {stepsList.length}
                 <span className="max-sm:hidden"> : {actualStep.label}</span>
               </p>
-              <ol className="flex min-w-0 flex-1 gap-1.5" aria-label="Étapes de l'édition du parcours">
+              <ol
+                className="flex min-w-0 flex-1 gap-1.5"
+                aria-label="Étapes de l'édition du parcours"
+              >
                 {stepsList.map((step) => (
                   <li key={step.id} className="min-w-0 flex-1">
                     <button
                       type="button"
-                      className="group flex h-5 w-full cursor-pointer items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info"
+                      className="group flex h-5 w-full cursor-pointer items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info tooltip"
                       aria-label={`Étape ${step.id} : ${step.label}`}
-                      aria-current={step.id === actualStep.id ? "step" : undefined}
+                      aria-current={
+                        step.id === actualStep.id ? "step" : undefined
+                      }
+                      data-tip={step.label}
                       title={step.label}
                       onClick={() => updateStep(step.id)}
                     >
@@ -82,8 +100,12 @@ const ParcoursStickyStepper = ({ actualStep, stepsList, updateStep }: Props) => 
                           className={cn(
                             "absolute inset-0 origin-left rounded-full",
                             "transition-[transform,background-color] duration-500 ease-out motion-reduce:transition-none",
-                            step.id <= actualStep.id ? "scale-x-100" : "scale-x-0",
-                            step.id === actualStep.id ? "bg-info" : "bg-primary",
+                            step.id <= actualStep.id
+                              ? "scale-x-100"
+                              : "scale-x-0",
+                            step.id === actualStep.id
+                              ? "bg-info"
+                              : "bg-primary",
                           )}
                         />
                       </span>

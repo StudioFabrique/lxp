@@ -1,5 +1,23 @@
 [
   {
+    "version": "0.9.5",
+    "status": "Beta",
+    "branch": "release/0.9.5",
+    "summary": "Suppression des champs objectifs et compétences, ajout de tooltips sur les étapes du parcours",
+    "changes": [
+      {
+        "title": "Suppression des champs objectifs et compétèn",
+        "description": "Suppression des champs objectifs et compétences dans les formulaires de parcours",
+        "icon": "book"
+      },
+      {
+        "title": "Tooltip sur les étapes du parcours",
+        "description": "Ajout de tooltips sur chaque étape du parcours pour plus de clarté",
+        "icon": "book"
+      }
+    ]
+  },
+  {
     "version": "0.9.3",
     "status": "Beta",
     "branch": "release/0.9.3",
@@ -7,12 +25,12 @@
     "changes": [
       {
         "title": "Onboarding & groupes",
-        "description": "Afficher groupes, créer indépendamment d’alertes, présenter les apprenants",
+        "description": "Afficher groupes, présenter les apprenants lors de l'onboarding équipe pédagogique",
         "icon": "graduation"
       },
       {
         "title": "Dates, CSV & images",
-        "description": "Harmoniser validation, importer CSV et images",
+        "description": "Harmoniser validation ainsi que l'importation CSV et images",
         "icon": "layout"
       },
       {
@@ -103,34 +121,6 @@
         "title": "Fiabilité",
         "icon": "shield",
         "description": "États de chargement, listes vides et messages d’erreur plus lisibles."
-      }
-    ]
-  },
-  {
-    "version": "0.8.2",
-    "status": "Beta",
-    "commit": "f7ac559831ff2750fb6ad5b2865b773234272aae",
-    "summary": "Un démarrage plus simple et une identité visuelle personnalisable.",
-    "changes": [
-      {
-        "title": "Configuration guidée",
-        "icon": "rocket",
-        "description": "La création du compte administrateur est plus claire."
-      },
-      {
-        "title": "Identité de l’instance",
-        "icon": "palette",
-        "description": "Logo, thème et accueil peuvent être adaptés à l’organisme."
-      },
-      {
-        "title": "E-mails harmonisés",
-        "icon": "mail",
-        "description": "Les messages reprennent l’identité visuelle de l’organisme."
-      },
-      {
-        "title": "Profil apprenant",
-        "icon": "user",
-        "description": "Un accueil guidé facilite la découverte du profil d’apprentissage."
       }
     ]
   }

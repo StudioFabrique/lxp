@@ -12,6 +12,7 @@ import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
 import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutations";
 import LoadingSkeleton from "../../../../../components/loaders/LoadingSkeleton";
+import DeleteConfirmationModal from "../delete-confirmation-modal";
 
 type SkillsListProps = {
   header?: ReactNode;
@@ -24,13 +25,24 @@ const SkillsList = ({ header }: SkillsListProps) => {
   const { createSkill, updateSkill, deleteSkill } =
     useParcoursSkillMutations(parcoursId);
   const [itemToUpdate, setItemToUpdate] = useState<Skill | null>(null);
+  const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
 
   const handleDeleteSkill = (skillId: number) => {
-    deleteSkill.mutate(skillId, {
-      onError: () => toast.error("Erreur lors de la suppression"),
-    });
+    setSkillToDelete(skillList.find((item: Skill) => item.id === skillId) ?? null);
+  };
+
+  // La modale reste ouverte tant que le serveur n'a pas confirmé la suppression.
+  const handleConfirmDeletion = async () => {
+    if (!skillToDelete?.id) return;
+    try {
+      await deleteSkill.mutateAsync(skillToDelete.id);
+      toast.success("Compétence supprimée");
+      setSkillToDelete(null);
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    }
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -88,7 +100,7 @@ const SkillsList = ({ header }: SkillsListProps) => {
   const content = (
     <>
       {skillList.length > 0 ? (
-        <ul className="flex flex-col gap-y-4">
+        <ul className="flex flex-col gap-y-2">
           {skillList.map((item: Skill) => (
             <li key={item.id}>
               <FadeWrapper>
@@ -116,19 +128,22 @@ const SkillsList = ({ header }: SkillsListProps) => {
 
   return (
     <>
-      {/* Mobile : l'en-tête d'import et le bouton d'ajout s'empilent, chacun sur toute la largeur. */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 sm:flex-1">{header}</div>
-        <ButtonAdd
-          label="Ajouter une compétence"
-          outline={true}
-          onClickEvent={handleAddSkill}
-        />
-      </div>
+      {/* Pile propre à la liste : les tiroirs ci-dessous, sans hauteur, n'ajoutent pas d'espace sous la boîte. */}
+      <div className="flex flex-col gap-y-4">
+        {/* Mobile : l'en-tête d'import et le bouton d'ajout s'empilent, chacun sur toute la largeur. */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 sm:flex-1">{header}</div>
+          <ButtonAdd
+            label="Ajouter une compétence"
+            outline={true}
+            onClickEvent={handleAddSkill}
+          />
+        </div>
 
-      <FadeWrapper>
-        <div className="w-full flex flex-col gap-y-4">{content}</div>
-      </FadeWrapper>
+        <FadeWrapper>
+          <div className="w-full flex flex-col gap-y-4">{content}</div>
+        </FadeWrapper>
+      </div>
 
       <RightSideDrawer
         visible={false}
@@ -154,6 +169,15 @@ const SkillsList = ({ header }: SkillsListProps) => {
           />
         ) : null}
       </RightSideDrawer>
+
+      {skillToDelete ? (
+        <DeleteConfirmationModal
+          title="Suppression de la compétence"
+          itemLabel={skillToDelete.description}
+          onConfirm={handleConfirmDeletion}
+          onCancel={() => setSkillToDelete(null)}
+        />
+      ) : null}
     </>
   );
 };
