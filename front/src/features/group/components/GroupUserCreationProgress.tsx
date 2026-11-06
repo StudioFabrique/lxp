@@ -3,6 +3,7 @@ import { useId, type ReactNode } from "react";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { getGroupUserCreationContext } from "../helpers/group-user-creation-context";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type GroupUserCreationProgressProps = { returnTo: string; action?: ReactNode };
 
@@ -22,7 +23,7 @@ export default function GroupUserCreationProgress({ returnTo, action }: GroupUse
                 {context.isEditing ? "Modification du groupe en cours" : "Création du groupe en cours"}
               </p>
               <h2 id={titleId} className="mt-1 break-words text-base font-semibold">
-                {context.name} <span className="font-normal text-base-content/65">({context.studentCount} {context.studentCount > 1 ? "apprenants" : "apprenant"})</span>
+                {context.name} <span className="font-normal text-base-content/65">({formatNumber(context.studentCount)} {context.studentCount > 1 ? "apprenants" : "apprenant"})</span>
               </h2>
             </div>
           </div>

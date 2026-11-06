@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import SubWrapper from "../../../../src/components/wrappers/SubBoxWrapper";
 import type { TopUser } from "../types";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   topUsers: TopUser[];
@@ -24,7 +25,7 @@ const TopFiveUsers = ({ topUsers }: Props) => (
                 >
                   {user.name}
                 </Link>
-                <p>{user.totalTokens}</p>
+                <p>{formatNumber(user.totalTokens)}</p>
               </span>
             </SubWrapper>
           </li>

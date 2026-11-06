@@ -14,6 +14,7 @@ import { BookOpen, Edit, Plus } from "lucide-react";
 import { cn } from "../../../../../utils/cn";
 import { sortModulesByStartDate } from "../../../helpers/sort-modules-by-start-date";
 import { getModulesLabel, getUserArea } from "../../../../../utils/helpers/user-role";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type ContenuProps = {
   modules: Module[];
@@ -102,7 +103,7 @@ const Contenu = ({ modules }: ContenuProps) => {
               >
                 {showAllModules
                   ? "Afficher moins"
-                  : `Afficher plus (${hiddenModuleCount})`}
+                  : `Afficher plus (${formatNumber(hiddenModuleCount)})`}
               </button>
             ) : null}
             {canEditParcoursContent && (

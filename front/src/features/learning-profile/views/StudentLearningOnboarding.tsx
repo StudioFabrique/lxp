@@ -43,6 +43,7 @@ import {
   learningProfileKey,
 } from "../learning-profile.api";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
+import OnboardingFooter from "../../../components/UI/OnboardingFooter";
 import { cn } from "../../../utils/cn";
 
 type OnboardingStep = {
@@ -608,10 +609,10 @@ export default function StudentLearningOnboarding() {
               progressLabel="Progression du questionnaire"
               contentRef={contentScrollRef}
               footer={
-                <div className="mt-4 flex shrink-0 justify-between gap-3 border-t border-base-300 pt-5">
+                <OnboardingFooter>
                   <button
                     type="button"
-                    className="btn btn-ghost text-base normal-case"
+                    className="btn btn-ghost w-full text-base normal-case sm:w-auto"
                     disabled={(index === 0 && !welcomeStarted) || saving}
                     onClick={() => {
                       if (index === 0) setWelcomeStarted(false);
@@ -622,7 +623,7 @@ export default function StudentLearningOnboarding() {
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary text-base normal-case disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
+                    className="btn btn-primary w-full text-base normal-case sm:w-auto disabled:cursor-not-allowed disabled:border-base-300 disabled:bg-base-300 disabled:text-base-content/45 disabled:shadow-none"
                     disabled={cannotContinue}
                   >
                     {saving && index === steps.length - 1 ? (
@@ -636,7 +637,7 @@ export default function StudentLearningOnboarding() {
                       "Continuer"
                     )}
                   </button>
-                </div>
+                </OnboardingFooter>
               }
             >
               {step.kind === "pace" ? (

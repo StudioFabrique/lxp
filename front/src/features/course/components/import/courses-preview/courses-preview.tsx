@@ -9,6 +9,7 @@ import SelectableCard from "../../../../../components/UI/selectable-card";
 import { CourseImport } from "../../../hooks/useImportCourses";
 import { ActivityImport } from "../../../../../utils/interfaces/import-types";
 import CourseArborescence from "./course-arborescence";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type Props = {
   importedCourses?: CourseImport[];
@@ -135,7 +136,7 @@ const CoursesPreview = ({
           >
             {importedCourses.map((course, idx) => {
               const isSelected = selectedCourse?.id === course.id;
-              const subtitle = `${course.lessons.filter((l) => l.isSelected).length} / ${course.lessons.length} leçons`;
+              const subtitle = `${formatNumber(course.lessons.filter((l) => l.isSelected).length)} / ${formatNumber(course.lessons.length)} leçons`;
 
               return (
                 <SelectableCard

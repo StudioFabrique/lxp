@@ -13,6 +13,7 @@ import {
   getStoredItemsPerPage,
   storeItemsPerPage,
 } from "../../../../../components/table/pagination-storage";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 const compareValues = (left: unknown, right: unknown) =>
   String(left ?? "").localeCompare(String(right ?? ""), "fr", {
@@ -116,7 +117,7 @@ const GroupUserList = ({
             <GraduationCap /> Apprenants
           </h2>
           <p className="text-sm text-base-content/65">
-            {usersToAdd.length} apprenant(s) dans le groupe
+            {formatNumber(usersToAdd.length)} apprenant(s) dans le groupe
           </p>
         </div>
 
@@ -175,7 +176,7 @@ const GroupUserList = ({
           currentPage={displayedPage}
           maxPage={maxPage}
           itemsPerPage={itemsPerPage}
-          leftText={`Apprenants : ${filteredUsers.length}`}
+          leftText={`Apprenants : ${formatNumber(filteredUsers.length)}`}
           onSetCurrentPage={setCurrentPage}
           onSetItemsPerPage={handleSetItemsPerPage}
           onSetPreviousPage={() =>

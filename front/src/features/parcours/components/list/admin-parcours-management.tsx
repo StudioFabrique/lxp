@@ -24,6 +24,7 @@ import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-
 import { parcoursApi } from "../../api/parcours.api";
 import ParcoursCreationModal from "../create/ParcoursCreationModal";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type AdminParcoursManagementProps = {
   formations: FormationParcoursSummary[];
@@ -299,7 +300,7 @@ const AdminParcoursManagement = ({
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Parcours : ${totalParcours}`}
+          leftText={`Parcours : ${formatNumber(totalParcours)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(itemsPerPage) => {
             setLimit(itemsPerPage);

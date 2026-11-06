@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { formatNumber } from "../../utils/helpers/format-number";
 
 type ParcoursFilterBadgesProps = {
   parcours: string[];
@@ -91,7 +92,7 @@ const ParcoursFilterBadges = ({
               <>
                 <ChevronDown className="size-3.5" aria-hidden />
                 Afficher plus de parcours (
-                {uniqueParcours.length - INITIAL_PARCOURS_COUNT})
+                {formatNumber(uniqueParcours.length - INITIAL_PARCOURS_COUNT)})
               </>
             )}
           </button>

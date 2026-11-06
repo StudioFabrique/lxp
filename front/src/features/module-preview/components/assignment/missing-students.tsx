@@ -1,6 +1,7 @@
 import type { AssignmentExpectedStudent } from "../../interfaces/assignment";
 import { cn } from "../../../../utils/cn";
 import { toTitleCase } from "../../../../utils/helpers/text-helpers";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 export function MissingStudents({
   students,
@@ -20,7 +21,7 @@ export function MissingStudents({
       )}
     >
       <h4 className="text-sm font-semibold">
-        En attente de remise ({students.length})
+        En attente de remise ({formatNumber(students.length)})
       </h4>
       <ul className="mt-2 space-y-1 text-sm text-base-content/70">
         {students.map((student) => {

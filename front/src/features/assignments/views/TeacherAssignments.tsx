@@ -16,6 +16,7 @@ import {
   type TeacherAssignmentEvaluationFilter,
 } from "../teacher-assignments.utils";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "medium",
@@ -126,7 +127,7 @@ export default function TeacherAssignments() {
       ) : (
         <section
           className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 2xl:grid-cols-3"
-          aria-label={`${assignments.length} devoir${assignments.length > 1 ? "s" : ""} ${evaluationFilter === "graded" ? "évalués" : "non évalués"}`}
+          aria-label={`${formatNumber(assignments.length)} devoir${assignments.length > 1 ? "s" : ""} ${evaluationFilter === "graded" ? "évalués" : "non évalués"}`}
         >
           {assignments.map((assignment) => {
             const module = assignment.course.module;
@@ -147,7 +148,7 @@ export default function TeacherAssignments() {
                     <span className="inline-block first-letter:uppercase">{module.title}</span>
                     {assignment.students.length > 0 && (
                       <span className="text-sm text-base-content/70">
-                        {assignment.students.length} travail
+                        {formatNumber(assignment.students.length)} travail
                         {assignment.students.length > 1 ? "s" : ""} attendu
                         {assignment.students.length > 1 ? "s" : ""}
                       </span>
@@ -212,7 +213,7 @@ export default function TeacherAssignments() {
                 maxItemsShown={5}
                 emptyMessage="Aucun étudiant inscrit à ce parcours"
                 moreItemsLabel={(count) =>
-                  `Afficher plus d’étudiants (${count})`
+                  `Afficher plus d’étudiants (${formatNumber(count)})`
                 }
                 overflowTitle={`Autres étudiants du cours « ${assignment.course.title} »`}
               />

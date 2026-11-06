@@ -201,12 +201,9 @@ describe("Personnalisez votre espace", () => {
     expect(roleInput("student").value).toBe("Apprenant");
     expect(roleInput("visitor").value).toBe("Visiteur");
 
-    expect(container.textContent).toContain("Aperçu dans l’application");
-    expect(container.textContent).toContain("Aucun membre « Équipe pédagogique » renseigné");
+    expect(container.textContent).not.toContain("Aperçu dans l’application");
 
     await typeInto(roleInput("team"), "  Ressources   pédagogiques ");
-    // L'aperçu suit la saisie, espaces superflus compris tant qu'elle n'est pas normalisée.
-    expect(container.textContent).toContain("Aucun membre « Ressources   pédagogiques » renseigné");
     await submit();
 
     const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];

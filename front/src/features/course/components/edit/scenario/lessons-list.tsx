@@ -5,6 +5,7 @@ import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import LessonItem from "./lesson-item";
 import { CheckCircle, LoaderCircle } from "lucide-react";
 import { DndWrapper } from "../../../../../components/UI/DndWrapper";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 interface LessonsListProps {
   lessonsList: Lesson[];
@@ -39,7 +40,7 @@ const LessonsList = (props: LessonsListProps) => {
               ) : null}
             </span>
             {props.lessonsList && props.lessonsList.length > 0 ? (
-              <p className="text-sm font-normal">{` ${props.lessonsList.length} leçon(s)`}</p>
+              <p className="text-sm font-normal">{` ${formatNumber(props.lessonsList.length)} leçon(s)`}</p>
             ) : (
               <p className="text-sm font-normal">Aucun contenu</p>
             )}

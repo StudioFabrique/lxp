@@ -21,6 +21,7 @@ import useResource from "../hooks/useResource";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import activityIconType from "../../../utils/helpers/activity-icon-type";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 export default function ResourceAdd({
   readOnly = false,
@@ -112,7 +113,7 @@ export default function ResourceAdd({
               {panelClosed ? <PanelLeftOpen /> : <PanelLeftClose />}
             </button>
             <div className="flex-1 rounded-lg border border-secondary/20 bg-secondary/20 px-4 py-2 text-sm">
-              {activities.length} activité{activities.length > 1 ? "s" : ""}
+              {formatNumber(activities.length)} activité{activities.length > 1 ? "s" : ""}
             </div>
           </div>
           <div

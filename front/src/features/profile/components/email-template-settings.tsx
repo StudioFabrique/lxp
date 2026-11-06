@@ -38,7 +38,7 @@ export default function EmailTemplateSettings(props: Props) {
   return (
     <>
       <BoxWrapper className="@container h-auto w-full shrink-0 overflow-visible">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-start justify-between gap-4 @xl:items-center">
           <div className="flex min-w-0 items-center gap-4">
             <span className="shrink-0 rounded-xl bg-primary/10 p-3 text-primary">
               <LayoutTemplate className="size-5" aria-hidden="true" />
@@ -50,7 +50,7 @@ export default function EmailTemplateSettings(props: Props) {
               </p>
             </div>
           </div>
-          <div className="ml-auto flex flex-wrap justify-end gap-2">
+          <div className="flex shrink-0 justify-end gap-2">
             {props.onSendTest && <button type="button" className={cn("btn btn-outline btn-primary normal-case", actionButtonClassName)} onClick={props.onSendTest} disabled={props.disabled || props.isSaving || props.isSendingTest}>
               <Mail className={cn("size-4", props.isSendingTest && "animate-pulse")} aria-hidden="true" />
               <span className={actionLabelClassName}>{props.isSendingTest ? "Envoi…" : "Envoyer un e-mail de test"}</span>

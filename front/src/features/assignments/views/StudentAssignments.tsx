@@ -18,6 +18,7 @@ import {
   filterStudentAssignments,
   type AssignmentPeriod,
 } from "../student-assignments.utils";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "long",
@@ -111,7 +112,7 @@ export default function StudentAssignments() {
           fullWidth
           showMore={false}
           maxItemsShown={assignments.length}
-          label={`${assignments.length} évaluation${assignments.length > 1 ? "s" : ""}`}
+          label={`${formatNumber(assignments.length)} évaluation${assignments.length > 1 ? "s" : ""}`}
           title={period === "upcoming" ? "À venir" : "Évaluations passées"}
 
           emptyMessage={

@@ -15,6 +15,7 @@ import {
 } from "../../../utils/helpers/user-role";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   modules: ModuleSummary[];
@@ -72,7 +73,7 @@ export default function LastModules({ modules, isLoading }: Props) {
                 {module.parcours ?? "Non rattaché"}
               </div>
               <div className="text-xs text-base-content/80">
-                {module.coursesCount} cours, créé le{" "}
+                {formatNumber(module.coursesCount)} cours, créé le{" "}
                 {localeDate(module.createdAt)}
               </div>
             </div>

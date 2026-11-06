@@ -85,6 +85,13 @@ const inputClassName = cn("input input-bordered", hasError && "input-error");
 - Ne pas simuler ces séparateurs par le contenu textuel d'un pseudo-élément CSS.
 - Pour une séparation purement décorative, utiliser `aria-hidden="true"`. Utiliser `<hr>` lorsqu'une séparation thématique du contenu est pertinente.
 
+## Frontend : affichage des nombres
+
+- Tout nombre affiché à l'utilisateur (compteurs, totaux, tokens, statistiques, tailles, pourcentages décimaux, libellés de pagination, `aria-label` et toasts compris) passe par `formatNumber` de `front/src/utils/helpers/format-number.ts` : espace fine insécable comme séparateur de milliers (`1 234 567`) et virgule décimale.
+- Pour fixer la précision, transmettre des `Intl.NumberFormatOptions` (`formatNumber(value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })`).
+- Ne pas utiliser `toFixed` ni `new Intl.NumberFormat` pour l'affichage : une règle ESLint (`no-restricted-syntax`) les interdit. Ne pas formater les années, identifiants, codes ni valeurs transmises à une API ou à un attribut non affiché.
+- Les dates restent formatées par `front/src/utils/helpers/locale-date.ts`.
+
 ## Frontend : composants et couleurs DaisyUI
 
 - Utiliser autant que possible les composants et classes DaisyUI : `btn`, `card`, `modal`, `input`, `select`, `badge`, `alert`, `tabs`, `divider`, etc.

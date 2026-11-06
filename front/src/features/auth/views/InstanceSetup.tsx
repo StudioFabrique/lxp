@@ -1,4 +1,4 @@
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -19,6 +19,7 @@ import { profileApi } from "../../profile/api/profile.api";
 import AuthPageWrapper from "../components/AuthPageWrapper";
 import { cn } from "../../../utils/cn";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
+import OnboardingFooter from "../../../components/UI/OnboardingFooter";
 import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
 import RoleLabelsFields from "../../role/components/role-labels/RoleLabelsFields";
 import {
@@ -69,7 +70,6 @@ export default function InstanceSetup() {
     form,
     "color",
   );
-  const roleLabelValues = useWatch({ control: form.control, name: "roleLabels" });
   const [step, setStep] = useState(1);
   const initialized = useRef(false);
   const { reset } = form;
@@ -150,20 +150,20 @@ export default function InstanceSetup() {
         progressMountDuration={0.9}
         footer={
           step === 1 ? (
-            <div className="mt-5 flex justify-end border-t border-base-300 pt-4">
+            <OnboardingFooter className="sm:justify-end">
               <button
                 type="button"
-                className="btn btn-primary text-base normal-case"
+                className="btn btn-primary w-full text-base normal-case sm:w-auto"
                 onClick={() => setStep(2)}
               >
                 Continuer
               </button>
-            </div>
+            </OnboardingFooter>
           ) : step === 2 ? (
-            <div className="mt-5 flex items-center justify-between gap-3 border-t border-base-300 pt-4">
+            <OnboardingFooter>
               <button
                 type="button"
-                className="btn btn-ghost text-base normal-case"
+                className="btn btn-ghost w-full text-base normal-case sm:w-auto"
                 onClick={() => setStep(1)}
               >
                 Précédent
@@ -172,16 +172,16 @@ export default function InstanceSetup() {
                 type="submit"
                 form="instance-setup-form"
                 disabled={!settings}
-                className="btn btn-primary text-base normal-case"
+                className="btn btn-primary w-full text-base normal-case sm:w-auto"
               >
                 Continuer
               </button>
-            </div>
+            </OnboardingFooter>
           ) : (
-            <div className="mt-5 flex items-center justify-between gap-3 border-t border-base-300 pt-4">
+            <OnboardingFooter>
               <button
                 type="button"
-                className="btn btn-ghost text-base normal-case"
+                className="btn btn-ghost w-full text-base normal-case sm:w-auto"
                 disabled={isSaving}
                 onClick={() => setStep(2)}
               >
@@ -191,12 +191,12 @@ export default function InstanceSetup() {
                 type="submit"
                 form="instance-roles-form"
                 disabled={!settings || isSaving}
-                className="btn btn-primary rounded-lg text-base normal-case text-base-100"
+                className="btn btn-primary w-full rounded-lg text-base normal-case text-base-100 sm:w-auto"
               >
                 {isSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {isSaving ? "Configuration…" : "Configurer mon espace"}
               </button>
-            </div>
+            </OnboardingFooter>
           )
         }
       >
@@ -218,7 +218,6 @@ export default function InstanceSetup() {
               <RoleLabelsFields
                 register={(field) => form.register(`roleLabels.${field}`)}
                 errors={form.formState.errors.roleLabels}
-                values={roleLabelValues}
                 disabled={!settings || isSaving}
               />
             </form>

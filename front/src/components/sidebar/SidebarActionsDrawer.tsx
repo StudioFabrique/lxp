@@ -10,6 +10,8 @@ type Props = {
   onClose: () => void;
   /** Reçoit la zone où les en-têtes de page déposent leurs actions. */
   setContainer: (element: HTMLElement | null) => void;
+  /** Reçoit la zone de l'en-tête, à gauche de la croix, pour les actions en icône seule. */
+  setHeaderContainer: (element: HTMLElement | null) => void;
 };
 
 /**
@@ -17,7 +19,7 @@ type Props = {
  * fermé, pour que les actions gardent leur état et que la barre sache s'il y en a ; l'état fermé
  * le retire de l'affichage, du focus et des lecteurs d'écran.
  */
-const SidebarActionsDrawer = ({ open, onClose, setContainer }: Props) => {
+const SidebarActionsDrawer = ({ open, onClose, setContainer, setHeaderContainer }: Props) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const { animations } = useVisualPreferences();
@@ -68,8 +70,9 @@ const SidebarActionsDrawer = ({ open, onClose, setContainer }: Props) => {
       >
         {/* Même fond que l'en-tête de page remplacé : les boutons d'action y gardent leurs couleurs. */}
         <section className="themed-page-header flex h-full flex-col gap-4 overflow-y-auto rounded-xl border p-4 text-base-content shadow-sm">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="font-bold">Actions de la page</h2>
+          {/* Pas de titre visible : le tiroir porte déjà son nom accessible (`aria-label`). */}
+          <div className="flex items-center justify-end gap-1">
+            <div ref={setHeaderContainer} onClick={handleActionClick} className="flex items-center" />
             <button
               ref={closeButtonRef}
               type="button"

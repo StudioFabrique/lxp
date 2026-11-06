@@ -9,6 +9,7 @@ import { LoaderCircle, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../store/AuthProvider";
 import OnboardingProgressPanel from "../../../components/UI/OnboardingProgressPanel";
+import OnboardingFooter from "../../../components/UI/OnboardingFooter";
 import ReleaseNotesCard from "../../../components/UI/ReleaseNotesCard";
 import WelcomeActions from "../components/WelcomeActions";
 import ThemeSelectionStep from "../../learning-profile/ThemeSelectionStep";
@@ -151,23 +152,23 @@ export default function StaffOnboarding() {
               className="min-h-[600px] flex-none lg:min-h-0 lg:flex-1"
               footer={
                 step === 1 ? (
-                  <div className="mt-5 flex justify-between border-t border-base-300 pt-4">
+                  <OnboardingFooter>
                     <button
                       type="button"
-                      className="btn btn-ghost text-base normal-case"
+                      className="btn btn-ghost w-full text-base normal-case sm:w-auto"
                       onClick={() => setStep(0)}
                     >
                       Précédent
                     </button>
                     <button
                       type="button"
-                      className="btn btn-primary text-base normal-case"
+                      className="btn btn-primary w-full text-base normal-case sm:w-auto"
                       disabled={saving}
                       onClick={() => (admin ? void finishAdmin() : setStep(2))}
                     >
                       {admin ? "Terminer" : "Continuer"}
                     </button>
-                  </div>
+                  </OnboardingFooter>
                 ) : (
                   <div ref={setFooterContainer} />
                 )

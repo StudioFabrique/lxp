@@ -16,6 +16,7 @@ import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import type Media from "../interfaces/media";
 import type { MediaAssociatedActivity, MediaType } from "../interfaces/media";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const mediaTypes: {
   type: MediaType;
@@ -178,7 +179,7 @@ function MediathequeHomePage() {
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={perPage}
-          leftText={`Médias : ${total}`}
+          leftText={`Médias : ${formatNumber(total)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(value) => {
             setLimit(value);

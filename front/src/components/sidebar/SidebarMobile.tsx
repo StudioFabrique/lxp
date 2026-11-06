@@ -90,6 +90,7 @@ const SidebarMobile = ({ interfaceType, children }: Props) => {
           open={actionsOpen}
           onClose={() => setActionsOpenedAt(null)}
           setContainer={headerActions.setContainer}
+          setHeaderContainer={headerActions.setHeaderContainer}
         />
       )}
       <AnimatePresence>

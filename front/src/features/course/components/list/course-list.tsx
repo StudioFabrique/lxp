@@ -31,6 +31,7 @@ import { courseApi } from "../../api/course.api";
 import useDeleteCourse from "../../hooks/useDeleteCourse";
 import CourseHeader from "./course-header";
 import type CustomCourse from "./interfaces/custom-course";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type CourseListProps = {
   coursesList: CustomCourse[];
@@ -379,7 +380,7 @@ export default function CourseList({
               }))}
               maxItemsShown={3}
               emptyMessage="Aucune leçon associée"
-              moreItemsLabel={(count) => `Afficher plus de leçons (${count})`}
+              moreItemsLabel={(count) => `Afficher plus de leçons (${formatNumber(count)})`}
               overflowTitle={`Autres leçons de ${course.title}`}
             />
           ))}
@@ -393,7 +394,7 @@ export default function CourseList({
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Cours : ${filteredCourses.length}`}
+          leftText={`Cours : ${formatNumber(filteredCourses.length)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(itemsPerPage) => {
             setLimit(itemsPerPage);

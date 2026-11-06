@@ -17,6 +17,7 @@ import ElementNotFound from "../../../components/UI/element-not-found";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import { groupAnalysisNameLines } from "../helpers/group-analysis-name";
 import { useRoleLabels } from "../../role/hooks/useRoleLabels";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const DashboardIAHome = () => {
   const { labels } = useRoleLabels();
@@ -93,7 +94,7 @@ const DashboardIAHome = () => {
           <article className="flex flex-wrap items-center justify-between gap-x-2">
             <h2 className="font-semibold">Tokens consommés</h2>
             <h3 className="text-lg font-bold text-primary">
-              {totals?.totalTokens ?? 0}
+              {formatNumber(totals?.totalTokens ?? 0)}
             </h3>
           </article>
         </div>
@@ -101,7 +102,7 @@ const DashboardIAHome = () => {
           <article className="flex flex-wrap items-center justify-between gap-x-2">
             <h2 className="font-semibold">Tokens consommés ce mois-ci</h2>
             <h3 className="text-lg font-bold text-primary">
-              {totals?.totalCurrentMonthTokens ?? 0}
+              {formatNumber(totals?.totalCurrentMonthTokens ?? 0)}
             </h3>
           </article>
         </div>

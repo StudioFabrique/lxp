@@ -1,6 +1,7 @@
 import ParcoursStatistiquesItem from "./parcours-statistiques-item";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../../api/dashboard-student.api";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 const ParcoursStatistiques = ({ parcoursId }: { parcoursId: number }) => {
   const { data: parcoursStats } = useQuery({
@@ -11,9 +12,9 @@ const ParcoursStatistiques = ({ parcoursId }: { parcoursId: number }) => {
   const stats = parcoursStats
     ? [
         { title: "Diplôme", value: `Niveau ${parcoursStats.diplome}` },
-        { title: "Semaines", value: String(parcoursStats.totalWeeks) },
-        { title: "Heures", value: String(parcoursStats.totalHours) },
-        { title: "Modules", value: String(parcoursStats.totalModules) },
+        { title: "Semaines", value: formatNumber(parcoursStats.totalWeeks) },
+        { title: "Heures", value: formatNumber(parcoursStats.totalHours) },
+        { title: "Modules", value: formatNumber(parcoursStats.totalModules) },
       ]
     : undefined;
 

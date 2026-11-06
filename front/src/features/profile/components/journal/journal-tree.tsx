@@ -4,6 +4,7 @@ import Parcours from "../../../../utils/interfaces/parcours";
 import JournalTimeline from "./journal-timeline";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type Props = {
   parcoursList: Parcours[];
@@ -83,7 +84,7 @@ const JournalTree = ({ parcoursList }: Props) => {
                     </span>
                     <span className="flex items-center gap-1 text-xs font-semibold">
                       <CircleCheckBig className="h-4 w-4" aria-hidden="true" />
-                      {count}
+                      {formatNumber(count)}
                     </span>
                     <ChevronRight
                       className="h-4 w-4 opacity-60"

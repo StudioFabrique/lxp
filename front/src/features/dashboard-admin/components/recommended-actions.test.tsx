@@ -2,6 +2,10 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  MobileHeaderActionsContext,
+  type MobileHeaderActions,
+} from "../../../store/MobileHeaderActionsProvider";
 import RecommendedActions from "./recommended-actions";
 import {
   recommendedActionIcons,
@@ -108,5 +112,50 @@ describe("RecommendedActions", () => {
     expect(
       localStorage.getItem("lxp:recommended-actions:hidden:teacher-id"),
     ).toBe("true");
+  });
+
+  it("sur mobile, place la cloche seule dans l'en-tête du tiroir d'actions", () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes("max-width"),
+      media: query,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    })) as unknown as typeof window.matchMedia;
+    const slot = document.createElement("div");
+    document.body.appendChild(slot);
+    const noop = () => undefined;
+    const value: MobileHeaderActions = {
+      container: null,
+      setContainer: noop,
+      headerContainer: slot,
+      setHeaderContainer: noop,
+      topBarTitle: null,
+      setTopBarTitle: noop,
+      navigation: null,
+      setNavigation: noop,
+      isNavigationOpen: false,
+      setIsNavigationOpen: noop,
+      navigationContainer: null,
+      setNavigationContainer: noop,
+    };
+    act(() => {
+      root = createRoot(container);
+      root.render(
+        <MemoryRouter>
+          <MobileHeaderActionsContext value={value}>
+            <RecommendedActions userId="root-id" actions={actions} />
+          </MobileHeaderActionsContext>
+        </MemoryRouter>,
+      );
+    });
+
+    const bell = slot.querySelector('button[aria-label^="Actions recommandées"]');
+    expect(bell).not.toBeNull();
+    expect(bell?.textContent).toBe("3");
+    expect(container.querySelector('button[aria-label^="Actions recommandées"]')).toBeNull();
+
+    window.matchMedia = originalMatchMedia;
+    slot.remove();
   });
 });

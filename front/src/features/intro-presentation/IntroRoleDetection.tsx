@@ -128,7 +128,7 @@ const IntroRoleDetection = ({ role, roles, onDone }: Props) => {
   }, [targetIndex]);
 
   return (
-    <div className="grid h-full place-items-center overflow-hidden p-6">
+    <div className="grid h-full grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden p-6">
       <p className="sr-only" role="status">
         {isMatched ? `Rôle détecté : ${role.label}` : "Détection du rôle en cours"}
       </p>

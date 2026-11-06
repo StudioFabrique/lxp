@@ -14,6 +14,7 @@ import { DataTable } from "../../../../../../components/table/DataTable";
 import TablePagination from "../../../../../../components/table/TablePagination";
 import { useAvailableStudents } from "../../../../hooks/useAvailableStudents";
 import { getAvailableStudentColumns } from "../../group-user-table-columns";
+import { formatNumber } from "../../../../../../utils/helpers/format-number";
 
 type Props = {
   usersToAdd: User[];
@@ -146,7 +147,7 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers, onCreateStudent }: Props)
 
           {data.length > 0 ? (
             <TablePagination
-              leftText={`Apprenants disponibles : ${totalItems}`}
+              leftText={`Apprenants disponibles : ${formatNumber(totalItems)}`}
               {...pagination}
             />
           ) : null}

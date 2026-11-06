@@ -2,9 +2,13 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowRight, Bell, FastForward } from "lucide-react";
 import { Link } from "react-router";
+import { cn } from "../../../utils/cn";
+import { useIsMobile } from "../../../hooks/useMediaQuery";
+import { useMobileHeaderActions } from "../../../hooks/useMobileHeaderActions";
 import RightSideDrawer from "../../../components/UI/right-side-drawer/right-side-drawer";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import type { RecommendedAction } from "./recommended-action-config";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   userId: string;
@@ -31,6 +35,10 @@ export default function RecommendedActions({
     () => localStorage.getItem(storageKey(userId)) === "true",
   );
   const [isOpen, setIsOpen] = useState(false);
+  // Sur mobile, la cloche quitte la liste du tiroir d'actions de la barre : elle prend place dans son en-tête, à gauche de la croix.
+  const isMobile = useIsMobile();
+  const headerSlot = useMobileHeaderActions()?.headerContainer ?? null;
+  const inDrawerHeader = isMobile && headerSlot !== null;
 
   if (isHidden || isLoading || actions.length === 0) return null;
 
@@ -40,12 +48,14 @@ export default function RecommendedActions({
     setIsHidden(true);
   };
 
-  return (
-    <>
+  const trigger = (
       <button
         type="button"
-        className="btn btn-ghost gap-2 max-md:w-full max-md:justify-start"
-        aria-label={`Actions recommandées, ${actions.length} à réaliser`}
+        className={cn(
+          "btn btn-ghost",
+          inDrawerHeader ? "btn-sm btn-square" : "gap-2 max-md:w-full max-md:justify-start",
+        )}
+        aria-label={`Actions recommandées, ${formatNumber(actions.length)} à réaliser`}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         onClick={() => setIsOpen(true)}
@@ -55,12 +65,17 @@ export default function RecommendedActions({
             className="indicator-item badge badge-primary badge-xs px-1"
             aria-hidden="true"
           >
-            {actions.length}
+            {formatNumber(actions.length)}
           </span>
           <Bell className="size-5" aria-hidden="true" />
         </span>
-        <span className="md:hidden">Actions recommandées</span>
+        {!inDrawerHeader && <span className="md:hidden">Actions recommandées</span>}
       </button>
+  );
+
+  return (
+    <>
+      {inDrawerHeader ? createPortal(trigger, headerSlot) : trigger}
 
       {createPortal(
         <RightSideDrawer

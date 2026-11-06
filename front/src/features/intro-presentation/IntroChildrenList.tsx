@@ -4,6 +4,7 @@ import { cn } from "../../utils/cn";
 import type { IntroCard } from "./intro-content";
 import IntroSectionFrame from "./IntroSectionFrame";
 import { INTRO_LEVELS } from "./intro-levels";
+import { formatNumber } from "../../utils/helpers/format-number";
 
 type Props = {
   card: IntroCard;
@@ -29,8 +30,8 @@ const IntroChildrenList = ({ card, index, highlightedRow = -1, onHighlightRow, o
       icon={ChildIcon}
       title={
         isLeaf
-          ? `${card.rows.length} types d'activités`
-          : `${card.rows.length} ${level.childrenPlural}`
+          ? `${formatNumber(card.rows.length)} types d'activités`
+          : `${formatNumber(card.rows.length)} ${level.childrenPlural}`
       }
     >
       {card.rows.length === 0 ? (

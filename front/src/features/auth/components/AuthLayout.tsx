@@ -110,7 +110,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
           data-auth-column
           className={cn("relative flex flex-col items-center px-8 w-full h-full ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none", introPlayed && "transition-transform duration-1100", fullIntro ? "lg:translate-x-1/2" : "lg:translate-none", isOnboardingLayout ? "min-h-[calc(100vh-2rem)] lg:min-h-0 lg:h-full" : "min-h-[calc(100vh-6rem)]")}
         >
-          <div className={cn("absolute right-4 z-10 flex items-center gap-1 lg:right-8", isStudentOnboarding ? "top-6" : "top-0")}>
+          <div className={cn("absolute right-4 z-10 flex flex-col-reverse items-end gap-1 lg:right-8 lg:flex-row lg:items-center", isStudentOnboarding ? "top-6" : "top-0")}>
             <div ref={setHeaderActionHost} className="contents" />
             {isOnboardingLayout && isLoggedIn && (
               <button

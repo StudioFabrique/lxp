@@ -7,6 +7,7 @@ import StudentGroupList from "./student-group-list";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import { GroupList } from "./parcours-students.component";
 import { AuthContext } from "../../../../../../src/store/AuthProvider";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 // Interface définissant les props du composant
 interface GroupsListProps {
@@ -78,7 +79,7 @@ const GroupsList = (props: GroupsListProps) => {
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Groupes : ${props.groups.length}`}
+          leftText={`Groupes : ${formatNumber(props.groups.length)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(itemsPerPage) => {
             setLimit(itemsPerPage);

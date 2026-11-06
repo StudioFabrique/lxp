@@ -50,16 +50,16 @@ const SidebarIntroBar = () => {
     <nav
       ref={barRef}
       aria-label="Navigation de la présentation"
-      className="flex w-fit max-w-[calc(100vw-1rem)] items-center gap-5 rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) px-3 py-2 text-(--sidebar-content) shadow-sm transition-colors duration-200"
+      className="flex w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] items-center md:w-fit gap-2 rounded-xl md:gap-5 border border-(--sidebar-border) bg-(--sidebar-bg) px-3 py-2 text-(--sidebar-content) shadow-sm transition-colors duration-200"
     >
-      <div className="w-24 shrink-0">
+      <div className="w-16 shrink-0 md:w-24">
         <SidebarLogo />
       </div>
       {/* Même bloc que dans le menu du profil, teinté pour se détacher du fond de la barre. */}
-      <div className="flex min-w-0 justify-center">
-        <div className="flex min-w-0 items-center justify-between gap-4 rounded-lg bg-(--sidebar-content)/12 p-2 text-xs">
+      <div className="flex min-w-0 flex-1 justify-center md:flex-none">
+        <div className="flex min-w-0 items-center justify-between gap-4 rounded-lg bg-(--sidebar-content)/12 p-1 text-xs md:p-2">
           {/* Les deux libellés se superposent : la largeur ne change pas avec le mode. */}
-          <span className="ml-1 grid shrink-0">
+          <span className="ml-1 hidden shrink-0 md:grid">
             <span className="col-start-1 row-start-1">
               Mode {theme === "light" ? "clair" : "sombre"}
             </span>

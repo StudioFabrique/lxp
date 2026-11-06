@@ -3,17 +3,13 @@ import {
   DEFAULT_ROLE_LABELS,
   ROLE_LABEL_FIELDS,
   type RoleLabelFieldName,
-  type RoleLabelsFormValues,
 } from "../../helpers/role-labels";
 import RoleLabelField from "./RoleLabelField";
-import RoleLabelsPreview from "./RoleLabelsPreview";
 
 type RoleLabelsFieldsProps = {
   /** Branche un champ sur le formulaire parent (`register` de RHF, éventuellement préfixé). */
   register: (name: RoleLabelFieldName) => UseFormRegisterReturn;
   errors?: Partial<Record<RoleLabelFieldName, FieldError>>;
-  /** Valeurs en cours de saisie, pour l'aperçu. */
-  values: RoleLabelsFormValues;
   disabled?: boolean;
 };
 
@@ -39,16 +35,13 @@ const FIELD_COPY: Record<RoleLabelFieldName, { label: string; description: strin
 
 const FIELD_NAMES = Object.keys(ROLE_LABEL_FIELDS) as RoleLabelFieldName[];
 
-/** Les quatre libellés de rôles de l'instance, rattachés au formulaire d'onboarding parent. */
-/** Les quatre libellés de rôles de l'instance et leur aperçu, rattachés au formulaire du parent. */
+/** Les quatre libellés de rôles de l'instance, rattachés au formulaire du parent. */
 const RoleLabelsFields = ({
   register,
   errors,
-  values,
   disabled,
 }: RoleLabelsFieldsProps) => (
-  <>
-    <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
+  <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
       {FIELD_NAMES.map((name, index) => (
         <RoleLabelField
           key={name}
@@ -61,9 +54,7 @@ const RoleLabelsFields = ({
           tooltipPosition={index % 2 === 0 ? "right" : "left"}
         />
       ))}
-    </div>
-    <RoleLabelsPreview values={values} />
-  </>
+  </div>
 );
 
 export default RoleLabelsFields;

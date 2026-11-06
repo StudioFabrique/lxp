@@ -24,6 +24,7 @@ import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const TagsHome = () => {
   const navigate = useNavigate();
@@ -183,7 +184,7 @@ const TagsHome = () => {
                 actions={[
                   {
                     title: "Supprimer les tags sélectionnés",
-                    description: `${idsList.length} tag(s) vont être supprimé(s)`,
+                    description: `${formatNumber(idsList.length)} tag(s) vont être supprimé(s)`,
                     rightButtonTitle: "Supprimer",
                     onConfirm: () => onDeleteSelected(idsList),
                   },
@@ -220,7 +221,7 @@ const TagsHome = () => {
 
         {data.length > 0 ? (
           <div className="w-full mt-5">
-            <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
+            <TablePagination leftText={`Tags : ${formatNumber(totalItems)}`} {...pagination} />
           </div>
         ) : null}
       </BoxWrapper>

@@ -15,6 +15,7 @@ import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/
 import type { PermissionTypes, RoleCounts } from "../api/role.api";
 import { roleModelIcons } from "../helpers/role-models";
 import { useRoleLabels } from "../hooks/useRoleLabels";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type PermissionSummary = {
   type: PermissionTypes;
@@ -162,7 +163,7 @@ export default function RoleCard({
         title: summary.label,
         titleAccessory: (
           <span className="badge badge-sm badge-ghost tabular-nums">
-            {summary.count}
+            {formatNumber(summary.count)}
           </span>
         ),
         icon: summary.icon,

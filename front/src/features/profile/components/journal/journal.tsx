@@ -4,6 +4,7 @@ import { profileApi } from "../../api/profile.api";
 import Loader from "../../../../components/loaders/Loader";
 import Parcours from "../../../../utils/interfaces/parcours";
 import JournalTree from "./journal-tree";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 const Journal = ({ parcoursId }: { parcoursId?: number }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +58,7 @@ const Journal = ({ parcoursId }: { parcoursId?: number }) => {
         </div>
         {!isLoading && accomplishmentCount > 0 && (
           <span className="badge badge-primary badge-outline">
-            {accomplishmentCount} accomplissement{accomplishmentCount > 1 ? "s" : ""}
+            {formatNumber(accomplishmentCount)} accomplissement{accomplishmentCount > 1 ? "s" : ""}
           </span>
         )}
       </div>

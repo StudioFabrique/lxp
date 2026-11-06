@@ -1,4 +1,5 @@
 import Chart from "react-apexcharts";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface VerticalChartsProps {
@@ -47,6 +48,7 @@ export default function VerticalBars({
     },
     yaxis: {
       labels: {
+        formatter: (value: number) => formatNumber(value),
         // Style des étiquettes de l'axe des ordonnées
         style: {
           colors: [color], // Couleur des étiquettes de l'axe des ordonnées
@@ -66,6 +68,9 @@ export default function VerticalBars({
           ],
         },
       },
+    },
+    tooltip: {
+      y: { formatter: (value: number) => formatNumber(value) },
     },
     grid: { show: grid },
   };

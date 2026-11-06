@@ -28,6 +28,7 @@ import RoleCard from "../components/RoleCard";
 import RolePermissionsDrawer from "../components/permissions/RolePermissionsDrawer";
 import RoleForm from "../components/role-form/RoleForm";
 import { useRoleActions } from "../hooks/useRoleActions";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type RoleFormModal =
   { mode: "create" } | { mode: "edit" | "duplicate"; role: RoleCounts };
@@ -229,7 +230,7 @@ const RoleList = () => {
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Rôles : ${roles.length}`}
+          leftText={`Rôles : ${formatNumber(roles.length)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(itemsPerPage) => {
             setLimit(itemsPerPage);

@@ -3,6 +3,7 @@ import { HierarchicalListRow } from "../../../components/UI/hierarchical-list-ca
 import { displaySize } from "../../../utils/helpers/size-unit-conversion";
 import type Media from "../interfaces/media";
 import { getMediaUrl } from "./media-list.utils";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type MediaListProps = {
   medias: Media[];
@@ -63,7 +64,7 @@ export default function MediaList({
                 >
                   <ListTree className="size-[1.125rem]" />
                   <span aria-hidden="true">
-                    {media.associatedActivities.length}
+                    {formatNumber(media.associatedActivities.length)}
                   </span>
                 </button>
               </div>

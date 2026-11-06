@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
 import { LessonWithActivitiesCount } from "../../../../../../src/utils/interfaces/lesson";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 interface LessonsTableProps {
   list?: LessonWithActivitiesCount[];
@@ -88,7 +89,7 @@ const LessonsTable = (props: LessonsTableProps) => {
                   />
                 </td>
                 <td>{formatTitle(item.title)}</td>
-                <td className="text-center">{item.activitiesCount}</td>
+                <td className="text-center">{formatNumber(item.activitiesCount)}</td>
               </tr>
             ))}
         </tbody>

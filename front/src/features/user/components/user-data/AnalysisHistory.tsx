@@ -7,6 +7,7 @@ import { formatOutcome } from "../../helpers/format-prediction";
 import AnalysisTimelineChart from "./AnalysisTimelineChart";
 import { type HistoricalAnalysis } from "./AnalysisHistory.types";
 import { AnalysisDetailsModal } from "./AnalysisDetailsModal";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 export default function AnalysisHistory({
   studentId,
@@ -86,7 +87,7 @@ export default function AnalysisHistory({
                       aria-hidden="true"
                     />
                     {analysis.feedback.length
-                      ? `${analysis.feedback.length} retour${analysis.feedback.length > 1 ? "s" : ""}`
+                      ? `${formatNumber(analysis.feedback.length)} retour${analysis.feedback.length > 1 ? "s" : ""}`
                       : "Aucun retour"}
                   </div>
                 </div>
