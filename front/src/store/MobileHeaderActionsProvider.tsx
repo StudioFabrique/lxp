@@ -10,6 +10,9 @@ export type MobileHeaderActions = {
   /** Zone du tiroir d'actions de la barre mobile : les en-têtes de page y déposent leurs actions. */
   container: HTMLElement | null;
   setContainer: (element: HTMLElement | null) => void;
+  /** Zone de l'en-tête du tiroir, à gauche de la croix : une page y dépose une action en icône seule (ex. la cloche). */
+  headerContainer: HTMLElement | null;
+  setHeaderContainer: (element: HTMLElement | null) => void;
   topBarTitle: TopBarTitle | null;
   setTopBarTitle: (title: TopBarTitle | null) => void;
   /** Vaut `null` tant qu'aucune page ne propose de panneau : la barre n'affiche alors pas le bouton. */
@@ -27,6 +30,7 @@ export const MobileHeaderActionsContext = createContext<MobileHeaderActions | nu
 
 export function MobileHeaderActionsProvider({ children }: PropsWithChildren) {
   const [container, setContainer] = useState<HTMLElement | null>(null);
+  const [headerContainer, setHeaderContainer] = useState<HTMLElement | null>(null);
   const [topBarTitle, setTopBarTitle] = useState<TopBarTitle | null>(null);
   const [navigation, setNavigation] = useState<TopBarNavigation | null>(null);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
@@ -37,6 +41,8 @@ export function MobileHeaderActionsProvider({ children }: PropsWithChildren) {
       value={{
         container,
         setContainer,
+        headerContainer,
+        setHeaderContainer,
         topBarTitle,
         setTopBarTitle,
         navigation,

@@ -1,5 +1,7 @@
 import type { IntroRoleOption } from "./intro-role";
+import IntroMobileSpace from "./IntroMobileSpace";
 import IntroSpaceVideo from "./IntroSpaceVideo";
+import { useIsMobile } from "../../hooks/useMediaQuery";
 import { useIntroTeamContent } from "./useIntroTeamContent";
 
 type Props = {
@@ -13,8 +15,12 @@ type Props = {
 const IntroTeamSpace = ({ role, isPlaying, onEnded }: Props) => {
   const { content, isReady } = useIntroTeamContent(role);
 
+  // Sur mobile, la séquence de bureau (scène 3D en paysage) est remplacée par la barre mobile.
+  const isMobile = useIsMobile();
+  const Space = isMobile ? IntroMobileSpace : IntroSpaceVideo;
+
   return isPlaying && isReady ? (
-    <IntroSpaceVideo content={content} onEnded={onEnded} />
+    <Space content={content} onEnded={onEnded} />
   ) : null;
 };
 

@@ -146,14 +146,14 @@ export default function DropoutPreferencesForm({
       <div
         className={
           cn(onBack
-            ? "mt-auto flex items-center justify-between gap-3 border-t border-base-300 pt-4"
+            ? "mt-auto flex flex-col-reverse gap-2 border-t border-base-300 pt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
             : "flex justify-end")
         }
       >
         {onBack && (
           <button
             type="button"
-            className="btn btn-ghost text-base normal-case"
+            className="btn btn-ghost w-full text-base normal-case sm:w-auto"
             disabled={mutation.isPending}
             onClick={onBack}
           >
@@ -163,7 +163,10 @@ export default function DropoutPreferencesForm({
         <button
           type="submit"
           form={formId}
-          className="btn btn-primary text-base normal-case"
+          className={cn(
+            "btn btn-primary text-base normal-case",
+            onBack && "w-full sm:w-auto",
+          )}
           disabled={mutation.isPending}
         >
           {mutation.isPending ? (

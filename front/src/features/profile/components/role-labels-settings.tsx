@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil, UserCog } from "lucide-react";
 import Modal from "../../../components/UI/modal/modal";
@@ -32,7 +32,6 @@ export default function RoleLabelsSettings({ labels, disabled, onSave }: Props) 
     resolver: zodResolver(roleLabelsSchema),
     defaultValues: roleLabelsToFormValues(labels),
   });
-  const values = useWatch({ control: form.control });
   const { isDirty, isSubmitting, errors } = form.formState;
 
   const open = () => {
@@ -98,7 +97,6 @@ export default function RoleLabelsSettings({ labels, disabled, onSave }: Props) 
               <RoleLabelsFields
                 register={(field) => form.register(field)}
                 errors={errors}
-                values={{ ...roleLabelsToFormValues(labels), ...values }}
                 disabled={isSubmitting}
               />
             </form>

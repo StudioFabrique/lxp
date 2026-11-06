@@ -8,7 +8,7 @@ type Props = {
 const IntroSceneHeading = ({ className }: Props) => (
   <h1
     id="intro-presentation-title"
-    className={cn("text-2xl font-bold leading-tight", className)}
+    className={cn("text-2xl font-bold leading-tight text-balance", className)}
   >
     Comment s'organisent vos contenus ?
   </h1>

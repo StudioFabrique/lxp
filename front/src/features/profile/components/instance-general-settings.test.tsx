@@ -79,7 +79,7 @@ describe("paramètres de l’instance", () => {
       await click("Modifier les noms");
       expect(input("team").value).toBe("Formateur");
       expect(input("admin").value).toBe("Administrateur");
-      expect(document.body.textContent).toContain("Aperçu dans l’application");
+      expect(document.body.textContent).not.toContain("Aperçu dans l’application");
 
       await act(async () => {
         Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input("team"), "Ressources pédagogiques");

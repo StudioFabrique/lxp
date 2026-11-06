@@ -329,8 +329,8 @@ export default function AuthChatbotPlacement({
             random,
             { left: scope.left, top: scope.top, width: scope.width, height: scope.height },
           );
-      // Narrow screens use the empty part of the step, scrolling with the page,
-      // and only fall back below the card when the step has no room left.
+      // Narrow screens use the empty part of the step, scrolling with the page. When the step has no room
+      // left, the dialogue stays centred in the step rather than dropping below the card.
       const target =
         (point && !desktop ? { left: point.left, top: point.top + window.scrollY } : point) ??
         (desktop
@@ -352,7 +352,7 @@ export default function AuthChatbotPlacement({
                 20,
                 scope.left + (scope.width - host.offsetWidth) / 2,
               ),
-              top: scope.bottom + window.scrollY + 24,
+              top: scope.top + window.scrollY + (scope.height - host.offsetHeight) / 2,
             });
       const previous = previousPosition?.getPosition();
       host.getAnimations?.().forEach((animation) => animation.cancel());
