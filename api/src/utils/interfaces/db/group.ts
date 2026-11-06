@@ -21,7 +21,7 @@ export interface IGroup extends MongoRecord {
 
 const groupSchema: Schema = new Schema(
   {
-    name: { type: String, lowercase: true, required: true },
+    name: { type: String, required: true },
     desc: { type: String, required: false },
     users: {
       type: [mongoose.Schema.Types.ObjectId],

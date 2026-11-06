@@ -3,6 +3,7 @@ import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getExpectedAssignmentStudents } from "./teacher-assignments.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export type UploadedAssignmentFile = {
   originalname: string;
@@ -362,7 +363,7 @@ export async function saveSubmission(
   const assignment = await prisma.orm.public.CourseAssignment.where({
     courseId,
   })
-    .include("course", (related9) => related9.select("moduleId"))
+    .include("course", (related9) => related9.select("moduleId", "title"))
     .include("submissions", (related10) =>
       related10.where({ studentId: student.id }).include("files"),
     )
@@ -383,6 +384,9 @@ export async function saveSubmission(
       "Ajoutez un texte ou au moins un fichier avant de rendre le devoir.",
     );
   }
+
+  // Les noms vivent dans MongoDB : lus avant la transaction SQL, qu'ils ne partagent pas.
+  const studentUser = submit ? await User.findById(userIdMdb) : null;
 
   return prisma.transaction(async (transaction) => {
     const submission = existing
@@ -410,6 +414,17 @@ export async function saveSubmission(
           size: file.size,
         })),
       ).then((count) => ({ count }));
+    }
+    if (submit && studentUser) {
+      // La remise s'ajoute à l'historique de l'apprenant, comme la fin d'une leçon,
+      // sans être montrée aux autres apprenants.
+      await transaction.orm.public.Accomplishment.create({
+        name: `${studentUser.firstname} ${studentUser.lastname}`,
+        description: `vient de rendre le devoir du cours ${assignment.course?.title ?? ""}`.trim(),
+        student: (relation) => relation.connect({ id: student.id }),
+        course: (relation) => relation.connect({ id: courseId }),
+        showToOtherStudent: false,
+      });
     }
     const saved = await transaction.orm.public.AssignmentSubmission.where({
       id: submission.id,

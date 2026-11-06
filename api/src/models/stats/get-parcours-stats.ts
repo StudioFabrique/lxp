@@ -3,7 +3,7 @@ import { prisma } from "../../utils/db.ts";
 /**
  * Récupérer les informations d'un parcours destiné à l'affichage pour l'étudiant.
  * - Diplome du parcours
- * - Nombre de semaines de cours du parcours
+ * - Nombre de semaines entre le début et la fin du parcours
  * - Nombre d'heures de cours dans le parcours
  * - Nombre de modules dans le parcours
  */
@@ -23,10 +23,20 @@ export default async function getParcoursStats(parcoursId: number) {
 
   if (!parcours) return null;
 
-  // Calculate total weeks
-  const totalWeeks = Math.ceil(
-    parcours.modules.reduce((acc, mod) => acc + (mod.duration || 0), 0) / 5,
-  );
+  // Durée calendaire du parcours, calculée comme dans l'aperçu du parcours côté
+  // frontend (`quick-statistiques`) pour que les deux écrans affichent le même nombre.
+  const MILLIS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+  const totalWeeks =
+    parcours.startDate && parcours.endDate
+      ? Math.max(
+          0,
+          Math.floor(
+            (new Date(parcours.endDate).getTime() -
+              new Date(parcours.startDate).getTime()) /
+              MILLIS_PER_WEEK,
+          ),
+        )
+      : 0;
 
   // Calculate total hours
   const totalHours = parcours.modules.reduce(

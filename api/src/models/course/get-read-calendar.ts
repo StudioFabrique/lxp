@@ -12,7 +12,15 @@ export function getCalendarParcours(scope: AccessScope) {
     .all();
 }
 
-export function getParcoursCalendar(parcoursId: number, scope: AccessScope) {
+/**
+ * `learnerIdMdb` : identifiant de l'apprenant dont on joint la remise à chaque
+ * devoir, pour que le calendrier distingue un devoir remis d'un devoir à rendre.
+ */
+export function getParcoursCalendar(
+  parcoursId: number,
+  scope: AccessScope,
+  learnerIdMdb = "",
+) {
   const parcoursQuery = scope
     ? prisma.orm.public.Parcours.where((row) =>
         and(row.id.eq(parcoursId), row.id.in(scope.parcoursIds)),
@@ -39,7 +47,18 @@ export function getParcoursCalendar(parcoursId: number, scope: AccessScope) {
             )
             .select("id", "title", "description", "dates", "calendarColor")
             .include("assignment", (related59) =>
-              related59.select("id", "dueAt"),
+              related59
+                .select("id", "dueAt")
+                .include("submissions", (submissions) =>
+                  submissions
+                    .where((row) =>
+                      row.student.some((student) =>
+                        student.idMdb.eq(learnerIdMdb),
+                      ),
+                    )
+                    .select("submittedAt")
+                    .limit(1),
+                ),
             )
             .include("lessons", (related60) =>
               related60
