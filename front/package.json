@@ -8,6 +8,8 @@
     "test": "vitest",
     "build": "tsc --noEmit && vite build",
     "lint": "eslint . --report-unused-disable-directives",
+    "theme:contrast": "node scripts/theme-contrast.ts",
+    "theme:contrast:fix": "node scripts/theme-contrast.ts --fix",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -62,6 +64,7 @@
   },
   "devDependencies": {
     "@typescript/native": "npm:typescript@^7.0.2",
+    "@adobe/leonardo-contrast-colors": "1.1.0",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
