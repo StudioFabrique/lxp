@@ -3,17 +3,90 @@
     "version": "0.9.5",
     "status": "Beta",
     "branch": "release/0.9.5",
-    "summary": "Suppression des champs objectifs et compétences, ajout de tooltips sur les étapes du parcours",
+    "summary": "Mobile complété, rôles personnalisables, assistant plus pertinent et édition de parcours plus sûre",
     "changes": [
       {
-        "title": "Suppression des champs objectifs et compétèn",
-        "description": "Suppression des champs objectifs et compétences dans les formulaires de parcours",
-        "icon": "book"
+        "title": "Usage mobile complété",
+        "icon": "monitor",
+        "description": "Barres collantes et navigation du module, activités en plein écran, listes et tableaux de bord adaptés, édition de parcours sur petit écran."
       },
       {
-        "title": "Tooltip sur les étapes du parcours",
-        "description": "Ajout de tooltips sur chaque étape du parcours pour plus de clarté",
-        "icon": "book"
+        "title": "Rôles personnalisables",
+        "icon": "users",
+        "description": "Noms des rôles choisis à l'onboarding et modifiables dans les paramètres de l'instance, repris dans les écrans qui les affichent."
+      },
+      {
+        "title": "Assistant plus pertinent",
+        "icon": "user",
+        "description": "Questions utiles selon la page, tutoriels et bulles de dialogue supplémentaires."
+      },
+      {
+        "title": "Édition de parcours",
+        "icon": "graduation",
+        "description": "Barre d'étapes réduite avec une infobulle par étape, actions des étapes Modules et Calendrier à droite du titre."
+      },
+      {
+        "title": "Confirmation avant suppression",
+        "icon": "shield",
+        "description": "Un objectif ou une compétence d'un parcours n'est supprimé qu'après confirmation, une fois la suppression validée par le serveur."
+      },
+      {
+        "title": "Équipe pédagogique et actions",
+        "icon": "layout",
+        "description": "Équipe pédagogique, actions recommandées en tiroir et filtre de tags avec recherche."
+      },
+      {
+        "title": "Clé d'activation",
+        "icon": "rocket",
+        "description": "La clé s'affiche avec le logo ANDRIA en couleurs. Elle n'est plus générée à l'installation ni au déploiement : lancez npm run generate-activation-key."
+      }
+    ]
+  },
+  {
+    "version": "0.9.4",
+    "status": "Beta",
+    "commit": "63d2bc9e04e198f6d0c9d2a41feedeaaaee5d69e",
+    "summary": "Présentation d'accueil interactive, assistant virtuel, import de contenu et parcours plus sûrs",
+    "changes": [
+      {
+        "title": "Présentation d'accueil interactive",
+        "icon": "rocket",
+        "description": "Découverte de la méthodologie ANDRIA en 3D, puis de votre espace selon votre rôle. Elle peut être relancée à la demande."
+      },
+      {
+        "title": "Assistant virtuel",
+        "icon": "user",
+        "description": "Assistant déplaçable avec questions en éventail, réponses en bulle, tutoriels guidés et mode sans IA."
+      },
+      {
+        "title": "Édition de parcours plus sûre",
+        "icon": "graduation",
+        "description": "Badge Incomplet sur les modules, étape conservée au rechargement, sauvegarde automatique à la perte de focus, confirmation avant publication et alerte si un groupe n'a aucun étudiant."
+      },
+      {
+        "title": "Accueil apprenant",
+        "icon": "book",
+        "description": "Onboarding apprenant amélioré, indicateur de navigation et visibilité globale des cours."
+      },
+      {
+        "title": "Configuration et activation",
+        "icon": "mail",
+        "description": "Choix du modèle d'e-mail à la configuration de l'instance, rôle affiché à l'activation du compte, tuiles de connexion modernisées."
+      },
+      {
+        "title": "Import de contenu",
+        "icon": "layout",
+        "description": "Import de leçons depuis le menu du cours ou après sa création, sans choix de tag obligatoire."
+      },
+      {
+        "title": "Premiers pas sur mobile",
+        "icon": "monitor",
+        "description": "Navigation en barre et tiroirs, tableaux sans défilement horizontal, présentation et connexion adaptées aux petits écrans."
+      },
+      {
+        "title": "Fiabilité du suivi",
+        "icon": "clipboard",
+        "description": "Bonne réponse du quiz toujours affichée, lecteur de leçon stable sans évaluation, activité restaurée après rechargement."
       }
     ]
   },
