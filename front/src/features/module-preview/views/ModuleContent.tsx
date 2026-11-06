@@ -23,6 +23,7 @@ import { getUserArea, hasRoleRank } from "../../../utils/helpers/user-role";
 import ModuleContentToolbar from "../components/module-content-toolbar";
 import ModuleContentDialogs from "../components/module-content-dialogs";
 import ModuleContentPageHeader from "../components/module-content-page-header";
+import ModuleContentBreadcrumbs from "../components/ModuleContentBreadcrumbs";
 import ModuleContentBody from "../components/module-content-body";
 import MobileModuleNavigationPanel from "../components/sidebar/mobile-module-navigation-panel";
 
@@ -256,6 +257,14 @@ const ModuleContent = () => {
         isStudentView={isStudentView}
         canEditModule={canEditModule}
       />
+
+      {state.module?.title ? (
+        <ModuleContentBreadcrumbs
+          parcoursId={state.module.parcoursId}
+          parcoursTitle={state.module.parcours}
+          moduleTitle={state.module.title}
+        />
+      ) : null}
 
       {state.module && state.module?.parcoursId && state.module.id ? (
         <ModuleContentLayout

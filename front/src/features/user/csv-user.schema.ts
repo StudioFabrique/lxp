@@ -36,5 +36,5 @@ export const csvUserSchema = informationSchema.extend({
 });
 export type CsvUserRow = z.input<typeof csvUserSchema>;
 export const csvUsersSchema = z.object({
-  users: z.array(csvUserSchema).min(1, "Sélectionnez au moins un étudiant."),
+  users: z.array(csvUserSchema).min(1, "Sélectionnez au moins un apprenant."),
 });

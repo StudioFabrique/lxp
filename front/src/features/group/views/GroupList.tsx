@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { LoaderCircle, PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle, UsersRound } from "lucide-react";
 
 import Group from "../../../utils/interfaces/group";
 import { useGroupActions } from "../hooks/useGroupActions";
@@ -196,10 +196,20 @@ const GroupList = () => {
             setRowSelection={setRowSelection}
             sorting={sorting}
             setSorting={handleSortingChange}
+            emptyIcon={UsersRound}
             emptyMessage={
               searchValue
-                ? "Aucun groupe disponible pour cette recherche"
+                ? "Aucun groupe ne correspond à votre recherche"
                 : "Aucun groupe disponible"
+            }
+            emptyDescription="Créez votre premier groupe pour y rattacher des apprenants."
+            emptyAction={
+              <PermissionGuard object="group" action="write">
+                <Link className="btn btn-primary" to="/admin/group/add">
+                  <PlusCircle className="size-5" />
+                  Créer un nouveau groupe
+                </Link>
+              </PermissionGuard>
             }
           />
         </div>

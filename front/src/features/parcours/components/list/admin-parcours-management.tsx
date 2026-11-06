@@ -2,7 +2,7 @@ import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
-import { PlusCircle } from "lucide-react";
+import { FolderTree, PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 import Header from "../../../../components/headers/Header";
@@ -91,7 +91,7 @@ const AdminParcoursManagement = ({
   } = useEagerLoadingList(
     filteredFormations,
     "title",
-    5,
+    10,
     "id",
     `sidebar-parcours-${layout}`,
   );
@@ -213,26 +213,29 @@ const AdminParcoursManagement = ({
       >
         {isAdmin ? (
           <div className="flex flex-wrap justify-end gap-2">
+            {/* Une formation contient des parcours : sa création est l'action principale, celle d'un parcours reste secondaire. */}
             <PermissionGuard action="write" object="formation">
               <button
                 type="button"
-                className="btn btn-outline btn-primary"
+                className="btn btn-primary"
                 onClick={openFormationCreation}
               >
                 <PlusCircle />
                 Créer une formation
               </button>
             </PermissionGuard>
-            <PermissionGuard action="write" object="parcours">
-              <button
-                type="button"
-                className="btn btn-outline btn-primary"
-                onClick={() => setParcoursFormationId(-1)}
-              >
-                <PlusCircle />
-                Créer un parcours
-              </button>
-            </PermissionGuard>
+            {formations.length > 0 ? (
+              <PermissionGuard action="write" object="parcours">
+                <button
+                  type="button"
+                  className="btn btn-outline btn-primary"
+                  onClick={() => setParcoursFormationId(-1)}
+                >
+                  <PlusCircle />
+                  Créer un parcours
+                </button>
+              </PermissionGuard>
+            ) : null}
           </div>
         ) : null}
       </Header>
@@ -255,12 +258,33 @@ const AdminParcoursManagement = ({
         {paginatedFormations?.length === 0 ? (
           <div className="col-span-full">
             <EmptyStatePlaceholder
+              icon={FolderTree}
               title={
                 searchQuery
                   ? "Aucun parcours ne correspond à votre recherche"
                   : "Aucun parcours disponible"
               }
-            />
+              description={
+                searchQuery
+                  ? undefined
+                  : isAdmin
+                    ? "Créez une formation, puis ajoutez-y vos parcours."
+                    : "Les parcours qui vous sont attribués apparaîtront ici dès leur publication."
+              }
+            >
+              {searchQuery || !isAdmin ? null : (
+                <PermissionGuard action="write" object="formation">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={openFormationCreation}
+                  >
+                    <PlusCircle className="size-5" />
+                    Créer une formation
+                  </button>
+                </PermissionGuard>
+              )}
+            </EmptyStatePlaceholder>
           </div>
         ) : null}
         {(paginatedFormations as FormationParcoursSummary[] | null)?.map(

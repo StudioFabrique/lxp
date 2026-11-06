@@ -108,7 +108,7 @@ export default function EditLessonModal({
           <label className="flex flex-col gap-2">
             <span className="text-sm font-semibold">
               Description{" "}
-              <span className="font-normal text-base-content/50">
+              <span className="font-normal text-base-content/60">
                 (optionnelle)
               </span>
             </span>

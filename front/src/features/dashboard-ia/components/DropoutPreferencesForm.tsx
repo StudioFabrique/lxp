@@ -65,7 +65,7 @@ export default function DropoutPreferencesForm({
     >
       <label className="flex cursor-pointer items-start gap-4">
         <span
-          className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", enabled ? "bg-primary/10 text-primary" : "bg-base-300 text-base-content/40")}
+          className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", enabled ? "bg-primary/10 text-primary" : "bg-base-300 text-base-content/60")}
         >
           <ChartNoAxesCombined className="size-6" aria-hidden="true" />
         </span>

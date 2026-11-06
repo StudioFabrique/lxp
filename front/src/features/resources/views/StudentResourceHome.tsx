@@ -1,3 +1,4 @@
+import { FolderOpen } from "lucide-react";
 import ResourcesListCard from "../components/list/ResourcesListCard";
 import Header from "../../../components/headers/Header";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
@@ -75,10 +76,16 @@ export default function StudentResourceHome() {
         </>
       ) : (
         <EmptyStatePlaceholder
+          icon={FolderOpen}
           title={
             searchTerm
-              ? "Aucune ressource trouvée"
+              ? "Aucune ressource ne correspond à votre recherche"
               : "Aucune ressource disponible"
+          }
+          description={
+            searchTerm
+              ? undefined
+              : "Les ressources partagées par vos formateurs apparaîtront ici."
           }
         />
       )}

@@ -73,8 +73,8 @@ export default function TeacherAssignments() {
         <MultiCriteriaSearch
           value={search}
           onChange={setSearch}
-          criteria={["cours", "module", "parcours", "étudiant", "statut"]}
-          placeholder="Rechercher une évaluation ou un étudiant..."
+          criteria={["cours", "module", "parcours", "apprenant", "statut"]}
+          placeholder="Rechercher une évaluation ou un apprenant..."
         />
       ) : null}
 
@@ -178,7 +178,7 @@ export default function TeacherAssignments() {
                   const fullName =
                     [student.firstname, student.lastname]
                       .filter(Boolean)
-                      .join(" ") || "Étudiant";
+                      .join(" ") || "Apprenant";
                   const canOpenSubmission = Boolean(
                     student.submission?.submittedAt,
                   );
@@ -211,11 +211,11 @@ export default function TeacherAssignments() {
                   };
                 })}
                 maxItemsShown={5}
-                emptyMessage="Aucun étudiant inscrit à ce parcours"
+                emptyMessage="Aucun apprenant inscrit à ce parcours"
                 moreItemsLabel={(count) =>
-                  `Afficher plus d’étudiants (${formatNumber(count)})`
+                  `Afficher plus d’apprenants (${formatNumber(count)})`
                 }
-                overflowTitle={`Autres étudiants du cours « ${assignment.course.title} »`}
+                overflowTitle={`Autres apprenants du cours « ${assignment.course.title} »`}
               />
             );
           })}

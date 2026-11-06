@@ -175,8 +175,8 @@ describe("CourseList", () => {
       </MemoryRouter>,
     );
 
-    expect(markup).toContain('aria-label="Cours publié"');
-    expect(markup).toContain('aria-label="Cours non publié"');
+    // Seul le cours en préparation affiche le badge textuel « Non publié ».
+    expect(markup.match(/Non publié/g)).toHaveLength(1);
     expect(markup).toContain(
       'aria-label="Publier le cours Cours en préparation"',
     );

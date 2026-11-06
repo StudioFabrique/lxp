@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { AuthContext } from "../../../../../store/AuthProvider";
-import { getModulesLabel } from "../../../../../utils/helpers/user-role";
+import { getModulesLabel, hasRoleRank } from "../../../../../utils/helpers/user-role";
 import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type QuickStatistiquesProps = {
@@ -48,7 +48,10 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
         title="Diplôme"
         item={`Niveau ${parcours?.formation.level}`}
       />
-      <QuickStatItem title="Étudiants" item={studentCount ? formatNumber(studentCount) : "-"} />
+      {/* Le nombre d'apprenants concerne le suivi du parcours : un apprenant ne voit pas celui de ses camarades. */}
+      {hasRoleRank(user, [3]) ? null : (
+        <QuickStatItem title="Apprenants" item={studentCount ? formatNumber(studentCount) : "-"} />
+      )}
       <QuickStatItem
         title={getModulesLabel(user)}
         item={formatNumber(modules?.length || 0)}

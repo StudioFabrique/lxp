@@ -1,94 +1,51 @@
-import {
-  Bed,
-  BoomBox,
-  Candy,
-  Cat,
-  Citrus,
-  Coffee,
-  Dog,
-  Gamepad2,
-  Ghost,
-  Guitar,
-  HandMetal,
-  MountainSnow,
-  Piano,
-  Pizza,
-  Rabbit,
-  Rat,
-  Rocket,
-  Sailboat,
-  Star,
-  TentTree,
-  Tractor,
-  Turtle,
-} from "lucide-react";
-import { type PropsWithChildren, useEffect, useState } from "react";
+import { Inbox, type LucideIcon } from "lucide-react";
+import type { PropsWithChildren } from "react";
 
 import FadeWrapper from "../wrappers/FadeWrapper";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import CursorGlowCard from "./cursor-glow-card";
 import { cn } from "../../utils/cn";
 
-const EMPTY_STATE_ICONS = [
-  Coffee,
-  Pizza,
-  Bed,
-  Ghost,
-  Cat,
-  Dog,
-  BoomBox,
-  Rocket,
-  Gamepad2,
-  Star,
-  Candy,
-  Citrus,
-  Tractor,
-  Turtle,
-  TentTree,
-  Sailboat,
-  Rat,
-  Rabbit,
-  Piano,
-  MountainSnow,
-  Guitar,
-  HandMetal,
-];
-
 type EmptyStatePlaceholderProps = PropsWithChildren<{
   title: string;
+  /** Explique la suite à donner (« Créez votre premier groupe pour… »). */
+  description?: string;
+  /** Illustration liée au contenu de la page ; `Inbox` par défaut. */
+  icon?: LucideIcon;
   withBorder?: boolean;
 }>;
 
 const EmptyStatePlaceholder = ({
   title,
+  description,
+  icon: PlaceholderIcon = Inbox,
   children,
   withBorder = true,
 }: EmptyStatePlaceholderProps) => {
-  const iconClassName = "size-28 text-primary sm:size-40";
-  const [iconIndex, setIconIndex] = useState(0);
-
-  useEffect(() => {
-    const updateIcon = window.setTimeout(() => {
-      setIconIndex(Math.floor(Math.random() * EMPTY_STATE_ICONS.length));
-    }, 0);
-
-    return () => window.clearTimeout(updateIcon);
-  }, []);
-
-  const PlaceholderIcon = EMPTY_STATE_ICONS[iconIndex];
-
   const placeholder = (
     <BoxWrapper
       unstyled={!withBorder}
-      className={cn(withBorder ? "border border-base-300 bg-transparent select-none" : "")}
+      className={cn(withBorder ? "border border-base-300 bg-transparent" : "")}
     >
       <FadeWrapper>
-        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center sm:gap-10">
-          <PlaceholderIcon className={iconClassName} />
-          <div className="flex w-full flex-col items-center gap-5">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center sm:gap-8">
+          <PlaceholderIcon
+            aria-hidden="true"
+            className="size-20 text-primary sm:size-28"
+          />
+          <div className="flex w-full max-w-xl flex-col items-center gap-3">
             <p className="text-balance text-2xl font-bold text-primary">{title}</p>
-            {children}
+            {description ? (
+              <p className="text-balance text-base text-base-content/80">
+                {description}
+              </p>
+            ) : null}
           </div>
+          {children ? (
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {children}
+            </div>
+          ) : null}
         </div>
       </FadeWrapper>
     </BoxWrapper>

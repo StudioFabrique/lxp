@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ResourcesHeader from "../components/list/ResourcesHeader";
 import CreateResourceModal from "../components/add/CreateResourceModal";
+import { FolderOpen, PlusCircle } from "lucide-react";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
 import ResourcesListCard from "../components/list/ResourcesListCard";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
@@ -40,7 +42,7 @@ export default function ResourcesHome() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(() =>
-    getStoredItemsPerPage("admin-resources", 15),
+    getStoredItemsPerPage("admin-resources", 25),
   );
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -120,12 +122,31 @@ export default function ResourcesHome() {
           onDeleteResource={setResourceToDelete}
         >
           <EmptyStatePlaceholder
+            icon={FolderOpen}
             title={
               searchTerm
-                ? "Aucune ressource trouvée"
+                ? "Aucune ressource ne correspond à votre recherche"
                 : "Aucune ressource disponible"
             }
-          />
+            description={
+              searchTerm
+                ? undefined
+                : "Ajoutez une ressource supplémentaire pour la mettre à disposition des apprenants."
+            }
+          >
+            {searchTerm ? null : (
+              <PermissionGuard action="write" object="resource">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  <PlusCircle className="size-5" />
+                  Créer une ressource
+                </button>
+              </PermissionGuard>
+            )}
+          </EmptyStatePlaceholder>
         </ResourcesListCard>
       )}
       {total > 0 && (

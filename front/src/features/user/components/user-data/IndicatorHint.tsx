@@ -8,33 +8,33 @@ export function IndicatorHint({ indicator }: IndicatorCardProps) {
   switch (indicator.key) {
     case "chatbot_out_of_scope":
       return typeof meta.shareOfQuestionsPercent === "number" ? (
-        <p className="text-xs text-base-content/50">
+        <p className="text-xs text-base-content/60">
           {meta.shareOfQuestionsPercent} % des questions posées
         </p>
       ) : null;
 
     case "quiz_interactions":
       return typeof meta.selfTest === "number" ? (
-        <p className="text-xs text-base-content/50">
+        <p className="text-xs text-base-content/60">
           dont {meta.selfTest} en « je veux me tester »
         </p>
       ) : null;
 
     case "correct_answer_rate":
       return typeof meta.totalAnswers === "number" ? (
-        <p className="text-xs text-base-content/50">
+        <p className="text-xs text-base-content/60">
           sur {formatNumber(meta.totalAnswers)} réponses
         </p>
       ) : null;
 
     case "correct_answer_rate_evolution":
       return typeof meta.trend === "string" ? (
-        <p className="text-xs text-base-content/50">{String(meta.trend)}</p>
+        <p className="text-xs text-base-content/60">{String(meta.trend)}</p>
       ) : null;
 
     case "mood":
       return typeof meta.averageLevel === "number" ? (
-        <p className="text-xs text-base-content/50">
+        <p className="text-xs text-base-content/60">
           moyenne {meta.averageLevel} / 5
         </p>
       ) : null;

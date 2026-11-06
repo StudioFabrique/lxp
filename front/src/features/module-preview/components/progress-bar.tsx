@@ -1,6 +1,7 @@
 import { PlaneLandingIcon, PlaneTakeoffIcon } from "lucide-react";
 import Course from "../../../../src/utils/interfaces/course";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type ProgressBarProps = {
   courses: Course[];
@@ -11,10 +12,19 @@ type ProgressBarProps = {
 const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarProps) => {
   if (!(courses.length > 0)) return null;
 
+  const lessons = courses.flatMap((course) => course.lessons);
+  const finishedCount = lessons.filter((lesson) =>
+    lesson.lessonsRead?.some((read) => Boolean(read.finishedAt)),
+  ).length;
+
   return (
-    <div className="flex items-center gap-4 h-full w-full py-2">
-      <span>
-        <PlaneTakeoffIcon className="w-6 h-6 stroke-1" />
+    <div
+      role="group"
+      aria-label="Progression dans le module : un segment par leçon"
+      className="flex items-center gap-4 h-full w-full py-2"
+    >
+      <span title="Début du module">
+        <PlaneTakeoffIcon className="w-6 h-6 stroke-1" aria-hidden="true" />
       </span>
       {courses.map((course) => (
         <div
@@ -41,8 +51,12 @@ const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarP
           </div>
         </div>
       ))}
-      <span>
-        <PlaneLandingIcon className="w-6 h-6 stroke-1" />
+      <span title="Fin du module">
+        <PlaneLandingIcon className="w-6 h-6 stroke-1" aria-hidden="true" />
+      </span>
+      {/* Légende : chaque segment est une leçon, plein une fois terminée. */}
+      <span className="shrink-0 text-xs font-semibold max-xl:hidden">
+        {formatNumber(finishedCount)}/{formatNumber(lessons.length)} leçons terminées
       </span>
     </div>
   );

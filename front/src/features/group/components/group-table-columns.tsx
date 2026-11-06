@@ -40,7 +40,7 @@ export const getGroupColumns = (
     accessorKey: "name",
     header: "Nom",
     cell: (info) => (
-      <span className="font-semibold">{info.getValue() as string}</span>
+      <span className="font-semibold">{formatTitle(info.getValue() as string)}</span>
     ),
   },
   {
@@ -48,6 +48,10 @@ export const getGroupColumns = (
     header: "Formation - Parcours",
     cell: ({ row }) => {
       const group = row.original;
+      // Un groupe n'est rattaché à un parcours qu'une fois affecté depuis le parcours.
+      if (!group.parcoursId || !group.formation || group.formation === "ND") {
+        return <span className="text-base-content/70">Aucun parcours rattaché</span>;
+      }
       return (
         <Link
           to={`/admin/parcours/view/${group.parcoursId}`}

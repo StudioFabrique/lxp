@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { LoaderCircle, PlusCircle } from "lucide-react";
+import { LoaderCircle, PlusCircle, Tags } from "lucide-react";
 
 import type { TagRow } from "../api/tag.api";
 import { useTagActions } from "../hooks/useTagActions";
@@ -211,10 +211,20 @@ const TagsHome = () => {
             sorting={sorting}
             setSorting={handleSortingChange}
             canSelectRow={(tag) => tag.canDelete}
+            emptyIcon={Tags}
             emptyMessage={
               searchValue
-                ? "Aucun tag disponible pour cette recherche"
+                ? "Aucun tag ne correspond à votre recherche"
                 : "Aucun tag disponible"
+            }
+            emptyDescription="Créez un tag pour classer vos parcours et retrouver vos contenus plus facilement."
+            emptyAction={
+              <PermissionGuard object="tag" action="write">
+                <Link className="btn btn-primary" to="?openModal=true">
+                  <PlusCircle className="size-5" />
+                  Créer un nouveau tag
+                </Link>
+              </PermissionGuard>
             }
           />
         </div>

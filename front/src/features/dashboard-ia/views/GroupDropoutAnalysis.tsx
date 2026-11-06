@@ -104,7 +104,7 @@ export default function GroupDropoutAnalysis() {
       )}
       {saveAlerts.isError && (
         <p role="alert" className="w-full text-sm text-error">
-          Impossible d’enregistrer les alertes des étudiants.
+          Impossible d’enregistrer les alertes des apprenants.
         </p>
       )}
       <section
@@ -156,7 +156,7 @@ export default function GroupDropoutAnalysis() {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-xl font-semibold">Étudiants concernés</h2>
+                <h2 className="text-xl font-semibold">Apprenants concernés</h2>
                 {summary.canManageAlerts &&
                   (editingAlerts ? (
                     <div className="flex gap-2">

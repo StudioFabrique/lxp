@@ -34,7 +34,7 @@ const JournalTree = ({ parcoursList }: Props) => {
     return (
       <div className="rounded-2xl border border-dashed border-base-300 bg-base-200/50 px-6 py-10 text-center">
         <Sparkles
-          className="mx-auto mb-3 h-8 w-8 text-base-content/40"
+          className="mx-auto mb-3 h-8 w-8 text-base-content/60"
           aria-hidden="true"
         />
         <p className="font-semibold">Votre historique est encore vide</p>

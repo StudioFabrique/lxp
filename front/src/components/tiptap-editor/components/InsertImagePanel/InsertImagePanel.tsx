@@ -81,7 +81,7 @@ export const InsertImagePanel = ({
         <Button type="submit" className="w-full" disabled={isSubmitting}>Insérer l'image</Button>
       </form>
       {onClickUpload && <>
-        <div className="divider my-0 text-xs text-base-content/50" aria-hidden="true">ou</div>
+        <div className="divider my-0 text-xs text-base-content/60" aria-hidden="true">ou</div>
         <Button type="button" variant="quaternary" className="w-full" onClick={() => {
           uploadRequested.current = true;
           clearErrors("url");

@@ -46,6 +46,9 @@ const CourseInfos = () => {
   const visibility = useCourseSelector(
     (state) => state.course?.visibility
   ) as boolean;
+  const isPublished = useCourseSelector(
+    (state) => state.course?.isPublished
+  ) as boolean | undefined;
   const virtualClass = useCourseSelector((state) => state.course?.virtualClass) ?? "";
   const [submitTags, setSubmitTags] = useState<boolean>(false);
   const [submitContacts, setSubmitContacts] = useState<boolean>(false);
@@ -125,6 +128,7 @@ const CourseInfos = () => {
               courseTitle={title}
               courseDescription={description}
               visibility={visibility}
+              isPublished={isPublished ?? false}
             />
           </div>
         </BoxWrapper>

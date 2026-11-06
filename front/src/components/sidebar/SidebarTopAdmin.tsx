@@ -10,6 +10,9 @@ import {
 } from "../../utils/helpers/user-role";
 import { sidebarListClassName } from "./sidebar-styles";
 
+// Le contenu d'un module vit sous /parcours/module/:id mais relève de l'entrée « Modules ».
+const MODULE_CONTENT_PATH = "parcours/module";
+
 type SharedSideBarProps = { currentRoute: string[] };
 
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
@@ -35,6 +38,8 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
               icon={<Icon className="w-4" />}
               linkTo={`/${currentRoute[0]}/${item.path}`}
               tooltipText={label}
+              alsoActiveOn={item.key === "module" ? [MODULE_CONTENT_PATH] : undefined}
+              notActiveOn={item.key === "parcours" ? [MODULE_CONTENT_PATH] : undefined}
             >
               {label}
             </SidebarItem>

@@ -53,6 +53,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           drawerId="add-contacts"
           drawerTitle="Ajouter des Contacts"
           title={teamLabel}
+          emptyMessage="Aucun formateur ajouté"
           loading={isSaving}
           initialList={availableContacts}
           selectedItems={currentContacts}

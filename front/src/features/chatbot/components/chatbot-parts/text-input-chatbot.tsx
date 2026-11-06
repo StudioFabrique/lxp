@@ -44,7 +44,7 @@ export default function TextInputChatbot({
         <div className="relative flex items-end bg-base-200/60 border border-base-300 rounded-2xl p-1.5 transition-all duration-200 focus-within:border-primary focus-within:bg-base-100 focus-within:ring-2 focus-within:ring-primary/10">
           <textarea
             ref={textareaRef}
-            className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 resize-none min-h-10 max-h-35 text-sm leading-relaxed pl-3 pr-12 py-2 text-base-content placeholder:text-base-content/40 custom-scrollbar disabled:opacity-50"
+            className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 resize-none min-h-10 max-h-35 text-sm leading-relaxed pl-3 pr-12 py-2 text-base-content placeholder:text-base-content/60 custom-scrollbar disabled:opacity-50"
             name="prompt"
             disabled={isLoading || aiUnavailable}
             autoFocus

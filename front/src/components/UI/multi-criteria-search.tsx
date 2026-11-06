@@ -29,7 +29,7 @@ const MultiCriteriaSearch = ({
       <div className="flex w-full items-center gap-2">
         <label className="input input-bordered flex min-w-0 grow items-center gap-3 bg-base-100 focus-within:border-primary">
           <Search
-            className="size-5 shrink-0 text-base-content/50"
+            className="size-5 shrink-0 text-base-content/60"
             aria-hidden
           />
           <input

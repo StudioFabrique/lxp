@@ -25,7 +25,10 @@ export function filterStudentAssignments(
   const normalizedSearch = normalizeSearchText(search);
   return assignments
     .filter((assignment) => {
-      const isPast = new Date(assignment.dueAt).getTime() < now.getTime();
+      // Un devoir déjà remis n'est plus « à venir », même avant son échéance.
+      const isPast =
+        new Date(assignment.dueAt).getTime() < now.getTime() ||
+        Boolean(assignment.submissions[0]?.submittedAt);
       if ((period === "past") !== isPast) return false;
       if (!normalizedSearch) return true;
       return [

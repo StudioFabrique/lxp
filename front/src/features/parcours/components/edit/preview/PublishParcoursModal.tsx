@@ -18,7 +18,7 @@ const PublishParcoursModal = ({ isSubmitting, onConfirm, onCancel }: Props) => (
   >
     <p className="py-4">
       Souhaitez-vous publier ce parcours ? Une fois publié, il sera visible par
-      les étudiants rattachés.
+      les apprenants rattachés.
     </p>
   </Modal>
 );

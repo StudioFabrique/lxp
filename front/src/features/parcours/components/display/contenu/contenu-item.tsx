@@ -22,16 +22,17 @@ const ContenuItem = ({
   selectedModuleId,
   setSelectedModule,
 }: Props) => {
-  const minDate: { day: number | null; month: string } = useMemo(() => {
+  const minDate: { day: number | null; month: string; year: number | null } = useMemo(() => {
     if (!module.minDate) {
-      return { day: null, month: "" };
+      return { day: null, month: "", year: null };
     }
     const date = new Date(module.minDate);
     if (Number.isNaN(date.getTime())) {
-      return { day: null, month: "" };
+      return { day: null, month: "", year: null };
     }
     return {
       day: date.getDate(),
+      year: date.getFullYear(),
       month: getMonth(date.getMonth())?.substring(0, 4) ?? "",
     };
   }, [module.minDate]);
@@ -78,6 +79,7 @@ const ContenuItem = ({
             <p className="font-bold uppercase text-sm opacity-80">
               {minDate.month}
             </p>
+            <p className="text-xs opacity-80">{minDate.year}</p>
           </>
         )}
       </div>

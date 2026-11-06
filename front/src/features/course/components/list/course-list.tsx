@@ -87,7 +87,7 @@ export default function CourseList({
     [filteredCourses],
   );
   const { list, limit, page, totalPages, setLimit, setPage } =
-    useEagerLoadingList(sortedCourses, "title", 15, "id", "sidebar-courses");
+    useEagerLoadingList(sortedCourses, "title", 25, "id", "sidebar-courses");
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
   const handleDeleteLesson = async () => {
@@ -208,21 +208,13 @@ export default function CourseList({
               key={course.id}
               label="Cours"
               labelAccessory={
-                <div>
-                  <span
-                    role="img"
-                    className="opacity-50"
-                    aria-label={
-                      course.isPublished ? "Cours publié" : "Cours non publié"
-                    }
-                  >
-                    {!course.isPublished && (
-                      <CloudOff
-                        className="size-4 text-info"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </span>
+                <div className="flex flex-wrap items-center gap-1">
+                  {!course.isPublished && (
+                    <span className="badge badge-info badge-sm gap-1">
+                      <CloudOff className="size-3" aria-hidden="true" />
+                      Non publié
+                    </span>
+                  )}
                   {!course.visibility ? <InvisibleIndicator /> : null}
                 </div>
               }
@@ -386,7 +378,19 @@ export default function CourseList({
           ))}
         </section>
       ) : (
-        <EmptyStatePlaceholder title="Aucun cours trouvé" />
+        <EmptyStatePlaceholder
+          icon={BookOpen}
+          title={
+            searchQuery || selectedParcours !== null
+              ? "Aucun cours ne correspond à votre recherche"
+              : "Aucun cours disponible"
+          }
+          description={
+            searchQuery || selectedParcours !== null
+              ? undefined
+              : "Ajoutez un cours depuis la page d'un module."
+          }
+        />
       )}
 
       {list && list.length > 0 ? (

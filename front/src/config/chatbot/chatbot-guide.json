@@ -378,7 +378,7 @@
           "steps": [
             {
               "target": "user-certifications",
-              "message": "Saisissez le titre, le niveau et la date du diplôme, puis validez : la certification apparaît dans la liste des certifications enregistrées."
+              "message": "Dépliez la section « Certifications », saisissez le titre, le niveau et la date du diplôme, puis validez : la certification apparaît dans la liste des certifications enregistrées."
             }
           ]
         },

@@ -19,7 +19,7 @@ const INVITATION_POLL_INTERVAL_MS = 3000;
 export function useUserList(role: Role | null) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(() =>
-    getStoredItemsPerPage("users", 10),
+    getStoredItemsPerPage("users", 25),
   );
   const [sortProperty, setSortProperty] = useState<string | null>("lastname");
   const [isAscDirection, setIsAscDirection] = useState(true);
@@ -67,7 +67,7 @@ export function useUserList(role: Role | null) {
       const res = { data: (await queries.list(path)) as { total: number; list: User[] } };
       return res.data;
     },
-    enabled: !!role,
+    // Sans filtre de rôle (liste des rôles pas encore chargée), la liste complète reste affichée.
     placeholderData: keepPreviousData,
     // Une invitation part après la réponse de création : sans relance, la liste
     // resterait sur l'indicateur d'attente jusqu'à une action de l'utilisateur.

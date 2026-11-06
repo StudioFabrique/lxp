@@ -78,7 +78,7 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
           </h3>
 
           {fired.length === 0 ? (
-            <p className="text-sm italic text-base-content/50">
+            <p className="text-sm italic text-base-content/60">
               Aucun signal d'alerte.
             </p>
           ) : (

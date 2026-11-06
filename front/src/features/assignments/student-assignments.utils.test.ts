@@ -55,6 +55,17 @@ describe("liste apprenant des évaluations", () => {
     expect(result.map(({ id }) => id)).toEqual([2, 1]);
   });
 
+  it("range un devoir remis avant son échéance parmi les passés", () => {
+    const submitted = assignment(1, "2026-09-20T12:00:00.000Z", {
+      id: 4,
+      submittedAt: "2026-09-12T12:00:00.000Z",
+      grade: null,
+      gradedAt: null,
+    });
+    expect(filterStudentAssignments([submitted], "upcoming", "", now)).toHaveLength(0);
+    expect(filterStudentAssignments([submitted], "past", "", now)).toHaveLength(1);
+  });
+
   it("recherche dans le cours, le module, le parcours et le statut", () => {
     const graded = assignment(1, "2026-09-13T12:00:00.000Z", {
       id: 4,

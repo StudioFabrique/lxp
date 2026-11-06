@@ -61,7 +61,7 @@ export const FontFamilyPicker = ({
           </span>
           <Icon
             name="ChevronDown"
-            className="w-2 h-2 text-base-content/40"
+            className="w-2 h-2 text-base-content/60"
           />
         </ToolbarButton>
       </Dropdown.Trigger>

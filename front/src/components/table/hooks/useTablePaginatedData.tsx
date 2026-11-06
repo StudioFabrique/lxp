@@ -22,7 +22,7 @@ function useTablePaginatedData<TData>(
   const [isAscDirection, setAscDirection] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [itemsPerPage, setItemsPerPage] = useState<number>(() =>
-    getStoredItemsPerPage(paginationStorageLocation, 5),
+    getStoredItemsPerPage(paginationStorageLocation, 25),
   );
 
   const handleSetItemsPerPage = (value: number) => {

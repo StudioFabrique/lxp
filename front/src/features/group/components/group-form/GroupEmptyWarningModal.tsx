@@ -10,7 +10,7 @@ type Props = {
 
 const GroupEmptyWarningModal = ({ isEditing, onConfirm, onCancel, isSubmitting = false }: Props) => (
   <Modal
-    title="Aucun étudiant ajouté"
+    title="Aucun apprenant ajouté"
     leftLabel="Retour au formulaire"
     onLeftClick={onCancel}
     rightLabel={isEditing ? "Poursuivre la modification" : "Poursuivre la création"}
@@ -18,7 +18,7 @@ const GroupEmptyWarningModal = ({ isEditing, onConfirm, onCancel, isSubmitting =
     isSubmitting={isSubmitting}
   >
     <p className="py-4">
-      Aucun étudiant n'a été ajouté au groupe. Souhaitez-vous poursuivre la{" "}
+      Aucun apprenant n'a été ajouté au groupe. Souhaitez-vous poursuivre la{" "}
       {isEditing ? "modification" : "création"} ?
     </p>
   </Modal>

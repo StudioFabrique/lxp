@@ -73,11 +73,13 @@ const UserFormInformations = ({
           aria-invalid={firstnameError}
           aria-describedby={firstnameError && firstnameMessage ? "user-firstname-error" : undefined}
         />
-        {firstnameError && firstnameMessage ? (
-          <span id="user-firstname-error" role="alert" className="text-error text-sm">
-            {firstnameMessage}
-          </span>
-        ) : null}
+        <span
+          id="user-firstname-error"
+          role={firstnameError && firstnameMessage ? "alert" : undefined}
+          className="min-h-5 text-error text-sm"
+        >
+          {firstnameError ? firstnameMessage : null}
+        </span>
       </span>
       <span className="flex flex-col gap-y-2">
         <label htmlFor="user-lastname">Nom *</label>
@@ -93,15 +95,18 @@ const UserFormInformations = ({
           aria-invalid={lastnameError}
           aria-describedby={lastnameError && lastnameMessage ? "user-lastname-error" : undefined}
         />
-        {lastnameError && lastnameMessage ? (
-          <span id="user-lastname-error" role="alert" className="text-error text-sm">
-            {lastnameMessage}
-          </span>
-        ) : null}
+        <span
+          id="user-lastname-error"
+          role={lastnameError && lastnameMessage ? "alert" : undefined}
+          className="min-h-5 text-error text-sm"
+        >
+          {lastnameError ? lastnameMessage : null}
+        </span>
       </span>
       <span className="flex flex-col gap-y-2">
-        <label>Pseudo</label>
+        <label htmlFor="user-nickname">Pseudo</label>
         <input
+          id="user-nickname"
           className={inputStyle(nicknameError && nickname.length > 0)}
           type="text"
           value={nickname}
@@ -110,10 +115,12 @@ const UserFormInformations = ({
           autoComplete="nickname"
           disabled={disabled}
         />
+        <span aria-hidden="true" className="min-h-5" />
       </span>
       <span className="flex flex-col gap-y-2">
-        <label>Adresse Mail *</label>
+        <label htmlFor="user-email">Adresse Mail *</label>
         <input
+          id="user-email"
           className={inputStyle(emailError)}
           type="text"
           value={email}
@@ -124,11 +131,13 @@ const UserFormInformations = ({
           aria-invalid={emailError}
           aria-describedby={emailMessage ? "user-email-error" : undefined}
         />
-        {emailMessage ? (
-          <span id="user-email-error" role="alert" className="text-error text-sm">
-            {emailMessage}
-          </span>
-        ) : null}
+        <span
+          id="user-email-error"
+          role={emailMessage ? "alert" : undefined}
+          className="min-h-5 text-error text-sm"
+        >
+          {emailMessage}
+        </span>
       </span>
       <div className="flex items-center justify-between gap-4 border-t border-base-300 pt-4">
         <div>

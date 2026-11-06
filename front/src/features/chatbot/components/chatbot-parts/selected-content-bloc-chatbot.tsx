@@ -23,7 +23,7 @@ export default function SelectedContentBlocChatbot({
 
         <button
           onClick={onDismiss}
-          className="btn btn-ghost btn-circle btn-xs shrink-0 text-base-content/40 hover:text-error hover:bg-error/10 transition-colors"
+          className="btn btn-ghost btn-circle btn-xs shrink-0 text-base-content/60 hover:text-error hover:bg-error/10 transition-colors"
           title="Supprimer la sélection"
         >
           <X className="w-3.5 h-3.5" />

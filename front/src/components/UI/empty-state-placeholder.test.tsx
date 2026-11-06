@@ -1,7 +1,6 @@
-import { act } from "react";
-import { createRoot } from "react-dom/client";
+import { Users } from "lucide-react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import EmptyStatePlaceholder from "./empty-state-placeholder";
 
@@ -34,21 +33,29 @@ describe("EmptyStatePlaceholder", () => {
     expect(markup).not.toContain("shadow-sm");
   });
 
-  it("sélectionne une nouvelle illustration au montage", () => {
-    vi.useFakeTimers();
-    const random = vi.spyOn(Math, "random").mockReturnValue(0.999);
-    const container = document.createElement("div");
-    const root = createRoot(container);
+  it("affiche la description et l'illustration fournies", () => {
+    const markup = renderToStaticMarkup(
+      <EmptyStatePlaceholder
+        title="Aucun groupe disponible"
+        description="Créez votre premier groupe pour y rattacher des apprenants."
+        icon={Users}
+      />,
+    );
 
-    try {
-      act(() => root.render(<EmptyStatePlaceholder title="Aucune activité" />));
-      act(() => vi.runOnlyPendingTimers());
+    expect(markup).toContain("Créez votre premier groupe");
+    expect(markup).toContain("lucide-users");
+    expect(markup).toContain('aria-hidden="true"');
+  });
 
-      expect(container.querySelector(".lucide-hand-metal")).not.toBeNull();
-    } finally {
-      act(() => root.unmount());
-      random.mockRestore();
-      vi.useRealTimers();
-    }
+  it("utilise une illustration neutre et stable par défaut", () => {
+    const first = renderToStaticMarkup(
+      <EmptyStatePlaceholder title="Aucune activité" />,
+    );
+    const second = renderToStaticMarkup(
+      <EmptyStatePlaceholder title="Aucune activité" />,
+    );
+
+    expect(first).toContain("lucide-inbox");
+    expect(second).toBe(first);
   });
 });

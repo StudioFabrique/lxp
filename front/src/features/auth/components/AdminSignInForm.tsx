@@ -169,7 +169,7 @@ const AdminSignInForm = ({
             placeholder="Adresse email"
             readOnly={email.length > 0}
             {...register("email")}
-            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg read-only:cursor-not-allowed read-only:text-base-content/60"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/60 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg read-only:cursor-not-allowed read-only:text-base-content/60"
           />
           {errors.email && (
             <span className="text-xs text-error mt-1">
@@ -184,7 +184,7 @@ const AdminSignInForm = ({
             type="text"
             placeholder="Prénom"
             {...register("firstname")}
-            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/60 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
           {errors.firstname && (
             <span className="text-xs text-error mt-1">
@@ -199,7 +199,7 @@ const AdminSignInForm = ({
             type="text"
             placeholder="Nom"
             {...register("lastname")}
-            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/60 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
           {errors.lastname && (
             <span className="text-xs text-error mt-1">

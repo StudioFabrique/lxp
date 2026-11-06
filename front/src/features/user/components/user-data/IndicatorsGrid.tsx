@@ -75,7 +75,7 @@ export default function IndicatorsGrid({
       <div className="flex items-baseline justify-between">
         <h2 className="text-xl font-bold">Indicateurs de suivi</h2>
         {range ? (
-          <p className="text-xs text-base-content/50">
+          <p className="text-xs text-base-content/60">
             du {localeDate(range.from)} au {localeDate(range.to)}
           </p>
         ) : null}

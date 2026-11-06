@@ -1,4 +1,4 @@
-import { toTitleCase } from "../../../utils/helpers/text-helpers";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { LoaderCircle } from "lucide-react";
 import Header from "../../../components/headers/Header";
 import { Quiz, QuizAttempt, UserAnswer } from "../interfaces/quiz";
@@ -130,7 +130,7 @@ const DiagnosticQuiz = ({
     <PageWrapper>
       <Header
         title="Évaluation initiale"
-        description="Évalue tes connaissances avant de commencer le module"
+        description="Évaluez vos connaissances avant de commencer le module. Cette étape est requise et vos réponses sont enregistrées au fil des questions."
       />
       <BoxWrapper className="card h-auto min-h-[33rem] w-full gap-0 overflow-hidden border-primary/20 bg-primary/5 p-0 shadow-none">
         {!isStarted ? (
@@ -143,7 +143,7 @@ const DiagnosticQuiz = ({
               Test de connaissances sur le module{" "}
               {moduleTitle && (
                 <span style={{ color: "color-mix(in srgb, var(--color-secondary) 55%, white)" }}>
-                  {toTitleCase(moduleTitle)}
+                  {formatTitle(moduleTitle)}
                 </span>
               )}
             </h1>
@@ -159,7 +159,7 @@ const DiagnosticQuiz = ({
               <h1 className="text-base font-bold sm:text-3xl">
                 Test de connaissances sur le module{" "}
                 {moduleTitle && (
-                  <span className="text-secondary">{toTitleCase(moduleTitle)}</span>
+                  <span className="text-secondary">{formatTitle(moduleTitle)}</span>
                 )}
               </h1>
               <p className="mt-3 text-sm font-bold text-primary sm:text-lg">
@@ -191,12 +191,12 @@ const DiagnosticQuiz = ({
             ) : !isStarted ? (
               <>
                 <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
-                  Avant de te lancer, prends un court instant pour évaluer tes
+                  Avant de vous lancer, prenez un court instant pour évaluer vos
                   connaissances initiales.
                 </p>
                 <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
-                  Ces quelques questions permettront d'adapter ton apprentissage
-                  et ton accompagnement.
+                  Ces quelques questions permettront d'adapter votre apprentissage
+                  et votre accompagnement.
                 </p>
                 <div className="card-actions mt-auto justify-end pt-3">
                   <button className="btn btn-primary px-8" onClick={onStart}>
@@ -225,7 +225,7 @@ const DiagnosticQuiz = ({
                     <div key={i} className="skeleton h-12 w-full rounded-lg" />
                   ))}
                 </div>
-                <div className="mt-2 flex items-center gap-2 text-sm text-base-content/50">
+                <div className="mt-2 flex items-center gap-2 text-sm text-base-content/60">
                   <LoaderCircle className="h-4 w-4 animate-spin" />
                   <span>Génération de la prochaine question…</span>
                 </div>

@@ -13,12 +13,12 @@ export function FiredRule({ rule }: { rule: FiredAlertRule }) {
       </div>
 
       {description ? (
-        <p className="text-xs text-base-content/50">{description}</p>
+        <p className="text-xs text-base-content/60">{description}</p>
       ) : null}
 
       {/* Ce qui a fait basculer la règle, valeur et seuil dans la même unité :
           le signal doit pouvoir être expliqué à l'apprenant. */}
-      <ul className="text-xs text-base-content/50">
+      <ul className="text-xs text-base-content/60">
         {rule.matched.map((condition, index) => (
           <li key={`${condition.indicator}-${index}`}>
             {formatMatchedCondition(condition)}

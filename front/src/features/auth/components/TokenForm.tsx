@@ -84,7 +84,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
               tokenField.ref(element);
               tokenInputRef.current = element;
             }}
-            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/60 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
           {errors.token && (
             <span className="text-xs text-error mt-1">
@@ -134,7 +134,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
                 </span>
               </button>
             </div>
-            <p className="text-xs text-base-content/50 mt-4">
+            <p className="text-xs text-base-content/60 mt-4">
               La nouvelle clé s'affichera dans le terminal. Elle est valide
               pendant{" "}
               {activationTokenTtlMinutes >= 60

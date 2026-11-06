@@ -190,7 +190,7 @@ export function StaffAssignment({
               {selected.text}
             </p>
           ) : (
-            <p className="mt-3 text-sm italic text-base-content/50">
+            <p className="mt-3 text-sm italic text-base-content/60">
               Aucune réponse textuelle.
             </p>
           )}
@@ -270,7 +270,7 @@ export function StaffAssignment({
           <div className="mt-5 flex justify-end">
             <button
               type="button"
-              className="btn btn-warning"
+              className="btn btn-primary"
               disabled={
                 saving ||
                 (assignment.criteria.length === 0 && currentFreeGrade === "")

@@ -118,7 +118,7 @@ describe("SaveButton flottant", () => {
 
     expect(getWrapper()?.classList.contains("sticky")).toBe(true);
     expect(getButton()?.classList.contains("btn-circle")).toBe(true);
-    expect(getButton()?.classList.contains("btn-info")).toBe(true);
+    expect(getButton()?.classList.contains("btn-primary")).toBe(true);
     const tooltip = container.querySelector<HTMLElement>("[data-tip]");
     expect(tooltip).toBe(getButton()?.parentElement);
     expect(tooltip?.classList.contains("tooltip-left")).toBe(true);

@@ -3,6 +3,7 @@ import {
   BookMarked,
   Eye,
   EyeOff,
+  FolderTree,
   Pencil,
   SquareArrowRightEnter,
   Trash2,
@@ -70,7 +71,7 @@ const ModuleHomeList = ({
     });
   }, [modulesList, searchQuery, selectedParcours]);
   const { list, limit, page, totalPages, setLimit, setPage } =
-    useEagerLoadingList(filteredModules, "title", 15, "id", "sidebar-modules");
+    useEagerLoadingList(filteredModules, "title", 25, "id", "sidebar-modules");
 
   return (
     <PageWrapper as="main">
@@ -235,12 +236,31 @@ const ModuleHomeList = ({
         </section>
       ) : (
         <EmptyStatePlaceholder
+          icon={BookMarked}
           title={
-            isTeacher && !searchQuery && selectedParcours === null
-              ? "Aucun module affecté"
-              : "Aucun module trouvé"
+            searchQuery || selectedParcours !== null
+              ? "Aucun module ne correspond à votre recherche"
+              : isTeacher
+                ? "Aucun module affecté"
+                : "Aucun module disponible"
           }
-        />
+          description={
+            searchQuery || selectedParcours !== null
+              ? undefined
+              : isTeacher
+                ? "Les modules qui vous seront confiés apparaîtront ici."
+                : "Ajoutez un module depuis l'étape « Modules » d'un parcours."
+          }
+        >
+          {searchQuery || selectedParcours !== null || isTeacher ? null : (
+            <PermissionGuard action="update" object="parcours">
+              <Link className="btn btn-primary" to="/admin/parcours">
+                <FolderTree className="size-5" />
+                Accéder aux parcours
+              </Link>
+            </PermissionGuard>
+          )}
+        </EmptyStatePlaceholder>
       )}
 
       {list && list.length > 0 ? (

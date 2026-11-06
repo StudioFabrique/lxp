@@ -148,7 +148,7 @@ export const getUsersColumns = (
           <PermissionGuard object="user" action="update">
             {!canManage ? (
               <span
-                className="btn btn-ghost btn-xs btn-square text-base-content/40 tooltip"
+                className="btn btn-ghost btn-xs btn-square text-base-content/60 tooltip"
                 data-tip={
                   userId === currentUserId
                     ? "Votre propre compte ne peut pas être modifié depuis cette liste"

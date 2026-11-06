@@ -382,7 +382,7 @@ const CourseItem = ({
                   {isCourseOpen && !hideCreateLessonButton && (
                     <PermissionGuard action="write" object="course">
                       <button
-                        className="btn btn-success btn-xs gap-1 tooltip"
+                        className="btn btn-primary btn-xs gap-1 tooltip"
                         data-tip="Créer une leçon"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -527,8 +527,8 @@ const CourseItem = ({
                 className={cn(
                   "flex h-10 w-full items-center justify-between gap-2 rounded-xl px-4 text-sm font-medium transition-colors",
                   assignmentSelected
-                    ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
-                    : "bg-warning/25 text-warning-content hover:bg-warning/40",
+                    ? "bg-primary/20 text-base-content ring-1 ring-primary/40"
+                    : "bg-primary/10 text-base-content hover:bg-primary/20",
                 )}
                 disabled={disabled}
                 aria-current={assignmentSelected ? "step" : undefined}

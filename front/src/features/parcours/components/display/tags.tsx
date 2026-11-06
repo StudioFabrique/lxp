@@ -5,6 +5,7 @@ import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 import type Tag from "../../../../utils/interfaces/tag";
 import CollapsibleSection from "./collapsible-section";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
+import { readableTextColor } from "../../../../utils/helpers/color-helpers";
 
 type TagsProps = {
   open?: boolean;
@@ -37,7 +38,7 @@ const Tags = ({ open, onOpenChange }: TagsProps) => {
               <span
                 key={tag.id}
                 className="max-w-32 truncate rounded-md px-2 py-1 text-xs font-bold"
-                style={{ backgroundColor: tag.color }}
+                style={{ backgroundColor: tag.color, color: readableTextColor(tag.color) }}
               >
                 #{tag.name}
               </span>

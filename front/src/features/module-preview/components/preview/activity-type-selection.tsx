@@ -44,7 +44,7 @@ const ActivityTypeSelection = ({ onSelectType, onCancel }: Props) => {
           </button>
         ))}
       </div>
-      <button className="btn btn-error text-base-100" onClick={onCancel}>
+      <button className="btn btn-outline" onClick={onCancel}>
         Annuler
       </button>
     </div>

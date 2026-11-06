@@ -129,7 +129,7 @@ export default function ActivityList({
           <PermissionGuard action="update" object="lesson">
             <button
               className={cn(
-                "btn btn-success opacity-70 btn-xs gap-1",
+                "btn btn-primary opacity-70 btn-xs gap-1",
                 activities && activities.length === 0 ? "mt-0" : "mt-2",
               )}
               disabled={newActivityButtonDisabled}

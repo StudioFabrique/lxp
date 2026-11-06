@@ -169,7 +169,7 @@ const LessonReaderAndEditor = ({
               cancelClassName={
                 mode === "edit"
                   ? "btn btn-primary text-base-100"
-                  : "btn btn-warning"
+                  : "btn btn-outline"
               }
               cancelDisabled={isLoading}
               onCancel={mode === "edit" ? handleFinishResourceEditing : onBack}
@@ -187,7 +187,7 @@ const LessonReaderAndEditor = ({
               className="font-semibold flex justify-between items-center mb-4"
               titleClassName="text-lg md:text-2xl font-bold flex-1"
               cancelLabel="Annuler"
-              cancelClassName="btn btn-sm btn-error text-base-100"
+              cancelClassName="btn btn-sm btn-outline"
               cancelDisabled={isLoading}
               onCancel={mode === "write" ? onBack : onClose}
               enableSticky

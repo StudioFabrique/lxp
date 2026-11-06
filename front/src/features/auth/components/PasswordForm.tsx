@@ -61,7 +61,7 @@ const PasswordForm = <T extends FieldValues>({
             type={showPassword ? "text" : "password"}
             placeholder="Mot de passe"
             {...register(passwordFieldName)}
-            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/60 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
           />
           <button
             type="button"
@@ -97,7 +97,7 @@ const PasswordForm = <T extends FieldValues>({
           <span className="text-xs text-base-content/60">
             Force : {strength.label}
           </span>
-          <span className="text-xs text-base-content/40">
+          <span className="text-xs text-base-content/60">
             {strength.score}/5 critères
           </span>
         </div>
@@ -107,7 +107,7 @@ const PasswordForm = <T extends FieldValues>({
               key={rule.label}
               className={cn("text-xs", rule.test(passwordValue)
                   ? "text-success"
-                  : "text-base-content/40")}
+                  : "text-base-content/60")}
             >
               {rule.test(passwordValue) ? "✓" : "○"} {rule.label}
             </span>
@@ -121,7 +121,7 @@ const PasswordForm = <T extends FieldValues>({
           type={showPassword ? "text" : "password"}
           placeholder="Confirmer le mot de passe"
           {...register(confirmPasswordFieldName)}
-          className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+          className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/60 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
         />
         {errorConfirm && (
           <span className="text-xs text-error mt-1">

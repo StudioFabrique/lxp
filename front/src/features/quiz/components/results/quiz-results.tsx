@@ -38,12 +38,12 @@ const QuizResults = ({
 
   const message =
     percentage >= 80
-      ? "Tu maîtrises déjà bien ces notions. Consulte tes réponses pour repérer les derniers points à revoir."
+      ? "Vous maîtrisez déjà bien ces notions. Consultez vos réponses pour repérer les derniers points à revoir."
       : percentage >= 60
-        ? "Tu as acquis plusieurs notions. Les réponses détaillées t'aideront à identifier celles à consolider."
+        ? "Vous avez acquis plusieurs notions. Les réponses détaillées vous aideront à identifier celles à consolider."
         : percentage >= 40
-          ? "Tu as quelques acquis sur lesquels t'appuyer. Regarde les réponses détaillées pour choisir quoi approfondir."
-          : "Cette autoévaluation t'aide à repérer les notions à découvrir ou à revoir. Parcours les réponses à ton rythme.";
+          ? "Vous avez quelques acquis sur lesquels vous appuyer. Regardez les réponses détaillées pour choisir quoi approfondir."
+          : "Cette autoévaluation vous aide à repérer les notions à découvrir ou à revoir. Parcourez les réponses à votre rythme.";
 
   return (
     <div className="flex flex-col gap-8 mt-2">

@@ -57,7 +57,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
             {props.onRightClick && (
               <button
-                className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-warning")}
+                className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-primary")}
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={handleRightClick}
               >
@@ -120,7 +120,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
             {props.onRightClick && (
               <button
-                className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-warning")}
+                className={cn("btn flex items-center gap-x-2", props.rightClassName ?? "btn-primary")}
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={handleRightClick}
               >

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useId, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCourseDispatch } from "../../../store/CourseContext";
@@ -17,10 +17,13 @@ interface CourseInfosFormProps {
   courseTitle: string;
   courseDescription?: string;
   visibility: boolean;
+  /** La visibilité n'a d'effet pour les apprenants qu'une fois le cours publié. */
+  isPublished: boolean;
 }
 
 const CourseInfosForm = (props: CourseInfosFormProps) => {
   const dispatch = useCourseDispatch();
+  const visibilityHintId = useId();
 
   const defaultValues = useMemo(
     () => ({
@@ -118,16 +121,22 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
           />
         </div>
 
-        <div className="form-control w-fit">
+        <div className="form-control flex w-fit flex-col gap-y-2">
           <label className="flex gap-x-4 cursor-pointer items-center label">
             <span className="font-bold">Visibilité</span>
             <input
               type="checkbox"
               className="toggle toggle-primary"
+              aria-describedby={visibilityHintId}
               {...register("visibility")}
             />
             <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
           </label>
+          <p id={visibilityHintId} className="text-sm text-base-content/80">
+            {props.isPublished
+              ? "Ce cours est publié : il suit ce réglage de visibilité auprès des apprenants."
+              : "Ce cours n'est pas publié : les apprenants ne le verront qu'après sa publication, quel que soit ce réglage."}
+          </p>
         </div>
       </form>
     </>

@@ -37,7 +37,7 @@ export default function InstanceLogoControls({
         <span className="text-sm font-bold text-base-content">
           Logo{" "}
           {optional && (
-            <span className="font-normal text-base-content/50">
+            <span className="font-normal text-base-content/60">
               (facultatif)
             </span>
           )}

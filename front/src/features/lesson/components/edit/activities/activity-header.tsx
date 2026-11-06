@@ -40,7 +40,7 @@ const ActivityHeader = ({
   titlePlaceholder = "Saisissez le titre de l'activité",
   onCancel,
   cancelLabel = "Annuler",
-  cancelClassName = "btn btn-warning",
+  cancelClassName = "btn btn-outline",
   cancelDisabled = false,
   children,
   className = "w-full flex justify-between items-center",

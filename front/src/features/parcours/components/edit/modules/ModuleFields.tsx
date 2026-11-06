@@ -52,7 +52,7 @@ function ModuleFields({
           register={register}
           error={errors.quizInstructions}
         />
-        <p className="text-xs leading-relaxed text-base-content/50">
+        <p className="text-xs leading-relaxed text-base-content/60">
           Exemple : questionnaire diagnostique en français, au ton clair et
           pédagogique, centré sur les prérequis et composé uniquement de
           questions auto-corrigeables.
