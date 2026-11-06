@@ -1,6 +1,7 @@
 import SkillBadge from "../../../components/skills/skill-badge";
 import type Skill from "../../../utils/interfaces/skill";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type SkillBadgeSummaryProps = {
   skills?: Skill[];
@@ -31,9 +32,9 @@ const SkillBadgeSummary = ({
       {hiddenBadgeCount > 0 ? (
         <span
           className="mx-3 my-auto shrink-0 font-semibold"
-          aria-label={`${hiddenBadgeCount} badge${hiddenBadgeCount > 1 ? "s" : ""} supplémentaire${hiddenBadgeCount > 1 ? "s" : ""}`}
+          aria-label={`${formatNumber(hiddenBadgeCount)} badge${hiddenBadgeCount > 1 ? "s" : ""} supplémentaire${hiddenBadgeCount > 1 ? "s" : ""}`}
         >
-          +{hiddenBadgeCount}
+          +{formatNumber(hiddenBadgeCount)}
         </span>
       ) : null}
     </div>

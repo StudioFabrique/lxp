@@ -2,6 +2,7 @@ import type {
   IndicatorsPrediction,
   MatchedCondition,
 } from "../interfaces/indicators";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 /**
  * Mise en forme de l'analyse du risque de décrochage.
@@ -263,7 +264,10 @@ export function formatModelIndicatorValue(
     // Le modèle raisonne en pente sur une échelle [0, 1] par jour ; « 0.016667 »
     // ne se lit pas, « +1,67 pt/jour » se rapporte au taux de bonnes réponses.
     case "score_evolution": {
-      const points = (value * 100).toFixed(2).replace(".", ",");
+      const points = formatNumber(value * 100, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
       return `${value > 0 ? "+" : ""}${points} pt/jour`;
     }
     default:

@@ -28,6 +28,7 @@ import TableActionsModal from "../../../components/table/TableActionsModal";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const UserHome = () => {
   const { roles, user: currentUser } = useContext(AuthContext);
@@ -280,7 +281,7 @@ const UserHome = () => {
                       actions={[
                         {
                           title: "Supprimer les utilisateurs sélectionnés",
-                          description: `${selectedIds.length} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
+                          description: `${formatNumber(selectedIds.length)} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
                           rightButtonTitle: "Supprimer",
                           alertMessageBottom:
                             "Les données liées aux comptes sélectionnés seront également supprimées ou transférées selon leur rôle.",
@@ -326,7 +327,7 @@ const UserHome = () => {
         {data.length > 0 ? (
           <div className="w-full mt-5">
             <TablePagination
-              leftText={`Utilisateurs : ${totalItems}`}
+              leftText={`Utilisateurs : ${formatNumber(totalItems)}`}
               {...pagination}
             />
           </div>

@@ -4,6 +4,7 @@ import { CalendarEvent, CalendarView, eventConfig, theme } from "../calendar-con
 import { getCurrentTimeIndicator, getEventStyle, getWeekBounds, isSameDate } from "../calendar-utils";
 import { layoutDayEvents, minutes } from "../read-calendar-utils";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type Props = {
   events: CalendarEvent[];
@@ -54,7 +55,7 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
         {days.map(day => <div key={day.date.toDateString()} className="min-w-0 flex-1 space-y-1 border-r border-base-300 p-1">
           {day.allDay.slice(0, 2).map(event => <button key={event.id} type="button" className={cn("block w-full truncate rounded border-l-2 p-1 text-left text-xs", eventClass(event))} onClick={e => clickEvent(event, e.currentTarget)}>{formatTitle(event.title)}</button>)}
           {day.allDay.length > 2 && <button type="button" className="block text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.allDay.slice(2))}>Afficher plus ({day.allDay.length - 2})</button>}
-          {day.hidden.length > 0 && <button type="button" className="block text-left text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.hidden)}>Afficher {day.hidden.length} cours superposé{day.hidden.length > 1 ? "s" : ""}</button>}
+          {day.hidden.length > 0 && <button type="button" className="block text-left text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.hidden)}>Afficher {formatNumber(day.hidden.length)} cours superposé{day.hidden.length > 1 ? "s" : ""}</button>}
         </div>)}
       </div>}
       <div className="flex" style={{ height: hours.length * style.hourHeight }}>

@@ -31,6 +31,24 @@ export default [
         { allowConstantExport: true },
       ],
 
+      // Les nombres affichés passent par `formatNumber` (séparateur de milliers
+      // à la française, virgule décimale) : `toFixed` produit un point décimal
+      // et aucun séparateur.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.property.name='toFixed']",
+          message:
+            "Utiliser formatNumber (utils/helpers/format-number) pour afficher un nombre.",
+        },
+        {
+          selector:
+            "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
+          message:
+            "Utiliser formatNumber (utils/helpers/format-number) pour afficher un nombre.",
+        },
+      ],
+
       // --- Dette existante, signalée mais non bloquante ---
       //
       // Ces règles portent sur du code antérieur à leur adoption : les règles
@@ -58,5 +76,9 @@ export default [
       "react-hooks/set-state-in-render": "warn",
       "react-hooks/immutability": "warn",
     },
+  },
+  {
+    files: ["src/utils/helpers/format-number.ts"],
+    rules: { "no-restricted-syntax": "off" },
   },
 ];

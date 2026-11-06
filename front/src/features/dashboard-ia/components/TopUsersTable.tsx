@@ -7,6 +7,7 @@ import TablePagination from "../../../components/table/TablePagination";
 import type { TopUser } from "../types";
 import { cn } from "../../../utils/cn";
 import { useRoleLabels } from "../../role/hooks/useRoleLabels";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   dataList: TopUser[];
@@ -107,7 +108,7 @@ const TopUsersTable = ({
                 <td className={cn(user.groupName ? "" : "text-center")}>
                   {user.groupName ?? " - "}
                 </td>
-                <td>{user.totalTokens}</td>
+                <td>{formatNumber(user.totalTokens)}</td>
                 <td>{user.lastActivity}</td>
               </tr>
             ))}

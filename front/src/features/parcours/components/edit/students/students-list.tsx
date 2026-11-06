@@ -9,6 +9,7 @@ import MultiCriteriaSearch from "../../../../../components/UI/multi-criteria-sea
 import TablePagination from "../../../../../components/table/TablePagination";
 import { getStoredItemsPerPage, storeItemsPerPage } from "../../../../../components/table/pagination-storage";
 import StudentsListTable from "./students-list-table";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 interface StudentsListProps {
   initalList: StudentWithGroup[];
@@ -151,7 +152,7 @@ const StudentsList = ({ initalList, groups, parcoursId, onRemoveGroup, disabled 
             currentPage={currentPage}
             maxPage={totalPages}
             itemsPerPage={limit}
-            leftText={`Apprenants : ${sorted.length}`}
+            leftText={`Apprenants : ${formatNumber(sorted.length)}`}
             onSetCurrentPage={setPage}
             onSetItemsPerPage={(itemsPerPage) => {
               storeItemsPerPage("parcours-students", itemsPerPage);

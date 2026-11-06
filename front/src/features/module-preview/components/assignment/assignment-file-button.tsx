@@ -3,10 +3,11 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { modulePreviewApi } from "../../api/module-preview.api";
 import type { AssignmentFile } from "../../interfaces/assignment";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 function fileSize(size: number) {
-  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} Ko`;
-  return `${(size / (1024 * 1024)).toFixed(1)} Mo`;
+  if (size < 1024 * 1024) return `${formatNumber(Math.max(1, Math.round(size / 1024)))} Ko`;
+  return `${formatNumber(size / (1024 * 1024), { minimumFractionDigits: 1, maximumFractionDigits: 1 })} Mo`;
 }
 
 export function AssignmentFileButton({

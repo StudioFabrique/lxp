@@ -19,6 +19,7 @@ import { resourcesApi } from "../api/resources.api";
 import { resourcesKeys } from "../api/resources.keys";
 import { Activity } from "../../../utils/interfaces/activity";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 export type ResourceListItem = {
   id: number;
@@ -132,7 +133,7 @@ export default function ResourcesHome() {
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Ressources : ${total}`}
+          leftText={`Ressources : ${formatNumber(total)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(value) => {
             storeItemsPerPage("admin-resources", value);

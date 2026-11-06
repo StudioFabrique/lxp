@@ -28,6 +28,7 @@ import TableActionsModal from "../../../components/table/TableActionsModal";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
 import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
 import { cn } from "../../../utils/cn";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const GroupList = () => {
   const { state } = useLocation();
@@ -169,7 +170,7 @@ const GroupList = () => {
                 actions={[
                   {
                     title: "Supprimer les groupes sélectionnés",
-                    description: `${idsList.length} groupe(s) vont être supprimé(s)`,
+                    description: `${formatNumber(idsList.length)} groupe(s) vont être supprimé(s)`,
                     rightButtonTitle: "Supprimer",
                     onConfirm: () => onDeleteSelected(idsList),
                   },
@@ -206,7 +207,7 @@ const GroupList = () => {
         {filteredData.length > 0 ? (
           <div className="w-full mt-5">
             <TablePagination
-              leftText={`Groupes : ${totalItems}`}
+              leftText={`Groupes : ${formatNumber(totalItems)}`}
               {...pagination}
             />
           </div>

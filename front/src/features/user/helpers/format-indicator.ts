@@ -1,4 +1,5 @@
 import type { Indicator, IndicatorUnit } from "../interfaces/indicators";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 /**
  * Mise en forme des valeurs d'indicateurs.
@@ -72,7 +73,7 @@ export function formatIndicatorValue(
     case "days":
       return formatDays(value);
     case "percent":
-      return `${value} %`;
+      return `${formatNumber(value)} %`;
     case "level":
       return formatMood(value);
     case "trend":

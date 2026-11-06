@@ -38,6 +38,7 @@ import {
   selectImportFormationId,
 } from "../../helpers/read-parcours-archive-formation";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type Item = { id: number; title: string };
 type Mode = "create" | "template" | "import";
@@ -133,7 +134,7 @@ export default function ParcoursCreationModal({
       toast.success(`Le parcours « ${data.title} » a été importé.`);
       if (data.warnings.length > 0) {
         toast(
-          `${data.warnings.length} fichier(s) étaient manquants lors de l'export.`,
+          `${formatNumber(data.warnings.length)} fichier(s) étaient manquants lors de l'export.`,
         );
       }
       navigate(`/admin/parcours/edit/${data.parcoursId}`);

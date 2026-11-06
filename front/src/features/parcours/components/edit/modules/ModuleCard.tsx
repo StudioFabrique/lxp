@@ -13,6 +13,7 @@ import type { ModuleData } from "../../../interfaces/new-module";
 import ModuleIncompleteBadge from "./ModuleIncompleteBadge";
 import "./ModuleCard.css";
 import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type ModuleCardProps = {
   module: ModuleData;
@@ -130,7 +131,7 @@ export default function ModuleCard({
         })}
         maxItemsShown={3}
         emptyMessage={`Aucun membre « ${teamLabel} » affecté`}
-        moreItemsLabel={(count) => `Afficher plus de ressources (${count})`}
+        moreItemsLabel={(count) => `Afficher plus de ressources (${formatNumber(count)})`}
         overflowTitle={`Autres ressources de ${module.title}`}
         footerAtBottom
         footerClassName="py-2"

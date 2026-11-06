@@ -14,6 +14,7 @@ import { type Props } from "./course-assignment.types";
 import { MissingStudents } from "./missing-students";
 import { formatDate } from "./course-assignment.utils";
 import { AssignmentFileButton } from "./assignment-file-button";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 export function StaffAssignment({
   course,
@@ -126,7 +127,7 @@ export function StaffAssignment({
         </p>
         {(assignment.expectedStudents?.length ?? 0) > 0 && (
           <p className="mt-3 text-sm text-base-content/60">
-            {assignment.expectedStudents?.length} travail
+            {formatNumber(assignment.expectedStudents?.length ?? 0)} travail
             {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""} attendu
             {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""}
           </p>
@@ -139,10 +140,10 @@ export function StaffAssignment({
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
       <aside className="rounded-2xl border border-base-300 bg-base-100 p-3">
-        <h3 className="px-2 pb-1 font-bold">Rendus ({submitted.length})</h3>
+        <h3 className="px-2 pb-1 font-bold">Rendus ({formatNumber(submitted.length)})</h3>
         {(assignment.expectedStudents?.length ?? 0) > 0 && (
           <p className="px-2 pb-3 text-xs text-base-content/60">
-            {assignment.expectedStudents?.length} travail
+            {formatNumber(assignment.expectedStudents?.length ?? 0)} travail
             {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""} attendu
             {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""}
           </p>

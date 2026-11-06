@@ -6,6 +6,7 @@ import { useParcoursModules } from "../../../hooks/useParcoursModules";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { getModulesLabel } from "../../../../../utils/helpers/user-role";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type QuickStatistiquesProps = {
   studentCount?: number;
@@ -47,13 +48,13 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
         title="Diplôme"
         item={`Niveau ${parcours?.formation.level}`}
       />
-      <QuickStatItem title="Étudiants" item={studentCount || "-"} />
+      <QuickStatItem title="Étudiants" item={studentCount ? formatNumber(studentCount) : "-"} />
       <QuickStatItem
         title={getModulesLabel(user)}
-        item={modules?.length || 0}
+        item={formatNumber(modules?.length || 0)}
       />
-      <QuickStatItem title="Semaines" item={parcoursWeeks()} />
-      <QuickStatItem title="Heures" item={modulesHourSum()} />
+      <QuickStatItem title="Semaines" item={formatNumber(parcoursWeeks())} />
+      <QuickStatItem title="Heures" item={formatNumber(modulesHourSum())} />
     </div>
   );
 };

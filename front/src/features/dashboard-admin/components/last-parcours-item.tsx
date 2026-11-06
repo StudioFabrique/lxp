@@ -7,6 +7,7 @@ import defaultParcoursImage from "../../../assets/images/new-parcours-default.jp
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import ParcoursActionsMenu from "../../parcours/components/list/parcours-actions-menu";
 import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const fullDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -132,7 +133,7 @@ const LastParcoursItem = ({
       maxItemsShown={maxParcoursShown}
       showMore={isManagementView}
       emptyMessage="Aucun parcours associé"
-      moreItemsLabel={(count) => `Afficher plus de parcours (${count})`}
+      moreItemsLabel={(count) => `Afficher plus de parcours (${formatNumber(count)})`}
       overflowTitle={
         formation ? `Autres parcours de ${formation.title}` : undefined
       }

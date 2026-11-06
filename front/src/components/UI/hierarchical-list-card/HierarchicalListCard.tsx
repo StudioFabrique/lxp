@@ -9,6 +9,7 @@ import {
   HierarchicalListCardItem,
   HierarchicalListRow,
 } from "./HierarchicalListRow";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type HierarchicalListCardProps = {
   label?: string;
@@ -53,7 +54,7 @@ const HierarchicalListCard = ({
   showMore = true,
   emptyMessage = "Aucun élément associé",
   moreItemsLabel = (remainingItemsCount) =>
-    `Afficher plus (${remainingItemsCount})`,
+    `Afficher plus (${formatNumber(remainingItemsCount)})`,
   overflowTitle = title ? `Autres éléments de ${formatTitle(title)}` : "Autres éléments",
   footer,
   footerClassName,

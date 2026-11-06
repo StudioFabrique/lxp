@@ -18,6 +18,7 @@ import PermissionGuard from "../../../../../../components/guards/PermissionGuard
 import { parcoursApi } from "../../../../api/parcours.api";
 import LoadingSkeleton from "../../../../../../components/loaders/LoadingSkeleton";
 import CardProgress from "../card-progress";
+import { formatNumber } from "../../../../../../utils/helpers/format-number";
 
 const ContenuDetail: FC<{
   canEdit?: boolean;
@@ -158,7 +159,7 @@ const ContenuDetail: FC<{
     <div className="flex flex-col gap-y-4 mt-5">
       <span className="flex justify-between gap-4">
         <h2 className="text-xl font-bold text-primary select-none">
-          Contenu du module ({courses.length})
+          Contenu du module ({formatNumber(courses.length)})
         </h2>
         {canEdit && (
           <PermissionGuard action="write" object="course">

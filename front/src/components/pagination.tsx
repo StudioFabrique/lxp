@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cloneElement, ReactElement, useMemo } from "react";
 import { cn } from "../utils/cn";
+import { formatNumber } from "../utils/helpers/format-number";
 
 // Props du composant de pagination
 type Props = {
@@ -46,7 +47,7 @@ function Pagination({
   // Affichage des informations de pagination (numéro de page courant / total)
   const pageInfos = (
     <p>
-      Page {page} de {totalPages}
+      Page {formatNumber(page)} de {formatNumber(totalPages)}
     </p>
   );
   const isButtonVisible = useMemo(() => {

@@ -1,7 +1,14 @@
+import { formatNumber } from "./format-number";
+
+const TWO_DECIMALS: Intl.NumberFormatOptions = {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+};
+
 export const displaySize = (size: number) => {
   const convertedSize = size / 1024;
 
   return convertedSize < 1024
-    ? `${convertedSize.toFixed(2)} ko`
-    : `${(convertedSize / 1024).toFixed(2)} mo`;
+    ? `${formatNumber(convertedSize, TWO_DECIMALS)} ko`
+    : `${formatNumber(convertedSize / 1024, TWO_DECIMALS)} mo`;
 };

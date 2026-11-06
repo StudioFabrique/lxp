@@ -8,6 +8,7 @@ import HierarchicalListCard from "../../../../components/UI/hierarchical-list-ca
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
 import { ACTIVITIES } from "../../../../config/urls";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type Props = {
   resourcesList?: ResourceListItem[] | null;
@@ -94,7 +95,7 @@ export default function ResourcesListCard({
             }))}
             maxItemsShown={3}
             emptyMessage="Aucune activité associée"
-            moreItemsLabel={(count) => `Afficher plus d'activités (${count})`}
+            moreItemsLabel={(count) => `Afficher plus d'activités (${formatNumber(count)})`}
             overflowTitle={`Activités de ${resource.title}`}
           />
         );

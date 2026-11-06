@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { ChevronDown, ChevronUp, LockKeyhole } from "lucide-react";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type ProgressModulesStatsProps = {
   modules: Module[];
@@ -119,7 +120,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
             ) : (
               <>
                 <ChevronDown className="size-4" aria-hidden="true" />
-                Afficher plus ({expandableModuleCount})
+                Afficher plus ({formatNumber(expandableModuleCount)})
               </>
             )}
           </button>

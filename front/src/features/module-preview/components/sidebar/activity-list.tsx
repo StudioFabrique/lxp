@@ -11,6 +11,7 @@ import {
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type ActivityListProps = {
   readOnly?: boolean;
@@ -77,7 +78,7 @@ export default function ActivityList({
               <span>Activités</span>
               <span>
                 {(activities?.length || 0) > 1
-                  ? `(${activities?.length})`
+                  ? `(${formatNumber(activities?.length ?? 0)})`
                   : null}
               </span>
             </div>

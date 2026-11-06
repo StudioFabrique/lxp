@@ -16,6 +16,7 @@ import type {
 import Header from "../../../../components/headers/Header";
 import { Link } from "react-router";
 import { cn } from "../../../../utils/cn";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type Props = {
   importedCourses: CourseImport[];
@@ -170,15 +171,15 @@ const ImportResult = ({
             </div>
             <div className="flex flex-wrap gap-2 text-xs">
               <span className="badge badge-success badge-soft">
-                {successCount} réussi{successCount > 1 ? "s" : ""}
+                {formatNumber(successCount)} réussi{successCount > 1 ? "s" : ""}
               </span>
               {errorCount > 0 && (
                 <span className="badge badge-error badge-soft">
-                  {errorCount} échoué{errorCount > 1 ? "s" : ""}
+                  {formatNumber(errorCount)} échoué{errorCount > 1 ? "s" : ""}
                 </span>
               )}
               <span className="badge badge-ghost">
-                {pendingCount} en attente
+                {formatNumber(pendingCount)} en attente
               </span>
             </div>
           </div>

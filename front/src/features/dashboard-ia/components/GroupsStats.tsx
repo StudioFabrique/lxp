@@ -1,5 +1,6 @@
 import SubWrapper from "../../../../src/components/wrappers/SubBoxWrapper";
 import type { GroupsStats as GroupsStatsType } from "../types";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   stats: GroupsStatsType[];
@@ -19,13 +20,14 @@ const GroupsStats = ({ stats, groupsTotalTokens }: Props) => (
                 value={stat.totalTokens}
                 max={groupsTotalTokens}
               />
-              <p className="flex shrink-0">{stat.totalTokens}</p>
+              <p className="flex shrink-0">{formatNumber(stat.totalTokens)}</p>
             </div>
             <p className="text-left">
               (
-              {((stat.totalTokens / groupsTotalTokens) * 100).toFixed(
-                2,
-              )}
+              {formatNumber((stat.totalTokens / groupsTotalTokens) * 100, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
               %)
             </p>
           </span>

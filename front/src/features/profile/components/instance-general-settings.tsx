@@ -35,6 +35,7 @@ import {
   resolveRoleLabels,
   type RoleLabels,
 } from "../../role/helpers/role-labels";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 const emptySettings: InstanceSettings = {
   name: "",
@@ -435,7 +436,7 @@ export default function InstanceGeneralSettings() {
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <h3 className="text-sm font-bold">{label}</h3>
                       <span className="badge badge-ghost text-xs">
-                        {enabledThemes.length} actifs
+                        {formatNumber(enabledThemes.length)} actifs
                       </span>
                     </div>
 

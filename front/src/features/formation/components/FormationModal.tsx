@@ -14,6 +14,7 @@ import { readParcoursArchiveFormationTitle } from "../../parcours/helpers/read-p
 import ParcoursImportModal from "../../parcours/components/import/ParcoursImportModal";
 import ParcoursCreationModal from "../../parcours/components/create/ParcoursCreationModal";
 import FormationFirstParcoursModal from "./FormationFirstParcoursModal";
+import { formatNumber } from "../../../utils/helpers/format-number";
 
 type FormationModalProps = {
   formationId?: number | null;
@@ -63,7 +64,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
       );
       if (data.warnings.length > 0) {
         toast(
-          `${data.warnings.length} fichier(s) étaient manquants lors de l'export.`,
+          `${formatNumber(data.warnings.length)} fichier(s) étaient manquants lors de l'export.`,
         );
       }
       void queryClient.invalidateQueries({ queryKey: ["formations"] });

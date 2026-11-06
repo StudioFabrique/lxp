@@ -1,6 +1,7 @@
 import { Copy } from "lucide-react";
 import { SourceModule } from "../../../interfaces/new-module";
 import { formatTitle } from "../../../../../utils/helpers/text-helpers";
+import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type ModuleListItemProps = {
   module: SourceModule;
@@ -24,7 +25,7 @@ export default function ModuleListItem({
             {isCurrentParcours ? " (actuel)" : ""}
           </p>
           <p className="mt-2 text-xs text-base-content/65">
-            {module.courses.length} cours
+            {formatNumber(module.courses.length)} cours
           </p>
         </div>
         <button

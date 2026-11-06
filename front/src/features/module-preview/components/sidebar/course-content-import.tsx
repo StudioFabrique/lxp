@@ -11,6 +11,7 @@ import { cn } from "../../../../utils/cn";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import TagItem from "../../../../components/UI/tag-item/tag-item";
 import CourseContentTagCombobox from "./course-content-tag-combobox";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type Props = {
   /** Tags du module, proposés pour rechercher du contenu existant. */
@@ -144,7 +145,7 @@ export default function CourseContentImport({
           {content.tag ? <TagItem tag={content.tag} compact /> : null}
         </span>
         <span className="justify-self-end text-xs text-base-content/50">
-          {content.activitiesCount ?? 0} activité(s)
+          {formatNumber(content.activitiesCount ?? 0)} activité(s)
         </span>
       </span>
     </motion.label>

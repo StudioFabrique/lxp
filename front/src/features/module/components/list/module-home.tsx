@@ -27,6 +27,7 @@ import { normalizeImageSource } from "../../../../utils/images/image-source";
 import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-text";
 import type { ModuleListItem } from "../../api/module.api";
 import ModuleHeader from "./module-header";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 type ModuleHomeListProps = {
   modulesList: ModuleListItem[];
@@ -227,7 +228,7 @@ const ModuleHomeList = ({
               }))}
               maxItemsShown={3}
               emptyMessage="Aucun cours associé"
-              moreItemsLabel={(count) => `Afficher plus de cours (${count})`}
+              moreItemsLabel={(count) => `Afficher plus de cours (${formatNumber(count)})`}
               overflowTitle={`Autres cours de ${module.title}`}
             />
           ))}
@@ -247,7 +248,7 @@ const ModuleHomeList = ({
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Modules : ${filteredModules.length}`}
+          leftText={`Modules : ${formatNumber(filteredModules.length)}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(itemsPerPage) => {
             setLimit(itemsPerPage);

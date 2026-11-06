@@ -1,4 +1,5 @@
 import { type IndicatorCardProps } from "./IndicatorCard.types";
+import { formatNumber } from "../../../../utils/helpers/format-number";
 
 /** Précision secondaire, quand la métadonnée s'y prête. */
 export function IndicatorHint({ indicator }: IndicatorCardProps) {
@@ -22,7 +23,7 @@ export function IndicatorHint({ indicator }: IndicatorCardProps) {
     case "correct_answer_rate":
       return typeof meta.totalAnswers === "number" ? (
         <p className="text-xs text-base-content/50">
-          sur {meta.totalAnswers} réponses
+          sur {formatNumber(meta.totalAnswers)} réponses
         </p>
       ) : null;
 
