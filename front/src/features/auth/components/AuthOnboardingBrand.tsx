@@ -35,7 +35,7 @@ export default function AuthOnboardingBrand({ intro, className }: Props) {
       <motion.div
         layout
         transition={transition}
-        className={cn("relative flex max-w-full flex-col items-center gap-2 text-center", intro ? "w-[36rem]" : "w-72")}
+        className={cn("relative flex max-w-full flex-col items-center gap-2 text-center", intro ? "w-[36rem]" : "w-44 sm:w-72")}
       >
         <AuthAnimatedLogo className="w-full" />
         <AuthLogoCaption className={cn(intro ? "max-w-md sm:text-sm" : "max-w-xs")} />

@@ -94,7 +94,7 @@ export default function LastModules({ modules, isLoading }: Props) {
                   </PermissionGuard>
                   <PermissionGuard action="read" object="module">
                     <ArrowUpRight
-                      className="pointer-events-none absolute right-1 -top-2 size-3.5 translate-y-1 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-has-[[data-row-link]:focus-visible]:translate-y-0 group-has-[[data-row-link]:focus-visible]:opacity-100 motion-reduce:transition-none"
+                      className="pointer-events-none absolute right-2 top-1.5 size-3.5 translate-y-1 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-has-[[data-row-link]:focus-visible]:translate-y-0 group-has-[[data-row-link]:focus-visible]:opacity-100 motion-reduce:transition-none"
                       aria-hidden="true"
                     />
                   </PermissionGuard>

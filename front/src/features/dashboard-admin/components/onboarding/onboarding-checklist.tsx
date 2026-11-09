@@ -178,7 +178,7 @@ export default function OnboardingChecklist({
                     const isFirstOfCurrentStep =
                       isCurrent && action === actionsByStep[step.id][0];
                     const className = cn(
-                      "btn btn-sm",
+                      "btn btn-sm max-w-full whitespace-nowrap",
                       isFirstOfCurrentStep
                         ? "btn-primary"
                         : "btn-outline",

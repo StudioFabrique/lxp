@@ -156,6 +156,7 @@ const UserForm = ({
   return (
     <PageWrapper as="form" className="@container min-w-0" onSubmit={handleSubmit} autoComplete="on" data-testid="user-form">
       <Header
+        keepActionsInPage
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
           editMode

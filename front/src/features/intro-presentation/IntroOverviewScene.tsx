@@ -656,7 +656,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                   />
                 ) : null}
               </div>
-              <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+              {/* Sous `lg`, la zone est courte et basse (titre et sélecteur au-dessus) : la scène, agrandie, est remontée pour ne pas passer sous l'indication de défilement. */}
+              <div className="flex min-h-0 w-full flex-1 items-center justify-center max-lg:-translate-y-24">
                 <IntroLevelStack
                   offsetX={-initialShift}
                   activeIndex={levelIndex}

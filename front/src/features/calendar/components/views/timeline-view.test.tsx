@@ -16,7 +16,7 @@ it("étend le fond de la semaine sur toute la largeur horizontale scrollable", (
   );
 
   expect(markup).toContain(
-    'data-calendar-scroll-content="true" class="min-w-[700px]"',
+    'data-calendar-scroll-content="true" class="min-w-[560px]"',
   );
 });
 

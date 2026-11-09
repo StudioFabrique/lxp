@@ -45,7 +45,7 @@ const ModuleContentLayout = ({
           "mt-5 grid w-full gap-2 sm:gap-3 lg:grid-cols-3 lg:gap-5",
           showSidebarOnMobile
             ? "grid-cols-[minmax(7.5rem,1fr)_minmax(0,2fr)] sm:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)]"
-            : "grid-cols-1 md:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)]",
+            : "grid-cols-1 md:grid-cols-[minmax(14rem,1fr)_minmax(0,2fr)]",
         )}
       >
         {!isSidebarCollapsed && (

@@ -43,7 +43,11 @@ export const restingChatbotPoint = (
   centered = false,
   size = CHATBOT_AVATAR_SIZE,
 ): ChatbotPoint => {
-  const offset = saved ?? { right: CHATBOT_DEFAULT_OFFSET, bottom: CHATBOT_DEFAULT_OFFSET };
+  // Mobile : l'assistant reste en bas de l'écran (seul le côté se choisit), à la hauteur où les barres du bas lui font place.
+  const isMobile = viewport.width < CHATBOT_SNAP_MAX_WIDTH;
+  const offset = saved
+    ? { right: saved.right, bottom: isMobile ? CHATBOT_DEFAULT_OFFSET : saved.bottom }
+    : { right: CHATBOT_DEFAULT_OFFSET, bottom: CHATBOT_DEFAULT_OFFSET };
   const point = { x: viewport.width - size - offset.right, y: viewport.height - size - offset.bottom };
   return clampChatbotPoint(centered ? { x: point.x, y: (viewport.height - size) / 2 } : point, viewport, size);
 };

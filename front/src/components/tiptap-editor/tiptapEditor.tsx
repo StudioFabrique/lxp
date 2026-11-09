@@ -64,9 +64,9 @@ export default function TiptapEditor({
   return (
     <>
       {mode === "read" && (
-        <div className="flex justify-end text-base-content/60 text-sm">
-          <span className="mr-1">Temps estimé de lecture :</span>
-          <span>
+        <div className="flex flex-wrap justify-end gap-x-1 text-base-content/60 text-sm">
+          <span className="whitespace-nowrap">Temps estimé de lecture :</span>
+          <span className="whitespace-nowrap">
             {readTimeMinutes > 0
               ? `${readTimeMinutes} minutes`
               : "moins d'une minute"}

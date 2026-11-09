@@ -28,6 +28,8 @@ interface HeaderProps {
   showTitleInTopBar?: boolean;
   /** Faux sur les pages qui ont leurs propres éléments collants : l'en-tête reste alors fixe dans la page. */
   sticky?: boolean;
+  /** Mobile : garde le titre et les actions dans la page (formulaire dont « Sauvegarder » ne doit pas être caché dans le tiroir). */
+  keepActionsInPage?: boolean;
 }
 
 const Header = ({
@@ -44,12 +46,13 @@ const Header = ({
   onClick,
   showTitleInTopBar = false,
   sticky = true,
+  keepActionsInPage = false,
   children,
 }: PropsWithChildren<HeaderProps>) => {
   const isPageTitle =
     !isSubHeader && !alternateBgColor && !successBgColor && !hasError && !disabled && !onClick;
   const mobile = useMobilePageHeader(
-    isPageTitle,
+    isPageTitle && !keepActionsInPage,
     showTitleInTopBar && typeof title === "string" ? { text: title, className: classname } : undefined,
   );
 
