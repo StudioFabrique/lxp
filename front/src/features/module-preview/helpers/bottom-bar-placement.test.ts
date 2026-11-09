@@ -43,7 +43,7 @@ describe("bottomBarPlacement", () => {
     const dock = { visible: true, x: 316, y: bottomY, ...screen, questionsOpen: true };
 
     expect(isBottomBarReduced(dock)).toBe(true);
-    expect(bottomBarPlacement(dock)).toEqual({ left: 12, bottom: 16 });
+    expect(bottomBarPlacement(dock)).toEqual({ left: 12, bottom: 23 });
   });
 
   it("ne se réduit pas sur un écran assez large pour l'éventail, ni questions fermées", () => {

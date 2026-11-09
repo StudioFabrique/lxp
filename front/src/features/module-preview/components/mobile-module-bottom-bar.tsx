@@ -52,7 +52,7 @@ export default function MobileModuleBottomBar({
       className={cn(
         "fixed flex items-center justify-between gap-2 rounded-full border border-base-300 bg-base-200/90 shadow-lg backdrop-blur transition-[left,right] duration-300 ease-out motion-reduce:transition-none md:hidden",
         // Réduite en cercle, elle passe au-dessus des questions de l'assistant (z-50).
-        reduced ? "z-[55] size-[62px] justify-center p-0" : "z-40 box-border h-[62px] p-1.5",
+        reduced ? "z-[55] size-12 justify-center p-0" : "z-40 box-border h-[62px] p-1.5",
       )}
       style={bottomBarPlacement(dock)}
     >

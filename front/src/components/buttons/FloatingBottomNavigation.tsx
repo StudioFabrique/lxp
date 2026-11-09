@@ -87,7 +87,7 @@ const FloatingBottomNavigation = ({
         <div
           className={cn(
             "fixed box-border flex items-center justify-between gap-2 rounded-full border border-base-300 bg-base-200/90 shadow-lg backdrop-blur transition-[left,right] duration-300 ease-out motion-reduce:transition-none [&_.btn]:rounded-full",
-            reduced ? "z-[55] size-[62px] justify-center p-0" : "z-40 h-[62px] px-3 py-1.5",
+            reduced ? "z-[55] size-12 justify-center p-0" : "z-40 h-[62px] px-3 py-1.5",
           )}
           style={bottomBarPlacement(dock)}
         >

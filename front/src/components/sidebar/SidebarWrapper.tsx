@@ -42,7 +42,8 @@ const SidebarWrapper = ({
           cn("transition-[width,background-color,border-color]", sidebarTransitionClassName),
       )}
     >
-      <div>
+      {/* Tiroir sans logo : la croix de fermeture, posée en haut à droite, ne doit pas recouvrir la première ligne. */}
+      <div className={cn(isDrawer && !logoUrl && "pt-10")}>
         {logoUrl && (
           <SidebarOrganisationLogo
             logoUrl={logoUrl}

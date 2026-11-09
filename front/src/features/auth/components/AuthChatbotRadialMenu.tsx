@@ -130,7 +130,7 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         <motion.li key={item.key} ref={element => { if (element) itemsRef.current.set(item.key, element); else itemsRef.current.delete(item.key); }}
           className={cn(
             "pointer-events-auto",
-            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-4.4rem)]") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
+            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
           )}
           initial={reducedMotion ? false : { opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9, transition: { duration: reducedMotion ? 0 : .12, delay: 0 } }}
           transition={{ duration: reducedMotion ? 0 : .3, delay: reducedMotion ? 0 : index * .12, ease: [.22, 1, .36, 1] }}>

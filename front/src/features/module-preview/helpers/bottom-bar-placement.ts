@@ -6,8 +6,8 @@ const EDGE = 16;
 const GAP = 8;
 /** Marge gauche des questions empilées de l'assistant. */
 const REDUCED_EDGE = 12;
-/** Cercle de la même taille que la barre (62 px), centré sur la question libre (environ 46 px, à 24 px du bas : `bottom-6` de la pile de questions). */
-const REDUCED_BOTTOM = 16;
+/** Aligné sur la question libre, qui mesure ici environ 46 px, à 24 px du bas (`bottom-6` de la pile de questions) : le cercle de 48 px est à sa hauteur. */
+const REDUCED_BOTTOM = 23;
 /** Hauteur de la barre (bouton de 48 px et marges) : elle occupe la bande du bas de l'écran. */
 const BAR_HEIGHT = 60;
 /** Distance au bas de l'écran : la barre est centrée sur la place de repos de l'assistant virtuel (même niveau). */
