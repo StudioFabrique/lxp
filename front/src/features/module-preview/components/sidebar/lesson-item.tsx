@@ -226,7 +226,7 @@ const LessonItem = ({
               <EyeOff className="size-3.5" />
             </span>
           ) : null}
-          <p className="min-w-0 max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
+          <p className="min-w-0 flex-1 line-clamp-2 break-words text-sm" title={formatTitle(lesson.title)}>{formatTitle(lesson.title)}</p>
           {isReordering && <GripVertical aria-hidden="true" className="size-4 shrink-0" />}
           {!isReordering && selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">

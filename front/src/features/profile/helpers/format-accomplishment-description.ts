@@ -9,6 +9,6 @@ export const formatAccomplishmentDescription = (description: string): string =>
   formatTitle(
     description
       .trim()
-      .replace(/^vient de /i, "Vous venez de ")
+      .replace(/^vient d(e |')/i, "Vous venez d$1")
       .replace(/(\bla leçon )(\p{L})/u, (_, prefix: string, letter: string) => prefix + letter.toUpperCase()),
   );

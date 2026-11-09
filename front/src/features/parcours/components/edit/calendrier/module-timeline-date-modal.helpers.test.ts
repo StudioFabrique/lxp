@@ -17,7 +17,7 @@ describe("getInitialTimelineDates", () => {
 
     expect(result).toEqual({
       minDate: "2026-08-26",
-      maxDate: "2026-08-27",
+      maxDate: "2026-08-30",
     });
     expect(startDate.getDate()).toBe(26);
   });

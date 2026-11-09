@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarClock, SquareArrowRightEnter, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -175,10 +176,12 @@ export default function TeacherAssignments() {
                 }
                 items={assignment.students.map((student) => {
                   const status = teacherAssignmentStudentStatus(student);
-                  const fullName =
+                  // Les noms sont stockés en minuscules : on les met en forme à l'affichage.
+                  const fullName = toTitleCase(
                     [student.firstname, student.lastname]
                       .filter(Boolean)
-                      .join(" ") || "Apprenant";
+                      .join(" ") || "Apprenant",
+                  );
                   const canOpenSubmission = Boolean(
                     student.submission?.submittedAt,
                   );

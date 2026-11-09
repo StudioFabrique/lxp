@@ -15,15 +15,13 @@ export const getInitialTimelineDates = (
   currentModule: Pick<Module, "minDate" | "maxDate">,
   datesParcours: ParcoursDates,
 ): TimelineDates => {
-  const defaultMaxDate = new Date(datesParcours.startDate);
-  defaultMaxDate.setDate(defaultMaxDate.getDate() + 1);
-
+  // Sans dates propres, un module couvre tout le parcours : un module d'une seule journée par défaut obligerait à le corriger à chaque fois.
   return {
     minDate: formatDateToYYYYMMDD(
       new Date(currentModule.minDate || datesParcours.startDate),
     ),
     maxDate: formatDateToYYYYMMDD(
-      new Date(currentModule.maxDate || defaultMaxDate),
+      new Date(currentModule.maxDate || datesParcours.endDate),
     ),
   };
 };

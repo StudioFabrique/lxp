@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { X } from "lucide-react";
+import { CircleX, X } from "lucide-react";
 import { getValidationStep, goToValidationTarget } from "./parcours-validation-target";
 
 export const PARCOURS_VALIDATION_TOAST_ID = "parcours-validation";
@@ -56,6 +56,13 @@ export const showParcoursValidationToast = (
     ),
     {
       id: PARCOURS_VALIDATION_TOAST_ID,
+      // L'icône reste alignée sur la ligne du titre (même hauteur que le bouton de fermeture), et non au milieu de la liste des manques.
+      style: { alignItems: "flex-start" },
+      icon: (
+        <span className="flex h-8 items-center">
+          <CircleX className="size-5 text-error" aria-hidden="true" />
+        </span>
+      ),
       duration: items.some(([key]) => getValidationStep(key) !== undefined)
         ? Infinity
         : 8000,

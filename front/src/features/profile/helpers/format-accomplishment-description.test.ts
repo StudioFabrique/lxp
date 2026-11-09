@@ -13,4 +13,10 @@ describe("formatAccomplishmentDescription", () => {
       "Vous avez terminé la leçon JavaScript",
     );
   });
+
+  it("gère aussi « vient d'attribuer »", () => {
+    expect(formatAccomplishmentDescription("vient d'attribuer une note de 4 sur 5 à la leçon variables")).toBe(
+      "Vous venez d'attribuer une note de 4 sur 5 à la leçon Variables",
+    );
+  });
 });
