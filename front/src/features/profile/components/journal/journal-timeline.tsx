@@ -1,5 +1,6 @@
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { CalendarDays, CircleCheck } from "lucide-react";
+import { formatAccomplishmentDescription } from "../../helpers/format-accomplishment-description";
 import Course from "../../../../utils/interfaces/course";
 
 type Props = {
@@ -28,7 +29,7 @@ const JournalTimeline = ({ course }: Props) => {
               <CircleCheck className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
             <article className="rounded-xl border border-base-300 bg-base-200/40 p-4">
-              <p className="font-medium text-base-content">{acc.description}</p>
+              <p className="font-medium text-base-content">{formatAccomplishmentDescription(acc.description)}</p>
               {acc.accomplishedAt && (
                 <time
                   className="mt-2 flex items-center gap-1.5 text-xs text-base-content/55"

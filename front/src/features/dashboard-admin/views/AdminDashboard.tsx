@@ -5,12 +5,13 @@ import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-st
 import LastModules from "../components/last-modules";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import RecommendedActions from "../components/recommended-actions";
 import { useAdminDashboard } from "../hooks/use-admin-dashboard";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
 import GroupAiAlerts from "../components/group-ai-alerts";
 import QuickActions from "../components/quick-actions";
 import { useSearchParams } from "react-router";
+import { cn } from "../../../utils/cn";
+import AdminOnboarding from "../components/onboarding/admin-onboarding";
 
 const AdminDashboard = () => {
   const {
@@ -19,13 +20,18 @@ const AdminDashboard = () => {
     welcomeMessage,
     parcours,
     modules,
-    recommendedActions,
+    teachersCount,
+    studentsCount,
+    groupsCount,
+    adminsCount,
+    isRoot,
     isParcoursLoading,
     isModulesLoading,
-    areRecommendationsLoading,
   } = useAdminDashboard();
   const [searchParams, setSearchParams] = useSearchParams();
   const isTeacher = isTeacherUser(user);
+  // Instance vide : la checklist de mise en route s'affiche au-dessus du bouton de création de la première formation.
+  const showOnboarding = !isParcoursLoading && parcours.length === 0;
 
   const openCreateModal = (key: "createFormation" | "createParcours") => {
     const next = new URLSearchParams(searchParams);
@@ -39,30 +45,36 @@ const AdminDashboard = () => {
         title={welcomeTitle}
         description={welcomeMessage}
         classname="capitalize"
-        containerClassname="z-20"
+        containerClassname="z-41 md:z-41"
         showTitleInTopBar
       >
-        {user ? (
-          <RecommendedActions
-            userId={user._id}
-            actions={recommendedActions}
-            isLoading={areRecommendationsLoading}
-          />
-        ) : null}
-        {isTeacher && (
-          <QuickActions
-            onCreateFormation={() => openCreateModal("createFormation")}
-            onCreateParcours={() => openCreateModal("createParcours")}
-          />
-        )}
+        <QuickActions
+          onCreateFormation={() => openCreateModal("createFormation")}
+          onCreateParcours={() => openCreateModal("createParcours")}
+        />
       </Header>
 
       {/* --- Contenu Principal --- */}
-      <section className="flex w-full flex-col gap-10">
+      <section className={cn("flex w-full flex-col", showOnboarding ? "gap-2" : "gap-10")}>
+        {showOnboarding ? (
+          <AdminOnboarding
+            isTeacher={isTeacher}
+            formations={parcours}
+            modulesCount={modules.length}
+            teachersCount={teachersCount}
+            studentsCount={studentsCount}
+            groupsCount={groupsCount}
+            canAddAdmin={isRoot}
+            adminsCount={adminsCount}
+            onCreateFormation={() => openCreateModal("createFormation")}
+            onCreateParcours={() => openCreateModal("createParcours")}
+          />
+        ) : null}
         <LastParcours
           parcours={parcours}
           isLoading={isParcoursLoading}
-          showQuickActions={!isTeacher}
+          showQuickActions={false}
+          hasOnboarding={showOnboarding}
           sideContent={isTeacher && parcours.some((formation) => formation.parcours.length > 0) ? <GroupAiAlerts /> : null}
         />
         <LastModules modules={modules} isLoading={isModulesLoading} />

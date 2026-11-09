@@ -13,10 +13,11 @@ export function useUserRoleOptions(requiredRoleRank?: number) {
     refetchOnWindowFocus: true,
   });
   const roles = useMemo(
+    // Tri explicite : l'ordre renvoyé par l'API n'est pas garanti d'un chargement à l'autre.
     () => (query.data?.data ?? []).filter(
       (role) => role.rank > actorRank &&
         (requiredRoleRank === undefined || role.rank === requiredRoleRank),
-    ),
+    ).sort((a, b) => a.rank - b.rank || a.label.localeCompare(b.label, "fr")),
     [actorRank, query.data, requiredRoleRank],
   );
 

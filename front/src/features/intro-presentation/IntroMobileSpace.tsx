@@ -76,7 +76,7 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
         id: "content",
         title: "Contenu de la page",
         target: "content",
-        text: "Dessous s'affiche le contenu de la page : sur l'accueil, vos actions recommandées et vos derniers éléments.",
+        text: "Dessous s'affiche le contenu de la page : sur l'accueil, votre mise en route et vos derniers éléments.",
       },
       ...(content.headerAction
         ? [

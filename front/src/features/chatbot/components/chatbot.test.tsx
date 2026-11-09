@@ -148,7 +148,7 @@ describe("assistant virtuel de l'application", () => {
 
     describe("guide vers « Créer ma première formation »", () => {
       const addFirstFormationButton = (): HTMLButtonElement => {
-        document.body.insertAdjacentHTML("beforeend", '<button data-chatbot-target="first-formation">Créer ma première formation</button>');
+        document.body.insertAdjacentHTML("beforeend", '<button data-chatbot-target="onboarding-current-step">Créer ma première formation</button>');
         const button = document.querySelector<HTMLButtonElement>("[data-chatbot-target]");
         if (!button) throw new Error("bouton introuvable");
         button.getBoundingClientRect = () => new DOMRect(300, 400, 220, 40);
@@ -161,7 +161,7 @@ describe("assistant virtuel de l'application", () => {
         await render(true);
         const button = addFirstFormationButton();
         await flush();
-        expect(bubble()).toContain("La première étape de la création de contenu démarre ici");
+        expect(bubble()).toContain("Commencez ici");
         expect(bubble()).not.toContain("1 / 1");
         expect(document.activeElement).toBe(button);
         expect(document.body.textContent).not.toContain("Terminer");
@@ -185,7 +185,7 @@ describe("assistant virtuel de l'application", () => {
         await render(true);
         addFirstFormationButton();
         await flush();
-        expect(bubble()).toContain("La première étape");
+        expect(bubble()).toContain("Commencez ici");
         document.querySelector("[data-chatbot-target]")?.remove();
         await flush();
         expect(document.querySelector("[data-chatbot-bubble]")).toBeNull();
@@ -208,7 +208,7 @@ describe("assistant virtuel de l'application", () => {
         await flush();
         addFirstFormationButton();
         await flush();
-        expect(bubble()).toContain("La première étape de la création de contenu démarre ici");
+        expect(bubble()).toContain("Commencez ici");
       });
     });
 

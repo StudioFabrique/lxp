@@ -12,6 +12,7 @@ import httpCreateUser from "../../../controllers/user/http-create-user.ts";
 import httpDeleteUser from "../../../controllers/user/http-delete-user.ts";
 import httpDeleteManyUsers from "../../../controllers/user/http-delete-many-users.ts";
 import httpGetContacts from "../../../controllers/user/http-get-contacts.ts";
+import checkRoleRank from "../../../middleware/check-role-rank.ts";
 import preventSelfUserEdit from "../../../middleware/prevent-self-user-edit.ts";
 import checkUserManagementScope from "../../../middleware/check-user-management-scope.ts";
 import httpGetUserData from "../../../controllers/user/http-get-user-data.ts";
@@ -345,6 +346,9 @@ userRouter.get(
 userRouter.get(
   "/last-feedbacks/:notReviewed",
   checkPermissions("feedback", "read"),
+  // Les retours des apprenants sont propres à l'équipe pédagogique : jamais exposés aux administrateurs,
+  // quelles que soient les permissions configurées pour leur rôle.
+  checkRoleRank([2], "Cette opération est réservée à l'équipe pédagogique."),
   param("notReviewed")
     .isBoolean()
     .withMessage("Le paramètre 'notReviewed' doit être un booléen."),

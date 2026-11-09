@@ -2,10 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { formatWelcomeTitle } from "../../../utils/helpers/welcome-title";
-import { profileApi } from "../../profile/api/profile.api";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
-import { buildRecommendedActions } from "../components/build-recommended-actions";
-import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 
 const defaultTitle = "Bonjour {firstname} !";
 const adminDescription =
@@ -15,17 +12,10 @@ const teacherDescription =
 
 export function useAdminDashboard() {
   const { user } = useContext(AuthContext);
-  const { labels: roleLabels } = useRoleLabels();
   const userRank = user?.roles.length ? (user.roles[0]?.rank ?? 4) : 4;
   const isAdministrator = userRank <= 1;
   const isRoot = userRank === 0;
   const isTeacher = userRank === 2;
-
-  const { data: instanceSettings, isLoading: isInstanceSettingsLoading } =
-    useQuery({
-      queryKey: ["instance-settings"],
-      queryFn: profileApi.queries.getInstanceSettings,
-    });
 
   const { data: parcours = [], isLoading: isParcoursLoading } = useQuery({
     queryKey: ["root-parcours"],
@@ -38,55 +28,47 @@ export function useAdminDashboard() {
   });
 
   const teachersCount = useQuery({
-    queryKey: ["dashboard", "recommended-actions", "users", "teacher"],
+    queryKey: ["dashboard", "onboarding", "users", "teacher"],
     queryFn: () => dashboardAdminApi.queries.getUsersCountByRole("teacher"),
     enabled: isAdministrator,
   });
 
   const adminsCount = useQuery({
-    queryKey: ["dashboard", "recommended-actions", "users", "admin"],
+    queryKey: ["dashboard", "onboarding", "users", "admin"],
     queryFn: () => dashboardAdminApi.queries.getUsersCountByRole("admin"),
     enabled: isRoot,
   });
 
   const studentsCount = useQuery({
-    queryKey: ["dashboard", "recommended-actions", "users", "student"],
+    queryKey: ["dashboard", "onboarding", "users", "student"],
     queryFn: () => dashboardAdminApi.queries.getUsersCountByRole("student"),
-    enabled: isTeacher,
+    enabled: isAdministrator || isTeacher,
   });
 
   const groupsCount = useQuery({
-    queryKey: ["dashboard", "recommended-actions", "groups"],
+    queryKey: ["dashboard", "onboarding", "groups"],
     queryFn: dashboardAdminApi.queries.getStudentGroupsCount,
-    enabled: isTeacher,
+    enabled: isAdministrator || isTeacher,
   });
 
-  const recommendedActions = buildRecommendedActions({
-    userRank,
-    teachersCount: teachersCount.data,
-    adminsCount: adminsCount.data,
-    studentsCount: studentsCount.data,
-    groupsCount: groupsCount.data,
-    hasLogo: instanceSettings?.hasLogo,
-    roleLabels,
-    parcours,
-  });
-
-  const areRecommendationsLoading =
+  const areCountsLoading =
     (isAdministrator && teachersCount.isLoading) ||
     (isRoot && adminsCount.isLoading) ||
-    (isRoot && isInstanceSettingsLoading) ||
-    (isTeacher &&
-      (studentsCount.isLoading || groupsCount.isLoading || isParcoursLoading));
+    ((isAdministrator || isTeacher) &&
+      (studentsCount.isLoading || groupsCount.isLoading));
   return {
     user,
     welcomeTitle: formatWelcomeTitle(defaultTitle, user),
     welcomeMessage: isTeacher ? teacherDescription : adminDescription,
     parcours,
     modules,
-    recommendedActions,
+    isRoot,
+    teachersCount: teachersCount.data,
+    adminsCount: adminsCount.data,
+    studentsCount: studentsCount.data,
+    groupsCount: groupsCount.data,
     isParcoursLoading,
     isModulesLoading,
-    areRecommendationsLoading,
+    areCountsLoading,
   };
 }

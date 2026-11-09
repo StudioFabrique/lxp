@@ -53,7 +53,9 @@ function ModuleFields({
           error={errors.quizInstructions}
         />
         <p className="text-xs leading-relaxed text-base-content/60">
-          Exemple : questionnaire diagnostique en français, au ton clair et
+          Obligatoire pour enregistrer le module, même sans IA : ces
+          instructions servent à générer le quiz diagnostique. Exemple :
+          questionnaire diagnostique en français, au ton clair et
           pédagogique, centré sur les prérequis et composé uniquement de
           questions auto-corrigeables.
         </p>

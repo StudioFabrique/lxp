@@ -315,7 +315,7 @@ const CourseItem = ({
         {!course.isPublished || !course.visibility ? (
           <div
             className={cn(
-              "badge absolute -top-3 -left-3 tooltip tooltip-right z-11",
+              "badge absolute -top-3 -left-3 gap-1 tooltip tooltip-right z-11",
               {
                 "badge-info tooltip-info": !course.isPublished,
                 "badge-warning tooltip-warning":
@@ -329,10 +329,14 @@ const CourseItem = ({
             }
           >
             {!course.isPublished ? (
-              <CloudOff className="w-4 h-4" />
+              <CloudOff className="w-4 h-4" aria-hidden="true" />
             ) : (
-              <EyeOff className="w-4 h-4" />
+              <EyeOff className="w-4 h-4" aria-hidden="true" />
             )}
+            {/* Le statut est écrit : une icône seule ne dit pas qu'il s'agit d'un brouillon. */}
+            <span className="text-xs font-semibold">
+              {!course.isPublished ? "Brouillon" : "Masqué"}
+            </span>
           </div>
         ) : null}
         <div
@@ -370,7 +374,7 @@ const CourseItem = ({
                     <ChevronRight className="w-5" />
                   )}
                 </div>
-                <h3 className="font-semibold text-primary-content truncate first-letter:uppercase">
+                <h3 className="font-semibold text-primary-content line-clamp-2 break-words first-letter:uppercase" title={formatTitle(course.title)}>
                   {formatTitle(course.title)}
                 </h3>
               </span>

@@ -16,6 +16,8 @@ type LastParcoursProps = {
   isLoading: boolean;
   showQuickActions?: boolean;
   sideContent?: ReactNode;
+  /** La checklist « Bien démarrer » occupe le haut de la page : la carte vide réduit sa hauteur minimale d'autant, pour ne pas dépasser l'écran. */
+  hasOnboarding?: boolean;
 };
 
 export default function LastParcours({
@@ -23,6 +25,7 @@ export default function LastParcours({
   isLoading,
   showQuickActions = true,
   sideContent,
+  hasOnboarding = false,
 }: LastParcoursProps) {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
@@ -30,6 +33,8 @@ export default function LastParcours({
   const usesFullWidthLayout = isTeacher && displayedFormations.length === 1;
   // Carte « Créer ma première formation » seule : elle remplit l'espace au lieu de flotter dans une page vide.
   const isFirstFormationAlone = !isLoading && displayedFormations.length === 0;
+  // Sans titre ni actions, l'en-tête serait vide : on ne réserve ni sa place ni la marge qui le suit.
+  const hasHeader = parcours.length > 0 || showQuickActions;
   const gridClassName = cn(usesFullWidthLayout || isFirstFormationAlone
     ? "grid-cols-1"
     : isTeacher && displayedFormations.length === 2
@@ -78,21 +83,23 @@ export default function LastParcours({
 
   return (
     <div className="p-2">
-      <div className="flex flex-wrap justify-between items-center gap-4">
-        {parcours.length > 0 && (
-          <h3 className="text-xl font-bold text-primary select-none">
-            Derniers parcours ajoutés
-          </h3>
-        )}
-        {showQuickActions && (
-          <QuickActions
-            onCreateFormation={openFormationModal}
-            onCreateParcours={() => setParcoursFormationId(-1)}
-          />
-        )}
-      </div>
+      {hasHeader && (
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          {parcours.length > 0 && (
+            <h3 className="text-xl font-bold text-primary select-none">
+              Derniers parcours ajoutés
+            </h3>
+          )}
+          {showQuickActions && (
+            <QuickActions
+              onCreateFormation={openFormationModal}
+              onCreateParcours={() => setParcoursFormationId(-1)}
+            />
+          )}
+        </div>
+      )}
 
-      <div className={cn("mt-4 grid grid-cols-1 items-start gap-x-6 gap-y-2", sideContent && "2xl:grid-cols-[minmax(0,1fr)_20rem]")}>
+      <div className={cn(hasHeader && "mt-4", "grid grid-cols-1 items-start gap-x-6 gap-y-2", sideContent && "2xl:grid-cols-[minmax(0,1fr)_20rem]")}>
         <div className="min-w-0">
           {isLoading ? (
             <div className={cn("grid gap-5", gridClassName)}>
@@ -109,7 +116,12 @@ export default function LastParcours({
               className={cn(
                 "grid gap-5",
                 isFirstFormationAlone
-                  ? "min-h-[calc(100dvh-20rem)] grid-rows-1 items-stretch"
+                  ? cn(
+                      "grid-rows-1 items-stretch",
+                      hasOnboarding
+                        ? "min-h-[calc(100dvh-28rem)]"
+                        : "min-h-[calc(100dvh-20rem)]",
+                    )
                   : "items-start",
                 gridClassName,
               )}

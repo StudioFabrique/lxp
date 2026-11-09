@@ -9,7 +9,7 @@ const buildSidebarHelp = (
   teamLabel: string,
 ): Record<SidebarLayout, Record<string, string>> => ({
   admin: {
-    home: "Votre tableau de bord : les actions recommandées, les derniers modules et formations créés, et les retours des apprenants.",
+    home: "Votre tableau de bord : la mise en route, les derniers modules et formations créés, et les retours des apprenants.",
     user: "Créez et gérez les comptes utilisateurs, leurs rôles et leurs accès.",
     group: "Organisez les apprenants et l'équipe en groupes, et rattachez-les à vos formations.",
     parcours: "Construisez vos formations et gardez la main sur leur contenu.",

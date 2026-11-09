@@ -112,9 +112,11 @@ export default function useDiagnosticQuiz(
       return;
     }
     if (aiDisabled && !moduleInfo.hasPreliminaryQuiz) {
-      console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
       setIsOpen(false);
       onFinishInitialQuiz();
+      toastWarning(
+        "L'évaluation initiale est indisponible : les fonctionnalités IA sont désactivées. Le module reste accessible normalement.",
+      );
       return;
     }
 
@@ -189,6 +191,17 @@ export default function useDiagnosticQuiz(
             }
           }
         }
+      }
+
+      // Flux terminé sans aucune question : on le dit au lieu d'enchaîner silencieusement sur la leçon.
+      if (!attemptStarted && !isFinished.current) {
+        isFinished.current = true;
+        setQuizzes(null);
+        setIsOpen(false);
+        onFinishInitialQuiz();
+        toastWarning(
+          "L'évaluation initiale est indisponible : aucune question n'a pu être générée. Le module reste accessible normalement.",
+        );
       }
     } catch (error) {
       console.error(

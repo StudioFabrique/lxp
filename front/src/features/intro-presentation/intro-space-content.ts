@@ -123,7 +123,7 @@ export type TeamContentInput = {
   title: string;
   message: string;
   nav: IntroSpaceNavEntry[];
-  recommended: ReadonlyArray<{ title: string; description: string }>;
+  gettingStarted: ReadonlyArray<{ title: string; subtitle: string }>;
   modules: readonly ModuleSummary[];
   modulesTitle: string;
   parcours: readonly FormationParcoursSummary[];
@@ -134,7 +134,7 @@ export type TeamContentInput = {
 
 /**
  * Équipe (root, administrateur, pédagogique). Les quatre cartes du film
- * reprennent celles du vrai dashboard : actions recommandées, derniers modules,
+ * reprennent celles du vrai dashboard : étapes de mise en route, derniers modules,
  * derniers parcours, puis les retours des apprenants (équipe pédagogique) ou
  * les raccourcis de création (administrateurs).
  */
@@ -163,8 +163,8 @@ export const buildTeamContent = (input: TeamContentInput): IntroSpaceContent => 
         id: "dash-feedback",
         title: "Actions rapides",
         rows: limitRows(shortcuts, {
-          title: "Voir les feedbacks",
-          subtitle: "Suivre le ressenti des apprenants",
+          title: "Créer un utilisateur",
+          subtitle: "Ajouter un compte à la plateforme",
         }),
       };
 
@@ -181,14 +181,11 @@ export const buildTeamContent = (input: TeamContentInput): IntroSpaceContent => 
     cards: [
       {
         id: "dash-actions",
-        title: "Actions recommandées",
-        rows: limitRows(
-          input.recommended.map((action) => ({
-            title: action.title,
-            subtitle: action.description,
-          })),
-          { title: "Tout est en ordre", subtitle: "Aucune action recommandée pour le moment." },
-        ),
+        title: "Bien démarrer",
+        rows: limitRows([...input.gettingStarted], {
+          title: "Tout est en ordre",
+          subtitle: "Toutes les étapes de mise en route sont faites.",
+        }),
       },
       { id: "dash-alerts", title: input.modulesTitle, rows: buildModuleRows(input.modules) },
       { id: "dash-latest", title: "Derniers parcours", rows: buildParcoursRows(input.parcours) },

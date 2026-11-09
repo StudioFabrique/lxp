@@ -70,4 +70,23 @@ describe("testParcoursStep", () => {
       { groups: "Le parcours doit avoir au moins un groupe d'apprenants rattachés" },
     ]);
   });
+
+  it("liste d'un coup tout ce qui manque, dans l'ordre des étapes", () => {
+    const errors = testParcoursStep({
+      ...validParcours,
+      contacts: [],
+      objectives: [],
+      skills: [],
+      modules: [{ duration: 10, contacts: [{}], bonusSkills: [] }],
+      groups: [],
+    });
+
+    expect(errors.map((error) => Object.keys(error)[0])).toEqual([
+      "contacts",
+      "objectives",
+      "skills",
+      "modules",
+      "groups",
+    ]);
+  });
 });

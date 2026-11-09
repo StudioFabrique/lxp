@@ -131,8 +131,8 @@ export default function ModuleCard({
         })}
         maxItemsShown={3}
         emptyMessage={`Aucun membre « ${teamLabel} » affecté`}
-        moreItemsLabel={(count) => `Afficher plus de ressources (${formatNumber(count)})`}
-        overflowTitle={`Autres ressources de ${module.title}`}
+        moreItemsLabel={(count) => `Afficher plus de membres (${formatNumber(count)})`}
+        overflowTitle={`Autres membres de ${module.title}`}
         footerAtBottom
         footerClassName="py-2"
         hideLastItemDivider

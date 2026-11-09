@@ -1,0 +1,9 @@
+{
+  "from": "dae3340eb8f66c82e5140f379b40427a8fed799abe03f86d4c40fd6988a81f93",
+  "to": "dae3340eb8f66c82e5140f379b40427a8fed799abe03f86d4c40fd6988a81f93",
+  "providedInvariants": [
+    "keep-display-label-case"
+  ],
+  "createdAt": "2026-11-09T09:41:45.363Z",
+  "migrationHash": "fac9c829048d634687c4a652d01b700267bdf0d8e2ced6bd01982f96d2725fd2"
+}

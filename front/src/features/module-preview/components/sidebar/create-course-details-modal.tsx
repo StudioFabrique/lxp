@@ -165,7 +165,9 @@ export default function CreateCourseDetailsModal({
                 })
               ) : (
                 <span className="text-sm text-base-content/60">
-                  Aucun tag disponible
+                  Aucun tag disponible : les tags d'un cours sont ceux de son
+                  parcours. Ajoutez-en à l'étape 1 (Informations) du parcours,
+                  puis revenez créer le cours.
                 </span>
               )}
             </div>

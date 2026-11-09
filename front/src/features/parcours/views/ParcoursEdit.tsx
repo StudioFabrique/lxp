@@ -29,6 +29,8 @@ import {
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
 import useValidateParcours from "../hooks/useValidateParcours";
+import { useParcoursModules } from "../hooks/useParcoursModules";
+import { hasVisibleCourse } from "../helpers/parcours-steps-validation";
 import { parcoursApi } from "../api/parcours.api";
 import {
   PARCOURS_VALIDATION_TOAST_ID,
@@ -66,6 +68,7 @@ const EditParcours = () => {
     handleUpdateStep,
     handleRetour,
   } = useParcoursEdit();
+  const { modules } = useParcoursModules(Number(id));
   const contextualStepsList = useMemo(
     () =>
       stepsList.map((step) => {
@@ -103,6 +106,12 @@ const EditParcours = () => {
       const data = await parcoursApi.mutations.publishParcours(id, true);
       if (data.success) {
         toast.success(data.message);
+        if (!hasVisibleCourse(modules)) {
+          toast(
+            "Aucun cours n’est publié et visible : les apprenants verront « Pas encore de contenu ».",
+            { icon: "⚠️", duration: 8000 },
+          );
+        }
         navigate(`/admin/parcours/view/${id}`);
       }
     } catch {

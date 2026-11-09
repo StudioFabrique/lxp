@@ -724,6 +724,14 @@ describe("HTTP /user", () => {
         .expect(200);
     });
 
+    // Les administrateurs ne voient jamais les retours des apprenants
+    test("It should respond 403 forbidden for an administrator", async () => {
+      await request(app)
+        .get("/v1/user/last-feedbacks/true")
+        .set("Cookie", [`${authToken}`])
+        .expect(403);
+    });
+
     // Wrong data types
     test("It should respond 400 bad request", async () => {
       const res = await request(app)

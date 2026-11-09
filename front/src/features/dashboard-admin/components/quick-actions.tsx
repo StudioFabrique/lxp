@@ -11,7 +11,11 @@ import { cn } from "../../../utils/cn";
 
 const links = [
   { path: "/admin/user/add", label: "Créer un utilisateur" },
-  { path: "/admin/feedbacks", label: "Voir les feedbacks" },
+  {
+    path: "/admin/feedbacks",
+    label: "Voir les feedbacks",
+    teacherOnly: true,
+  },
   {
     path: "/admin/teacher/evaluations",
     label: "Évaluer un apprenant",
