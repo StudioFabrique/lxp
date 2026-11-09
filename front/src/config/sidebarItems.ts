@@ -4,6 +4,7 @@ import {
   ClipboardCheck,
   Component,
   FileEdit,
+  GraduationCap,
   Home,
   Layers,
   Library,
@@ -55,7 +56,7 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       subject: "parcours",
       path: "parcours",
       label: "Parcours",
-      icon: Rocket,
+      icon: GraduationCap,
     },
     {
       key: "module",

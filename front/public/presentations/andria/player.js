@@ -142,6 +142,10 @@ const opening={"id": "identity", "start": 0.0, "duration": 3.0};
       const chip = make('div', 'tutorial-chip');
       const inner = make('div', 'tutorial-chip-inner');
       Object.assign(chip.style, {width: `${CHIP_WIDTH}px`, height: `${shown}px`});
+      // The copied component already draws its own background, border and corners: the chip only crops it,
+      // with the same radius at the chip's scale, so no second frame doubles the edge.
+      const radius = parseFloat(shot.clone.style.borderTopLeftRadius) || 0;
+      chip.style.borderRadius = `${radius * scale}px`;
       chip.classList.toggle('is-cropped', shot.height * scale > CHIP_MAX_HEIGHT);
       Object.assign(inner.style, {width: `${shot.width}px`, height: `${shot.height}px`});
       gsap.set(inner, {scale, transformOrigin: '0 0'});

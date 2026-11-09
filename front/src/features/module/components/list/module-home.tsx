@@ -3,7 +3,7 @@ import {
   BookMarked,
   Eye,
   EyeOff,
-  FolderTree,
+  GraduationCap,
   Pencil,
   SquareArrowRightEnter,
   Trash2,
@@ -255,7 +255,7 @@ const ModuleHomeList = ({
           {searchQuery || selectedParcours !== null || isTeacher ? null : (
             <PermissionGuard action="update" object="parcours">
               <Link className="btn btn-primary" to="/admin/parcours">
-                <FolderTree className="size-5" />
+                <GraduationCap className="size-5" />
                 Accéder aux parcours
               </Link>
             </PermissionGuard>

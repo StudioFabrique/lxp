@@ -1,10 +1,11 @@
 import { Inbox, type LucideIcon } from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { useRef, type PropsWithChildren } from "react";
 
 import FadeWrapper from "../wrappers/FadeWrapper";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import CursorGlowCard from "./cursor-glow-card";
 import { cn } from "../../utils/cn";
+import { useFillRemainingHeight } from "../../hooks/useFillRemainingHeight";
 
 type EmptyStatePlaceholderProps = PropsWithChildren<{
   title: string;
@@ -22,13 +23,17 @@ const EmptyStatePlaceholder = ({
   children,
   withBorder = true,
 }: EmptyStatePlaceholderProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  // Bordure + padding du BoxWrapper (p-5) sous le contenu quand l'encadré est visible.
+  useFillRemainingHeight(contentRef, withBorder ? 22 : 0);
+
   const placeholder = (
     <BoxWrapper
       unstyled={!withBorder}
       className={cn(withBorder ? "border border-base-300 bg-transparent" : "")}
     >
       <FadeWrapper>
-        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center sm:gap-8">
+        <div ref={contentRef} className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center sm:gap-8">
           <PlaceholderIcon
             aria-hidden="true"
             className="size-20 text-primary sm:size-28"

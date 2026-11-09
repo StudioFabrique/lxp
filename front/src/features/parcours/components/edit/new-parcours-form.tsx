@@ -94,37 +94,39 @@ const NewParcoursForm: FC<Props> = ({
           </div>
         </div>
       </div>
-      <form
-        className="w-full flex flex-col gap-y-8 mt-8"
-        onSubmit={handleSubmit}
-      >
-        <div className="flex flex-col gap-y-4">
-          <label className="font-bold" htmlFor="title">
-            Donner un nom au parcours
-          </label>
-          <input
-            ref={(element) => {
-              form.register("title").ref(element);
-              titleInputRef.current = element;
-            }}
-            className={setInputStyle(Boolean(form.formState.errors.title))}
-            id="title"
-            onChange={form.register("title").onChange}
-            onBlur={form.register("title").onBlur}
-            name="title"
-            placeholder={`Exemple: CDA - Promotion ${new Date().getFullYear()}`}
-            disabled={!formationId}
-          />
-        </div>
-        <div className="w-full flex justify-end">
-          <button
-            className="btn btn-primary"
-            disabled={!formationId || !form.formState.isValid}
-          >
-            Créer
-          </button>
-        </div>
-      </form>
+      {/* Le nom n'a de sens qu'une fois la formation choisie. */}
+      {formationId ? (
+        <form
+          className="w-full flex flex-col gap-y-8 mt-8"
+          onSubmit={handleSubmit}
+        >
+          <div className="flex flex-col gap-y-4">
+            <label className="font-bold" htmlFor="title">
+              Donner un nom au parcours
+            </label>
+            <input
+              ref={(element) => {
+                form.register("title").ref(element);
+                titleInputRef.current = element;
+              }}
+              className={setInputStyle(Boolean(form.formState.errors.title))}
+              id="title"
+              onChange={form.register("title").onChange}
+              onBlur={form.register("title").onBlur}
+              name="title"
+              placeholder={`Exemple: CDA - Promotion ${new Date().getFullYear()}`}
+            />
+          </div>
+          <div className="w-full flex justify-end">
+            <button
+              className="btn btn-primary"
+              disabled={!form.formState.isValid}
+            >
+              Créer
+            </button>
+          </div>
+        </form>
+      ) : null}
     </>
   );
 };

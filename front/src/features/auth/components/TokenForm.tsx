@@ -2,8 +2,8 @@ import useActivationKey from "../hooks/useActivationKey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { activationTokenSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
-import { LoaderCircle, Check, Copy } from "lucide-react";
+import { useId, useRef, useState } from "react";
+import { LoaderCircle, Check, Copy, MailClock } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import AuthPageWrapper from "./AuthPageWrapper";
 
@@ -20,6 +20,7 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const tokenInputRef = useRef<HTMLInputElement>(null);
+  const tokenInputId = useId();
   const {
     command,
     activationTokenTtlMinutes,
@@ -71,10 +72,27 @@ const TokenForm = ({ onNext, onPrevious }: Props) => {
         onSubmit={(event) => {
           void handleSubmit(onSubmit, focusInvalidToken)(event);
         }}
-        className="flex flex-1 flex-col gap-4"
+        className="flex flex-1 flex-col gap-6"
       >
+        <div className="flex flex-col gap-4">
+          <MailClock className="self-center" />
+          <p className="text-sm text-base-content/60 text-center">
+            Un email contenant votre lien d'activation vous a été envoyé.
+            Ouvrez-le pour activer le compte root directement.
+          </p>
+        </div>
+
+        <div className="divider my-0 text-sm text-base-content/60">OU</div>
+
         <div className="form-control w-full">
+          <label
+            htmlFor={tokenInputId}
+            className="mb-2 block text-sm font-medium text-base-content"
+          >
+            Rentrer une clé d'activation
+          </label>
           <input
+            id={tokenInputId}
             type="text"
             placeholder="Clé d'activation"
             autoComplete="off"

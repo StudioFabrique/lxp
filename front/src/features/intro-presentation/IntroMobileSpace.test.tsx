@@ -3,6 +3,13 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import IntroMobileSpace from "./IntroMobileSpace";
+const preferences = vi.hoisted(() => ({ animations: false }));
+vi.mock("../../store/VisualPreferences", () => ({
+  useVisualPreferences: () => ({ glow: true, confetti: true, animations: preferences.animations }),
+}));
+vi.mock("../../hooks/useInstanceBranding", () => ({
+  useInstanceBranding: () => ({ logoUrl: null, websiteUrl: null }),
+}));
 import type { IntroSpaceContent } from "./intro-space-content";
 
 const content: IntroSpaceContent = {
@@ -34,6 +41,7 @@ const click = (label: string) => act(() => button(label).click());
 const explanation = () => container.querySelector("section[aria-label='Explication'] p")?.textContent;
 
 beforeEach(() => {
+  preferences.animations = false;
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);
@@ -49,22 +57,45 @@ describe("IntroMobileSpace", () => {
     expect(container.textContent).toContain("Bonjour Martin !");
     expect(explanation()).toContain("barre de navigation");
     expect(container.textContent).not.toContain("Précédent");
+    // La carte indique la progression et l'intitulé de l'étape, comme le tutoriel du bureau.
+    expect(container.textContent).toContain("Étape 1 sur 8");
+    expect(container.querySelector("section[aria-label='Explication'] h2")?.textContent).toBe("Barre de navigation");
 
     click("Suivant");
     expect(explanation()).toContain("ouvre le menu");
-    // Le tiroir reproduit le menu : toutes les sections sont listées.
+    // Le tiroir reproduit le menu : toutes les sections, puis les blocs du bas du vrai menu.
     expect(container.textContent).toContain("Utilisateurs");
+    expect(container.textContent).toContain("Martin D");
+    expect(container.textContent).toContain("Consommation IA");
+    expect(container.textContent).toContain("Revoir la présentation");
+    expect(container.textContent).toContain("Déconnexion");
+    expect(container.querySelector("[data-explained]")).toBeNull();
 
     click("Suivant");
-    expect(explanation()).toBe("Accueil : Votre tableau de bord.");
+    expect(explanation()).toBe("Votre tableau de bord.");
     click("Suivant");
-    expect(explanation()).toBe("Utilisateurs : Gérez les comptes.");
+    expect(explanation()).toBe("Gérez les comptes.");
+    expect(container.querySelector("[data-explained]")?.textContent).toBe("Utilisateurs");
     // Une section sans explication n'a pas d'étape.
     click("Suivant");
     expect(explanation()).toContain("titre de la barre");
 
     click("Précédent");
-    expect(explanation()).toBe("Utilisateurs : Gérez les comptes.");
+    expect(explanation()).toBe("Gérez les comptes.");
+  });
+
+  it("joue l'ouverture 3D, sauf quand les animations sont désactivées", () => {
+    act(() => root.render(<IntroMobileSpace content={content} onEnded={vi.fn()} />));
+    expect(container.querySelector("[data-intro-opening]")).toBeNull();
+    act(() => root.unmount());
+
+    preferences.animations = true;
+    root = createRoot(container);
+    act(() => root.render(<IntroMobileSpace content={content} onEnded={vi.fn()} />));
+    expect(container.querySelector("[data-intro-opening]")).not.toBeNull();
+    // L'ouverture est décorative : le tutoriel reste utilisable pendant qu'elle joue.
+    click("Suivant");
+    expect(explanation()).toContain("ouvre le menu");
   });
 
   it("ne rend la main qu'au clic sur Terminer, au dernier message", () => {

@@ -1,10 +1,15 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { Bot, Check, EllipsisVertical, House, Menu } from "lucide-react";
 
 import SidebarLogo from "../../components/sidebar/SidebarLogo";
-import { sidebarItems } from "../../config/sidebarItems";
+import SidebarOrganisationLogo from "../../components/sidebar/SidebarOrganisationLogo";
+import { useInstanceBranding } from "../../hooks/useInstanceBranding";
+import { useVisualPreferences } from "../../store/VisualPreferences";
 import { cn } from "../../utils/cn";
 import IntroDialogueNav from "./IntroDialogueNav";
+import IntroMobileDrawer from "./IntroMobileDrawer";
+import IntroMobileOpening from "./IntroMobileOpening";
 import type { IntroSpaceContent } from "./intro-space-content";
 import { useIntroGuide } from "./useIntroGuide";
 
@@ -17,6 +22,8 @@ type StepTarget = "bar" | "menu" | "nav" | "title" | "content" | "actions" | "as
 
 type Step = {
   id: string;
+  /** Intitulé de la carte d'explication, au-dessus du texte. */
+  title: string;
   target: StepTarget;
   /** Entrée du menu mise en avant, pour les étapes `nav`. */
   navKey?: string;
@@ -34,17 +41,19 @@ const focusOnPage = "ring-2 ring-primary ring-offset-2 ring-offset-base-100";
  */
 const IntroMobileSpace = ({ content, onEnded }: Props) => {
   const layout = content.space === "student" ? "student" : "admin";
-  const items = sidebarItems[layout];
+  const { logoUrl, backgroundColor } = useInstanceBranding();
 
   const steps = useMemo<Step[]>(
     () => [
       {
         id: "bar",
+        title: "Barre de navigation",
         target: "bar",
         text: "Voici votre barre de navigation : elle reste en haut de l'écran, sur toutes les pages.",
       },
       {
         id: "menu",
+        title: "Menu",
         target: "menu",
         text: "Ce bouton ouvre le menu : la liste de toutes vos sections.",
       },
@@ -52,17 +61,20 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
         .filter((entry) => entry.description)
         .map<Step>((entry) => ({
           id: `nav-${entry.key}`,
+          title: entry.displayLabel,
           target: "nav",
           navKey: entry.key,
-          text: `${entry.displayLabel} : ${entry.description}`,
+          text: entry.description,
         })),
       {
         id: "title",
+        title: "Titre de la page",
         target: "title",
         text: "Le titre de la barre rappelle la page que vous consultez.",
       },
       {
         id: "content",
+        title: "Contenu de la page",
         target: "content",
         text: "Dessous s'affiche le contenu de la page : sur l'accueil, vos actions recommandées et vos derniers éléments.",
       },
@@ -70,6 +82,7 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
         ? [
             {
               id: "actions",
+              title: "Actions de la page",
               target: "actions",
               text: `Ce bouton regroupe les actions de la page, par exemple « ${content.headerAction} ».`,
             } satisfies Step,
@@ -77,6 +90,7 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
         : []),
       {
         id: "assistant",
+        title: "Assistant virtuel",
         target: "assistant",
         text: "Je reste en bas à droite de l'écran : touchez-moi pour me poser une question.",
       },
@@ -86,12 +100,13 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
   const guide = useIntroGuide(steps.length, content.space);
   const step = steps[guide.step];
   const isDrawerOpen = step.target === "menu" || step.target === "nav";
-  const activeEntryRef = useRef<HTMLLIElement>(null);
-
-  // Une longue liste de sections reste lisible : l'entrée expliquée est ramenée dans la vue du tiroir.
-  useEffect(() => {
-    activeEntryRef.current?.scrollIntoView?.({ block: "nearest" });
-  }, [step.id]);
+  const branding = { logoUrl, backgroundColor };
+  // Même condition que le reste de l'application : sans animations, l'ouverture 3D est omise.
+  const reduceMotion = useReducedMotion();
+  const { animations } = useVisualPreferences();
+  const instant = reduceMotion || !animations;
+  const [isOpening, setIsOpening] = useState(!instant);
+  const endOpening = useCallback(() => setIsOpening(false), []);
 
   return (
     <div className="absolute inset-0 bg-base-100 p-2">
@@ -109,6 +124,14 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
         >
           <Menu className="size-4" aria-hidden="true" />
         </span>
+        {logoUrl && (
+          <SidebarOrganisationLogo
+            logoUrl={logoUrl}
+            backgroundColor={backgroundColor}
+            websiteUrl={null}
+            variant="bar"
+          />
+        )}
         <p
           className={cn(
             "flex min-w-0 flex-1 items-center gap-2 rounded-lg px-1 text-sm font-medium",
@@ -159,49 +182,42 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
         ))}
       </div>
 
-      {/* Reproduit le tiroir du menu mobile ; l'explication reste lisible dessous. */}
+      {/* Reproduit le menu mobile ; l'explication reste lisible dessous. */}
       {isDrawerOpen && (
-        <div className="absolute inset-0 z-10 bg-black/50" aria-hidden="true">
-          <div className="absolute inset-y-0 left-0 w-[90%] max-w-md p-2 pb-[13rem]">
-            <ul className="flex h-full flex-col gap-1 overflow-y-auto rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) p-3 text-(--sidebar-content)">
-              {content.nav.map((entry) => {
-                const Icon = items.find((item) => item.key === entry.key)?.icon;
-                const active = step.navKey === entry.key;
-                return (
-                  <li
-                    key={entry.key}
-                    ref={active ? activeEntryRef : undefined}
-                    className={cn(
-                      "flex min-h-9 shrink-0 items-center gap-3 rounded-lg px-3 text-sm",
-                      active && "bg-(--sidebar-active) font-medium text-(--sidebar-active-content) ring-1 ring-inset ring-(--sidebar-content)",
-                    )}
-                  >
-                    {Icon && <Icon className="size-4 shrink-0" />}
-                    {entry.displayLabel}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
+        <IntroMobileDrawer
+          content={content}
+          layout={layout}
+          explainedKey={step.navKey}
+          branding={branding}
+        />
       )}
 
-      {/* Même place et même aspect que l'assistant virtuel de l'application. */}
-      <span
+      {/* Même place et même aspect que l'assistant virtuel de l'application ; il arrive après l'ouverture et rebondit quand il est expliqué. */}
+      <motion.span
         aria-hidden="true"
         className={cn(
           "absolute bottom-6 right-6 z-20 flex size-12 items-center justify-center rounded-full bg-primary text-primary-content shadow-lg",
           step.target === "assistant" && focusOnPage,
         )}
+        initial={{ scale: instant ? 1 : 0 }}
+        animate={{ scale: 1, y: !instant && step.target === "assistant" ? [0, -8, 0] : 0 }}
+        transition={{
+          scale: { delay: instant ? 0 : 1.4, type: "spring", stiffness: 260, damping: 18 },
+          y: { duration: 1.2, repeat: step.target === "assistant" ? Infinity : 0 },
+        }}
       >
         <Bot className="size-6" />
-      </span>
+      </motion.span>
 
       <section
         aria-label="Explication"
-        className="absolute inset-x-3 bottom-[5.25rem] z-20 rounded-2xl border border-base-300 bg-base-100 p-4 text-primary shadow-lg"
+        className="absolute inset-x-3 bottom-[5.25rem] z-20 rounded-2xl border border-base-300 bg-base-100 p-4 shadow-lg"
       >
-        <p aria-live="polite" className="text-sm leading-6">
+        <span className="block text-xs text-base-content/60">
+          Étape {guide.step + 1} sur {steps.length}
+        </span>
+        <h2 className="text-lg font-bold leading-tight text-base-content">{step.title}</h2>
+        <p aria-live="polite" className="mt-1 text-sm leading-6 text-base-content">
           {step.text}
         </p>
         <IntroDialogueNav
@@ -214,6 +230,9 @@ const IntroMobileSpace = ({ content, onEnded }: Props) => {
           }}
         />
       </section>
+      {isOpening && (
+        <IntroMobileOpening content={content} layout={layout} branding={branding} onDone={endOpening} />
+      )}
     </div>
   );
 };

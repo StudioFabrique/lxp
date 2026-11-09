@@ -28,7 +28,9 @@ export default function LastParcours({
   const isTeacher = isTeacherUser(user);
   const displayedFormations = parcours.slice(0, 6);
   const usesFullWidthLayout = isTeacher && displayedFormations.length === 1;
-  const gridClassName = cn(usesFullWidthLayout
+  // Carte « Créer ma première formation » seule : elle remplit l'espace au lieu de flotter dans une page vide.
+  const isFirstFormationAlone = !isLoading && displayedFormations.length === 0;
+  const gridClassName = cn(usesFullWidthLayout || isFirstFormationAlone
     ? "grid-cols-1"
     : isTeacher && displayedFormations.length === 2
       ? "grid-cols-1 lg:grid-cols-2"
@@ -103,7 +105,15 @@ export default function LastParcours({
               ))}
             </div>
           ) : (
-            <div className={cn("grid items-start gap-5", gridClassName)}>
+            <div
+              className={cn(
+                "grid gap-5",
+                isFirstFormationAlone
+                  ? "min-h-[calc(100dvh-20rem)] grid-rows-1 items-stretch"
+                  : "items-start",
+                gridClassName,
+              )}
+            >
               {displayedFormations.map((formation) => (
                 <LastParcoursItem
                   key={formation.id}

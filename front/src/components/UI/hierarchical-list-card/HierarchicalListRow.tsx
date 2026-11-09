@@ -1,5 +1,5 @@
 import { formatTitle } from "../../../utils/helpers/text-helpers";
-import { ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { type Key, type ReactNode, useState } from "react";
 import { Link, type LinkProps } from "react-router";
 import { cn } from "../../../utils/cn";
@@ -112,18 +112,20 @@ export const HierarchicalListRow = ({
                 <ExternalLink className="size-[1.2em]" />
               </Link>
             ) : null)}
-          {/* La ligne entière est cliquable : un chevron glisse en place au survol ou au focus pour le signaler. */}
-          {item.to || item.onClick ? (
-            <ChevronRight
-              className="pointer-events-none size-5 shrink-0 -translate-x-2 text-primary opacity-0 transition-all duration-200 ease-out group-hover/row:translate-x-0 group-hover/row:opacity-100 group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 motion-reduce:transition-none"
-              aria-hidden="true"
-            />
-          ) : null}
         </div>
+      ) : null}
+
+      {/* La ligne entière est cliquable : une flèche dans le coin haut droit, au-dessus des actions, le signale au survol ou quand le lien de la ligne a le focus clavier (pas quand une action, comme le menu, le garde après un clic). */}
+      {item.to || item.onClick ? (
+        <ArrowUpRight
+          className="pointer-events-none absolute right-1 -top-2 z-10 size-3.5 translate-y-1 text-primary opacity-0 transition-all duration-200 ease-out group-hover/row:translate-y-0 group-hover/row:opacity-100 group-has-[[data-row-link]:focus-visible]/row:translate-y-0 group-has-[[data-row-link]:focus-visible]/row:opacity-100 motion-reduce:transition-none"
+          aria-hidden="true"
+        />
       ) : null}
 
       {item.to ? (
         <Link
+          data-row-link
           className="absolute inset-0 z-0 cursor-pointer rounded-box"
           to={item.to}
           state={item.state}
@@ -132,6 +134,7 @@ export const HierarchicalListRow = ({
       ) : item.onClick ? (
         <button
           type="button"
+          data-row-link
           className="absolute inset-0 z-0 cursor-pointer rounded-box"
           onClick={item.onClick}
           aria-label={item.ariaLabel ?? `Ouvrir ${formatTitle(item.title)}`}
