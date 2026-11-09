@@ -55,7 +55,7 @@ const AdminDashboard = () => {
       </Header>
 
       {/* --- Contenu Principal --- */}
-      <section className={cn("flex w-full flex-col", showOnboarding ? "gap-2" : "gap-10")}>
+      <section className={cn("flex w-full flex-col", showOnboarding ? "gap-2" : "gap-4")}>
         {showOnboarding ? (
           <AdminOnboarding
             isTeacher={isTeacher}
