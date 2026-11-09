@@ -52,8 +52,15 @@ describe("position de repos de l'assistant virtuel", () => {
 });
 
 describe("placement de l'assistant virtuel face à un élément", () => {
+  it("se cale sous l'élément visé quand il y a de la place dessous", () => {
+    const target = { left: 600, top: 300, width: 220, height: 40 };
+    const placement = chooseTutorialPlacement(target, viewport);
+    expect(placement && placement.point.y).toBeGreaterThanOrEqual(target.top + target.height);
+  });
+
   it("se pose à droite d'un élément à gauche, la bulle s'étendant à l'opposé sans le cacher", () => {
-    const target = { left: 8, top: 120, width: 220, height: 40 };
+    // Collé au bas de l'écran : pas de place dessous ni dessus.
+    const target = { left: 8, top: 60, width: 220, height: 760 };
     const placement = chooseTutorialPlacement(target, viewport);
     expect(placement?.side).toBe("right");
     expect(placement?.point.x).toBeGreaterThanOrEqual(target.left + target.width);
@@ -61,7 +68,7 @@ describe("placement de l'assistant virtuel face à un élément", () => {
   });
 
   it("se pose à gauche d'un élément à droite", () => {
-    const target = { left: 1200, top: 300, width: 160, height: 40 };
+    const target = { left: 1200, top: 100, width: 160, height: 700 };
     const placement = chooseTutorialPlacement(target, viewport);
     expect(placement?.side).toBe("left");
     expect(placement && placement.point.x + CHATBOT_AVATAR_SIZE).toBeLessThanOrEqual(target.left);

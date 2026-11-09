@@ -21,7 +21,7 @@ export const CHATBOT_EDGE_MARGIN = 20;
 export const CHATBOT_DEFAULT_OFFSET = 24;
 const BUBBLE_GAP = 12;
 // Le cadre de mise en évidence dépasse déjà l'élément d'une dizaine de pixels : l'assistant garde de l'air au-delà.
-const TARGET_CLEARANCE = 28;
+const TARGET_CLEARANCE = 40;
 
 export const clampChatbotPoint = (point: ChatbotPoint, viewport: ChatbotViewport, size = CHATBOT_AVATAR_SIZE): ChatbotPoint => ({
   x: Math.max(CHATBOT_EDGE_MARGIN, Math.min(point.x, viewport.width - size - CHATBOT_EDGE_MARGIN)),
@@ -62,8 +62,8 @@ const overlaps = (a: ChatbotRect, b: ChatbotRect): boolean =>
 export type ChatbotTutorialPlacement = { point: ChatbotPoint; side: ChatbotBubbleSide };
 
 /**
- * Choisit où poser l'assistant virtuel pour désigner un élément : collé à l'élément, du côté tourné vers
- * le centre de l'écran, la bulle s'étendant à l'opposé pour ne jamais le cacher. Sans place suffisante
+ * Choisit où poser l'assistant virtuel pour désigner un élément : sous l'élément, la bulle s'étendant vers
+ * le centre de l'écran ; à défaut, au-dessus, puis sur un côté (celui tourné vers le centre de l'écran). Sans place suffisante
  * (élément qui occupe presque tout l'écran), il retourne `null` et l'appelant garde sa position.
  */
 export const chooseTutorialPlacement = (
@@ -89,7 +89,9 @@ export const chooseTutorialPlacement = (
     { point: { x: centerX, y: target.top - TARGET_CLEARANCE - size }, side: centerX + size / 2 > viewport.width / 2 ? "left" : "right" },
   ];
   const targetOnLeft = target.left + target.width / 2 < viewport.width / 2;
-  const ordered = targetOnLeft ? candidates : [candidates[1], candidates[0], candidates[2], candidates[3]];
+  const sides = targetOnLeft ? [candidates[0], candidates[1]] : [candidates[1], candidates[0]];
+  // Sous l'élément d'abord : l'assistant se cale en bas du composant visé sans passer sur ses voisins, les côtés ne servent que s'il n'y a pas de place dessous.
+  const ordered = [candidates[2], candidates[3], ...sides];
   return ordered.find(({ point, side }) => {
     const avatar: ChatbotRect = { left: point.x, top: point.y, width: size, height: size };
     const bubbleLeft = side === "left" ? point.x - bubbleSpan : point.x + size + BUBBLE_GAP;
