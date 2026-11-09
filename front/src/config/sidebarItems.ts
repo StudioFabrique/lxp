@@ -55,7 +55,7 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       key: "parcours",
       subject: "parcours",
       path: "parcours",
-      label: "Parcours",
+      label: "Formations",
       icon: GraduationCap,
     },
     {

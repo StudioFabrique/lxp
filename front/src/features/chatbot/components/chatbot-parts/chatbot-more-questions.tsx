@@ -1,5 +1,6 @@
+import { cn } from "../../../../utils/cn";
 import { X } from "lucide-react";
-import ChatbotRadialButton from "./chatbot-radial-button";
+import ChatbotRadialButton, { SECONDARY_CLASS } from "./chatbot-radial-button";
 
 type Props = {
   label: string;
@@ -18,7 +19,7 @@ export default function ChatbotMoreQuestions({ label, onMore, onReset }: Props) 
       {onReset && (
         <button
           type="button"
-          className="btn btn-secondary btn-circle size-9 min-h-0 shrink-0 border border-secondary-content/40 p-0 shadow-md"
+          className={cn("btn btn-circle size-9 min-h-0 shrink-0 border p-0 shadow-md", SECONDARY_CLASS)}
           onClick={onReset}
           aria-label="Revenir aux premières questions"
         >
