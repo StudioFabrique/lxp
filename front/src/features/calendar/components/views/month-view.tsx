@@ -78,7 +78,7 @@ const MonthView = ({
                 if (!(event.target as HTMLElement).closest("button"))
                   onSelectDay?.(new Date(cellDate));
               }}
-              className={cn("border-b border-r min-h-20 p-1 flex flex-col gap-1 transition-colors", theme.border, onSelectDay && "cursor-pointer hover:bg-primary/5", !cell.currentMonth && "bg-base-200 text-base-content/40", isToday && theme.todayBg)}
+              className={cn("border-b border-r min-h-20 p-1 flex flex-col gap-1 transition-colors", theme.border, onSelectDay && "cursor-pointer hover:bg-primary/5", !cell.currentMonth && "bg-base-200 text-base-content/60", isToday && theme.todayBg)}
             >
               <button
                 type="button"

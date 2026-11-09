@@ -58,7 +58,7 @@ export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disa
           placeholder={disabled ? "Assistant indisponible" : "Poser une question"}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className="min-w-0 flex-1 bg-transparent text-base text-base-content outline-none placeholder:text-base-content/50"
+          className="min-w-0 flex-1 bg-transparent text-base text-base-content outline-none placeholder:text-base-content/60"
           {...register("prompt")}
         />
         {/* Mobile : dans le champ, à côté de l'envoi, plutôt qu'en débord qui sort de l'écran. */}

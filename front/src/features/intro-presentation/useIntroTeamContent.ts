@@ -6,6 +6,7 @@ import { AbilityContext } from "../../rbac/AbilityProvider";
 import { getModulesLabel, isTeacherUser } from "../../utils/helpers/user-role";
 import type StudentFeedback from "../../utils/interfaces/student-feedback";
 import { dashboardAdminApi } from "../dashboard-admin/api/dashboard-admin.api";
+import { buildOnboardingSteps } from "../dashboard-admin/components/onboarding/build-onboarding-steps";
 import { useAdminDashboard } from "../dashboard-admin/hooks/use-admin-dashboard";
 import type { IntroRoleOption } from "./intro-role";
 import {
@@ -28,10 +29,14 @@ export const useIntroTeamContent = (role: IntroRoleOption) => {
     welcomeMessage,
     parcours,
     modules,
-    recommendedActions,
+    isRoot,
+    teachersCount,
+    studentsCount,
+    groupsCount,
+    adminsCount,
     isParcoursLoading,
     isModulesLoading,
-    areRecommendationsLoading,
+    areCountsLoading,
   } = useAdminDashboard();
   const isTeacher = isTeacherUser(user);
 
@@ -47,7 +52,7 @@ export const useIntroTeamContent = (role: IntroRoleOption) => {
   const isReady = useIntroSpaceReady(
     isParcoursLoading ||
       isModulesLoading ||
-      areRecommendationsLoading ||
+      areCountsLoading ||
       (isTeacher && feedbacks.isLoading),
   );
 
@@ -66,7 +71,18 @@ export const useIntroTeamContent = (role: IntroRoleOption) => {
             item.key === "module" ? getModulesLabel(user, item.label) : item.label,
           description: (item) => getSidebarHelp("admin", item),
         }),
-        recommended: recommendedActions,
+        gettingStarted: buildOnboardingSteps({
+          isTeacher,
+          teachersCount,
+          studentsCount,
+          groupsCount,
+          adminsCount,
+          canAddAdmin: isRoot,
+          modulesCount: modules.length,
+          formations: parcours,
+        })
+          .filter((step) => !step.isDone)
+          .map((step) => ({ title: step.title, subtitle: step.description })),
         modules,
         modulesTitle: getModulesLabel(user, "Derniers modules créés"),
         parcours,
@@ -76,11 +92,15 @@ export const useIntroTeamContent = (role: IntroRoleOption) => {
       }),
     [
       ability,
+      adminsCount,
       feedbacks.data,
+      groupsCount,
+      isRoot,
       isTeacher,
+      studentsCount,
+      teachersCount,
       modules,
       parcours,
-      recommendedActions,
       role,
       user,
       welcomeMessage,

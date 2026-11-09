@@ -166,7 +166,7 @@ const ContenuDetail: FC<{
             <div className="flex flex-wrap justify-end gap-2">
               <Link
                 to={`/admin/parcours/module/${moduleId}?createCourse=true`}
-                className="btn btn-success btn-sm text-base-100"
+                className="btn btn-primary btn-sm"
               >
                 <Plus size={20} />
                 Créer un cours

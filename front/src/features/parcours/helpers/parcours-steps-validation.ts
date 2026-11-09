@@ -71,64 +71,64 @@ export const isModuleComplete = (module: Module) =>
 export const testModules = (modules: Array<Module>) =>
   modules.length > 0 && modules.every(isModuleComplete);
 
+/**
+ * Un parcours publié dont aucun cours n'est publié et visible apparaît vide aux apprenants.
+ * Ce n'est pas bloquant (le serveur accepte la publication) : l'appelant avertit.
+ */
+export const hasVisibleCourse = (
+  modules: ReadonlyArray<{ courses?: ReadonlyArray<{ isPublished?: boolean; visibility?: boolean }> }>,
+) =>
+  modules.some((module) =>
+    (module.courses ?? []).some(
+      (course) => course.isPublished === true && course.visibility !== false,
+    ),
+  );
+
 const testGroups = (groups: Array<Group>) => {
   return groups.length > 0;
 };
 
  
+/**
+ * Liste d'un coup tout ce qui empêche la publication : une entrée par règle non respectée,
+ * dans l'ordre des étapes de l'édition, pour que chaque manque ait son lien « Corriger ».
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function testParcoursStep(data: any) {
-  const validationErrors = Array<any>();
+  const validationErrors = Array<Record<string, string>>();
 
   if (!testTitle(data.infos.title)) {
-    validationErrors.push({
-      title: "Titre du parcours non valide",
-    });
-    return validationErrors;
+    validationErrors.push({ title: "Titre du parcours non valide" });
   }
   if (!testDates(data.infos.startDate, data.infos.endDate)) {
-    validationErrors.push({
-      dates: "Dates du parcours non valides",
-    });
-    return validationErrors;
+    validationErrors.push({ dates: "Dates du parcours non valides" });
   }
   if (!testTags(data.tags)) {
-    validationErrors.push({
-      tags: "Le parcours doit avoir au moins un tag",
-    });
-    return validationErrors;
+    validationErrors.push({ tags: "Le parcours doit avoir au moins un tag" });
   }
   if (!testContacts(data.contacts)) {
     validationErrors.push({
       contacts: "Le parcours doit avoir au moins un contact",
     });
-    return validationErrors;
   }
   if (!testObjectives(data.objectives)) {
     validationErrors.push({
       objectives: "Le parcours doit avoir au moins un objectif",
     });
-    return validationErrors;
   }
   if (!testSkills(data.skills)) {
     validationErrors.push({
       skills: "Le parcours doit avoir au moins une compétence",
     });
-    return validationErrors;
   }
-
   if (!data.modules || data.modules.length === 0) {
     validationErrors.push({
       modules: "Aucun module n'est attaché au parcours",
     });
-    return validationErrors;
-  }
-
-  if (data.modules.length > 0 && !testModules(data.modules)) {
+  } else if (!testModules(data.modules)) {
     validationErrors.push({
       modules: "Un ou plusieurs modules sont incomplets",
     });
-    return validationErrors;
   }
   if (!testGroups(data.groups)) {
     validationErrors.push({

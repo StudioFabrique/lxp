@@ -45,7 +45,7 @@ const IntroChildrenList = ({ card, index, highlightedRow = -1, onHighlightRow, o
               <ChildIcon
                 className={cn(
                   "size-4 shrink-0 transition-colors",
-                  isHighlighted ? "text-primary" : "text-base-content/50",
+                  isHighlighted ? "text-primary" : "text-base-content/60",
                 )}
                 aria-hidden="true"
               />
@@ -54,7 +54,7 @@ const IntroChildrenList = ({ card, index, highlightedRow = -1, onHighlightRow, o
                 <ChevronRight
                   className={cn(
                     "size-4 shrink-0 transition-all",
-                    isHighlighted ? "translate-x-0.5 text-primary" : "text-base-content/40",
+                    isHighlighted ? "translate-x-0.5 text-primary" : "text-base-content/60",
                   )}
                   aria-hidden="true"
                 />

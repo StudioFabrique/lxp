@@ -48,7 +48,7 @@ export default function AssignModuleContactsModal({
 
   return (
     <Modal
-      title={`Affecter des ressources à « ${module.title} »`}
+      title={`Affecter des membres « ${teamLabel} » à « ${module.title} »`}
       leftLabel="Annuler"
       rightLabel="Affecter"
       onLeftClick={onClose}

@@ -18,6 +18,7 @@ import {
   assignmentFormIsValid,
   emptyAssignmentForm,
 } from "./assignment-form.helpers";
+import { readableTextColor } from "../../../../utils/helpers/color-helpers";
 
 type Props = {
   course: Course;
@@ -162,7 +163,7 @@ export default function EditCourseModal({
                         ? "border-primary ring-2 ring-primary/30"
                         : "border-transparent",
                     )}
-                    style={{ backgroundColor: tag.color }}
+                    style={{ backgroundColor: tag.color, color: readableTextColor(tag.color) }}
                     onClick={() => toggleTag(tag.id)}
                     aria-pressed={selected}
                     disabled={selected && selectedTagIds.length === 1}

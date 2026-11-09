@@ -52,7 +52,7 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
 
           <StickyBarStackProvider>
             <div className="flex min-w-0 justify-center">
-              <div className="min-w-0 mt-4 md:mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
+              <div data-page-content className="min-w-0 mt-4 md:mt-[8vh] mb-[4vh] max-md:mb-24 xl:w-[80%] w-[90%]">
                 {children}
               </div>
             </div>

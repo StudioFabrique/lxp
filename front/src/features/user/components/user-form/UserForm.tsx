@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
+import type Role from "../../../../utils/interfaces/role";
 import { useUserForm } from "./useUserForm";
 import UserFormInformations from "./UserFormInformations";
 import UserFormContact from "./UserFormContact";
@@ -110,8 +111,16 @@ const UserForm = ({
     } else if (!roleId && initialRoleRank !== undefined) {
       const initialRole = roleOptions.roles.find((role) => role.rank === initialRoleRank);
       if (initialRole) setRoleId(initialRole._id);
+    } else if (!roleId && !editMode) {
+      // Sans choix explicite, la création démarre sur le rôle le moins privilégié
+      // (rang le plus élevé) : un compte n'obtient jamais plus de droits par oubli.
+      const leastPrivilegedRole = roleOptions.roles.reduce<Role | null>(
+        (lowest, role) => (!lowest || role.rank > lowest.rank ? role : lowest),
+        null,
+      );
+      if (leastPrivilegedRole) setRoleId(leastPrivilegedRole._id);
     }
-  }, [initialRoleRank, requiredRoleRank, roleId, roleOptions.isSuccess, roleOptions.roles, setRoleId]);
+  }, [editMode, initialRoleRank, requiredRoleRank, roleId, roleOptions.isSuccess, roleOptions.roles, setRoleId]);
 
   useEffect(() => {
     if (error && error.length > 0) {
@@ -124,7 +133,9 @@ const UserForm = ({
     email.trim().toLowerCase() === emailConflict.email.trim().toLowerCase();
 
   const emailMessage = emailError
-    ? "Le format de l'adresse email n'est pas valide."
+    ? email.trim().length === 0
+      ? "L'adresse email est obligatoire."
+      : "Le format de l'adresse email n'est pas valide."
     : emailIsRefused
       ? emailConflict.message
       : null;
@@ -177,7 +188,7 @@ const UserForm = ({
       </Header>
       {groupCreationContext?.(!editMode ? <UserInvitationCard sendEmail={sendEmail} onSetSendEmail={setSendEmail} disabled={disabled} compact /> : null)}
       <div className="flex flex-col gap-y-5">
-        <div className="grid grid-cols-1 gap-5 @min-[40rem]:grid-cols-2 @min-[64rem]:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 @min-[48rem]:grid-cols-2">
           <div className="min-w-0" data-testid="user-informations" data-chatbot-target="user-informations">
             <UserFormInformations
               lastname={lastname}
@@ -199,25 +210,8 @@ const UserForm = ({
               disabled={disabled}
             />
           </div>
-          <UserFormContact
-            address={address}
-            addressError={addressError}
-            onAddress={setAddress}
-            city={city}
-            cityError={cityError}
-            onCity={setCity}
-            postCode={postCode}
-            postCodeError={postCodeError}
-            onPostCode={setPostCode}
-            phone={phoneNumber}
-            phoneError={phoneError}
-            onPhone={setPhoneNumber}
-            birthDate={birthDate}
-            onChangeDate={setBirthDate}
-            disabled={disabled}
-          />
           <div
-            className="flex min-w-0 flex-col gap-5 @min-[40rem]:col-span-2 @min-[64rem]:col-span-1"
+            className="flex min-w-0 flex-col gap-5"
           >
             {!editMode && !groupCreationContext && (
               <BoxWrapper className="h-auto shrink-0">
@@ -240,6 +234,23 @@ const UserForm = ({
             </div>
           </div>
         </div>
+        <UserFormContact
+          address={address}
+          addressError={addressError}
+          onAddress={setAddress}
+          city={city}
+          cityError={cityError}
+          onCity={setCity}
+          postCode={postCode}
+          postCodeError={postCodeError}
+          onPostCode={setPostCode}
+          phone={phoneNumber}
+          phoneError={phoneError}
+          onPhone={setPhoneNumber}
+          birthDate={birthDate}
+          onChangeDate={setBirthDate}
+          disabled={disabled}
+        />
         {editMode && (
           <div className="grid grid-cols-1 gap-5 @min-[64rem]:grid-cols-3">
             <ItemsAdder

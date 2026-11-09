@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../../utils/helpers/text-helpers";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,8 +11,9 @@ const defaults = (
   invitationSent: boolean,
 ): UserFormValues => ({
   email: user?.email ?? "",
-  firstname: user?.firstname ?? "",
-  lastname: user?.lastname ?? "",
+  // Le serveur enregistre les noms en minuscules : on les affiche avec leurs majuscules.
+  firstname: toTitleCase(user?.firstname ?? ""),
+  lastname: toTitleCase(user?.lastname ?? ""),
   nickname: user?.nickname ?? "",
   address: user?.address ?? "",
   city: user?.city ?? "",

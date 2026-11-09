@@ -89,7 +89,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   if (!floating) {
     return (
       <button
-        className="self-center btn btn-sm btn-info text-info-content"
+        className="self-center btn btn-sm btn-primary"
         type="button"
         onClick={onSave}
         disabled={pending}
@@ -133,7 +133,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
                 paddingRight: isFloating ? 6 : 16,
               }}
               transition={transition}
-              className={cn("btn btn-sm btn-info justify-start overflow-hidden px-0 text-info-content", isFloating && "btn-circle shadow-lg")}
+              className={cn("btn btn-sm btn-primary justify-start overflow-hidden px-0", isFloating && "btn-circle shadow-lg")}
               type="button"
               onClick={onSave}
               disabled={pending}

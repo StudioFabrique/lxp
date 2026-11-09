@@ -76,7 +76,7 @@ export const ContentTypePicker = ({
               />
               <ChevronDown
                 aria-hidden="true"
-                className="h-2 w-2 text-base-content/40"
+                className="h-2 w-2 text-base-content/60"
                 strokeWidth={2}
               />
             </>

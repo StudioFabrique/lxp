@@ -13,7 +13,14 @@ type Props = {
   icon: React.ReactNode;
   textSize?: "text-sm" | "text-lg";
   tooltipText?: string;
+  /** Chemins supplémentaires qui activent aussi cette entrée. */
+  alsoActiveOn?: string[];
+  /** Chemins qui relèvent d'une autre entrée et ne doivent pas activer celle-ci. */
+  notActiveOn?: string[];
 };
+
+const isUnderPath = (currentPath: string, path: string) =>
+  currentPath === path || currentPath.startsWith(`${path}/`);
 
 const SidebarItem = ({
   linkTo,
@@ -22,13 +29,18 @@ const SidebarItem = ({
   icon,
   textSize = "text-sm",
   tooltipText,
+  alsoActiveOn = [],
+  notActiveOn = [],
   children,
 }: PropsWithChildren<Props>) => {
   const currentPath = currentRoute.slice(1).join("/");
-  const isActive = Boolean(
-    itemPath &&
-    (currentPath === itemPath || currentPath.startsWith(`${itemPath}/`)),
-  );
+  const isActive =
+    alsoActiveOn.some((path) => isUnderPath(currentPath, path)) ||
+    Boolean(
+      itemPath &&
+        isUnderPath(currentPath, itemPath) &&
+        !notActiveOn.some((path) => isUnderPath(currentPath, path)),
+    );
 
   return (
     <li className="block w-full">

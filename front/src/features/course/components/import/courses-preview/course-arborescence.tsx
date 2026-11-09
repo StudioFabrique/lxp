@@ -52,14 +52,14 @@ const CourseArborescence = ({
 
   if (!activeCourse)
     return (
-      <div className="text-base-content/40 italic text-sm text-center mt-10">
+      <div className="text-base-content/60 italic text-sm text-center mt-10">
         Sélectionnez un cours ci-dessus
       </div>
     );
 
   if (activeCourse.lessons.length === 0) {
     return (
-      <div className="text-base-content/40 italic text-sm p-4 text-center border border-dashed border-base-300 rounded-lg m-2">
+      <div className="text-base-content/60 italic text-sm p-4 text-center border border-dashed border-base-300 rounded-lg m-2">
         Ce cours ne contient aucune leçon.
       </div>
     );
@@ -133,7 +133,7 @@ const CourseArborescence = ({
                         autoFocus
                       />
                       <button
-                        className="btn btn-xs btn-square btn-success"
+                        className="btn btn-xs btn-square btn-primary"
                         onClick={(e) => {
                           e.stopPropagation();
                           if (lesson.id) saveLessonTitle(lesson.id);
@@ -145,7 +145,7 @@ const CourseArborescence = ({
                   ) : (
                     <div className="flex items-center gap-2 group/edit w-full">
                       <span
-                        className={cn("line-clamp-1 first-letter:uppercase", !lesson.isSelected && "line-through text-base-content/50")}
+                        className={cn("line-clamp-1 first-letter:uppercase", !lesson.isSelected && "line-through text-base-content/60")}
                       >
                         {lesson.title}
                       </span>
@@ -210,7 +210,7 @@ const CourseArborescence = ({
                               autoFocus
                             />
                             <button
-                              className="btn btn-xs btn-square btn-success"
+                              className="btn btn-xs btn-square btn-primary"
                               onClick={() => {
                                 if (lesson.id)
                                   saveActivityTitle(lesson.id, activity.id);
@@ -268,7 +268,7 @@ const CourseArborescence = ({
                     );
                   })
                 ) : (
-                  <div className="px-4 py-3 text-xs text-base-content/40 italic flex items-center gap-2">
+                  <div className="px-4 py-3 text-xs text-base-content/60 italic flex items-center gap-2">
                     <AlertCircle className="w-3 h-3" />
                     Aucune activité dans cette leçon
                   </div>

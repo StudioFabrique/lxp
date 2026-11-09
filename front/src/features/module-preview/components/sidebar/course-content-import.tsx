@@ -134,7 +134,7 @@ export default function CourseContentImport({
       <span className="grid flex-1 grid-cols-[1fr_auto_1fr] items-center gap-4">
         <span className="min-w-0">
           <span className="block font-medium">{formatTitle(content.title)}</span>
-          <span className="text-xs text-base-content/50">
+          <span className="text-xs text-base-content/60">
             {content.source === "resource"
               ? "Ressource supplémentaire"
               : content.sourceTitle}
@@ -144,7 +144,7 @@ export default function CourseContentImport({
         <span className="flex justify-center">
           {content.tag ? <TagItem tag={content.tag} compact /> : null}
         </span>
-        <span className="justify-self-end text-xs text-base-content/50">
+        <span className="justify-self-end text-xs text-base-content/60">
           {formatNumber(content.activitiesCount ?? 0)} activité(s)
         </span>
       </span>

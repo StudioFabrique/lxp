@@ -103,6 +103,16 @@ const inputClassName = cn("input input-bordered", hasError && "input-error");
 - Si une couleur doit être passée à une bibliothèque ou à un style inline, utiliser les variables CSS du thème DaisyUI, par exemple `var(--color-primary)`.
 - Vérifier que les choix de couleurs restent lisibles dans les thèmes clair et sombre.
 
+## Frontend : thèmes et contrastes avec Leonardo
+
+- Tout nouveau thème et toute modification des couleurs d'un thème (`front/src/index.css`, `front/src/themes/*.css`) doivent être conçus et vérifiés avec Leonardo (`@adobe/leonardo-contrast-colors`, déjà installé en devDependency). Ne pas choisir les teintes de texte, de contenu ou d'état « à l'œil » ni ajouter un autre outil de contraste.
+- Partir des couleurs de marque, puis faire générer par Leonardo les couleurs qui doivent respecter un rapport de contraste (`base-content`, les `*-content`, les couleurs d'état utilisées comme texte, les variables `--sidebar-*`). La commande `npm run theme:contrast:fix` applique cette génération en conservant la teinte et en modifiant le moins possible les valeurs déjà conformes.
+- Un thème est complet lorsqu'il déclare explicitement toutes les variables DaisyUI (`primary`, `secondary`, `accent`, `neutral`, `base-100/200/300`, `info`, `success`, `warning`, `error`, leurs `*-content` et `base-content`) et les variables `--sidebar-*`. Ne pas compter sur les valeurs par défaut de DaisyUI ni sur les blocs partagés `:where([data-theme])` pour des couleurs de contenu.
+- Seuils WCAG AA à respecter dans les thèmes clairs comme sombres : 4,5:1 pour le texte (y compris `base-content` à 60 % d'opacité sur `base-100` et `base-200`, les couleurs `primary`, `info`, `success`, `warning`, `error` utilisées comme texte, chaque `*-content` sur sa couleur et le texte de la barre latérale), 3:1 pour les composants d'interface et les indicateurs de focus.
+- Dans les composants, ne pas descendre sous `text-base-content/60` pour du texte lisible (aide, sous-titre, placeholder). Les opacités inférieures sont réservées aux éléments décoratifs ou désactivés.
+- Un nouveau thème s'ajoute dans la liste du plugin `daisyui` de `front/src/index.css` et dans les sélecteurs des blocs partagés s'il en utilise. Mettre à jour le nombre de thèmes attendu dans `front/src/themes/theme-contrast.test.ts`.
+- Lancer `npm run theme:contrast` depuis `front/` après toute modification de thème : la commande doit afficher `0 mesure(s) sous le seuil`. Le test `src/themes/theme-contrast.test.ts` échoue sinon. Ne pas assouplir un seuil ni retirer un thème du test pour le faire passer.
+
 ## Frontend : un composant par fichier
 
 - **Un composant React frontend = un fichier.** Ne pas déclarer plusieurs composants dans un même fichier, même si les composants secondaires ne sont pas exportés.
@@ -181,6 +191,7 @@ const inputClassName = cn("input input-bordered", hasError && "input-error");
 ## Vérifications et tests
 
 - Choisir les vérifications selon les fichiers et comportements modifiés. Une modification exclusivement documentaire n'exige pas une compilation applicative ; relire les règles, chemins et commandes et exécuter `git diff --check`.
+- Après une modification de thème, lancer depuis `front/` `npm run theme:contrast` et `npm run test -- --run src/themes`.
 - Après une modification frontend, lancer depuis `front/` `npm run build`, le lint ciblé avec `npx eslint <fichiers-modifiés> --report-unused-disable-directives` et les tests concernés avec `npm run test -- --run <fichiers-de-test>`.
 - Après une modification backend, lancer depuis `api/` `npm run build` et les tests concernés. Utiliser `npm run typecheck` lorsque la modification touche aussi les types ou fichiers exclus du build, notamment les tests.
 - Pour des tests Jest ciblés, utiliser depuis `api/` `NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/dotenv -e .env.test -- ./node_modules/.bin/jest --runInBand --runTestsByPath <fichiers-de-test>`.

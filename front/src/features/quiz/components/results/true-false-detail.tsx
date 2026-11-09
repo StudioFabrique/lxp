@@ -28,7 +28,7 @@ const TrueFalseDetail = ({ quiz, userAnswer }: TrueFalseDetailProps) => {
                 !isCorrect &&
                 "bg-error text-error-content border-2 border-primary",
               !isSelected && isCorrect && "bg-success/15 text-success",
-              !isSelected && !isCorrect && "bg-base-200 text-base-content/40",
+              !isSelected && !isCorrect && "bg-base-200 text-base-content/60",
             )}
           >
             {value ? "VRAI" : "FAUX"}

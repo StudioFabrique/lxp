@@ -7,10 +7,15 @@ import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
 import { useIsMobile } from "../../../hooks/useMediaQuery";
 import { useMobileHeaderActions } from "../../../hooks/useMobileHeaderActions";
+import { cn } from "../../../utils/cn";
 
 const links = [
   { path: "/admin/user/add", label: "Créer un utilisateur" },
-  { path: "/admin/feedbacks", label: "Voir les feedbacks" },
+  {
+    path: "/admin/feedbacks",
+    label: "Voir les feedbacks",
+    teacherOnly: true,
+  },
   {
     path: "/admin/teacher/evaluations",
     label: "Évaluer un apprenant",
@@ -32,6 +37,8 @@ export default function QuickActions({
   const isMobile = useIsMobile();
   const headerActions = useMobileHeaderActions();
   const isInActionsDrawer = isMobile && headerActions !== null;
+  // Dans le tiroir, chaque entrée est un `.btn` : elle reçoit le gabarit en carte commun à toutes les actions du tiroir.
+  const itemClassName = cn(isInActionsDrawer && "btn");
 
   const items = (
     <>
@@ -39,6 +46,7 @@ export default function QuickActions({
         <li>
           <button
             type="button"
+            className={itemClassName}
             onClick={onCreateFormation}
           >
             Créer une formation
@@ -47,7 +55,7 @@ export default function QuickActions({
       </PermissionGuard>
       <PermissionGuard action="write" object="parcours">
         <li>
-          <button type="button" onClick={onCreateParcours}>
+          <button type="button" className={itemClassName} onClick={onCreateParcours}>
             Créer un parcours
           </button>
         </li>
@@ -57,7 +65,9 @@ export default function QuickActions({
 
         return (
           <li key={item.label}>
-            <Link to={item.path}>{item.label}</Link>
+            <Link to={item.path} className={itemClassName}>
+              {item.label}
+            </Link>
           </li>
         );
       })}
@@ -67,7 +77,7 @@ export default function QuickActions({
   if (isInActionsDrawer) {
     return headerActions.container
       ? createPortal(
-          <ul className="menu w-full gap-1 p-0 text-base" aria-label="Actions rapides">
+          <ul className="flex w-full flex-col gap-2" aria-label="Actions rapides">
             {items}
           </ul>,
           headerActions.container,

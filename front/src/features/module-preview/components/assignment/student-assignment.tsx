@@ -11,6 +11,7 @@ import { modulePreviewApi } from "../../api/module-preview.api";
 import { assignmentScoreTextClass, assignmentScoreTone } from "./assignment-score-color";
 import AssignmentLinkPreviews from "./assignment-link-previews";
 import { cn } from "../../../../utils/cn";
+import FileInputButton from "../../../../components/form/FileInputButton";
 import { type Props } from "./course-assignment.types";
 import { AssignmentFileButton } from "./assignment-file-button";
 import { formatDate } from "./course-assignment.utils";
@@ -73,7 +74,7 @@ export function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
           title="Confirmer la remise ?"
           leftLabel="Annuler"
           rightLabel="Confirmer la remise"
-          rightClassName="btn-warning"
+          rightClassName="btn-primary"
           isSubmitting={saving === "submit"}
           onLeftClick={() => {
             if (saving === null) setShowSubmitConfirmation(false);
@@ -154,28 +155,27 @@ export function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
 
         <label className="mt-4 flex flex-col gap-2">
           <span className="text-sm font-semibold">Réponse textuelle</span>
+          {/* Après la remise, le texte reste lisible (lecture seule) : un champ désactivé ressemble à un champ vide. */}
           <textarea
-            className="textarea textarea-bordered min-h-48 w-full resize-y"
+            className={cn(
+              "textarea textarea-bordered min-h-28 w-full resize-y",
+              isSubmitted && "cursor-default resize-none bg-base-200 text-base-content",
+            )}
             placeholder="Rédigez votre réponse…"
             value={text}
-            disabled={isSubmitted}
+            readOnly={isSubmitted}
             onChange={(event) => setText(event.target.value)}
           />
         </label>
         <AssignmentLinkPreviews text={savedText} />
 
         {!isSubmitted && (
-          <label className="mt-4 flex flex-col gap-2">
-            <span className="text-sm font-semibold">Fichiers</span>
-            <input
-              type="file"
-              className="file-input file-input-bordered w-full"
-              multiple
-              onChange={(event) =>
-                setFiles(Array.from(event.target.files ?? []))
-              }
+          <div className="mt-4">
+            <FileInputButton
+              label="Fichiers"
+              onFiles={setFiles}
             />
-          </label>
+          </div>
         )}
 
         {(submission?.files.length || files.length > 0) && (
@@ -216,7 +216,7 @@ export function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
             </button>
             <button
               type="button"
-              className="btn btn-warning"
+              className="btn btn-primary"
               disabled={saving !== null}
               onClick={() => {
                 if (

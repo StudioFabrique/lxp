@@ -28,7 +28,7 @@ export default function IndicatorCard({ indicator }: IndicatorCardProps) {
         ) : (
           // Un zéro laisserait croire à une mesure faite, alors qu'aucune
           // donnée n'a été collectée.
-          <p className="text-sm italic text-base-content/50">
+          <p className="text-sm italic text-base-content/60">
             {indicatorEmptyMessage(indicator)}
           </p>
         )}

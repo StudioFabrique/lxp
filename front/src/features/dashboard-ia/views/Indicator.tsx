@@ -17,7 +17,7 @@ export function Indicator({
     value === null || !Number.isFinite(value) ? null : clamp(value);
   const color =
     percent === null
-      ? "text-base-content/40"
+      ? "text-base-content/60"
       : reverse
         ? percent >= 70
           ? "text-error"

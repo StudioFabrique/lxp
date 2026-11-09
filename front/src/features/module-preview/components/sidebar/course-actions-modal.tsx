@@ -4,6 +4,7 @@ import Course from "../../../../../src/utils/interfaces/course";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import TableActionsModal from "../../../../components/table/TableActionsModal";
 import { ModalCourseType } from "./course-item";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 
 type CourseActionsModalProps = {
   modalType?: ModalCourseType;
@@ -40,19 +41,21 @@ const CourseActionsModal = ({
   }, [modalType]);
 
   const description = useMemo(() => {
+    const courseName = `« ${formatTitle(course.title)} »`;
+    const lessonName = `« ${formatTitle(lesson?.title)} »`;
     switch (modalType) {
       case "visibility":
-        return "Changez la visibilité du cours";
+        return `Vous allez changer la visibilité du cours ${courseName} auprès des apprenants.`;
       case "publish":
-        return "Publiez le cours";
+        return `Vous allez publier le cours ${courseName}. Les apprenants le verront aussitôt, selon sa visibilité.`;
       case "deleteCourse":
-        return "Supprimez le cours";
+        return `Vous allez supprimer le cours ${courseName}. Cette action est irréversible.`;
       case "deleteLesson":
-        return "Supprimez la leçon";
+        return `Vous allez supprimer la leçon ${lessonName}. Cette action est irréversible.`;
       default:
         return "";
     }
-  }, [modalType]);
+  }, [course.title, lesson?.title, modalType]);
 
   return (
     <TableActionsModal
@@ -61,7 +64,6 @@ const CourseActionsModal = ({
       isPending={isModalLoading}
       title={title}
       description={description}
-      descList={lesson ? [lesson.title] : [course.title]}
     >
       <button
         className="btn btn-primary btn-md"

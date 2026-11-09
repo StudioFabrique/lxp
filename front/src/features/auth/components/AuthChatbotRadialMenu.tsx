@@ -37,7 +37,9 @@ type Props = {
  */
 export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide", items, anchorRef, bubbleRef, pinnedSide, onOverlapChange, stacked = false, pinnedInset = false, aligned = false }: Props) {
   const reducedMotion = useReducedMotion();
-  const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
+  // Indexées par clé : quand la série de questions change, une référence par position garderait des cases périmées ou vides.
+  const itemsRef = useRef<Map<string, HTMLLIElement>>(new Map());
+  const keys = items.map(item => item.key).join("\u0000");
   const count = items.length;
   const pinnedIndex = items.findIndex(item => item.pinned);
   const pinnedOverhang = items[pinnedIndex]?.overhang ?? 0;
@@ -64,8 +66,7 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         const fanTowardsLeft = pinnedSide === undefined
           ? !roomRight
           : pinnedSide === "right" ? roomLeft || !roomRight : !roomRight && roomLeft;
-        // La liste garde des cases vides quand le nombre d'entrées diminue : seules les entrées affichées comptent.
-        const elements = itemsRef.current.slice(0, count).map(item => item ?? null);
+        const elements = keys.split("\u0000").map(key => itemsRef.current.get(key) ?? null);
         const halfHeight = Math.max(...elements.map(item => (item?.offsetHeight ?? 0) / 2));
         const extent = radius * Math.sin(Math.max(...fan.map(Math.abs)) * Math.PI / 180) + halfHeight;
         // Avec une entrée épinglée, c'est elle qui reste à hauteur de l'assistant : les autres s'écartent, l'éventail ne se décale pas.
@@ -121,12 +122,12 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
     };
     positionItems();
     return () => window.cancelAnimationFrame(frame);
-  }, [anchorRef, bubbleRef, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange, stacked, aligned]);
+  }, [anchorRef, bubbleRef, keys, count, pinnedIndex, pinnedOverhang, pinnedSide, onOverlapChange, stacked, aligned]);
 
   return createPortal(
     <ul id={id} aria-label={label} className={cn("pointer-events-none fixed z-50", stacked ? "inset-x-3 bottom-6 flex max-h-[calc(100dvh-3rem)] flex-col gap-2 overflow-y-auto overflow-x-hidden" : "inset-0")}>
       {items.map((item, index) => (
-        <motion.li key={item.key} ref={element => { itemsRef.current[index] = element; }}
+        <motion.li key={item.key} ref={element => { if (element) itemsRef.current.set(item.key, element); else itemsRef.current.delete(item.key); }}
           className={cn(
             "pointer-events-auto",
             stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),

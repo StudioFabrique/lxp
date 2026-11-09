@@ -22,9 +22,15 @@ export default function useParcoursView() {
         ?.data?.message ?? "Erreur inconnue")
     : "";
 
+  const errorCode = (
+    queryError as { response?: { data?: { code?: string } } } | null
+  )?.response?.data?.code;
+
   return {
     isLoading,
     error,
+    /** `PARCOURS_WITHOUT_PUBLISHED_CONTENT` : parcours publié, mais sans cours encore visible. */
+    errorCode,
     image: normalizeImageSource(parcours?.image),
     parcours: {
       id: parcours?.id,

@@ -101,7 +101,7 @@ export const AppErrorPage = ({ error }: { error: unknown }) => {
                 {/* Bouton Copier */}
                 <button
                   onClick={handleCopy}
-                  className="absolute top-2 right-2 btn btn-xs btn-square btn-ghost text-base-content/50 hover:text-base-content hover:bg-base-300 transition-colors"
+                  className="absolute top-2 right-2 btn btn-xs btn-square btn-ghost text-base-content/60 hover:text-base-content hover:bg-base-300 transition-colors"
                   aria-label="Copier l'erreur"
                   title="Copier les détails"
                 >

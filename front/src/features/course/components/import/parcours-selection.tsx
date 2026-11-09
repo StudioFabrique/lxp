@@ -241,7 +241,7 @@ const ParcoursSelection = ({
         endActions={
           <button
             data-course-import-tour="assignment-actions"
-            className="btn btn-success gap-2"
+            className="btn btn-primary gap-2"
             disabled={!canConfirm}
             onClick={() => onConfirm(selectedParcours)}
           >

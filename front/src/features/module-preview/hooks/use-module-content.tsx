@@ -344,11 +344,13 @@ const useModuleContent = () => {
           visibility,
         );
         if (data.success) {
-          toast.success(data.message);
+          toast.success(data.message || "Le cours a été publié.");
           fetchModuleData();
+        } else {
+          toast.error(data.message || "Le cours n'a pas pu être publié.");
         }
       } catch {
-        // silently fail
+        toast.error("Le cours n'a pas pu être publié. Réessayez dans un instant.");
       }
     },
     [fetchModuleData],

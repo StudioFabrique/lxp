@@ -8,7 +8,7 @@ export const DropdownCategoryTitle = ({
 }) => {
   return (
     <div
-      className="text-[.65rem] font-semibold mb-1 uppercase text-base-content/40 select-none px-2 tracking-wider"
+      className="text-[.65rem] font-semibold mb-1 uppercase text-base-content/60 select-none px-2 tracking-wider"
     >
       {children}
     </div>

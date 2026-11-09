@@ -1,0 +1,80 @@
+[
+  {
+    "id": "normalize.display.fields.drop",
+    "invariantId": "keep-display-label-case",
+    "label": "Keep the case of display labels",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "dependency",
+        "name": "normalize_display_fields"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Stop normalizing labels on Accomplishment",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Accomplishment\""
+      },
+      {
+        "description": "Stop normalizing labels on Activity",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Activity\""
+      },
+      {
+        "description": "Stop normalizing labels on BonusActivity",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"BonusActivity\""
+      },
+      {
+        "description": "Stop normalizing labels on Course",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Course\""
+      },
+      {
+        "description": "Stop normalizing labels on CourseAssignmentCriterion",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"CourseAssignmentCriterion\""
+      },
+      {
+        "description": "Stop normalizing labels on Formation",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Formation\""
+      },
+      {
+        "description": "Stop normalizing labels on Lesson",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Lesson\""
+      },
+      {
+        "description": "Stop normalizing labels on Module",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Module\""
+      },
+      {
+        "description": "Stop normalizing labels on Parcours",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Parcours\""
+      },
+      {
+        "description": "Stop normalizing labels on Quiz",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Quiz\""
+      },
+      {
+        "description": "Stop normalizing labels on Resource",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Resource\""
+      },
+      {
+        "description": "Stop normalizing labels on ResourceActivity",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"ResourceActivity\""
+      },
+      {
+        "description": "Stop normalizing labels on ResourceBonusActivity",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"ResourceBonusActivity\""
+      },
+      {
+        "description": "Stop normalizing labels on Tag",
+        "sql": "DROP TRIGGER IF EXISTS normalize_display_fields ON public.\"Tag\""
+      },
+      {
+        "description": "Drop display label normalization function",
+        "sql": "DROP FUNCTION IF EXISTS public.normalize_display_fields()"
+      }
+    ],
+    "postcheck": []
+  }
+]

@@ -12,7 +12,7 @@
             },
             {
               "selector": "aside a[href=\"/admin/dashboard\"]",
-              "message": "Accueil. Votre tableau de bord : les actions recommandées, les derniers modules et parcours créés, et les retours des apprenants."
+              "message": "Accueil. Votre tableau de bord : la mise en route, les derniers modules et parcours créés, et les retours des apprenants."
             },
             {
               "selector": "aside a[href=\"/admin/user\"]",
@@ -143,7 +143,7 @@
           "steps": [
             {
               "selector": "aside a[href=\"/admin/dashboard\"]",
-              "message": "Vous êtes dans la section « Accueil ». Votre tableau de bord : les actions recommandées, les derniers modules et parcours créés, et les retours des apprenants."
+              "message": "Vous êtes dans la section « Accueil ». Votre tableau de bord : la mise en route, les derniers modules et parcours créés, et les retours des apprenants."
             },
             {
               "selector": "#main-scroll-container .themed-page-header",
@@ -151,7 +151,7 @@
             },
             {
               "selector": "#main-scroll-container .header-actions-main > *",
-              "message": "Les actions recommandées et les raccourcis de création sont regroupés ici."
+              "message": "Les raccourcis de création sont regroupés ici, dans « Actions rapides »."
             }
           ]
         },
@@ -164,8 +164,8 @@
               "message": "Ouvrez « Actions rapides » puis choisissez « Créer une formation »."
             },
             {
-              "selector": "[data-chatbot-target=\"first-formation\"]",
-              "message": "Tant que vous n'avez aucune formation, ce bouton la crée directement."
+              "selector": "[data-chatbot-target=\"onboarding-current-step\"]",
+              "message": "Tant que vous n'avez aucune formation, la checklist « Bien démarrer » vous y conduit."
             }
           ]
         },
@@ -180,16 +180,6 @@
             {
               "target": "formation-add-parcours",
               "message": "Vous pouvez aussi cliquer sur « Ajouter un parcours » directement dans la carte de la formation."
-            }
-          ]
-        },
-        {
-          "id": "recommended",
-          "label": "Que sont les actions recommandées ?",
-          "steps": [
-            {
-              "selector": "button[aria-label^=\"Actions recommandées\"]",
-              "message": "Cette cloche liste les prochaines étapes utiles, par exemple un parcours à compléter ou un feedback à traiter. Le chiffre indique leur nombre."
             }
           ]
         },
@@ -378,7 +368,7 @@
           "steps": [
             {
               "target": "user-certifications",
-              "message": "Saisissez le titre, le niveau et la date du diplôme, puis validez : la certification apparaît dans la liste des certifications enregistrées."
+              "message": "Dépliez la section « Certifications », saisissez le titre, le niveau et la date du diplôme, puis validez : la certification apparaît dans la liste des certifications enregistrées."
             }
           ]
         },

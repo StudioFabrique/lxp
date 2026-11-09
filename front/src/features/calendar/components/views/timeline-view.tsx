@@ -36,7 +36,7 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
   const hasUntimed = days.some(day => day.allDay.length || day.hidden.length);
   const eventClass = (event: CalendarEvent) => eventConfig[event.type];
   const clickEvent = (event: CalendarEvent, target: HTMLElement) => onClickEventDetails?.(event.id, target.getBoundingClientRect(), target);
-  return <div className="overflow-auto max-h-[75vh]" aria-label={view === "day" ? "Cours du jour" : "Cours de la semaine"}>
+  return <div className="overflow-x-auto" aria-label={view === "day" ? "Cours du jour" : "Cours de la semaine"}>
     <div data-calendar-scroll-content className={cn(view === "week" ? "min-w-[700px]" : "min-w-full")}>
       {hasHeader && <div className={cn("sticky top-0 z-30 flex border-b", theme.headerBg, theme.border)}>
         <div className="w-16 shrink-0" />
@@ -71,10 +71,10 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
             return <button key={event.id} type="button" data-calendar-event={event.id}
               className={cn("absolute z-10 flex flex-col items-stretch justify-start overflow-hidden rounded-md border-l-4 px-1.5 py-1 text-left shadow-sm hover:z-20 hover:shadow-md focus:z-20", eventClass(event))}
               style={{ ...getEventStyle(start, end, startHour, style), left: `calc(${lane * 100 / columns}% + 2px)`, width: `calc(${100 / columns}% - 4px)` }}
-              title={event.category === "assignment" ? `${formatTitle(event.title)} : à rendre avant ${event.deadlineTime}` : `${formatTitle(event.title)} : ${event.start} – ${event.end}`}
+              title={event.category === "assignment" ? `${formatTitle(event.title)} : ${event.isSubmitted ? "remis" : `à rendre avant ${event.deadlineTime}`}` : `${formatTitle(event.title)} : ${event.start} – ${event.end}`}
               onClick={e => clickEvent(event, e.currentTarget)}>
               <div className="line-clamp-3 break-words text-xs font-bold leading-tight">{formatTitle(event.title)}</div>
-              <div className="truncate text-[10px]">{event.category === "assignment" ? `À rendre avant ${event.deadlineTime}` : `${event.start} – ${event.end}`}</div>
+              <div className="truncate text-[10px]">{event.category === "assignment" ? (event.isSubmitted ? "Devoir remis" : `À rendre avant ${event.deadlineTime}`) : `${event.start} – ${event.end}`}</div>
               {event.subtitle && <div className="truncate text-[10px] opacity-80">{event.subtitle}</div>}
             </button>;
           })}

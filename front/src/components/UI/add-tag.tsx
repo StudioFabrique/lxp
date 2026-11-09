@@ -7,6 +7,8 @@ interface AddTagProps {
   tag: string;
   placeholder?: string;
   error: boolean;
+  /** Signale le champ comme obligatoire (astérisque dans le libellé). */
+  required?: boolean;
   onChangeValue: (event: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (event: React.FormEvent) => void;
 }
@@ -22,7 +24,7 @@ export default function AddTag(props: AddTagProps) {
       className="flex flex-col items-start w-full gap-y-2"
       onSubmit={handleTagSubmit}
     >
-      <label>Tags</label>
+      <label>{props.required ? "Tags *" : "Tags"}</label>
       <span className="flex items-center gap-x-2 w-full">
         <input
           className={cn("input input-sm focus:outline-none w-full", props.error && "input-error")}

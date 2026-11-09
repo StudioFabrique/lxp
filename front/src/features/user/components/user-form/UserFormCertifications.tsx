@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { graduationSchema } from "../../user.schema";
 import { showFormErrors } from "../../../../components/form/form-errors";
 import { useState } from "react";
-import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import UserFormOptionalSection from "./UserFormOptionalSection";
 import Graduation from "../../interfaces/graduation";
 import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
@@ -94,17 +94,21 @@ const UserFormCertifications = ({
   };
 
   return (
-    <BoxWrapper className="@container">
+    <UserFormOptionalSection
+      title="Certifications"
+      hint="Facultatif : diplômes et titres obtenus"
+      defaultOpen={graduations.length > 0}
+    >
       <div
         data-chatbot-target="user-certifications"
         className={cn(
+          "@container",
           "grid grid-cols-1 gap-5 @min-[40rem]:gap-x-10",
           graduations.length > 0 && "@min-[40rem]:grid-cols-2",
         )}
       >
         <div className="flex min-w-0 flex-col justify-between">
           <div className="flex flex-col justify-between gap-y-3">
-            <h2 className="font-bold text-xl">Certifications</h2>
             <span className="flex flex-col gap-y-2">
               <label>Titre du diplôme</label>
               <input
@@ -210,7 +214,7 @@ const UserFormCertifications = ({
           </ul>
         )}
       </div>
-    </BoxWrapper>
+    </UserFormOptionalSection>
   );
 };
 

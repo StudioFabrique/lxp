@@ -201,7 +201,7 @@ démonstration, à chaque déploiement, dès que l'environnement porte
 1. arrêt de l'application et recréation de la base LXP. Le dump est un
    `pg_dump -a` et ne se rejoue que sur une base vide ; cette étape efface aussi
    le marqueur de migration Prisma 8 ;
-2. `prisma db migrate`, puis les triggers ANDRIA ;
+2. `prisma db migrate --to current`, puis les triggers ANDRIA ;
 3. `psql < api/dumps/demo/dump-pgsql.sql` ;
 4. `mongorestore --drop` du dump Mongo, copié dans le conteneur au préalable ;
 5. `rsync` de `api/dumps/demo/activities/` vers le volume `uploads` ;

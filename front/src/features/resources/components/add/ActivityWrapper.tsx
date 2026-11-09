@@ -22,7 +22,7 @@ export default function ActivityWrapper(props: Props) {
         props.activity.type === "resource") ? (
         <div className="flex items-center gap-x-4 justify-start">
           <PermissionGuard action="write" object="resource">
-            <p className="whitespace-nowrap text-base-content/50">
+            <p className="whitespace-nowrap text-base-content/60">
               Titre de l'activité :&nbsp;
             </p>
           </PermissionGuard>
@@ -34,7 +34,7 @@ export default function ActivityWrapper(props: Props) {
               )}
               <h2>{formatTitle(props.activity?.title)}</h2>
             </div>
-            <p className="italic text-xs text-base-content/50">
+            <p className="italic text-xs text-base-content/60">
               &nbsp;ajouté le {localeDate(props.activity.createdAt)}
             </p>
           </span>

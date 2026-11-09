@@ -11,9 +11,10 @@ import type { CreateCourseFormValues } from "./course-form.types";
 import { cn } from "../../../../utils/cn";
 import AssignmentFields from "./assignment-fields";
 import {
-  assignmentFormIsValid,
+  assignmentFormIssue,
   emptyAssignmentForm,
 } from "./assignment-form.helpers";
+import { readableTextColor } from "../../../../utils/helpers/color-helpers";
 
 type Props = {
   initialTitle: string;
@@ -55,13 +56,14 @@ export default function CreateCourseDetailsModal({
     );
   };
 
-  // Motif affiché en infobulle tant que le bouton de création est désactivé.
+  // Motif affiché à côté du bouton (et en infobulle) tant que la création est désactivée.
+  const assignmentIssue = assignmentFormIssue(assignment);
   const submitBlockReason = !title.trim()
     ? "Renseignez le titre du cours."
     : selectedTagIds.length === 0
       ? "Sélectionnez au moins un tag pour créer le cours."
-      : !assignmentFormIsValid(assignment)
-        ? "Complétez les informations du devoir."
+      : assignmentIssue
+        ? `Devoir à compléter : ${assignmentIssue}`
         : null;
 
   const handleSubmit = form.handleSubmit(
@@ -152,7 +154,7 @@ export default function CreateCourseDetailsModal({
                           ? "border-primary ring-2 ring-primary/30"
                           : "border-transparent",
                       )}
-                      style={{ backgroundColor: tag.color }}
+                      style={{ backgroundColor: tag.color, color: readableTextColor(tag.color) }}
                       aria-pressed={selected}
                       disabled={selected && selectedTagIds.length === 1}
                     >
@@ -162,8 +164,10 @@ export default function CreateCourseDetailsModal({
                   );
                 })
               ) : (
-                <span className="text-sm text-base-content/50">
-                  Aucun tag disponible
+                <span className="text-sm text-base-content/60">
+                  Aucun tag disponible : les tags d'un cours sont ceux de son
+                  parcours. Ajoutez-en à l'étape 1 (Informations) du parcours,
+                  puis revenez créer le cours.
                 </span>
               )}
             </div>
@@ -172,7 +176,12 @@ export default function CreateCourseDetailsModal({
           <AssignmentFields value={assignment} onChange={setAssignment} />
         </form>
 
-        <div className="flex justify-end gap-3 border-t border-base-300 px-6 py-4">
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-base-300 px-6 py-4">
+          {submitBlockReason ? (
+            <p role="status" className="mr-auto min-w-0 text-sm text-base-content/80">
+              {submitBlockReason}
+            </p>
+          ) : null}
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             Annuler
           </button>

@@ -126,7 +126,7 @@ export default function CourseContentTagCombobox({
             disabled={disabled || !hasTags}
             placeholder={
               !hasTags
-                ? "Aucun tag disponible"
+                ? "Aucun tag sur le parcours (étape 1)"
                 : selectedTag?.name ?? "Choisir un tag"
             }
             value={isOpen ? query : (selectedTag?.name ?? "")}

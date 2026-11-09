@@ -60,7 +60,7 @@ describe("intro-space-content", () => {
       title: "Bonjour ada !",
       message: "Bienvenue",
       nav: [],
-      recommended: [],
+      gettingStarted: [],
       modules: [],
       modulesTitle: "Derniers modules créés",
       parcours: [{ id: 1, title: "F", level: "", parcours: [{ id: 2, title: "P1", startDate: null, endDate: null, isPublished: true, thumb: null }] }],

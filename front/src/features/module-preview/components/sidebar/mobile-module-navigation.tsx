@@ -173,8 +173,8 @@ export default function MobileModuleNavigation({
                       onNavigated?.();
                     }}
                     className={cn("flex h-10 w-full items-center justify-between gap-2 rounded-lg px-3 text-left text-sm font-medium transition-colors", selectedAssignmentCourseId === course.id
-                        ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
-                        : "bg-warning/25 text-warning-content hover:bg-warning/40")}
+                        ? "bg-primary/20 text-base-content ring-1 ring-primary/40"
+                        : "bg-primary/10 text-base-content hover:bg-primary/20")}
                   >
                     <span className="flex min-w-0 items-center gap-1">
                       <ClipboardCheck className="size-4 shrink-0" />

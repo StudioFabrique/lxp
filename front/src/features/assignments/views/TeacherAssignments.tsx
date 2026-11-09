@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarClock, SquareArrowRightEnter, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -73,8 +74,8 @@ export default function TeacherAssignments() {
         <MultiCriteriaSearch
           value={search}
           onChange={setSearch}
-          criteria={["cours", "module", "parcours", "étudiant", "statut"]}
-          placeholder="Rechercher une évaluation ou un étudiant..."
+          criteria={["cours", "module", "parcours", "apprenant", "statut"]}
+          placeholder="Rechercher une évaluation ou un apprenant..."
         />
       ) : null}
 
@@ -175,10 +176,12 @@ export default function TeacherAssignments() {
                 }
                 items={assignment.students.map((student) => {
                   const status = teacherAssignmentStudentStatus(student);
-                  const fullName =
+                  // Les noms sont stockés en minuscules : on les met en forme à l'affichage.
+                  const fullName = toTitleCase(
                     [student.firstname, student.lastname]
                       .filter(Boolean)
-                      .join(" ") || "Étudiant";
+                      .join(" ") || "Apprenant",
+                  );
                   const canOpenSubmission = Boolean(
                     student.submission?.submittedAt,
                   );
@@ -211,11 +214,11 @@ export default function TeacherAssignments() {
                   };
                 })}
                 maxItemsShown={5}
-                emptyMessage="Aucun étudiant inscrit à ce parcours"
+                emptyMessage="Aucun apprenant inscrit à ce parcours"
                 moreItemsLabel={(count) =>
-                  `Afficher plus d’étudiants (${formatNumber(count)})`
+                  `Afficher plus d’apprenants (${formatNumber(count)})`
                 }
-                overflowTitle={`Autres étudiants du cours « ${assignment.course.title} »`}
+                overflowTitle={`Autres apprenants du cours « ${assignment.course.title} »`}
               />
             );
           })}

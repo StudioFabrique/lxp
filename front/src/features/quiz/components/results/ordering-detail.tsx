@@ -17,7 +17,7 @@ const OrderingDetail = ({ quiz, userAnswer }: OrderingDetailProps) => {
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold text-base-content/50 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-base-content/60 uppercase tracking-wide">
           Votre ordre
         </p>
         {userItems.map((item, i) => {
@@ -43,7 +43,7 @@ const OrderingDetail = ({ quiz, userAnswer }: OrderingDetailProps) => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold text-base-content/50 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-base-content/60 uppercase tracking-wide">
           Ordre correct
         </p>
         {correctOrder.length > 0 ? (
@@ -57,7 +57,7 @@ const OrderingDetail = ({ quiz, userAnswer }: OrderingDetailProps) => {
             </div>
           ))
         ) : (
-          <div className="p-2 text-sm italic text-base-content/50 bg-base-200 rounded-lg">
+          <div className="p-2 text-sm italic text-base-content/60 bg-base-200 rounded-lg">
             Indisponible
           </div>
         )}

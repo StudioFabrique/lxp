@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ChevronRight, MoveUpRight, Pencil } from "lucide-react";
+import { ArrowUpRight, MoveUpRight, Pencil } from "lucide-react";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { cn } from "../../../utils/cn";
@@ -60,6 +60,7 @@ export default function LastModules({ modules, isLoading }: Props) {
                 <PermissionGuard action="read" object="module" fallback={title}>
                   <Link
                     to={previewPath}
+                    data-row-link
                     aria-label={`Prévisualiser ${module.title}`}
                     className="block rounded after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
                   >
@@ -92,8 +93,8 @@ export default function LastModules({ modules, isLoading }: Props) {
                     </Link>
                   </PermissionGuard>
                   <PermissionGuard action="read" object="module">
-                    <ChevronRight
-                      className="size-5 -translate-x-2 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-focus-within:translate-x-0 group-focus-within:opacity-100 motion-reduce:transition-none"
+                    <ArrowUpRight
+                      className="pointer-events-none absolute right-1 -top-2 size-3.5 translate-y-1 text-primary opacity-0 transition-all duration-200 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-has-[[data-row-link]:focus-visible]:translate-y-0 group-has-[[data-row-link]:focus-visible]:opacity-100 motion-reduce:transition-none"
                       aria-hidden="true"
                     />
                   </PermissionGuard>

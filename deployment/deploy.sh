@@ -430,7 +430,7 @@ if [ "$DEMO_ENABLED" = "true" ]; then
 fi
 
 echo "Migration Prisma..."
-compose run --rm --no-deps -w /app/api app npx prisma db migrate
+compose run --rm --no-deps -w /app/api app npx prisma db migrate --to current
 
 if [ "$DEMO_ENABLED" = "true" ]; then
     echo "Restauration du jeu de démonstration..."

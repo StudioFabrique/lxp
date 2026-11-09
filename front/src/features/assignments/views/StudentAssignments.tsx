@@ -18,6 +18,7 @@ import {
   filterStudentAssignments,
   type AssignmentPeriod,
 } from "../student-assignments.utils";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { formatNumber } from "../../../utils/helpers/format-number";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -81,7 +82,7 @@ export default function StudentAssignments() {
           aria-pressed={period === "past"}
           onClick={() => setPeriod("past")}
         >
-          Évaluations passées
+          Rendus et passés
         </button>
       </div>
 
@@ -113,14 +114,14 @@ export default function StudentAssignments() {
           showMore={false}
           maxItemsShown={assignments.length}
           label={`${formatNumber(assignments.length)} évaluation${assignments.length > 1 ? "s" : ""}`}
-          title={period === "upcoming" ? "À venir" : "Évaluations passées"}
+          title={period === "upcoming" ? "À venir" : "Rendus et passés"}
 
           emptyMessage={
             search
               ? "Aucune évaluation ne correspond à votre recherche."
               : period === "upcoming"
                 ? "Aucune évaluation à venir."
-                : "Aucune évaluation passée."
+                : "Aucune évaluation rendue ou passée."
           }
           items={assignments.map((assignment) => {
             const status = assignmentStatus(assignment, now);
@@ -129,15 +130,15 @@ export default function StudentAssignments() {
 
             return {
               id: assignment.id,
-              title: assignment.course.title,
+              title: formatTitle(assignment.course.title),
               titleAccessory: (
                 <span
-                  className={cn("badge mb-0.5 badge-xs", statusClassName[status])}
+                  className={cn("badge mb-0.5 badge-sm", statusClassName[status])}
                 >
                   {status}
                 </span>
               ),
-              description: assignment.course.module.title,
+              description: formatTitle(assignment.course.module.title),
               subDescription: (
                 <div className="flex flex-col">
                   <span>{deadline}</span>

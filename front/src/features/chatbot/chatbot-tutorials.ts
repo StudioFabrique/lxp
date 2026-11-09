@@ -17,8 +17,12 @@ export type ChatbotTutorial = {
   answer?: string;
 };
 
-/** Bouton « Créer ma première formation » du tableau de bord : repère posé par `LastParcoursItem`. */
-export const FIRST_FORMATION_SELECTOR = '[data-chatbot-target="first-formation"]';
+/**
+ * Point de départ du tableau de bord vide : le bouton de l'étape mise en avant de la checklist « Bien démarrer »
+ * (`onboarding-current-step`) ou, sans checklist, le bouton « Créer ma première formation » de `LastParcoursItem`.
+ */
+export const FIRST_FORMATION_SELECTOR =
+  '[data-chatbot-target="onboarding-current-step"], [data-chatbot-target="first-formation"]';
 
 /**
  * Guide lancé seul par l'assistant virtuel quand le bouton est affiché : il n'apparaît pas dans l'éventail
@@ -30,7 +34,7 @@ export const FIRST_FORMATION_TUTORIAL: ChatbotTutorial = {
   steps: [
     {
       selector: FIRST_FORMATION_SELECTOR,
-      message: "La première étape de la création de contenu démarre ici : créez votre première formation, puis ses parcours, modules et cours.",
+      message: "Commencez ici : suivez les étapes de mise en route, de haut en bas. Chaque étape débloque la suivante.",
     },
   ],
 };

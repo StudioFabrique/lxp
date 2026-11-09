@@ -11,6 +11,10 @@ import {
   resolveAccessScope,
 } from "../utils/services/permissions/accessible-parcours.ts";
 
+export const PARCOURS_WITHOUT_CONTENT_CODE = "PARCOURS_WITHOUT_PUBLISHED_CONTENT";
+const PARCOURS_WITHOUT_CONTENT_MESSAGE =
+  "Ce parcours n'a pas encore de contenu publié.";
+
 /**
  * Restreint un contenu pédagogique aux parcours auxquels l'appelant est inscrit.
  *
@@ -55,6 +59,14 @@ export default function checkContentAccess(
         scope.kind === "learner" &&
         !(await isLearnerContentAvailable(type, contentId))
       ) {
+        // Le parcours est publié et l'apprenant y est inscrit (périmètre vérifié plus haut) : lui dire
+        // qu'il n'a pas encore de contenu ne révèle rien. Il ne doit pas le prendre pour un parcours inexistant.
+        if (type === "parcours") {
+          return res.status(404).json({
+            message: PARCOURS_WITHOUT_CONTENT_MESSAGE,
+            code: PARCOURS_WITHOUT_CONTENT_CODE,
+          });
+        }
         return res.status(404).json({ message: noData });
       }
 

@@ -7,6 +7,8 @@ import { Check, Import, Plus } from "lucide-react";
 import { Link } from "react-router";
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
+import { useQueryClient } from "@tanstack/react-query";
+import { courseApi } from "../../../course/api/course.api";
 import type { CourseContentValues, CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
 import CourseContentModal from "./course-content-modal";
@@ -41,6 +43,7 @@ const CreateCourseItem = ({
     title: string;
   } | null>(null);
   const [isAddingContent, setIsAddingContent] = useState(false);
+  const queryClient = useQueryClient();
   const form = useForm({
     resolver: zodResolver(courseTitleSchema),
     defaultValues: { title: "" },
@@ -53,6 +56,22 @@ const CreateCourseItem = ({
     setShowDetailsForm(true);
   }, showFormErrors);
 
+  const hasContentToImport = async () => {
+    try {
+      const [resources, lessons] = await Promise.all(
+        [false, true].map((includeCourseContents) =>
+          queryClient.fetchQuery(
+            courseApi.queries.lessonsToImport(1, includeCourseContents, true),
+          ),
+        ),
+      );
+      return resources.data.length > 0 || lessons.data.length > 0;
+    } catch {
+      // En cas de doute, on laisse la modale s'ouvrir : elle affiche elle-même l'erreur éventuelle.
+      return true;
+    }
+  };
+
   const handleCreate = async (values: CreateCourseFormValues) => {
     setIsSubmitting(true);
     const courseId = await onCreate(values);
@@ -62,7 +81,10 @@ const CreateCourseItem = ({
       setShowDetailsForm(false);
       setShowTitleInput(false);
       onCreated?.(courseId);
-      setContentCourse({ id: courseId, title: values.title.trim() });
+      // Sans contenu existant à importer, la seconde modale n'aurait rien à proposer.
+      if (await hasContentToImport()) {
+        setContentCourse({ id: courseId, title: values.title.trim() });
+      }
     }
     return courseId !== false;
   };
@@ -102,7 +124,7 @@ const CreateCourseItem = ({
       <motion.div
         className={cn(
           "flex w-full flex-col gap-4 rounded-xl",
-          showTitleInput && "bg-success",
+          showTitleInput && "bg-primary",
         )}
         initial={{ scale: 0.95, padding: 0 }}
         animate={{
@@ -151,7 +173,7 @@ const CreateCourseItem = ({
               type="button"
               onClick={() => setShowTitleInput(true)}
               data-chatbot-target="module-add-course"
-              className="btn btn-success flex-1 justify-between rounded-xl text-base-100"
+              className="btn btn-primary flex-1 justify-between rounded-xl"
             >
               Ajouter un cours
               <Plus />
@@ -159,7 +181,7 @@ const CreateCourseItem = ({
             <Link
               to="/admin/course/import"
               state={{ parcoursId, moduleId }}
-              className="btn btn-primary shrink-0 text-base-100 tooltip tooltip-left"
+              className="btn btn-outline btn-primary shrink-0 tooltip tooltip-left"
               data-tip="Importer des cours"
               aria-label="Importer des cours"
             >

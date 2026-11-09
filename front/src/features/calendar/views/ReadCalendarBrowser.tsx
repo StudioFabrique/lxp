@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { CalendarX } from "lucide-react";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
@@ -70,7 +71,11 @@ export function ReadCalendarBrowser({
               setDate={setDate}
             />
           ) : (
-            <EmptyStatePlaceholder title="Aucun parcours accessible." />
+            <EmptyStatePlaceholder
+              icon={CalendarX}
+              title="Aucun événement à afficher"
+              description="Le calendrier apparaîtra dès qu'un parcours vous sera accessible."
+            />
           )}
         </>
       )}

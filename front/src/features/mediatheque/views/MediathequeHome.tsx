@@ -168,8 +168,16 @@ function MediathequeHomePage() {
         />
       ) : (
         <EmptyStatePlaceholder
+          icon={Image}
           title={
-            searchInput.trim() ? "Aucun média trouvé" : "Aucun média disponible"
+            searchInput.trim()
+              ? "Aucun média ne correspond à votre recherche"
+              : "Aucun média disponible"
+          }
+          description={
+            searchInput.trim()
+              ? undefined
+              : "Les images, vidéos et fichiers ajoutés dans vos leçons seront regroupés ici."
           }
         />
       )}

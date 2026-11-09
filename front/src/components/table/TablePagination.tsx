@@ -86,7 +86,7 @@ const TablePagination = (props: TablePaginationProps) => {
               onSelect={(val) =>
                 changePage(() => props.onSetItemsPerPage(Number(val)))
               }
-              valueList={[5, 10, 15]}
+              valueList={[10, 25, 50]}
             >
               <div className="flex items-center gap-1">
                 {props.itemsPerPage}

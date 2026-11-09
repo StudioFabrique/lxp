@@ -74,8 +74,8 @@ export const getPaginateTagsValidator = [
     .withMessage("Le numéro de page doit être un nombre entier positif"),
 
   query("limit")
-    .isInt({ min: 1, max: 15 })
-    .withMessage("La limite doit être un nombre entier entre 1 et 100"),
+    .isInt({ min: 1, max: 50 })
+    .withMessage("La limite doit être un nombre entier entre 1 et 50"),
 
   checkValidatorResult,
 ];
@@ -111,8 +111,8 @@ export const getPaginateSearchTagsValidator = [
     .withMessage("Le numéro de page doit être un nombre entier positif"),
 
   query("limit")
-    .isInt({ min: 1, max: 15 })
-    .withMessage("La limite doit être un nombre entier entre 1 et 100"),
+    .isInt({ min: 1, max: 50 })
+    .withMessage("La limite doit être un nombre entier entre 1 et 50"),
 
   checkValidatorResult,
 ];

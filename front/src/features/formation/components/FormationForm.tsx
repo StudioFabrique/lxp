@@ -108,6 +108,7 @@ const FormationForm = ({
       >
         <AddTag
           error={false}
+          required
           tag={tagInput}
           placeholder="Exemple : artisanal, technologie, industriel"
           onChangeValue={(e) =>

@@ -9,7 +9,8 @@ import {
   RowSelectionState,
   SortingState,
 } from "@tanstack/react-table";
-import { ChevronRight, SortAsc, SortDesc } from "lucide-react";
+import { ChevronRight, SortAsc, SortDesc, type LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import EmptyStatePlaceholder from "../UI/empty-state-placeholder";
 import TableOverflowContainer from "./TableOverflowContainer";
 import "./DataTable.css";
@@ -42,6 +43,11 @@ interface DataTableProps<TData extends RowData> {
   isLoading?: boolean;
   isSearching?: boolean;
   emptyMessage?: string;
+  /** Prochaine étape suggérée sous le message d'état vide (masquée pendant une recherche). */
+  emptyDescription?: string;
+  emptyIcon?: LucideIcon;
+  /** Action principale de l'état vide (hors recherche), par exemple un bouton de création. */
+  emptyAction?: ReactNode;
   emptyPlaceholderWithBorder?: boolean;
   onRowClick?: (row: TData) => void;
   isRowClickable?: (row: TData) => boolean;
@@ -60,6 +66,9 @@ export function DataTable<TData extends RowData>({
   isLoading,
   isSearching = false,
   emptyMessage = "Aucun élément disponible",
+  emptyDescription,
+  emptyIcon,
+  emptyAction,
   emptyPlaceholderWithBorder,
   onRowClick,
   isRowClickable = () => true,
@@ -91,8 +100,12 @@ export function DataTable<TData extends RowData>({
     return isLoading ? <LoadingSkeleton variant="rows" label="Chargement du tableau" /> : (
       <EmptyStatePlaceholder
         title={emptyMessage}
+        description={isSearching ? undefined : emptyDescription}
+        icon={emptyIcon}
         withBorder={emptyPlaceholderWithBorder ?? !isSearching}
-      />
+      >
+        {isSearching ? null : emptyAction}
+      </EmptyStatePlaceholder>
     );
   }
 

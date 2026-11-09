@@ -112,7 +112,7 @@ const CoursesPreview = ({
           />
 
           <button
-            className="btn btn-sm btn-success ml-2 mr-2"
+            className="btn btn-sm btn-primary ml-2 mr-2"
             disabled={(!importedCourses && Boolean(error)) || isLoading}
             onClick={onConfirmZipImport}
           >
@@ -187,7 +187,7 @@ const CoursesPreview = ({
                           autoFocus
                         />
                         <button
-                          className="btn btn-xs btn-square btn-success"
+                          className="btn btn-xs btn-square btn-primary"
                           onClick={handleSaveCourseTitle}
                         >
                           <Check className="w-3.5 h-3.5" />
@@ -211,7 +211,7 @@ const CoursesPreview = ({
                     )}
                   </div>
                   {selectedCourse.sourceFileName && (
-                    <p className="truncate pl-0 text-xs text-base-content/50">
+                    <p className="truncate pl-0 text-xs text-base-content/60">
                       {selectedCourse.sourceFileName}
                     </p>
                   )}

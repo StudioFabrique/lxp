@@ -16,13 +16,14 @@ type Props = {
   endDateProp?: string;
   disabled?: boolean;
 };
+// Par défaut, le parcours démarre aujourd'hui et se termine demain : la fin doit suivre le début (voir dates.schema).
 const defaults = (start: string, end: string): Dates => {
+  const today = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const fallback = formatDateToYYYYMMDD(tomorrow);
   return {
-    startDate: start ? formatDateToYYYYMMDD(new Date(start)) : fallback,
-    endDate: end ? formatDateToYYYYMMDD(new Date(end)) : fallback,
+    startDate: start ? formatDateToYYYYMMDD(new Date(start)) : formatDateToYYYYMMDD(today),
+    endDate: end ? formatDateToYYYYMMDD(new Date(end)) : formatDateToYYYYMMDD(tomorrow),
   };
 };
 export default function DatesSelecter({

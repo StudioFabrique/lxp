@@ -86,6 +86,8 @@ export interface CalendarEvent {
   };
   category?: "course" | "assignment";
   deadlineTime?: string;
+  /** Devoir déjà remis par l'apprenant : l'échéance n'est plus une action à mener. */
+  isSubmitted?: boolean;
   dayIndex?: number; // 0 = Monday, 6 = Sunday
   date?: Date;
   start: string; // Format "HH:MM"

@@ -10,7 +10,7 @@ const useEagerLoadingList = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialList: Array<any>,
   defaultSort: string,
-  defaultLimit: number | null = 15,
+  defaultLimit: number | null = 25,
   idProperty: "id" | "_id" = "id",
   paginationStorageLocation?: string,
 ) => {
@@ -19,7 +19,7 @@ const useEagerLoadingList = (
   const [list, setList] = useState<Array<any> | null>(initialList);
   const [page, setPage] = useState(1);
   const [limit, setLimitState] = useState(() =>
-    getStoredItemsPerPage(paginationStorageLocation, defaultLimit ?? 15),
+    getStoredItemsPerPage(paginationStorageLocation, defaultLimit ?? 25),
   );
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);

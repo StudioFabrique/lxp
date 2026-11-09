@@ -235,7 +235,7 @@ const ImportResult = ({
             data-course-import-tour="result-actions"
           >
             <Link
-              className={cn("btn", isComplete ? "btn-success" : "btn-outline")}
+              className={cn("btn", isComplete ? "btn-primary" : "btn-outline")}
               to={`/admin/parcours/module/${moduleId}`}
             >
               Terminer

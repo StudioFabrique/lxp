@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { ExternalLink } from "lucide-react";
 import { Link, createSearchParams } from "react-router";
 import type Role from "../../../../utils/interfaces/role";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
@@ -34,10 +35,13 @@ const UserFormTypeUser = ({
   return (
     <BoxWrapper>
       <div className="flex flex-wrap justify-between gap-3 h-fit items-center">
-        <h2 id={`${fieldId}-label`} className="font-bold text-xl">Type d'utilisateur</h2>
+        <h2 id={`${fieldId}-label`} className="font-bold text-xl">
+          Type d'utilisateur <span aria-hidden="true">*</span>
+          <span className="sr-only">(obligatoire)</span>
+        </h2>
         <div className="flex gap-2 items-center">
           <Link
-            className="btn btn-accent btn-sm normal-case tooltip"
+            className="btn btn-outline btn-sm normal-case tooltip"
             type="button"
             to={{
               pathname: "/admin/roles",
@@ -47,6 +51,7 @@ const UserFormTypeUser = ({
             target="_blank"
           >
             Gérer les rôles
+            <ExternalLink className="size-4" aria-hidden="true" />
           </Link>
         </div>
       </div>
@@ -66,7 +71,7 @@ const UserFormTypeUser = ({
           </div>
         ) : (
           <div className="flex flex-col justify-between h-full gap-5">
-            <div role="radiogroup" aria-labelledby={`${fieldId}-label`} aria-describedby={error ? `${fieldId}-error` : undefined} className="flex flex-col gap-y-3">
+            <div role="radiogroup" aria-required="true" aria-labelledby={`${fieldId}-label`} aria-describedby={error ? `${fieldId}-error` : undefined} className="flex flex-col gap-y-3">
               {roles.map((role) => (
                   <RoleRadioCard
                     key={role._id}

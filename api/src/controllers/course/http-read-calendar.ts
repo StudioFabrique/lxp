@@ -11,7 +11,12 @@ export async function httpGetCalendarParcours(req: CustomRequest, res: Response,
 
 export async function httpGetParcoursCalendar(req: CustomRequest, res: Response, next: NextFunction) {
   try {
-    const calendar = await getParcoursCalendar(Number(req.params.parcoursId), await resolveAccessScope(req.auth!));
+    const scope = await resolveAccessScope(req.auth!);
+    const calendar = await getParcoursCalendar(
+      Number(req.params.parcoursId),
+      scope,
+      scope?.kind === "learner" ? req.auth!.userId : undefined,
+    );
     if (!calendar) return res.status(404).json({ message: "Parcours introuvable" });
     return res.json(calendar);
   } catch (error) { next(error); }

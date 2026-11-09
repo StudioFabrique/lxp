@@ -34,7 +34,7 @@ const AttemptCardAccordion = ({
           <XCircle className="text-error shrink-0 mt-0.5" size={20} />
         )}
         <div className="flex flex-col gap-0.5">
-          <span className="text-xs text-base-content/40 font-medium">
+          <span className="text-xs text-base-content/60 font-medium">
             Question {index + 1}
           </span>
           <div className="font-semibold">
@@ -72,7 +72,7 @@ const AttemptCardAccordion = ({
           />
         )}
         {/* Explication */}
-        <div className="text-sm italic text-base-content/50 pt-5">
+        <div className="text-sm italic text-base-content/60 pt-5">
           <QuizMarkdown explanation>
             {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
           </QuizMarkdown>

@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, Plus, PlusCircle } from "lucide-react";
+import { LoaderCircle, Plus, PlusCircle, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
@@ -174,12 +174,31 @@ const RoleList = () => {
           {roles.length === 0 ? (
             <div className="col-span-full">
               <EmptyStatePlaceholder
+                icon={ShieldCheck}
                 title={
                   isSearching
                     ? "Aucun rôle ne correspond à votre recherche"
                     : "Aucun rôle disponible"
                 }
-              />
+                description={
+                  isSearching
+                    ? undefined
+                    : "Créez un rôle pour définir les droits d'accès de vos utilisateurs."
+                }
+              >
+                {isSearching ? null : (
+                  <PermissionGuard action="write" object="role">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => setFormModal({ mode: "create" })}
+                    >
+                      <PlusCircle className="size-5" />
+                      Créer un rôle
+                    </button>
+                  </PermissionGuard>
+                )}
+              </EmptyStatePlaceholder>
             </div>
           ) : null}
 

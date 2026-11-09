@@ -1,4 +1,5 @@
 import { Eye, EyeOff, FileText, Plus, Trash2 } from "lucide-react";
+import FileInputButton from "../../../../components/form/FileInputButton";
 import DatePicker from "../../../../components/UI/date-picker/date-picker";
 import { cn } from "../../../../utils/cn";
 import type {
@@ -227,22 +228,10 @@ export default function AssignmentFields({
             />
           </label>
 
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold">Fichiers de consigne</span>
-            <input
-              type="file"
-              className="file-input file-input-bordered w-full"
-              multiple
-              onChange={(event) =>
-                patch({
-                  files: [
-                    ...value.files,
-                    ...Array.from(event.target.files ?? []),
-                  ],
-                })
-              }
-            />
-          </label>
+          <FileInputButton
+            label="Fichiers de consigne"
+            onFiles={(added) => patch({ files: [...value.files, ...added] })}
+          />
 
           {(visibleExistingFiles.length > 0 || value.files.length > 0) && (
             <ul className="space-y-2">

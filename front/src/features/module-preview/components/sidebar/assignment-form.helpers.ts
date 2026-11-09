@@ -23,3 +23,9 @@ export function assignmentDateForInput(value?: string) {
 export function assignmentFormIsValid(value: AssignmentFormValue) {
   return assignmentFormSchema.safeParse(value).success;
 }
+
+/** Premier motif pour lequel le devoir est incomplet, ou `null` s'il est valide. */
+export function assignmentFormIssue(value: AssignmentFormValue): string | null {
+  const result = assignmentFormSchema.safeParse(value);
+  return result.success ? null : (result.error.issues[0]?.message ?? null);
+}

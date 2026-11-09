@@ -299,7 +299,7 @@ done
 ok "PostgreSQL prêt"
 
 step_cmd "Migrations"
-npx prisma db migrate || { fail "Migrations"; exit 1; }
+npx prisma db migrate --to current || { fail "Migrations"; exit 1; }
 
 if [ "$restore_data" = true ]; then
   step_cmd "Restauration des données"

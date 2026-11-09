@@ -42,7 +42,8 @@ const FormTextarea = <TFieldValues extends FieldValues,>({
         disabled={disabled}
         rows={rows}
       />
-      {error && <p id={`${fieldId}-error`} role="alert" className="text-error text-xs">{error.message}</p>}
+      {/* Emplacement réservé : l'apparition du message ne décale pas les champs suivants. */}
+      <p id={`${fieldId}-error`} role={error ? "alert" : undefined} className="min-h-4 text-error text-xs">{error?.message}</p>
     </div>
   );
 };

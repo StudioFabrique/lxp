@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../../utils/helpers/text-helpers";
 import { useFormField } from "../../../../components/form/useFormField";
 import { FC, Ref, useEffect, useState } from "react";
 import Info from "./info";
@@ -97,8 +98,9 @@ const InformationAndSettings: FC<{
   useEffect(() => {
     if (userData) {
       reset({
-        firstname: userData.firstname,
-        lastname: userData.lastname,
+        // Le serveur enregistre les noms en minuscules : on les affiche avec leurs majuscules.
+        firstname: toTitleCase(userData.firstname),
+        lastname: toTitleCase(userData.lastname),
         nickname: userData.nickname ?? "",
         email: userData.email,
         address: userData.address ?? "",

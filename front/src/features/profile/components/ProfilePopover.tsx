@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { useContext, useRef, useState, type ChangeEvent } from "react";
 import { createPortal } from "react-dom";
 import * as Popover from "@radix-ui/react-popover";
@@ -59,7 +60,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
     onClose: () => setOpen(false),
   });
   const fullName = user
-    ? `${user.firstname} ${user.lastname}`.trim()
+    ? toTitleCase(`${user.firstname} ${user.lastname}`.trim())
     : "Utilisateur";
   const canManageInstance = user?.roles?.[0]?.rank === 0;
   const canSeeProgress =

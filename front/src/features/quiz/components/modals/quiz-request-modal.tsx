@@ -13,12 +13,12 @@ const QuizRequestModal = ({ isOpen, onAcceptQuiz, onDeclineQuiz }: Props) => {
         <div className="flex items-center">
           <Lightbulb className="inline mr-2 text-warning" />
           <h3 className="font-bold text-lg">
-            Je t'ai préparé un quiz rapide !
+            Un quiz rapide vous est proposé !
           </h3>
         </div>
         <p className="py-4">
-          On dirait que tu as parcouru cette ressource à ton rythme. Veux-tu
-          vérifier rapidement tes acquis avant de passer à la suite ?
+          Vous avez parcouru cette ressource à votre rythme. Souhaitez-vous
+          vérifier rapidement vos acquis avant de passer à la suite ?
         </p>
         <div className="modal-action">
           <button className="btn btn-ghost" onClick={onDeclineQuiz}>

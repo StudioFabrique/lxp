@@ -91,6 +91,13 @@ describe("rôles du formulaire utilisateur", () => {
     expect(submit).toHaveBeenCalledWith(expect.objectContaining({ roleId: roles[0]._id }), null);
   });
 
+  it("présélectionne le rôle le moins privilégié à la création", () => {
+    renderForm();
+    const checked = container.querySelectorAll<HTMLInputElement>('input[type="radio"]:checked');
+    expect(checked.length).toBe(1);
+    expect(checked[0].value).toBe(roles[2]._id);
+  });
+
   it("ne propose que les apprenants et les présélectionne depuis un groupe", async () => {
     const submit = renderForm(3);
     const radios = container.querySelectorAll<HTMLInputElement>('input[type="radio"]');

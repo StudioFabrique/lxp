@@ -114,8 +114,7 @@
     [role="button"],
     [tabindex]:not([tabindex="-1"])
 ):focus-visible {
-    outline: 1px solid
-        color-mix(in oklab, var(--color-primary) 55%, transparent);
+    outline: 1px solid var(--color-primary);
     outline-offset: 1px;
 }
 
@@ -124,6 +123,12 @@
     box-shadow: none !important;
     border-color: var(--color-primary);
     border-radius: var(--radius-field);
+}
+
+/* Placeholder at the secondary-text opacity checked by `npm run theme:contrast` (4.5:1). */
+:where(input, textarea)::placeholder {
+    color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+    opacity: 1;
 }
 
 /* Keep autofilled fields in the active theme across the application. */
@@ -152,7 +157,7 @@
     --color-base-100: #ffffff;
     --color-base-200: #f7f9fc;
     --color-base-300: #dce4ed;
-    --color-base-content: #172638;
+    --color-base-content: #0b192a;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
     --color-success: #15803d;
@@ -182,23 +187,23 @@
     /* Tons bleus très frais, invite à la concentration */
     --color-primary: #0369a1; /* Bleu océan profond */
     --color-primary-content: #ffffff;
-    --color-secondary: #0891b2; /* Cyan */
-    --color-secondary-content: #dfeef5;
+    --color-secondary: #0ab7e1; /* Cyan, éclairci : 7:1 avec le texte sombre */
+    --color-secondary-content: #141f24;
     --color-accent: #059669; /* Émeraude */
-    --color-accent-content: #ffffff;
+    --color-accent-content: #1b1b1b;
     --color-neutral: #164e63;
     --color-neutral-content: #f0f9ff;
     --color-base-100: #f0f9ff; /* Fond très légèrement bleuté */
     --color-base-200: #e0f2fe;
     --color-base-300: #bae6fd;
-    --color-base-content: #082f49;
-    --color-info: #3b82f6;
+    --color-base-content: #00172f;
+    --color-info: #1f67d9;
     --color-info-content: #ffffff;
-    --color-success: #10b981;
+    --color-success: #007c49;
     --color-success-content: #ffffff;
-    --color-warning: #f59e0b;
+    --color-warning: #a75600;
     --color-warning-content: #ffffff;
-    --color-error: #ef4444;
+    --color-error: #d2222b;
     --color-error-content: #ffffff;
     --radius-selector: 0.5rem;
     --radius-field: 0.5rem;
@@ -229,12 +234,12 @@
     --color-base-100: #fffdf9;
     --color-base-200: #f8f1e7;
     --color-base-300: #eadcc9;
-    --color-base-content: #3b241b;
+    --color-base-content: #261108;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
-    --color-success: #15803d;
+    --color-success: #127e3c;
     --color-success-content: #ffffff;
-    --color-warning: #b45309;
+    --color-warning: #b25104;
     --color-warning-content: #ffffff;
     --color-error: #be123c;
     --color-error-content: #ffffff;
@@ -267,7 +272,7 @@
     --color-base-100: #fbfef5;
     --color-base-200: #f1f8df;
     --color-base-300: #dcebbf;
-    --color-base-content: #1a2e05;
+    --color-base-content: #091c00;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
     --color-success: #15803d;
@@ -305,12 +310,12 @@
     --color-base-100: #fdfbff;
     --color-base-200: #f5f0ff;
     --color-base-300: #e9ddff;
-    --color-base-content: #2e1065;
+    --color-base-content: #28055d;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
-    --color-success: #15803d;
+    --color-success: #127e3c;
     --color-success-content: #ffffff;
-    --color-warning: #a16207;
+    --color-warning: #9e6001;
     --color-warning-content: #ffffff;
     --color-error: #be123c;
     --color-error-content: #ffffff;
@@ -343,12 +348,12 @@
     --color-base-100: #fffaf0;
     --color-base-200: #fff0d2;
     --color-base-300: #fed7aa;
-    --color-base-content: #431407;
+    --color-base-content: #390a01;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
-    --color-success: #15803d;
+    --color-success: #127e3c;
     --color-success-content: #ffffff;
-    --color-warning: #b45309;
+    --color-warning: #b25104;
     --color-warning-content: #ffffff;
     --color-error: #be123c;
     --color-error-content: #ffffff;
@@ -381,12 +386,12 @@
     --color-base-100: #fbfdff;
     --color-base-200: #eef5ff;
     --color-base-300: #dbeafe;
-    --color-base-content: #172554;
+    --color-base-content: #0a1543;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
     --color-success: #15803d;
     --color-success-content: #ffffff;
-    --color-warning: #a16207;
+    --color-warning: #a06104;
     --color-warning-content: #ffffff;
     --color-error: #be123c;
     --color-error-content: #ffffff;
@@ -419,12 +424,12 @@
     --color-base-100: #fffdf5;
     --color-base-200: #f7f0dc;
     --color-base-300: #e8dcc0;
-    --color-base-content: #3f2d1d;
+    --color-base-content: #221204;
     --color-info: #0369a1;
     --color-info-content: #ffffff;
-    --color-success: #15803d;
+    --color-success: #0f7d3a;
     --color-success-content: #ffffff;
-    --color-warning: #a16207;
+    --color-warning: #9d5e00;
     --color-warning-content: #ffffff;
     --color-error: #be123c;
     --color-error-content: #ffffff;

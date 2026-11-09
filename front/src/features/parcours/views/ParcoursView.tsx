@@ -45,6 +45,7 @@ const ParcoursView = () => {
   const {
     isLoading,
     error,
+    errorCode,
     image,
     parcours,
     parcoursInfos,
@@ -281,6 +282,13 @@ const ParcoursView = () => {
             </div>
           </div>
         </FadeWrapper>
+      ) : errorCode === "PARCOURS_WITHOUT_PUBLISHED_CONTENT" ? (
+        <Error404
+          title="Pas encore de contenu"
+          message="Ce parcours n’a pas encore de contenu publié. Revenez bientôt : votre équipe pédagogique le prépare."
+          backTo={`/${currentRoute[0]}/dashboard`}
+          backLabel="Retour à l’accueil"
+        />
       ) : (
         <Error404 />
       )}

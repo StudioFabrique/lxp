@@ -60,7 +60,7 @@ const StudentActivityNavigation = ({
               data-tip={isDisabled ? disabledReason : undefined}
             >
               <FeedbacksButton
-                className="btn btn-success text-nowrap text-success-content"
+                className="btn btn-primary text-nowrap"
                 feedbackType="thumbUp"
                 showFeedback={!isLessonCompleted}
                 disabled={isDisabled}

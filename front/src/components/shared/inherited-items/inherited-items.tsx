@@ -27,6 +27,8 @@ interface InheritedItemsProps {
   titleSize?: "small" | "medium" | "large";
   /** Actions affichées dans l'en-tête, à gauche du bouton d'ouverture du drawer. */
   headerActions?: ReactNode;
+  /** Texte de la liste vide ; « Aucun élément ajouté » par défaut. */
+  emptyMessage?: string;
 }
 
 const InheritedItems = (props: InheritedItemsProps) => {
@@ -151,7 +153,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           </>
         ) : visibleList ? (
           <SubBoxWrapper>
-            <p className="text-xs">Aucun objet ajouté</p>
+            <p className="text-xs">{props.emptyMessage ?? "Aucun élément ajouté"}</p>
           </SubBoxWrapper>
         ) : null}
       </div>

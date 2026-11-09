@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { LoaderCircle, PlusCircle, RefreshCw } from "lucide-react";
+import { LoaderCircle, PlusCircle, RefreshCw, Users } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import type Role from "../../../utils/interfaces/role";
@@ -316,10 +316,20 @@ const UserHome = () => {
             canSelectRow={(listedUser) =>
               canManageUser(listedUser, currentUserRank)
             }
+            emptyIcon={Users}
             emptyMessage={
               searchValue
-                ? "Aucun utilisateur disponible pour cette recherche"
+                ? "Aucun utilisateur ne correspond à votre recherche"
                 : "Aucun utilisateur disponible"
+            }
+            emptyDescription="Créez un compte pour inviter un apprenant ou un formateur sur la plateforme."
+            emptyAction={
+              <PermissionGuard object="user" action="write">
+                <Link className="btn btn-primary" to="/admin/user/add">
+                  <PlusCircle className="size-5" />
+                  Créer un utilisateur
+                </Link>
+              </PermissionGuard>
             }
           />
         </div>

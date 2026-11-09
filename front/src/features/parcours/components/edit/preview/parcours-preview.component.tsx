@@ -9,6 +9,8 @@ import PreviewSkills from "../../../../../../src/components/preview/preview-skil
 import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../hooks/useValidateParcours";
 import { useContext, useMemo, useState } from "react";
+import { hasVisibleCourse } from "../../../helpers/parcours-steps-validation";
+import { useParcoursModules } from "../../../hooks/useParcoursModules";
 import { showParcoursValidationToast } from "../../../helpers/show-parcours-validation-toast";
 import PublishParcoursModal from "./PublishParcoursModal";
 import { parcoursApi } from "../../../api/parcours.api";
@@ -33,6 +35,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
   const objectives = parcours?.objectives ?? [];
   const { skills } = useParcoursSkills(parcoursId);
   const { validateParcours } = useValidateParcours();
+  const { modules: parcoursModules } = useParcoursModules(parcoursId);
   const nav = useNavigate();
   const { data: groups = [] } = useParcoursGroupsQuery(parcoursId);
   const groupIds = useMemo(
@@ -153,6 +156,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
       {isPublishModalOpen ? (
         <PublishParcoursModal
           isSubmitting={isPublishing}
+          hasNoVisibleCourse={!hasVisibleCourse(parcoursModules)}
           onConfirm={() => void handlePublishParcours(true)}
           onCancel={() => setPublishModalOpen(false)}
         />

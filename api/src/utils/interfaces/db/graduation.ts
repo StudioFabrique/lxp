@@ -10,8 +10,8 @@ export interface IGraduation extends MongoRecord {
 }
 
 const graduationSchema: Schema = new Schema({
-  title: { type: String, lowercase: true, required: true },
-  degree: { type: String, lowercase: true, required: true },
+  title: { type: String, required: true },
+  degree: { type: String, required: true },
   date: { type: Date, required: true },
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });

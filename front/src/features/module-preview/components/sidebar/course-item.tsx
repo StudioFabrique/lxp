@@ -315,7 +315,7 @@ const CourseItem = ({
         {!course.isPublished || !course.visibility ? (
           <div
             className={cn(
-              "badge absolute -top-3 -left-3 tooltip tooltip-right z-11",
+              "badge absolute -top-3 -left-3 gap-1 tooltip tooltip-right z-11",
               {
                 "badge-info tooltip-info": !course.isPublished,
                 "badge-warning tooltip-warning":
@@ -329,10 +329,14 @@ const CourseItem = ({
             }
           >
             {!course.isPublished ? (
-              <CloudOff className="w-4 h-4" />
+              <CloudOff className="w-4 h-4" aria-hidden="true" />
             ) : (
-              <EyeOff className="w-4 h-4" />
+              <EyeOff className="w-4 h-4" aria-hidden="true" />
             )}
+            {/* Le statut est écrit : une icône seule ne dit pas qu'il s'agit d'un brouillon. */}
+            <span className="text-xs font-semibold">
+              {!course.isPublished ? "Brouillon" : "Masqué"}
+            </span>
           </div>
         ) : null}
         <div
@@ -370,7 +374,7 @@ const CourseItem = ({
                     <ChevronRight className="w-5" />
                   )}
                 </div>
-                <h3 className="font-semibold text-primary-content truncate first-letter:uppercase">
+                <h3 className="font-semibold text-primary-content line-clamp-2 break-words first-letter:uppercase" title={formatTitle(course.title)}>
                   {formatTitle(course.title)}
                 </h3>
               </span>
@@ -382,7 +386,7 @@ const CourseItem = ({
                   {isCourseOpen && !hideCreateLessonButton && (
                     <PermissionGuard action="write" object="course">
                       <button
-                        className="btn btn-success btn-xs gap-1 tooltip"
+                        className="btn btn-primary btn-xs gap-1 tooltip"
                         data-tip="Créer une leçon"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -527,8 +531,8 @@ const CourseItem = ({
                 className={cn(
                   "flex h-10 w-full items-center justify-between gap-2 rounded-xl px-4 text-sm font-medium transition-colors",
                   assignmentSelected
-                    ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
-                    : "bg-warning/25 text-warning-content hover:bg-warning/40",
+                    ? "bg-primary/20 text-base-content ring-1 ring-primary/40"
+                    : "bg-primary/10 text-base-content hover:bg-primary/20",
                 )}
                 disabled={disabled}
                 aria-current={assignmentSelected ? "step" : undefined}

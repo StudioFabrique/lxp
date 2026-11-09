@@ -102,7 +102,7 @@ const SelectableCard = ({
                     autoFocus
                   />
                   <button
-                    className="btn btn-xs btn-square btn-success"
+                    className="btn btn-xs btn-square btn-primary"
                     onClick={handleSaveTitle}
                   >
                     <Check className="w-3.5 h-3.5" />

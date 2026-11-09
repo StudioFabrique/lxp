@@ -155,6 +155,7 @@ export default function ModuleContentToolbar({
         ) : (
           <PanelLeftClose className="size-6" />
         )}
+        <span className="max-xl:sr-only">Panneau</span>
       </button>
 
       {canReorderCourses && !isCalendarView && (
@@ -176,6 +177,7 @@ export default function ModuleContentToolbar({
             onClick={onToggleCourseReordering}
           >
             <ArrowDownUp className="size-5" />
+            <span className="max-xl:sr-only">{isReorderingCourses ? "Terminer" : "Réorganiser"}</span>
           </button>
         </PermissionGuard>
       )}
@@ -197,12 +199,13 @@ export default function ModuleContentToolbar({
             ) : (
               <Eye className="size-5" />
             )}
+            <span className="max-xl:sr-only">{areAllCoursesVisible ? "Masquer tout" : "Afficher tout"}</span>
           </button>
         </PermissionGuard>
       )}
 
       <div
-        className="flex h-10 min-w-0 flex-1 items-center rounded-lg border border-secondary/20 bg-secondary/20 px-2"
+        className="flex h-10 min-w-0 flex-1 items-center rounded-lg border border-secondary/20 bg-secondary/20 px-2 empty:border-transparent empty:bg-transparent"
       >
         {progress}
       </div>
@@ -238,6 +241,7 @@ export default function ModuleContentToolbar({
               ) : (
                 <UploadCloud className="size-5" />
               )}
+              <span className="max-xl:sr-only">Tout publier</span>
             </button>
           </PermissionGuard>
         </RoleRankGuard>
@@ -255,6 +259,7 @@ export default function ModuleContentToolbar({
           <span className="block size-5" aria-hidden="true">
             <TrophyIcon />
           </span>
+          <span className="max-xl:sr-only">Mes réussites</span>
         </button>
       )}
       {isContentSelected && (
@@ -267,6 +272,7 @@ export default function ModuleContentToolbar({
           onClick={onCloseContent}
         >
           <ListChevronsUpDown className="size-5" />
+          <span className="max-xl:sr-only">Tout réduire</span>
         </button>
       )}
     </div>

@@ -79,7 +79,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
               dragOver === index && draggingIndex !== index && "ring-2 ring-primary",
             )}
           >
-            <GripVertical size={18} className="shrink-0 text-base-content/50" aria-hidden="true" />
+            <GripVertical size={18} className="shrink-0 text-base-content/60" aria-hidden="true" />
             <span className="badge badge-primary badge-outline shrink-0">{index + 1}</span>
             <span className="min-w-0 flex-1 font-medium break-words">{item.text}</span>
             <div className="flex flex-col gap-1">

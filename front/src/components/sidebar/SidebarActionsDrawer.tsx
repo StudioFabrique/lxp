@@ -14,6 +14,12 @@ type Props = {
   setHeaderContainer: (element: HTMLElement | null) => void;
 };
 
+// Carte des actions : bordure et angles du menu de navigation (`sidebarControlClassName`), fond transparent
+// et couleur du texte du thème quel que soit le style du bouton (`btn-primary`, `btn-ghost`...).
+// Noms de classes complets pour que Tailwind les détecte à la compilation.
+const actionCardClassName =
+  "[&_.btn]:rounded-xl [&_.btn]:border [&_.btn]:border-primary/40 [&_.btn]:bg-transparent [&_.btn]:text-base-content [&_.btn]:shadow-none [&_.btn:hover]:bg-primary/10";
+
 /**
  * Tiroir de droite du mobile : les actions de l'en-tête de page, masqué à cet écran. Il reste monté,
  * fermé, pour que les actions gardent leur état et que la barre sache s'il y en a ; l'état fermé
@@ -68,11 +74,15 @@ const SidebarActionsDrawer = ({ open, onClose, setContainer, setHeaderContainer 
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
-        {/* Même fond que l'en-tête de page remplacé : les boutons d'action y gardent leurs couleurs. */}
+        {/* Même fond que l'en-tête de page remplacé ; les actions y reprennent la carte bordée des entrées du menu de navigation. */}
         <section className="themed-page-header flex h-full flex-col gap-4 overflow-y-auto rounded-xl border p-4 text-base-content shadow-sm">
           {/* Pas de titre visible : le tiroir porte déjà son nom accessible (`aria-label`). */}
           <div className="flex items-center justify-end gap-1">
-            <div ref={setHeaderContainer} onClick={handleActionClick} className="flex items-center" />
+            <div
+              ref={setHeaderContainer}
+              onClick={handleActionClick}
+              className={cn("flex items-center", actionCardClassName)}
+            />
             <button
               ref={closeButtonRef}
               type="button"
@@ -89,7 +99,10 @@ const SidebarActionsDrawer = ({ open, onClose, setContainer, setHeaderContainer 
             // Toutes les actions de toutes les pages ont le même gabarit : pleine largeur, icône puis libellé alignés à gauche,
             // libellé qui passe à la ligne sans changer la hauteur minimale ni décentrer l'icône. `text-left!` (important) est nécessaire :
             // la règle `.header-actions-main .btn` d'index.css, qui centre le texte, est hors des couches Tailwind et l'emporte sinon.
-            className="header-actions header-actions-main flex flex-col items-stretch gap-2 [&_.btn]:h-auto [&_.btn]:min-h-11 [&_.btn]:w-full [&_.btn]:justify-start [&_.btn]:gap-2 [&_.btn]:py-2 [&_.btn:not(.btn-circle)]:text-left! [&_.btn]:leading-snug [&_.btn_svg]:shrink-0"
+            className={cn(
+              "header-actions header-actions-main flex flex-col items-stretch gap-2 [&_.btn]:h-auto [&_.btn]:min-h-11 [&_.btn]:w-full [&_.btn]:justify-start [&_.btn]:gap-2 [&_.btn]:py-2 [&_.btn:not(.btn-circle)]:text-left! [&_.btn]:leading-snug [&_.btn_svg]:shrink-0",
+              actionCardClassName,
+            )}
           />
         </section>
       </div>

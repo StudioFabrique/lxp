@@ -37,12 +37,12 @@ const Welcome = ({ onNext }: Props) => {
         className="btn btn-primary mt-9 w-full gap-2 rounded-lg normal-case text-base-100"
         onClick={onNext}
         initial={reduceMotion ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 1.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
       >
         Commencer <ArrowRight className="size-4" aria-hidden="true" />
       </motion.button>
       <motion.div initial={reduceMotion ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 1.95, ease: [0.22, 1, 0.36, 1] }}>
+        transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}>
         <WelcomeActions />
       </motion.div>
     </motion.section>

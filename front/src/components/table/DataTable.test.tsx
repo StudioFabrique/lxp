@@ -23,6 +23,24 @@ describe("DataTable", () => {
     expect(markup).not.toContain("Nom");
   });
 
+  it("affiche la description et l'action hors recherche, pas pendant une recherche", () => {
+    const render = (isSearching: boolean) =>
+      renderToStaticMarkup(
+        <DataTable
+          columns={[{ accessorKey: "name", header: "Nom" }]}
+          data={[]}
+          isSearching={isSearching}
+          emptyDescription="Créez votre premier élément."
+          emptyAction={<button type="button">Créer</button>}
+        />,
+      );
+
+    expect(render(false)).toContain("Créez votre premier élément.");
+    expect(render(false)).toContain("Créer</button>");
+    expect(render(true)).not.toContain("Créez votre premier élément.");
+    expect(render(true)).not.toContain("Créer</button>");
+  });
+
   it("retire la bordure de l'état vide lorsqu'une recherche est active", () => {
     const markup = renderToStaticMarkup(
       <DataTable

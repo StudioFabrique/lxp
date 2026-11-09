@@ -17,7 +17,7 @@ const IntroSkipConfirmModal = ({ isSaving, onCancel, onConfirm }: Props) => (
     onRightClick={onConfirm}
   >
     <p className="py-4">
-      Cette présentation explique comment ANDRIA organise vos contenus, de l'organisme jusqu'aux activités.
+      Cette présentation explique comment ANDRIA organise vos contenus.
       Si vous la passez, elle ne sera plus proposée automatiquement. Vous pourrez la revoir à tout moment
       depuis le menu, avec le bouton « Revoir la présentation ».
     </p>

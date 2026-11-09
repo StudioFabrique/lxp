@@ -29,8 +29,13 @@ import {
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
 import useValidateParcours from "../hooks/useValidateParcours";
+import { useParcoursModules } from "../hooks/useParcoursModules";
+import { hasVisibleCourse } from "../helpers/parcours-steps-validation";
 import { parcoursApi } from "../api/parcours.api";
-import { showParcoursValidationToast } from "../helpers/show-parcours-validation-toast";
+import {
+  PARCOURS_VALIDATION_TOAST_ID,
+  showParcoursValidationToast,
+} from "../helpers/show-parcours-validation-toast";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
@@ -63,6 +68,7 @@ const EditParcours = () => {
     handleUpdateStep,
     handleRetour,
   } = useParcoursEdit();
+  const { modules } = useParcoursModules(Number(id));
   const contextualStepsList = useMemo(
     () =>
       stepsList.map((step) => {
@@ -87,6 +93,8 @@ const EditParcours = () => {
   const handlePublishParcours = async () => {
     if (!id || isPublishing) return;
 
+    // Une erreur de validation précédente est périmée dès qu'on relance la publication.
+    toast.dismiss(PARCOURS_VALIDATION_TOAST_ID);
     const validationErrors = validateParcours();
     if (validationErrors.length > 0) {
       showParcoursValidationToast(validationErrors, updateStep);
@@ -98,6 +106,12 @@ const EditParcours = () => {
       const data = await parcoursApi.mutations.publishParcours(id, true);
       if (data.success) {
         toast.success(data.message);
+        if (!hasVisibleCourse(modules)) {
+          toast(
+            "Aucun cours n’est publié et visible : les apprenants verront « Pas encore de contenu ».",
+            { icon: "⚠️", duration: 8000 },
+          );
+        }
         navigate(`/admin/parcours/view/${id}`);
       }
     } catch {
@@ -223,7 +237,7 @@ const EditParcours = () => {
                         </button>
                       )}
                       <button
-                        className="btn btn-info px-3 md:px-6"
+                        className="btn btn-primary px-3 md:px-6"
                         data-chatbot-target="parcours-next-step"
                         onClick={() => handleUpdateStep(actualStep.id)}
                       >

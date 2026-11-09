@@ -43,10 +43,8 @@ describe("NewParcoursForm", () => {
   it("place le focus sur le nom après la sélection d'une formation", async () => {
     const { container, cleanup } = await renderForm();
     const select = container.querySelector<HTMLSelectElement>("select[name=menu]");
-    const title = container.querySelector<HTMLInputElement>(
-      "input[name=title]",
-    );
-    expect(title?.disabled).toBe(true);
+    expect(container.querySelector("input[name=title]")).toBeNull();
+    expect(container.textContent).not.toContain("Donner un nom au parcours");
 
     await act(async () => {
       if (select) {
@@ -55,7 +53,10 @@ describe("NewParcoursForm", () => {
       }
     });
 
-    expect(title?.disabled).toBe(false);
+    const title = container.querySelector<HTMLInputElement>(
+      "input[name=title]",
+    );
+    expect(title).not.toBeNull();
     expect(document.activeElement).toBe(title);
     await cleanup();
   });

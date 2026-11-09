@@ -12,7 +12,11 @@ export type ReadCalendarModule = {
     dates: CourseDates[];
     calendarColor?: string;
     lessons: { id: number }[];
-    assignment?: { id: number; dueAt: string } | null;
+    assignment?: {
+      id: number;
+      dueAt: string;
+      submissions?: { submittedAt?: string | null }[];
+    } | null;
   }[];
 };
 export type ReadCalendar = { id: number; title: string; modules: ReadCalendarModule[] };
@@ -61,10 +65,11 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
       if (Number.isFinite(deadline.getTime())) {
         const deadlineDay = dateKey(deadline);
         if (deadlineDay >= first && deadlineDay <= last) {
+          const isSubmitted = Boolean(course.assignment.submissions?.[0]?.submittedAt);
           const deadlineTime = `${String(deadline.getHours()).padStart(2, "0")}:${String(deadline.getMinutes()).padStart(2, "0")}`;
           events.push({
             id: `assignment:${course.assignment.id}`,
-            title: `Devoir : ${formatTitle(course.title)}`,
+            title: `${isSubmitted ? "Devoir remis" : "Devoir"} : ${formatTitle(course.title)}`,
             subtitle: formatTitle(module.title),
             description: course.description ?? undefined,
             date: new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate()),
@@ -73,8 +78,10 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
             deadlineTime,
             allDay: false,
             rangeStart: course.assignment.dueAt,
-            type: "warning",
+            // Un devoir remis quitte la couleur d'alerte : il n'y a plus rien à faire.
+            type: isSubmitted ? "success" : "warning",
             category: "assignment",
+            isSubmitted,
             to: `/${area}/parcours/module/${module.id}`,
             navigationState: {
               courseId: course.id,
