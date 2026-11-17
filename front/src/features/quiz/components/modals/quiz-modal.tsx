@@ -5,6 +5,7 @@ import QuizOrdering from "./quiz-ordering";
 import QuizTrueFalse from "./quiz-true-false";
 import QuizResults from "../results/quiz-results";
 import QuizMarkdown from "../quiz-markdown";
+import { getQuizExplanation } from "../../utils/ordering-explanation";
 import { LoaderCircle, X } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 
@@ -174,9 +175,7 @@ const QuizModal = ({
                       </h3>
                       <div className="text-sm">
                         <QuizMarkdown explanation>
-                          {isCorrect
-                            ? quiz.trueExplanation
-                            : quiz.falseExplanation}
+                          {getQuizExplanation(quiz, isCorrect)}
                         </QuizMarkdown>
                       </div>
                     </div>

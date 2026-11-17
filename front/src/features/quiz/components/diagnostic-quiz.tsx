@@ -8,6 +8,7 @@ import QuizOrdering from "./modals/quiz-ordering";
 import QuizTrueFalse from "./modals/quiz-true-false";
 import QuizResults from "./results/quiz-results";
 import QuizMarkdown from "./quiz-markdown";
+import { getQuizExplanation } from "../utils/ordering-explanation";
 import { cn } from "../../../utils/cn";
 import defaultModuleImage from "../../../assets/images/module-default.jpg";
 import { normalizeImageSource } from "../../../utils/images/image-source";
@@ -252,7 +253,7 @@ const DiagnosticQuiz = ({
                     </h3>
                     <div className="text-sm text-base-content">
                       <QuizMarkdown explanation>
-                        {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+                        {getQuizExplanation(quiz, isCorrect)}
                       </QuizMarkdown>
                     </div>
                   </BoxWrapper>
