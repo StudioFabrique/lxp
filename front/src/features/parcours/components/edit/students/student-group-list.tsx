@@ -6,7 +6,7 @@ import {
   useEffect,
   useMemo,
 } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { Link } from "react-router";
 
 import Role from "../../../../../../src/utils/interfaces/role";
@@ -55,6 +55,7 @@ function StudentGroupList({
       return (
         <EmptyStatePlaceholder
           title="Aucun groupe disponible"
+          icon={Users}
           withBorder={false}
         />
       );

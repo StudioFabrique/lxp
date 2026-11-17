@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Users } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router";
 
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
@@ -37,9 +37,18 @@ const ParcoursStudents = () => {
   const navigationState = location.state as Record<string, unknown> | null;
   const refreshGroupsOnReturn = navigationState?.refreshParcoursGroups === true;
   const parcoursId = Number(id);
-  const { data: persistedGroups = [], isPending: areGroupsPending, isFetching: areGroupsFetching, isError: areGroupsError } = useParcoursGroupsQuery(parcoursId);
-  const { data: fetchedGroups = [], refetch: fetchGroups, isPending: areAvailableGroupsPending, isError: areAvailableGroupsError } =
-    useStudentGroupsQuery();
+  const {
+    data: persistedGroups = [],
+    isPending: areGroupsPending,
+    isFetching: areGroupsFetching,
+    isError: areGroupsError,
+  } = useParcoursGroupsQuery(parcoursId);
+  const {
+    data: fetchedGroups = [],
+    refetch: fetchGroups,
+    isPending: areAvailableGroupsPending,
+    isError: areAvailableGroupsError,
+  } = useStudentGroupsQuery();
   const [draftGroups, setDraftGroups] = useState<Group[] | null>(null);
   const groups = draftGroups ?? persistedGroups;
   const availableGroups = useMemo(() => {
@@ -54,13 +63,20 @@ const ParcoursStudents = () => {
     () => groups.map((group) => group._id).filter(Boolean) as string[],
     [groups],
   );
-  const { data: fetchedStudents = [], isPending: areStudentsPending, isFetching: areStudentsFetching, isError: areStudentsError } = useParcoursStudentsQuery(groupIds);
+  const {
+    data: fetchedStudents = [],
+    isPending: areStudentsPending,
+    isFetching: areStudentsFetching,
+    isError: areStudentsError,
+  } = useParcoursStudentsQuery(groupIds);
   // Pendant le rechargement, la liste précédente reste affichée : on en retire aussitôt les apprenants des groupes détachés.
   const students = useMemo(
-    () => fetchedStudents.filter((student) => groupIds.includes(student.group._id)),
+    () =>
+      fetchedStudents.filter((student) => groupIds.includes(student.group._id)),
     [fetchedStudents, groupIds],
   );
-  const { mutate: updateGroups, isPending: isSavingGroups } = useUpdateParcoursGroups(parcoursId);
+  const { mutate: updateGroups, isPending: isSavingGroups } =
+    useUpdateParcoursGroups(parcoursId);
   const isUpdating = isSavingGroups || areStudentsFetching;
 
   useEffect(() => {
@@ -69,7 +85,15 @@ const ParcoursStudents = () => {
       replace: true,
       state: { ...navigationState, refreshParcoursGroups: false },
     });
-  }, [refreshGroupsOnReturn, areGroupsPending, areGroupsFetching, navigate, location.pathname, location.search, navigationState]);
+  }, [
+    refreshGroupsOnReturn,
+    areGroupsPending,
+    areGroupsFetching,
+    navigate,
+    location.pathname,
+    location.search,
+    navigationState,
+  ]);
 
   const handleDrawer = (id: string) => {
     if (fetchedGroups.length === 0) void fetchGroups();
@@ -108,21 +132,26 @@ const ParcoursStudents = () => {
             {areAvailableGroupsError ? (
               <p role="alert">Impossible de charger les groupes disponibles.</p>
             ) : areAvailableGroupsPending ? (
-              <LoadingSkeleton variant="rows" label="Chargement des groupes disponibles" />
-            ) : <GroupsList
-              onCancel={handleDrawer}
-              groups={availableGroups}
-              createGroupHref={`/admin/group/add?parcours=${id}`}
-              onAdd={(selectedGroups) =>
-                setDraftGroups([
-                  ...groups,
-                  ...selectedGroups.filter(
-                    (group) =>
-                      !groups.some((current) => current._id === group._id),
-                  ),
-                ])
-              }
-            />}
+              <LoadingSkeleton
+                variant="rows"
+                label="Chargement des groupes disponibles"
+              />
+            ) : (
+              <GroupsList
+                onCancel={handleDrawer}
+                groups={availableGroups}
+                createGroupHref={`/admin/group/add?parcours=${id}`}
+                onAdd={(selectedGroups) =>
+                  setDraftGroups([
+                    ...groups,
+                    ...selectedGroups.filter(
+                      (group) =>
+                        !groups.some((current) => current._id === group._id),
+                    ),
+                  ])
+                }
+              />
+            )}
           </div>
         </RightSideDrawer>
       </section>
@@ -133,8 +162,14 @@ const ParcoursStudents = () => {
               <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
               {/* Mise à jour en cours : un témoin discret, sans remplacer la liste. */}
               {isUpdating && (
-                <span role="status" className="flex items-center gap-2 text-xs text-base-content/60">
-                  <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+                <span
+                  role="status"
+                  className="flex items-center gap-2 text-xs text-base-content/60"
+                >
+                  <LoaderCircle
+                    className="size-3.5 animate-spin"
+                    aria-hidden="true"
+                  />
                   {isSavingGroups ? "Enregistrement…" : "Mise à jour…"}
                 </span>
               )}
@@ -147,7 +182,8 @@ const ParcoursStudents = () => {
           </div>
           {areGroupsError ? (
             <p role="alert">Impossible de charger les groupes du parcours.</p>
-          ) : areGroupsPending || (refreshGroupsOnReturn && areGroupsFetching) ? (
+          ) : areGroupsPending ||
+            (refreshGroupsOnReturn && areGroupsFetching) ? (
             <LoadingSkeleton
               variant="panel"
               label="Chargement des groupes du parcours"
@@ -155,6 +191,7 @@ const ParcoursStudents = () => {
           ) : groups.length === 0 ? (
             <EmptyStatePlaceholder
               title="Aucun groupe d'apprenants ajouté"
+              icon={Users}
               withBorder={false}
             />
           ) : groupIds.length > 0 && areStudentsError ? (
@@ -168,9 +205,7 @@ const ParcoursStudents = () => {
               parcoursId={parcoursId}
               disabled={isSavingGroups}
               onRemoveGroup={(groupId) =>
-                setDraftGroups(
-                  groups.filter((group) => group._id !== groupId),
-                )
+                setDraftGroups(groups.filter((group) => group._id !== groupId))
               }
             />
           )}
