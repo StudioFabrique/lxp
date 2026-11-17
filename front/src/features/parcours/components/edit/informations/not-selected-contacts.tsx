@@ -12,6 +12,7 @@ import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-messa
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
+import { PlusCircle } from "lucide-react";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -41,17 +42,20 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   const [direction, setDirection] = useState(true);
   const fieldSort = "lastname";
   const list = useMemo(
-    () => sortArray(
-      (props.list ?? []).map((contact) => ({
-        ...contact,
-        isSelected: contact.id !== undefined && selectedContactIds.has(contact.id),
-      })),
-      fieldSort,
-      direction,
-    ),
+    () =>
+      sortArray(
+        (props.list ?? []).map((contact) => ({
+          ...contact,
+          isSelected:
+            contact.id !== undefined && selectedContactIds.has(contact.id),
+        })),
+        fieldSort,
+        direction,
+      ),
     [props.list, selectedContactIds, direction],
   );
-  const allChecked = list.length > 0 && list.every((contact) => contact.isSelected);
+  const allChecked =
+    list.length > 0 && list.every((contact) => contact.isSelected);
   const queryClient = useQueryClient();
 
   const { mutate: createTeacher } = useMutation({
@@ -94,19 +98,16 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     });
   }, [allChecked, list]);
 
-  const handleContactCheck = useCallback(
-    (contact: Contact) => {
-      if (contact.id === undefined) return;
+  const handleContactCheck = useCallback((contact: Contact) => {
+    if (contact.id === undefined) return;
 
-      setSelectedContactIds((previousIds) => {
-        const nextIds = new Set(previousIds);
-        if (contact.isSelected) nextIds.delete(contact.id!);
-        else nextIds.add(contact.id!);
-        return nextIds;
-      });
-    },
-    [],
-  );
+    setSelectedContactIds((previousIds) => {
+      const nextIds = new Set(previousIds);
+      if (contact.isSelected) nextIds.delete(contact.id!);
+      else nextIds.add(contact.id!);
+      return nextIds;
+    });
+  }, []);
 
   const table = useMemo(() => {
     return (
@@ -230,11 +231,12 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           {canCreateTeacher ? (
             <>
               <button
-                className="btn btn-accent"
+                className="btn btn-primary flex items-center"
                 onClick={() => {
                   handleCloseDrawer("new-contact");
                 }}
               >
+                <PlusCircle />
                 Créer un contact
               </button>
               <RightSideDrawer
