@@ -65,6 +65,12 @@ export default function ResourceAdd({
         }
       >
         <div className="flex flex-wrap gap-2">
+          <Link
+            className="btn btn-outline btn-primary"
+            to={readOnly ? "/student/ressources" : "/admin/resources"}
+          >
+            <ArrowLeft /> Retour aux ressources
+          </Link>
           {state.resourceId && canEdit && (
             <button
               type="button"
@@ -74,12 +80,6 @@ export default function ResourceAdd({
               <Edit /> Modifier les détails de la ressource
             </button>
           )}
-          <Link
-            className="btn btn-outline btn-primary"
-            to={readOnly ? "/student/ressources" : "/admin/resources"}
-          >
-            <ArrowLeft /> Retour aux ressources
-          </Link>
         </div>
       </Header>
       {state.isLoading ? (
@@ -166,7 +166,8 @@ export default function ResourceAdd({
               </aside>
             )}
             <section
-              className={cn("relative min-w-0 min-h-[60vh] pb-28", panelClosed ? "" : "lg:col-span-2")}
+              // Sans activité affichée, le bouton « + » se pose dans le coin de l'encadré vide : pas de marge basse pour lui.
+              className={cn("relative min-w-0 min-h-[60vh]", state.activityType && "pb-28", panelClosed ? "" : "lg:col-span-2")}
             >
               {state.activityType ? (
                 <ActivityContent
@@ -228,6 +229,8 @@ export default function ResourceAdd({
               )}
               {canCreateActivity && state.activityState === "read" && (
                 <ActivityFloatingActionButton
+                  // Sans activité, il est dans l'encadré vide : il garde de l'air avec sa bordure.
+                  className={!state.activityType ? "bottom-6 end-6" : undefined}
                   onTypeSelection={state.createNewActivity}
                 />
               )}

@@ -156,7 +156,7 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
                 {isSessionLoading ? (
                   <AuthHeaderSpacer />
                 ) : (
-                  <div className={isOnboardingLayout ? "mt-0" : "mt-20"}><AuthAnimatedLogo /></div>
+                  <div className={isOnboardingLayout ? "mt-0" : "mt-6 sm:mt-20"}><AuthAnimatedLogo /></div>
                 )}
                 {isSessionLoading ? null : <AuthLogoCaption />}
               </div>

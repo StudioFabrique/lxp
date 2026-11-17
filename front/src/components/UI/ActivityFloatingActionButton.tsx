@@ -5,11 +5,14 @@ import {
   TextInitial,
   Video,
 } from "lucide-react";
+import { cn } from "../../utils/cn";
 
 type Props = {
   onTypeSelection: (
     type: "video" | "text" | "image" | "resource" | "iframe",
   ) => void;
+  /** Décalage par rapport aux bords du bloc qui le contient (`bottom-*`, `end-*`). */
+  className?: string;
 };
 
 export default function ActivityFloatingActionButton(props: Props) {
@@ -45,7 +48,7 @@ export default function ActivityFloatingActionButton(props: Props) {
   ];
 
   return (
-    <div className="fab absolute">
+    <div className={cn("fab absolute", props.className)}>
       {/* a focusable div with tabIndex is necessary to work on all browsers. role="button"
         aria-label="Créer une activité" is necessary for accessibility */}
       <div
@@ -88,7 +91,8 @@ export default function ActivityFloatingActionButton(props: Props) {
 
       {/* buttons that show up when FAB is open */}
 
-      {activitiesTypes.map((activity) => (
+      {/* Le menu s'ouvre vers le haut : l'ordre est inversé pour que le texte, premier type, finisse en haut. */}
+      {[...activitiesTypes].reverse().map((activity) => (
         <button
           type="button"
           key={activity.type}

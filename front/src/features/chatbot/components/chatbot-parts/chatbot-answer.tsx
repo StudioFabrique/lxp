@@ -17,19 +17,16 @@ type Props = {
 export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, onDismiss }: Props) {
   const isGeneralKnowledge = message.mode && message.mode !== "course_content";
 
+  const canExpand = !message.preset;
+
   return (
     <div className="relative text-sm text-base-content">
-      <div className="absolute -right-2 -top-2 z-10 flex">
-        {!message.preset && (
-          <button type="button" className="btn btn-ghost btn-circle size-6 min-h-0 p-0" onClick={onExpand} aria-label="Agrandir la réponse dans la fenêtre de conversation">
-            <Maximize2 className="size-3" />
-          </button>
-        )}
+      <div className="absolute -right-2 -top-5 z-10 flex">
         <button type="button" className="btn btn-ghost btn-circle size-6 min-h-0 p-0" onClick={onDismiss} aria-label="Fermer la réponse">
           <X className="size-3.5" />
         </button>
       </div>
-      <div className={cn("max-h-60 overflow-y-auto pr-1", message.type === "error" && "text-error")}>
+      <div className={cn("mt-3 max-h-60 overflow-y-auto pr-1", canExpand && "pb-14", message.type === "error" && "text-error")}>
         <div className="prose prose-sm max-w-none text-inherit [&>:first-child]:mr-12 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
           <ChatbotMarkdown>{message.message}</ChatbotMarkdown>
         </div>
@@ -48,6 +45,17 @@ export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, o
           </button>
         )}
       </div>
+      {canExpand && (
+        <button
+          type="button"
+          className="btn btn-primary absolute bottom-1 right-1 z-10 h-12 gap-2 rounded-full px-5 shadow-lg"
+          onClick={onExpand}
+          aria-label="Agrandir la réponse dans la fenêtre de conversation"
+        >
+          <Maximize2 className="size-5" />
+          Agrandir
+        </button>
+      )}
     </div>
   );
 }

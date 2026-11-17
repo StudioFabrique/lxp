@@ -29,9 +29,9 @@ const Stepper: FC<Props> = ({
           />
         ))}
       </ul>
-      {/* Mobile : les libellés ne tiennent pas sous les numéros, l'étape courante est nommée ici. */}
+      {/* Sous `lg` : les libellés ne tiennent pas sous les numéros, l'étape courante est nommée ici. */}
       <p
-        className="mt-3 text-center text-sm font-semibold md:hidden"
+        className="mt-3 text-center text-sm font-semibold lg:hidden"
         aria-hidden="true"
       >
         Étape {actualStep.id} sur {stepsList.length} : {actualStep.label}

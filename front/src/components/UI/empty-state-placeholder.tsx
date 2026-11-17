@@ -27,10 +27,12 @@ const EmptyStatePlaceholder = ({
   // Bordure + padding du BoxWrapper (p-5) sous le contenu quand l'encadré est visible.
   useFillRemainingHeight(contentRef, withBorder ? 22 : 0);
 
+  // Même rayon que le halo (`rounded-xl` de CursorGlowCard, qui rogne ses enfants) : avec le rayon par défaut
+  // du cadre, ses coins dépassent et leur bordure est coupée.
   const placeholder = (
     <BoxWrapper
       unstyled={!withBorder}
-      className={cn(withBorder ? "border border-base-300 bg-transparent" : "")}
+      className={cn(withBorder ? "rounded-xl border border-base-300 bg-transparent" : "")}
     >
       <FadeWrapper>
         <div ref={contentRef} className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center sm:gap-8">

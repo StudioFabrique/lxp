@@ -1,6 +1,9 @@
 import toast from "react-hot-toast";
 import { CircleX, X } from "lucide-react";
-import { getValidationStep, goToValidationTarget } from "./parcours-validation-target";
+import {
+  getValidationStep,
+  goToValidationTarget,
+} from "./parcours-validation-target";
 
 export const PARCOURS_VALIDATION_TOAST_ID = "parcours-validation";
 
@@ -20,7 +23,7 @@ export const showParcoursValidationToast = (
   toast.error(
     (t) => (
       <div className="flex flex-col gap-y-2">
-        <div className="flex items-start justify-between gap-x-3">
+        <div className="flex items-center justify-between gap-x-3 mb-2">
           <p className="font-semibold">
             {items.length > 1
               ? "Avant de publier, complétez ces points"

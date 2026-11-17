@@ -6,7 +6,7 @@ const EDGE = 16;
 const GAP = 8;
 /** Marge gauche des questions empilées de l'assistant. */
 const REDUCED_EDGE = 12;
-/** Aligné sur la question libre, qui mesure ici environ 46 px, à 24 px du bas (`bottom-6` de la pile de questions). */
+/** Aligné sur la question libre, qui mesure ici environ 46 px, à 24 px du bas (`bottom-6` de la pile de questions) : le cercle de 48 px est à sa hauteur. */
 const REDUCED_BOTTOM = 23;
 /** Hauteur de la barre (bouton de 48 px et marges) : elle occupe la bande du bas de l'écran. */
 const BAR_HEIGHT = 60;

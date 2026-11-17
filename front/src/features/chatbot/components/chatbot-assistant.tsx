@@ -288,12 +288,12 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
       <motion.div
         data-chatbot-dock
         // Sur petit écran, la pile de questions occupe le bas de l'écran : l'avatar s'efface tant qu'elle est ouverte (un appui ailleurs la referme).
-        className={cn("fixed left-0 top-0 z-45 size-16", (hidden || (radialOpen && narrowScreen)) && "invisible")}
+        className={cn("fixed left-0 top-0 z-45 size-[62px] md:size-16", (hidden || (radialOpen && narrowScreen)) && "invisible")}
         style={{ x: dock.x, y: dock.y }}
         initial={reducedMotion || hasJustRevealed ? false : { opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        drag
+        drag={dock.dragAxis}
         dragControls={dock.dragControls}
         dragListener={false}
         dragConstraints={dock.dragBounds}

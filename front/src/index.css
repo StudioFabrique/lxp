@@ -187,8 +187,8 @@
     /* Tons bleus très frais, invite à la concentration */
     --color-primary: #0369a1; /* Bleu océan profond */
     --color-primary-content: #ffffff;
-    --color-secondary: #0ab7e1; /* Cyan, éclairci : 7:1 avec le texte sombre */
-    --color-secondary-content: #141f24;
+    --color-secondary: #0e7490; /* Cyan profond : 5:1 avec le texte blanc et contraste suffisant sur le fond clair */
+    --color-secondary-content: #ffffff;
     --color-accent: #059669; /* Émeraude */
     --color-accent-content: #1b1b1b;
     --color-neutral: #164e63;

@@ -37,7 +37,7 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
   const eventClass = (event: CalendarEvent) => eventConfig[event.type];
   const clickEvent = (event: CalendarEvent, target: HTMLElement) => onClickEventDetails?.(event.id, target.getBoundingClientRect(), target);
   return <div className="overflow-x-auto" aria-label={view === "day" ? "Cours du jour" : "Cours de la semaine"}>
-    <div data-calendar-scroll-content className={cn(view === "week" ? "min-w-[700px]" : "min-w-full")}>
+    <div data-calendar-scroll-content className={cn(view === "week" ? "min-w-[560px]" : "min-w-full")}>
       {hasHeader && <div className={cn("sticky top-0 z-30 flex border-b", theme.headerBg, theme.border)}>
         <div className="w-16 shrink-0" />
         {days.map(({ date }) => {

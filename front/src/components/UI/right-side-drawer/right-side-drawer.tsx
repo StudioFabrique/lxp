@@ -43,6 +43,7 @@ const RightSideDrawer: FC<Props> = ({
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const sideRef = useRef<HTMLDivElement | null>(null);
   const focusTimersRef = useRef<number[]>([]);
 
   const clearFocusTimers = useCallback(() => {
@@ -64,7 +65,11 @@ const RightSideDrawer: FC<Props> = ({
         }
         const field = panel.querySelector<HTMLElement>(FIRST_FIELD_SELECTOR);
         if (!field) return;
-        field.focus();
+        // Sans preventScroll, le navigateur fait défiler les conteneurs
+        // ancêtres (drawer parent) pour révéler le champ pendant la transition
+        // et leur décalage persiste après la fermeture : le drawer rouvert
+        // apparaît alors téléporté sur le côté.
+        field.focus({ preventScroll: true });
         if (document.activeElement === field) clearFocusTimers();
       }, delay),
     );
@@ -74,6 +79,14 @@ const RightSideDrawer: FC<Props> = ({
     "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none",
     buttonTitle === undefined && "btn-square",
   );
+
+  const resetScroll = useCallback(() => {
+    let node: HTMLElement | null = sideRef.current;
+    while (node) {
+      if (node.scrollLeft !== 0) node.scrollLeft = 0;
+      node = node.parentElement;
+    }
+  }, []);
 
   const handleCloseDrawer = () => {
     if (onCloseDrawer) {
@@ -89,8 +102,9 @@ const RightSideDrawer: FC<Props> = ({
     if (isOpen !== undefined) {
       checkboxRef.current!.checked = isOpen;
       if (isOpen) focusFirstField();
+      else resetScroll();
     }
-  }, [isOpen, focusFirstField]);
+  }, [isOpen, focusFirstField, resetScroll]);
 
   useEffect(() => clearFocusTimers, [clearFocusTimers]);
 
@@ -103,6 +117,7 @@ const RightSideDrawer: FC<Props> = ({
         ref={checkboxRef}
         onChange={(event) => {
           if (event.currentTarget.checked) focusFirstField();
+          else resetScroll();
         }}
       />
       <div className="drawer-content sticky top-0 z-0">
@@ -143,7 +158,11 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      <div className="drawer-side h-dvh overflow-hidden" style={{ zIndex }}>
+      <div
+        ref={sideRef}
+        className="drawer-side h-dvh overflow-hidden"
+        style={{ zIndex }}
+      >
         <button
           type="button"
           aria-label="Fermer le panneau"

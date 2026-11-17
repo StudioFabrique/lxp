@@ -25,7 +25,7 @@ const ButtonAdd: FC<Props> = ({
 }) => {
   return (
     <button
-      className={cn("btn btn-primary flex gap-x-2", small && "btn-sm", outline && "btn-outline")}
+      className={cn("btn btn-primary flex gap-x-2 max-sm:h-auto max-sm:whitespace-normal max-sm:py-2", small && "btn-sm", outline && "btn-outline")}
       disabled={isDisabled || loading}
       onClick={onClickEvent}
       type={type}

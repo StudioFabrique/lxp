@@ -49,15 +49,16 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
     else swap(selected, index);
   };
 
+  const isMatchCorrect = pairs.every(
+    (pair: Pair, index: number) => pairs[positions[index]]?.right === pair.right,
+  );
+
   const handleValidate = () => {
     if (!validPairs) return;
     const answers = Object.fromEntries(
       positions.map((position, index) => [index, pairs[position].right]),
     ) as Record<number, string>;
-    const isCorrect = pairs.every(
-      (pair: Pair, index: number) => answers[index] === pair.right,
-    );
-    onAnswer(isCorrect, { type: "matching", answers });
+    onAnswer(isMatchCorrect, { type: "matching", answers });
     setSelected(null);
   };
 
@@ -116,8 +117,8 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered, nextAction }: Prop
           </div>
         ))}
       </div>
-      {isAnswered && (
-        <section className="rounded-box border-2 border-success bg-success/10 p-4 text-base-content" aria-label="Associations correctes">
+      {isAnswered && !isMatchCorrect && (
+        <section className="rounded-box border-2 border-info bg-info/10 p-4 text-base-content" aria-label="Associations correctes">
           <h3 className="mb-2 font-bold">Associations correctes</h3>
           <dl className="space-y-2">
             {pairs.map((pair, index) => (

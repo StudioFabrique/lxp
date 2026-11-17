@@ -87,6 +87,13 @@ export const boxStyle = (box: StackBox) => ({
   top: box.y - box.height / 2,
 });
 
+/** Largeur sous laquelle la scène est seule dans sa colonne, sous un titre et un sélecteur : la hauteur libre est alors courte. */
+const NARROW_AREA_WIDTH = 900;
+/** Échelle minimale de la scène dans une zone étroite : mieux vaut qu'elle déborde un peu sur les zones vides voisines que de devenir illisible. */
+const NARROW_AREA_MIN_SCALE = 0.5;
+
 /** Échelle de la scène 3D dans une zone de cette taille : elle inclut le cadre et la projection des six couches, pas seulement leur base à plat. */
-export const getIntroStackScale = (width: number, height: number): number =>
-  Math.min(width / 1000, height / 850, 0.8);
+export const getIntroStackScale = (width: number, height: number): number => {
+  const heightScale = width < NARROW_AREA_WIDTH ? Math.max(height / 850, NARROW_AREA_MIN_SCALE) : height / 850;
+  return Math.min(width / 1000, heightScale, 0.8);
+};

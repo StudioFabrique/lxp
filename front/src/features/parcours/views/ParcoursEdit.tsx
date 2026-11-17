@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Send, TriangleAlert } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
@@ -109,7 +109,10 @@ const EditParcours = () => {
         if (!hasVisibleCourse(modules)) {
           toast(
             "Aucun cours n’est publié et visible : les apprenants verront « Pas encore de contenu ».",
-            { icon: "⚠️", duration: 8000 },
+            {
+              icon: <TriangleAlert className="text-warning" />,
+              duration: 8000,
+            },
           );
         }
         navigate(`/admin/parcours/view/${id}`);

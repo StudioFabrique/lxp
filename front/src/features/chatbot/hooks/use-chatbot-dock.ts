@@ -6,6 +6,7 @@ import { publishChatbotDock } from "../chatbot-dock-store";
 import {
   CHATBOT_AVATAR_SIZE,
   CHATBOT_EDGE_MARGIN,
+  CHATBOT_SNAP_MAX_WIDTH,
   chatbotBubbleSide,
   clampChatbotPoint,
   restingChatbotPoint,
@@ -172,5 +173,8 @@ export default function useChatbotDock(centered: boolean) {
     bottom: viewport.height - CHATBOT_AVATAR_SIZE - CHATBOT_EDGE_MARGIN,
   }), [viewport]);
 
-  return { x, y, side, dragControls, dragContext, dragBounds, onDragStart, onDragEnd, moveForTutorial, returnToRest };
+  // Mobile : glissement horizontal seulement, l'assistant garde sa place en bas de l'écran.
+  const dragAxis: "x" | true = viewport.width < CHATBOT_SNAP_MAX_WIDTH ? "x" : true;
+
+  return { x, y, side, dragAxis, dragControls, dragContext, dragBounds, onDragStart, onDragEnd, moveForTutorial, returnToRest };
 }

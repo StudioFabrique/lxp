@@ -17,7 +17,7 @@ const ModuleContentBreadcrumbs = ({
   const baseRoute = pathname.split("/")[1];
 
   return (
-    <nav aria-label="Fil d'Ariane" className="breadcrumbs max-w-full py-0 text-sm">
+    <nav aria-label="Fil d'Ariane" className="breadcrumbs max-w-full py-0 text-sm [&_ul]:max-sm:flex-wrap">
       <ul>
         <li>
           <Link to={`/${baseRoute}/parcours`} className="link-hover">
@@ -28,7 +28,7 @@ const ModuleContentBreadcrumbs = ({
           <li className="min-w-0">
             <Link
               to={`/${baseRoute}/parcours/view/${parcoursId}`}
-              className="link-hover max-w-48 truncate sm:max-w-80"
+              className="link-hover break-words sm:max-w-80 sm:truncate"
               title={formatTitle(parcoursTitle)}
             >
               {formatTitle(parcoursTitle)}

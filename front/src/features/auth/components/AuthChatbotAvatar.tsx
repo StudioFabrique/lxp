@@ -36,7 +36,7 @@ export default function AuthChatbotAvatar({ gesture, compact, replaySignal, intr
       <motion.span className="block"
         animate={carried ? { rotate: [-9, 9, -9], scale: 1.1, y: -4 } : { rotate: 0, scale: 1, y: 0 }}
         transition={carried ? { rotate: { duration: 0.7, repeat: Infinity, ease: "easeInOut" }, default: { type: "spring", stiffness: 300, damping: 14 } } : { type: "spring", stiffness: 260, damping: 12 }}>
-        <AuthAnimatedLogo mode="chatbot" gesture={gesture} className={cn("rounded-full", compact ? "w-16" : "w-20 sm:w-28")} replaySignal={replaySignal} />
+        <AuthAnimatedLogo mode="chatbot" gesture={gesture} className={cn("rounded-full", compact ? "w-[62px] md:w-16" : "w-20 sm:w-28")} replaySignal={replaySignal} />
       </motion.span>
     </button>
   );

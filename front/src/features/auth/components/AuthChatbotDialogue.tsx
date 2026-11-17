@@ -7,6 +7,7 @@ import { chooseChatbotGesture } from "./auth-chatbot-gestures";
 import AuthChatbotAvatar from "./AuthChatbotAvatar";
 import AuthChatbotQuestions from "./AuthChatbotQuestions";
 import AuthChatbotBubble from "./AuthChatbotBubble";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import type { ChatbotHelp } from "./AuthChatbotHostContext";
 
 type Props = {
@@ -36,6 +37,8 @@ export default function AuthChatbotDialogue({
   stepId,
 }: Props) {
   const reducedMotion = useReducedMotion();
+  // Mobile : pas d'assistant virtuel dans les séquences d'onboarding, il ne laisse pas assez de place aux écrans.
+  const hiddenOnMobile = useMediaQuery("(max-width: 1023px)");
   // The default welcome starts with the typing dots, then a warm sentence replaces them.
   const followUp = introduction && message === undefined && !reducedMotion;
   const [replaySignal, setReplaySignal] = useState(0);
@@ -103,6 +106,7 @@ export default function AuthChatbotDialogue({
   useEffect(() => {
     memory?.setGesture(gesture);
   }, [gesture, memory]);
+  if (hiddenOnMobile) return null;
   return (
     <AuthChatbotPlacement floating={!introduction} scopeRef={scopeRef} stepId={stepId}>
     <div>

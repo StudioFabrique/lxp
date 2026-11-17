@@ -87,7 +87,11 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
     <div className="w-full flex flex-col gap-y-8">
       {/* Infos générales du parcours */}
       <section>
-        <ParcoursPreviewInfos onEdit={props.onEdit} groups={groups} isTeacher={isTeacher} />
+        <ParcoursPreviewInfos
+          onEdit={props.onEdit}
+          groups={groups}
+          isTeacher={isTeacher}
+        />
       </section>
       {/* Objectifs du parcours */}
       <section>
