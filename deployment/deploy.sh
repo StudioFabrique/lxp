@@ -118,7 +118,8 @@ case "$DEPLOY_MODE" in
 esac
 
 BASE_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.yml"
-AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.ai.yml"
+AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/ai.compose.yml"
+OBSERVABILITY_COMPOSE_FILE="deployment/$DEPLOY_MODE/observability.compose.yml"
 
 # Toutes les variables réservées à l'overlay IA. Elles peuvent être injectées
 # par Infisical ou par un pipeline, mais ne doivent pas rester dans
@@ -158,12 +159,29 @@ if [ "${DEMO_MODE:-false}" = "true" ]; then
     for name in $MAILER_SETTINGS; do
         unset "$name"
     done
+    # L'observabilité n'est jamais déployée sur l'instance publique de
+    # démonstration, même si OBSERVABILITY_ENABLED y est défini par erreur.
+    OBSERVABILITY_ENABLED=false
     echo "Mode démonstration : le déploiement ignore les couches IA et mailer ainsi que leur configuration."
 else
     DEMO_ENABLED=false
     AI_ENABLED=true
     COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
     LOG_SERVICES="app ai dropout-worker"
+
+    # Couche optionnelle : journaux (VictoriaLogs, Vector).
+    case "${OBSERVABILITY_ENABLED:-false}" in
+        true)
+            OBSERVABILITY_ENABLED=true
+            [ -f "$OBSERVABILITY_COMPOSE_FILE" ] || die "Fichier Compose introuvable : $OBSERVABILITY_COMPOSE_FILE"
+            COMPOSE_FILES="$COMPOSE_FILES -f $OBSERVABILITY_COMPOSE_FILE"
+            LOG_SERVICES="$LOG_SERVICES victorialogs vector"
+            ;;
+        false)
+            OBSERVABILITY_ENABLED=false
+            ;;
+        *) die "OBSERVABILITY_ENABLED doit valoir true ou false." ;;
+    esac
 fi
 
 # --------------------------------------------------------------------------
@@ -359,10 +377,19 @@ target_sh "mkdir -p '$DEPLOY_PATH/data' '$DEPLOY_PATH/uploads' '$DEPLOY_PATH/log
 
 # Retire les fichiers déposés par les versions précédentes des pipelines, qui
 # laissaient le `.env` et les Compose sur la machine.
-target_sh "cd '$DEPLOY_PATH' && rm -f .env .deploy.env compose.yml compose.ai.yml && rm -rf deployment api"
+target_sh "cd '$DEPLOY_PATH' && rm -f .env .deploy.env compose.yml ai.compose.yml && rm -rf deployment api"
 
 echo "Synchronisation des contenus initiaux..."
 rsync -avz api/uploads/ "$(target_path "$DEPLOY_PATH/uploads/")"
+
+# Le démon Docker cible peut être distant : les fichiers de configuration
+# montés par l'overlay doivent exister sur cette machine, pas dans l'espace de
+# travail de l'agent.
+if [ "$OBSERVABILITY_ENABLED" = "true" ]; then
+    echo "Synchronisation de la configuration d'observabilité..."
+    rsync -avz --delete deployment/observability/ \
+        "$(target_path "$DEPLOY_PATH/observability/")"
+fi
 
 if [ "$DEPLOY_MODE" = "caddy" ]; then
     echo "Vérification du réseau Caddy partagé..."
@@ -489,6 +516,11 @@ if [ "$AI_ENABLED" = "true" ]; then
     compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app dropout-worker
 else
     compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app
+fi
+
+if [ "$OBSERVABILITY_ENABLED" = "true" ]; then
+    echo "Démarrage de l'observabilité..."
+    compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" victorialogs vector
 fi
 
 if [ "$DEMO_ENABLED" = "false" ]; then

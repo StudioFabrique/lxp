@@ -38,6 +38,7 @@ import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
 import demoRouter from "./demo/demo.router.ts";
 import assignmentRouter from "./assignment/assignment.router.ts";
+import observabilityRouter from "./observability/observability.router.ts";
 import { mountRouter } from "../../utils/express/route-registry.ts";
 import {
   httpGetInstanceSettings,
@@ -118,5 +119,9 @@ v1Router.post(
 mountRouter(v1Router, "/chatbot", chatbotRouter);
 
 mountRouter(v1Router, "/dashboard-ia", dashboardIa);
+
+// Consultation des journaux (VictoriaLogs), réservée au root. Sans effet tant que
+// OBSERVABILITY_URL n'est pas défini : la route répond alors 404.
+mountRouter(v1Router, "/observability", observabilityRouter);
 
 export default v1Router;

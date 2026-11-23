@@ -154,6 +154,17 @@ backup_sources=(
     -v "$staging_volume:/source/databases:ro"
     -v "$DEPLOY_PATH/uploads:/source/uploads:ro"
 )
+backup_paths=(/source/databases /source/uploads)
+
+# Les journaux applicatifs ne sont sauvegardes que si la couche
+# d'observabilite est deployee. Les fichiers winston sont la source de verite :
+# VictoriaLogs en derive, et Vector les reindexe apres une restauration. Les
+# copier en cours d'ecriture est sans risque (fichiers en ajout seul).
+if docker container inspect "$LXP_DEPLOYMENT_NAME-victorialogs" >/dev/null 2>&1; then
+    printf 'Journaux applicatifs inclus dans la sauvegarde.\n'
+    backup_sources+=(-v "$DEPLOY_PATH/logs:/source/logs:ro")
+    backup_paths+=(/source/logs)
+fi
 
 backup_write_filesystem_repository() {
     local repository_path="$1" description="$2"
@@ -165,7 +176,7 @@ backup_write_filesystem_repository() {
         "$BACKUP_RESTIC_IMAGE" -r /repository backup \
             --host "$LXP_DEPLOYMENT_NAME" \
             --tag "$backup_tag" --tag "$BACKUP_REASON" \
-            /source/databases /source/uploads
+            "${backup_paths[@]}"
 }
 
 if [[ "${BACKUP_LOCAL_ENABLED:-false}" == true ]]; then
@@ -187,7 +198,7 @@ if [[ "${BACKUP_S3_ENABLED:-false}" == true ]]; then
         "$BACKUP_RESTIC_IMAGE" -r "$BACKUP_S3_REPOSITORY" backup \
             --host "$LXP_DEPLOYMENT_NAME" \
             --tag "$backup_tag" --tag "$BACKUP_REASON" \
-            /source/databases /source/uploads
+            "${backup_paths[@]}"
 fi
 
 [[ "${BACKUP_LOCAL_ENABLED:-false}" != true ]] \

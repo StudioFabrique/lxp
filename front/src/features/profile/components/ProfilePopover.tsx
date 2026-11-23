@@ -22,6 +22,7 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { profileApi } from "../api/profile.api";
 import ProfileEditorModal from "./ProfileEditorModal";
 import ThemeSelect from "./theme-select";
+import ObservabilityLink from "./ObservabilityLink";
 import {
   sidebarControlClassName,
   sidebarLabelClassName,
@@ -306,6 +307,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
                         <Settings className="size-3.5 shrink-0" /> Paramètres de
                         l’instance
                       </Link>
+                      <ObservabilityLink onNavigate={() => setOpen(false)} />
                     </div>
                   )}
     </>

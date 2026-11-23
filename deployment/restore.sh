@@ -213,6 +213,26 @@ docker run --rm \
         cp -a '$uploads_path/.' /destination/
     "
 
+# Presents seulement si la sauvegarde incluait VictoriaLogs. Les fichiers
+# existants ne sont jamais ecrases : une restauration ne doit pas faire perdre
+# les journaux plus recents. Vector reindexe les fichiers qu'il n'a pas encore lus.
+logs_path=/restore/source/logs
+if docker run --rm -v "$restore_volume:/restore:ro" "$BACKUP_HELPER_IMAGE" \
+    test -d "$logs_path"; then
+    printf 'Restauration des journaux applicatifs (sans ecraser les fichiers existants)...\n'
+    docker run --rm \
+        -v "$restore_volume:/restore:ro" \
+        -v "$DEPLOY_PATH/logs:/destination" \
+        "$BACKUP_HELPER_IMAGE" sh -eu -c '
+            cd /restore/source/logs
+            find . -type f | while IFS= read -r file; do
+                [ -e "/destination/$file" ] && continue
+                mkdir -p "/destination/$(dirname "$file")"
+                cp -a "$file" "/destination/$file"
+            done
+        '
+fi
+
 if docker container inspect "$ai_container" >/dev/null 2>&1; then
     printf 'Reprovisionnement de la couche IA...\n'
     docker start "$ai_container" >/dev/null

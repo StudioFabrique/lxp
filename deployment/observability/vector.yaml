@@ -1,0 +1,41 @@
+# Lit les fichiers JSON écrits par winston (api/dist/logs) et les envoie à
+# VictoriaLogs. Aucun accès au socket Docker : le dossier est monté en lecture
+# seule. Les archives `.gz` des heures passées sont ignorées.
+data_dir: /var/lib/vector
+
+sources:
+  lxp_files:
+    type: file
+    include: ["/logs/application-*.log"]
+    exclude: ["/logs/*.gz"]
+    read_from: beginning
+
+transforms:
+  lxp_parse:
+    type: remap
+    inputs: [lxp_files]
+    source: |
+      line = string!(.message)
+      parsed, err = parse_json(line)
+      if err != null || !is_object(parsed) {
+        # Ligne non JSON : on la conserve telle quelle plutôt que de la perdre.
+        .level = "unknown"
+      } else {
+        . = object!(parsed)
+        # Le format de date de winston n'est pas ISO : on garde la valeur
+        # d'origine et on date l'entrée à son ingestion.
+        .app_timestamp = del(.timestamp)
+        .timestamp = now()
+      }
+      .job = "lxp-app"
+
+sinks:
+  victorialogs:
+    type: http
+    inputs: [lxp_parse]
+    uri: "http://victorialogs:9428/v1/observability/insert/jsonline?_stream_fields=job,level&_msg_field=message&_time_field=timestamp"
+    method: post
+    framing:
+      method: newline_delimited
+    encoding:
+      codec: json

@@ -1,7 +1,7 @@
 name: ${LXP_DEPLOYMENT_NAME:-lxp}
 
 # Socle applicatif, sans la couche IA. L'instance de démonstration se déploie
-# avec ce seul fichier ; les autres y superposent `compose.ai.yml`.
+# avec ce seul fichier ; les autres y superposent `ai.compose.yml`.
 
 services:
   app:

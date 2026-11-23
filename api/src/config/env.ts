@@ -66,6 +66,9 @@ const schema = z
     DOCKER_IA_AUTH_SECRET: optionalString,
     DISABLE_AI_FEATURES: booleanString,
 
+    // Adresse interne de VictoriaLogs. Absente en mode démonstration.
+    OBSERVABILITY_URL: optionalUrl,
+
     DEMO_MODE: booleanString,
     DEMO_URL: optionalUrl,
     DEMO_EXIT_URL: optionalUrl,

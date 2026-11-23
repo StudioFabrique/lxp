@@ -16,6 +16,7 @@ import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger.ts";
 import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils.ts";
 import { buildAbility } from "../../utils/rbac/ability.ts";
+import { clientIp } from "../../middleware/rate-limiter.ts";
 
 async function httpLogin(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -51,6 +52,13 @@ async function httpLogin(req: Request, res: Response) {
           `${user.firstname} ${user.lastname} vient de se connecter.`
         );
       } */
+      // Trace d'audit : la requête HTTP de connexion est anonyme dans le
+      // journal de requêtes, seul l'identifiant (jamais l'email) l'attribue.
+      logger.info("auth.login", {
+        event: "auth.login",
+        userId: String(user._id),
+        from: clientIp(req),
+      });
       return res
         .cookie("accessToken", accessToken, sessionCookieOptions("accessToken"))
         .cookie(

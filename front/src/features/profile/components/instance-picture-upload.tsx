@@ -132,7 +132,10 @@ const InstancePictureUpload = () => {
 
       <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
         <div className="min-w-0">
-          <span className="mb-2 block text-sm font-bold">Aperçu du logo</span>
+          <div className="mb-2 flex items-center gap-1.5">
+            <span className="text-sm font-bold">Aperçu du logo</span>
+            <InstanceLogoAdvice formatHint="JPG ou PNG, 500 Ko maximum" />
+          </div>
           <div className="max-w-md">
             <ImageFileUpload
               temporaryImage={temporaryAvatar}
@@ -148,9 +151,6 @@ const InstancePictureUpload = () => {
           <p className="mt-2 text-xs text-base-content/60">
             Cliquez sur l’aperçu pour remplacer le logo.
           </p>
-          <div className="mt-1">
-            <InstanceLogoAdvice formatHint="JPG ou PNG, 500 Ko maximum" />
-          </div>
         </div>
 
         <div className="flex min-h-32 flex-col">

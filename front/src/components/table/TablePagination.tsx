@@ -19,6 +19,8 @@ export type TablePaginationProps = {
   maxPage: number | null;
   itemsPerPage: number;
   leftText?: string;
+  /** Faux quand le tableau est un panneau parmi d'autres : la page garde sa position au changement de page. */
+  scrollToTopOnChange?: boolean;
   onSetCurrentPage: (currentPage: number) => void;
   onSetItemsPerPage: (itemsPerPage: number) => void;
   onSetPreviousPage: () => void;
@@ -36,7 +38,7 @@ const TablePagination = (props: TablePaginationProps) => {
 
   const changePage = (onChange: () => void) => {
     onChange();
-    scrollToListTop();
+    if (props.scrollToTopOnChange ?? true) scrollToListTop();
   };
 
   return (

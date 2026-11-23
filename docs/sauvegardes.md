@@ -4,10 +4,28 @@ Les scripts utilisent Restic pour sauvegarder :
 
 - PostgreSQL ;
 - MongoDB ;
-- le dossier `uploads`.
+- le dossier `uploads` ;
+- les journaux applicatifs (`logs`), seulement si la couche d'observabilité
+  (`observability.compose.yml`) est déployée.
 
-La base IA, le cache des modèles et les journaux ne sont pas sauvegardés. Le
-service IA reconstruit sa base à partir des données du LXP.
+La base IA et le cache des modèles ne sont pas sauvegardés. Le service IA
+reconstruit sa base à partir des données du LXP.
+
+### Journaux et observabilité
+
+La sauvegarde copie les fichiers `application-*.log` écrits par l'API, pas le
+volume de VictoriaLogs : l'index en dérive et Vector le reconstruit à partir des
+fichiers. L'API ne conserve que 14 jours de fichiers (rotation winston), alors que
+VictoriaLogs en garde 30 : un snapshot contient donc au plus ces 14 jours.
+
+À la restauration, les journaux sont recopiés dans `logs` **sans écraser les
+fichiers existants**. Le volume VictoriaLogs n'est pas modifié ; Vector indexe les
+fichiers qu'il n'a pas encore lus.
+
+> RGPD : les journaux contiennent des identifiants d'utilisateur et des adresses
+> IP. Les snapshots suivent la rétention des sauvegardes (7 jours, 8 semaines,
+> 12 mois) : ces données restent donc récupérables bien au-delà des 30 jours de
+> VictoriaLogs. Ce délai doit figurer dans la durée de conservation déclarée.
 
 ## Choisir les destinations
 
@@ -122,7 +140,8 @@ Lancez un contrôle après un changement majeur de PostgreSQL, MongoDB ou Restic
 
 ## Restaurer une instance
 
-> Cette commande remplace PostgreSQL, MongoDB et `uploads`. Vérifiez le nom de
+> Cette commande remplace PostgreSQL, MongoDB et `uploads` (les journaux sont
+> seulement ajoutés). Vérifiez le nom de
 > la stack et l'identifiant du snapshot avant de continuer.
 
 La restauration demande un identifiant Restic précis. Elle refuse `latest`.

@@ -63,7 +63,7 @@ const DashboardIAHome = () => {
     : [];
 
   return (
-    <PageWrapper as="main" className="items-center">
+    <PageWrapper as="main">
       <Header
         title="Tableau de bord IA"
         description="Consultez les statistiques de consommation de l'IA par vos apprenants"

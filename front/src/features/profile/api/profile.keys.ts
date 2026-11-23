@@ -4,5 +4,6 @@ export const profileKeys = {
   accomplishments: () => [...profileKeys.all, "accomplishments"] as const,
   skills: () => [...profileKeys.all, "skills"] as const,
   instanceSettings: () => [...profileKeys.all, "instance-settings"] as const,
+  observabilityStatus: () => [...profileKeys.all, "observability-status"] as const,
   instanceLogo: () => [...profileKeys.all, "instance-logo"] as const,
 };

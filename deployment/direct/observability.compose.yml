@@ -1,0 +1,68 @@
+# Observabilité, superposée au socle `compose.yml` (et à `ai.compose.yml`) :
+#
+#   docker compose -f compose.yml -f observability.compose.yml up -d
+#
+# - VictoriaLogs + Vector : logs applicatifs (qui s'est connecté, quelles
+#   routes, quels statuts), lus depuis le dossier de logs de l'application.
+#   L'interface est servie par l'API sur /v1/observability/select/vmui/,
+#   réservée au compte root.
+#
+# Ce fichier n'est pas autonome : il réutilise `app` et le réseau `backend`.
+
+services:
+  app:
+    environment:
+      OBSERVABILITY_URL: http://victorialogs:9428
+    networks:
+      - observability
+
+  victorialogs:
+    image: victoriametrics/victoria-logs:v1.54.0
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-victorialogs
+    restart: unless-stopped
+    command:
+      - -storageDataPath=/vlogs
+      # 30 jours : limite la durée de conservation des IP et identifiants.
+      - -retentionPeriod=30d
+      # Préfixe commun avec la route de l'API : l'interface n'est servie qu'à
+      # travers `/v1/observability`, réservée au compte root.
+      - -http.pathPrefix=/v1/observability
+    volumes:
+      - vlogs:/vlogs
+    # Aucun port publié ni label de proxy : VictoriaLogs n'est joignable que
+    # depuis le réseau interne `observability` (API et Vector).
+    networks:
+      - observability
+    security_opt:
+      - no-new-privileges:true
+
+  vector:
+    image: timberio/vector:0.62.0-alpine
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-vector
+    restart: unless-stopped
+    command: ["--config", "/etc/vector/vector.yaml"]
+    depends_on:
+      - victorialogs
+    volumes:
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/observability/vector.yaml:/etc/vector/vector.yaml:ro
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/logs:/logs:ro
+      - vector:/var/lib/vector
+    networks:
+      - observability
+    environment:
+      VECTOR_WATCH_CONFIG: "false"
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  # Réseau propre à l'observabilité : VictoriaLogs et Vector n'ont
+  # aucune raison d'être joignables depuis `backend`.
+  observability:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_observability
+    internal: true
+
+volumes:
+  vlogs:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_vlogs
+  vector:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_vector
