@@ -1,5 +1,6 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -33,6 +34,7 @@ describe("Menu du profil", () => {
     act(() => {
       root = createRoot(container);
       root.render(
+        <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter>
           <AuthContext
             value={
@@ -73,7 +75,8 @@ describe("Menu du profil", () => {
               </VisualPreferencesProvider>
             </ThemeContext>
           </AuthContext>
-        </MemoryRouter>,
+        </MemoryRouter>
+        </QueryClientProvider>,
       );
     });
     act(() => {
@@ -88,6 +91,37 @@ describe("Menu du profil", () => {
     expect(
       document.querySelector('a[href="/admin/parametres-instance"]'),
     ).not.toBeNull();
+  });
+
+  it("propose les journaux au superadmin quand ils sont déployés", async () => {
+    vi.spyOn(profileApi.queries, "getObservabilityStatus").mockResolvedValue({
+      enabled: true,
+    });
+    showMenu(0);
+    await act(async () => {});
+    const link = document.querySelector<HTMLAnchorElement>(
+      'a[href$="/observability/select/vmui/"]',
+    );
+    expect(link).not.toBeNull();
+    expect(link?.rel).toContain("noopener");
+  });
+
+  it("n’affiche pas les journaux quand ils ne sont pas déployés", async () => {
+    vi.spyOn(profileApi.queries, "getObservabilityStatus").mockResolvedValue({
+      enabled: false,
+    });
+    showMenu(0);
+    await act(async () => {});
+    expect(
+      document.querySelector('a[href$="/observability/select/vmui/"]'),
+    ).toBeNull();
+  });
+
+  it("n’interroge pas les journaux pour un administrateur classique", async () => {
+    const status = vi.spyOn(profileApi.queries, "getObservabilityStatus");
+    showMenu(1);
+    await act(async () => {});
+    expect(status).not.toHaveBeenCalled();
   });
 
   it("cache les paramètres à l’administrateur classique", () => {

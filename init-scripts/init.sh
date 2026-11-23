@@ -380,8 +380,19 @@ if [ "$demo_mode" = false ] && [ "$restore_data" = false ]; then
   info "Rôles, permissions et clé du premier administrateur : $(cmd "npm run generate-activation-key")"
 fi
 cd ..
+
+# Les journaux sont indisponibles en démonstration : le mode coupe la route
+# côté API, inutile alors de proposer de les démarrer.
+show_observability_hint() {
+  [ "$demo_mode" = false ] || return 0
+  info "Journaux (facultatif) : $(cmd "npm run observability:dev") à la racine du projet"
+  info "Puis dans api/.env : $(cmd "OBSERVABILITY_URL=http://localhost:9428") et $(cmd "DEMO_MODE=false")"
+  info "Arrêt : $(cmd "npm run observability:dev:down")"
+}
+
 if [ ! -t 0 ]; then
   info "Prochaine étape : lancer $(cmd "npm run dev") à la racine du projet"
+  show_observability_hint
   exit 0
 fi
 
@@ -389,10 +400,12 @@ while true; do
   read -r -p "Voulez-vous lancer le serveur de développement maintenant ? [y/N] : " start_dev
   case "$start_dev" in
     o|O|oui|Oui|OUI|y|Y|yes|YES)
+      show_observability_hint
       exec npm run dev
       ;;
     ""|n|N|non|Non|NON|no|NO)
       info "Lancer $(cmd "npm run dev") plus tard à la racine du projet"
+      show_observability_hint
       break
       ;;
     *) echo "Répondez par y ou n." ;;

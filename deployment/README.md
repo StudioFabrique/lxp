@@ -26,7 +26,7 @@ Le fichier `compose.yml` démarre :
 - PostgreSQL `db-pg` ;
 - MongoDB `db-mongo`.
 
-Le fichier `compose.ai.yml` ajoute le service `ai`, sa base `db-ai`, le cache
+Le fichier `ai.compose.yml` ajoute le service `ai`, sa base `db-ai`, le cache
 des modèles et `dropout-worker`. Ce dernier reprend l'analyse hebdomadaire du
 décrochage et les récapitulatifs mensuels après un arrêt, sans charger le
 processus HTTP. Les pipelines chargent ce second fichier quand
@@ -34,6 +34,37 @@ processus HTTP. Les pipelines chargent ce second fichier quand
 
 Une instance de démonstration utilise seulement `compose.yml`. Elle ne démarre
 pas le service IA.
+
+## Observabilité (optionnelle)
+
+`observability.compose.yml` se superpose aux autres fichiers du même mode. Le
+pipeline le charge quand `OBSERVABILITY_ENABLED=true`, et jamais en mode
+démonstration (`DEMO_MODE=true` le désactive et retire ses variables).
+
+```bash
+docker compose -f compose.yml -f ai.compose.yml -f observability.compose.yml up -d
+```
+
+- **VictoriaLogs + Vector** : Vector lit `${DEPLOY_PATH}/logs` en lecture seule
+  (aucun accès au socket Docker) et alimente VictoriaLogs, avec 30 jours de
+  rétention. VictoriaLogs n'a ni port publié ni label de proxy : seule l'API le
+  joint, par le réseau interne `observability`.
+- **Accès** : `https://<instance>/v1/observability/select/vmui/`, réservé au
+  compte root (rang 0) via `checkPermissions` et `checkRoleRank([0])`. Lecture
+  seule, limitée à `/select/`. La route répond 404 sans `OBSERVABILITY_URL`.
+  Exemples de requêtes LogsQL :
+  - connexions : `event:"auth.login"` ;
+  - actions d'un utilisateur : `user:~"^42-"` ;
+  - erreurs : `level:error`.
+- **Metabase** : à connecter à `db-pg` et `db-mongo` avec un compte en lecture
+  seule créé à la main (jamais le compte applicatif). Les noms et emails sont dans
+  MongoDB, l'activité d'apprentissage dans PostgreSQL ; le lien se fait par
+  `Student.idMdb` = `_id` Mongo. Metabase a ses propres comptes : ne créer
+  d'administrateur que pour les personnes autorisées.
+
+Variables : `OBSERVABILITY_ENABLED`, `METABASE_DB_PASSWORD`, et en mode `caddy`
+`METABASE_HOST` ; en mode `direct`, Metabase (`METABASE_PORT`, 3002) reste sur
+la boucle locale, à joindre par tunnel SSH.
 
 ## Préparer un serveur
 

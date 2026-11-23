@@ -28,6 +28,12 @@ const queries = {
     const res = await apiClient.get<{ data: Skill[] }>("/user/profile/skills");
     return res.data.data;
   },
+  getObservabilityStatus: async (): Promise<{ enabled: boolean }> => {
+    const res = await apiClient.get<{ enabled: boolean }>(
+      "/observability/status",
+    );
+    return res.data;
+  },
   getInstanceSettings: async (): Promise<InstanceSettings> => {
     const res = await apiClient.get<InstanceSettings>("/instance-settings");
     return res.data;
