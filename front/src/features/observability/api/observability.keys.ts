@@ -7,6 +7,8 @@ export const observabilityKeys = {
     [...observabilityKeys.all, "overview", rangeKey(range)] as const,
   details: (kind: DetailKind, range: ActivityRange) =>
     [...observabilityKeys.all, "details", kind, rangeKey(range)] as const,
+  search: (text: string, range: ActivityRange) =>
+    [...observabilityKeys.all, "search", text, rangeKey(range)] as const,
   userActivity: (userId: string, range: ActivityRange) =>
     [...observabilityKeys.all, "user-activity", userId, rangeKey(range)] as const,
 };

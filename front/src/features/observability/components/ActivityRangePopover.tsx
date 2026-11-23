@@ -13,7 +13,10 @@ import {
   MAX_RANGE_DAYS,
   type CustomRangeValues,
 } from "../observability.schema";
-import { customRangeLabel, type ActivityRange } from "../helpers/activity-range";
+import {
+  customRangeLabel,
+  type ActivityRange,
+} from "../helpers/activity-range";
 
 type Props = {
   value: ActivityRange;
@@ -90,7 +93,7 @@ export default function ActivityRangePopover({ value, onApply }: Props) {
         >
           <form onSubmit={submit} noValidate className="flex flex-col gap-4">
             <div>
-              <h3 className="font-bold">Cibler un intervalle</h3>
+              <h3 className="font-bold">Choisir les dates</h3>
               <p className="text-xs text-base-content/70">
                 Les journaux sont conservés {MAX_RANGE_DAYS - 1} jours.
               </p>
@@ -118,13 +121,21 @@ export default function ActivityRangePopover({ value, onApply }: Props) {
             />
 
             {errorMessage && (
-              <p id={errorId} role="alert" className="text-xs font-bold text-error">
+              <p
+                id={errorId}
+                role="alert"
+                className="text-xs font-bold text-error"
+              >
                 {errorMessage}
               </p>
             )}
 
             <div className="flex justify-end gap-2">
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setOpen(false)}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => setOpen(false)}
+              >
                 Annuler
               </button>
               <button

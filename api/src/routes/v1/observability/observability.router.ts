@@ -4,11 +4,13 @@ import checkRoleRank from "../../../middleware/check-role-rank.ts";
 import {
   httpObservabilityDetails,
   httpObservabilityOverview,
+  httpObservabilitySearch,
   httpObservabilityUserActivity,
 } from "../../../controllers/observability/http-observability-activity.ts";
 import {
   detailsValidator,
   overviewValidator,
+  searchValidator,
   userActivityValidator,
 } from "./observability.validators.ts";
 import httpObservabilityProxy, {
@@ -29,6 +31,7 @@ observabilityRouter.get(
   overviewValidator,
   httpObservabilityOverview,
 );
+observabilityRouter.get("/search", ...rootOnly, searchValidator, httpObservabilitySearch);
 observabilityRouter.get(
   "/details/:kind",
   ...rootOnly,

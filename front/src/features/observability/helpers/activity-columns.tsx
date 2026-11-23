@@ -3,7 +3,7 @@ import CardLabel from "../components/CardLabel";
 import RouteLabel from "../components/RouteLabel";
 import UserActivityButton from "../components/UserActivityButton";
 import UserLabel from "../components/UserLabel";
-import type { ActivityUser } from "../api/observability.api";
+import type { ActivityTarget, ActivityUser } from "../api/observability.api";
 import { formatNumber } from "../../../utils/helpers/format-number";
 import { localeDate, localeTime } from "../../../utils/helpers/locale-date";
 
@@ -30,31 +30,31 @@ export const dateTimeColumn = <T extends RowData>(
 });
 
 export const routeColumn = <T extends RowData>(
-  read: (row: T) => { method: string; path: string },
+  read: (row: T) => { method: string; path: string; targets?: ActivityTarget[] },
 ): Column<T> => ({
   id: "route",
   header: "Route",
   enableSorting: false,
   cell: ({ row }) => {
-    const { method, path } = read(row.original);
+    const { method, path, targets } = read(row.original);
     return (
       <div className="py-2">
-        <RouteLabel method={method} path={path} />
+        <RouteLabel method={method} path={path} targets={targets} />
       </div>
     );
   },
 });
 
 export const userColumn = <T extends RowData>(
-  read: (row: T) => { user: ActivityUser | null; anonymous?: boolean },
+  read: (row: T) => { user: ActivityUser | null; anonymous?: boolean; system?: boolean },
   header = "Personne",
 ): Column<T> => ({
   id: "person",
   header,
   enableSorting: false,
   cell: ({ row }) => {
-    const { user, anonymous } = read(row.original);
-    return <UserLabel user={user} anonymous={anonymous} />;
+    const { user, anonymous, system } = read(row.original);
+    return <UserLabel user={user} anonymous={anonymous} system={system} />;
   },
 });
 

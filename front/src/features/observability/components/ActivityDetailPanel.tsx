@@ -18,6 +18,7 @@ import FailedLoginsDetail from "./FailedLoginsDetail";
 import LoginsDetail from "./LoginsDetail";
 import PerformanceDetail from "./PerformanceDetail";
 import RequestsDetail from "./RequestsDetail";
+import SlowRequestsDetail from "./SlowRequestsDetail";
 
 const titles: Record<DetailKind, string> = {
   logins: "Détail des connexions",
@@ -27,6 +28,7 @@ const titles: Record<DetailKind, string> = {
   "client-errors": "Détail des erreurs côté client",
   "server-errors": "Détail des erreurs côté serveur",
   performance: "Détail des temps de réponse",
+  "slow-requests": "Détail des requêtes lentes",
 };
 
 type Props = {
@@ -104,6 +106,8 @@ export default function ActivityDetailPanel({
           <RequestsDetail data={data} />
         ) : data.kind === "performance" ? (
           <PerformanceDetail data={data} />
+        ) : data.kind === "slow-requests" ? (
+          <SlowRequestsDetail data={data} onSelectUser={onSelectUser} />
         ) : (
           <ErrorsDetail data={data} onSelectUser={onSelectUser} />
         )}
