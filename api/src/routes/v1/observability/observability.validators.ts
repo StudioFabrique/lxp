@@ -73,3 +73,17 @@ export const detailsValidator = [
   ...rangeValidators,
   checkValidatorResult,
 ];
+
+export const searchValidator = [
+  query("q")
+    .isString()
+    .bail()
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage("La recherche doit contenir entre 2 et 100 caractères.")
+    // Pas de caractère de contrôle : le texte est inséré entre guillemets dans la requête.
+    .matches(/^[^\u0000-\u001f\u007f]+$/)
+    .withMessage("La recherche contient des caractères invalides."),
+  ...rangeValidators,
+  checkValidatorResult,
+];

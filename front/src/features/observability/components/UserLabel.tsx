@@ -5,12 +5,17 @@ type Props = {
   anonymous?: boolean;
   /** `null` si le compte n'existe plus. */
   user: ActivityUser | null;
+  /** Ligne qui ne vient d'aucune requête (worker, tâche planifiée). */
+  system?: boolean;
 };
 
 const mutedClassName = "whitespace-nowrap text-sm italic text-base-content/70";
 
 /** Rattache une ligne de journal à une personne, à un visiteur anonyme ou à un compte supprimé. */
-export default function UserLabel({ anonymous = false, user }: Props) {
+export default function UserLabel({ anonymous = false, system = false, user }: Props) {
+  if (system) {
+    return <span className={mutedClassName}>Système</span>;
+  }
   if (anonymous) {
     return <span className={mutedClassName}>Visiteur non connecté</span>;
   }

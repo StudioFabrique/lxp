@@ -15,7 +15,13 @@ const plural = (count: number, singular: string, pluralForm: string) =>
 export default function ActivityStats({ totals, selected, onSelect }: Props) {
   const block = (
     id: StatBlockId,
-    props: { label: string; value: number; hint?: string; unit?: string; valueClassName?: string },
+    props: {
+      label: string;
+      value: number;
+      hint?: string;
+      unit?: string;
+      valueClassName?: string;
+    },
   ) => (
     <li key={id}>
       <ActivityStatBlock
@@ -35,18 +41,22 @@ export default function ActivityStats({ totals, selected, onSelect }: Props) {
       {block("logins", {
         label: "Connexions",
         value: totals.logins,
-        hint: plural(totals.loginUsers, "personne différente", "personnes différentes"),
+        hint: plural(
+          totals.loginUsers,
+          "personne différente",
+          "personnes différentes",
+        ),
       })}
       {block("failed-logins", {
         label: "Échecs de connexion",
         value: totals.failedLogins,
-        hint: "Mauvais identifiants ou blocages",
+        hint: "Mauvais identifiants ou problèmes d'authentification",
         valueClassName: totals.failedLogins > 0 ? "text-warning" : undefined,
       })}
       {block("active-users", {
         label: "Utilisateurs actifs",
         value: totals.activeUsers,
-        hint: "Comptes ayant agi",
+        hint: "Comptes ayant eu au moins une interaction",
       })}
       {block("requests", {
         label: "Requêtes",
@@ -56,25 +66,26 @@ export default function ActivityStats({ totals, selected, onSelect }: Props) {
       {block("client-errors", {
         label: "Erreurs côté client",
         value: totals.clientErrors,
-        hint: "Codes 4xx : refus, introuvable",
+        hint: "Codes 400 : refus, introuvable",
         valueClassName: totals.clientErrors > 0 ? "text-warning" : undefined,
       })}
       {block("server-errors", {
         label: "Erreurs côté serveur",
         value: totals.serverErrors,
-        hint: "Codes 5xx : pannes",
+        hint: "Codes 500 : pannes",
         valueClassName: totals.serverErrors > 0 ? "text-error" : undefined,
       })}
       {block("performance-average", {
         label: "Temps de réponse moyen",
         value: totals.avgResponseMs,
         unit: "ms",
+        hint: "Durée habituelle d'une requête",
       })}
-      {block("performance-p95", {
-        label: "95e centile",
-        value: totals.p95ResponseMs,
-        unit: "ms",
-        hint: "95 % des requêtes sont plus rapides",
+      {block("slow-requests", {
+        label: "Requêtes lentes",
+        value: totals.slowRequests,
+        hint: "Plus d'une seconde pour répondre",
+        valueClassName: totals.slowRequests > 0 ? "text-warning" : undefined,
       })}
     </ul>
   );

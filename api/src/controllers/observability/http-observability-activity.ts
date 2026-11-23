@@ -3,10 +3,17 @@ import { matchedData } from "express-validator";
 import { logger } from "../../utils/logs/logger.ts";
 import { ObservabilityUnavailableError } from "../../utils/services/observability/victorialogs-proxy.ts";
 import getUserIdentitiesByIds, { type UserIdentity } from "../../models/user/get-user-identities-by-ids.ts";
+import getTargetLabels, { targetKey } from "../../models/observability/get-target-labels.ts";
+import findUserIdsByName from "../../models/user/find-user-ids-by-name.ts";
+import {
+  extractTargets,
+  TARGET_KIND_LABELS,
+} from "../../utils/services/observability/route-targets.ts";
 import {
   getActivityDetails,
   getActivityOverview,
   getUserActivity,
+  searchLogs,
   type ActivityDetails,
   type ActivityPeriod,
   type ActivityRange,
@@ -90,7 +97,7 @@ export async function httpObservabilityUserActivity(
             role: identity.roleLabel,
           }
         : null,
-      actions,
+      actions: await attachTargets(actions),
     });
   } catch (error: unknown) {
     return failure(res, error, "observability.user-activity");
@@ -121,6 +128,7 @@ const userIdsOf = (details: ActivityDetails): string[] => {
       return details.users.map(({ userId }) => userId);
     case "client-errors":
     case "server-errors":
+    case "slow-requests":
       return details.recent.flatMap(({ userId }) => (userId ? [userId] : []));
     default:
       return [];
@@ -144,6 +152,7 @@ function withUsers(details: ActivityDetails, identities: Map<string, UserIdentit
       };
     case "client-errors":
     case "server-errors":
+    case "slow-requests":
       return {
         ...details,
         recent: details.recent.map((row) => ({ ...row, user: user(row.userId) })),
@@ -159,10 +168,66 @@ export async function httpObservabilityDetails(req: Request, res: Response) {
   try {
     const details = await getActivityDetails(kind, range);
     const identities = await getUserIdentitiesByIds(userIdsOf(details));
-    return res.json(
-      withUsers(details, new Map(identities.map((identity) => [identity.id, identity]))),
+    const resolved = withUsers(
+      details,
+      new Map(identities.map((identity) => [identity.id, identity])),
     );
+
+    // Les événements individuels (pas les routes regroupées) portent un chemin
+    // complet : on y résout les contenus désignés.
+    if (resolved.kind === "client-errors" || resolved.kind === "server-errors" || resolved.kind === "slow-requests") {
+      return res.json({ ...resolved, recent: await attachTargets(resolved.recent) });
+    }
+    return res.json(resolved);
   } catch (error: unknown) {
     return failure(res, error, "observability.details");
+  }
+}
+
+/**
+ * Contenu désigné par un chemin (« Leçon : Introduction »). `label` vaut `null`
+ * quand le contenu n'existe plus, pour afficher « supprimé » plutôt que rien.
+ */
+type TargetView = { kind: string; id: string; label: string | null };
+
+async function attachTargets<T extends { path: string }>(
+  rows: T[],
+): Promise<(T & { targets: TargetView[] })[]> {
+  const refsByRow = rows.map((row) => extractTargets(row.path));
+  const labels = await getTargetLabels(refsByRow.flat());
+
+  return rows.map((row, index) => ({
+    ...row,
+    targets: refsByRow[index].map((ref) => ({
+      kind: TARGET_KIND_LABELS[ref.kind],
+      id: ref.id,
+      label: labels.get(targetKey(ref.kind, ref.id)) ?? null,
+    })),
+  }));
+}
+
+export async function httpObservabilitySearch(req: Request, res: Response) {
+  const { q, ...rangeQuery } = matchedData<RangeQuery & { q: string }>(req);
+  const range = rangeOf(rangeQuery);
+  try {
+    // Les journaux ne portent que des identifiants : un nom tapé ici retrouve
+    // les comptes correspondants, dont on cherche ensuite les lignes.
+    const personIds = await findUserIdsByName(q);
+    const results = await searchLogs(q, range, personIds);
+
+    const identities = await getUserIdentitiesByIds(
+      results.flatMap(({ userId }) => (userId ? [userId] : [])),
+    );
+    const byId = new Map(identities.map((identity) => [identity.id, identity]));
+    const withTargets = await attachTargets(results);
+
+    return res.json({
+      results: withTargets.map((row) => ({
+        ...row,
+        user: toUserRef(byId, row.userId),
+      })),
+    });
+  } catch (error: unknown) {
+    return failure(res, error, "observability.search");
   }
 }

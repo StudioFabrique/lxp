@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, ScrollText } from "lucide-react";
 import Header from "../../../components/headers/Header";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import LoadingSkeleton from "../../../components/loaders/LoadingSkeleton";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -12,10 +13,12 @@ import {
   type ActivityUser,
 } from "../api/observability.api";
 import { observabilityKeys } from "../api/observability.keys";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { presetRange, type ActivityRange } from "../helpers/activity-range";
 import { detailKindOfBlock, type StatBlockId } from "../helpers/stat-blocks";
 import ActivityDetailPanel from "../components/ActivityDetailPanel";
 import ActivityPeriodSelect from "../components/ActivityPeriodSelect";
+import ActivitySearchResults from "../components/ActivitySearchResults";
 import ActivityStats from "../components/ActivityStats";
 import HourlyLoginsChart from "../components/HourlyLoginsChart";
 import RecentLoginsTable from "../components/RecentLoginsTable";
@@ -29,6 +32,9 @@ export default function ObservabilityActivity() {
   const [range, setRange] = useState<ActivityRange>(presetRange("24h"));
   const [selectedBlock, setSelectedBlock] = useState<StatBlockId | null>(null);
   const [scrollSignal, setScrollSignal] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
+  // Une requête par recherche, pas une par lettre tapée.
+  const searchText = useDebouncedValue(searchInput.trim());
   // Bloc qui a ouvert le détail : on y revient à la fermeture.
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const [selectedUser, setSelectedUser] = useState<ActivityUser | null>(null);
@@ -91,6 +97,28 @@ export default function ObservabilityActivity() {
       </Header>
 
       <ActivityPeriodSelect value={range} onChange={setRange} />
+
+      <div className="mb-4">
+        <MultiCriteriaSearch
+          value={searchInput}
+          onChange={setSearchInput}
+          placeholder="Rechercher dans les journaux"
+          criteria={["route", "code", "adresse IP", "nom d'une personne"]}
+        />
+        <p className="mt-1 text-xs text-base-content/70">
+          La recherche porte sur la période choisie ci-dessus.
+        </p>
+      </div>
+
+      {searchText.length >= 2 && (
+        <div className="mb-4">
+          <ActivitySearchResults
+            text={searchText}
+            range={range}
+            onSelectUser={setSelectedUser}
+          />
+        </div>
+      )}
 
       {isPending ? (
         <LoadingSkeleton variant="cards" label="Chargement de l'activité" />

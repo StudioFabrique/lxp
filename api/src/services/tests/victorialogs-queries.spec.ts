@@ -6,12 +6,14 @@ import {
   getActivityDetails,
   getActivityOverview,
   getUserActivity,
+  searchLogs,
   userIdFromLogField,
 } from "../../utils/services/observability/victorialogs-queries.ts";
 import { ObservabilityUnavailableError } from "../../utils/services/observability/victorialogs-proxy.ts";
 import {
   detailsValidator,
   overviewValidator,
+  searchValidator,
   userActivityValidator,
 } from "../../routes/v1/observability/observability.validators.ts";
 
@@ -48,8 +50,8 @@ describe("requêtes d'activité VictoriaLogs", () => {
         return new Response(ndjson([{ method: "GET", path: "/v1/a/:id", avg_ms: "12.6", hits: "3" }]));
       if (query.includes("stats by (_time:1h)"))
         return new Response(ndjson([{ _time: "2026-11-23T09:00:00Z", n: "3" }, { _time: "2026-11-23T10:00:00Z", n: "6" }]));
-      if (query.includes("quantile(0.95, durationMs) as p95") && !query.includes("by (method"))
-        return new Response(ndjson([{ avg_ms: "45.4", p95: "97" }]));
+      if (query.includes("stats avg(durationMs) as avg_ms") && !query.includes("by (method"))
+        return new Response(ndjson([{ avg_ms: "45.4" }]));
       if (query.includes("by (user)"))
         return new Response(ndjson([{ user: "6b0442fd94346451f219a8fd-root", hits: "264", last: "2026-11-23T14:00:00Z" }, { user: "-anonyme", hits: "2", last: "x" }]));
       if (query.includes("fields _time, method, path, status, user"))
@@ -77,7 +79,7 @@ describe("requêtes d'activité VictoriaLogs", () => {
 
   it("expose les nouveaux indicateurs et la courbe horaire des connexions", async () => {
     const overview = await getActivityOverview(preset("30d"));
-    expect(overview.totals).toMatchObject({ failedLogins: 4, avgResponseMs: 45, p95ResponseMs: 97 });
+    expect(overview.totals).toMatchObject({ failedLogins: 4, avgResponseMs: 45, slowRequests: 4 });
     expect(overview.hourlyLogins).toEqual([
       { time: "2026-11-23T09:00:00Z", count: 3 },
       { time: "2026-11-23T10:00:00Z", count: 6 },
@@ -113,6 +115,61 @@ describe("requêtes d'activité VictoriaLogs", () => {
     expect(sentQueries).toHaveLength(0);
   });
 
+  it("cherche l'expression entre guillemets dans tous les champs, sans ses propres appels", async () => {
+    await searchLogs("first-admin", preset("7d"));
+    expect(sentQueries[0]).toContain('_time:7d (*:"first-admin")');
+    expect(sentQueries[0]).toContain('!path:~"^/v1/observability"');
+    expect(sentQueries[0]).toContain("limit 100");
+  });
+
+  it.each([
+    ['x" or *', 'x\\" or *'],
+    ['*" | delete', '*\\" | delete'],
+    ["abc\\", "abc\\\\"],
+  ])("neutralise le texte cherché %s", async (text, escaped) => {
+    await searchLogs(text, preset("24h"));
+    expect(sentQueries[0]).toContain(`(*:"${escaped}")`);
+  });
+
+  it("ajoute les lignes des comptes dont le nom correspond, avec des identifiants validés", async () => {
+    await searchLogs("martin", preset("24h"), ["6b0442fd94346451f219a8fd", "x\" | delete"]);
+    expect(sentQueries[0]).toContain('user:~"^(6b0442fd94346451f219a8fd)-"');
+    expect(sentQueries[0]).toContain('userId:in("6b0442fd94346451f219a8fd")');
+    expect(sentQueries[0]).not.toContain("delete");
+  });
+
+  it("distingue compte, visiteur et événement système dans les résultats", async () => {
+    jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        ndjson([
+          { _time: "t1", _msg: "GET /v1/a 200", method: "GET", path: "/v1/a", status: "200", user: "6b0442fd94346451f219a8fd-root" },
+          { _time: "t2", _msg: "POST /v1/b 401", method: "POST", path: "/v1/b", status: "401", user: "--anonyme" },
+          { _time: "t3", _msg: "auth.login", userId: "6b0442fd94346451f219a8fd", from: "::1" },
+          { _time: "t4", _msg: "Prochain réveil du worker", level: "info" },
+        ]),
+      ),
+    );
+    const results = await searchLogs("a", preset("24h"));
+    expect(results.map(({ userId, anonymous, system }) => ({ userId, anonymous, system }))).toEqual([
+      { userId: "6b0442fd94346451f219a8fd", anonymous: false, system: false },
+      { userId: null, anonymous: true, system: false },
+      { userId: "6b0442fd94346451f219a8fd", anonymous: false, system: false },
+      { userId: null, anonymous: false, system: true },
+    ]);
+    expect(results[0].status).toBe(200);
+    expect(results[3].status).toBeNull();
+  });
+
+  it("valide le texte de recherche (longueur, caractères de contrôle)", async () => {
+    const search = async (q: string) =>
+      validationResult(await run(searchValidator, { query: { q } })).isEmpty();
+    expect(await search("chatbot")).toBe(true);
+    expect(await search("a")).toBe(false);
+    expect(await search("x".repeat(101))).toBe(false);
+    expect(await search("ligne\nsuivante")).toBe(false);
+    expect(await search("   ")).toBe(false);
+  });
+
   it("extrait l'identifiant Mongo du champ user", () => {
     expect(userIdFromLogField("6b0442fd94346451f219a8fd-root")).toBe("6b0442fd94346451f219a8fd");
     expect(userIdFromLogField("-anonyme")).toBeNull();
@@ -131,6 +188,18 @@ describe("requêtes d'activité VictoriaLogs", () => {
     if (details.kind !== "server-errors") throw new Error("type inattendu");
     expect(details.recent.map(({ userId }) => userId)).toEqual(["6b0442fd94346451f219a8fd", null]);
     expect(sentQueries.some((query) => query.includes("status:range[500,599]"))).toBe(true);
+  });
+
+  it("compte les requêtes lentes au-delà d'une seconde et rattache leurs auteurs", async () => {
+    const overview = await getActivityOverview(preset("24h"));
+    expect(overview.totals.slowRequests).toBe(4);
+    expect(sentQueries.some((query) => query.includes("durationMs:>1000"))).toBe(true);
+
+    sentQueries.length = 0;
+    const details = await getActivityDetails("slow-requests", preset("24h"));
+    if (details.kind !== "slow-requests") throw new Error("type inattendu");
+    expect(details.recent.map(({ userId }) => userId)).toEqual(["6b0442fd94346451f219a8fd", null]);
+    expect(sentQueries.every((query) => query.includes("durationMs:>1000"))).toBe(true);
   });
 
   it("ne garde que les comptes dans les utilisateurs actifs", async () => {

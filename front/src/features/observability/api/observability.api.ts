@@ -11,6 +11,12 @@ export type ActivityUser = {
   role: string | null;
 };
 
+/**
+ * Contenu désigné par un chemin d'API (« Leçon : Introduction »). `label` vaut
+ * `null` quand le contenu n'existe plus.
+ */
+export type ActivityTarget = { kind: string; id: string; label: string | null };
+
 export type ActivityOverview = {
   totals: {
     requests: number;
@@ -21,7 +27,7 @@ export type ActivityOverview = {
     serverErrors: number;
     failedLogins: number;
     avgResponseMs: number;
-    p95ResponseMs: number;
+    slowRequests: number;
   };
   /** Connexions par heure UTC ; le regroupement par heure locale se fait à l'affichage. */
   hourlyLogins: { time: string; count: number }[];
@@ -39,7 +45,26 @@ export type UserActivity = {
     path: string;
     status: number;
     durationMs: number;
+    targets: ActivityTarget[];
   }[];
+};
+
+export type SearchResult = {
+  time: string;
+  level: string;
+  message: string;
+  method: string;
+  path: string;
+  status: number | null;
+  durationMs: number | null;
+  from: string;
+  userId: string | null;
+  /** Requête d'un visiteur non connecté. */
+  anonymous: boolean;
+  /** Ligne qui ne vient d'aucune requête (worker, tâche planifiée). */
+  system: boolean;
+  user: ActivityUser | null;
+  targets: ActivityTarget[];
 };
 
 export const detailKinds = [
@@ -50,6 +75,7 @@ export const detailKinds = [
   "client-errors",
   "server-errors",
   "performance",
+  "slow-requests",
 ] as const;
 export type DetailKind = (typeof detailKinds)[number];
 
@@ -62,6 +88,7 @@ export type ActivityEvent = {
   durationMs: number;
   userId: string | null;
   user: ActivityUser | null;
+  targets: ActivityTarget[];
 };
 
 export type ActivityDetails =
@@ -96,9 +123,13 @@ export type ActivityDetails =
         method: string;
         path: string;
         avgMs: number;
-        p95Ms: number;
         hits: number;
       }[];
+    }
+  | {
+      kind: "slow-requests";
+      topRoutes: { method: string; path: string; count: number; avgMs: number }[];
+      recent: ActivityEvent[];
     };
 
 /** Interface de consultation détaillée (VictoriaLogs), servie par l'API. */
@@ -121,6 +152,12 @@ export const observabilityApi = {
         { params: rangeParams(range) },
       );
       return res.data;
+    },
+    search: async (text: string, range: ActivityRange): Promise<SearchResult[]> => {
+      const res = await apiClient.get<{ results: SearchResult[] }>("/observability/search", {
+        params: { q: text, ...rangeParams(range) },
+      });
+      return res.data.results;
     },
     getUserActivity: async (
       userId: string,

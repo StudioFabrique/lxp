@@ -16,7 +16,7 @@ export default function UserActivityRow({ action }: Props) {
       >
         {localeTime(action.time)}
       </time>
-      <RouteLabel method={action.method} path={action.path} />
+      <RouteLabel method={action.method} path={action.path} targets={action.targets} />
       <div className="flex flex-col items-end gap-1">
         <span
           className={cn(

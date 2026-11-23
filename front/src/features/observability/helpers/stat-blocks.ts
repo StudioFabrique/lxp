@@ -3,7 +3,7 @@ import type { DetailKind } from "../api/observability.api";
 /** Identifiant du panneau de détail, référencé par `aria-controls` sur chaque bloc. */
 export const detailPanelId = "activity-detail";
 
-/** Un identifiant par bloc : deux blocs peuvent ouvrir le même détail. */
+/** Un identifiant par bloc : le détail ouvert se déduit de lui. */
 export type StatBlockId =
   | "logins"
   | "failed-logins"
@@ -12,7 +12,7 @@ export type StatBlockId =
   | "client-errors"
   | "server-errors"
   | "performance-average"
-  | "performance-p95";
+  | "slow-requests";
 
 export const detailKindOfBlock = (block: StatBlockId): DetailKind =>
-  block === "performance-average" || block === "performance-p95" ? "performance" : block;
+  block === "performance-average" ? "performance" : block;

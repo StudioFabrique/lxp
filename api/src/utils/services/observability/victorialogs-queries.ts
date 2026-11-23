@@ -46,6 +46,9 @@ const OBJECT_ID_PATTERN = /^[0-9a-f]{24}$/;
  */
 const IGNORE_OBSERVABILITY =
   '!path:~"^/v1/observability" !(status:=401 path:~"^/v1/auth/(handshake|refresh)$")';
+/** Une requête est dite lente au-delà d'une seconde ; l'interface l'écrit en toutes lettres. */
+export const SLOW_REQUEST_MS = 1000;
+const SLOW_REQUEST = `durationMs:>${SLOW_REQUEST_MS}`;
 const FAILED_LOGIN = 'path:="/v1/auth/login" method:POST status:range[400,499]';
 /** Les identifiants numériques et Mongo d'un chemin sont regroupés sous `:id`. */
 const NORMALIZE_PATH =
@@ -99,7 +102,7 @@ export type ActivityOverview = {
     serverErrors: number;
     failedLogins: number;
     avgResponseMs: number;
-    p95ResponseMs: number;
+    slowRequests: number;
   };
   /** Connexions par heure UTC : le navigateur regroupe selon son fuseau. */
   hourlyLogins: { time: string; count: number }[];
@@ -125,6 +128,7 @@ export async function getActivityOverview(
     recent,
     failedLogins,
     timing,
+    slowRequests,
     hourly,
   ] = await Promise.all([
     runLogsQuery(`${requests} | stats count() as n`),
@@ -140,9 +144,8 @@ export async function getActivityOverview(
       `${range} event:"auth.login" | sort by (_time desc) | limit 20 | fields _time, userId, from`,
     ),
     runLogsQuery(`${range} ${FAILED_LOGIN} | stats count() as n`),
-    runLogsQuery(
-      `${requests} | stats avg(durationMs) as avg_ms, quantile(0.95, durationMs) as p95`,
-    ),
+    runLogsQuery(`${requests} | stats avg(durationMs) as avg_ms`),
+    runLogsQuery(`${requests} ${SLOW_REQUEST} | stats count() as n`),
     runLogsQuery(
       `${range} event:"auth.login" | stats by (_time:1h) count() as n | sort by (_time)`,
     ),
@@ -158,7 +161,7 @@ export async function getActivityOverview(
       serverErrors: toNumber(serverErrors[0]?.n),
       failedLogins: toNumber(failedLogins[0]?.n),
       avgResponseMs: Math.round(toNumber(timing[0]?.avg_ms)),
-      p95ResponseMs: Math.round(toNumber(timing[0]?.p95)),
+      slowRequests: toNumber(slowRequests[0]?.n),
     },
     hourlyLogins: hourly.map((row) => ({
       time: row._time ?? "",
@@ -221,6 +224,7 @@ export const DETAIL_KINDS = [
   "client-errors",
   "server-errors",
   "performance",
+  "slow-requests",
 ] as const;
 export type DetailKind = (typeof DETAIL_KINDS)[number];
 
@@ -262,7 +266,12 @@ export type ActivityDetails =
     }
   | {
       kind: "performance";
-      slowestRoutes: { method: string; path: string; avgMs: number; p95Ms: number; hits: number }[];
+      slowestRoutes: { method: string; path: string; avgMs: number; hits: number }[];
+    }
+  | {
+      kind: "slow-requests";
+      topRoutes: { method: string; path: string; count: number; avgMs: number }[];
+      recent: ActivityEvent[];
     };
 
 /** L'identifiant Mongo est le préfixe du champ `user` (« <id>-<rôle> »). */
@@ -397,7 +406,7 @@ export async function getActivityDetails(
     }
     case "performance": {
       const rows = await runLogsQuery(
-        `${requests} | ${routeKey} avg(durationMs) as avg_ms, quantile(0.95, durationMs) as p95, count() as hits | sort by (avg_ms desc) | limit 15`,
+        `${requests} | ${routeKey} avg(durationMs) as avg_ms, count() as hits | sort by (avg_ms desc) | limit 15`,
       );
       return {
         kind,
@@ -405,10 +414,100 @@ export async function getActivityDetails(
           method: row.method ?? "",
           path: row.path ?? "",
           avgMs: Math.round(toNumber(row.avg_ms)),
-          p95Ms: Math.round(toNumber(row.p95)),
           hits: toNumber(row.hits),
         })),
       };
     }
+    case "slow-requests": {
+      const [routes, recent] = await Promise.all([
+        runLogsQuery(
+          `${requests} ${SLOW_REQUEST} | ${routeKey} count() as n, avg(durationMs) as avg_ms | sort by (n desc) | limit 15`,
+        ),
+        runLogsQuery(
+          `${requests} ${SLOW_REQUEST} | sort by (_time desc) | limit 30 | fields _time, method, path, status, user, durationMs`,
+        ),
+      ]);
+      return {
+        kind,
+        topRoutes: routes.map((row) => ({
+          method: row.method ?? "",
+          path: row.path ?? "",
+          count: toNumber(row.n),
+          avgMs: Math.round(toNumber(row.avg_ms)),
+        })),
+        recent: recent.map((row) => ({
+          time: row._time ?? "",
+          method: row.method ?? "",
+          path: row.path ?? "",
+          status: toNumber(row.status),
+          durationMs: toNumber(row.durationMs),
+          userId: userIdFromLogField(row.user),
+        })),
+      };
+    }
   }
+}
+
+// ---------------------------------------------------------------------------
+// Recherche libre
+// ---------------------------------------------------------------------------
+
+export const SEARCH_LIMIT = 100;
+
+export type SearchResult = {
+  time: string;
+  level: string;
+  message: string;
+  method: string;
+  path: string;
+  status: number | null;
+  durationMs: number | null;
+  from: string;
+  /** Identifiant du compte ; `null` pour un visiteur ou un événement système. */
+  userId: string | null;
+  /** Requête d'un visiteur non connecté. */
+  anonymous: boolean;
+  /** Ligne qui ne vient d'aucune requête (worker, tâche planifiée). */
+  system: boolean;
+};
+
+/** Texte cherché, encadré par des guillemets : il ne peut jamais devenir un opérateur LogsQL. */
+const escapePhrase = (text: string) =>
+  text.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
+/**
+ * Cherche une expression dans tous les champs des journaux (message, route,
+ * code, adresse IP...). `userIds` ajoute les lignes des comptes dont le nom
+ * correspondait au texte : les journaux ne contiennent que leur identifiant.
+ */
+export async function searchLogs(
+  text: string,
+  activityRange: ActivityRange,
+  userIds: string[] = [],
+): Promise<SearchResult[]> {
+  const ids = userIds.filter((id) => OBJECT_ID_PATTERN.test(id));
+  const byPerson = ids.length
+    ? ` or user:~"^(${ids.join("|")})-" or userId:in(${ids.map((id) => `"${id}"`).join(",")})`
+    : "";
+
+  const rows = await runLogsQuery(
+    `${timeFilter(activityRange)} (*:"${escapePhrase(text)}"${byPerson}) !path:~"^/v1/observability" | sort by (_time desc) | limit ${SEARCH_LIMIT} | fields _time, level, _msg, method, path, status, durationMs, user, userId, from`,
+  );
+
+  return rows.map((row) => {
+    const userId = row.userId || userIdFromLogField(row.user);
+    return {
+      time: row._time ?? "",
+      level: row.level ?? "",
+      message: row._msg ?? "",
+      method: row.method ?? "",
+      path: row.path ?? "",
+      status: row.status ? toNumber(row.status) : null,
+      durationMs: row.durationMs ? toNumber(row.durationMs) : null,
+      from: row.from ?? "",
+      userId: userId || null,
+      anonymous: !userId && Boolean(row.user),
+      system: !userId && !row.user,
+    };
+  });
 }
