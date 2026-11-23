@@ -33,7 +33,7 @@ export default function InstanceLogoControls({
 
   return (
     <div className="w-full min-w-0 max-w-sm text-center">
-      <div className="mb-2 text-center">
+      <div className="mb-2 flex items-center justify-center gap-1.5 text-center">
         <span className="text-sm font-bold text-base-content">
           Logo{" "}
           {optional && (
@@ -42,6 +42,7 @@ export default function InstanceLogoControls({
             </span>
           )}
         </span>
+        <InstanceLogoAdvice id={adviceId} formatHint={helpText} />
       </div>
 
       <div
@@ -91,10 +92,6 @@ export default function InstanceLogoControls({
             <Trash2 className="h-4 w-4" aria-hidden="true" />
           </button>
         )}
-      </div>
-
-      <div className="mx-auto mt-2 w-fit">
-        <InstanceLogoAdvice id={adviceId} formatHint={helpText} />
       </div>
     </div>
   );
