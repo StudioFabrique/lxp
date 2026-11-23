@@ -99,11 +99,7 @@ describe("Menu du profil", () => {
     });
     showMenu(0);
     await act(async () => {});
-    const link = document.querySelector<HTMLAnchorElement>(
-      'a[href$="/observability/select/vmui/"]',
-    );
-    expect(link).not.toBeNull();
-    expect(link?.rel).toContain("noopener");
+    expect(document.querySelector('a[href="/admin/journaux"]')).not.toBeNull();
   });
 
   it("n’affiche pas les journaux quand ils ne sont pas déployés", async () => {
@@ -112,9 +108,7 @@ describe("Menu du profil", () => {
     });
     showMenu(0);
     await act(async () => {});
-    expect(
-      document.querySelector('a[href$="/observability/select/vmui/"]'),
-    ).toBeNull();
+    expect(document.querySelector('a[href="/admin/journaux"]')).toBeNull();
   });
 
   it("n’interroge pas les journaux pour un administrateur classique", async () => {

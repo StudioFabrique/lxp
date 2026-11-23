@@ -15,6 +15,7 @@ import { adminParcoursRoutes } from "../features/parcours/routes";
 import { adminMediathequeRoutes } from "../features/mediatheque/routes";
 import { adminResourcesRoutes } from "../features/resources/routes";
 import { adminProfileRoutes } from "../features/profile/routes";
+import { adminObservabilityRoutes } from "../features/observability/routes";
 import { adminModulePreviewRoutes } from "../features/module-preview/routes";
 
 import { studentCalendarRoutes } from "../features/calendar/routes";
@@ -56,6 +57,7 @@ export const adminRoutes: RouteObject[] = [
                   guard("mediatheque", adminMediathequeRoutes),
                   guard("resource", adminResourcesRoutes),
                   guard("cursus", adminProfileRoutes),
+                  guard("cursus", adminObservabilityRoutes),
                   {
                     path: "*",
                     lazy: lazyRoute(

@@ -307,7 +307,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
                         <Settings className="size-3.5 shrink-0" /> Paramètres de
                         l’instance
                       </Link>
-                      <ObservabilityLink />
+                      <ObservabilityLink onNavigate={() => setOpen(false)} />
                     </div>
                   )}
     </>
