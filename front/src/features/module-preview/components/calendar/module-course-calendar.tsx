@@ -4,7 +4,10 @@ import { useLayoutEffect, useRef, useState } from "react";
 import Calendar from "../../../calendar/components/calendar";
 import TimeSelector from "../../../calendar/components/time-selector";
 import type Module from "../../../../utils/interfaces/module";
-import { localCalendarDate, type ModuleCalendarStore } from "../../hooks/use-module-calendar";
+import {
+  localCalendarDate,
+  type ModuleCalendarStore,
+} from "../../hooks/use-module-calendar";
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { calendarColor } from "../../../calendar/components/calendar-configuration";
 import { cn } from "../../../../utils/cn";
@@ -96,8 +99,8 @@ export default function ModuleCourseCalendar({
     );
   if (store.isError)
     return (
-      <div role="alert" className="rounded-lg border border-error p-6">
-        Impossible de charger le calendrier.{" "}
+      <div role="alert" className="p-6 flex flex-col items-center gap-5">
+        Impossible de charger le calendrier.
         <button className="btn btn-sm" onClick={() => void store.refetch()}>
           Réessayer
         </button>

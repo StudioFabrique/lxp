@@ -225,7 +225,7 @@ const RoleList = () => {
             />
           ))}
 
-          <PermissionGuard action="write" object="role">
+          <PermissionGuard action="write" object="role" demoBlock>
             <div>
               <HierarchicalListCard
                 placeholder={

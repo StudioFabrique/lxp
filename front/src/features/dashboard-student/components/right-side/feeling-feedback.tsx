@@ -9,13 +9,17 @@ import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { dashboardStudentApi } from "../../api/dashboard-student.api";
 import { AuthContext } from "../../../../store/AuthProvider";
-import FeelingLevel from "../../../../components/UI/feeling-level";
+import FeelingLevelMorph from "./feeling-level-morph";
 import Loader from "../../../../components/loaders/Loader";
 import { isSameDate } from "../../../calendar/components/calendar-utils";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
+import { useDemoMode } from "../../../../store/DemoContext";
+
+const FEEDBACK_TOAST_ID = "feeling-feedback";
 
 const FeelingFeedback = () => {
   const { socket } = useContext(AuthContext);
+  const { demoMode } = useDemoMode();
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
 
@@ -31,8 +35,22 @@ const FeelingFeedback = () => {
   const [commentValue, setCommentValue] = useFormField(form, "comment");
 
   const handleSubmitFeedback = form.handleSubmit((values) => {
+    // En démonstration le temps réel est coupé (compte partagé, écritures
+    // interdites) : l'envoi reste simulé côté interface pour que le visiteur
+    // puisse essayer le ressenti du jour, sans rien enregistrer.
+    if (demoMode) {
+      toast.success("Merci ! En démonstration, votre ressenti n'est pas conservé.", {
+        id: FEEDBACK_TOAST_ID,
+      });
+      setFeedbackSent(true);
+      return;
+    }
+
     if (!socket) {
-      toast("problème socket");
+      toast.error(
+        "Connexion en temps réel interrompue : votre ressenti n'a pas été envoyé. Rechargez la page puis réessayez.",
+        { id: FEEDBACK_TOAST_ID },
+      );
       return;
     }
 
@@ -40,7 +58,9 @@ const FeelingFeedback = () => {
       ...values,
     });
 
-    toast("feedback envoyé !");
+    toast.success("Merci, votre ressenti a bien été envoyé.", {
+      id: FEEDBACK_TOAST_ID,
+    });
 
     setFeedbackSent(true);
   }, showFormErrors);
@@ -50,7 +70,9 @@ const FeelingFeedback = () => {
     queryFn: async () => {
       const data = await dashboardStudentApi.queries.getOwnFeedback();
       const lastFeedback = data.data;
-      if (lastFeedback) {
+      // En démonstration le compte est partagé : un ressenti déjà déposé
+      // aujourd'hui ne doit pas empêcher le visiteur d'essayer le formulaire.
+      if (lastFeedback && !demoMode) {
         const feedbackDate = new Date(lastFeedback.feedbackAt);
         if (isSameDate(new Date(), feedbackDate)) {
           setFeedbackSent(true);
@@ -65,7 +87,7 @@ const FeelingFeedback = () => {
     <BoxWrapper className="h-auto text-base">
       <span className="flex justify-between items-center">
         <p className="font-bold">Comment vous sentez-vous aujourd'hui ?</p>
-        <FeelingLevel value={currentProgressValue} />
+        <FeelingLevelMorph value={currentProgressValue} />
       </span>
       {isLoading ? (
         <Loader variant="panel" label="Chargement du feedback" />

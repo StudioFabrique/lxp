@@ -98,7 +98,7 @@ const ModuleContentSidebar = ({
           }
         >
           {canEditModule && (
-            <PermissionGuard action="write" object="course">
+            <PermissionGuard action="write" object="course" demoBlock>
               <CreateCourseItem
                 parcoursId={module.parcoursId}
                 moduleId={module.id || 0}

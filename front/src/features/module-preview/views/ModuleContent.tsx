@@ -9,6 +9,7 @@ import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contac
 import useDiagnosticQuiz from "../../quiz/hooks/use-diagnostic-quiz";
 import useCourseQuiz from "../../quiz/hooks/use-course-quiz";
 import useSmartQuizPrompt from "../../quiz/hooks/use-smart-quiz-prompt";
+import { useDemoMode } from "../../../store/DemoContext";
 import DiagnosticQuiz from "../../quiz/components/diagnostic-quiz";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import ModuleContentLayout from "../components/module-content-layout";
@@ -32,6 +33,7 @@ import MobileModuleNavigationPanel from "../components/sidebar/mobile-module-nav
  * La modification de contenu est aussi possible pour le formateur et l'admin.
  */
 const ModuleContent = () => {
+  const { demoMode } = useDemoMode();
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const navigate = useNavigate();
@@ -225,6 +227,7 @@ const ModuleContent = () => {
         attempts={diagnosticQuiz.attempts || []}
         score={diagnosticQuiz.score}
         onStart={diagnosticQuiz.onStartQuiz}
+        onSkip={demoMode ? diagnosticQuiz.onContinueFromResults : undefined}
         onAnswer={diagnosticQuiz.onAnswerQuiz}
         onNext={diagnosticQuiz.onNextQuiz}
         onContinueFromResults={diagnosticQuiz.onContinueFromResults}

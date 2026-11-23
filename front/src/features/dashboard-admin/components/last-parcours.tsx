@@ -136,7 +136,7 @@ export default function LastParcours({
                   onCreateParcours={setParcoursFormationId}
                 />
               ))}
-              <PermissionGuard action="write" object="parcours">
+              <PermissionGuard action="write" object="parcours" demoLock={false}>
                 <LastParcoursItem
                   onCreateFormation={openFormationModal}
                   isFirstFormation={displayedFormations.length === 0}

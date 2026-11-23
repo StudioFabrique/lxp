@@ -7,6 +7,9 @@ type ToasterRouter = Pick<ReturnType<typeof createBrowserRouter>, "state" | "sub
 /** Nombre maximal de toasts affichés en même temps : un nouveau toast fait disparaître le plus ancien. */
 const TOAST_LIMIT = 2;
 
+/** Identifiant du toast émis par `lib/axios.ts` quand le verrou de démonstration bloque une écriture. */
+const DEMO_READ_ONLY_TOAST_ID = "demo-read-only";
+
 const PARCOURS_EDIT_PATH = /\/parcours\/edit\/[^/]+/;
 
 /** Édition d'un parcours : la barre des étapes occupe le haut de l'écran, les toasts s'affichent donc
@@ -22,6 +25,18 @@ export default function AppToaster({ router }: { router: ToasterRouter }) {
 
   const { toasts } = useToasterStore();
   useEffect(() => {
+    // Une écriture bloquée par la démonstration est déjà signalée par
+    // l'intercepteur HTTP : l'échec générique que le composant appelant affiche
+    // dans la foulée (« Impossible d'enregistrer… ») ferait doublon.
+    const demoBlocked = toasts.some(
+      (item) => item.visible && item.id === DEMO_READ_ONLY_TOAST_ID,
+    );
+    if (demoBlocked) {
+      toasts
+        .filter((item) => item.visible && item.type === "error")
+        .forEach((item) => toast.dismiss(item.id));
+    }
+
     // `toasts` est trié du plus récent au plus ancien.
     toasts
       .filter((item) => item.visible)

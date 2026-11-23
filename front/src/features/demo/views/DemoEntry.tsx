@@ -208,7 +208,9 @@ const DemoEntry = () => {
               onClick={() => void enterDemo(profile)}
             >
               <Icon className="h-8 w-8 text-primary" />
-              <h2 className="mt-4 text-lg font-bold">{getRoleLabel(roleRank)}</h2>
+              <h2 className="mt-4 text-lg font-bold">
+                {getRoleLabel(roleRank)}
+              </h2>
               <p className="mt-2 text-sm text-base-content/70">{description}</p>
               <span className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
                 {pending === profile && (
@@ -219,8 +221,12 @@ const DemoEntry = () => {
             </button>
           ))}
         </div>
-        <Link className="btn" to="https://lxpandria.com">
-          Visiter le site de la plateforme
+        <p className="text-sm">
+          Les comptes ne dispose d'aucun droit d'écriture pendant l'utilisation
+          de l'instance de démonstration.
+        </p>
+        <Link className="btn" to={"https://presentation.andria.step.eco/"}>
+          Voir la présentation de ANDRIA
         </Link>
       </div>
     </main>

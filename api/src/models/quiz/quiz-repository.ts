@@ -30,6 +30,24 @@ export class QuizRepository {
       .first();
   }
 
+  /**
+   * Quiz de fin déjà généré pour un cours, quel que soit l'apprenant.
+   * Réservé à la démonstration, où l'IA est coupée et où les quiz sont
+   * fournis par le jeu de données plutôt que générés pour chaque compte.
+   */
+  findAnyEndingQuiz(courseId: number) {
+    return this.database.orm.public.Quiz.where((quiz) =>
+      and(
+        quiz.courseId.eq(courseId),
+        quiz.type.eq("ending_course"),
+        quiz.questions.some(),
+      ),
+    )
+      .include("questions", (questions) => questions.orderBy((question) => question.id.asc()))
+      .orderBy((quiz) => quiz.id.asc())
+      .first();
+  }
+
   createEndingQuiz(title: string, courseId: number, studentId: number) {
     return this.database.orm.public.Quiz.create({
       title,

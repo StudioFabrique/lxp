@@ -38,11 +38,15 @@ export const DEMO_READ_ONLY_CODE = "DEMO_READ_ONLY";
 const READ_METHODS = new Set(["get", "head", "options"]);
 
 /**
- * Écritures tolérées en démonstration : l'ouverture de session, et les deux
+ * Écritures tolérées en démonstration : l'ouverture de session, et les
  * lectures que l'API sert en POST. Doit rester aligné sur
  * `api/src/config/demo-read-only-allowlist.ts`.
  */
-const DEMO_ALLOWED_WRITES = [/^\/?demo\/session\/?$/, /^\/?user\/group\/?$/];
+const DEMO_ALLOWED_WRITES = [
+  /^\/?demo\/session\/?$/,
+  /^\/?user\/group\/?$/,
+  /^\/?quiz\/preliminary\/stream\/?$/,
+];
 
 /**
  * Écritures refusées sans notification.
@@ -60,7 +64,29 @@ const DEMO_ALLOWED_WRITES = [/^\/?demo\/session\/?$/, /^\/?user\/group\/?$/];
  */
 const DEMO_SILENT_WRITES = [
   /^\/?content-read\/[^/]+\/\d+\/(begin|heartbeat)\/?$/,
+  // Suivi des passations de quiz : il part tout seul à l'ouverture, à chaque
+  // réponse et à la clôture. Le quiz se déroule normalement sans lui.
+  /^\/?quiz\/attempt\/?$/,
+  /^\/?quiz\/attempt\/\d+\/(answer|finish)\/?$/,
 ];
+
+/**
+ * Vrai si l'erreur vient du verrou de démonstration, côté client (requête
+ * arrêtée avant l'envoi) ou côté serveur (403 `DEMO_READ_ONLY`). L'intercepteur
+ * a déjà prévenu l'utilisateur : les appelants s'en servent pour ne pas
+ * empiler leur propre message d'échec par-dessus.
+ */
+export const isDemoBlockedError = (error: unknown): boolean => {
+  if (typeof error !== "object" || error === null) return false;
+  const candidate = error as {
+    isDemoReadOnly?: unknown;
+    response?: { data?: { code?: unknown } };
+  };
+  return (
+    candidate.isDemoReadOnly === true ||
+    candidate.response?.data?.code === DEMO_READ_ONLY_CODE
+  );
+};
 
 /** Chemin seul : sans hôte ni chaîne de requête, pour comparer aux motifs. */
 const toPath = (url: string) =>

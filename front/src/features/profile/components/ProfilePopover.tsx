@@ -26,6 +26,7 @@ import {
   sidebarControlClassName,
   sidebarLabelClassName,
 } from "../../../components/sidebar/sidebar-styles";
+import { useDemoMode } from "../../../store/DemoContext";
 import { useVisualPreferences } from "../../../store/VisualPreferences";
 import { cn } from "../../../utils/cn";
 import { useDrawerKeyboard } from "../../../components/sidebar/useDrawerKeyboard";
@@ -35,6 +36,7 @@ type Props = { interfaceType: string };
 
 export default function ProfilePopover({ interfaceType }: Props) {
   const { user, handshake } = useContext(AuthContext);
+  const { demoMode } = useDemoMode();
   const {
     theme,
     toggleTheme,
@@ -65,8 +67,9 @@ export default function ProfilePopover({ interfaceType }: Props) {
   const canManageInstance = user?.roles?.[0]?.rank === 0;
   const canSeeProgress =
     interfaceType === "student" && user?.roles?.[0]?.rank === 3;
+  // Pas d'activation root en démonstration : le compte est partagé et l'écriture interdite.
   const canActivateSuperadmin =
-    user?.roles?.[0]?.rank === 1 && user.roles[0].role === "admin";
+    !demoMode && user?.roles?.[0]?.rank === 1 && user.roles[0].role === "admin";
 
   const uploadAvatar = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

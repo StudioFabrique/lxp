@@ -314,7 +314,7 @@ const AdminParcoursManagement = ({
           ),
         )}
         {isAdmin && formations.length > 0 ? (
-          <PermissionGuard action="write" object="parcours">
+          <PermissionGuard action="write" object="parcours" demoLock={false}>
             <LastParcoursItem onCreateFormation={openFormationCreation} />
           </PermissionGuard>
         ) : null}

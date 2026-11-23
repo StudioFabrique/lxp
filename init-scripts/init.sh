@@ -194,7 +194,25 @@ configure_development_env() {
   configure_development_password "$file"
 }
 
-if [ "$restore_data" = false ]; then
+# --with-data et --demo restaurent dans des bases vides : sans nettoyage, le dump
+# échoue sur les clés déjà présentes. Seule l'installation simple propose en plus
+# de récupérer une sauvegarde locale.
+requested_restore=$restore_data
+
+if [ "$requested_restore" = true ]; then
+  if [ -t 0 ] && has_project_volumes; then
+    echo
+    warn "La restauration remplace toutes les données existantes"
+    read -r -p "Êtes-vous sûr de réinitialiser les volumes des conteneurs ? [y/N] : " confirm_reset
+    if [[ ! "$confirm_reset" =~ ^[Yy]$ ]]; then
+      echo "Initialisation annulée, aucune donnée supprimée."
+      exit 0
+    fi
+  fi
+
+  step "Nettoyage des données existantes"
+  ./init-scripts/clean-project-data.sh || { fail "Nettoyage des données"; exit 1; }
+else
   # Une sauvegarde locale (npm run dump) permet de proposer sa récupération.
   # Sans terminal interactif, le nettoyage reste automatique comme avant.
   work_dump_dir="./api/dumps"

@@ -117,71 +117,50 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
 }
 
 /**
- * Rattache l'apprenant de démonstration à un parcours publié.
+ * Rattache l'apprenant de démonstration à chaque parcours publié.
  *
  * L'inscription est à cheval sur les deux bases : l'appartenance au groupe vit
  * dans Mongo, le rattachement du groupe au parcours dans PostgreSQL, et les deux
  * se rejoignent par `idMdb`. Sans ce montage, `check-content-access` répond 404
  * sur tout le contenu — et la démonstration apprenant serait vide.
+ *
+ * Un groupe ne peut être rattaché qu'à un seul parcours (`groupId` est unique
+ * dans `GroupsOnParcours`) : on ajoute donc l'apprenant aux groupes que le jeu
+ * de démonstration associe déjà à chaque parcours, plutôt que d'en créer un
+ * seul qu'il faudrait lier à tous.
  */
 async function ensureEnrollment(userId: string) {
-  const parcoursPublies = await prisma.orm.public.Parcours.where({
-    isPublished: true,
-  })
-    .select("id")
+  const liens = await prisma.orm.public.GroupsOnParcours.include(
+    "parcours",
+    (parcours) => parcours.select("id", "isPublished"),
+  )
+    .include("group", (group) => group.select("idMdb"))
     .all();
 
-  if (parcoursPublies.length === 0) {
+  const groupesMongo = [
+    ...new Set(
+      liens
+        .filter((lien) => lien.parcours?.isPublished && lien.group?.idMdb)
+        .map((lien) => lien.group!.idMdb),
+    ),
+  ];
+
+  if (groupesMongo.length === 0) {
     console.warn(
-      "  ⚠ aucun parcours publié : l'apprenant de démonstration ne verra aucun contenu.",
+      "  ⚠ aucun parcours publié rattaché à un groupe : l'apprenant de démonstration ne verra aucun contenu.",
     );
     return;
   }
 
-  const dejaInscrit = await Group.findOne({ users: userId });
-  if (dejaInscrit) {
-    const groupePg = await prisma.orm.public.Group.where({
-      idMdb: dejaInscrit.id as string,
-    })
-      .select("id")
-      .first();
-    if (groupePg) {
-      const liens = await prisma.orm.public.GroupsOnParcours.where({
-        groupId: groupePg.id,
-      })
-        .aggregate((aggregate) => ({ total: aggregate.count() }))
-        .then(({ total }) => total);
-      if (liens > 0) {
-        console.log("  inscription déjà en place");
-        return;
-      }
-    }
-  }
-
-  const roleStudent = await Role.findOne({ role: "student" });
-  const groupeMongo =
-    dejaInscrit ??
-    (await Group.create({
-      name: "Promotion démonstration",
-      users: [userId],
-      roles: roleStudent ? [roleStudent._id] : [],
-      isActive: true,
-    }));
-
-  const idMdb = groupeMongo.id as string;
-  const groupePg =
-    (await prisma.orm.public.Group.where({ idMdb }).select("id").first()) ??
-    (await prisma.orm.public.Group.select("id").create({ idMdb }));
-
-  await prisma.orm.public.GroupsOnParcours.createAndCount(
-    parcoursPublies.map((parcours) => ({
-      groupId: groupePg.id,
-      parcoursId: parcours.id,
-    })),
-  ).then((count) => ({ count }));
+  const { modifiedCount } = await Group.updateMany(
+    { _id: { $in: groupesMongo }, users: { $ne: userId } },
+    { $addToSet: { users: userId } },
+  );
 
   console.log(
-    `  inscription créée sur ${parcoursPublies.length} parcours publié(s)`,
+    modifiedCount > 0
+      ? `  inscription ajoutée à ${modifiedCount} groupe(s) de parcours publié(s)`
+      : "  inscription déjà en place",
   );
 }
 

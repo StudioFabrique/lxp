@@ -144,6 +144,32 @@ COPY public."Accomplishment" (id, name, description, "accomplishedAt", "hasBeenC
 22	martin gonzalez	vient d'attribuer une note de 3 sur 5 à la leçon ARIA	2026-08-28 14:10:14.936	f	1	f	16
 23	martin gonzalez	vient de terminer la leçon Introduction à NoSQL & MongoDB	2026-08-28 14:15:56.132	f	1	t	14
 24	martin gonzalez	vient d'attribuer une note de 3 sur 5 à la leçon Introduction à NoSQL & MongoDB	2026-08-28 14:15:56.21	f	1	f	14
+25	Alex Démo	vient de terminer la leçon Présentation, attitude et langage professionnel	2026-11-03 09:13:17	f	2	t	2
+26	Alex Démo	vient de terminer la leçon Communication verbale et non verbale	2026-11-03 09:15:54	f	2	t	2
+27	Alex Démo	vient de terminer la leçon Adapter sa posture aux différentes situations d’accueil	2026-11-03 09:18:42	f	2	t	2
+28	Alex Démo	vient de terminer la leçon Comprendre les standards d’un établissement hôtelier	2026-11-04 09:13:49	f	2	t	3
+29	Alex Démo	vient de terminer la leçon Appliquer une procédure d’accueil	2026-11-04 09:19:23	f	2	t	3
+30	Alex Démo	vient de terminer la leçon Contrôler la qualité de la prise en charge	2026-11-04 09:26:05	f	2	t	3
+31	Alex Démo	vient de terminer la leçon Questionner le client pour identifier ses besoins	2026-11-05 09:13:54	f	2	t	4
+32	Alex Démo	vient de terminer la leçon Différencier besoins exprimés et besoins implicites	2026-11-05 09:16:25	f	2	t	4
+33	Alex Démo	vient de terminer la leçon Personnaliser la réponse apportée au client	2026-11-05 09:18:50	f	2	t	4
+34	Alex Démo	vient de terminer la leçon Repérer les indicateurs de satisfaction	2026-11-06 09:16:45	f	2	t	5
+35	Alex Démo	vient de terminer la leçon tariication des buitées	2026-11-09 09:15:34	f	2	t	18
+36	Camille Démo	vient de terminer la leçon Connaître les prestations de l’établissement	2026-11-10 09:14:37	f	1	t	7
+37	Camille Démo	vient de terminer la leçon Présenter une prestation de manière attractive	2026-11-10 09:17:29	f	1	t	7
+38	Camille Démo	vient de terminer la leçon Adapter la présentation au profil du client	2026-11-10 09:22:39	f	1	t	7
+39	Camille Démo	vient de terminer la leçon Identifier les opportunités de vente additionnelle	2026-11-11 09:12:30	f	1	t	8
+40	Camille Démo	vient de terminer la leçon Identifier et reformuler une demande particulière	2026-11-12 09:15:38	f	1	t	6
+41	Camille Démo	vient de terminer la leçon Vérifier la faisabilité de la demande	2026-11-12 09:22:37	f	1	t	6
+42	Camille Démo	vient de terminer la leçon Coordonner la réponse avec les services concernés	2026-11-12 09:27:42	f	1	t	6
+43	Camille Démo	vient de terminer la leçon Traitement des réclamations	2026-11-12 09:35:39	f	1	t	6
+44	Alex Démo	vient de terminer la leçon Introduction à NoSQL & MongoDB	2026-11-13 09:14:33	f	2	t	14
+45	Camille Démo	vient de terminer la leçon Introduction à Node JS	2026-11-16 09:14:27	f	1	t	19
+46	Camille Démo	vient de terminer la leçon MongoDB	2026-11-16 09:17:27	f	1	t	19
+47	Alex Démo	vient de terminer la leçon Introduction	2026-11-17 09:13:17	f	2	t	11
+48	Alex Démo	vient de terminer la leçon L'importance de l’architecture logicielle	2026-11-17 09:18:52	f	2	t	11
+49	Alex Démo	vient de terminer la leçon Les DRIVERs d'architecture	2026-11-17 09:27:23	f	2	t	11
+50	Alex Démo	vient de terminer la leçon Les objectifs mésurables - SLO SLI SLA	2026-11-17 09:32:17	f	2	t	11
 \.
 
 
@@ -492,6 +518,9 @@ COPY public."Authorization" (id, role, action, resource) FROM stdin;
 --
 
 COPY public."Resource" (id, title, description, "createdAt", "updatedAt", author, "adminId", "imageUrl") FROM stdin;
+1	Guide de l’accueil professionnel	Fiches pratiques pour réussir l’accueil et le premier contact avec un client.	2026-11-20 09:00:00	2026-11-20 09:00:00	Équipe pédagogique	1	\N
+2	Mémo d’architecture logicielle	Synthèse sur les décisions d’architecture et leur documentation.	2026-11-20 09:00:00	2026-11-20 09:00:00	Équipe pédagogique	1	\N
+3	Sécurité : les essentiels	Rappel des bonnes pratiques de sécurité applicative.	2026-11-20 09:00:00	2026-11-20 09:00:00	Équipe pédagogique	1	\N
 \.
 
 
@@ -500,6 +529,10 @@ COPY public."Resource" (id, title, description, "createdAt", "updatedAt", author
 --
 
 COPY public."BonusActivity" (id, title, type, "order", url, "createdAt", "updatedAt", "adminId", "resourceId") FROM stdin;
+1	Guide de l’accueil	text	0	demo-ressource-guide-accueil-1790000000001.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	1
+2	Checklist du premier contact	text	1	demo-ressource-guide-accueil-1790000000002.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	1
+3	Décisions d’architecture	text	0	demo-ressource-architecture-1790000000003.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	2
+4	Bonnes pratiques	text	0	demo-ressource-securite-1790000000004.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	3
 \.
 
 
@@ -696,6 +729,17 @@ COPY public."CourseRead" (id, "beganAt", "lastOpenedAt", "finishedAt", "readTime
 1	2026-08-28 07:12:04.905	2026-08-28 14:34:53.881	2026-08-28 07:19:53.31	1310827	15	1
 3	2026-08-28 14:05:16.609	2026-08-28 14:10:16.085	2026-08-28 14:10:15.009	299476	16	1
 4	2026-08-28 14:12:30.912	2026-08-28 14:20:37.164	\N	486252	14	1
+5	2026-11-03 09:20:00	2026-11-03 09:18:42	2026-11-03 09:18:42	522000	2	2
+6	2026-11-04 09:32:00	2026-11-04 09:26:05	2026-11-04 09:26:05	965000	3	2
+7	2026-11-05 09:07:00	2026-11-05 09:18:50	2026-11-05 09:18:50	530000	4	2
+8	2026-11-06 09:02:00	2026-11-06 09:16:45	\N	405000	5	2
+9	2026-11-09 09:18:00	2026-11-09 09:15:34	2026-11-09 09:15:34	334000	18	2
+10	2026-11-10 09:36:00	2026-11-10 09:22:39	2026-11-10 09:22:39	759000	7	1
+11	2026-11-11 09:36:00	2026-11-11 09:12:30	\N	150000	8	1
+12	2026-11-12 09:34:00	2026-11-12 09:35:39	2026-11-12 09:35:39	1539000	6	1
+13	2026-11-13 09:36:00	2026-11-13 09:14:33	\N	273000	14	2
+14	2026-11-16 09:28:00	2026-11-16 09:17:27	2026-11-16 09:17:27	447000	19	1
+15	2026-11-17 09:21:00	2026-11-17 09:32:17	\N	1337000	11	2
 \.
 
 
@@ -736,6 +780,27 @@ COPY public."LessonRating" (id, rating, "lessonId", "studentId") FROM stdin;
 10	3	52	1
 11	3	53	1
 12	3	43	1
+13	3	4	2
+14	3	6	2
+15	5	7	2
+16	3	8	2
+17	5	9	2
+18	5	10	2
+19	5	11	2
+20	3	59	2
+21	4	19	1
+22	4	20	1
+23	3	21	1
+24	5	22	1
+25	5	16	1
+26	4	18	1
+27	3	31	1
+28	4	43	2
+29	3	60	1
+30	4	61	1
+31	3	33	2
+32	4	34	2
+33	5	35	2
 \.
 
 
@@ -758,6 +823,32 @@ COPY public."LessonRead" (id, "beganAt", "lastOpenedAt", "finishedAt", "lessonId
 7	2026-08-28 07:30:59.294	2026-08-28 07:33:18.789	2026-08-28 07:31:56.206	2	2	66935
 9	2026-08-28 14:05:16.685	2026-08-28 14:09:20.592	2026-08-28 14:09:18.41	51	1	208833
 10	2026-08-28 14:08:53.232	2026-08-28 14:09:29.448	2026-08-28 14:09:27.485	52	1	12917
+15	2026-11-03 09:10:00	2026-11-03 09:13:17	2026-11-03 09:13:17	4	2	197000
+16	2026-11-03 09:13:17	2026-11-03 09:15:54	2026-11-03 09:15:54	5	2	157000
+17	2026-11-03 09:15:54	2026-11-03 09:18:42	2026-11-03 09:18:42	6	2	168000
+18	2026-11-04 09:10:00	2026-11-04 09:13:49	2026-11-04 09:13:49	7	2	229000
+19	2026-11-04 09:13:49	2026-11-04 09:19:23	2026-11-04 09:19:23	8	2	334000
+20	2026-11-04 09:19:23	2026-11-04 09:26:05	2026-11-04 09:26:05	9	2	402000
+21	2026-11-05 09:10:00	2026-11-05 09:13:54	2026-11-05 09:13:54	10	2	234000
+22	2026-11-05 09:13:54	2026-11-05 09:16:25	2026-11-05 09:16:25	11	2	151000
+23	2026-11-05 09:16:25	2026-11-05 09:18:50	2026-11-05 09:18:50	12	2	145000
+24	2026-11-06 09:10:00	2026-11-06 09:16:45	2026-11-06 09:16:45	13	2	405000
+25	2026-11-09 09:10:00	2026-11-09 09:15:34	2026-11-09 09:15:34	59	2	334000
+26	2026-11-10 09:10:00	2026-11-10 09:14:37	2026-11-10 09:14:37	19	1	277000
+27	2026-11-10 09:14:37	2026-11-10 09:17:29	2026-11-10 09:17:29	20	1	172000
+28	2026-11-10 09:17:29	2026-11-10 09:22:39	2026-11-10 09:22:39	21	1	310000
+29	2026-11-11 09:10:00	2026-11-11 09:12:30	2026-11-11 09:12:30	22	1	150000
+30	2026-11-12 09:10:00	2026-11-12 09:15:38	2026-11-12 09:15:38	16	1	338000
+31	2026-11-12 09:15:38	2026-11-12 09:22:37	2026-11-12 09:22:37	17	1	419000
+32	2026-11-12 09:22:37	2026-11-12 09:27:42	2026-11-12 09:27:42	18	1	305000
+33	2026-11-12 09:27:42	2026-11-12 09:35:39	2026-11-12 09:35:39	31	1	477000
+34	2026-11-13 09:10:00	2026-11-13 09:14:33	2026-11-13 09:14:33	43	2	273000
+35	2026-11-16 09:10:00	2026-11-16 09:14:27	2026-11-16 09:14:27	60	1	267000
+36	2026-11-16 09:14:27	2026-11-16 09:17:27	2026-11-16 09:17:27	61	1	180000
+37	2026-11-17 09:10:00	2026-11-17 09:13:17	2026-11-17 09:13:17	32	2	197000
+38	2026-11-17 09:13:17	2026-11-17 09:18:52	2026-11-17 09:18:52	33	2	335000
+39	2026-11-17 09:18:52	2026-11-17 09:27:23	2026-11-17 09:27:23	34	2	511000
+40	2026-11-17 09:27:23	2026-11-17 09:32:17	2026-11-17 09:32:17	35	2	294000
 \.
 
 
@@ -830,6 +921,12 @@ COPY public."ModuleRead" (id, "beganAt", "lastOpenedAt", "finishedAt", "readTime
 1	2026-08-28 07:12:04.906	2026-08-28 14:34:53.881	2026-08-28 07:19:53.322	1310988	11	1
 3	2026-08-28 14:05:16.566	2026-08-28 14:10:16.075	2026-08-28 14:10:15.056	299509	12	1
 4	2026-08-28 14:12:30.783	2026-08-28 14:20:37.146	\N	486363	14	1
+5	2026-11-05 09:07:00	2026-11-05 09:18:50	\N	530000	2	2
+6	2026-11-10 09:36:00	2026-11-10 09:22:39	\N	759000	3	1
+7	2026-11-12 09:34:00	2026-11-12 09:35:39	\N	1539000	2	1
+8	2026-11-13 09:36:00	2026-11-13 09:14:33	\N	273000	14	2
+9	2026-11-16 09:28:00	2026-11-16 09:17:27	\N	447000	13	1
+10	2026-11-17 09:21:00	2026-11-17 09:32:17	\N	1337000	13	2
 \.
 
 
@@ -885,6 +982,32 @@ COPY public."Quiz" (id, title, type, "moduleId", "activityId", "courseId", "crea
 5	Quiz préliminaire - Analyse des besoins, UX/UI et développement des interfaces	preliminary	12	\N	\N	2026-08-28 14:05:31.047	2026-08-28 14:05:31.047	\N
 6	Quiz de fin - Accessibilité en développement web	ending_course	\N	\N	16	2026-08-28 14:09:55.405	2026-08-28 14:09:55.405	1
 7	Quiz préliminaire - Bases de données et accès aux données SQL/NoSQL	preliminary	14	\N	\N	2026-08-28 14:12:34.473	2026-08-28 14:12:34.473	\N
+8	Quiz de fin - Posture Professionnelle	ending_course	\N	\N	2	2026-10-02 10:11:00	2026-10-02 10:11:00	2
+9	Quiz de fin - Standards et procédures d'accueil	ending_course	\N	\N	3	2026-10-03 11:12:00	2026-10-03 11:12:00	1
+10	Quiz de fin - Identification des besoins et attentes	ending_course	\N	\N	4	2026-10-04 12:13:00	2026-10-04 12:13:00	2
+11	Quiz de fin - Suivi de la satisfaction client	ending_course	\N	\N	5	2026-10-05 13:14:00	2026-10-05 13:14:00	1
+12	Quiz de fin - Gestion des demandes particulières	ending_course	\N	\N	6	2026-10-06 14:15:00	2026-10-06 14:15:00	2
+13	Quiz de fin - Présentation des prestations de l'établissement	ending_course	\N	\N	7	2026-10-07 15:16:00	2026-10-07 15:16:00	1
+14	Quiz de fin - Vente de services complémentaires	ending_course	\N	\N	8	2026-10-08 16:17:00	2026-10-08 16:17:00	2
+15	Quiz de fin - Conseil sur l'offre touristique locale	ending_course	\N	\N	9	2026-10-09 09:18:00	2026-10-09 09:18:00	1
+16	Quiz de fin - Contribution au chiffre d'affaires	ending_course	\N	\N	10	2026-10-10 10:19:00	2026-10-10 10:19:00	2
+17	Quiz de fin - Architecture logicielle - Introduction	ending_course	\N	\N	11	2026-10-11 11:20:00	2026-10-11 11:20:00	1
+18	Quiz de fin - Modéliser une architecture	ending_course	\N	\N	12	2026-10-12 12:21:00	2026-10-12 12:21:00	2
+19	Quiz de fin - Méthodes de révision de l'architecture et décisions architecturales	ending_course	\N	\N	13	2026-10-13 13:22:00	2026-10-13 13:22:00	1
+20	Quiz de fin - MongoDB	ending_course	\N	\N	14	2026-10-14 14:23:00	2026-10-14 14:23:00	2
+21	Quiz de fin - Tarification	ending_course	\N	\N	18	2026-10-15 15:24:00	2026-10-15 15:24:00	2
+22	Quiz de fin - NodeJs Express MongoDb	ending_course	\N	\N	19	2026-10-16 16:25:00	2026-10-16 16:25:00	1
+23	Quiz préliminaire - Relation client et qualité de service	preliminary	2	\N	\N	2026-10-17 15:21:00	2026-10-17 15:21:00	\N
+24	Quiz préliminaire - Commercialisation des prestations hôtelières	preliminary	3	\N	\N	2026-10-18 16:22:00	2026-10-18 16:22:00	\N
+25	Quiz préliminaire - Réservations et gestion des disponibilités	preliminary	4	\N	\N	2026-10-19 08:23:00	2026-10-19 08:23:00	\N
+26	Quiz préliminaire - Arrivées et départs des clients	preliminary	5	\N	\N	2026-10-20 09:24:00	2026-10-20 09:24:00	\N
+27	Quiz préliminaire - Facturation, encaissement et gestion de caisse	preliminary	6	\N	\N	2026-10-21 10:25:00	2026-10-21 10:25:00	\N
+28	Quiz préliminaire - Tarification et optimisation de l'activité	preliminary	7	\N	\N	2026-10-22 11:26:00	2026-10-22 11:26:00	\N
+29	Quiz préliminaire - E-réputation et communication digitale	preliminary	8	\N	\N	2026-10-23 12:27:00	2026-10-23 12:27:00	\N
+30	Quiz préliminaire - Organisation et continuité du service de réception	preliminary	9	\N	\N	2026-10-24 13:28:00	2026-10-24 13:28:00	\N
+31	Quiz préliminaire - Sécurité des personnes et des biens	preliminary	10	\N	\N	2026-10-25 14:29:00	2026-10-25 14:29:00	\N
+32	Quiz préliminaire - Architecture applicative et développement des composants	preliminary	13	\N	\N	2026-10-26 15:30:00	2026-10-26 15:30:00	\N
+33	Quiz préliminaire - Tests, déploiement et démarche DevOps	preliminary	15	\N	\N	2026-10-27 16:31:00	2026-10-27 16:31:00	\N
 \.
 
 
@@ -893,6 +1016,49 @@ COPY public."Quiz" (id, title, type, "moduleId", "activityId", "courseId", "crea
 --
 
 COPY public."QuizAttempt" (id, "quizId", "studentId", origin, "startedAt", "finishedAt", "totalQuestions", "correctAnswers") FROM stdin;
+1	8	2	ending_course	2026-11-18 09:56:00	2026-11-18 09:56:00	5	4
+2	9	1	ending_course	2026-11-17 17:28:00	2026-11-17 17:28:00	5	3
+3	9	2	ending_course	2026-11-17 13:13:00	2026-11-17 13:13:00	5	4
+4	10	1	ending_course	2026-11-04 13:05:00	2026-11-04 13:05:00	5	2
+5	10	2	ending_course	2026-11-02 13:23:00	2026-11-02 13:23:00	5	3
+6	11	1	ending_course	2026-11-17 14:58:00	2026-11-17 14:58:00	5	2
+7	11	2	ending_course	2026-11-20 11:49:00	2026-11-20 11:49:00	5	4
+8	12	1	ending_course	2026-11-17 10:30:00	2026-11-17 10:30:00	5	1
+9	12	2	ending_course	2026-11-19 12:35:00	2026-11-19 12:35:00	5	4
+10	13	1	ending_course	2026-11-14 14:12:00	2026-11-14 14:12:00	5	3
+11	13	2	ending_course	2026-11-18 15:23:00	2026-11-18 15:23:00	5	3
+12	14	1	ending_course	2026-11-19 08:53:00	2026-11-19 08:53:00	5	3
+13	14	2	ending_course	2026-11-10 15:59:00	2026-11-10 15:59:00	5	2
+14	15	2	ending_course	2026-11-05 11:47:00	2026-11-05 11:47:00	5	3
+15	16	1	ending_course	2026-11-04 17:50:00	2026-11-04 17:50:00	5	5
+16	16	2	ending_course	2026-11-13 10:00:00	2026-11-13 10:00:00	5	3
+17	17	1	ending_course	2026-11-06 16:14:00	2026-11-06 16:14:00	5	3
+18	17	2	ending_course	2026-11-07 10:50:00	2026-11-07 10:50:00	5	4
+19	18	1	ending_course	2026-11-14 08:06:00	2026-11-14 08:06:00	5	2
+20	18	2	ending_course	2026-11-02 16:30:00	2026-11-02 16:30:00	5	4
+21	19	1	ending_course	2026-11-07 10:37:00	2026-11-07 10:37:00	5	3
+22	19	2	ending_course	2026-11-14 08:12:00	2026-11-14 08:12:00	5	4
+23	20	1	ending_course	2026-11-08 15:45:00	2026-11-08 15:45:00	5	2
+24	20	2	ending_course	2026-11-06 10:42:00	2026-11-06 10:42:00	5	4
+25	21	2	ending_course	2026-11-10 15:31:00	2026-11-10 15:31:00	5	3
+26	22	1	ending_course	2026-11-18 16:50:00	2026-11-18 16:50:00	5	5
+27	22	2	ending_course	2026-11-12 14:34:00	2026-11-12 14:34:00	5	2
+28	23	2	preliminary	2026-11-20 16:13:00	2026-11-20 16:13:00	4	4
+29	24	2	preliminary	2026-11-10 16:08:00	2026-11-10 16:08:00	4	3
+30	25	1	preliminary	2026-11-13 10:41:00	2026-11-13 10:41:00	4	2
+31	25	2	preliminary	2026-11-12 10:16:00	2026-11-12 10:16:00	4	2
+32	26	2	preliminary	2026-11-03 09:15:00	2026-11-03 09:15:00	4	4
+33	27	1	preliminary	2026-11-13 13:49:00	2026-11-13 13:49:00	4	2
+34	27	2	preliminary	2026-11-08 17:29:00	2026-11-08 17:29:00	4	4
+35	28	1	preliminary	2026-11-10 14:18:00	2026-11-10 14:18:00	4	2
+36	28	2	preliminary	2026-11-12 12:46:00	2026-11-12 12:46:00	4	1
+37	29	2	preliminary	2026-11-19 13:12:00	2026-11-19 13:12:00	4	4
+38	30	2	preliminary	2026-11-13 17:41:00	2026-11-13 17:41:00	4	3
+39	31	1	preliminary	2026-11-14 11:49:00	2026-11-14 11:49:00	4	4
+40	31	2	preliminary	2026-11-19 16:25:00	2026-11-19 16:25:00	4	2
+41	32	1	preliminary	2026-11-15 12:20:00	2026-11-15 12:20:00	4	3
+42	32	2	preliminary	2026-11-18 12:21:00	2026-11-18 12:21:00	4	3
+43	33	2	preliminary	2026-11-17 08:14:00	2026-11-17 08:14:00	4	1
 \.
 
 
@@ -982,6 +1148,125 @@ COPY public."QuizQuestion" (id, "externalId", type, difficulty, prompt, "explana
 79	q_007	mcq	easy	Parmi les propositions suivantes, laquelle décrit CORRECTEMENT le rôle principal d'une base de données ?	Parce qu'une base de données sert principalement à stocker, organiser et permettre l'accès sécurisé et structuré aux données d'une application, indépendamment de leur format ou de leur usage.	A est faux car une base de données ne sert pas à exécuter du code applicatif, mais à gérer des données. B est faux car bien que les données puissent être affichées sous forme de tableaux, leur stockage physique n'est pas toujours tabulaire (ex : NoSQL). C est faux car une base de données ne génère pas automatiquement des rapports : c'est un outil qui peut être utilisé pour cela, mais ce n'est pas sa fonction principale.	{base_de_données,concept_fondamental,persistance}	{"bloom": "remember", "pairs": null, "choices": ["Stocker et exécuter du code applicatif pour accélérer les performances.", "Organiser et sécuriser les données pour permettre leur consultation et leur modification par plusieurs utilisateurs.", "Générer automatiquement des rapports statistiques à partir des données collectées.", "Transformer les données brutes en informations exploitables par une interface utilisateur."], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-08-28 14:12:41.697	2026-08-28 14:12:41.697	7
 80	q_008	mcq	easy	Parmi les propositions suivantes, laquelle définit CORRECTEMENT un schéma de base de données relationnelle (SQL) ?	Parce que le schéma d'une base de données relationnelle décrit la structure des tables (colonnes, types de données, contraintes) et leurs relations, avant toute insertion de données.	A est faux car une base de données n'est pas un fichier texte contenant des requêtes. B est faux car un schéma ne se limite pas à lister les données existantes : il définit aussi les règles de validation. C est faux car une clé primaire n'est qu'un élément du schéma, pas sa définition complète. D est faux car les vues (vues SQL) sont des objets dérivés du schéma, pas sa définition de base.	{SQL,schéma,relationnel,conception}	{"bloom": "remember", "pairs": null, "choices": ["Un ensemble de fichiers texte contenant les requêtes SQL à exécuter pour créer les tables.", "Une liste exhaustive des données actuellement stockées dans chaque table.", "Un document qui associe chaque clé primaire à une valeur unique dans la base.", "Une description formelle des tables, colonnes, types de données et relations entre elles."], "evidence": null, "answer_key": 3, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-08-28 14:12:41.771	2026-08-28 14:12:41.771	7
 81	q_009	mcq	easy	Parmi les propositions suivantes, laquelle décrit CORRECTEMENT le rôle principal d'une clé étrangère dans une base de données relationnelle (SQL) ?	Parce qu'une clé étrangère établit une relation logique entre deux tables en référençant la clé primaire d'une autre table, garantissant ainsi l'intégrité référentielle.	A est faux car une clé étrangère ne sert pas à crypter les données, mais à créer des liens entre tables. B est faux car elle ne définit pas une colonne comme unique (c'est le rôle d'une clé primaire). C est faux car elle ne stocke pas directement des données utilisateur, mais des références vers d'autres tables. D est faux car elle ne permet pas de supprimer automatiquement une table (ce serait une cascade mal configurée).	{"clé étrangère",relationnel,SQL,modélisation}	{"bloom": "remember", "pairs": null, "choices": ["Elle crypte les données sensibles pour en garantir la confidentialité.", "Elle définit une colonne comme unique dans une table.", "Elle stocke directement les données utilisateur sous forme chiffrée.", "Elle référence la clé primaire d'une autre table pour créer une relation entre elles."], "evidence": null, "answer_key": 3, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-08-28 14:12:44.13	2026-08-28 14:12:44.13	7
+82	demo-c2-q1	mcq	easy	Quelle attitude traduit le mieux une posture professionnelle à la réception ?	Se lever, sourire et établir un contact visuel montre immédiatement au client qu'il est attendu et pris en considération.	L'attitude doit être proactive : le client ne doit jamais avoir à solliciter l'attention du réceptionniste.	{posture,accueil}	{"bloom": "remember", "pairs": null, "choices": ["Rester assis derrière le comptoir en terminant sa saisie", "Se lever, sourire et regarder le client dès son arrivée", "Saluer sans quitter l'écran des yeux", "Attendre que le client interpelle le réceptionniste"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-02 10:11:00	2026-10-02 10:11:00	8
+83	demo-c2-q2	true_false	easy	Un réceptionniste peut consulter son téléphone personnel devant un client si l'établissement est calme.	Le téléphone personnel donne une impression de désintérêt, même en période creuse.	La posture professionnelle exclut l'usage du téléphone personnel face à la clientèle.	{posture}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": false, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-02 10:11:00	2026-10-02 10:11:00	8
+84	demo-c2-q3	ordering	medium	Remettez dans l'ordre les gestes d'un accueil réussi.	L'accueil suit une progression naturelle : contact, présentation, écoute, réponse, conclusion.	Écouter la demande avant de proposer une solution évite les réponses hors sujet.	{accueil}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Identifier la demande du client", "Prendre congé chaleureusement", "Sourire et saluer", "Proposer une solution", "Se présenter"], "choice_feedback": null, "ordering_answer": [2, 4, 0, 3, 1]}	\N	2026-10-02 10:11:00	2026-10-02 10:11:00	8
+85	demo-c2-q4	matching	medium	Associez chaque élément de la tenue ou du comportement à son effet sur le client.	Chaque détail de la posture contribue à l'image de l'hôtel.	Les gestes non verbaux sont perçus avant même le premier mot.	{posture}	{"bloom": "analyze", "pairs": [{"left": "Tenue soignée", "right": "Image de rigueur de l'établissement"}, {"left": "Ton de voix posé", "right": "Sentiment de confiance"}, {"left": "Contact visuel", "right": "Sentiment d'être écouté"}, {"left": "Sourire sincère", "right": "Climat chaleureux dès l'arrivée"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-02 10:11:00	2026-10-02 10:11:00	8
+86	demo-c2-q5	mcq	medium	Un client est agacé par l'attente. Quelle est la meilleure première réaction ?	Reconnaître l'attente et donner une échéance réaliste désamorce la tension.	Rejeter la faute sur un collègue ou ignorer le client aggrave l'insatisfaction.	{posture,réclamation}	{"bloom": "remember", "pairs": null, "choices": ["Lui expliquer que c'est la faute du service d'étage", "Le remercier de sa patience et indiquer le délai estimé", "Ignorer son agacement pour rester neutre", "Lui demander de revenir plus tard"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-02 10:11:00	2026-10-02 10:11:00	8
+87	demo-c3-q1	mcq	easy	À quoi servent les standards d'accueil d'un établissement ?	Les standards assurent que chaque client reçoit le même niveau de service, quel que soit le réceptionniste.	Un standard n'est pas une contrainte arbitraire : c'est un repère commun de qualité.	{standards}	{"bloom": "remember", "pairs": null, "choices": ["À limiter la liberté du personnel", "À garantir une qualité de service homogène", "À réduire le nombre de clients", "À remplacer la formation"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-03 11:12:00	2026-10-03 11:12:00	9
+88	demo-c3-q2	true_false	easy	Une procédure d'accueil doit être connue de toute l'équipe, y compris des remplaçants.	Une procédure partagée garantit la continuité du service lors des changements d'équipe.	Une procédure connue d'une seule personne n'assure aucune continuité.	{procédures}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-03 11:12:00	2026-10-03 11:12:00	9
+89	demo-c3-q3	ordering	medium	Classez les étapes d'un check-in standard.	Le check-in suit un ordre réglementaire : identité et fiche avant la remise de la clé.	Remettre la clé avant les formalités expose l'hôtel à des risques de sécurité.	{check-in}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Contrôler la pièce d'identité", "Remettre la clé et présenter les services", "Accueillir et vérifier la réservation", "Faire remplir la fiche de police"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-03 11:12:00	2026-10-03 11:12:00	9
+90	demo-c3-q4	matching	medium	Associez chaque document à son usage.	Chaque document répond à une obligation précise.	Confondre ces documents fait perdre en traçabilité.	{documents}	{"bloom": "analyze", "pairs": [{"left": "Fiche de police", "right": "Enregistrement réglementaire du voyageur étranger"}, {"left": "Bon de commande", "right": "Demande de prestation à un service"}, {"left": "Main courante", "right": "Transmission des événements de la journée"}, {"left": "Fiche de réclamation", "right": "Traçabilité d'un incident client"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-03 11:12:00	2026-10-03 11:12:00	9
+91	demo-c3-q5	mcq	medium	Qui contrôle l'application des standards d'accueil ?	Le contrôle des standards relève de l'encadrement, via des audits et des visites mystère.	Un standard sans contrôle finit par s'éroder.	{standards}	{"bloom": "remember", "pairs": null, "choices": ["Uniquement les clients", "Le responsable d'hébergement et la direction", "Les fournisseurs", "Personne : ils sont facultatifs"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-03 11:12:00	2026-10-03 11:12:00	9
+92	demo-c4-q1	mcq	easy	Quelle technique permet de découvrir un besoin non exprimé par le client ?	Les questions ouvertes invitent le client à détailler son projet de séjour.	Les questions fermées ne livrent que des oui/non et masquent les attentes réelles.	{"écoute active"}	{"bloom": "remember", "pairs": null, "choices": ["Les questions ouvertes", "Les questions fermées uniquement", "L'affirmation de ses propres préférences", "Le silence prolongé"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-04 12:13:00	2026-10-04 12:13:00	10
+93	demo-c4-q2	true_false	easy	Un besoin implicite est un besoin que le client formule clairement dès le départ.	Un besoin implicite doit être deviné ou révélé par le questionnement.	Un besoin exprimé est explicite ; l'implicite se déduit du contexte.	{besoins}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": false, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-04 12:13:00	2026-10-04 12:13:00	10
+94	demo-c4-q3	matching	medium	Associez chaque situation au besoin sous-jacent.	Adapter la réponse au profil crée une expérience personnalisée.	Un service identique pour tous passe à côté des attentes spécifiques.	{profils}	{"bloom": "apply", "pairs": [{"left": "Voyageur d'affaires", "right": "Wi-Fi fiable et petit-déjeuner rapide"}, {"left": "Famille avec enfants", "right": "Chambres communicantes et lit bébé"}, {"left": "Couple en week-end", "right": "Calme et cadre romantique"}, {"left": "Personne à mobilité réduite", "right": "Chambre accessible de plain-pied"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-04 12:13:00	2026-10-04 12:13:00	10
+95	demo-c4-q4	ordering	medium	Ordonnez les étapes de la découverte du besoin.	La reformulation valide la compréhension avant toute proposition.	Proposer sans reformuler expose à une réponse à côté de la plaque.	{"écoute active"}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Reformuler", "Accueillir", "Proposer une réponse adaptée", "Questionner"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-04 12:13:00	2026-10-04 12:13:00	10
+96	demo-c4-q5	mcq	easy	Pourquoi reformuler la demande d'un client ?	La reformulation évite les malentendus et montre l'écoute.	Elle n'est ni une marque d'impatience ni une prise de pouvoir sur l'échange.	{"écoute active"}	{"bloom": "remember", "pairs": null, "choices": ["Pour gagner du temps de parole", "Pour vérifier qu'on a bien compris", "Pour lui couper la parole", "Pour se faire valoir"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-04 12:13:00	2026-10-04 12:13:00	10
+97	demo-c5-q1	mcq	easy	Quel indicateur mesure la probabilité qu'un client recommande l'établissement ?	Le NPS interroge le client sur sa propension à recommander l'hôtel.	Les autres indicateurs mesurent la performance commerciale, pas la recommandation.	{satisfaction,NPS}	{"bloom": "remember", "pairs": null, "choices": ["Le taux d'occupation", "Le Net Promoter Score (NPS)", "Le RevPAR", "Le taux de no-show"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-05 13:14:00	2026-10-05 13:14:00	11
+98	demo-c5-q2	true_false	easy	Un client qui ne se plaint pas est forcément satisfait.	Beaucoup de clients insatisfaits ne se plaignent pas et ne reviennent simplement pas.	Le silence n'est pas un indicateur de satisfaction : il faut aller chercher le retour.	{satisfaction}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": false, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-05 13:14:00	2026-10-05 13:14:00	11
+99	demo-c5-q3	ordering	medium	Classez les étapes de la gestion d'une insatisfaction constatée en séjour.	Intervenir pendant le séjour permet de corriger avant le départ.	Attendre le questionnaire de sortie fait perdre l'occasion de rattraper la situation.	{rattrapage}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Vérifier la satisfaction après correction", "Aller vers le client et l'écouter", "Repérer le signe d'insatisfaction", "Corriger le problème"], "choice_feedback": null, "ordering_answer": [2, 1, 3, 0]}	\N	2026-10-05 13:14:00	2026-10-05 13:14:00	11
+100	demo-c5-q4	matching	medium	Associez chaque canal de recueil d'avis à sa particularité.	Chaque canal apporte une information complémentaire.	Un seul canal donne une vision partielle.	{avis}	{"bloom": "analyze", "pairs": [{"left": "Questionnaire de sortie", "right": "Retour structuré et comparable"}, {"left": "Avis en ligne", "right": "Visibilité publique et immédiate"}, {"left": "Échange oral", "right": "Retour spontané et nuancé"}, {"left": "Livre d'or", "right": "Témoignage libre sur place"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-05 13:14:00	2026-10-05 13:14:00	11
+101	demo-c5-q5	mcq	medium	Que faire d'un avis négatif publié en ligne ?	Une réponse courtoise montre le sérieux de l'établissement aux futurs clients.	Ignorer ou attaquer le client dégrade l'image de l'hôtel.	{e-réputation}	{"bloom": "remember", "pairs": null, "choices": ["Le supprimer", "Y répondre rapidement, poliment et factuellement", "L'ignorer", "Répondre par une critique du client"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-05 13:14:00	2026-10-05 13:14:00	11
+102	demo-c6-q1	mcq	easy	Un client demande une chambre calme en fin de couloir. Que faites-vous en premier ?	Toute demande particulière commence par un contrôle de faisabilité.	Promettre sans vérifier ou refuser d'emblée nuit à la relation client.	{demandes}	{"bloom": "remember", "pairs": null, "choices": ["Refuser pour ne pas créer de précédent", "Vérifier la disponibilité et la faisabilité", "Promettre sans contrôle", "Rediriger vers un autre hôtel"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-06 14:15:00	2026-10-06 14:15:00	12
+103	demo-c6-q2	true_false	easy	Une demande particulière doit être transmise aux services concernés et tracée.	La traçabilité garantit que la promesse faite au client sera tenue.	Une demande non transmise est une demande qui sera oubliée.	{traçabilité}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-06 14:15:00	2026-10-06 14:15:00	12
+104	demo-c6-q3	ordering	medium	Ordonnez le traitement d'une demande particulière.	Le client n'est informé qu'une fois la faisabilité confirmée.	Confirmer trop tôt oblige à revenir sur une promesse.	{demandes}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Coordonner avec les services", "Analyser la demande", "Confirmer au client", "Vérifier la faisabilité"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-06 14:15:00	2026-10-06 14:15:00	12
+105	demo-c6-q4	matching	medium	Associez chaque demande au service à solliciter.	Connaître les interlocuteurs accélère la réponse.	Un mauvais routage retarde la demande.	{coordination}	{"bloom": "analyze", "pairs": [{"left": "Lit supplémentaire", "right": "Étages / maintenance"}, {"left": "Régime alimentaire spécial", "right": "Restauration"}, {"left": "Navette aéroport", "right": "Conciergerie"}, {"left": "Oreiller hypoallergénique", "right": "Gouvernante"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-06 14:15:00	2026-10-06 14:15:00	12
+106	demo-c6-q5	mcq	medium	Si la demande est impossible, la bonne attitude est de…	Proposer une alternative transforme un refus en service.	Un simple « non » laisse le client sans solution.	{alternatives}	{"bloom": "remember", "pairs": null, "choices": ["Dire non sèchement", "Expliquer la raison et proposer une alternative", "Ne pas répondre", "Changer de sujet"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-06 14:15:00	2026-10-06 14:15:00	12
+107	demo-c7-q1	mcq	easy	Que doit connaître un réceptionniste pour présenter l'hôtel ?	Une présentation complète valorise l'offre et évite les questions sans réponse.	Se limiter aux tarifs appauvrit le conseil.	{prestations}	{"bloom": "remember", "pairs": null, "choices": ["Uniquement les tarifs", "L'ensemble des prestations, horaires et conditions", "Seulement le nom du directeur", "Les prix des concurrents uniquement"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-07 15:16:00	2026-10-07 15:16:00	13
+108	demo-c7-q2	true_false	easy	Présenter les services au moment de l'arrivée favorise leur utilisation par le client.	Un client informé consomme davantage les services.	Un service ignoré est un service non vendu.	{vente}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-07 15:16:00	2026-10-07 15:16:00	13
+109	demo-c7-q3	matching	medium	Associez chaque prestation à son bénéfice client.	Parler bénéfice plutôt que caractéristique rend l'offre attractive.	Citer la prestation sans son bénéfice convainc peu.	{argumentation}	{"bloom": "apply", "pairs": [{"left": "Petit-déjeuner buffet", "right": "Gain de temps le matin"}, {"left": "Spa", "right": "Détente"}, {"left": "Parking", "right": "Facilité d'accès en voiture"}, {"left": "Late check-out", "right": "Départ plus confortable"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-07 15:16:00	2026-10-07 15:16:00	13
+110	demo-c7-q4	ordering	medium	Classez les étapes d'une présentation des services à l'arrivée.	On conclut la présentation par les services complémentaires, une fois les informations essentielles transmises.	Commencer par la vente avant l'information essentielle déroute le client.	{check-in}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Remettre la clé", "Proposer les services complémentaires", "Accueillir", "Présenter petit-déjeuner et horaires"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-07 15:16:00	2026-10-07 15:16:00	13
+111	demo-c7-q5	mcq	easy	Quel support aide à présenter l'établissement ?	Un support à jour garantit une information fiable.	Une information périmée décrédibilise l'établissement.	{supports}	{"bloom": "remember", "pairs": null, "choices": ["Un livret d'accueil à jour", "Un document périmé", "Aucun support", "Un tract concurrent"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-07 15:16:00	2026-10-07 15:16:00	13
+112	demo-c8-q1	mcq	easy	Qu'est-ce que la vente additionnelle (upselling) ?	L'upselling propose une montée en gamme adaptée au besoin du client.	Il ne s'agit ni d'une remise ni d'une annulation.	{upselling}	{"bloom": "remember", "pairs": null, "choices": ["Vendre moins cher", "Proposer une option supérieure à ce que le client avait choisi", "Offrir une prestation gratuite", "Annuler une réservation"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-08 16:17:00	2026-10-08 16:17:00	14
+113	demo-c8-q2	true_false	easy	Une bonne vente additionnelle part des besoins du client.	Une proposition pertinente est mieux acceptée.	Vendre sans écouter est perçu comme de la pression commerciale.	{vente}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-08 16:17:00	2026-10-08 16:17:00	14
+114	demo-c8-q3	ordering	medium	Ordonnez les étapes d'une vente de service complémentaire.	Le prix s'annonce après le bénéfice pour qu'il soit perçu comme justifié.	Annoncer le prix en premier fait paraître l'offre chère.	{argumentation}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Conclure et enregistrer", "Présenter le bénéfice", "Identifier le besoin", "Annoncer le prix"], "choice_feedback": null, "ordering_answer": [2, 1, 3, 0]}	\N	2026-10-08 16:17:00	2026-10-08 16:17:00	14
+115	demo-c8-q4	matching	medium	Associez chaque technique à sa définition.	Maîtriser ces techniques élargit les options de vente.	Les confondre brouille le discours commercial.	{ventes}	{"bloom": "analyze", "pairs": [{"left": "Upselling", "right": "Proposer une catégorie supérieure"}, {"left": "Cross-selling", "right": "Proposer un service associé"}, {"left": "Vente flash", "right": "Offre limitée dans le temps"}, {"left": "Package", "right": "Offre regroupant plusieurs prestations"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-08 16:17:00	2026-10-08 16:17:00	14
+116	demo-c8-q5	mcq	medium	Un client refuse votre proposition. Que faites-vous ?	Respecter le refus préserve la relation et la confiance.	L'insistance dégrade l'image de l'établissement.	{vente}	{"bloom": "remember", "pairs": null, "choices": ["Insister jusqu'à l'accord", "Respecter sa décision et rester disponible", "Lui reprocher son refus", "Annuler le service principal"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-08 16:17:00	2026-10-08 16:17:00	14
+117	demo-c9-q1	mcq	easy	Pourquoi un réceptionniste conseille-t-il des activités locales ?	Un bon conseil local valorise l'hôtel et la destination.	Le conseil touristique fait partie de la valeur ajoutée de l'accueil.	{tourisme}	{"bloom": "remember", "pairs": null, "choices": ["Pour occuper son temps", "Pour enrichir le séjour et fidéliser le client", "Pour réduire les ventes", "Par obligation légale"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-09 09:18:00	2026-10-09 09:18:00	15
+118	demo-c9-q2	true_false	easy	Il faut adapter les recommandations au profil et à la saison.	Une recommandation pertinente tient compte du public et de la météo.	Un conseil générique convainc moins.	{conseil}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-09 09:18:00	2026-10-09 09:18:00	15
+119	demo-c9-q3	matching	medium	Associez chaque profil à une suggestion adaptée.	Associer profil et activité personnalise le conseil.	Une suggestion hors profil est contre-productive.	{profils}	{"bloom": "apply", "pairs": [{"left": "Famille", "right": "Parc de loisirs"}, {"left": "Couple", "right": "Dîner gastronomique"}, {"left": "Randonneur", "right": "Sentiers balisés"}, {"left": "Amateur d'art", "right": "Musée local"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-09 09:18:00	2026-10-09 09:18:00	15
+120	demo-c9-q4	ordering	medium	Classez les étapes du conseil touristique.	Limiter les options facilite le choix.	Submerger le client d'options le paralyse.	{conseil}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Proposer de réserver", "Proposer deux ou trois options", "Questionner sur les envies", "Donner les informations pratiques"], "choice_feedback": null, "ordering_answer": [2, 1, 3, 0]}	\N	2026-10-09 09:18:00	2026-10-09 09:18:00	15
+121	demo-c9-q5	mcq	easy	Quelle source est la plus fiable pour informer sur les événements locaux ?	L'office de tourisme publie une information officielle et à jour.	Les sources non vérifiées exposent à des informations erronées.	{sources}	{"bloom": "remember", "pairs": null, "choices": ["Le bouche-à-oreille non vérifié", "L'office de tourisme", "Un forum anonyme", "Une publicité périmée"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-09 09:18:00	2026-10-09 09:18:00	15
+122	demo-c10-q1	mcq	easy	Quel levier la réception peut-elle actionner pour augmenter le chiffre d'affaires ?	Les ventes additionnelles augmentent le revenu par client.	Baisser les prix ou refuser des demandes réduit les revenus.	{CA}	{"bloom": "remember", "pairs": null, "choices": ["La vente de services complémentaires", "La baisse systématique des prix", "La réduction des horaires", "Le refus des demandes"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-10 10:19:00	2026-10-10 10:19:00	16
+123	demo-c10-q2	true_false	medium	Le RevPAR rapporte le revenu hébergement au nombre de chambres disponibles.	Le RevPAR combine taux d'occupation et prix moyen.	C'est bien la définition du revenu par chambre disponible.	{RevPAR}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-10 10:19:00	2026-10-10 10:19:00	16
+124	demo-c10-q3	matching	medium	Associez chaque indicateur à sa définition.	Ces indicateurs forment le tableau de bord de l'hôtelier.	Les confondre fausse l'analyse de la performance.	{indicateurs}	{"bloom": "apply", "pairs": [{"left": "Taux d'occupation", "right": "Chambres vendues / chambres disponibles"}, {"left": "Prix moyen", "right": "Revenu hébergement / chambres vendues"}, {"left": "RevPAR", "right": "Revenu hébergement / chambres disponibles"}, {"left": "No-show", "right": "Client qui ne se présente pas"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-10 10:19:00	2026-10-10 10:19:00	16
+125	demo-c10-q4	ordering	medium	Classez les étapes d'une démarche d'amélioration du CA.	La démarche commence par la mesure.	Agir sans mesurer empêche d'évaluer l'effet.	{pilotage}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Identifier un levier", "Suivre les résultats", "Mesurer la situation", "Agir"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-10 10:19:00	2026-10-10 10:19:00	16
+126	demo-c10-q5	mcq	easy	Que signifie un taux d'occupation de 80 % ?	Le taux d'occupation compare chambres vendues et chambres disponibles.	Il ne mesure ni la satisfaction ni la fidélité.	{occupation}	{"bloom": "remember", "pairs": null, "choices": ["80 % des chambres disponibles ont été vendues", "80 % des clients sont satisfaits", "80 % du chiffre d'affaires est réalisé", "80 % des clients reviennent"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-10 10:19:00	2026-10-10 10:19:00	16
+127	demo-c11-q1	mcq	easy	Qu'est-ce que l'architecture logicielle ?	Elle définit composants, relations et principes directeurs d'un système.	Elle ne concerne ni le design graphique ni la gestion de planning.	{architecture}	{"bloom": "remember", "pairs": null, "choices": ["Le choix des couleurs de l'interface", "L'organisation structurelle d'un système et ses décisions fondamentales", "Le planning du projet", "La liste des testeurs"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-11 11:20:00	2026-10-11 11:20:00	17
+128	demo-c11-q2	true_false	easy	Une bonne architecture facilite l'évolution et la maintenance d'un logiciel.	Une séparation claire des responsabilités réduit le coût de changement.	Une architecture confuse rend chaque évolution coûteuse.	{maintenabilité}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-11 11:20:00	2026-10-11 11:20:00	17
+129	demo-c11-q3	matching	medium	Associez chaque style d'architecture à sa caractéristique.	Chaque style répond à des besoins différents.	Il n'existe pas de style universel.	{styles}	{"bloom": "apply", "pairs": [{"left": "Monolithe", "right": "Une seule unité déployable"}, {"left": "Microservices", "right": "Services indépendants et déployables séparément"}, {"left": "Architecture en couches", "right": "Séparation présentation, métier, données"}, {"left": "Événementielle", "right": "Communication par événements asynchrones"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-11 11:20:00	2026-10-11 11:20:00	17
+130	demo-c11-q4	ordering	medium	Ordonnez les couches d'une architecture classique, de l'utilisateur vers les données.	Les requêtes traversent les couches de haut en bas.	Inverser les couches viole la séparation des responsabilités.	{couches}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Services métier", "Présentation", "Accès aux données", "Contrôleurs"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-11 11:20:00	2026-10-11 11:20:00	17
+131	demo-c11-q5	mcq	easy	Quel est l'intérêt de découpler les composants ?	Le découplage limite la propagation des changements.	Un couplage fort multiplie les effets de bord.	{couplage}	{"bloom": "remember", "pairs": null, "choices": ["Allonger les temps de build", "Pouvoir modifier une partie sans impacter les autres", "Réduire la documentation", "Multiplier les dépendances"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-11 11:20:00	2026-10-11 11:20:00	17
+132	demo-c12-q1	mcq	easy	Quel diagramme UML représente les classes et leurs relations ?	Le diagramme de classes décrit la structure statique du système.	Les autres diagrammes décrivent comportements ou usages.	{UML}	{"bloom": "remember", "pairs": null, "choices": ["Diagramme de séquence", "Diagramme de classes", "Diagramme d'activité", "Diagramme de cas d'utilisation"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-12 12:21:00	2026-10-12 12:21:00	18
+133	demo-c12-q2	true_false	easy	Un diagramme de séquence montre l'ordre des échanges entre objets dans le temps.	Il représente la dynamique des interactions.	C'est précisément son objet.	{UML}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-12 12:21:00	2026-10-12 12:21:00	18
+134	demo-c12-q3	matching	medium	Associez chaque diagramme à son objectif.	Chaque vue éclaire un aspect de l'architecture.	Une seule vue ne suffit pas à décrire un système.	{UML}	{"bloom": "apply", "pairs": [{"left": "Cas d'utilisation", "right": "Décrire les fonctionnalités du point de vue de l'acteur"}, {"left": "Classes", "right": "Décrire la structure statique"}, {"left": "Séquence", "right": "Décrire les échanges dans le temps"}, {"left": "Déploiement", "right": "Décrire l'infrastructure physique"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-12 12:21:00	2026-10-12 12:21:00	18
+135	demo-c12-q4	ordering	medium	Classez les étapes de modélisation.	On part des besoins pour aller vers la validation.	Modéliser sans besoins clairs produit un modèle inadapté.	{modélisation}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Définir les interfaces", "Recueillir les besoins", "Valider le modèle avec les parties prenantes", "Identifier les composants"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-12 12:21:00	2026-10-12 12:21:00	18
+136	demo-c12-q5	mcq	medium	À quoi sert le modèle C4 ?	Le modèle C4 propose contexte, conteneurs, composants et code.	Il ne traite ni budget ni tests.	{C4}	{"bloom": "remember", "pairs": null, "choices": ["À chiffrer le projet", "À décrire l'architecture à plusieurs niveaux de détail", "À tester l'application", "À gérer les accès"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-12 12:21:00	2026-10-12 12:21:00	18
+137	demo-c13-q1	mcq	easy	Que consigne un ADR (Architecture Decision Record) ?	L'ADR trace pourquoi une décision a été prise.	Il documente les décisions, pas les anomalies.	{ADR}	{"bloom": "remember", "pairs": null, "choices": ["Un bug à corriger", "Une décision d'architecture, son contexte et ses conséquences", "Un horaire de réunion", "Une facture"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-13 13:22:00	2026-10-13 13:22:00	19
+138	demo-c13-q2	true_false	easy	Documenter les décisions architecturales aide les nouveaux arrivants à comprendre le système.	La trace des choix évite de remettre en cause sans contexte.	Sans trace, les raisons des choix se perdent.	{documentation}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-13 13:22:00	2026-10-13 13:22:00	19
+139	demo-c13-q3	matching	hard	Associez chaque méthode à son but.	Ces pratiques sécurisent l'évolution du système.	Les confondre brouille le suivi de qualité.	{revue}	{"bloom": "apply", "pairs": [{"left": "ATAM", "right": "Évaluer les compromis entre qualités"}, {"left": "Revue de code", "right": "Contrôler la qualité du code"}, {"left": "Revue d'architecture", "right": "Valider les choix structurants"}, {"left": "Dette technique", "right": "Mesurer le coût des raccourcis pris"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-13 13:22:00	2026-10-13 13:22:00	19
+140	demo-c13-q4	ordering	medium	Ordonnez une démarche de décision architecturale.	Documenter la décision clôt la démarche.	Décider avant de comparer expose à des choix biaisés.	{décision}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Lister les options", "Décider et documenter", "Identifier le problème", "Comparer selon les critères"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-13 13:22:00	2026-10-13 13:22:00	19
+141	demo-c13-q5	mcq	easy	Qu'est-ce que la dette technique ?	Comme une dette, elle génère des intérêts sous forme de surcoût de maintenance.	Ce n'est ni un montant bancaire ni un type d'erreur.	{dette}	{"bloom": "remember", "pairs": null, "choices": ["Un emprunt bancaire", "Le coût futur induit par des choix rapides mais imparfaits", "Un type de bug", "Une méthode de test"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-13 13:22:00	2026-10-13 13:22:00	19
+142	demo-c14-q1	mcq	easy	MongoDB est une base de données…	MongoDB stocke des documents JSON (BSON) dans des collections.	Ce n'est pas une base relationnelle : pas de tables ni de jointures natives.	{mongodb}	{"bloom": "remember", "pairs": null, "choices": ["Relationnelle", "Orientée documents", "Orientée graphes uniquement", "Clé-valeur uniquement"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-14 14:23:00	2026-10-14 14:23:00	20
+143	demo-c14-q2	true_false	easy	Dans MongoDB, une collection est l'équivalent approximatif d'une table.	Une collection regroupe des documents comme une table regroupe des lignes.	L'analogie est bien valable, à la différence que le schéma est flexible.	{mongodb}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-14 14:23:00	2026-10-14 14:23:00	20
+144	demo-c14-q3	matching	medium	Associez chaque opérateur à son rôle.	Ces étapes composent le pipeline d'agrégation.	Les confondre produit des résultats inattendus.	{agrégation}	{"bloom": "apply", "pairs": [{"left": "$match", "right": "Filtrer les documents"}, {"left": "$group", "right": "Regrouper et agréger"}, {"left": "$sort", "right": "Trier"}, {"left": "$project", "right": "Choisir les champs retournés"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-14 14:23:00	2026-10-14 14:23:00	20
+145	demo-c14-q4	ordering	hard	Ordonnez les étapes d'un pipeline d'agrégation pour obtenir les 3 clients les plus dépensiers.	Filtrer, regrouper, trier puis limiter.	Limiter avant de trier renverrait des résultats arbitraires.	{agrégation}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["$limit (3)", "$group (somme par client)", "$match (commandes payées)", "$sort (décroissant)"], "choice_feedback": null, "ordering_answer": [2, 1, 3, 0]}	\N	2026-10-14 14:23:00	2026-10-14 14:23:00	20
+146	demo-c14-q5	mcq	easy	Quelle méthode insère un document dans une collection ?	insertOne ajoute un document.	find lit, drop supprime la collection, sort trie.	{CRUD}	{"bloom": "remember", "pairs": null, "choices": ["db.col.find()", "db.col.insertOne()", "db.col.drop()", "db.col.sort()"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-14 14:23:00	2026-10-14 14:23:00	20
+147	demo-c18-q1	mcq	easy	Qu'est-ce que le yield management ?	Le yield management fait varier prix et disponibilités selon la demande.	Il s'agit d'une stratégie tarifaire, pas d'un outil de gestion interne.	{yield}	{"bloom": "remember", "pairs": null, "choices": ["Une méthode de ménage", "L'ajustement des tarifs selon la demande pour maximiser le revenu", "Un logiciel de comptabilité", "Une certification qualité"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-15 15:24:00	2026-10-15 15:24:00	21
+148	demo-c18-q2	true_false	easy	En haute saison, un hôtel complet peut relever ses tarifs.	Une demande forte justifie des tarifs plus élevés.	Maintenir des prix bas en période de forte demande fait perdre du revenu.	{yield}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-15 15:24:00	2026-10-15 15:24:00	21
+149	demo-c18-q3	matching	medium	Associez chaque tarif à sa particularité.	Les tarifs s'adaptent au segment de clientèle.	Appliquer le mauvais tarif fausse la facturation.	{tarifs}	{"bloom": "apply", "pairs": [{"left": "Tarif rack", "right": "Prix public affiché"}, {"left": "Tarif négocié", "right": "Prix convenu avec une entreprise"}, {"left": "Tarif non remboursable", "right": "Prix réduit sans annulation possible"}, {"left": "Tarif last minute", "right": "Prix pour remplir les chambres restantes"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-15 15:24:00	2026-10-15 15:24:00	21
+150	demo-c18-q4	ordering	medium	Classez les étapes de fixation d'un tarif.	On ajuste en continu après avoir fixé.	Fixer un prix sans analyse des coûts menace la rentabilité.	{tarification}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Étudier la concurrence", "Fixer et ajuster les prix", "Analyser les coûts", "Segmenter la clientèle"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-15 15:24:00	2026-10-15 15:24:00	21
+151	demo-c18-q5	mcq	easy	Que mesure le prix moyen (ADR) ?	L'ADR divise le revenu hébergement par le nombre de chambres vendues.	Les autres propositions sont d'autres indicateurs.	{ADR}	{"bloom": "remember", "pairs": null, "choices": ["Le revenu hébergement par chambre vendue", "Le nombre de clients", "Le taux d'annulation", "La satisfaction"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-15 15:24:00	2026-10-15 15:24:00	21
+152	demo-c19-q1	mcq	easy	Quel rôle joue Express dans une application Node.js ?	Express simplifie la création d'API HTTP.	Il ne stocke pas de données ni ne gère les paquets.	{express}	{"bloom": "remember", "pairs": null, "choices": ["Base de données", "Framework web gérant routes et middlewares", "Gestionnaire de paquets", "Éditeur de code"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-16 16:25:00	2026-10-16 16:25:00	22
+153	demo-c19-q2	true_false	easy	Un middleware Express peut modifier la requête avant qu'elle n'atteigne le contrôleur.	Les middlewares s'exécutent en chaîne et peuvent enrichir ou rejeter la requête.	C'est exactement leur rôle.	{middleware}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-16 16:25:00	2026-10-16 16:25:00	22
+154	demo-c19-q3	matching	medium	Associez chaque outil à son usage.	Ces briques composent la pile Node/Express/Mongo.	Les confondre complique le diagnostic.	{stack}	{"bloom": "apply", "pairs": [{"left": "Express", "right": "Routage HTTP"}, {"left": "Mongoose", "right": "Modélisation des documents MongoDB"}, {"left": "npm", "right": "Gestion des dépendances"}, {"left": "dotenv", "right": "Chargement des variables d'environnement"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-16 16:25:00	2026-10-16 16:25:00	22
+155	demo-c19-q4	ordering	medium	Ordonnez le traitement d'une requête dans une API Express.	La requête traverse routes, validation, contrôleur, puis la base.	Un accès base avant validation expose à des données invalides.	{API}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Contrôleur", "Route", "Accès à MongoDB", "Middleware de validation"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-16 16:25:00	2026-10-16 16:25:00	22
+156	demo-c19-q5	mcq	easy	Pourquoi valider les données entrantes côté serveur ?	Le client peut être contourné ; seul le serveur garantit l'intégrité.	La validation front seule n'est pas une protection.	{sécurité}	{"bloom": "remember", "pairs": null, "choices": ["Pour alourdir le code", "Parce qu'on ne peut pas faire confiance au client", "Pour remplacer la base", "Pour éviter les logs"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-16 16:25:00	2026-10-16 16:25:00	22
+157	demo-m2-q1	mcq	easy	Que signifie « qualité de service » dans l'hôtellerie ?	La qualité se mesure à la capacité à satisfaire durablement les attentes.	Le prix seul ne fait pas la qualité.	{qualité}	{"bloom": "remember", "pairs": null, "choices": ["Offrir le prix le plus bas", "Répondre aux attentes du client de façon constante", "Multiplier les promotions", "Réduire le personnel"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-17 15:21:00	2026-10-17 15:21:00	23
+158	demo-m2-q2	true_false	easy	Une réclamation bien traitée peut renforcer la fidélité du client.	Le paradoxe du service : un incident bien géré fidélise.	Une réclamation est une occasion de montrer son sérieux.	{réclamation}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-17 15:21:00	2026-10-17 15:21:00	23
+159	demo-m2-q3	mcq	easy	Quelle est la première étape du traitement d'une réclamation ?	L'écoute permet de comprendre et d'apaiser.	Se justifier ou proposer une remise trop tôt envenime l'échange.	{réclamation}	{"bloom": "apply", "pairs": null, "choices": ["Se justifier", "Écouter sans interrompre", "Transférer au directeur", "Proposer une remise"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-17 15:21:00	2026-10-17 15:21:00	23
+160	demo-m2-q4	matching	medium	Associez chaque terme à sa définition.	Ces notions structurent la relation client.	Les confondre gêne l'analyse.	{vocabulaire}	{"bloom": "analyze", "pairs": [{"left": "Fidélisation", "right": "Inciter le client à revenir"}, {"left": "Réclamation", "right": "Expression d'une insatisfaction"}, {"left": "Attente implicite", "right": "Besoin non formulé"}, {"left": "NPS", "right": "Indice de recommandation"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-17 15:21:00	2026-10-17 15:21:00	23
+161	demo-m3-q1	mcq	easy	Qu'est-ce qu'une prestation complémentaire ?	Petit-déjeuner, spa, parking : autant de prestations proposées en plus de la chambre.	La chambre est la prestation principale.	{prestations}	{"bloom": "remember", "pairs": null, "choices": ["Le service principal", "Un service additionnel à la chambre", "Une taxe", "Un avis client"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-18 16:22:00	2026-10-18 16:22:00	24
+162	demo-m3-q2	true_false	easy	L'argumentation commerciale doit partir des besoins du client.	Un argument pertinent répond à un besoin identifié.	Un argument générique convainc peu.	{vente}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-18 16:22:00	2026-10-18 16:22:00	24
+163	demo-m3-q3	mcq	easy	Que désigne le cross-selling ?	Il s'agit de proposer un produit lié à l'achat principal.	L'upselling vise la montée en gamme.	{vente}	{"bloom": "apply", "pairs": null, "choices": ["Vente d'une catégorie supérieure", "Vente d'un service associé", "Vente à perte", "Vente en ligne"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-18 16:22:00	2026-10-18 16:22:00	24
+164	demo-m3-q4	ordering	medium	Ordonnez une démarche de vente.	La découverte précède l'argumentation.	Argumenter avant d'écouter est inefficace.	{vente}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Argumenter", "Accueillir", "Conclure", "Découvrir le besoin"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-18 16:22:00	2026-10-18 16:22:00	24
+165	demo-m4-q1	mcq	easy	Que contient une confirmation de réservation ?	Elle récapitule les éléments contractuels.	Une confirmation incomplète génère des litiges.	{réservation}	{"bloom": "remember", "pairs": null, "choices": ["Seulement le nom", "Dates, type de chambre, tarif et conditions", "Uniquement le prix", "Un plan de la ville"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-19 08:23:00	2026-10-19 08:23:00	25
+166	demo-m4-q2	true_false	medium	Le surbooking consiste à accepter plus de réservations que de chambres.	Pratiquée de façon maîtrisée, elle compense les no-shows.	Mal gérée, elle oblige à reloger des clients.	{surbooking}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-19 08:23:00	2026-10-19 08:23:00	25
+167	demo-m4-q3	mcq	easy	Quel outil centralise les disponibilités ?	Le PMS (Property Management System) gère réservations et disponibilités.	Les autres outils ne gèrent pas les stocks de chambres.	{PMS}	{"bloom": "apply", "pairs": null, "choices": ["Le PMS", "Le livre d'or", "Le téléphone", "La caisse"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-19 08:23:00	2026-10-19 08:23:00	25
+168	demo-m4-q4	ordering	medium	Ordonnez le traitement d'une demande de réservation.	On confirme à la fin, par écrit.	Confirmer avant de vérifier crée des litiges.	{réservation}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Confirmer par écrit", "Vérifier les disponibilités", "Recevoir la demande", "Proposer un tarif"], "choice_feedback": null, "ordering_answer": [2, 1, 3, 0]}	\N	2026-10-19 08:23:00	2026-10-19 08:23:00	25
+169	demo-m5-q1	mcq	easy	À quoi sert la préparation des arrivées ?	Anticiper permet un accueil fluide.	La préparation améliore l'expérience.	{arrivées}	{"bloom": "remember", "pairs": null, "choices": ["À gagner du temps et personnaliser l'accueil", "À remplir des documents inutiles", "À retarder le check-in", "À limiter les ventes"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-20 09:24:00	2026-10-20 09:24:00	26
+170	demo-m5-q2	true_false	easy	Le check-out est l'occasion de recueillir l'avis du client.	Le départ est un bon moment pour un retour à chaud.	Manquer cette occasion prive l'hôtel d'informations.	{départ}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-20 09:24:00	2026-10-20 09:24:00	26
+171	demo-m5-q3	ordering	medium	Ordonnez le départ d'un client.	On termine par la prise de congé.	Prendre congé avant l'encaissement oublie une étape.	{check-out}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Encaisser", "Prendre congé", "Vérifier la facture", "Récupérer la clé"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-20 09:24:00	2026-10-20 09:24:00	26
+172	demo-m5-q4	mcq	easy	Que contient la main courante ?	Elle assure la continuité entre équipes.	Elle ne gère pas la restauration.	{transmission}	{"bloom": "analyze", "pairs": null, "choices": ["Les événements et consignes à transmettre", "Les menus", "Les tarifs concurrents", "Les plannings de congés"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-20 09:24:00	2026-10-20 09:24:00	26
+173	demo-m6-q1	mcq	easy	Que doit comporter une facture hôtelière ?	La facture est un document légal.	Une facture incomplète n'est pas valable.	{facture}	{"bloom": "remember", "pairs": null, "choices": ["Le nom du client uniquement", "Prestations, montants, TVA et mentions légales", "Le menu", "Le planning"], "evidence": null, "answer_key": 1, "ordering_items": null, "choice_feedback": ["Réponse incorrecte.", "Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-21 10:25:00	2026-10-21 10:25:00	27
+174	demo-m6-q2	true_false	easy	Un contrôle de caisse se fait en fin de service.	Le contrôle détecte les écarts rapidement.	Ne pas contrôler laisse des écarts non expliqués.	{caisse}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-21 10:25:00	2026-10-21 10:25:00	27
+175	demo-m6-q3	mcq	easy	Quel moyen de paiement est le plus utilisé à la réception ?	La carte bancaire est le moyen dominant.	Les autres moyens restent marginaux.	{paiement}	{"bloom": "apply", "pairs": null, "choices": ["La carte bancaire", "Le troc", "Les chèques-restaurant uniquement", "Le virement uniquement"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-21 10:25:00	2026-10-21 10:25:00	27
+176	demo-m6-q4	ordering	medium	Ordonnez la clôture journalière.	La clôture finit par l'archivage.	Archiver avant de contrôler fige des erreurs.	{clôture}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Éditer les états", "Archiver", "Vérifier les encaissements", "Contrôler la caisse"], "choice_feedback": null, "ordering_answer": [2, 0, 3, 1]}	\N	2026-10-21 10:25:00	2026-10-21 10:25:00	27
+177	demo-m7-q1	mcq	easy	Que mesure le taux d'occupation ?	C'est le ratio de remplissage.	Il ne dit rien du prix.	{occupation}	{"bloom": "remember", "pairs": null, "choices": ["Les chambres vendues sur les chambres disponibles", "Le revenu total", "La satisfaction", "Le prix moyen"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-22 11:26:00	2026-10-22 11:26:00	28
+178	demo-m7-q2	true_false	easy	Le yield management ajuste les prix selon la demande.	Les prix s'élèvent quand la demande est forte.	Un prix fixe ne maximise pas le revenu.	{yield}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-22 11:26:00	2026-10-22 11:26:00	28
+179	demo-m7-q3	mcq	medium	Que signifie RevPAR ?	Il combine occupation et prix moyen.	Les autres propositions ne sont pas des indicateurs.	{RevPAR}	{"bloom": "apply", "pairs": null, "choices": ["Revenu par chambre disponible", "Revenu par client", "Remise par réservation", "Réservation par an"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-22 11:26:00	2026-10-22 11:26:00	28
+180	demo-m7-q4	matching	medium	Associez chaque canal à sa nature.	Chaque canal a un coût.	Les confondre fausse la rentabilité.	{distribution}	{"bloom": "analyze", "pairs": [{"left": "OTA", "right": "Plateforme de réservation en ligne"}, {"left": "Vente directe", "right": "Réservation sans intermédiaire"}, {"left": "GDS", "right": "Réseau mondial d'agences"}, {"left": "Centrale de réservation", "right": "Réseau d'une chaîne"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-22 11:26:00	2026-10-22 11:26:00	28
+181	demo-m8-q1	mcq	easy	Qu'est-ce que l'e-réputation ?	Elle résulte des avis et contenus en ligne.	Elle ne concerne pas l'inventaire physique.	{e-réputation}	{"bloom": "remember", "pairs": null, "choices": ["L'image d'un établissement sur Internet", "Le nombre de chambres", "Un logiciel", "Un tarif"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-23 12:27:00	2026-10-23 12:27:00	29
+182	demo-m8-q2	true_false	easy	Répondre aux avis, positifs comme négatifs, renforce la confiance.	Répondre montre l'écoute.	Ignorer les avis laisse le champ libre aux critiques.	{avis}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-23 12:27:00	2026-10-23 12:27:00	29
+183	demo-m8-q3	mcq	easy	Que faire face à un avis négatif injuste ?	Une réponse mesurée rassure les lecteurs.	L'agressivité aggrave le tort.	{avis}	{"bloom": "apply", "pairs": null, "choices": ["Répondre calmement et factuellement", "Insulter l'auteur", "Supprimer la page", "Ne rien faire"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-23 12:27:00	2026-10-23 12:27:00	29
+184	demo-m8-q4	matching	medium	Associez chaque réseau à son usage hôtelier.	Chaque canal sert un objectif.	Une présence sans stratégie est inefficace.	{réseaux}	{"bloom": "analyze", "pairs": [{"left": "Instagram", "right": "Valorisation visuelle"}, {"left": "Google Business", "right": "Visibilité locale"}, {"left": "TripAdvisor", "right": "Avis voyageurs"}, {"left": "LinkedIn", "right": "Communication professionnelle"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-23 12:27:00	2026-10-23 12:27:00	29
+185	demo-m9-q1	mcq	easy	Pourquoi transmettre les consignes entre équipes ?	La transmission évite les oublis.	Sans transmission, l'information se perd.	{transmission}	{"bloom": "remember", "pairs": null, "choices": ["Pour assurer la continuité du service", "Pour allonger la relève", "Pour contrôler les collègues", "Par habitude"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-24 13:28:00	2026-10-24 13:28:00	30
+186	demo-m9-q2	true_false	easy	Le cahier de consignes doit être lu à chaque prise de poste.	Il garantit que chacun est informé.	Ne pas le lire expose à des erreurs.	{consignes}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-24 13:28:00	2026-10-24 13:28:00	30
+187	demo-m9-q3	ordering	medium	Ordonnez une prise de poste.	On s'informe avant d'accueillir.	Accueillir sans information expose aux erreurs.	{organisation}	{"bloom": "apply", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Accueillir les clients", "Prendre la caisse", "Consulter les arrivées du jour", "Lire les consignes"], "choice_feedback": null, "ordering_answer": [3, 1, 2, 0]}	\N	2026-10-24 13:28:00	2026-10-24 13:28:00	30
+188	demo-m9-q4	mcq	easy	Quel service coordonne l'état des chambres ?	La gouvernante informe la réception de l'état des chambres.	Les autres services n'ont pas cette responsabilité.	{coordination}	{"bloom": "analyze", "pairs": null, "choices": ["La gouvernante", "Le restaurant", "Le service achats", "La comptabilité"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-24 13:28:00	2026-10-24 13:28:00	30
+189	demo-m10-q1	mcq	easy	Que faire en cas de départ de feu ?	Alerter puis évacuer sauve des vies.	Agir seul retarde l'alerte.	{incendie}	{"bloom": "remember", "pairs": null, "choices": ["Déclencher l'alarme et appliquer la consigne d'évacuation", "Ignorer", "Éteindre seul sans alerter", "Fermer l'hôtel"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-25 14:29:00	2026-10-25 14:29:00	31
+190	demo-m10-q2	true_false	easy	La remise d'une clé exige de vérifier l'identité du client.	Cela protège les biens et les personnes.	Sans contrôle, un tiers peut accéder à la chambre.	{accès}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-25 14:29:00	2026-10-25 14:29:00	31
+191	demo-m10-q3	mcq	easy	Comment réagir face à un comportement suspect ?	On alerte sans s'exposer.	L'affrontement est dangereux.	{vigilance}	{"bloom": "apply", "pairs": null, "choices": ["Rester vigilant et alerter la hiérarchie", "L'affronter seul", "L'ignorer", "Le filmer pour les réseaux"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-25 14:29:00	2026-10-25 14:29:00	31
+192	demo-m10-q4	matching	medium	Associez chaque équipement à son usage.	Ces équipements composent la sécurité.	Les méconnaître retarde l'intervention.	{équipements}	{"bloom": "analyze", "pairs": [{"left": "Extincteur", "right": "Éteindre un départ de feu"}, {"left": "Plan d'évacuation", "right": "Indiquer les issues"}, {"left": "Coffre", "right": "Protéger les valeurs"}, {"left": "Caméra", "right": "Dissuader et enregistrer"}], "choices": null, "evidence": null, "answer_key": null, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-25 14:29:00	2026-10-25 14:29:00	31
+193	demo-m13-q1	mcq	easy	Quel est l'objectif principal du découpage en couches ?	Chaque couche a un rôle précis.	Le découpage vise la clarté.	{couches}	{"bloom": "remember", "pairs": null, "choices": ["Séparer les responsabilités", "Allonger le code", "Supprimer les tests", "Multiplier les fichiers"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-26 15:30:00	2026-10-26 15:30:00	32
+194	demo-m13-q2	true_false	easy	Une API REST utilise les verbes HTTP pour exprimer les actions.	GET, POST, PUT et DELETE structurent les échanges.	C'est un principe fondamental de REST.	{REST}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-26 15:30:00	2026-10-26 15:30:00	32
+195	demo-m13-q3	mcq	medium	Quel pattern isole l'accès aux données ?	Le repository masque la persistance.	Les autres patterns ont d'autres buts.	{patterns}	{"bloom": "apply", "pairs": null, "choices": ["Repository", "Singleton uniquement", "Observer", "Decorator"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-26 15:30:00	2026-10-26 15:30:00	32
+196	demo-m13-q4	ordering	medium	Ordonnez le cycle d'une requête.	La réponse clôt le cycle.	Répondre avant de valider est une faille.	{API}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Réponse", "Validation", "Réception", "Traitement métier"], "choice_feedback": null, "ordering_answer": [2, 1, 3, 0]}	\N	2026-10-26 15:30:00	2026-10-26 15:30:00	32
+197	demo-m15-q1	mcq	easy	Que signifie CI/CD ?	Elle automatise tests et mise en production.	Les autres expansions sont fantaisistes.	{CI/CD}	{"bloom": "remember", "pairs": null, "choices": ["Intégration et déploiement continus", "Code Indenté / Debug", "Client Interne / Distant", "Contrôle Interne / Data"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-27 16:31:00	2026-10-27 16:31:00	33
+198	demo-m15-q2	true_false	easy	Un test unitaire vérifie une petite unité de code de façon isolée.	Il est rapide et ciblé.	Il ne teste pas l'application entière.	{tests}	{"bloom": "understand", "pairs": null, "choices": null, "evidence": null, "answer_key": true, "ordering_items": null, "choice_feedback": null, "ordering_answer": null}	\N	2026-10-27 16:31:00	2026-10-27 16:31:00	33
+199	demo-m15-q3	mcq	easy	Quel outil permet de conteneuriser une application ?	Docker emballe l'application et ses dépendances.	Les autres outils n'ont pas ce rôle.	{docker}	{"bloom": "apply", "pairs": null, "choices": ["Docker", "Excel", "Photoshop", "Outlook"], "evidence": null, "answer_key": 0, "ordering_items": null, "choice_feedback": ["Bonne réponse.", "Réponse incorrecte.", "Réponse incorrecte.", "Réponse incorrecte."], "ordering_answer": null}	\N	2026-10-27 16:31:00	2026-10-27 16:31:00	33
+200	demo-m15-q4	ordering	medium	Ordonnez un pipeline CI/CD.	Le déploiement vient après les tests.	Déployer avant les tests est risqué.	{CI/CD}	{"bloom": "analyze", "pairs": null, "choices": null, "evidence": null, "answer_key": null, "ordering_items": ["Tests", "Commit", "Déploiement", "Build"], "choice_feedback": null, "ordering_answer": [1, 3, 0, 2]}	\N	2026-10-27 16:31:00	2026-10-27 16:31:00	33
 \.
 
 
@@ -990,6 +1275,205 @@ COPY public."QuizQuestion" (id, "externalId", type, difficulty, prompt, "explana
 --
 
 COPY public."QuizAnswer" (id, "attemptId", "quizQuestionId", "isCorrect", "userAnswer", "answeredAt") FROM stdin;
+1	1	82	t	{"type": "mcq", "selectedIndex": 1}	2026-11-18 09:56:00
+2	1	83	t	{"type": "true_false", "selected": false}	2026-11-18 09:56:00
+3	1	84	t	{"type": "ordering", "items": [{"text": "Sourire et saluer", "originalIndex": 2}, {"text": "Se présenter", "originalIndex": 4}, {"text": "Identifier la demande du client", "originalIndex": 0}, {"text": "Proposer une solution", "originalIndex": 3}, {"text": "Prendre congé chaleureusement", "originalIndex": 1}]}	2026-11-18 09:56:00
+4	1	85	f	{"type": "matching", "answers": {"0": "Sentiment de confiance", "1": "Sentiment d'être écouté", "2": "Climat chaleureux dès l'arrivée", "3": "Image de rigueur de l'établissement"}}	2026-11-18 09:56:00
+5	1	86	t	{"type": "mcq", "selectedIndex": 1}	2026-11-18 09:56:00
+6	2	87	t	{"type": "mcq", "selectedIndex": 1}	2026-11-17 17:28:00
+7	2	88	f	{"type": "true_false", "selected": false}	2026-11-17 17:28:00
+8	2	89	t	{"type": "ordering", "items": [{"text": "Accueillir et vérifier la réservation", "originalIndex": 2}, {"text": "Contrôler la pièce d'identité", "originalIndex": 0}, {"text": "Faire remplir la fiche de police", "originalIndex": 3}, {"text": "Remettre la clé et présenter les services", "originalIndex": 1}]}	2026-11-17 17:28:00
+9	2	90	f	{"type": "matching", "answers": {"0": "Demande de prestation à un service", "1": "Transmission des événements de la journée", "2": "Traçabilité d'un incident client", "3": "Enregistrement réglementaire du voyageur étranger"}}	2026-11-17 17:28:00
+10	2	91	t	{"type": "mcq", "selectedIndex": 1}	2026-11-17 17:28:00
+11	3	87	t	{"type": "mcq", "selectedIndex": 1}	2026-11-17 13:13:00
+12	3	88	t	{"type": "true_false", "selected": true}	2026-11-17 13:13:00
+13	3	89	f	{"type": "ordering", "items": [{"text": "Faire remplir la fiche de police", "originalIndex": 3}, {"text": "Accueillir et vérifier la réservation", "originalIndex": 2}, {"text": "Remettre la clé et présenter les services", "originalIndex": 1}, {"text": "Contrôler la pièce d'identité", "originalIndex": 0}]}	2026-11-17 13:13:00
+14	3	90	t	{"type": "matching", "answers": {"0": "Enregistrement réglementaire du voyageur étranger", "1": "Demande de prestation à un service", "2": "Transmission des événements de la journée", "3": "Traçabilité d'un incident client"}}	2026-11-17 13:13:00
+15	3	91	t	{"type": "mcq", "selectedIndex": 1}	2026-11-17 13:13:00
+16	4	92	f	{"type": "mcq", "selectedIndex": 1}	2026-11-04 13:05:00
+17	4	93	t	{"type": "true_false", "selected": false}	2026-11-04 13:05:00
+18	4	94	t	{"type": "matching", "answers": {"0": "Wi-Fi fiable et petit-déjeuner rapide", "1": "Chambres communicantes et lit bébé", "2": "Calme et cadre romantique", "3": "Chambre accessible de plain-pied"}}	2026-11-04 13:05:00
+19	4	95	f	{"type": "ordering", "items": [{"text": "Questionner", "originalIndex": 3}, {"text": "Proposer une réponse adaptée", "originalIndex": 2}, {"text": "Accueillir", "originalIndex": 1}, {"text": "Reformuler", "originalIndex": 0}]}	2026-11-04 13:05:00
+20	4	96	f	{"type": "mcq", "selectedIndex": 0}	2026-11-04 13:05:00
+21	5	92	t	{"type": "mcq", "selectedIndex": 0}	2026-11-02 13:23:00
+22	5	93	t	{"type": "true_false", "selected": false}	2026-11-02 13:23:00
+23	5	94	f	{"type": "matching", "answers": {"0": "Chambres communicantes et lit bébé", "1": "Calme et cadre romantique", "2": "Chambre accessible de plain-pied", "3": "Wi-Fi fiable et petit-déjeuner rapide"}}	2026-11-02 13:23:00
+24	5	95	t	{"type": "ordering", "items": [{"text": "Accueillir", "originalIndex": 1}, {"text": "Questionner", "originalIndex": 3}, {"text": "Reformuler", "originalIndex": 0}, {"text": "Proposer une réponse adaptée", "originalIndex": 2}]}	2026-11-02 13:23:00
+25	5	96	f	{"type": "mcq", "selectedIndex": 0}	2026-11-02 13:23:00
+26	6	97	t	{"type": "mcq", "selectedIndex": 1}	2026-11-17 14:58:00
+27	6	98	f	{"type": "true_false", "selected": true}	2026-11-17 14:58:00
+28	6	99	f	{"type": "ordering", "items": [{"text": "Corriger le problème", "originalIndex": 3}, {"text": "Repérer le signe d'insatisfaction", "originalIndex": 2}, {"text": "Aller vers le client et l'écouter", "originalIndex": 1}, {"text": "Vérifier la satisfaction après correction", "originalIndex": 0}]}	2026-11-17 14:58:00
+29	6	100	f	{"type": "matching", "answers": {"0": "Visibilité publique et immédiate", "1": "Retour spontané et nuancé", "2": "Témoignage libre sur place", "3": "Retour structuré et comparable"}}	2026-11-17 14:58:00
+30	6	101	t	{"type": "mcq", "selectedIndex": 1}	2026-11-17 14:58:00
+31	7	97	t	{"type": "mcq", "selectedIndex": 1}	2026-11-20 11:49:00
+32	7	98	t	{"type": "true_false", "selected": false}	2026-11-20 11:49:00
+33	7	99	t	{"type": "ordering", "items": [{"text": "Repérer le signe d'insatisfaction", "originalIndex": 2}, {"text": "Aller vers le client et l'écouter", "originalIndex": 1}, {"text": "Corriger le problème", "originalIndex": 3}, {"text": "Vérifier la satisfaction après correction", "originalIndex": 0}]}	2026-11-20 11:49:00
+34	7	100	f	{"type": "matching", "answers": {"0": "Visibilité publique et immédiate", "1": "Retour spontané et nuancé", "2": "Témoignage libre sur place", "3": "Retour structuré et comparable"}}	2026-11-20 11:49:00
+35	7	101	t	{"type": "mcq", "selectedIndex": 1}	2026-11-20 11:49:00
+36	8	102	f	{"type": "mcq", "selectedIndex": 0}	2026-11-17 10:30:00
+37	8	103	f	{"type": "true_false", "selected": false}	2026-11-17 10:30:00
+38	8	104	t	{"type": "ordering", "items": [{"text": "Analyser la demande", "originalIndex": 1}, {"text": "Vérifier la faisabilité", "originalIndex": 3}, {"text": "Coordonner avec les services", "originalIndex": 0}, {"text": "Confirmer au client", "originalIndex": 2}]}	2026-11-17 10:30:00
+39	8	105	f	{"type": "matching", "answers": {"0": "Restauration", "1": "Conciergerie", "2": "Gouvernante", "3": "Étages / maintenance"}}	2026-11-17 10:30:00
+40	8	106	f	{"type": "mcq", "selectedIndex": 0}	2026-11-17 10:30:00
+41	9	102	t	{"type": "mcq", "selectedIndex": 1}	2026-11-19 12:35:00
+42	9	103	f	{"type": "true_false", "selected": false}	2026-11-19 12:35:00
+43	9	104	t	{"type": "ordering", "items": [{"text": "Analyser la demande", "originalIndex": 1}, {"text": "Vérifier la faisabilité", "originalIndex": 3}, {"text": "Coordonner avec les services", "originalIndex": 0}, {"text": "Confirmer au client", "originalIndex": 2}]}	2026-11-19 12:35:00
+44	9	105	t	{"type": "matching", "answers": {"0": "Étages / maintenance", "1": "Restauration", "2": "Conciergerie", "3": "Gouvernante"}}	2026-11-19 12:35:00
+45	9	106	t	{"type": "mcq", "selectedIndex": 1}	2026-11-19 12:35:00
+46	10	107	t	{"type": "mcq", "selectedIndex": 1}	2026-11-14 14:12:00
+47	10	108	t	{"type": "true_false", "selected": true}	2026-11-14 14:12:00
+48	10	109	t	{"type": "matching", "answers": {"0": "Gain de temps le matin", "1": "Détente", "2": "Facilité d'accès en voiture", "3": "Départ plus confortable"}}	2026-11-14 14:12:00
+49	10	110	f	{"type": "ordering", "items": [{"text": "Présenter petit-déjeuner et horaires", "originalIndex": 3}, {"text": "Accueillir", "originalIndex": 2}, {"text": "Proposer les services complémentaires", "originalIndex": 1}, {"text": "Remettre la clé", "originalIndex": 0}]}	2026-11-14 14:12:00
+50	10	111	f	{"type": "mcq", "selectedIndex": 1}	2026-11-14 14:12:00
+51	11	107	f	{"type": "mcq", "selectedIndex": 0}	2026-11-18 15:23:00
+52	11	108	t	{"type": "true_false", "selected": true}	2026-11-18 15:23:00
+53	11	109	t	{"type": "matching", "answers": {"0": "Gain de temps le matin", "1": "Détente", "2": "Facilité d'accès en voiture", "3": "Départ plus confortable"}}	2026-11-18 15:23:00
+54	11	110	t	{"type": "ordering", "items": [{"text": "Accueillir", "originalIndex": 2}, {"text": "Remettre la clé", "originalIndex": 0}, {"text": "Présenter petit-déjeuner et horaires", "originalIndex": 3}, {"text": "Proposer les services complémentaires", "originalIndex": 1}]}	2026-11-18 15:23:00
+55	11	111	f	{"type": "mcq", "selectedIndex": 1}	2026-11-18 15:23:00
+56	12	112	t	{"type": "mcq", "selectedIndex": 1}	2026-11-19 08:53:00
+57	12	113	t	{"type": "true_false", "selected": true}	2026-11-19 08:53:00
+58	12	114	f	{"type": "ordering", "items": [{"text": "Annoncer le prix", "originalIndex": 3}, {"text": "Identifier le besoin", "originalIndex": 2}, {"text": "Présenter le bénéfice", "originalIndex": 1}, {"text": "Conclure et enregistrer", "originalIndex": 0}]}	2026-11-19 08:53:00
+59	12	115	t	{"type": "matching", "answers": {"0": "Proposer une catégorie supérieure", "1": "Proposer un service associé", "2": "Offre limitée dans le temps", "3": "Offre regroupant plusieurs prestations"}}	2026-11-19 08:53:00
+60	12	116	f	{"type": "mcq", "selectedIndex": 0}	2026-11-19 08:53:00
+61	13	112	f	{"type": "mcq", "selectedIndex": 0}	2026-11-10 15:59:00
+62	13	113	f	{"type": "true_false", "selected": false}	2026-11-10 15:59:00
+63	13	114	f	{"type": "ordering", "items": [{"text": "Annoncer le prix", "originalIndex": 3}, {"text": "Identifier le besoin", "originalIndex": 2}, {"text": "Présenter le bénéfice", "originalIndex": 1}, {"text": "Conclure et enregistrer", "originalIndex": 0}]}	2026-11-10 15:59:00
+64	13	115	t	{"type": "matching", "answers": {"0": "Proposer une catégorie supérieure", "1": "Proposer un service associé", "2": "Offre limitée dans le temps", "3": "Offre regroupant plusieurs prestations"}}	2026-11-10 15:59:00
+65	13	116	t	{"type": "mcq", "selectedIndex": 1}	2026-11-10 15:59:00
+66	14	117	f	{"type": "mcq", "selectedIndex": 0}	2026-11-05 11:47:00
+67	14	118	t	{"type": "true_false", "selected": true}	2026-11-05 11:47:00
+68	14	119	f	{"type": "matching", "answers": {"0": "Dîner gastronomique", "1": "Sentiers balisés", "2": "Musée local", "3": "Parc de loisirs"}}	2026-11-05 11:47:00
+69	14	120	t	{"type": "ordering", "items": [{"text": "Questionner sur les envies", "originalIndex": 2}, {"text": "Proposer deux ou trois options", "originalIndex": 1}, {"text": "Donner les informations pratiques", "originalIndex": 3}, {"text": "Proposer de réserver", "originalIndex": 0}]}	2026-11-05 11:47:00
+70	14	121	t	{"type": "mcq", "selectedIndex": 1}	2026-11-05 11:47:00
+71	15	122	t	{"type": "mcq", "selectedIndex": 0}	2026-11-04 17:50:00
+72	15	123	t	{"type": "true_false", "selected": true}	2026-11-04 17:50:00
+73	15	124	t	{"type": "matching", "answers": {"0": "Chambres vendues / chambres disponibles", "1": "Revenu hébergement / chambres vendues", "2": "Revenu hébergement / chambres disponibles", "3": "Client qui ne se présente pas"}}	2026-11-04 17:50:00
+74	15	125	t	{"type": "ordering", "items": [{"text": "Mesurer la situation", "originalIndex": 2}, {"text": "Identifier un levier", "originalIndex": 0}, {"text": "Agir", "originalIndex": 3}, {"text": "Suivre les résultats", "originalIndex": 1}]}	2026-11-04 17:50:00
+75	15	126	t	{"type": "mcq", "selectedIndex": 0}	2026-11-04 17:50:00
+76	16	122	t	{"type": "mcq", "selectedIndex": 0}	2026-11-13 10:00:00
+77	16	123	t	{"type": "true_false", "selected": true}	2026-11-13 10:00:00
+78	16	124	f	{"type": "matching", "answers": {"0": "Revenu hébergement / chambres vendues", "1": "Revenu hébergement / chambres disponibles", "2": "Client qui ne se présente pas", "3": "Chambres vendues / chambres disponibles"}}	2026-11-13 10:00:00
+79	16	125	f	{"type": "ordering", "items": [{"text": "Agir", "originalIndex": 3}, {"text": "Mesurer la situation", "originalIndex": 2}, {"text": "Suivre les résultats", "originalIndex": 1}, {"text": "Identifier un levier", "originalIndex": 0}]}	2026-11-13 10:00:00
+80	16	126	t	{"type": "mcq", "selectedIndex": 0}	2026-11-13 10:00:00
+81	17	127	t	{"type": "mcq", "selectedIndex": 1}	2026-11-06 16:14:00
+82	17	128	t	{"type": "true_false", "selected": true}	2026-11-06 16:14:00
+83	17	129	f	{"type": "matching", "answers": {"0": "Services indépendants et déployables séparément", "1": "Séparation présentation, métier, données", "2": "Communication par événements asynchrones", "3": "Une seule unité déployable"}}	2026-11-06 16:14:00
+84	17	130	f	{"type": "ordering", "items": [{"text": "Contrôleurs", "originalIndex": 3}, {"text": "Accès aux données", "originalIndex": 2}, {"text": "Présentation", "originalIndex": 1}, {"text": "Services métier", "originalIndex": 0}]}	2026-11-06 16:14:00
+85	17	131	t	{"type": "mcq", "selectedIndex": 1}	2026-11-06 16:14:00
+86	18	127	f	{"type": "mcq", "selectedIndex": 0}	2026-11-07 10:50:00
+87	18	128	t	{"type": "true_false", "selected": true}	2026-11-07 10:50:00
+88	18	129	t	{"type": "matching", "answers": {"0": "Une seule unité déployable", "1": "Services indépendants et déployables séparément", "2": "Séparation présentation, métier, données", "3": "Communication par événements asynchrones"}}	2026-11-07 10:50:00
+89	18	130	t	{"type": "ordering", "items": [{"text": "Présentation", "originalIndex": 1}, {"text": "Contrôleurs", "originalIndex": 3}, {"text": "Services métier", "originalIndex": 0}, {"text": "Accès aux données", "originalIndex": 2}]}	2026-11-07 10:50:00
+90	18	131	t	{"type": "mcq", "selectedIndex": 1}	2026-11-07 10:50:00
+91	19	132	t	{"type": "mcq", "selectedIndex": 1}	2026-11-14 08:06:00
+92	19	133	t	{"type": "true_false", "selected": true}	2026-11-14 08:06:00
+93	19	134	f	{"type": "matching", "answers": {"0": "Décrire la structure statique", "1": "Décrire les échanges dans le temps", "2": "Décrire l'infrastructure physique", "3": "Décrire les fonctionnalités du point de vue de l'acteur"}}	2026-11-14 08:06:00
+94	19	135	f	{"type": "ordering", "items": [{"text": "Identifier les composants", "originalIndex": 3}, {"text": "Valider le modèle avec les parties prenantes", "originalIndex": 2}, {"text": "Recueillir les besoins", "originalIndex": 1}, {"text": "Définir les interfaces", "originalIndex": 0}]}	2026-11-14 08:06:00
+95	19	136	f	{"type": "mcq", "selectedIndex": 0}	2026-11-14 08:06:00
+96	20	132	t	{"type": "mcq", "selectedIndex": 1}	2026-11-02 16:30:00
+97	20	133	t	{"type": "true_false", "selected": true}	2026-11-02 16:30:00
+98	20	134	t	{"type": "matching", "answers": {"0": "Décrire les fonctionnalités du point de vue de l'acteur", "1": "Décrire la structure statique", "2": "Décrire les échanges dans le temps", "3": "Décrire l'infrastructure physique"}}	2026-11-02 16:30:00
+99	20	135	t	{"type": "ordering", "items": [{"text": "Recueillir les besoins", "originalIndex": 1}, {"text": "Identifier les composants", "originalIndex": 3}, {"text": "Définir les interfaces", "originalIndex": 0}, {"text": "Valider le modèle avec les parties prenantes", "originalIndex": 2}]}	2026-11-02 16:30:00
+100	20	136	f	{"type": "mcq", "selectedIndex": 0}	2026-11-02 16:30:00
+101	21	137	t	{"type": "mcq", "selectedIndex": 1}	2026-11-07 10:37:00
+102	21	138	t	{"type": "true_false", "selected": true}	2026-11-07 10:37:00
+103	21	139	t	{"type": "matching", "answers": {"0": "Évaluer les compromis entre qualités", "1": "Contrôler la qualité du code", "2": "Valider les choix structurants", "3": "Mesurer le coût des raccourcis pris"}}	2026-11-07 10:37:00
+104	21	140	f	{"type": "ordering", "items": [{"text": "Comparer selon les critères", "originalIndex": 3}, {"text": "Identifier le problème", "originalIndex": 2}, {"text": "Décider et documenter", "originalIndex": 1}, {"text": "Lister les options", "originalIndex": 0}]}	2026-11-07 10:37:00
+105	21	141	f	{"type": "mcq", "selectedIndex": 0}	2026-11-07 10:37:00
+106	22	137	t	{"type": "mcq", "selectedIndex": 1}	2026-11-14 08:12:00
+107	22	138	t	{"type": "true_false", "selected": true}	2026-11-14 08:12:00
+108	22	139	t	{"type": "matching", "answers": {"0": "Évaluer les compromis entre qualités", "1": "Contrôler la qualité du code", "2": "Valider les choix structurants", "3": "Mesurer le coût des raccourcis pris"}}	2026-11-14 08:12:00
+109	22	140	f	{"type": "ordering", "items": [{"text": "Comparer selon les critères", "originalIndex": 3}, {"text": "Identifier le problème", "originalIndex": 2}, {"text": "Décider et documenter", "originalIndex": 1}, {"text": "Lister les options", "originalIndex": 0}]}	2026-11-14 08:12:00
+110	22	141	t	{"type": "mcq", "selectedIndex": 1}	2026-11-14 08:12:00
+111	23	142	f	{"type": "mcq", "selectedIndex": 0}	2026-11-08 15:45:00
+112	23	143	t	{"type": "true_false", "selected": true}	2026-11-08 15:45:00
+113	23	144	f	{"type": "matching", "answers": {"0": "Regrouper et agréger", "1": "Trier", "2": "Choisir les champs retournés", "3": "Filtrer les documents"}}	2026-11-08 15:45:00
+114	23	145	t	{"type": "ordering", "items": [{"text": "$match (commandes payées)", "originalIndex": 2}, {"text": "$group (somme par client)", "originalIndex": 1}, {"text": "$sort (décroissant)", "originalIndex": 3}, {"text": "$limit (3)", "originalIndex": 0}]}	2026-11-08 15:45:00
+115	23	146	f	{"type": "mcq", "selectedIndex": 0}	2026-11-08 15:45:00
+116	24	142	f	{"type": "mcq", "selectedIndex": 0}	2026-11-06 10:42:00
+117	24	143	t	{"type": "true_false", "selected": true}	2026-11-06 10:42:00
+118	24	144	t	{"type": "matching", "answers": {"0": "Filtrer les documents", "1": "Regrouper et agréger", "2": "Trier", "3": "Choisir les champs retournés"}}	2026-11-06 10:42:00
+119	24	145	t	{"type": "ordering", "items": [{"text": "$match (commandes payées)", "originalIndex": 2}, {"text": "$group (somme par client)", "originalIndex": 1}, {"text": "$sort (décroissant)", "originalIndex": 3}, {"text": "$limit (3)", "originalIndex": 0}]}	2026-11-06 10:42:00
+120	24	146	t	{"type": "mcq", "selectedIndex": 1}	2026-11-06 10:42:00
+121	25	147	f	{"type": "mcq", "selectedIndex": 0}	2026-11-10 15:31:00
+122	25	148	f	{"type": "true_false", "selected": false}	2026-11-10 15:31:00
+123	25	149	t	{"type": "matching", "answers": {"0": "Prix public affiché", "1": "Prix convenu avec une entreprise", "2": "Prix réduit sans annulation possible", "3": "Prix pour remplir les chambres restantes"}}	2026-11-10 15:31:00
+124	25	150	t	{"type": "ordering", "items": [{"text": "Analyser les coûts", "originalIndex": 2}, {"text": "Étudier la concurrence", "originalIndex": 0}, {"text": "Segmenter la clientèle", "originalIndex": 3}, {"text": "Fixer et ajuster les prix", "originalIndex": 1}]}	2026-11-10 15:31:00
+125	25	151	t	{"type": "mcq", "selectedIndex": 0}	2026-11-10 15:31:00
+126	26	152	t	{"type": "mcq", "selectedIndex": 1}	2026-11-18 16:50:00
+127	26	153	t	{"type": "true_false", "selected": true}	2026-11-18 16:50:00
+128	26	154	t	{"type": "matching", "answers": {"0": "Routage HTTP", "1": "Modélisation des documents MongoDB", "2": "Gestion des dépendances", "3": "Chargement des variables d'environnement"}}	2026-11-18 16:50:00
+129	26	155	t	{"type": "ordering", "items": [{"text": "Route", "originalIndex": 1}, {"text": "Middleware de validation", "originalIndex": 3}, {"text": "Contrôleur", "originalIndex": 0}, {"text": "Accès à MongoDB", "originalIndex": 2}]}	2026-11-18 16:50:00
+130	26	156	t	{"type": "mcq", "selectedIndex": 1}	2026-11-18 16:50:00
+131	27	152	f	{"type": "mcq", "selectedIndex": 0}	2026-11-12 14:34:00
+132	27	153	f	{"type": "true_false", "selected": false}	2026-11-12 14:34:00
+133	27	154	t	{"type": "matching", "answers": {"0": "Routage HTTP", "1": "Modélisation des documents MongoDB", "2": "Gestion des dépendances", "3": "Chargement des variables d'environnement"}}	2026-11-12 14:34:00
+134	27	155	f	{"type": "ordering", "items": [{"text": "Middleware de validation", "originalIndex": 3}, {"text": "Accès à MongoDB", "originalIndex": 2}, {"text": "Route", "originalIndex": 1}, {"text": "Contrôleur", "originalIndex": 0}]}	2026-11-12 14:34:00
+135	27	156	t	{"type": "mcq", "selectedIndex": 1}	2026-11-12 14:34:00
+136	28	157	t	{"type": "mcq", "selectedIndex": 1}	2026-11-20 16:13:00
+137	28	158	t	{"type": "true_false", "selected": true}	2026-11-20 16:13:00
+138	28	159	t	{"type": "mcq", "selectedIndex": 1}	2026-11-20 16:13:00
+139	28	160	t	{"type": "matching", "answers": {"0": "Inciter le client à revenir", "1": "Expression d'une insatisfaction", "2": "Besoin non formulé", "3": "Indice de recommandation"}}	2026-11-20 16:13:00
+140	29	161	t	{"type": "mcq", "selectedIndex": 1}	2026-11-10 16:08:00
+141	29	162	t	{"type": "true_false", "selected": true}	2026-11-10 16:08:00
+142	29	163	f	{"type": "mcq", "selectedIndex": 0}	2026-11-10 16:08:00
+143	29	164	t	{"type": "ordering", "items": [{"text": "Accueillir", "originalIndex": 1}, {"text": "Découvrir le besoin", "originalIndex": 3}, {"text": "Argumenter", "originalIndex": 0}, {"text": "Conclure", "originalIndex": 2}]}	2026-11-10 16:08:00
+144	30	165	f	{"type": "mcq", "selectedIndex": 0}	2026-11-13 10:41:00
+145	30	166	t	{"type": "true_false", "selected": true}	2026-11-13 10:41:00
+146	30	167	t	{"type": "mcq", "selectedIndex": 0}	2026-11-13 10:41:00
+147	30	168	f	{"type": "ordering", "items": [{"text": "Proposer un tarif", "originalIndex": 3}, {"text": "Recevoir la demande", "originalIndex": 2}, {"text": "Vérifier les disponibilités", "originalIndex": 1}, {"text": "Confirmer par écrit", "originalIndex": 0}]}	2026-11-13 10:41:00
+148	31	165	t	{"type": "mcq", "selectedIndex": 1}	2026-11-12 10:16:00
+149	31	166	t	{"type": "true_false", "selected": true}	2026-11-12 10:16:00
+150	31	167	f	{"type": "mcq", "selectedIndex": 1}	2026-11-12 10:16:00
+151	31	168	f	{"type": "ordering", "items": [{"text": "Proposer un tarif", "originalIndex": 3}, {"text": "Recevoir la demande", "originalIndex": 2}, {"text": "Vérifier les disponibilités", "originalIndex": 1}, {"text": "Confirmer par écrit", "originalIndex": 0}]}	2026-11-12 10:16:00
+152	32	169	t	{"type": "mcq", "selectedIndex": 0}	2026-11-03 09:15:00
+153	32	170	t	{"type": "true_false", "selected": true}	2026-11-03 09:15:00
+154	32	171	t	{"type": "ordering", "items": [{"text": "Vérifier la facture", "originalIndex": 2}, {"text": "Encaisser", "originalIndex": 0}, {"text": "Récupérer la clé", "originalIndex": 3}, {"text": "Prendre congé", "originalIndex": 1}]}	2026-11-03 09:15:00
+155	32	172	t	{"type": "mcq", "selectedIndex": 0}	2026-11-03 09:15:00
+156	33	173	t	{"type": "mcq", "selectedIndex": 1}	2026-11-13 13:49:00
+157	33	174	f	{"type": "true_false", "selected": false}	2026-11-13 13:49:00
+158	33	175	f	{"type": "mcq", "selectedIndex": 1}	2026-11-13 13:49:00
+159	33	176	t	{"type": "ordering", "items": [{"text": "Vérifier les encaissements", "originalIndex": 2}, {"text": "Éditer les états", "originalIndex": 0}, {"text": "Contrôler la caisse", "originalIndex": 3}, {"text": "Archiver", "originalIndex": 1}]}	2026-11-13 13:49:00
+160	34	173	t	{"type": "mcq", "selectedIndex": 1}	2026-11-08 17:29:00
+161	34	174	t	{"type": "true_false", "selected": true}	2026-11-08 17:29:00
+162	34	175	t	{"type": "mcq", "selectedIndex": 0}	2026-11-08 17:29:00
+163	34	176	t	{"type": "ordering", "items": [{"text": "Vérifier les encaissements", "originalIndex": 2}, {"text": "Éditer les états", "originalIndex": 0}, {"text": "Contrôler la caisse", "originalIndex": 3}, {"text": "Archiver", "originalIndex": 1}]}	2026-11-08 17:29:00
+164	35	177	f	{"type": "mcq", "selectedIndex": 1}	2026-11-10 14:18:00
+165	35	178	t	{"type": "true_false", "selected": true}	2026-11-10 14:18:00
+166	35	179	f	{"type": "mcq", "selectedIndex": 1}	2026-11-10 14:18:00
+167	35	180	t	{"type": "matching", "answers": {"0": "Plateforme de réservation en ligne", "1": "Réservation sans intermédiaire", "2": "Réseau mondial d'agences", "3": "Réseau d'une chaîne"}}	2026-11-10 14:18:00
+168	36	177	f	{"type": "mcq", "selectedIndex": 1}	2026-11-12 12:46:00
+169	36	178	f	{"type": "true_false", "selected": false}	2026-11-12 12:46:00
+170	36	179	t	{"type": "mcq", "selectedIndex": 0}	2026-11-12 12:46:00
+171	36	180	f	{"type": "matching", "answers": {"0": "Réservation sans intermédiaire", "1": "Réseau mondial d'agences", "2": "Réseau d'une chaîne", "3": "Plateforme de réservation en ligne"}}	2026-11-12 12:46:00
+172	37	181	t	{"type": "mcq", "selectedIndex": 0}	2026-11-19 13:12:00
+173	37	182	t	{"type": "true_false", "selected": true}	2026-11-19 13:12:00
+174	37	183	t	{"type": "mcq", "selectedIndex": 0}	2026-11-19 13:12:00
+175	37	184	t	{"type": "matching", "answers": {"0": "Valorisation visuelle", "1": "Visibilité locale", "2": "Avis voyageurs", "3": "Communication professionnelle"}}	2026-11-19 13:12:00
+176	38	185	f	{"type": "mcq", "selectedIndex": 1}	2026-11-13 17:41:00
+177	38	186	t	{"type": "true_false", "selected": true}	2026-11-13 17:41:00
+178	38	187	t	{"type": "ordering", "items": [{"text": "Lire les consignes", "originalIndex": 3}, {"text": "Prendre la caisse", "originalIndex": 1}, {"text": "Consulter les arrivées du jour", "originalIndex": 2}, {"text": "Accueillir les clients", "originalIndex": 0}]}	2026-11-13 17:41:00
+179	38	188	t	{"type": "mcq", "selectedIndex": 0}	2026-11-13 17:41:00
+180	39	189	t	{"type": "mcq", "selectedIndex": 0}	2026-11-14 11:49:00
+181	39	190	t	{"type": "true_false", "selected": true}	2026-11-14 11:49:00
+182	39	191	t	{"type": "mcq", "selectedIndex": 0}	2026-11-14 11:49:00
+183	39	192	t	{"type": "matching", "answers": {"0": "Éteindre un départ de feu", "1": "Indiquer les issues", "2": "Protéger les valeurs", "3": "Dissuader et enregistrer"}}	2026-11-14 11:49:00
+184	40	189	f	{"type": "mcq", "selectedIndex": 1}	2026-11-19 16:25:00
+185	40	190	f	{"type": "true_false", "selected": false}	2026-11-19 16:25:00
+186	40	191	t	{"type": "mcq", "selectedIndex": 0}	2026-11-19 16:25:00
+187	40	192	t	{"type": "matching", "answers": {"0": "Éteindre un départ de feu", "1": "Indiquer les issues", "2": "Protéger les valeurs", "3": "Dissuader et enregistrer"}}	2026-11-19 16:25:00
+188	41	193	t	{"type": "mcq", "selectedIndex": 0}	2026-11-15 12:20:00
+189	41	194	f	{"type": "true_false", "selected": false}	2026-11-15 12:20:00
+190	41	195	t	{"type": "mcq", "selectedIndex": 0}	2026-11-15 12:20:00
+191	41	196	t	{"type": "ordering", "items": [{"text": "Réception", "originalIndex": 2}, {"text": "Validation", "originalIndex": 1}, {"text": "Traitement métier", "originalIndex": 3}, {"text": "Réponse", "originalIndex": 0}]}	2026-11-15 12:20:00
+192	42	193	t	{"type": "mcq", "selectedIndex": 0}	2026-11-18 12:21:00
+193	42	194	f	{"type": "true_false", "selected": false}	2026-11-18 12:21:00
+194	42	195	t	{"type": "mcq", "selectedIndex": 0}	2026-11-18 12:21:00
+195	42	196	t	{"type": "ordering", "items": [{"text": "Réception", "originalIndex": 2}, {"text": "Validation", "originalIndex": 1}, {"text": "Traitement métier", "originalIndex": 3}, {"text": "Réponse", "originalIndex": 0}]}	2026-11-18 12:21:00
+196	43	197	t	{"type": "mcq", "selectedIndex": 0}	2026-11-17 08:14:00
+197	43	198	f	{"type": "true_false", "selected": false}	2026-11-17 08:14:00
+198	43	199	f	{"type": "mcq", "selectedIndex": 1}	2026-11-17 08:14:00
+199	43	200	f	{"type": "ordering", "items": [{"text": "Build", "originalIndex": 3}, {"text": "Déploiement", "originalIndex": 2}, {"text": "Commit", "originalIndex": 1}, {"text": "Tests", "originalIndex": 0}]}	2026-11-17 08:14:00
 \.
 
 
@@ -1274,6 +1758,9 @@ COPY public."TagsOnParcours" ("tagId", "parcoursId") FROM stdin;
 --
 
 COPY public."TagsOnResources" ("tagId", "resourceId") FROM stdin;
+2	1
+2	2
+3	3
 \.
 
 
@@ -1289,7 +1776,7 @@ COPY public."Teacher" (id, "idMdb") FROM stdin;
 -- Name: Accomplishment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."Accomplishment_id_seq"', 24, true);
+SELECT pg_catalog.setval('public."Accomplishment_id_seq"', 50, true);
 
 
 --
@@ -1324,7 +1811,7 @@ SELECT pg_catalog.setval('public."Authorization_id_seq"', 1, false);
 -- Name: BonusActivity_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."BonusActivity_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."BonusActivity_id_seq"', 4, true);
 
 
 --
@@ -1345,7 +1832,7 @@ SELECT pg_catalog.setval('public."Contact_id_seq"', 8, true);
 -- Name: CourseRead_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."CourseRead_id_seq"', 4, true);
+SELECT pg_catalog.setval('public."CourseRead_id_seq"', 15, true);
 
 
 --
@@ -1373,14 +1860,14 @@ SELECT pg_catalog.setval('public."Group_id_seq"', 2, true);
 -- Name: LessonRating_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."LessonRating_id_seq"', 12, true);
+SELECT pg_catalog.setval('public."LessonRating_id_seq"', 33, true);
 
 
 --
 -- Name: LessonRead_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."LessonRead_id_seq"', 14, true);
+SELECT pg_catalog.setval('public."LessonRead_id_seq"', 40, true);
 
 
 --
@@ -1401,7 +1888,7 @@ SELECT pg_catalog.setval('public."Mediatheque_id_seq"', 52, true);
 -- Name: ModuleRead_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."ModuleRead_id_seq"', 4, true);
+SELECT pg_catalog.setval('public."ModuleRead_id_seq"', 10, true);
 
 
 --
@@ -1436,14 +1923,14 @@ SELECT pg_catalog.setval('public."Parcours_id_seq"', 4, true);
 -- Name: QuizAnswer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."QuizAnswer_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."QuizAnswer_id_seq"', 199, true);
 
 
 --
 -- Name: QuizAttempt_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."QuizAttempt_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."QuizAttempt_id_seq"', 43, true);
 
 
 --
@@ -1457,14 +1944,14 @@ SELECT pg_catalog.setval('public."QuizQuestionReport_id_seq"', 1, false);
 -- Name: QuizQuestion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."QuizQuestion_id_seq"', 81, true);
+SELECT pg_catalog.setval('public."QuizQuestion_id_seq"', 200, true);
 
 
 --
 -- Name: Quiz_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."Quiz_id_seq"', 7, true);
+SELECT pg_catalog.setval('public."Quiz_id_seq"', 33, true);
 
 
 --
@@ -1485,7 +1972,7 @@ SELECT pg_catalog.setval('public."ResourceBonusActivity_id_seq"', 1, false);
 -- Name: Resource_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."Resource_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."Resource_id_seq"', 3, true);
 
 
 --

@@ -10,6 +10,7 @@ import type { QuizStreamDoneEvent } from "../../services/quiz/quiz-stream.ts";
 import { logger } from "../../utils/logs/logger.ts";
 import { buildStudentProfile } from "../../services/ai/student-profile-adapter.ts";
 import { prisma } from "../../utils/db.ts";
+import { isDemoMode } from "../../config/config.ts";
 
 export class QuizGenerationError extends Error {
   readonly statusCode: number;
@@ -71,6 +72,20 @@ export async function prepareEndingQuizGeneration(
   courseId: number,
   userId: string,
 ) {
+  if (isDemoMode()) {
+    // Démonstration : aucun appel à l'IA, on rejoue un quiz déjà généré. Il
+    // est partagé par tous les visiteurs, le compte l'étant aussi.
+    const demoQuiz = await quizRepository.findAnyEndingQuiz(courseId);
+    if (!demoQuiz?.questions.length) {
+      throw new QuizGenerationError(
+        404,
+        "Aucun quiz n'est disponible pour ce cours dans la démonstration.",
+        "DEMO_QUIZ_UNAVAILABLE",
+      );
+    }
+    return { kind: "cached" as const, questions: demoQuiz.questions };
+  }
+
   const { course, student, cachedQuiz } = await getEndingQuizContext(
     courseId,
     userId,
@@ -141,6 +156,15 @@ export async function preparePreliminaryQuizGeneration(
   const { module, cachedQuiz } = await getPreliminaryQuizContext(moduleId);
   if (cachedQuiz?.questions.length) {
     return { kind: "cached" as const, questions: cachedQuiz.questions };
+  }
+
+  // Démonstration : l'IA est coupée, seul un quiz déjà généré peut être rejoué.
+  if (isDemoMode()) {
+    throw new QuizGenerationError(
+      404,
+      "Aucun quiz diagnostique n'est disponible pour ce module dans la démonstration.",
+      "DEMO_QUIZ_UNAVAILABLE",
+    );
   }
 
   const stream = await aiApiClient.postStream("/quiz/preliminary/stream", {
