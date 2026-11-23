@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 vi.mock("react-hot-toast", () => ({ default: vi.fn() }));
 
 import toast from "react-hot-toast";
-import apiClient, { setDemoMode } from "./axios";
+import apiClient, { isDemoBlockedError, setDemoMode } from "./axios";
 
 /**
  * Le refus s'exerce dans l'intercepteur de requête : rien ne part sur le
@@ -34,6 +34,29 @@ describe("client HTTP en mode démonstration", () => {
     ).resolves.toBe("blocked");
 
     expect(vi.mocked(toast)).not.toHaveBeenCalled();
+  });
+
+  it("bloque le suivi des passations de quiz sans notifier l'apprenant", async () => {
+    setDemoMode(true);
+
+    await expect(attempt("post", "/quiz/attempt")).resolves.toBe("blocked");
+    await expect(attempt("post", "/quiz/attempt/5/answer")).resolves.toBe(
+      "blocked",
+    );
+    await expect(attempt("put", "/quiz/attempt/5/finish")).resolves.toBe(
+      "blocked",
+    );
+
+    expect(vi.mocked(toast)).not.toHaveBeenCalled();
+  });
+
+  it("reconnaît une erreur issue du verrou de démonstration", () => {
+    expect(isDemoBlockedError({ isDemoReadOnly: true })).toBe(true);
+    expect(
+      isDemoBlockedError({ response: { data: { code: "DEMO_READ_ONLY" } } }),
+    ).toBe(true);
+    expect(isDemoBlockedError(new Error("réseau"))).toBe(false);
+    expect(isDemoBlockedError(null)).toBe(false);
   });
 
   it("notifie sur une écriture issue d'un geste de l'apprenant", async () => {

@@ -14,6 +14,7 @@ import { isAiServerError } from "../../../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
 import { useDemoMode } from "../../../store/DemoContext";
+import { isDemoBlockedError } from "../../../lib/axios";
 
 export default function useCourseQuiz(
   courseId?: number,
@@ -24,7 +25,9 @@ export default function useCourseQuiz(
   // Le serveur décide de la disponibilité de l'IA : le bundle est bâti une
   // seule fois pour toutes les instances. La valeur vient de l'unique appel
   // à `/demo/config` fait au démarrage par `DemoProvider`.
-  const { aiDisabled } = useDemoMode();
+  // En démonstration l'IA est coupée, mais les quiz déjà générés sont rejoués
+  // par le serveur : seuls les quiz « à la volée » restent indisponibles.
+  const { aiDisabled, demoMode } = useDemoMode();
   const attemptTracking = useQuizAttemptTracking();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -85,9 +88,9 @@ export default function useCourseQuiz(
     setShowResults(false);
     if (courseId) attemptTracking.start("self_test", { courseId });
 
-    if (aiDisabled) {
+    if (aiDisabled && !demoMode) {
       setIsStreaming(false);
-      toast("Fonctionnalités IA désactivées.");
+      toast("Fonctionnalités IA désactivées.", { id: "quiz-ai-disabled" });
       return;
     }
 
@@ -184,11 +187,17 @@ export default function useCourseQuiz(
     }
   };
 
-  const onTriggerRandomQuiz = useCallback(
+  const requestRandomQuiz = useCallback(
     async (isAppending = false) => {
       if (!aiIndexed) return;
       if (aiDisabled) {
-        toast("Les quiz IA sont temporairement désactivés.");
+        // Pas de notification en démonstration : une mauvaise réponse déclenche
+        // l'ajout automatique d'une question, l'apprenant n'a rien demandé.
+        if (!demoMode) {
+          toast("Les quiz IA sont temporairement désactivés.", {
+            id: "quiz-ai-disabled",
+          });
+        }
         return;
       }
 
@@ -241,8 +250,19 @@ export default function useCourseQuiz(
         setIsStreaming(false);
       }
     },
-    [activityContent, aiDisabled, aiUnavailable, aiIndexed, setAiUnavailable, courseId, attemptTracking],
+    [activityContent, aiDisabled, demoMode, aiUnavailable, aiIndexed, setAiUnavailable, courseId, attemptTracking],
   );
+
+  // Démonstration : pas de génération à la volée, mais le quiz proposé après
+  // une lecture rapide ouvre le quiz de fin de cours déjà généré, que le
+  // serveur rejoue. L'ajout automatique après une erreur reste sans effet.
+  const onTriggerRandomQuiz = (isAppending = false) => {
+    if (aiDisabled && demoMode && !isAppending) {
+      void onLoadQuizzes();
+      return Promise.resolve();
+    }
+    return requestRandomQuiz(isAppending);
+  };
 
   const onCloseQuizzes = () => {
     endingQuizController.current?.abort();
@@ -343,7 +363,11 @@ export default function useCourseQuiz(
         }
       } catch (error) {
         console.error("Erreur lors du traitement du signalement :", error);
-        toast.error("Impossible de remplacer le quiz pour le moment.");
+        // En démonstration, l'intercepteur a déjà prévenu que l'action est
+        // indisponible : un second message ferait doublon.
+        if (!isDemoBlockedError(error)) {
+          toast.error("Impossible de remplacer le quiz pour le moment.");
+        }
       } finally {
         setIsReplacing(false);
       }

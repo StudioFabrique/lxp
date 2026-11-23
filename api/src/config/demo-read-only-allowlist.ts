@@ -28,6 +28,12 @@ export const demoWriteAllowlist: DemoWriteException[] = [
     reason:
       "Lecture servie en POST (httpGetUsersByGroup) : sans elle les pages Groupes cassent.",
   },
+  {
+    method: "POST",
+    pattern: /^\/quiz\/preliminary\/stream\/?$/,
+    reason:
+      "Lecture servie en POST : en démonstration le flux rejoue le quiz diagnostique déjà généré, sans appel à l'IA ni écriture.",
+  },
 ];
 
 export function isDemoWriteAllowed(method: string, path: string): boolean {

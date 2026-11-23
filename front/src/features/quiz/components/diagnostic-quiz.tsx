@@ -1,5 +1,6 @@
+import { useEffect, useRef } from "react";
 import { formatTitle } from "../../../utils/helpers/text-helpers";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, SkipForward } from "lucide-react";
 import Header from "../../../components/headers/Header";
 import { Quiz, QuizAttempt, UserAnswer } from "../interfaces/quiz";
 import QuizMatching from "./modals/quiz-matching";
@@ -33,6 +34,8 @@ type Props = {
   attempts: QuizAttempt[];
   score: number;
   onStart: () => void;
+  /** Fourni uniquement en démonstration : passe l'évaluation sans y répondre. */
+  onSkip?: () => void;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onNext: () => void;
   onContinueFromResults: () => void;
@@ -55,13 +58,27 @@ const DiagnosticQuiz = ({
   attempts,
   score,
   onStart,
+  onSkip,
   onAnswer,
   onNext,
   onContinueFromResults,
   onReport,
 }: Props) => {
   const reduceMotion = useReducedMotion();
-  const isLoading = isRestoring || (isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming)));
+  const feedbackEndRef = useRef<HTMLDivElement>(null);
+
+  // Une fois la réponse donnée, le retour et « Question suivante » se trouvent
+  // sous la ligne de flottaison : on amène la fin du bloc dans la vue.
+  useEffect(() => {
+    if (!isAnswered) return;
+    feedbackEndRef.current?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "end",
+    });
+  }, [isAnswered, reduceMotion]);
+  const isLoading =
+    isRestoring ||
+    (isStarted && !showResults && (isWaitingForNext || (!quiz && isStreaming)));
   const upcomingNumber = currentIndex + (isWaitingForNext ? 2 : 1);
   const image = normalizeImageSource(moduleImage) ?? defaultModuleImage;
   const contentKey = !isStarted
@@ -143,14 +160,29 @@ const DiagnosticQuiz = ({
             <h1 className="relative text-2xl font-bold sm:text-3xl">
               Test de connaissances sur le module{" "}
               {moduleTitle && (
-                <span style={{ color: "color-mix(in srgb, var(--color-secondary) 55%, white)" }}>
+                <span
+                  style={{
+                    color:
+                      "color-mix(in srgb, var(--color-secondary) 55%, white)",
+                  }}
+                >
                   {formatTitle(moduleTitle)}
                 </span>
               )}
             </h1>
           </div>
         ) : (
-          <div className="flex h-56 shrink-0 items-center gap-3 border-b border-primary/20 pr-4 sm:h-60 sm:gap-8 sm:pr-8">
+          <div className="relative flex h-56 shrink-0 items-center gap-3 border-b border-primary/20 pr-4 sm:h-60 sm:gap-8 sm:pr-8">
+            {onSkip && !showResults && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs absolute right-4 top-4 z-10 h-6 min-h-0 gap-1 px-2 text-[0.7rem] font-normal"
+                onClick={onSkip}
+              >
+                <SkipForward className="size-3" aria-hidden="true" />
+                Passer le quiz
+              </button>
+            )}
             <img
               src={image}
               alt=""
@@ -160,7 +192,9 @@ const DiagnosticQuiz = ({
               <h1 className="text-base font-bold sm:text-3xl">
                 Test de connaissances sur le module{" "}
                 {moduleTitle && (
-                  <span className="text-secondary">{formatTitle(moduleTitle)}</span>
+                  <span className="text-secondary">
+                    {formatTitle(moduleTitle)}
+                  </span>
                 )}
               </h1>
               <p className="mt-3 text-sm font-bold text-primary sm:text-lg">
@@ -181,7 +215,10 @@ const DiagnosticQuiz = ({
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
-            transition={{ duration: reduceMotion ? 0.01 : 0.22, ease: "easeOut" }}
+            transition={{
+              duration: reduceMotion ? 0.01 : 0.22,
+              ease: "easeOut",
+            }}
           >
             {isRestoring ? (
               <div className="flex flex-col gap-4 py-4" role="status">
@@ -196,10 +233,20 @@ const DiagnosticQuiz = ({
                   connaissances initiales.
                 </p>
                 <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">
-                  Ces quelques questions permettront d'adapter votre apprentissage
-                  et votre accompagnement.
+                  Ces quelques questions permettront d'adapter votre
+                  apprentissage et votre accompagnement.
                 </p>
                 <div className="card-actions mt-auto justify-end pt-3">
+                  {onSkip && (
+                    <button
+                      type="button"
+                      className="btn btn-outline px-8 tooltip tooltip-bottom"
+                      onClick={onSkip}
+                      data-tip="Seulement en mode demo, le test de connaissance n'est pas optionnel."
+                    >
+                      Passer le quizz
+                    </button>
+                  )}
                   <button className="btn btn-primary px-8" onClick={onStart}>
                     Commencer l'évaluation
                   </button>
@@ -248,8 +295,15 @@ const DiagnosticQuiz = ({
                         : "border-error/20 bg-error/10",
                     )}
                   >
-                    <h3 className={cn("font-bold", isCorrect ? "text-success" : "text-error")}>
-                      {isCorrect ? "Bonne réponse !" : "Ce n'est pas tout à fait ça."}
+                    <h3
+                      className={cn(
+                        "font-bold",
+                        isCorrect ? "text-success" : "text-error",
+                      )}
+                    >
+                      {isCorrect
+                        ? "Bonne réponse !"
+                        : "Ce n'est pas tout à fait ça."}
                     </h3>
                     <div className="text-sm text-base-content">
                       <QuizMarkdown explanation>
@@ -258,6 +312,7 @@ const DiagnosticQuiz = ({
                     </div>
                   </BoxWrapper>
                 )}
+                <div ref={feedbackEndRef} aria-hidden="true" />
               </>
             ) : null}
           </motion.div>
