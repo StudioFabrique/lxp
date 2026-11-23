@@ -22,7 +22,11 @@ const ActivityActionsMenu = ({
       {["text", "iframe", "image", "video", "resource"].includes(
         activity.type,
       ) && (
-        <PermissionGuard action="update" object={permissionSubject}>
+        <PermissionGuard
+          action="update"
+          object={permissionSubject}
+          demoLock={false}
+        >
           <button
             type="button"
             className="btn btn-ghost btn-sm btn-square tooltip tooltip-bottom"

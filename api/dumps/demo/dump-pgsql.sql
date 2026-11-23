@@ -518,6 +518,9 @@ COPY public."Authorization" (id, role, action, resource) FROM stdin;
 --
 
 COPY public."Resource" (id, title, description, "createdAt", "updatedAt", author, "adminId", "imageUrl") FROM stdin;
+1	Guide de l’accueil professionnel	Fiches pratiques pour réussir l’accueil et le premier contact avec un client.	2026-11-20 09:00:00	2026-11-20 09:00:00	Équipe pédagogique	1	\N
+2	Mémo d’architecture logicielle	Synthèse sur les décisions d’architecture et leur documentation.	2026-11-20 09:00:00	2026-11-20 09:00:00	Équipe pédagogique	1	\N
+3	Sécurité : les essentiels	Rappel des bonnes pratiques de sécurité applicative.	2026-11-20 09:00:00	2026-11-20 09:00:00	Équipe pédagogique	1	\N
 \.
 
 
@@ -526,6 +529,10 @@ COPY public."Resource" (id, title, description, "createdAt", "updatedAt", author
 --
 
 COPY public."BonusActivity" (id, title, type, "order", url, "createdAt", "updatedAt", "adminId", "resourceId") FROM stdin;
+1	Guide de l’accueil	text	0	demo-ressource-guide-accueil-1790000000001.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	1
+2	Checklist du premier contact	text	1	demo-ressource-guide-accueil-1790000000002.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	1
+3	Décisions d’architecture	text	0	demo-ressource-architecture-1790000000003.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	2
+4	Bonnes pratiques	text	0	demo-ressource-securite-1790000000004.html	2026-11-20 09:00:00	2026-11-20 09:00:00	1	3
 \.
 
 
@@ -1751,6 +1758,9 @@ COPY public."TagsOnParcours" ("tagId", "parcoursId") FROM stdin;
 --
 
 COPY public."TagsOnResources" ("tagId", "resourceId") FROM stdin;
+2	1
+2	2
+3	3
 \.
 
 
@@ -1801,7 +1811,7 @@ SELECT pg_catalog.setval('public."Authorization_id_seq"', 1, false);
 -- Name: BonusActivity_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."BonusActivity_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."BonusActivity_id_seq"', 4, true);
 
 
 --
@@ -1962,7 +1972,7 @@ SELECT pg_catalog.setval('public."ResourceBonusActivity_id_seq"', 1, false);
 -- Name: Resource_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lxp
 --
 
-SELECT pg_catalog.setval('public."Resource_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."Resource_id_seq"', 3, true);
 
 
 --

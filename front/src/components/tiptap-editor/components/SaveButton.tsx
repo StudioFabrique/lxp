@@ -1,7 +1,9 @@
 import { LoaderCircle, Save } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { cn } from "../../../utils/cn";
+import { useDemoMode } from "../../../store/DemoContext";
 import { useChatbotDockSnapshot } from "../../../features/chatbot/chatbot-dock-store";
 
 const FLOATING_SIZE = 32;
@@ -21,6 +23,16 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   // Mobile : la barre du bas du module (et l'assistant virtuel, au même niveau) occupe le bas de l'écran ;
   // le bouton flottant se colle au-dessus au lieu de passer dessous.
   const { hasBottomBar } = useChatbotDockSnapshot();
+  const { demoMode } = useDemoMode();
+  // En démonstration l'éditeur reste testable mais rien n'est enregistré :
+  // on explique pourquoi plutôt que d'envoyer une requête vouée au refus.
+  const handleClick = useCallback(() => {
+    if (demoMode) {
+      toast("Sauvegarde indisponible en mode démo", { id: "demo-read-only" });
+      return;
+    }
+    onSave();
+  }, [demoMode, onSave]);
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(true);
   const [naturalWidth, setNaturalWidth] = useState<number>();
   const [canAnimate, setCanAnimate] = useState(false);
@@ -91,7 +103,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
       <button
         className="self-center btn btn-sm btn-primary"
         type="button"
-        onClick={onSave}
+        onClick={handleClick}
         disabled={pending}
         aria-label="Sauvegarder l'activité"
       >
@@ -135,7 +147,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
               transition={transition}
               className={cn("btn btn-sm btn-primary justify-start overflow-hidden px-0", isFloating && "btn-circle shadow-lg")}
               type="button"
-              onClick={onSave}
+              onClick={handleClick}
               disabled={pending}
               aria-label="Sauvegarder l'activité"
             >

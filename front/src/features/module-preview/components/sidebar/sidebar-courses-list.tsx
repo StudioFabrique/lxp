@@ -292,7 +292,7 @@ const SidebarCoursesList = ({
         )}
       </div>
       {!calendarMode && !isReorderingCourses && reorderingLessonCourseId === undefined && (
-        <PermissionGuard action="update" object="course">
+        <PermissionGuard action="update" object="course" demoLock={false}>
           <div
             className={cn(
               // Même géométrie collée ou non (pied de carte pleine largeur : il annule le padding de la carte) :

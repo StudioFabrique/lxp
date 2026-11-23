@@ -7,12 +7,23 @@ import { Link, useLocation } from "react-router";
 import { ArrowRight, X } from "lucide-react";
 import apiClient from "../../../lib/axios";
 import Calendar from "../components/calendar";
-import type { CalendarEvent, CalendarView } from "../components/calendar-configuration";
-import { calendarColor, type CalendarColor } from "../components/calendar-configuration";
+import type {
+  CalendarEvent,
+  CalendarView,
+} from "../components/calendar-configuration";
+import {
+  calendarColor,
+  type CalendarColor,
+} from "../components/calendar-configuration";
 import { ColorPicker } from "../../module-preview/components/calendar/module-course-calendar";
 import ViewSelector from "../components/view-selector";
 import TimeSelector from "../components/time-selector";
-import { calendarCourseEvents, localDate, minutes, type ReadCalendar } from "../components/read-calendar-utils";
+import {
+  calendarCourseEvents,
+  localDate,
+  minutes,
+  type ReadCalendar,
+} from "../components/read-calendar-utils";
 import { formatDate } from "../components/calendar-utils";
 import { type ParcoursOption } from "./CalendarHome.types";
 
@@ -57,19 +68,45 @@ export function ParcoursCalendar({
     setColorSaving(true);
     const key = ["read-calendar", scopeKey, parcours.id];
     const previous = queryClient.getQueryData<ReadCalendar>(key);
-    queryClient.setQueryData<ReadCalendar>(key, data => data && ({
-      ...data,
-      modules: data.modules.map(module => ({ ...module, courses: module.courses.map(course =>
-        course.id === courseId ? { ...course, calendarColor: color } : course,
-      ) })),
-    }));
-    setSelection(value => value ? { event: { ...value.event, type: color } } : value);
+    queryClient.setQueryData<ReadCalendar>(
+      key,
+      (data) =>
+        data && {
+          ...data,
+          modules: data.modules.map((module) => ({
+            ...module,
+            courses: module.courses.map((course) =>
+              course.id === courseId
+                ? { ...course, calendarColor: color }
+                : course,
+            ),
+          })),
+        },
+    );
+    setSelection((value) =>
+      value ? { event: { ...value.event, type: color } } : value,
+    );
     try {
-      await apiClient.put(`/course/calendar/${courseId}/color`, { calendarColor: color });
+      await apiClient.put(`/course/calendar/${courseId}/color`, {
+        calendarColor: color,
+      });
       void queryClient.invalidateQueries({ queryKey: ["read-calendar"] });
     } catch {
       queryClient.setQueryData(key, previous);
-      setSelection(value => value ? { event: { ...value.event, type: calendarColor(previous?.modules.flatMap(module => module.courses).find(course => course.id === courseId)?.calendarColor) } } : value);
+      setSelection((value) =>
+        value
+          ? {
+              event: {
+                ...value.event,
+                type: calendarColor(
+                  previous?.modules
+                    .flatMap((module) => module.courses)
+                    .find((course) => course.id === courseId)?.calendarColor,
+                ),
+              },
+            }
+          : value,
+      );
       toast.error("Impossible d'enregistrer la couleur du cours. Réessayez.");
     } finally {
       setColorSaving(false);
@@ -106,14 +143,18 @@ export function ParcoursCalendar({
   return (
     <div className="mt-4 space-y-3">
       {query.isPending ? (
-        <div role="status" aria-label="Chargement du calendrier" className="space-y-3">
+        <div
+          role="status"
+          aria-label="Chargement du calendrier"
+          className="space-y-3"
+        >
           <span className="sr-only">Chargement du calendrier…</span>
           <div className="skeleton h-10 w-56" />
           <div className="skeleton h-[50vh] w-full rounded-box" />
         </div>
       ) : query.isError ? (
         <p role="alert">
-          Impossible de charger le calendrier.{" "}
+          Impossible de charger le calendrier.
           <button className="btn btn-sm" onClick={() => void query.refetch()}>
             Réessayer
           </button>
@@ -121,7 +162,10 @@ export function ParcoursCalendar({
       ) : (
         <>
           <Calendar
-            onSelectDay={value => { changeDate(value); setView("day"); }}
+            onSelectDay={(value) => {
+              changeDate(value);
+              setView("day");
+            }}
             events={events}
             timelineEvents={timeline}
             view={view}
@@ -157,7 +201,9 @@ export function ParcoursCalendar({
             }}
             header={
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 bg-base-200 p-4">
-                <h2 className="font-semibold first-letter:uppercase">{formatTitle(parcours.title)}</h2>
+                <h2 className="font-semibold first-letter:uppercase">
+                  {formatTitle(parcours.title)}
+                </h2>
                 <div className="flex flex-wrap items-center gap-2">
                   {view !== "year-timeline" && (
                     <TimeSelector
@@ -202,10 +248,23 @@ export function ParcoursCalendar({
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex min-w-0 items-start gap-2">
-                {selection?.event.category === "course" && selection.event.navigationState?.courseId &&
-                  <ColorPicker key={selection.event.navigationState.courseId} color={calendarColor(selection.event.type)} disabled={colorSaving}
-                    onChange={color => { void saveColor(selection.event.navigationState!.courseId!, color); }} />}
-                <h3 className="font-semibold">{formatTitle(selection?.event.title)}</h3>
+                {selection?.event.category === "course" &&
+                  selection.event.navigationState?.courseId && (
+                    <ColorPicker
+                      key={selection.event.navigationState.courseId}
+                      color={calendarColor(selection.event.type)}
+                      disabled={colorSaving}
+                      onChange={(color) => {
+                        void saveColor(
+                          selection.event.navigationState!.courseId!,
+                          color,
+                        );
+                      }}
+                    />
+                  )}
+                <h3 className="font-semibold">
+                  {formatTitle(selection?.event.title)}
+                </h3>
               </div>
               <Popover.Close
                 className="btn btn-xs btn-ghost"
@@ -234,8 +293,8 @@ export function ParcoursCalendar({
                     ? "Devoir remis"
                     : `À rendre avant ${selection.event.deadlineTime ?? selection.event.start}`
                   : selection.event.allDay
-                  ? "Sans horaire"
-                  : `${selection.event.start} – ${selection.event.end}, chaque jour`}
+                    ? "Sans horaire"
+                    : `${selection.event.start} – ${selection.event.end}, chaque jour`}
               </p>
             )}
             {selection?.event.to && (
@@ -246,9 +305,10 @@ export function ParcoursCalendar({
               >
                 {selection.event.category === "assignment"
                   ? "Accéder au devoir"
-                  : selection.event.subtitle === "Module" && !selection.event.date
-                  ? "Accéder au module"
-                  : "Accéder au cours"}
+                  : selection.event.subtitle === "Module" &&
+                      !selection.event.date
+                    ? "Accéder au module"
+                    : "Accéder au cours"}
                 <ArrowRight className="size-4" />
               </Link>
             )}
