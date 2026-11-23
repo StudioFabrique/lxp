@@ -67,10 +67,16 @@ export default function ActivityList({
       <div
         className={cn(
           "flex items-center gap-1 w-full select-none px-4 transition-all mt-2",
-          activities && activities.length === 0 ? "flex-row" : "flex-col",
+          activities && activities.length === 0 ? "flex-row flex-wrap justify-center" : "flex-col",
         )}
       >
-        <div className="mb-1 flex w-full items-center justify-between pb-1 mt-2 text-xs font-semibold text-base-content/60">
+        <div
+          className={cn(
+            "mb-1 flex items-center justify-between pb-1 mt-2 text-xs font-semibold text-base-content/60",
+            // Sans activité, le libellé et le bouton partagent la ligne et passent à la suivante si la place manque.
+            activities && activities.length === 0 ? "w-auto" : "w-full",
+          )}
+        >
           {isLoading ? (
             <div className="skeleton h-4 w-24" aria-hidden="true" />
           ) : activities && activities.length > 0 ? (
