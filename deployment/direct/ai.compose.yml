@@ -1,10 +1,14 @@
 # Couche IA, superposée au socle `compose.yml` :
 #
-#   docker compose -f compose.yml -f compose.ai.yml up -d app dropout-worker
+#   docker compose -f compose.yml -f ai.compose.yml up -d app dropout-worker
 #
-# Ce fichier n'est pas autonome : il complète des services et référence des
-# réseaux déclarés par le socle. Il n'est pas chargé sur l'instance de
+# Ce fichier n'est pas autonome : il complète des services et référence un
+# réseau déclarés par le socle. Il n'est pas chargé sur l'instance de
 # démonstration, où `DEMO_MODE=true` coupe déjà l'IA côté applicatif.
+#
+# Contrairement au mode `caddy`, le mode `direct` n'a pas de réseau de sortie
+# dédié : son `backend` n'est pas `internal`, `ai` y joint donc déjà Mistral et
+# Hugging Face.
 
 services:
   app:
@@ -32,7 +36,6 @@ services:
         condition: service_healthy
     networks:
       - backend
-      - egress
     volumes:
       - ${DEPLOY_PATH:?Set DEPLOY_PATH}/logs:/app/api/dist/logs
     environment:
@@ -75,14 +78,18 @@ services:
       - "8000"
     networks:
       - backend
-      - egress
     volumes:
       - hf_cache:/cache
       - ${DEPLOY_PATH:?Set DEPLOY_PATH}/data:/app/data
+
+      # Même stockage que celui monté dans le conteneur LXP.
       - ${DEPLOY_PATH}/uploads/activities:/lxp/api/uploads/activities:ro
     environment:
+      # Base propre au service IA
       DATABASE_URL: ${ANDRIA_AI_DB_URL:?Set ANDRIA_AI_DB_URL}
-      ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL:?Set ANDRIA_AI_DB_URL}
+      ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL}
+
+      # Base métier LXP, idéalement avec un utilisateur read-only
       LXP_DB_URL: ${LXP_DB_URL:?Set LXP_DB_URL}
 
       LXP_UPLOADS_DIR: /lxp/api/uploads/activities
@@ -134,6 +141,8 @@ services:
     container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-ai
     restart: unless-stopped
     volumes:
+      # PostgreSQL 18 range ses données dans un sous-répertoire propre à la
+      # version majeure.
       - pg_ai:/var/lib/postgresql
     networks:
       - backend
@@ -149,10 +158,6 @@ services:
     stop_grace_period: 30s
     security_opt:
       - no-new-privileges:true
-
-networks:
-  egress:
-    name: ${LXP_DEPLOYMENT_NAME:-lxp}_egress
 
 volumes:
   pg_ai:

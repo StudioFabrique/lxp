@@ -161,12 +161,12 @@ au prochain rafraîchissement des données.
 
 ## Ce qui est désactivé en démonstration
 
-| Quoi                           | Pourquoi                                                                                                                                                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Le temps réel (Socket.IO)      | Ses gestionnaires écrivent en base sans passer par le verrou HTTP, et tous les visiteurs partagent un compte, donc les mêmes salons. Coupé dans `api/src/server.ts` et `front/src/store/AuthProvider.tsx`.                     |
-| Les fonctionnalités IA         | Chatbot et génération de quiz partent d'une session obtenue sans identifiants sur une instance publique, et consomment des jetons chez le fournisseur.                                                                         |
+| Quoi                               | Pourquoi                                                                                                                                                                                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Le temps réel (Socket.IO)          | Ses gestionnaires écrivent en base sans passer par le verrou HTTP, et tous les visiteurs partagent un compte, donc les mêmes salons. Coupé dans `api/src/server.ts` et `front/src/store/AuthProvider.tsx`.                                                         |
+| Les fonctionnalités IA             | Chatbot et génération de quiz partent d'une session obtenue sans identifiants sur une instance publique, et consomment des jetons chez le fournisseur.                                                                                                             |
 | La présentation de la méthodologie | Son statut (`user.onboarding`) est enregistré sur le compte, partagé : le premier visiteur à l'ignorer en priverait tous les suivants. Elle ne s'ouvre jamais seule en démonstration, reste rouvrable depuis « Revoir la présentation », et rien n'est enregistré. |
-| Le questionnaire bêta-testeurs | Sans objet pour un visiteur de passage.                                                                                                                                                                                        |
+| Le questionnaire bêta-testeurs     | Sans objet pour un visiteur de passage.                                                                                                                                                                                                                            |
 
 ## Produire le jeu de contenus
 
@@ -224,7 +224,7 @@ Une démonstration de production utilise par exemple `/demo/ci`,
 `/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
 `LXP_DEPLOYMENT_NAME` et ses propres identifiants de base de données.
 
-Le pipeline ne charge pas `compose.ai.yml`. Le service `ai`, sa base pgvector
+Le pipeline ne charge pas `ai.compose.yml`. Le service `ai`, sa base pgvector
 et le cache des modèles ne démarrent pas. Le script retire aussi les variables
 IA avant les appels à Docker. Consultez
 [`deployment/README.md`](../deployment/README.md).
