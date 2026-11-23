@@ -6,8 +6,6 @@
 #   routes, quels statuts), lus depuis le dossier de logs de l'application.
 #   L'interface est servie par l'API sur /v1/observability/select/vmui/,
 #   réservée au compte root.
-# - Metabase : exploration des données métier (PostgreSQL et MongoDB) avec un
-#   compte en lecture seule. Son état est stocké dans `db-metabase`.
 #
 # Ce fichier n'est pas autonome : il réutilise `app` et le réseau `backend`.
 
@@ -56,52 +54,8 @@ services:
     security_opt:
       - no-new-privileges:true
 
-  db-metabase:
-    image: postgres:18-alpine
-    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-metabase
-    restart: unless-stopped
-    volumes:
-      - pg_metabase:/var/lib/postgresql
-    networks:
-      - observability
-    environment:
-      POSTGRES_USER: metabase
-      POSTGRES_PASSWORD: ${METABASE_DB_PASSWORD:?Set METABASE_DB_PASSWORD}
-      POSTGRES_DB: metabase
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U metabase -d metabase"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    security_opt:
-      - no-new-privileges:true
-
-  metabase:
-    image: metabase/metabase:v0.55.1
-    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-metabase
-    restart: unless-stopped
-    depends_on:
-      db-metabase:
-        condition: service_healthy
-    ports:
-      - "127.0.0.1:${METABASE_PORT:-3002}:3000"
-    networks:
-      - backend
-      - observability
-    environment:
-      MB_DB_TYPE: postgres
-      MB_DB_HOST: db-metabase
-      MB_DB_PORT: "5432"
-      MB_DB_DBNAME: metabase
-      MB_DB_USER: metabase
-      MB_DB_PASS: ${METABASE_DB_PASSWORD:?Set METABASE_DB_PASSWORD}
-      MB_ANON_TRACKING_ENABLED: "false"
-      MB_CHECK_FOR_UPDATES: "false"
-    security_opt:
-      - no-new-privileges:true
-
 networks:
-  # Réseau propre à l'observabilité : VictoriaLogs, Vector et la base de Metabase n'ont
+  # Réseau propre à l'observabilité : VictoriaLogs et Vector n'ont
   # aucune raison d'être joignables depuis `backend`.
   observability:
     name: ${LXP_DEPLOYMENT_NAME:-lxp}_observability
@@ -112,5 +66,3 @@ volumes:
     name: ${LXP_DEPLOYMENT_NAME:-lxp}_vlogs
   vector:
     name: ${LXP_DEPLOYMENT_NAME:-lxp}_vector
-  pg_metabase:
-    name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg_metabase

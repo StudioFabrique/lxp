@@ -121,12 +121,6 @@ BASE_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.yml"
 AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/ai.compose.yml"
 OBSERVABILITY_COMPOSE_FILE="deployment/$DEPLOY_MODE/observability.compose.yml"
 
-# Variables réservées à l'overlay d'observabilité (VictoriaLogs, Vector,
-# Metabase). Comme pour l'IA, elles ne doivent pas subsister en démonstration.
-OBSERVABILITY_SETTINGS="
-METABASE_DB_PASSWORD METABASE_HOST METABASE_PORT
-"
-
 # Toutes les variables réservées à l'overlay IA. Elles peuvent être injectées
 # par Infisical ou par un pipeline, mais ne doivent pas rester dans
 # l'environnement d'un déploiement de démonstration.
@@ -168,9 +162,6 @@ if [ "${DEMO_MODE:-false}" = "true" ]; then
     # L'observabilité n'est jamais déployée sur l'instance publique de
     # démonstration, même si OBSERVABILITY_ENABLED y est défini par erreur.
     OBSERVABILITY_ENABLED=false
-    for name in $OBSERVABILITY_SETTINGS; do
-        unset "$name"
-    done
     echo "Mode démonstration : le déploiement ignore les couches IA et mailer ainsi que leur configuration."
 else
     DEMO_ENABLED=false
@@ -178,19 +169,16 @@ else
     COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
     LOG_SERVICES="app ai dropout-worker"
 
-    # Couche optionnelle : journaux (VictoriaLogs, Vector) et Metabase.
+    # Couche optionnelle : journaux (VictoriaLogs, Vector).
     case "${OBSERVABILITY_ENABLED:-false}" in
         true)
             OBSERVABILITY_ENABLED=true
             [ -f "$OBSERVABILITY_COMPOSE_FILE" ] || die "Fichier Compose introuvable : $OBSERVABILITY_COMPOSE_FILE"
             COMPOSE_FILES="$COMPOSE_FILES -f $OBSERVABILITY_COMPOSE_FILE"
-            LOG_SERVICES="$LOG_SERVICES victorialogs vector metabase"
+            LOG_SERVICES="$LOG_SERVICES victorialogs vector"
             ;;
         false)
             OBSERVABILITY_ENABLED=false
-            for name in $OBSERVABILITY_SETTINGS; do
-                unset "$name"
-            done
             ;;
         *) die "OBSERVABILITY_ENABLED doit valoir true ou false." ;;
     esac
@@ -226,13 +214,6 @@ else
     MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
     LXP_AI_IMAGE LXP_AI_IMAGE_TAG
     "
-fi
-
-if [ "$OBSERVABILITY_ENABLED" = "true" ]; then
-    settings="$settings METABASE_DB_PASSWORD"
-    if [ "$DEPLOY_MODE" = "caddy" ]; then
-        settings="$settings METABASE_HOST"
-    fi
 fi
 
 require "$settings"
@@ -539,7 +520,7 @@ fi
 
 if [ "$OBSERVABILITY_ENABLED" = "true" ]; then
     echo "Démarrage de l'observabilité..."
-    compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" victorialogs vector metabase
+    compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" victorialogs vector
 fi
 
 if [ "$DEMO_ENABLED" = "false" ]; then

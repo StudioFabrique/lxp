@@ -81,6 +81,13 @@ grep -Fq './deployment/restore.sh verify-enabled' \
     "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "verify-backup ne controle pas les destinations activees"
 
+grep -Fq -- '-victorialogs" >/dev/null' "$backup_script" \
+    || fail "la sauvegarde n'inclut pas les journaux quand VictoriaLogs est deploye"
+[[ "$(grep -c '"${backup_paths\[@\]}"' "$backup_script")" -eq 2 ]] \
+    || fail "les destinations de sauvegarde n'utilisent pas toutes la liste des chemins"
+grep -Fq '[ -e "/destination/$file" ] && continue' "$restore_script" \
+    || fail "la restauration des journaux peut ecraser des fichiers existants"
+
 mkdir -p "$temporary_dir/infisical-bin"
 cat >"$temporary_dir/infisical-bin/infisical" <<'EOF'
 #!/bin/sh

@@ -39,7 +39,7 @@ pas le service IA.
 
 `observability.compose.yml` se superpose aux autres fichiers du même mode. Le
 pipeline le charge quand `OBSERVABILITY_ENABLED=true`, et jamais en mode
-démonstration (`DEMO_MODE=true` le désactive et retire ses variables).
+démonstration (`DEMO_MODE=true` le désactive).
 
 ```bash
 docker compose -f compose.yml -f ai.compose.yml -f observability.compose.yml up -d
@@ -56,15 +56,6 @@ docker compose -f compose.yml -f ai.compose.yml -f observability.compose.yml up 
   - connexions : `event:"auth.login"` ;
   - actions d'un utilisateur : `user:~"^42-"` ;
   - erreurs : `level:error`.
-- **Metabase** : à connecter à `db-pg` et `db-mongo` avec un compte en lecture
-  seule créé à la main (jamais le compte applicatif). Les noms et emails sont dans
-  MongoDB, l'activité d'apprentissage dans PostgreSQL ; le lien se fait par
-  `Student.idMdb` = `_id` Mongo. Metabase a ses propres comptes : ne créer
-  d'administrateur que pour les personnes autorisées.
-
-Variables : `OBSERVABILITY_ENABLED`, `METABASE_DB_PASSWORD`, et en mode `caddy`
-`METABASE_HOST` ; en mode `direct`, Metabase (`METABASE_PORT`, 3002) reste sur
-la boucle locale, à joindre par tunnel SSH.
 
 ## Préparer un serveur
 
@@ -244,7 +235,8 @@ fichier `.env` est présent à cette racine.
 
 ## Sauvegardes
 
-Les déploiements peuvent copier PostgreSQL, MongoDB et `uploads` vers un dépôt
+Les déploiements peuvent copier PostgreSQL, MongoDB, `uploads` (et les journaux quand
+l'observabilité est déployée) vers un dépôt
 Restic local, un volume externe ou S3. Consultez
 [Sauvegarder et restaurer](../docs/sauvegardes.md) pour préparer les dépôts,
 contrôler un snapshot ou remplacer les données d'une instance.

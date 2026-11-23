@@ -1,4 +1,4 @@
-# Observabilité en développement local : VictoriaLogs + Vector, sans Metabase.
+# Observabilité en développement local : VictoriaLogs + Vector.
 #
 #   npm run observability:dev        # démarre
 #   npm run observability:dev:down   # arrête (les logs indexés sont conservés)
