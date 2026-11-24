@@ -58,8 +58,8 @@ côté API, et le front en hérite par `aiDisabled`.
 | `DEMO_ADMIN_EMAIL`   | Compte emprunté pour l'interface équipe pédagogique.                                                              |
 | `DEMO_STUDENT_EMAIL` | Compte emprunté pour l'interface apprenant.                                                                       |
 
-Elles sont déjà déclarées dans `deployment/direct/compose.yml` et
-`deployment/caddy/compose.yml`. `DEMO_MODE` pilote en outre le choix des
+Elles sont déjà déclarées dans `deployment/compose.yml`, commun
+aux deux modes de déploiement. `DEMO_MODE` pilote en outre le choix des
 fichiers Compose : sur `true`, la couche IA n'est pas déployée du tout.
 
 ## Le verrou lecture seule
@@ -193,8 +193,8 @@ npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 ```
 
 `init-scripts/init.sh` ne vaut que là : il installe les dépendances, copie les
-`env.example` et parle aux conteneurs par leur nom local (`lxp-prisma`,
-`lxp-mongo`). Sur un serveur, c'est le **pipeline** qui restaure le jeu de
+`env.example` et pilote les conteneurs du Compose local (projet `lxp-local`,
+services `db-pg` et `db-mongo`). Sur un serveur, c'est le **pipeline** qui restaure le jeu de
 démonstration, à chaque déploiement, dès que l'environnement porte
 `DEMO_MODE=true` :
 

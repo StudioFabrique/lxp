@@ -18,6 +18,27 @@ avant de préparer une nouvelle instance.
 Le mode `caddy` demande un réseau Docker externe nommé `caddy` par défaut. Le
 mode `direct` ne demande pas de proxy.
 
+Les fichiers `compose.yml`, `ai.compose.yml` et `observability.compose.yml` de
+`deployment/` forment le socle commun, qui ne publie aucun port. Chaque mode
+ajoute une surcouche qui expose `app` :
+
+- `direct/publish.compose.yml` publie le port 80 de l'hôte ;
+- `caddy/compose.yml` et `caddy/ai.compose.yml` ajoutent réseau et labels du
+  proxy, un `backend` interne et le réseau de sortie de l'IA.
+
+Les surcouches se chargent après les fichiers qu'elles complètent :
+
+```bash
+# direct
+docker compose -f compose.yml -f ai.compose.yml -f direct/publish.compose.yml up -d
+# caddy
+docker compose -f compose.yml -f ai.compose.yml \
+  -f caddy/compose.yml -f caddy/ai.compose.yml up -d
+```
+
+Une modification d'un service (variable, volume, healthcheck) se fait donc une
+seule fois, dans `deployment/`.
+
 ## Services déployés
 
 Le fichier `compose.yml` démarre :
@@ -35,9 +56,27 @@ processus HTTP. Les pipelines chargent ce second fichier quand
 Une instance de démonstration utilise seulement `compose.yml`. Elle ne démarre
 pas le service IA.
 
+## Mots de passe des bases
+
+PostgreSQL et MongoDB n'appliquent leurs mots de passe qu'à la création du
+volume. Avant le démarrage de l'application, `deploy.sh` exécute donc
+`database-passwords.sh` : il réalise un `ALTER ROLE ... PASSWORD` sur `db-pg` et
+`db-ai`, et un `changeUserPassword` sur MongoDB, pour que la base suive la valeur
+courante d'Infisical. Une rotation se fait ainsi dans Infisical seul, puis un
+déploiement.
+
+- Seul le mot de passe est aligné, pas le nom du compte ni de la base
+  (`POSTGRES_USER`, `POSTGRES_DB`, etc.) : les changer demande une migration.
+- PostgreSQL se corrige sans connaître l'ancien mot de passe.
+- MongoDB exige d'être authentifié. Si l'ancien mot de passe est refusé, le
+  déploiement s'arrête avec un message ; relancez-le avec l'ancienne valeur dans
+  `MONGO_ADMIN_PASSWORD_PREVIOUS` (variable du job, pas d'Infisical).
+- Aucun mot de passe ne passe dans les arguments d'une commande de l'hôte.
+- Le Compose local fait la même chose à chaque `npm run services:up`.
+
 ## Observabilité (optionnelle)
 
-`observability.compose.yml` se superpose aux autres fichiers du même mode. Le
+`observability.compose.yml`, commun aux deux modes, se superpose aux autres fichiers. Le
 pipeline le charge quand `OBSERVABILITY_ENABLED=true`, et jamais en mode
 démonstration (`DEMO_MODE=true` le désactive).
 
