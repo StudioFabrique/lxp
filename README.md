@@ -198,7 +198,7 @@ avant le premier lancement.
 ---
 
 <p align="center">
-  <strong>ANDRIA LXP</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; Développé par StudioFabrique
+  <strong>ANDRIA LXP</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; Développé par le studio de développement de Step
 </p>
 
 &nbsp;
