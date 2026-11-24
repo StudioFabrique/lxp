@@ -27,7 +27,7 @@
     "generate-activation-key": "node src/scripts/generate-activation-key.ts",
     "send-root-invitation": "node src/scripts/send-root-invitation.ts",
     "demo:seed": "node src/scripts/demo-seed.ts",
-    "notify-triggers": "docker compose exec -T db-pg sh -c 'psql -v ON_ERROR_STOP=1 -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"' < src/scripts/andria_notify_triggers.sql"
+    "notify-triggers": "../init-scripts/notify-triggers.sh"
   },
   "author": "studio@step.eco",
   "license": "ISC",
