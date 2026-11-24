@@ -117,9 +117,19 @@ case "$DEPLOY_MODE" in
     *) die "DEPLOY_MODE doit valoir caddy ou direct, pas « $DEPLOY_MODE »." ;;
 esac
 
-BASE_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.yml"
-AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/ai.compose.yml"
-OBSERVABILITY_COMPOSE_FILE="deployment/$DEPLOY_MODE/observability.compose.yml"
+# Les fichiers de `deployment/` sont le socle commun. Chaque mode ajoute une
+# surcouche pour exposer `app` : `direct/publish.compose.yml` ou
+# `caddy/compose.yml` (et `caddy/ai.compose.yml` avec l'IA), chargées après le
+# fichier qu'elles complètent.
+BASE_COMPOSE_FILE="deployment/compose.yml"
+AI_COMPOSE_FILE="deployment/ai.compose.yml"
+OBSERVABILITY_COMPOSE_FILE="deployment/observability.compose.yml"
+MODE_BASE_COMPOSE_FILE="deployment/direct/publish.compose.yml"
+MODE_AI_COMPOSE_FILE=""
+if [ "$DEPLOY_MODE" = "caddy" ]; then
+    MODE_BASE_COMPOSE_FILE="deployment/caddy/compose.yml"
+    MODE_AI_COMPOSE_FILE="deployment/caddy/ai.compose.yml"
+fi
 
 # Toutes les variables réservées à l'overlay IA. Elles peuvent être injectées
 # par Infisical ou par un pipeline, mais ne doivent pas rester dans
@@ -127,7 +137,7 @@ OBSERVABILITY_COMPOSE_FILE="deployment/$DEPLOY_MODE/observability.compose.yml"
 AI_SETTINGS="
 ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
 ANDRIA_AI_DB_URL LXP_DB_USER LXP_DB_PASSWORD LXP_DB_URL
-DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
+DOCKER_IA_AUTH_SECRET
 MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY MISTRAL_MODEL
 LXP_PUBLIC_BASE DISABLE_AI_FEATURES
 QUIZ_TEMPERATURE QUIZ_MAX_TOKENS QUIZ_MAX_ATTEMPTS QUIZ_PARALLEL_SLOTS
@@ -152,6 +162,7 @@ if [ "${DEMO_MODE:-false}" = "true" ]; then
     DEMO_ENABLED=true
     AI_ENABLED=false
     COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
+    COMPOSE_FILES="$COMPOSE_FILES -f $MODE_BASE_COMPOSE_FILE"
     LOG_SERVICES="app"
     for name in $AI_SETTINGS; do
         unset "$name"
@@ -167,6 +178,9 @@ else
     DEMO_ENABLED=false
     AI_ENABLED=true
     COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
+    # Les surcouches du mode suivent les fichiers qu'elles complètent.
+    COMPOSE_FILES="$COMPOSE_FILES -f $MODE_BASE_COMPOSE_FILE"
+    [ -z "$MODE_AI_COMPOSE_FILE" ] || COMPOSE_FILES="$COMPOSE_FILES -f $MODE_AI_COMPOSE_FILE"
     LOG_SERVICES="app ai dropout-worker"
 
     # Couche optionnelle : journaux (VictoriaLogs, Vector).
@@ -210,7 +224,7 @@ else
     settings="$settings
     MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_SMTP_PORT MAILER_FROM
     ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD
-    DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
+    DOCKER_IA_AUTH_SECRET
     MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
     LXP_AI_IMAGE LXP_AI_IMAGE_TAG
     "
@@ -437,6 +451,15 @@ if [ "$AI_ENABLED" = "true" ]; then
         'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'; do
         sleep 2
     done
+fi
+
+# Les bases gardent le mot de passe de leur création : l'aligner sur Infisical
+# avant que l'application ne se connecte, pour qu'une rotation ne la bloque pas.
+. ./deployment/database-passwords.sh
+if [ "$AI_ENABLED" = "true" ]; then
+    align_database_passwords ai
+else
+    align_database_passwords
 fi
 
 if [ "$DEMO_ENABLED" = "true" ]; then

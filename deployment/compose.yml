@@ -3,9 +3,9 @@ name: ${LXP_DEPLOYMENT_NAME:-lxp}
 # Socle applicatif, sans la couche IA. L'instance de démonstration se déploie
 # avec ce seul fichier ; les autres y superposent `ai.compose.yml`.
 #
-# Mode `direct` : `app` publie lui-même le port 80 de l'hôte. Le réseau reste
-# donc joignable depuis l'extérieur, contrairement au `backend` interne du mode
-# `caddy`, où seul le proxy partagé expose l'application.
+# Le socle ne publie aucun port : l'exposition de `app` dépend du mode et vient
+# d'une surcouche (`direct/publish.compose.yml` en `direct`, `caddy/compose.yml`
+# derrière le proxy partagé).
 
 services:
   app:
@@ -14,8 +14,6 @@ services:
     container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-app
     restart: unless-stopped
     init: true
-    ports:
-      - "80:${PORT:?Set PORT}"
     depends_on:
       db-pg:
         condition: service_healthy

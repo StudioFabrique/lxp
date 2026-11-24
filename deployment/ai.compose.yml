@@ -16,7 +16,9 @@ services:
       ai:
         condition: service_healthy
     environment:
-      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL:?Set DOCKER_IA_API_BASE_URL}
+      # Adresse du service `ai` dans le réseau Compose : constante, donc pas
+      # dans Infisical.
+      DOCKER_IA_API_BASE_URL: http://ai:8000
       DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
       DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
 
@@ -46,7 +48,9 @@ services:
       ENVIRONMENT: ${ENVIRONMENT}
       FRONT_URL: ${FRONT_URL}
       UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
-      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL:?Set DOCKER_IA_API_BASE_URL}
+      # Adresse du service `ai` dans le réseau Compose : constante, donc pas
+      # dans Infisical.
+      DOCKER_IA_API_BASE_URL: http://ai:8000
       DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
       DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
       MAILER_EMAIL: ${MAILER_EMAIL:-}
@@ -95,7 +99,8 @@ services:
       LXP_UPLOADS_DIR: /lxp/api/uploads/activities
       LXP_PUBLIC_BASE: ${LXP_PUBLIC_BASE}
 
-      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY}
+      # Même secret que celui du LXP : une seule valeur à maintenir.
+      SECRET_KEY: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
       DEV_BYPASS_AUTH: "false"
 
       MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY:?Set MISTRAL_STUDENT_API_KEY}
