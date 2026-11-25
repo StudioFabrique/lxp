@@ -16,7 +16,7 @@
     "services:up": "./init-scripts/services.sh up",
     "services:down": "./init-scripts/services.sh down",
     "infisical:login": "bash -c '. ./init-scripts/infisical.sh && infisical_login'",
-    "observability:dev": "docker compose -f deployment/observability/dev.compose.yml up -d",
+    "observability:dev": "./init-scripts/observability-dev.sh",
     "observability:dev:down": "docker compose -f deployment/observability/dev.compose.yml down",
     "clean": "./init-scripts/clean-project-data.sh",
     "dump": "./init-scripts/dump-data.sh",

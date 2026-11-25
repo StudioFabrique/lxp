@@ -396,7 +396,7 @@ cd ..
 show_observability_hint() {
   [ "$demo_mode" = false ] || return 0
   info "Journaux (facultatif) : $(cmd "npm run observability:dev") à la racine du projet"
-  info "Puis dans api/.env : $(cmd "OBSERVABILITY_URL=http://localhost:9428") et $(cmd "DEMO_MODE=false")"
+  info "Puis dans api/.env : $(cmd "OBSERVABILITY_ENABLED=true"), $(cmd "OBSERVABILITY_URL=http://localhost:9428") et $(cmd "DEMO_MODE=false")"
   info "Arrêt : $(cmd "npm run observability:dev:down")"
 }
 
