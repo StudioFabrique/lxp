@@ -11,7 +11,7 @@ export const userCreationContextValidator = [
     .optional()
     .isString()
     .bail()
-    .isIn(["group"])
+    .isIn(["group", "parcours"])
     .withMessage("Le contexte de création de l'utilisateur est invalide."),
   checkValidatorResult,
 ];

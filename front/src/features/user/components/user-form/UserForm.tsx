@@ -143,7 +143,7 @@ const UserForm = ({
   const handleSubmit = form.handleSubmit((values) => {
     if (fieldsDisabled || isLoading) return;
     if (!values.roleId || !roleOptions.isSuccess || !roleOptions.roles.some((role) => role._id === values.roleId)) {
-      const message = requiredRoleRank === 3 ? "Veuillez choisir un rôle apprenant disponible." : "Veuillez choisir un rôle disponible.";
+      const message = requiredRoleRank === 3 ? "Veuillez choisir un rôle apprenant disponible." : requiredRoleRank === 2 ? "Veuillez choisir un rôle d'équipe pédagogique disponible." : "Veuillez choisir un rôle disponible.";
       form.setError("roleId", { message });
       toast.error(message);
       return;
@@ -229,6 +229,7 @@ const UserForm = ({
               isError={roleOptions.isError}
               onRefresh={() => void roleOptions.refetch()}
               studentOnly={requiredRoleRank === 3}
+              contactOnly={requiredRoleRank === 2}
               error={form.formState.errors.roleId?.message}
               disabled={disabled}
             />
