@@ -54,7 +54,7 @@ const useTags = (initialTags: Tag[]) => {
     (tagsToCheck = currentTags) => {
       return tagsToCheck.filter(
         (item) =>
-          !initialTags.find(
+          !initialTags.some(
             (elem) => elem.name.toLowerCase() === item.name.toLowerCase(),
           ),
       );

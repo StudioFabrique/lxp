@@ -32,7 +32,7 @@ export default function ActivityStatBlock({
   controls,
   onSelect,
   valueClassName = "text-primary",
-}: Props) {
+}: Readonly<Props>) {
   const formatted = `${formatNumber(value)}${unit ? ` ${unit}` : ""}`;
 
   return (

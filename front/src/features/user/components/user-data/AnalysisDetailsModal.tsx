@@ -7,10 +7,10 @@ import { type HistoricalAnalysis } from "./AnalysisHistory.types";
 export function AnalysisDetailsModal({
   analysis,
   onClose,
-}: {
+}: Readonly<{
   analysis: HistoricalAnalysis;
   onClose: () => void;
-}) {
+}>) {
   return (
     <Modal
       title={`Analyse du ${new Date(analysis.evaluatedAt).toLocaleDateString("fr-FR")}`}

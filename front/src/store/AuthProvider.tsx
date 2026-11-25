@@ -3,17 +3,17 @@ import {
   createContext,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import type { Socket } from "socket.io-client";
 import { SOCKET_URL } from "../config/urls";
 import { useDemoMode } from "./DemoContext";
-import apiClient from "../lib/axios";
+import apiClient, { injectAbilityResync, injectLogout } from "../lib/axios";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
 import { setIntroFirstRunHint } from "../features/intro-presentation/intro-first-run-hint";
 import { isIntroStillPending } from "../features/intro-presentation/intro-presentation-status";
-import { injectAbilityResync, injectLogout } from "../lib/axios";
 import type {
   OnboardingStatus,
   UserOnboarding,
@@ -84,7 +84,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     setError("");
     setActivationRequired(false);
     setActivationRetryAfterSeconds(0);
@@ -127,7 +127,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [demoMode, logout]);
 
   const handshake = useCallback(async () => {
     try {
@@ -236,25 +236,28 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     };
   }, [user, demoMode]);
 
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isLoggedIn,
+      isAppInitialized,
+      isLoading,
+      error,
+      activationRequired,
+      activationRetryAfterSeconds,
+      roles,
+      socket,
+      login,
+      logout,
+      handshake,
+      fetchRoles,
+      updateOnboarding,
+    }),
+    [user, isLoggedIn, isAppInitialized, isLoading, error, activationRequired, activationRetryAfterSeconds, roles, socket, login, logout, handshake, fetchRoles, updateOnboarding],
+  );
+
   return (
-    <AuthContext
-      value={{
-        user,
-        isLoggedIn,
-        isAppInitialized,
-        isLoading,
-        error,
-        activationRequired,
-        activationRetryAfterSeconds,
-        roles,
-        socket,
-        login,
-        logout,
-        handshake,
-        fetchRoles,
-        updateOnboarding,
-      }}
-    >
+    <AuthContext value={contextValue}>
       {children}
     </AuthContext>
   );

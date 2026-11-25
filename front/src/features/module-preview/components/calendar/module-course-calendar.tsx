@@ -17,10 +17,10 @@ import { DatesEditor } from "./dates-editor";
 export default function ModuleCourseCalendar({
   module,
   store,
-}: {
+}: Readonly<{
   module: Module;
   store: ModuleCalendarStore;
-}) {
+}>) {
   const { selection, setSelection, currentDate, setCurrentDate } = store;
   const container = useRef<HTMLDivElement>(null);
   const anchorElement = useRef<HTMLElement | null>(null);
@@ -87,15 +87,14 @@ export default function ModuleCourseCalendar({
 
   if (store.isPending)
     return (
-      <div
-        role="status"
+      <output
         aria-label="Chargement du calendrier"
-        className="space-y-4 p-5"
+        className="block space-y-4 p-5"
       >
         <span className="sr-only">Chargement du calendrier…</span>
         <div className="skeleton h-10 w-56" />
         <div className="skeleton h-[50vh] w-full rounded-box" />
-      </div>
+      </output>
     );
   if (store.isError)
     return (

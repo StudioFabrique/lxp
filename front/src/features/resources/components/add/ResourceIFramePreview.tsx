@@ -8,7 +8,7 @@ export default function ResourceIFramePreview({
   isLoading,
   setIsLoading,
   url,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <iframe
       src={url}

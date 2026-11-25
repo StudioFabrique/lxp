@@ -9,8 +9,8 @@ export function extractYouTubeId(
 
   // common YouTube URL forms
   const match =
-    s.match(/(?:v=|\/embed\/|\/v\/|youtu\.be\/)([\w-]{11})/) ||
-    s.match(/youtube\.com\/shorts\/([\w-]{11})/);
+    /(?:v=|\/embed\/|\/v\/|youtu\.be\/)([\w-]{11})/.exec(s) ||
+    /youtube\.com\/shorts\/([\w-]{11})/.exec(s);
   return match ? match[1] : null;
 }
 

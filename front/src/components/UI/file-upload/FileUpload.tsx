@@ -91,7 +91,7 @@ export default function FileUpload({
   error,
   className = "",
   buttonClassName,
-}: Props) {
+}: Readonly<Props>) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -115,6 +115,17 @@ export default function FileUpload({
     setFileName(file.name);
     onFileSelect(file);
   };
+
+  let buttonIcon: ReactNode = icon ?? <Upload className="h-4 w-4" />;
+  if (isLoading) {
+    buttonIcon = <LoaderCircle className="h-4 w-4 animate-spin" />;
+  } else if (fileName && !preserveButtonLabel) {
+    buttonIcon = compact ? (
+      <Pencil className="h-4 w-4" />
+    ) : (
+      <FileCheck2 className="h-4 w-4" />
+    );
+  }
 
   return (
     <div className={cn(compact ? "w-auto" : "w-full", className)}>
@@ -141,17 +152,7 @@ export default function FileUpload({
             buttonClassName,
           )}
         >
-          {isLoading ? (
-            <LoaderCircle className="h-4 w-4 animate-spin" />
-          ) : fileName && !preserveButtonLabel ? (
-            compact ? (
-              <Pencil className="h-4 w-4" />
-            ) : (
-              <FileCheck2 className="h-4 w-4" />
-            )
-          ) : (
-            (icon ?? <Upload className="h-4 w-4" />)
-          )}
+          {buttonIcon}
           <span className="max-w-64 truncate">
             {compact && fileName && !preserveButtonLabel
               ? fileName

@@ -15,7 +15,7 @@ type Props = {
  * DialogImages - Composant modal pour afficher et sélectionner des images de la médiathèque
  * @param {Props} onClose - Fonction pour fermer le modal
  */
-function DialogImages({ onClose }: Props) {
+function DialogImages({ onClose }: Readonly<Props>) {
   // Hook personnalisé pour gérer la pagination des médias
   const { list, isLoading, error, page, perPage, totalPages, setPage, setLimit } =
     usePaginatedMediatheque();

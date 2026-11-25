@@ -150,16 +150,15 @@ const IntroSpaceVideo = ({ content, onEnded }: Props) => {
         onLoad={() => send("initialize")}
       />
       {!isLoaded && !hasFailed ? (
-        <div
+        <output
           className="absolute inset-0 grid place-items-center bg-base-100"
-          role="status"
         >
           <LoaderCircle
             className="size-6 animate-spin motion-reduce:animate-none"
             aria-hidden="true"
           />
           <span className="sr-only">Chargement de la présentation</span>
-        </div>
+        </output>
       ) : null}
       {hasFailed ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-base-100 p-4 text-center">

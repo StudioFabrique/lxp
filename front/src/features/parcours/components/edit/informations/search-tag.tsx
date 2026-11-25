@@ -7,7 +7,7 @@ type Props = {
   onSetSearchTerm: Dispatch<SetStateAction<string>>;
 };
 
-export default function SearchTag(props: Props) {
+export default function SearchTag(props: Readonly<Props>) {
   const handleChangeTerm = (event: ChangeEvent<HTMLInputElement>) => {
     props.onSetSearchTerm(event.currentTarget.value);
   };

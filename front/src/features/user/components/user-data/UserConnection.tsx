@@ -34,7 +34,7 @@ export default function UserConnection({
   parcours,
   tokenStats,
   progression,
-}: UserConnectionProps) {
+}: Readonly<UserConnectionProps>) {
   const completion =
     progression?.available && typeof progression.value === "number"
       ? progression.value

@@ -40,12 +40,12 @@ export const optionalWebUrl = z.union([z.literal(""), webUrl]);
 export const postCodeField = z
   .string()
   .trim()
-  .regex(/^[0-9]*$/, "Le code postal doit contenir uniquement des chiffres.");
+  .regex(/^\d*$/, "Le code postal doit contenir uniquement des chiffres.");
 export const phoneField = z
   .string()
   .trim()
   .regex(
-    /^(?:\+?[0-9][0-9 ().-]*)?$/,
+    /^(?:\+?\d[\d ().-]*)?$/,
     "Le numéro de téléphone n'est pas valide.",
   );
 export const tagSchema = z.object({

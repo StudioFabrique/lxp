@@ -169,7 +169,7 @@ const mutations = {
     return res.data;
   },
   /** L'archive convertie revient en binaire, d'où le `responseType: "blob"`. */
-  importMbz: async (
+  importMbz: (
     file: File,
     onProgress?: (percent: number) => void,
   ) => {

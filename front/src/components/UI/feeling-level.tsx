@@ -13,7 +13,7 @@ interface FeelingLevelProps {
   size?: number;
 }
 
-export default function FeelingLevel({ value, size = 10 }: FeelingLevelProps) {
+export default function FeelingLevel({ value, size = 10 }: Readonly<FeelingLevelProps>) {
   const iconStyle = iconSizeStyle(size);
 
   switch (value) {

@@ -31,6 +31,9 @@ const FormNumberInput = <TFieldValues extends FieldValues,>({
   const fieldId = useId();
   const errorId = `${fieldId}-error`;
   const helperId = `${fieldId}-helper`;
+  let describedBy: string | undefined;
+  if (error) describedBy = errorId;
+  else if (helperText) describedBy = helperId;
 
   return (
     <div className="flex flex-col gap-y-2 w-full">
@@ -48,17 +51,18 @@ const FormNumberInput = <TFieldValues extends FieldValues,>({
         step="any"
         inputMode="decimal"
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : helperText ? helperId : undefined}
+        aria-describedby={describedBy}
       />
-      {error ? (
+      {error && (
         <p id={errorId} className="text-error text-xs" role="alert">
           {error.message}
         </p>
-      ) : helperText ? (
+      )}
+      {!error && helperText && (
         <p id={helperId} className="text-base-content/60 text-xs">
           {helperText}
         </p>
-      ) : null}
+      )}
     </div>
   );
 };

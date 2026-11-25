@@ -17,7 +17,7 @@ type Props = {
  * Displays a list of media resources in a table-like format
  * @param {Media[]} resources - Array of media resources to display
  */
-function ListResources({ options, resources, onSort }: Props) {
+function ListResources({ options, resources, onSort }: Readonly<Props>) {
   /**
    * Opens the file in a new tab for preview/download
    * @param {Media} resource - The media resource to preview

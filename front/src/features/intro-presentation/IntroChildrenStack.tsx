@@ -132,7 +132,7 @@ const IntroChildrenStack = ({
     // Une sortie interrompue se défait : les plaques retrouvent leur place et leur opacité.
     const context = gsap.context(() => {
       const timeline = gsap.timeline({ onComplete: commit });
-      if (next && next.levelIndex === current.levelIndex + 1) {
+      if (next?.levelIndex === current.levelIndex + 1) {
         // La carte choisie (la première par défaut) devient la couche suivante.
         timeline.to(
           children.filter((_, index) => index !== selectedChildRef.current),

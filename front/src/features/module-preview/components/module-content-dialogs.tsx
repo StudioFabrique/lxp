@@ -21,7 +21,7 @@ export default function ModuleContentDialogs({
   quiz,
   smartQuiz,
   onOpenAssignment,
-}: ModuleContentDialogsProps) {
+}: Readonly<ModuleContentDialogsProps>) {
   const { state, computed, dispatch, lessonActions } = store;
   const hasAssignmentAfterLesson = Boolean(
     computed.isLastLessonOfCurrentCourse && selectedCourse?.assignment,

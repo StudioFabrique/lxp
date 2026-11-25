@@ -7,13 +7,13 @@ import { ExistingGroup } from "./ExistingGroup";
 
 export default function ExistingTeacherGroups({
   groups,
-}: {
+}: Readonly<{
   groups: UseQueryResult<StudentGroupSummary[], Error>;
-}) {
+}>) {
   const content = groups.isPending ? (
-    <p role="status" className="text-sm">
+    <output className="block text-sm">
       Chargement de vos groupes…
-    </p>
+    </output>
   ) : groups.isError ? (
     <div role="alert" className="text-sm">
       <p>Impossible de charger vos groupes.</p>

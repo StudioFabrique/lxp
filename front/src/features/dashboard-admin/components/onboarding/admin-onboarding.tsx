@@ -30,7 +30,7 @@ export default function AdminOnboarding({
   adminsCount,
   onCreateFormation,
   onCreateParcours,
-}: Props) {
+}: Readonly<Props>) {
   const { user } = useContext(AuthContext);
   const { skipped, skip } = useSkippedOnboardingSteps(user?._id);
   const steps = buildOnboardingSteps({

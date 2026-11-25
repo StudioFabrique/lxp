@@ -359,7 +359,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
           });
           gsap.from(items, {
             x: (_index: number, item: HTMLElement) =>
-              -parseFloat(getComputedStyle(item).marginLeft),
+              -Number.parseFloat(getComputedStyle(item).marginLeft),
             force3D: true,
             lazy: false,
             duration: 0.9,

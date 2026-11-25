@@ -7,7 +7,7 @@ type ModuleIncompleteBadgeProps = {
 
 export default function ModuleIncompleteBadge({
   missingRequirements,
-}: ModuleIncompleteBadgeProps) {
+}: Readonly<ModuleIncompleteBadgeProps>) {
   const tooltipId = useId();
 
   return (

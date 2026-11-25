@@ -172,14 +172,14 @@ const UserHome = () => {
     return undefined;
   }, [userToDelete]);
 
-  const handleConfirmResetPassword = async () => {
+  const handleConfirmResetPassword = () => {
     if (idToResetPassword) {
       // La modale reste ouverte, avec son loader, jusqu'à la réponse du serveur.
       onSendResetPassword(idToResetPassword, () => setIdToResetPassword(null));
     }
   };
 
-  const handleConfirmResendInvitation = async () => {
+  const handleConfirmResendInvitation = () => {
     if (idToResendInvitation) {
       onSendInvitation(idToResendInvitation, () => setIdToResendInvitation(null));
     }

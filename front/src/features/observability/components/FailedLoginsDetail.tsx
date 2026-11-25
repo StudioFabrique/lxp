@@ -21,7 +21,7 @@ const recentColumns: ColumnDef<StockFeatures, RecentRow>[] = [
   textColumn("reason", "Motif", (row) => statusLabel(row.status)),
 ];
 
-export default function FailedLoginsDetail({ data }: { data: Data }) {
+export default function FailedLoginsDetail({ data }: Readonly<{ data: Data }>) {
   const none = "Aucun échec de connexion sur cette période.";
 
   return (

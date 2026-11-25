@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 import type Media from "../interfaces/media";
 import { getMediaUrl } from "./media-list.utils";
 
-export function MediaPreview({ media }: { media: Media }) {
+export function MediaPreview({ media }: Readonly<{ media: Media }>) {
   const url = getMediaUrl(media);
 
   if (media.type === "image") {

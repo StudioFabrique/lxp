@@ -2,7 +2,7 @@ import AuthPageWrapper from "./AuthPageWrapper";
 
 export default function LoginLoadingSkeleton() {
   return (
-    <div role="status" aria-label="Chargement de la connexion" className="w-full">
+    <output aria-label="Chargement de la connexion" className="block w-full">
       <span className="sr-only">Chargement de la connexion…</span>
       <AuthPageWrapper title="Connectez-vous à votre espace">
         <div className="flex flex-col gap-4" aria-hidden="true">
@@ -12,6 +12,6 @@ export default function LoginLoadingSkeleton() {
           <div className="skeleton mx-auto mt-2 h-5 w-36 rounded-lg" />
         </div>
       </AuthPageWrapper>
-    </div>
+    </output>
   );
 }

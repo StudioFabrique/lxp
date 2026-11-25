@@ -50,9 +50,9 @@ const useUploadResources = (
 
   let id: number | null = parentId ?? null;
   if (id === null && parent === "resource" && resourceId)
-    id = parseInt(resourceId);
+    id = Number.parseInt(resourceId);
   else if (id === null && parent === "lesson" && lessonId)
-    id = parseInt(lessonId);
+    id = Number.parseInt(lessonId);
 
   const hasError =
     filesList.length > 0 &&

@@ -11,7 +11,7 @@ type Props = {
  * largeur sur mobile (action principale en premier) et alignées en ligne dès `sm`.
  * Les boutons enfants portent `w-full sm:w-auto`.
  */
-export default function OnboardingFooter({ children, className }: Props) {
+export default function OnboardingFooter({ children, className }: Readonly<Props>) {
   return (
     <div
       className={cn(

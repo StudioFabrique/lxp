@@ -6,7 +6,10 @@ import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
   {
-    ignores: ["dist/**"],
+    // `public/` contient des bundles tiers minifiés (présentations) et
+    // `vite.config.js` est la sortie compilée de `vite.config.ts` : ni l'un
+    // ni l'autre ne sont du code source à linter.
+    ignores: ["dist/**", "public/**", "vite.config.js", "vite.config.d.ts"],
   },
   js.configs.recommended,
   ...typescriptEslint.configs["flat/recommended"],

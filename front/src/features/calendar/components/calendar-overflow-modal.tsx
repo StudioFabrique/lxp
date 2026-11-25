@@ -5,10 +5,10 @@ import Modal from "../../../components/UI/modal/modal";
 import { HierarchicalListRow } from "../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import type { CalendarEvent } from "./calendar-configuration";
 
-export default function CalendarOverflowModal({ events, onClose, onClickDetails }: {
+export default function CalendarOverflowModal({ events, onClose, onClickDetails }: Readonly<{
   events: CalendarEvent[]; onClose: () => void;
   onClickDetails?: (id: string | number, rect: DOMRect) => void;
-}) {
+}>) {
   const content = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const dialog = content.current?.closest("dialog");

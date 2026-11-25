@@ -25,7 +25,7 @@ export default function AvatarCard({
   hasBeenReviewed,
   studentId,
   onReview,
-}: AvatarCardProps) {
+}: Readonly<AvatarCardProps>) {
   const handleReview = () => {
     if (!hasBeenReviewed) {
       onReview(studentId, _id);

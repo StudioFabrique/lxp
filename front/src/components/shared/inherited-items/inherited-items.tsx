@@ -33,7 +33,7 @@ interface InheritedItemsProps {
 
 const InheritedItems = (props: InheritedItemsProps) => {
   const visibleList = useMemo(() => {
-    return props.visibleList !== undefined ? props.visibleList : true;
+    return props.visibleList ?? true;
   }, [props.visibleList]);
 
   const handleCloseDrawer = (id: string) => {
@@ -43,7 +43,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
   const [notSelected, setNotSelected] = useState<any[]>([]);
 
   const isDisabled = useMemo(() => {
-    return props.isDisabled !== undefined ? props.isDisabled : false;
+    return props.isDisabled ?? false;
   }, [props.isDisabled]);
 
   const sizeClass = useMemo(() => {
@@ -94,9 +94,9 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * des contacts sélectionnés
    */
   useEffect(() => {
-    let updatedItems = Array<any>();
+    let updatedItems: any[] = [];
     (props.initialList ?? []).forEach((item: any) => {
-      const foundItem = currentItems.find((element) => element.id === item.id);
+      const foundItem = currentItems.some((element) => element.id === item.id);
       if (!foundItem) {
         updatedItems = [...updatedItems, item];
       }
@@ -138,7 +138,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           capitalize: Boolean(props.capitalize),
         })}
       >
-        {currentItems.length ? (
+        {currentItems.length > 0 && (
           <>
             {React.cloneElement(
               props.children[0] as React.ReactElement,
@@ -151,11 +151,12 @@ const InheritedItems = (props: InheritedItemsProps) => {
               } as any,
             )}
           </>
-        ) : visibleList ? (
+        )}
+        {currentItems.length === 0 && visibleList && (
           <SubBoxWrapper>
             <p className="text-xs">{props.emptyMessage ?? "Aucun élément ajouté"}</p>
           </SubBoxWrapper>
-        ) : null}
+        )}
       </div>
       <RightSideDrawer
         title={props.drawerTitle}

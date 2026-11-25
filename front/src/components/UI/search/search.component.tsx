@@ -35,7 +35,7 @@ const Search: FC<{
   };
 
   const handleSwitchValueChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSwitchValue(event.target.value === "actif" ? true : false);
+    setSwitchValue(event.target.value === "actif");
   };
 
   const handleSearchValueChange = (

@@ -28,7 +28,7 @@ export function DndWrapper<T>({
   renderItem,
   isLoading,
   getItemId,
-}: DndWrapperProps<T>) {
+}: Readonly<DndWrapperProps<T>>) {
   const generatedId = useId();
   const contextId = `${droppableId}-${generatedId}`;
 

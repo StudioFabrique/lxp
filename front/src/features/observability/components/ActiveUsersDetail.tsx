@@ -18,7 +18,7 @@ type Props = {
   onSelectUser: (user: ActivityUser) => void;
 };
 
-export default function ActiveUsersDetail({ data, onSelectUser }: Props) {
+export default function ActiveUsersDetail({ data, onSelectUser }: Readonly<Props>) {
   const rows = useMemo(() => withIds(data.users, (row) => row.userId), [data.users]);
   const columns = useMemo<ColumnDef<StockFeatures, Row>[]>(
     () => [

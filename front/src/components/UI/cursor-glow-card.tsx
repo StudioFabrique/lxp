@@ -23,6 +23,16 @@ type CursorGlowCardProps = {
   disableHoverScale?: boolean;
 };
 
+/** Durée de transition du halo : nulle sans animations, plus courte au survol. */
+const hoverDuration = (
+  animations: boolean,
+  isHovered: boolean,
+  hoveredDuration: number,
+): number => {
+  if (!animations) return 0;
+  return isHovered ? hoveredDuration : 0.5;
+};
+
 const CursorGlowCard = ({
   children,
   glowSize = 1,
@@ -64,6 +74,11 @@ const CursorGlowCard = ({
     frame = requestAnimationFrame(move);
     return () => cancelAnimationFrame(frame);
   }, [autoEnabled, autoGlow, animations, glowEnabled, mouseX, mouseY]);
+
+  const scaleDuration = hoverDuration(animations, isHovered, 0.25);
+  const opacityDuration = hoverDuration(animations, isHovered, 0.2);
+
+  const glowBaseOpacity = glowColor === "accent" ? 0.8 : 0.7;
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -111,15 +126,15 @@ const CursorGlowCard = ({
           }}
           animate={{
             scale: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? glowSize : 0,
-            opacity: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? (glowColor === "accent" ? 0.8 : 0.7) * glowIntensity : 0,
+            opacity: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? glowBaseOpacity * glowIntensity : 0,
           }}
           transition={{
             scale: {
-              duration: animations ? (isHovered ? 0.25 : 0.5) : 0,
+              duration: scaleDuration,
               ease: isHovered ? "easeOut" : "easeInOut",
             },
             opacity: {
-              duration: animations ? (isHovered ? 0.2 : 0.5) : 0,
+              duration: opacityDuration,
               ease: "easeOut",
             },
           }}

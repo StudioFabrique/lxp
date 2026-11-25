@@ -13,7 +13,7 @@ type Props = {
  * d'exploitation, pas du suivi pédagogique, et ne font donc pas partie des
  * indicateurs apprenant.
  */
-export default function TokensUsed({ tokenStats }: Props) {
+export default function TokensUsed({ tokenStats }: Readonly<Props>) {
   return (
     <div className="w-full h-full">
       <h2 className="text-xs font-bold">Tokens utilisés</h2>

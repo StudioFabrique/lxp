@@ -23,13 +23,13 @@ describe("group form draft", () => {
       ],
     });
 
-    const url = new URL(studentUrl, "http://lxp.local");
+    const url = new URL(studentUrl, "https://lxp.local");
     expect(url.pathname).toBe("/admin/user/add");
     expect(url.searchParams.get("roleRank")).toBe("3");
 
     const returnTo = new URL(
       url.searchParams.get("returnTo")!,
-      "http://lxp.local",
+      "https://lxp.local",
     );
     expect(returnTo.pathname).toBe("/admin/group/add");
     expect(returnTo.searchParams.get("groupName")).toBe("Promotion août");

@@ -9,11 +9,11 @@ function timeAfter(start: string, minutes: number) {
   return `${String(Math.floor(end / 60)).padStart(2, "0")}:${String(end % 60).padStart(2, "0")}`;
 }
 
-export default function CourseTimeFields({ startTime, endTime, onChange }: {
+export default function CourseTimeFields({ startTime, endTime, onChange }: Readonly<{
   startTime?: string;
   endTime?: string;
   onChange: (times: { startTime?: string; endTime?: string }) => void;
-}) {
+}>) {
   const [showError, setShowError] = useState(false);
   return <div className="@container space-y-2">
     <div className="flex flex-wrap gap-2" role="group" aria-label="Plage horaire rapide">

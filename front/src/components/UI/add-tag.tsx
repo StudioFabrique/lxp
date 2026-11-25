@@ -13,7 +13,7 @@ interface AddTagProps {
   onSubmit: (event: React.FormEvent) => void;
 }
 
-export default function AddTag(props: AddTagProps) {
+export default function AddTag(props: Readonly<AddTagProps>) {
   const handleTagSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     props.onSubmit(event);

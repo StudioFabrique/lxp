@@ -26,7 +26,7 @@ type Props = {
 const FORM_ID = "instance-role-labels-form";
 
 /** Carte des noms de rôles et modale d'édition, avec le même formulaire que l'onboarding. */
-export default function RoleLabelsSettings({ labels, disabled, onSave }: Props) {
+export default function RoleLabelsSettings({ labels, disabled, onSave }: Readonly<Props>) {
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<RoleLabelsFormValues>({
     resolver: zodResolver(roleLabelsSchema),

@@ -26,7 +26,7 @@ export default function AssignContactsToModulesModal({
   isSubmitting,
   onClose,
   onSubmit,
-}: Props) {
+}: Readonly<Props>) {
   const { teamLabel } = useRoleLabels();
   const assignableModules = useMemo(
     () =>

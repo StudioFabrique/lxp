@@ -14,11 +14,11 @@ export function AssignmentFileButton({
   courseId,
   kind,
   file,
-}: {
+}: Readonly<{
   courseId: number;
   kind: "brief" | "submission";
   file: AssignmentFile;
-}) {
+}>) {
   const [loading, setLoading] = useState(false);
   const download = async () => {
     setLoading(true);

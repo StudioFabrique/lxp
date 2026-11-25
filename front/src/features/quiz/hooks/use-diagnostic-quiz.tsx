@@ -425,7 +425,7 @@ export default function useDiagnosticQuiz(
   useEffect(() => {
     if (isStreaming) return;
 
-    if (quizzes && quizzes.length === 0) {
+    if (quizzes?.length === 0) {
       console.warn("Api error: aucune question de diagnostic générée.");
       bypassDiagnostic();
     }

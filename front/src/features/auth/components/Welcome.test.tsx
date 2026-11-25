@@ -2,6 +2,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { currentRelease } from "../../../config/release-notes";
 import Welcome from "./Welcome";
 
 describe("accueil de la configuration", () => {
@@ -37,12 +38,12 @@ describe("accueil de la configuration", () => {
         ?.click();
     });
 
-    expect(document.querySelector("dialog h2")?.textContent).toBe("ANDRIA");
-    expect(document.querySelector("dialog")?.textContent).toContain("0.9");
-    expect(document.querySelector("dialog")?.textContent).toContain("Parcours apprenant");
+    expect(document.querySelector("dialog h2 img")?.getAttribute("alt")).toBe("ANDRIA");
+    expect(document.querySelector("dialog")?.textContent).toContain(currentRelease.version);
+    expect(document.querySelector("dialog")?.textContent).toContain(currentRelease.changes[0].title);
     expect(
       document.querySelector<HTMLAnchorElement>(
-        'dialog a[href="https://github.com/StudioFabrique/lxp"]',
+        `dialog a[href="https://github.com/StudioFabrique/lxp/tree/${currentRelease.branch}"]`,
       )?.target,
     ).toBe("_blank");
 

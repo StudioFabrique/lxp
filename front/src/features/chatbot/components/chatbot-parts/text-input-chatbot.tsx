@@ -17,7 +17,7 @@ export default function TextInputChatbot({
   aiUnavailable,
   handleSubmit,
   handleEveryInputInput,
-}: Props) {
+}: Readonly<Props>) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

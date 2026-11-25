@@ -15,7 +15,7 @@ type Props = {
   className?: string;
 };
 
-export default function ActivityFloatingActionButton(props: Props) {
+export default function ActivityFloatingActionButton(props: Readonly<Props>) {
   const style = "tooltip tooltip-left";
 
   const activitiesTypes = [

@@ -9,7 +9,7 @@ type Props = {
   onNavigate: () => void;
 };
 
-export default function ChatbotSources({ sources, routeRoot, onNavigate }: Props) {
+export default function ChatbotSources({ sources, routeRoot, onNavigate }: Readonly<Props>) {
   return (
     <div className="mt-2 pt-2 border-t border-base-content/10 text-xs">
       <span className="font-semibold mb-1.5 opacity-70 flex items-center gap-1">

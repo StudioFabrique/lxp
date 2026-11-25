@@ -1,7 +1,7 @@
 import { assignmentLinks } from "./assignment-links";
 import { LinkPreview } from "./link-preview";
 
-export default function AssignmentLinkPreviews({ text }: { text: string }) {
+export default function AssignmentLinkPreviews({ text }: Readonly<{ text: string }>) {
   const links = assignmentLinks(text);
   if (links.length === 0) return null;
   return <div className="mt-3" aria-label="Aperçu des liens du devoir">

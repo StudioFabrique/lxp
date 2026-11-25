@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 type Props = { children: string };
 
 /** Réponse de l'assistant virtuel en Markdown ; les liens externes s'ouvrent dans un nouvel onglet. */
-export default function ChatbotMarkdown({ children }: Props) {
+export default function ChatbotMarkdown({ children }: Readonly<Props>) {
   return (
     <ReactMarkdown
       components={{

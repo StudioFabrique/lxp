@@ -11,14 +11,14 @@ export function EmailPreview({
   hasInstanceLogo,
   instanceColor,
   instanceLogoUrl = INSTANCE_LOGO,
-}: {
+}: Readonly<{
   template: (typeof emailTemplates)[number];
   instanceName: string;
   website: string;
   hasInstanceLogo: boolean;
   instanceColor: string;
   instanceLogoUrl?: string;
-}) {
+}>) {
   const configuredAccent = instanceColor || "#ffffff";
   const accent = /^#(?:fff|ffffff)$/i.test(configuredAccent)
     ? "#1769aa"

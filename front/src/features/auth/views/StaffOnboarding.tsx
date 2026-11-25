@@ -67,8 +67,7 @@ export default function StaffOnboarding() {
   if (saving || navigation.state !== "idle" || !required)
     return (
       <>
-        <div
-          role="status"
+        <output role="status"
           className="flex min-h-64 w-full flex-1 flex-col items-center justify-center gap-4 text-center"
         >
           <LoaderCircle
@@ -79,7 +78,7 @@ export default function StaffOnboarding() {
           <p className="text-sm text-base-content/70">
             Votre tableau de bord est en cours de chargement.
           </p>
-        </div>
+        </output>
         {!required && <Navigate to="/admin/dashboard" replace />}
       </>
     );

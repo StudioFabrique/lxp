@@ -11,7 +11,7 @@ type Props = {
   onCancel: (value: boolean) => void;
 };
 
-export default function ImageActivityResource(props: Props) {
+export default function ImageActivityResource(props: Readonly<Props>) {
   const handleImageSubmit = async (fd: FormData) => {
     try {
       const data = await resourcesApi.mutations.saveImageActivity(

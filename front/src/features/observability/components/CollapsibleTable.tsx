@@ -28,7 +28,7 @@ export default function CollapsibleTable<T extends { id: string }>({
   defaultOpen = false,
   nested = false,
   previewSize = 3,
-}: Props<T>) {
+}: Readonly<Props<T>>) {
   const hasMore = rows.length > previewSize;
 
   return (

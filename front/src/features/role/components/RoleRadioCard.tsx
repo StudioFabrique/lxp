@@ -19,7 +19,7 @@ type RoleRadioCardProps = {
 export default function RoleRadioCard({
   name, value, rank, label, checked, onChange, disabled = false,
   description, invalid, describedBy,
-}: RoleRadioCardProps) {
+}: Readonly<RoleRadioCardProps>) {
   const id = useId();
   const Icon = roleModelIcons[rank] ?? ShieldCheck;
 

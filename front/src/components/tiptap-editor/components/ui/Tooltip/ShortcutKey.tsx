@@ -4,7 +4,7 @@ import { JSX } from "react";
 
 const isMac =
   typeof window !== "undefined"
-    ? navigator.platform.toUpperCase().indexOf("MAC") >= 0
+    ? navigator.platform.toUpperCase().includes("MAC")
     : false;
 
 export const ShortcutKey = ({ children }: { children: string }): JSX.Element => {

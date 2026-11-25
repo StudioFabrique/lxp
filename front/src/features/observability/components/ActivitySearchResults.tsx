@@ -42,7 +42,7 @@ export default function ActivitySearchResults({
   text,
   range,
   onSelectUser,
-}: Props) {
+}: Readonly<Props>) {
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: observabilityKeys.search(text, range),
     queryFn: () => observabilityApi.queries.search(text, range),

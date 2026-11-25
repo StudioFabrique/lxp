@@ -12,7 +12,7 @@ export default function ImageActivityPreview({
   activity,
   isEditing,
   onSubmitted,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <>
       {isEditing ? (

@@ -16,7 +16,7 @@ type Props = {
   onCreated: (tags: Tag[]) => void;
 };
 
-function CreateNewTag(props: Props) {
+function CreateNewTag(props: Readonly<Props>) {
   const { data: initialTags = [] } = useParcoursTagsQuery();
   const queryClient = useQueryClient();
 

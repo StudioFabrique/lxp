@@ -4,9 +4,9 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 
 export default function ResourcesHeader({
   onCreate,
-}: {
+}: Readonly<{
   onCreate: () => void;
-}) {
+}>) {
   return (
     <section className="w-full">
       <Header

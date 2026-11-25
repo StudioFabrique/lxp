@@ -80,7 +80,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
           onComplete={onComplete}
         />
       ) : (
-        <div className="grid h-full place-items-center" role="status">
+        <output className="grid h-full place-items-center">
           <div className="sr-only">
             <IntroSceneHeading />
             Préparation de la présentation
@@ -89,7 +89,7 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
             className="loading loading-spinner loading-lg text-primary"
             aria-hidden="true"
           />
-        </div>
+        </output>
       )}
 
       <button

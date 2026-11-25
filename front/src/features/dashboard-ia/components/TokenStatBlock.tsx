@@ -9,7 +9,7 @@ type Props = {
 };
 
 /** Gros bloc de statistique, au format des totaux des journaux de l'instance. */
-export default function TokenStatBlock({ label, value, hint }: Props) {
+export default function TokenStatBlock({ label, value, hint }: Readonly<Props>) {
   return (
     <BoxWrapper className="min-h-32 justify-between gap-2 p-4 font-bold text-primary">
       <div className="flex items-start justify-between gap-4">

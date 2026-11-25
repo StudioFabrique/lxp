@@ -32,7 +32,7 @@ export default function MobileModuleNavigation({
   onSelectAssignment,
   onLessonScrolled,
   onNavigated,
-}: MobileModuleNavigationProps) {
+}: Readonly<MobileModuleNavigationProps>) {
   const selectedLessonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {

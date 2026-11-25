@@ -10,7 +10,7 @@ type Props = {
 };
 
 /** Entrée « Autres questions » de l'éventail, d'une autre couleur que les questions, avec une croix pour revenir aux premières. */
-export default function ChatbotMoreQuestions({ label, onMore, onReset }: Props) {
+export default function ChatbotMoreQuestions({ label, onMore, onReset }: Readonly<Props>) {
   return (
     <div className="flex items-center gap-2">
       <div className="min-w-0 flex-1">

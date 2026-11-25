@@ -86,9 +86,9 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
         </InheritedItems>
       ) : null}
       {isSaving && (
-        <p className="mt-2 text-sm text-base-content/70" role="status">
+        <output role="status" className="block mt-2 text-sm text-base-content/70">
           Enregistrement des membres « {teamLabel} » en cours…
-        </p>
+        </output>
       )}
     </>
   );

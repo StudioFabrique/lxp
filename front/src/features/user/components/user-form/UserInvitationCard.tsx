@@ -9,7 +9,7 @@ type UserInvitationCardProps = {
   compact?: boolean;
 };
 
-export default function UserInvitationCard({ sendEmail, onSetSendEmail, disabled = false, compact = false }: UserInvitationCardProps) {
+export default function UserInvitationCard({ sendEmail, onSetSendEmail, disabled = false, compact = false }: Readonly<UserInvitationCardProps>) {
   const id = useId();
   const Icon = sendEmail ? Send : Mail;
 

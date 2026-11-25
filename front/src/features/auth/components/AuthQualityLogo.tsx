@@ -9,7 +9,7 @@ const paths = [...logoSvg.matchAll(/<path\b([^>]+)\/?\s*>/g)].map(([, attributes
   evenodd: attributes.includes('fill-rule="evenodd"'),
 }));
 
-export default function AuthQualityLogo({ color = 0, className }: { color?: number; className?: string }) {
+export default function AuthQualityLogo({ color = 0, className }: Readonly<{ color?: number; className?: string }>) {
   const tileColor = color % authTileColors.length;
   return (
     <svg

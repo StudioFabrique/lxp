@@ -20,7 +20,7 @@ const byTime = (a: CalendarEvent, b: CalendarEvent): number =>
  * illisibles. Chaque cours est une ligne avec son horaire, son titre et son sous-titre ; les jours vides restent
  * visibles, repliés sur une ligne.
  */
-export default function AgendaView({ events, view, currentDate, onClickEventDetails }: Props) {
+export default function AgendaView({ events, view, currentDate, onClickEventDetails }: Readonly<Props>) {
   const today = new Date();
   const days = useMemo(() => {
     const first = view === "week" ? getWeekBounds(currentDate).firstDay : currentDate;

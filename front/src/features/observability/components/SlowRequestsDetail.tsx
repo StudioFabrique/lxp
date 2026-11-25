@@ -26,7 +26,7 @@ const routeColumns: ColumnDef<StockFeatures, RouteRow>[] = [
   numberColumn("avg", "Durée moyenne", (row) => row.avgMs, "ms"),
 ];
 
-export default function SlowRequestsDetail({ data, onSelectUser }: Props) {
+export default function SlowRequestsDetail({ data, onSelectUser }: Readonly<Props>) {
   const none = "Aucune requête lente sur cette période.";
   const routeRows = useMemo(
     () => withIds(data.topRoutes, (row) => `${row.method} ${row.path}`),

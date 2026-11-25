@@ -29,7 +29,7 @@ export default function ThemeSelect({
   compact = false,
   selectedTheme: controlledTheme,
   reserveWidthFor,
-}: ThemeSelectProps) {
+}: Readonly<ThemeSelectProps>) {
   const mode = useMemo(() => {
     return label === "Thème clair" ? "light" : "dark";
   }, [label]);

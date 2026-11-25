@@ -20,7 +20,7 @@ function ResourcePreview({
   onCancel,
   parent = "lesson",
   onSubmit,
-}: Props) {
+}: Readonly<Props>) {
   const {
     resourceName,
     setResourceName,

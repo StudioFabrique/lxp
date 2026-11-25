@@ -32,7 +32,7 @@ export default function DatesSelecter({
   label = "",
   onSubmitDates,
   disabled = false,
-}: Props) {
+}: Readonly<Props>) {
   const id = useId();
   const form = useForm<Dates>({
     resolver: zodResolver(dateRangeSchema),

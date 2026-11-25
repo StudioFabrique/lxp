@@ -30,7 +30,7 @@ export default function MobileActivityNavigation({
   position = null,
   next,
   onPreviousActivity,
-}: MobileActivityNavigationProps) {
+}: Readonly<MobileActivityNavigationProps>) {
   return (
     <>
       {/* Occupe l'espace entre « Sommaire » et les flèches pour se centrer dans la barre. */}

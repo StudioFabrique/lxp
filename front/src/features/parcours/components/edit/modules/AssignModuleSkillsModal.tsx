@@ -21,7 +21,7 @@ export default function AssignModuleSkillsModal({
   isSubmitting,
   onClose,
   onSubmit,
-}: Props) {
+}: Readonly<Props>) {
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]);
   const assignedSkillIds = useMemo(
     () => new Set(module.skills.flatMap(({ id }) => (id ? [id] : []))),

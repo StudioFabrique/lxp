@@ -22,7 +22,7 @@ export default function ImportedCSVData<T extends Row>({
   field,
   onCloseDrawer,
   onPostData,
-}: Props<T>) {
+}: Readonly<Props<T>>) {
   const schema = useMemo(
     () =>
       z

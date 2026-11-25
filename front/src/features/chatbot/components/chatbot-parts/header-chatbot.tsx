@@ -24,7 +24,7 @@ export default function HeaderChatbot({
   onClose,
   onChangeSize,
   onNewChat,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">

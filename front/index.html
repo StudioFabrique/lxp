@@ -120,13 +120,12 @@
       .boot-dark #boot-auth-skeleton .skeleton{background-color:var(--boot-shade,#35455a)}
       @media(max-width:1023px){.boot-auth-route #boot-auth-skeleton{grid-template-columns:1fr}#boot-auth-skeleton .auth-right{display:none}}
       /* Première présentation : la barre réduite remplace la colonne, comme dans l'application. */
-      .boot-intro #boot-skeleton aside{position:absolute;left:8px;top:8px;width:min(32rem,calc(100vw - 16px));height:64px;padding:0 12px;flex-direction:row;align-items:center;justify-content:space-between;gap:20px}
+      .boot-intro #boot-skeleton aside{position:absolute;left:8px;top:8px;width:min(32rem,calc(100vw - 16px));height:64px;padding:0 12px;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;z-index:2}
       .boot-intro #boot-skeleton aside>div{display:none}
       /* La présentation remplace le contenu de la page : un voile et un spinner, pas de squelette de page. */
       .boot-intro #boot-skeleton main{visibility:hidden}
       #boot-skeleton .boot-veil{display:none}
       .boot-intro #boot-skeleton .boot-veil{display:grid;position:absolute;inset:0;z-index:1;place-items:center;background:color-mix(in srgb,var(--boot-side,#192d43) 15%,transparent)}
-      .boot-intro #boot-skeleton aside{z-index:2}
       #boot-skeleton .boot-veil i{width:40px;height:40px;border-radius:50%;border:4px solid color-mix(in srgb,var(--boot-side,#192d43) 25%,transparent);border-top-color:var(--boot-side,#192d43);animation:boot-spin .8s linear infinite}
       @keyframes boot-spin{to{transform:rotate(360deg)}}
       #boot-skeleton .boot-bar{display:none}

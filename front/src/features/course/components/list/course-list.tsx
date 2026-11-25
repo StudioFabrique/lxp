@@ -41,7 +41,7 @@ type CourseListProps = {
 export default function CourseList({
   coursesList,
   onRefreshCourses,
-}: CourseListProps) {
+}: Readonly<CourseListProps>) {
   const [lessonToDelete, setLessonToDelete] = useState<{
     id: number;
     title: string;

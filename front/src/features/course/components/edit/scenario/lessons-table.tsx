@@ -72,8 +72,7 @@ const LessonsTable = (props: LessonsTableProps) => {
           </tr>
         </thead>
         <tbody>
-          {list &&
-            list.map((item: LessonWithActivitiesCount) => (
+          {list?.map((item: LessonWithActivitiesCount) => (
               <tr
                 className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
                 key={item.id}

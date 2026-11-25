@@ -162,8 +162,7 @@ const ParcoursStudents = () => {
               <h4 className="text-sm font-semibold">Groupes d'apprenants</h4>
               {/* Mise à jour en cours : un témoin discret, sans remplacer la liste. */}
               {isUpdating && (
-                <span
-                  role="status"
+                <output
                   className="flex items-center gap-2 text-xs text-base-content/60"
                 >
                   <LoaderCircle
@@ -171,7 +170,7 @@ const ParcoursStudents = () => {
                     aria-hidden="true"
                   />
                   {isSavingGroups ? "Enregistrement…" : "Mise à jour…"}
-                </span>
+                </output>
               )}
             </div>
             <ButtonAdd

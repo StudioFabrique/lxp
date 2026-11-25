@@ -5,7 +5,7 @@ import { Favicon } from "./favicon";
 
 type Preview = { title: string; favicon: string | null };
 
-export function LinkPreview({ url }: { url: string }) {
+export function LinkPreview({ url }: Readonly<{ url: string }>) {
   const host = new URL(url).hostname;
   const preview = useQuery({
     queryKey: ["assignment-link-preview", url],

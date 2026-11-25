@@ -213,10 +213,10 @@ const SidebarCoursesList = ({
         ) : null}
       </RoleRankGuard>
       {calendarMode && calendarAdding && (
-        <p role="status" className="mb-5 rounded-lg border border-primary/30 bg-primary/10 p-3 text-sm font-medium text-base-content">
+        <output role="status" className="block mb-5 rounded-lg border border-primary/30 bg-primary/10 p-3 text-sm font-medium text-base-content">
           Cliquez sur un cours disponible ci-dessous pour l’ajouter au calendrier.
           Les cours grisés sont déjà planifiés.
-        </p>
+        </output>
       )}
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">

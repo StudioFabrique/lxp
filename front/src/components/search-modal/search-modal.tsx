@@ -29,7 +29,7 @@ const SearchModal: FC<{
 
   const inputRef: Ref<HTMLInputElement> = useRef(null);
 
-  const onSubmitSearch = async () => {
+  const onSubmitSearch = () => {
     if (searchValue.length > 0) {
       setIsLoading(true);
       apiClient

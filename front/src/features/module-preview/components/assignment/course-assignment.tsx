@@ -11,7 +11,7 @@ export default function CourseAssignmentView({
   staff,
   initialSubmissionId,
   onChanged,
-}: Props) {
+}: Readonly<Props>) {
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["course-assignment", course.id],

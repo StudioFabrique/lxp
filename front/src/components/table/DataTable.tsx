@@ -74,7 +74,7 @@ export function DataTable<TData extends RowData>({
   isRowClickable = () => true,
   canSelectRow = () => true,
   columnBreakpoints = {},
-}: DataTableProps<TData>) {
+}: Readonly<DataTableProps<TData>>) {
   const table = useTable<StockFeatures, TData>({
     features: stockFeatures,
     data,

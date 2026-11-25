@@ -17,7 +17,7 @@ export default function AssignmentFields({
   value,
   existingFiles = [],
   onChange,
-}: Props) {
+}: Readonly<Props>) {
   const visibleExistingFiles = existingFiles.filter(
     (file) => !value.removeFileIds.includes(file.id),
   );

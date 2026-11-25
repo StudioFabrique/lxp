@@ -1,7 +1,7 @@
 import type Skill from "../../../../utils/interfaces/skill";
 import SkillBadge from "../../../../components/skills/skill-badge";
 
-export default function ModuleBadges({ skills }: { skills: Skill[] }) {
+export default function ModuleBadges({ skills }: Readonly<{ skills: Skill[] }>) {
   const badges = skills;
   if (!badges.length) return null;
 

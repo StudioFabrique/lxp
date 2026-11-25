@@ -13,7 +13,7 @@ type Props = {
 export const SECONDARY_CLASS = "border-primary bg-base-100 text-primary hover:bg-base-200";
 
 /** Pilule d'une question de l'éventail, au même style que celles de l'onboarding. */
-export default function ChatbotRadialButton({ label, icon, onClick, variant = "primary" }: Props) {
+export default function ChatbotRadialButton({ label, icon, onClick, variant = "primary" }: Readonly<Props>) {
   return (
     <button
       type="button"

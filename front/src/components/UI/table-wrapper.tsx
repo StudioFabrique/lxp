@@ -2,7 +2,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-function TableWrapper({ children }: Props) {
+function TableWrapper({ children }: Readonly<Props>) {
   return (
     <TableOverflowContainer>
       <table className="w-full min-w-max xl:min-w-full xl:max-w-full text-xs xl:text-sm table border-separate border-spacing-y-5">

@@ -8,7 +8,7 @@ type Props = {
   size?: "small" | "medium" | "large";
 };
 
-export default function VideoPlayer({ url, size = "small" }: Props) {
+export default function VideoPlayer({ url, size = "small" }: Readonly<Props>) {
   const [videoError, setVideoError] = useState(false);
 
   const dimensions = useMemo(() => {

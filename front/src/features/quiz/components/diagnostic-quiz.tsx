@@ -221,11 +221,11 @@ const DiagnosticQuiz = ({
             }}
           >
             {isRestoring ? (
-              <div className="flex flex-col gap-4 py-4" role="status">
+              <output className="flex flex-col gap-4 py-4">
                 <p>Reprise du diagnostic…</p>
                 <div className="skeleton h-6 w-3/4 rounded" />
                 <div className="skeleton h-12 w-full rounded-lg" />
-              </div>
+              </output>
             ) : !isStarted ? (
               <>
                 <p className="max-w-2xl text-base text-base-content/80 sm:text-lg">

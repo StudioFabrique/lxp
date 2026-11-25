@@ -12,7 +12,7 @@ interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];
 }
 
-export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
+export default function ParcoursTable({ parcoursList }: Readonly<ParcoursTableProps>) {
   const { list, fieldSort, direction, sortData } = useEagerLoadingList(
     parcoursList,
     "title",

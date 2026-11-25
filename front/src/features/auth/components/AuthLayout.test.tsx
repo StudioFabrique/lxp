@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { profileApi } from "../../profile/api/profile.api";
 import { currentRelease } from "../../../config/release-notes";
 import { AuthContext } from "../../../store/AuthProvider";
+import { DemoContext, DEFAULT_DEMO_CONFIG } from "../../../store/DemoContext";
 import AuthLayout from "./AuthLayout";
 import AdminSignInForm from "./AdminSignInForm";
 
@@ -103,17 +104,22 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
   it("affiche la déconnexion et garde le logo inactif pendant la personnalisation", async () => {
     await act(async () => {
       root.render(
-        <AuthContext value={{ isLoggedIn: true, logout: vi.fn() } as never}>
-          <MemoryRouter initialEntries={["/instance-setup"]}>
-            <AuthLayout />
-          </MemoryRouter>
+        <AuthContext value={{ isLoggedIn: true, isAppInitialized: true, logout: vi.fn() } as never}>
+          <DemoContext value={{ ...DEFAULT_DEMO_CONFIG, isConfigLoaded: true }}>
+            <MemoryRouter initialEntries={["/instance-setup"]}>
+              <AuthLayout />
+            </MemoryRouter>
+          </DemoContext>
         </AuthContext>,
       );
     });
 
     expect(container.querySelector('button[aria-label="Se déconnecter"]')).not.toBeNull();
-    const logo = container.querySelector('img[alt="logo ANDRIA"]');
-    expect(logo?.parentElement?.className).not.toContain("cursor-pointer");
+    // Le logo est désormais une animation (role="img") : il doit rester inactif.
+    const logo = container.querySelector('[role="img"][aria-label="logo ANDRIA"]');
+    expect(logo).not.toBeNull();
+    expect(logo?.className).not.toContain("cursor-pointer");
+    expect(logo?.closest("a, button")).toBeNull();
   });
 
   it("ouvre les notes de version depuis le pied de la connexion", async () => {
@@ -131,7 +137,7 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
         ?.click();
     });
 
-    expect(document.querySelector("dialog h2")?.textContent).toBe("ANDRIA");
+    expect(document.querySelector("dialog h2 img")?.getAttribute("alt")).toBe("ANDRIA");
     expect(document.querySelector("dialog")?.textContent).toContain(currentRelease.version);
   });
 });

@@ -12,7 +12,7 @@ type Props = {
 const plural = (count: number, singular: string, pluralForm: string) =>
   `${formatNumber(count)} ${count > 1 ? pluralForm : singular}`;
 
-export default function ActivityStats({ totals, selected, onSelect }: Props) {
+export default function ActivityStats({ totals, selected, onSelect }: Readonly<Props>) {
   const block = (
     id: StatBlockId,
     props: {

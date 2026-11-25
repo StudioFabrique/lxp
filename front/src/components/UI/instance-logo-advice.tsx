@@ -13,7 +13,7 @@ type Props = {
  * dans la page, masqué visuellement, pour les technologies d'assistance :
  * l'infobulle ne s'ouvre qu'au survol.
  */
-export default function InstanceLogoAdvice({ id, formatHint }: Props) {
+export default function InstanceLogoAdvice({ id, formatHint }: Readonly<Props>) {
   const advice = `${formatHint}. PNG à fond transparent de préférence. Format horizontal, environ 128 × 50 px.`;
 
   return (

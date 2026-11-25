@@ -7,11 +7,11 @@ export function ColorPicker({
   color,
   disabled,
   onChange,
-}: {
+}: Readonly<{
   color: CalendarColor;
   disabled: boolean;
   onChange: (color: CalendarColor) => void;
-}) {
+}>) {
   const [open, setOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   return (

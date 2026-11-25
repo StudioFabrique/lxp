@@ -27,7 +27,7 @@ export default function Video({
   isEditing,
   parentId,
   parent = "lesson",
-}: VideoProps) {
+}: Readonly<VideoProps>) {
   const { lessonId, resourceId } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

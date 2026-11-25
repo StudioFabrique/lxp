@@ -46,7 +46,7 @@ export default function ActivityDetailPanel({
   scrollSignal,
   onClose,
   onSelectUser,
-}: Props) {
+}: Readonly<Props>) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Le détail s'ouvre sous les blocs : on amène son début à l'écran à chaque

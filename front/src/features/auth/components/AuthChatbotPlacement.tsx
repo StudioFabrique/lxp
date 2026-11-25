@@ -125,7 +125,7 @@ export default function AuthChatbotPlacement({
   floating = true,
   scopeRef,
   stepId,
-}: Props) {
+}: Readonly<Props>) {
   const desktop = useSyncExternalStore(
     subscribeViewport,
     isDesktop,

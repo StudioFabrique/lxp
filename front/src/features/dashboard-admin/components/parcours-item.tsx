@@ -12,7 +12,7 @@ interface ParcoursItemProps {
   parcours: Parcours;
 }
 
-export default function ParcoursItem({ parcours }: ParcoursItemProps) {
+export default function ParcoursItem({ parcours }: Readonly<ParcoursItemProps>) {
   const isInitialRender = useRef(true);
   const [bgImage, setBgImage] = useState<any | null>(null);
   // en l'absence de props affiche une image par défaut

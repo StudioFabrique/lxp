@@ -12,7 +12,7 @@ const columns: ColumnDef<StockFeatures, Row>[] = [
   numberColumn("hits", "Appels", (row) => row.hits),
 ];
 
-export default function SlowRoutesTable({ routes }: { routes: ActivityOverview["slowestRoutes"] }) {
+export default function SlowRoutesTable({ routes }: Readonly<{ routes: ActivityOverview["slowestRoutes"] }>) {
   return (
     <CollapsibleTable
       title="Routes les plus lentes"

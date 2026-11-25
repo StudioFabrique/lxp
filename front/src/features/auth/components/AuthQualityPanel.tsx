@@ -21,7 +21,7 @@ type Props = {
   onTurnChange: (turning: boolean) => void;
 };
 
-export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, geometry, reducedMotion, onClose, onTurnChange }: Props) {
+export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, geometry, reducedMotion, onClose, onTurnChange }: Readonly<Props>) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const fullscreenRef = useRef(false);

@@ -3,7 +3,13 @@ import type Skill from "../../utils/interfaces/skill";
 import { cn } from "../../utils/cn";
 import { LockKeyhole } from "lucide-react";
 
-export default function SkillModules({ skill, onNavigate }: { skill: Skill; onNavigate?: () => void }) {
+function moduleStatusLabel(module: NonNullable<Skill["modules"]>[number]): string {
+  if (module.hasContent === false) return "Contenu indisponible";
+  if (module.isCompleted) return "Terminé";
+  return `À terminer : ${module.progress} %`;
+}
+
+export default function SkillModules({ skill, onNavigate }: Readonly<{ skill: Skill; onNavigate?: () => void }>) {
   if (!skill.modules?.length) {
     return <p className="text-sm text-base-content/60">Aucun module associé à cette compétence.</p>;
   }
@@ -23,7 +29,7 @@ export default function SkillModules({ skill, onNavigate }: { skill: Skill; onNa
             </Link>
           )}
           <p className={cn(module.isCompleted ? "text-success" : "text-base-content/70")}>
-            {module.hasContent === false ? "Contenu indisponible" : module.isCompleted ? "Terminé" : `À terminer : ${module.progress} %`}
+            {moduleStatusLabel(module)}
           </p>
         </li>
       ))}

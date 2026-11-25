@@ -31,10 +31,13 @@ export default function OnboardingProgressPanel({
   animateProgressOnMount = false,
   progressMountDelay = 0.05,
   progressMountDuration = 0.35,
-}: Props) {
+}: Readonly<Props>) {
   const { theme } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
   const progress = Math.round((currentStep / stepCount) * 100);
+  let progressDuration = 0.3;
+  if (reduceMotion) progressDuration = 0;
+  else if (animateProgressOnMount) progressDuration = progressMountDuration;
 
   return (
     <section
@@ -61,11 +64,7 @@ export default function OnboardingProgressPanel({
           initial={animateProgressOnMount ? { width: "0%" } : false}
           animate={{ width: `${progress}%` }}
           transition={{
-            duration: reduceMotion
-              ? 0
-              : animateProgressOnMount
-                ? progressMountDuration
-                : 0.3,
+            duration: progressDuration,
             delay: animateProgressOnMount && !reduceMotion ? progressMountDelay : 0,
             ease: "easeOut",
           }}

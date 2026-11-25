@@ -20,7 +20,7 @@ type Props = {
  * @param props.onClose - Required callback executed when user closes the modal
  * @returns JSX.Element - Modal dialog for handling duplicate module scenarios
  */
-export default function DuplicateModuleModal(props: Props) {
+export default function DuplicateModuleModal(props: Readonly<Props>) {
   return (
     <dialog
       id="duplicate_module_modal"

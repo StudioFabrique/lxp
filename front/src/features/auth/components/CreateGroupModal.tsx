@@ -6,7 +6,7 @@ import { createGroupSchema } from "../../group/group.schema";
 import TeacherGroupFields from "./TeacherGroupFields";
 import OnboardingGroupModal from "./OnboardingGroupModal";
 
-export function CreateGroupModal({ onClose }: { onClose: () => void }) {
+export function CreateGroupModal({ onClose }: Readonly<{ onClose: () => void }>) {
   const [name, setName] = useState("");
   const [parcoursId, setParcoursId] = useState(0);
   const [selected, setSelected] = useState<Record<string, boolean>>({});

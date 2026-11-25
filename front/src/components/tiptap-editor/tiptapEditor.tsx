@@ -29,7 +29,7 @@ export default function TiptapEditor({
   onSave,
   onContentChange,
   headerSticky = false,
-}: TiptapEditorProps) {
+}: Readonly<TiptapEditorProps>) {
   const editorRef = useRef<Editor | null>(null);
   const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
   const [isImageUploadPending, setImageUploadPending] = useState(false);
@@ -106,8 +106,8 @@ export default function TiptapEditor({
             floating
           />
         )}
-      {editor && editor.isEditable && <LinkMenu editor={editor} />}
-      {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
+      {editor?.isEditable && <LinkMenu editor={editor} />}
+      {editor?.isEditable && <TableBubbleMenu editor={editor} />}
       {editor && <AiAskBubbleMenu mode={mode} editor={editor} />}
     </>
   );

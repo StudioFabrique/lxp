@@ -23,7 +23,8 @@ export const ResizableImage = Image.extend({
           const value = typeof width === "number" ? String(width) : width;
           if (typeof value !== "string" || !/^(?:\d+(?:\.\d+)?)(?:%|px)?$/.test(value)) return {};
           // Une largeur CSS résiste au width:auto du reset Tailwind, y compris en pourcentage.
-          return { width: value, style: `width: ${/[%a-z]$/.test(value) ? value : `${value}px`};` };
+          const cssWidth = /[%a-z]$/.test(value) ? value : `${value}px`;
+          return { width: value, style: `width: ${cssWidth};` };
         },
       },
       height: {
@@ -31,7 +32,7 @@ export const ResizableImage = Image.extend({
       },
       dataTempId: {
         default: undefined,
-        parseHTML: (element) => element.getAttribute("data-temp-id"),
+        parseHTML: (element) => element.dataset.tempId,
         renderHTML: (attributes) => {
           if (!attributes.dataTempId) return {};
           return { "data-temp-id": attributes.dataTempId };

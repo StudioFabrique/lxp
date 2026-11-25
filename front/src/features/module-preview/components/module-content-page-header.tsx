@@ -14,7 +14,7 @@ export default function ModuleContentPageHeader({
   module,
   isStudentView,
   canEditModule,
-}: ModuleContentPageHeaderProps) {
+}: Readonly<ModuleContentPageHeaderProps>) {
   return (
     <Header
       title="Contenu du module"

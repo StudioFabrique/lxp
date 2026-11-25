@@ -9,7 +9,7 @@ type Props = {
   onCloseDrawer?: (id: string) => void;
 };
 
-export default function NotSelectedSkills(props: Props) {
+export default function NotSelectedSkills(props: Readonly<Props>) {
   const {
     allChecked,
     list,
@@ -58,8 +58,7 @@ export default function NotSelectedSkills(props: Props) {
           </tr>
         </thead>
         <tbody>
-          {list &&
-            list.map((item) => (
+          {list?.map((item) => (
               <tr
                 className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
                 key={item.id}

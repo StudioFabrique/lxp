@@ -13,7 +13,7 @@ const columns: ColumnDef<StockFeatures, Row>[] = [
   numberColumn("hits", "Appels", (row) => row.hits),
 ];
 
-export default function PerformanceDetail({ data }: { data: Data }) {
+export default function PerformanceDetail({ data }: Readonly<{ data: Data }>) {
   return (
     <CollapsibleTable
       title="Routes les plus lentes (durée moyenne)"

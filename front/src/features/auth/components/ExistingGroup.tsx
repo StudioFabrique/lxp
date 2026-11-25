@@ -7,7 +7,7 @@ import RightSideDrawer from "../../../components/UI/right-side-drawer/right-side
 import { groupApi, type StudentGroupSummary } from "../../group/api/group.api";
 import OnboardingStudentIdentity from "./OnboardingStudentIdentity";
 
-export function ExistingGroup({ group }: { group: StudentGroupSummary }) {
+export function ExistingGroup({ group }: Readonly<{ group: StudentGroupSummary }>) {
   const [expanded, setExpanded] = useState(false);
   const details = useQuery({
     queryKey: ["onboarding-group", group._id],
@@ -53,9 +53,9 @@ export function ExistingGroup({ group }: { group: StudentGroupSummary }) {
             panelClassName="min-w-0 w-full max-w-lg"
           >
             {details.isPending ? (
-              <p role="status" className="text-sm">
+              <output className="block text-sm">
                 Chargement des apprenants…
-              </p>
+              </output>
             ) : details.isError ? (
               <div role="alert" className="text-sm">
                 <p>Impossible de charger les apprenants de ce groupe.</p>

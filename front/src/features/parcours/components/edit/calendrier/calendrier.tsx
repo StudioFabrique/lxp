@@ -102,11 +102,11 @@ const Calendrier = ({ titleActionsTarget = null }: Props) => {
 
   if (!modules || !parcours) {
     return (
-      <div role="status" aria-label="Chargement du calendrier" className="space-y-5 p-5">
+      <output aria-label="Chargement du calendrier" className="block space-y-5 p-5">
         <span className="sr-only">Chargement du calendrier…</span>
         <div className="skeleton h-10 w-64" />
         <div className="skeleton h-[50vh] w-full rounded-box" />
-      </div>
+      </output>
     );
   }
 

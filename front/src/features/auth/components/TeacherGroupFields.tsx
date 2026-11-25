@@ -24,7 +24,7 @@ export default function TeacherGroupFields({
   setParcoursId,
   selected,
   setSelected,
-}: Props) {
+}: Readonly<Props>) {
   const overlayContainer = useContext(OnboardingOverlayContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [search, setSearch] = useState("");

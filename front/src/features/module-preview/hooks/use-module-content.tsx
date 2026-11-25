@@ -165,7 +165,7 @@ const useModuleContent = () => {
       course.lessons.some((lesson) => lesson.id === selectedLessonId),
     );
 
-    if (!currentCourse || !currentCourse.lessons.length) return false;
+    if (!currentCourse?.lessons.length) return false;
 
     // On compare l'ID de la leçon actuelle avec l'ID de la dernière leçon de ce cours
     const lastLessonInCourse =
@@ -831,7 +831,7 @@ const useModuleContent = () => {
     }
 
     const destination = location.current.dropTargets[0];
-    if (!destination || destination.data.type !== "course") return;
+    if (destination?.data.type !== "course") return;
 
     const sourceCourseId = source.data.id;
     const destinationCourseId = destination.data.id;

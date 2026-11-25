@@ -6,10 +6,10 @@ import { AppAction, AppSubject } from "../../rbac/ability";
 export default function RequireAbility({
   action,
   subject,
-}: {
+}: Readonly<{
   action: AppAction;
   subject: AppSubject;
-}) {
+}>) {
   const ability = useContext(AbilityContext);
   if (!ability.can(action, subject)) {
     return <Navigate replace to="/access-denied" />;

@@ -22,7 +22,7 @@ export default function GroupTeachers({
   isLoading = !group && !isCreating,
   isError = false,
   onRetry,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <BoxWrapper className="h-auto">
       <div className="flex flex-wrap items-start justify-between gap-3" data-chatbot-target="group-teachers">
@@ -47,7 +47,7 @@ export default function GroupTeachers({
         )}
       </div>
       {isLoading ? (
-        <p role="status" className="text-sm">Chargement des formateurs…</p>
+        <output className="block text-sm">Chargement des formateurs…</output>
       ) : isError ? (
         <div role="alert" className="alert alert-error">
           <span>Impossible de charger les formateurs associés au parcours.</span>

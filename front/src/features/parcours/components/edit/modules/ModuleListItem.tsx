@@ -13,7 +13,7 @@ export default function ModuleListItem({
   module,
   currentParcoursId,
   onCopyModule,
-}: ModuleListItemProps) {
+}: Readonly<ModuleListItemProps>) {
   const isCurrentParcours = module.parcours.id === currentParcoursId;
   return (
     <li className="rounded-xl bg-base-100 border border-base-300 p-4 shadow-sm">

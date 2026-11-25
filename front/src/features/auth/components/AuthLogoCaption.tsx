@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "../../../utils/cn";
 
-export default function AuthLogoCaption({ className }: { className?: string }) {
+export default function AuthLogoCaption({ className }: Readonly<{ className?: string }>) {
   const reducedMotion = useReducedMotion();
   return (
     <motion.span

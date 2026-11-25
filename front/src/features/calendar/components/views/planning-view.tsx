@@ -41,7 +41,7 @@ export default function PlanningView({
   disabled,
   onClickDetails,
   onChangeDates,
-}: Props) {
+}: Readonly<Props>) {
   const days = getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
   const weeks = Array.from({ length: 6 }, (_, index) =>
     days.slice(index * 7, index * 7 + 7),

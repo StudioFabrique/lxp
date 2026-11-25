@@ -14,7 +14,7 @@ type Props = {
   onChange: (range: ActivityRange) => void;
 };
 
-export default function ActivityPeriodSelect({ value, onChange }: Props) {
+export default function ActivityPeriodSelect({ value, onChange }: Readonly<Props>) {
   return (
     <div
       role="group"

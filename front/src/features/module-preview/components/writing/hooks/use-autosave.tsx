@@ -123,7 +123,7 @@ export default function useAutosave({
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith("autosave_")) {
+        if (key?.startsWith("autosave_")) {
           try {
             const item = localStorage.getItem(key);
             if (!item) continue;

@@ -65,10 +65,10 @@ const UserFormTypeUser = ({
           <p className="text-sm text-base-content/70">Seuls les membres de l'équipe pédagogique peuvent être ajoutés au parcours.</p>
         ) : null}
         {isLoading ? (
-          <div role="status" aria-label="Chargement des rôles" className="space-y-3">
+          <output aria-label="Chargement des rôles" className="block space-y-3">
             <span className="sr-only">Chargement des rôles…</span>
             {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
-          </div>
+          </output>
         ) : isError ? (
           <div className="alert alert-error" role="alert">
             <span>Impossible de charger les rôles.</span>

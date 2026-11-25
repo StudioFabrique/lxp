@@ -18,8 +18,8 @@ const cleanActivityTextContent = (content: string): string => {
 
   // Définitions des patterns
   const brTag = "<br[^>]*>"; // Capture <br>, <br/>, <br class="...">
-  const emptyParagraphPattern = `(?:<p[^>]*>(?:\\s*${brTag}\\s*|\\s)*<\\/p>)`;
-  const orphanCloseTag = `(?:\\s*<\\/p>)`;
+  const emptyParagraphPattern = String.raw`(?:<p[^>]*>(?:\s*${brTag}\s*|\s)*<\/p>)`;
+  const orphanCloseTag = String.raw`(?:\s*<\/p>)`;
 
   // ÉTAPE A : Nettoyer les paragraphes vides/orphelins à la FIN
   // Ex: "...texte</p><p></p></p>" -> "...texte</p>"
@@ -31,7 +31,7 @@ const cleanActivityTextContent = (content: string): string => {
   // ÉTAPE B : Nettoyer les paragraphes vides au DÉBUT
   // Ex: "<p></p><p>Texte..." -> "<p>Texte..."
   cleaned = cleaned.replace(
-    new RegExp(`^\\s*(?:${emptyParagraphPattern}\\s*)+`, "gi"),
+    new RegExp(String.raw`^\s*(?:${emptyParagraphPattern}\s*)+`, "gi"),
     "",
   );
 
@@ -40,7 +40,7 @@ const cleanActivityTextContent = (content: string): string => {
   // - SOIT une balise fermante </p>
   // - SOIT la fin de la chaîne ($)
   cleaned = cleaned.replace(
-    new RegExp(`(?:${brTag}\\s*)+(?=<\\/p>|$)`, "gi"),
+    new RegExp(String.raw`(?:${brTag}\s*)+(?=<\/p>|$)`, "gi"),
     "",
   );
 

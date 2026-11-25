@@ -8,7 +8,7 @@ type Props = {
   onAddTag: (id: number) => void;
 };
 
-function TagsList(props: Props) {
+function TagsList(props: Readonly<Props>) {
   return (
     <div className="flex flex-col gap-y-4">
       <BoxWrapper>

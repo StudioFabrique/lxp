@@ -24,7 +24,7 @@ export default function ActivityTable<T extends { id: string }>({
   emptyMessage,
   countLabel,
   pageSize = 10,
-}: Props<T>) {
+}: Readonly<Props<T>>) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(pageSize);
 

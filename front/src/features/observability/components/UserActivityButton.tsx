@@ -8,7 +8,7 @@ type Props = {
 };
 
 /** Bouton icône des colonnes « Actions » (même format que la liste d'utilisateurs). */
-export default function UserActivityButton({ user, onSelectUser }: Props) {
+export default function UserActivityButton({ user, onSelectUser }: Readonly<Props>) {
   if (!user) return null;
 
   return (

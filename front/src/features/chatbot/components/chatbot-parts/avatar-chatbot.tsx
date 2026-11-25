@@ -10,7 +10,7 @@ type Props = {
   user: User | null;
 };
 
-export default function AvatarChatbot({ message, user }: Props) {
+export default function AvatarChatbot({ message, user }: Readonly<Props>) {
   if (message.origin === "bot") return <BotMessageSquare />;
   else
     return (

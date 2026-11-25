@@ -10,7 +10,7 @@ import { profileKeys } from "../api/profile.keys";
  * À monter pour le root uniquement : le lien n'apparaît que si l'instance a
  * déployé la couche d'observabilité (jamais en démonstration).
  */
-export default function ObservabilityLink({ onNavigate }: { onNavigate?: () => void }) {
+export default function ObservabilityLink({ onNavigate }: Readonly<{ onNavigate?: () => void }>) {
   const { data } = useQuery({
     queryKey: profileKeys.observabilityStatus(),
     queryFn: profileApi.queries.getObservabilityStatus,

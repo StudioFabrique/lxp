@@ -17,7 +17,7 @@ export default function BonusActivityItem({
   onEdit,
   onDelete,
   onPreview,
-}: Props) {
+}: Readonly<Props>) {
   const style = "hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10";
 
   return (

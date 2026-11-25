@@ -10,7 +10,7 @@ type Props = {
   onSelectAssignment?: (courseId: number) => void;
 };
 
-export default function NextCourseButton({ courses, onSelectLesson, onSelectAssignment }: Props) {
+export default function NextCourseButton({ courses, onSelectLesson, onSelectAssignment }: Readonly<Props>) {
   const availableCourses = courses.filter((course) => course.isPublished && course.visibility !== false);
   const nextCourse = availableCourses.find((course) =>
     !course.stats?.isCompleted && (

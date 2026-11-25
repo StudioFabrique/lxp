@@ -3,6 +3,7 @@ import {
   createContext,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import {
@@ -76,7 +77,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
   const chooseTheme = useCallback(
     (newTheme: string, mode: "light" | "dark") => {
       const availableThemes = mode === "light" ? availableLightThemes : availableDarkThemes;
-      if (!availableThemes.some((availableTheme) => availableTheme === newTheme))
+      if (!availableThemes.includes(newTheme))
         return;
 
       if (mode === "light") {
@@ -92,7 +93,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
 
       // React ne relance pas l'effet si le mode est déjà actif. Le thème
       // sélectionné doit néanmoins être appliqué immédiatement.
-      document.documentElement.setAttribute("data-theme", newTheme);
+      document.documentElement.dataset.theme = newTheme;
     },
     [availableDarkThemes, availableLightThemes],
   );
@@ -107,12 +108,8 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   useEffect(() => {
-    document
-      .querySelector("html")!
-      .setAttribute(
-        "data-theme",
-        theme === "light" ? themes.light : themes.dark,
-      );
+    document.documentElement.dataset.theme =
+      theme === "light" ? themes.light : themes.dark;
   }, [theme]);
 
   useEffect(() => {
@@ -137,15 +134,20 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
         themes.dark = getAvailableTheme(localStorage.getItem("darkTheme"), enabledDark, enabledDark[0]);
         localStorage.setItem("lightTheme", themes.light);
         localStorage.setItem("darkTheme", themes.dark);
-        document.documentElement.setAttribute("data-theme", themes[theme]);
+        document.documentElement.dataset.theme = themes[theme];
       })
       .catch(() => undefined);
 
     return () => abortController.abort();
   }, [theme]);
 
+  const contextValue = useMemo(
+    () => ({ theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes }),
+    [theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes],
+  );
+
   return (
-    <ThemeContext value={{ theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes }}>
+    <ThemeContext value={contextValue}>
       {children}
     </ThemeContext>
   );

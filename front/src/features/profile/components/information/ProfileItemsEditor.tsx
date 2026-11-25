@@ -20,7 +20,7 @@ export default function ProfileItemsEditor({
   links,
   onHobbiesChange,
   onLinksChange,
-}: Props) {
+}: Readonly<Props>) {
   const passionForm = useForm({
     resolver: zodResolver(hobbySchema),
     defaultValues: { title: "" },

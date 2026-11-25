@@ -9,7 +9,7 @@ type Props = {
 };
 
 /** Petit chiffre de synthèse, en tête du tiroir d'activité d'une personne. */
-export default function UserActivityStat({ label, value, unit, valueClassName }: Props) {
+export default function UserActivityStat({ label, value, unit, valueClassName }: Readonly<Props>) {
   return (
     <div className="rounded-lg border border-base-300 bg-base-100 p-3">
       <p className="text-xs text-base-content/70">{label}</p>

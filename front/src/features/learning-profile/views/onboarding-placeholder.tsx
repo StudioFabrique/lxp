@@ -21,9 +21,9 @@ export function LearningChoiceCardsPlaceholder() {
         Apprentissage Numérique &amp; Développement Renforcé par Intelligence
         Artificielle
       </span>
-      <p className="mt-8 text-sm text-base-content/60" role="status">
+      <output className="block mt-8 text-sm text-base-content/60">
         Chargement de votre parcours…
-      </p>
+      </output>
     </section>
   );
 }

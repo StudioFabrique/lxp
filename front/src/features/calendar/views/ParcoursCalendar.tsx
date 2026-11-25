@@ -35,7 +35,7 @@ export function ParcoursCalendar({
   setView,
   date,
   setDate,
-}: {
+}: Readonly<{
   allowedViews: CalendarView[];
   parcours: ParcoursOption;
   scopeKey: string;
@@ -43,7 +43,7 @@ export function ParcoursCalendar({
   setView: (view: CalendarView) => void;
   date: Date;
   setDate: (date: Date) => void;
-}) {
+}>) {
   const queryClient = useQueryClient();
   const [colorSaving, setColorSaving] = useState(false);
   const { pathname } = useLocation();
@@ -143,15 +143,14 @@ export function ParcoursCalendar({
   return (
     <div className="mt-4 space-y-3">
       {query.isPending ? (
-        <div
-          role="status"
+        <output
           aria-label="Chargement du calendrier"
-          className="space-y-3"
+          className="block space-y-3"
         >
           <span className="sr-only">Chargement du calendrier…</span>
           <div className="skeleton h-10 w-56" />
           <div className="skeleton h-[50vh] w-full rounded-box" />
-        </div>
+        </output>
       ) : query.isError ? (
         <p role="alert">
           Impossible de charger le calendrier.

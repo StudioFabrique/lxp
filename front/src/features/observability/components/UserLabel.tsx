@@ -12,7 +12,7 @@ type Props = {
 const mutedClassName = "whitespace-nowrap text-sm italic text-base-content/70";
 
 /** Rattache une ligne de journal à une personne, à un visiteur anonyme ou à un compte supprimé. */
-export default function UserLabel({ anonymous = false, system = false, user }: Props) {
+export default function UserLabel({ anonymous = false, system = false, user }: Readonly<Props>) {
   if (system) {
     return <span className={mutedClassName}>Système</span>;
   }

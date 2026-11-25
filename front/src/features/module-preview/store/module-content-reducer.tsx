@@ -313,7 +313,7 @@ export function moduleContentReducer(
     case "go_to_next_lesson": {
       const { selectedLesson, module } = state;
 
-      if (!(selectedLesson && selectedLesson.id && module)) return state;
+      if (!(selectedLesson?.id && module)) return state;
 
       const allLessons = module.courses.flatMap((course) => course.lessons);
       const currentLessonIndex = allLessons.findIndex(

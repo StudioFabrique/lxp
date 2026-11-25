@@ -48,7 +48,7 @@ type Props = {
  * en éventail. Les réponses et les tutoriels apparaissent dans une bulle à son côté ; la fenêtre de
  * conversation complète n'est ouverte que sur demande (historique ou agrandissement d'une réponse).
  */
-export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidden, chatbot, chatbotUi, chatbotQuiz }: Props) {
+export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidden, chatbot, chatbotUi, chatbotQuiz }: Readonly<Props>) {
   const { pathname } = useLocation();
   const routeRoot = pathname.split("/").filter(Boolean)[0] ?? "";
   const { currentActivity, activityTextSelection, setActivityTextSelection } = useContext(ChatbotContext);

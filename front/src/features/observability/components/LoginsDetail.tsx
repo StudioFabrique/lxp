@@ -20,7 +20,7 @@ type Props = {
   onSelectUser: (user: ActivityUser) => void;
 };
 
-export default function LoginsDetail({ data, onSelectUser }: Props) {
+export default function LoginsDetail({ data, onSelectUser }: Readonly<Props>) {
   const topRows = useMemo(() => withIds(data.topUsers, (row) => row.userId), [data.topUsers]);
   const recentRows = useMemo(() => withIds(data.recent, (row) => row.time), [data.recent]);
 

@@ -26,7 +26,7 @@ export default function LastParcours({
   showQuickActions = true,
   sideContent,
   hasOnboarding = false,
-}: LastParcoursProps) {
+}: Readonly<LastParcoursProps>) {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
   const displayedFormations = parcours.slice(0, 6);

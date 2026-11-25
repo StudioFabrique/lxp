@@ -6,7 +6,7 @@ type Props = {
   parcoursId: number;
 };
 
-export default function GroupFormParcoursWarning({ parcoursId }: Props) {
+export default function GroupFormParcoursWarning({ parcoursId }: Readonly<Props>) {
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <div className="w-full flex flex-col gap-y-4">
