@@ -1,4 +1,7 @@
-import SubWrapper from "../../../../src/components/wrappers/SubBoxWrapper";
+import { useMemo } from "react";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
+import { DataTable } from "../../../components/table/DataTable";
+import CardLabel from "../../observability/components/CardLabel";
 import type { GroupsStats as GroupsStatsType } from "../types";
 import { formatNumber } from "../../../utils/helpers/format-number";
 
@@ -7,34 +10,56 @@ type Props = {
   groupsTotalTokens: number;
 };
 
-const GroupsStats = ({ stats, groupsTotalTokens }: Props) => (
-  <ul className="flex flex-col gap-y-2">
-    {stats.map((stat) => (
-      <li key={stat._id}>
-        <SubWrapper>
-          <span className="grid w-full grid-cols-5 gap-2 text-xs">
-            <h3 className="col-span-2 min-w-0 break-words">{stat.groupName}</h3>
-            <div className="col-span-2 flex min-w-0 items-center gap-x-2 sm:gap-x-4">
-              <progress
-                className="progress progress-primary w-full min-w-0 sm:w-36"
-                value={stat.totalTokens}
-                max={groupsTotalTokens}
-              />
-              <p className="flex shrink-0">{formatNumber(stat.totalTokens)}</p>
-            </div>
-            <p className="text-left">
-              (
-              {formatNumber((stat.totalTokens / groupsTotalTokens) * 100, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-              %)
-            </p>
+const GroupsStats = ({ stats, groupsTotalTokens }: Props) => {
+  const columns = useMemo<ColumnDef<StockFeatures, GroupsStatsType>[]>(
+    () => [
+      {
+        id: "group",
+        header: "Promotion",
+        enableSorting: false,
+        cell: ({ row }) => (
+          <span className="break-words text-sm font-semibold">
+            {row.original.groupName}
           </span>
-        </SubWrapper>
-      </li>
-    ))}
-  </ul>
-);
+        ),
+      },
+      {
+        id: "tokens",
+        header: "Quantité",
+        enableSorting: false,
+        cell: ({ row }) => (
+          <div className="flex min-w-0 items-center gap-x-3 text-sm">
+            <CardLabel>Quantité</CardLabel>
+            <progress
+              className="progress progress-primary w-full min-w-16 sm:w-28"
+              value={row.original.totalTokens}
+              max={groupsTotalTokens}
+              aria-label={`${row.original.groupName} : ${formatNumber(row.original.totalTokens)} tokens`}
+            />
+            <span className="shrink-0">{formatNumber(row.original.totalTokens)}</span>
+          </div>
+        ),
+      },
+      {
+        id: "percent",
+        header: "%",
+        enableSorting: false,
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap text-sm">
+            <CardLabel>Part</CardLabel>
+            {formatNumber((row.original.totalTokens / groupsTotalTokens) * 100, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{" "}
+            %
+          </span>
+        ),
+      },
+    ],
+    [groupsTotalTokens],
+  );
+
+  return <DataTable columns={columns} data={stats} />;
+};
 
 export default GroupsStats;

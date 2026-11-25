@@ -1,38 +1,49 @@
+import { useMemo } from "react";
 import { Link } from "react-router";
-import SubWrapper from "../../../../src/components/wrappers/SubBoxWrapper";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
+import { DataTable } from "../../../components/table/DataTable";
+import CardLabel from "../../observability/components/CardLabel";
 import type { TopUser } from "../types";
 import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   topUsers: TopUser[];
+  /** Libellé de la colonne des personnes (« Apprenant »). */
+  userLabel: string;
 };
 
-const TopFiveUsers = ({ topUsers }: Props) => (
-  <>
-    {topUsers.length === 0 ? (
-      <p className="text-center text-sm text-base-content/70">
-        Aucune donnée disponible
-      </p>
-    ) : (
-      <ul className="flex flex-col gap-y-2">
-        {topUsers.map((user) => (
-          <li key={user._id}>
-            <SubWrapper>
-              <span className="w-full grid grid-cols-2 text-xs">
-                <Link
-                  to={`/admin/teacher/student/${user._id}`}
-                  className="min-w-0 truncate pr-2"
-                >
-                  {user.name}
-                </Link>
-                <p>{formatNumber(user.totalTokens)}</p>
-              </span>
-            </SubWrapper>
-          </li>
-        ))}
-      </ul>
-    )}
-  </>
-);
+const TopFiveUsers = ({ topUsers, userLabel }: Props) => {
+  const columns = useMemo<ColumnDef<StockFeatures, TopUser>[]>(
+    () => [
+      {
+        id: "user",
+        header: userLabel,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <Link
+            to={`/admin/teacher/student/${row.original._id}`}
+            className="link link-hover text-sm font-semibold"
+          >
+            {row.original.name}
+          </Link>
+        ),
+      },
+      {
+        id: "tokens",
+        header: "Quantité",
+        enableSorting: false,
+        cell: ({ row }) => (
+          <span className="text-sm">
+            <CardLabel>Quantité</CardLabel>
+            {formatNumber(row.original.totalTokens)}
+          </span>
+        ),
+      },
+    ],
+    [userLabel],
+  );
+
+  return <DataTable columns={columns} data={topUsers} />;
+};
 
 export default TopFiveUsers;
