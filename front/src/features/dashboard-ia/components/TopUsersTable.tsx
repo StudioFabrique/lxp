@@ -1,16 +1,26 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
-import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
-import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
-import SearchBar from "../../../components/UI/search-bar/search-bar";
+import type {
+  ColumnDef,
+  SortingState,
+  StockFeatures,
+  Updater,
+} from "@tanstack/react-table";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
+import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
+import CardLabel from "../../observability/components/CardLabel";
+import { useDebouncedValue } from "../../observability/hooks/useDebouncedValue";
 import type { TopUser } from "../types";
-import { cn } from "../../../utils/cn";
 import { useRoleLabels } from "../../role/hooks/useRoleLabels";
 import { formatNumber } from "../../../utils/helpers/format-number";
 
 type Props = {
   dataList: TopUser[];
+  totalItems: number;
+  isLoading: boolean;
+  isError: boolean;
   page: number;
   totalPages: number;
   perPage: number;
@@ -22,10 +32,11 @@ type Props = {
   onSearch: (value: string) => void;
 };
 
-const SORT_COLUMNS = ["lastname", "role", "groupName", "totalTokens", "createdAt"];
-
 const TopUsersTable = ({
   dataList,
+  totalItems,
+  isLoading,
+  isError,
   page,
   totalPages,
   perPage,
@@ -37,97 +48,135 @@ const TopUsersTable = ({
   onSearch,
 }: Props) => {
   const { labels, teamLabel } = useRoleLabels();
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const searchText = useDebouncedValue(searchInput.trim());
+  const isSearching = searchText.length > 0;
 
+  // Une requête par recherche, pas une par lettre tapée.
   useEffect(() => {
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, []);
+    onSearch(searchText);
+  }, [searchText, onSearch]);
 
-  const handleSearch = (value: string) => {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      onSearch(value);
-    }, 500);
+  const sorting = useMemo<SortingState>(
+    () => [{ id: sortProperty, desc: sortDirection === "desc" }],
+    [sortProperty, sortDirection],
+  );
+
+  // Le tri est fait par le serveur : `onSort` inverse le sens si la colonne est déjà triée.
+  const handleSortingChange = (updater: Updater<SortingState>) => {
+    const next = typeof updater === "function" ? updater(sorting) : updater;
+    onSort(next[0]?.id ?? sortProperty);
   };
 
+  const columns = useMemo<ColumnDef<StockFeatures, TopUser>[]>(
+    () => [
+      {
+        id: "lastname",
+        accessorFn: (row) => row.name,
+        header: "Utilisateur",
+        cell: ({ row }) =>
+          row.original.role === "student" ? (
+            <Link
+              to={`/admin/teacher/student/${row.original._id}`}
+              className="link link-hover text-sm font-semibold"
+            >
+              {row.original.name}
+            </Link>
+          ) : (
+            <span className="text-sm font-semibold">{row.original.name}</span>
+          ),
+      },
+      {
+        id: "role",
+        accessorFn: (row) => row.role,
+        header: "Rôle",
+        cell: ({ row }) => (
+          <span className="text-sm">
+            <CardLabel>Rôle</CardLabel>
+            {row.original.role === "student" ? labels[3] : teamLabel}
+          </span>
+        ),
+      },
+      {
+        id: "groupName",
+        accessorFn: (row) => row.groupName ?? "",
+        header: "Promotion",
+        cell: ({ row }) => (
+          <span className="text-sm">
+            <CardLabel>Promotion</CardLabel>
+            {row.original.groupName ?? "-"}
+          </span>
+        ),
+      },
+      {
+        id: "totalTokens",
+        accessorFn: (row) => row.totalTokens,
+        header: "Quantité",
+        cell: ({ row }) => (
+          <span className="text-sm font-bold">
+            <CardLabel>Quantité</CardLabel>
+            {formatNumber(row.original.totalTokens)}
+          </span>
+        ),
+      },
+      {
+        id: "createdAt",
+        accessorFn: (row) => row.lastActivity,
+        header: "Dernière utilisation",
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap text-sm">
+            <CardLabel>Dernière utilisation</CardLabel>
+            {row.original.lastActivity}
+          </span>
+        ),
+      },
+    ],
+    [labels, teamLabel],
+  );
+
   return (
-    <div>
-      <BoxWrapper className="overflow-x-auto">
-        <SearchBar
-          placeholder="Rechercher par nom d'utilisateur"
-          onSubmitSearchValue={handleSearch}
-        />
-        <table className="w-full table">
-          <thead>
-            <tr className="text-xs font-semibold text-primary">
-              {SORT_COLUMNS.map((col) => (
-                <th
-                  key={col}
-                  className="cursor-pointer"
-                  onClick={() => onSort(col)}
-                >
-                  <div className="flex items-center gap-x-2">
-                    <p>
-                      {col === "lastname"
-                        ? "Utilisateur"
-                        : col === "role"
-                          ? "Rôle"
-                          : col === "groupName"
-                            ? "Promotion"
-                            : col === "totalTokens"
-                              ? "Quantité"
-                              : "Dernière utilisation"}
-                    </p>
-                    <SortColumnIcon
-                      fieldSort={sortProperty}
-                      column={col}
-                      direction={sortDirection === "asc"}
-                    />
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {dataList.map((user) => (
-              <tr key={user._id} className="text-xs">
-                <td>
-                  {user.role === "student" ? (
-                    <Link to={`/admin/teacher/student/${user._id}`}>
-                      {user.name}
-                    </Link>
-                  ) : (
-                    user.name
-                  )}
-                </td>
-                <td>
-                  {user.role === "student" ? labels[3] : teamLabel}
-                </td>
-                <td className={cn(user.groupName ? "" : "text-center")}>
-                  {user.groupName ?? " - "}
-                </td>
-                <td>{formatNumber(user.totalTokens)}</td>
-                <td>{user.lastActivity}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </BoxWrapper>
-      <TablePagination
-        currentPage={page}
-        maxPage={totalPages}
-        itemsPerPage={perPage}
-        onSetCurrentPage={setPage}
-        onSetItemsPerPage={(itemsPerPage) => {
-          setPerPage(itemsPerPage);
-          setPage(1);
-        }}
-        onSetPreviousPage={() => setPage(Math.max(page - 1, 1))}
-        onSetNextPage={() => setPage(Math.min(page + 1, totalPages))}
+    <BoxWrapper>
+      <MultiCriteriaSearch
+        value={searchInput}
+        onChange={setSearchInput}
+        placeholder="Rechercher par nom d'utilisateur"
+        criteria={["nom d'utilisateur"]}
       />
-    </div>
+      {isError && (
+        <p role="alert">
+          Impossible de charger les consommations. Modifiez la recherche ou réessayez.
+        </p>
+      )}
+      <DataTable
+        columns={columns}
+        data={dataList}
+        isLoading={isLoading}
+        isSearching={isSearching}
+        sorting={sorting}
+        setSorting={handleSortingChange}
+        emptyMessage={
+          isSearching
+            ? "Aucun utilisateur pour cette recherche"
+            : "Aucune consommation enregistrée"
+        }
+      />
+      {dataList.length > 0 && (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={perPage}
+          leftText={`Utilisateurs : ${formatNumber(totalItems)}`}
+          scrollToTopOnChange={false}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setPerPage(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() => setPage(Math.max(page - 1, 1))}
+          onSetNextPage={() => setPage(Math.min(page + 1, totalPages))}
+        />
+      )}
+    </BoxWrapper>
   );
 };
 

@@ -1,3 +1,4 @@
+import { escapeRegExp } from "../../utils/unique-fields.ts";
 import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
 
 export default async function getTopFiveUsers(
@@ -87,7 +88,7 @@ export default async function getTopFiveUsers(
       },
     },
     ...(searchTerm
-      ? [{ $match: { lastname: { $regex: searchTerm, $options: "i" } } }]
+      ? [{ $match: { lastname: { $regex: escapeRegExp(searchTerm), $options: "i" } } }]
       : []),
     {
       $facet: {
