@@ -50,9 +50,13 @@ compatibilité. Vous pouvez les retirer de `api/.env`.
 
 ### Bases Docker locales
 
-Ces variables configurent les trois bases lancées par
-`api/docker-compose.yml`. Docker Compose utilise les valeurs du tableau si une
-variable manque.
+Ces variables configurent les conteneurs lancés par `npm run init` et
+`npm run services:up`. Ils utilisent les fichiers Compose de déploiement
+(`deployment/compose.yml` et `ai.compose.yml`) et la surcouche
+`deployment/local.compose.yml`, qui publie les ports sur `127.0.0.1` :
+PostgreSQL `5500`, pgvector `5501`, MongoDB `27000`, service IA `8000`. Le
+projet Compose s'appelle `lxp-local`. Docker Compose utilise les valeurs du
+tableau si une variable manque.
 
 | Variable                   | Valeur par défaut | Rôle                              |
 | -------------------------- | ----------------- | --------------------------------- |
@@ -111,31 +115,81 @@ associée.
 `DEMO_ADMIN_EMAIL` et `DEMO_STUDENT_EMAIL` deviennent obligatoires quand
 `DEMO_MODE=true`.
 
+### Infisical (facultatif)
+
+Par défaut, les variables viennent de `api/.env`. Les membres de l'équipe
+peuvent les lire dans Infisical à la place, dans l'environnement `local` (distinct de `dev`, réservé à l'instance de développement partagée, et de `prod`). Le choix est proposé au premier
+`npm run init` et enregistré dans `infisical.local.env` (ignoré par Git) :
+
+| Variable               | Défaut                      | Rôle                                  |
+| ---------------------- | --------------------------- | ------------------------------------- |
+| `INFISICAL_PROJECT_ID` | à saisir                    | Identifiant du projet Infisical.      |
+| `INFISICAL_DOMAIN`     | `https://eu.infisical.com`  | Instance Infisical (région EU).       |
+| `INFISICAL_ENVIRONMENT`| `local`                     | Environnement lu (`local`, `dev` ou `prod`). |
+| `INFISICAL_SECRET_PATHS`| `/runtime /mailer`         | Dossiers lus, dans l'ordre ; le dernier l'emporte en cas de doublon. |
+
+La CLI Infisical s'exécute dans le conteneur officiel `infisical/cli` (version
+épinglée dans `init-scripts/infisical.sh`) et ne garde aucune session.
+
+L'authentification se fait **uniquement par Machine Identity** (Universal Auth).
+La connexion par e-mail et mot de passe, ou par SSO, n'est pas prise en charge.
+Demandez à un administrateur une identité en lecture sur l'environnement `local`,
+puis fournissez ses identifiants de l'une de ces façons :
+
+- `npm run infisical:login` (et `npm run init`, si besoin) demande le Client ID et
+  le Client Secret, vérifie qu'Infisical les accepte, puis les enregistre dans
+  `~/.config/lxp/infisical-auth` (lisible par vous seul, hors du dépôt) ;
+- ou exportez `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID` et
+  `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` dans votre shell : ils priment sur le
+  fichier. Un `INFISICAL_TOKEN` déjà émis est aussi accepté.
+
+- `npm run dev`, `npm run demo:seed`, `npm run generate-activation-key`,
+  `npm run services:up`, `npm run dump` et `npm run notify-triggers --prefix api`
+  chargent les secrets à la volée. Ils restent en mémoire et ne sont écrits dans
+  aucun fichier.
+- Les valeurs d'Infisical priment sur `api/.env`. Pour revenir au mode sans
+  Infisical, supprimez `infisical.local.env` puis relancez `npm run init`.
+
 ## ANDRIA-IA en développement
 
-Le service IA est présent dans un dépôt séparé. Copiez son fichier
-`env.example` vers `.env`, puis renseignez les variables suivantes.
+Le service IA est téléchargé depuis Docker Hub (`studiostep/lxp-ai`) par le
+Compose local. Il démarre quand `DISABLE_AI_FEATURES` n'est pas `true` et que
+les deux clés Mistral sont définies (dans `api/.env` ou dans Infisical). Les
+valeurs liées aux bases, à `SECRET_KEY` et aux chemins sont calculées par le
+Compose ; `SECRET_KEY` prend la valeur de `DOCKER_IA_AUTH_SECRET`. En
+déploiement, `DOCKER_IA_API_BASE_URL` vaut toujours `http://ai:8000` : le
+Compose la fixe, ne la saisissez pas. Seules ces variables sont à renseigner :
 
-| Variable                   | Obligatoire | Valeur ou rôle                                             |
-| -------------------------- | ----------- | ---------------------------------------------------------- |
-| `MISTRAL_STUDENT_API_KEY`  | oui         | Clé Mistral pour les fonctions apprenant.                  |
-| `MISTRAL_CONTENT_API_KEY`  | oui         | Clé Mistral pour la création de contenu.                   |
-| `DATABASE_URL`             | oui         | `postgresql://andria:andria@lxp-ai-postgres:5432/lxp_ai`   |
-| `ANDRIA_AI_DB_URL`         | oui         | Même valeur que `DATABASE_URL`.                            |
-| `LXP_DB_URL`               | oui         | `postgresql://postgres:postgres@lxp-prisma:5432/lxp`       |
-| `LXP_MONGO_URL`            | oui         | `mongodb://root:root@lxp-mongo:27017/lxp?authSource=admin` |
-| `LXP_UPLOADS_DIR`          | oui         | `/lxp/api/uploads/activities`                              |
-| `LXP_PUBLIC_BASE`          | oui         | `http://localhost:3000`                                    |
-| `SECRET_KEY`               | oui         | Même valeur que `DOCKER_IA_AUTH_SECRET` dans `api/.env`.   |
-| `MISTRAL_MODEL`            | non         | `mistral-small-latest`                                     |
-| `DB_INGEST_MIN_WORDS`      | non         | Nombre minimal de mots à indexer. Valeur courante : `20`.  |
-| `DB_WATCH_RECONNECT_DELAY` | non         | Délai de reconnexion du watcher. Valeur courante : `5`.    |
-| `DEV_BYPASS_AUTH`          | non         | Gardez `false` pour utiliser l'authentification normale.   |
+| Variable                  | Obligatoire | Valeur ou rôle                                            |
+| ------------------------- | ----------- | --------------------------------------------------------- |
+| `MISTRAL_STUDENT_API_KEY` | oui         | Clé Mistral pour les fonctions apprenant.                 |
+| `MISTRAL_CONTENT_API_KEY` | oui         | Clé Mistral pour la création de contenu.                  |
+| `MISTRAL_MODEL`           | non         | `mistral-small-latest`                                    |
+| `DB_INGEST_MIN_WORDS`     | non         | Nombre minimal de mots à indexer. Valeur courante : `20`. |
+| `LXP_AI_IMAGE`            | non         | Image du service IA, `studiostep/lxp-ai` par défaut.      |
+| `LXP_AI_IMAGE_TAG`        | non         | Tag de l'image, `latest` par défaut.                      |
 
-Les clés Mistral de développement se trouvent dans Infisical EU, projet LXP,
-environnement `dev`, dossier `/runtime`. Le guide
+Si vous utilisez Infisical, les clés Mistral de développement se trouvent dans
+le dossier `/runtime` de l'environnement `local`. Le guide
 [Développement avec ANDRIA-IA](developpement-ia.md) donne les commandes de
 démarrage et de contrôle.
+
+### Références entre secrets Infisical
+
+Une valeur qui doit rester identique à une autre se saisit une seule fois, puis
+se référence : `${<environnement>.<dossier>.<CLE>}`. La CLI développe les
+références (`--expand`, actif par défaut). Exemple pour l'environnement `local`,
+qui réutilise les clés Mistral et le SMTP de `dev` :
+
+```text
+MISTRAL_STUDENT_API_KEY=${dev.runtime.MISTRAL_STUDENT_API_KEY}
+MISTRAL_CONTENT_API_KEY=${dev.runtime.MISTRAL_CONTENT_API_KEY}
+MAILER_PASSWORD=${dev.mailer.MAILER_PASSWORD}
+```
+
+Le déploiement échoue si une référence n'est pas résolue. Réservez-les aux
+valeurs identiques par nature ; les secrets de `local`, `dev` et `prod` restent
+distincts.
 
 ## Déploiement
 
@@ -193,9 +247,7 @@ les variables de ce tableau, même si `DISABLE_AI_FEATURES=true`.
 | -------------------------- | ----------------------------------------------------------------------------------- |
 | `ANDRIA_POSTGRES_USER`     | Compte PostgreSQL du service IA.                                                    |
 | `ANDRIA_POSTGRES_PASSWORD` | Mot de passe PostgreSQL du service IA.                                              |
-| `DOCKER_IA_API_BASE_URL`   | Adresse interne `http://ai:8000`.                                                   |
-| `DOCKER_IA_AUTH_SECRET`    | Secret partagé avec `SECRET_KEY`.                                                   |
-| `SECRET_KEY`               | Même valeur que `DOCKER_IA_AUTH_SECRET`.                                            |
+| `DOCKER_IA_AUTH_SECRET`    | Secret partagé avec le service IA, qui le reçoit sous le nom `SECRET_KEY`.          |
 | `MISTRAL_STUDENT_API_KEY`  | Clé Mistral pour les fonctions apprenant.                                           |
 | `MISTRAL_CONTENT_API_KEY`  | Clé Mistral pour la création de contenu.                                            |
 | `LXP_PUBLIC_BASE`          | Adresse publique du LXP, sans `/` final.                                            |
@@ -208,7 +260,8 @@ partir du compte PostgreSQL du LXP. Pour conserver un accès en lecture seule,
 définissez la paire facultative `LXP_DB_USER` et `LXP_DB_PASSWORD` ; l'URL est
 alors calculée avec ce compte.
 
-Réglages facultatifs de la couche IA :
+Réglages facultatifs de la couche IA et des clés root (le Compose porte ces
+valeurs par défaut : ne les enregistrez que pour les modifier) :
 
 | Variable                   | Valeur par défaut      |
 | -------------------------- | ---------------------- |

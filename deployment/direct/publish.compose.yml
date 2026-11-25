@@ -1,0 +1,12 @@
+# Surcouche du mode `direct`, superposée au socle `compose.yml` :
+#
+#   docker compose -f compose.yml -f direct/publish.compose.yml up -d
+#
+# `app` publie lui-même le port 80 de l'hôte. Le réseau reste donc joignable
+# depuis l'extérieur, contrairement au `backend` interne du mode `caddy`, où
+# seul le proxy partagé expose l'application.
+
+services:
+  app:
+    ports:
+      - "80:${PORT:?Set PORT}"

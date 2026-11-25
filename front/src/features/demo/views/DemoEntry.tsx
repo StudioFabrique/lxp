@@ -222,8 +222,8 @@ const DemoEntry = () => {
           ))}
         </div>
         <p className="text-sm">
-          Les comptes ne dispose d'aucun droit d'écriture pendant l'utilisation
-          de l'instance de démonstration.
+          Les comptes ne disposent d'aucun droit d'écriture pendant
+          l'utilisation de l'instance de démonstration.
         </p>
         <Link className="btn" to={"https://presentation.andria.step.eco/"}>
           Voir la présentation de ANDRIA

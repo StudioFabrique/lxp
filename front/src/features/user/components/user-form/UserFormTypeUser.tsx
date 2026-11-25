@@ -15,6 +15,7 @@ type Props = {
   isError: boolean;
   onRefresh: () => void;
   studentOnly?: boolean;
+  contactOnly?: boolean;
   error?: string;
 };
 
@@ -28,6 +29,7 @@ const UserFormTypeUser = ({
   isError,
   onRefresh,
   studentOnly,
+  contactOnly,
   error,
 }: Props) => {
   const fieldId = useId();
@@ -58,6 +60,9 @@ const UserFormTypeUser = ({
       <div className="flex flex-col gap-y-5">
         {studentOnly ? (
           <p className="text-sm text-base-content/70">Seuls les apprenants peuvent être ajoutés au groupe.</p>
+        ) : null}
+        {contactOnly ? (
+          <p className="text-sm text-base-content/70">Seuls les membres de l'équipe pédagogique peuvent être ajoutés au parcours.</p>
         ) : null}
         {isLoading ? (
           <div role="status" aria-label="Chargement des rôles" className="space-y-3">

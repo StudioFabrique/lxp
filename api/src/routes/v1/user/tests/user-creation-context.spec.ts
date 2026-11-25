@@ -6,7 +6,7 @@ const app = express();
 app.post("/user", userCreationContextValidator, (_req: Request, res: Response) => res.sendStatus(204));
 
 describe("validation du contexte de création utilisateur", () => {
-  it.each(["/user", "/user?creationContext=group"])("accepte %s", async (url) => {
+  it.each(["/user", "/user?creationContext=group", "/user?creationContext=parcours"])("accepte %s", async (url) => {
     await request(app).post(url).expect(204);
   });
   it.each([

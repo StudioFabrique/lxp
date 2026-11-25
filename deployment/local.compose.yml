@@ -1,0 +1,27 @@
+# Surcouche de développement local, superposée au socle `compose.yml` et à
+# `ai.compose.yml` (voir init-scripts/compose.sh) :
+#
+#   docker compose -f compose.yml -f ai.compose.yml -f local.compose.yml \
+#     up -d db-pg db-mongo db-ai
+#
+# En développement, l'API et le front tournent sur la machine (`npm run dev`) :
+# seules les bases et, si l'image est disponible, le service IA sont démarrés.
+# Cette surcouche publie leurs ports, sur la boucle locale uniquement. Le
+# service `app` du socle n'est jamais lancé en local.
+
+services:
+  db-pg:
+    ports:
+      - "127.0.0.1:5500:5432"
+
+  db-mongo:
+    ports:
+      - "127.0.0.1:27000:27017"
+
+  db-ai:
+    ports:
+      - "127.0.0.1:5501:5432"
+
+  ai:
+    ports:
+      - "127.0.0.1:8000:8000"

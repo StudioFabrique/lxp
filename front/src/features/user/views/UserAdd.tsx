@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import UserForm from "../components/user-form/UserForm";
 import { userApi } from "../api/user.api";
@@ -13,6 +13,12 @@ import {
   isConflictError,
 } from "../../../utils/helpers/api-error-message";
 import { AuthContext } from "../../../store/AuthProvider";
+import {
+  addCreatedContactToReturnPath,
+  getSafeParcoursReturnPath,
+  PARCOURS_CONTACT_ROLE_RANK,
+} from "../../parcours/helpers/parcours-contact-creation";
+import { parcoursKeys } from "../../parcours/api/parcours.keys";
 import GroupUserCreationProgress from "../../group/components/GroupUserCreationProgress";
 
 const UserAdd = () => {
@@ -21,11 +27,15 @@ const UserAdd = () => {
   const { user } = useContext(AuthContext);
   const returnTo = searchParams.get("returnTo");
   const safeReturnTo = getSafeGroupReturnPath(returnTo);
+  const safeParcoursReturnTo = safeReturnTo
+    ? null
+    : getSafeParcoursReturnPath(returnTo);
+  const queryClient = useQueryClient();
   const requestedRoleRank = Number(searchParams.get("roleRank"));
   const currentUserRank = user?.roles.length
     ? (user.roles[0]?.rank ?? 4)
     : 4;
-  const initialRoleRank = safeReturnTo ? 3 :
+  const initialRoleRank = safeParcoursReturnTo ? PARCOURS_CONTACT_ROLE_RANK : safeReturnTo ? 3 :
     [1, 2, 3].includes(requestedRoleRank) &&
     requestedRoleRank > currentUserRank
       ? requestedRoleRank
@@ -46,13 +56,23 @@ const UserAdd = () => {
     }: {
       userData: Record<string, unknown>;
       file: File | null;
-    }) => userApi.mutations.create(userData, file, safeReturnTo ? "group" : undefined),
+    }) => userApi.mutations.create(userData, file, safeReturnTo ? "group" : safeParcoursReturnTo ? "parcours" : undefined),
     onSuccess: (data) => {
       toast.success(data.message ?? "Utilisateur créé avec succès");
       const groupReturnPath = data.userId
         ? addStudentToGroupReturnPath(safeReturnTo, data.userId)
         : safeReturnTo;
-      navigate(groupReturnPath ?? "/admin/user");
+      if (safeParcoursReturnTo) {
+        // Le nouveau membre doit apparaître dans la liste des contacts sélectionnables.
+        void queryClient.invalidateQueries({
+          queryKey: parcoursKeys.availableContacts(),
+        });
+      }
+      const parcoursReturnPath =
+        safeParcoursReturnTo && data.userId
+          ? addCreatedContactToReturnPath(safeParcoursReturnTo, data.userId)
+          : safeParcoursReturnTo;
+      navigate(groupReturnPath ?? parcoursReturnPath ?? "/admin/user");
     },
     onError: (error, variables) => {
       // Sur ces deux routes, un 409 ne peut venir que de l'adresse email :
@@ -90,9 +110,9 @@ const UserAdd = () => {
         }
         isLoading={isPending}
         initialRoleRank={initialRoleRank}
-        requiredRoleRank={safeReturnTo ? 3 : undefined}
+        requiredRoleRank={safeParcoursReturnTo ? PARCOURS_CONTACT_ROLE_RANK : safeReturnTo ? 3 : undefined}
         initialSendEmail={initialSendEmail}
-        cancelTo={safeReturnTo ?? undefined}
+        cancelTo={safeReturnTo ?? safeParcoursReturnTo ?? undefined}
         groupCreationContext={safeReturnTo ? (invitation) => <GroupUserCreationProgress returnTo={safeReturnTo} action={invitation} /> : undefined}
       />
     </>

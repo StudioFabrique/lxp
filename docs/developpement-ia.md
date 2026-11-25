@@ -1,9 +1,10 @@
-# Démarrer ANDRIA-IA en développement
+# Démarrer le service IA en développement
 
-Le dépôt privé
-[`StudioFabrique/ANDRIA-IA`](https://github.com/StudioFabrique/ANDRIA-IA)
-fournit le chatbot, la génération de quiz et les indicateurs prédictifs. Il lit
-les contenus du LXP et stocke son index dans PostgreSQL avec pgvector.
+Le service ANDRIA-IA fournit le chatbot, la génération de quiz et les
+indicateurs prédictifs. Il lit les contenus du LXP et stocke son index dans
+PostgreSQL avec pgvector. En développement, il n'est plus à cloner ni à
+construire : le Compose local télécharge l'image publiée sur Docker Hub
+(`studiostep/lxp-ai`).
 
 ## Architecture locale
 
@@ -11,150 +12,94 @@ les contenus du LXP et stocke son index dans PostgreSQL avec pgvector.
 navigateur
     │
     ▼
-LXP :5173 / API :3000
-    │                 ┌────────────────────────┐
-    ├── PostgreSQL ──►│ ANDRIA-IA :8000        │
-    ├── MongoDB ─────►│ watcher + quiz + RAG   │
-    └── uploads ─────►│ PostgreSQL/pgvector IA │
-                      └────────────────────────┘
+LXP :5173 / API :3000 (sur la machine)
+    │                 ┌───────────────────────────┐
+    ├── PostgreSQL ──►│ ai :8000 (conteneur)      │
+    ├── MongoDB ─────►│ watcher + quiz + RAG      │
+    └── uploads ─────►│ PostgreSQL/pgvector IA    │
+                      └───────────────────────────┘
 ```
 
-Les dépôts doivent partager le même dossier parent. Le Compose d'ANDRIA-IA
-monte `../lxp/api/uploads/activities` et rejoint le réseau Docker `lxp`.
+Les conteneurs viennent de `deployment/compose.yml` et `ai.compose.yml`,
+complétés par `local.compose.yml` qui publie les ports sur `127.0.0.1`. Le
+service lit `api/uploads/activities`, monté dans le conteneur.
 
-```text
-projets/
-├── lxp/
-└── ANDRIA-IA/
-```
+## 1. Renseigner les clés Mistral
 
-## 1. Démarrer le LXP
+Le service démarre seulement si les deux clés existent et que
+`DISABLE_AI_FEATURES` n'est pas `true`.
 
-Depuis `lxp/` :
-
-```bash
-npm run init
-npm run dev
-```
-
-`npm run init` crée les trois bases, le réseau Docker et les triggers qui
-signalent les changements de cours au watcher.
-
-Le schéma SQL exposé à ANDRIA-IA conserve volontairement les noms historiques
-PascalCase (`"Course"`, `"Lesson"`, `"Activity"`). Ils sont figés par les
-`@@map` du contrat Prisma 8 : les requêtes d'ingestion et le watcher IA sont
-sensibles à cette casse. Le lowercase que Prisma 8 choisirait sans mapping
-explicite n'est pas utilisé par le LXP.
-
-Pour un projet déjà initialisé, gardez les données et relancez les services :
-
-```bash
-docker compose -f api/docker-compose.yml up -d
-npm run dev
-```
-
-## 2. Cloner et configurer ANDRIA-IA
-
-```bash
-cd ..
-git clone --branch prod git@github.com:StudioFabrique/ANDRIA-IA.git
-cd ANDRIA-IA
-cp env.example .env
-```
-
-Complétez `.env` avec cette configuration locale :
+- **Avec Infisical** : les clés sont dans le dossier `/runtime` de
+  l'environnement configuré. `npm run init` indique si elles sont reçues, sans
+  rien demander ni écrire.
+- **Sans Infisical** : `npm run init` demande d'abord si vous activez le service
+  IA, puis les deux clés. Un refus écrit `DISABLE_AI_FEATURES=true` dans
+  `api/.env`. Vous pouvez aussi les ajouter à la main :
 
 ```dotenv
 MISTRAL_STUDENT_API_KEY=<cle-dev>
 MISTRAL_CONTENT_API_KEY=<cle-dev>
-MISTRAL_MODEL=mistral-small-latest
-
-DATABASE_URL=postgresql://andria:andria@lxp-ai-postgres:5432/lxp_ai
-ANDRIA_AI_DB_URL=postgresql://andria:andria@lxp-ai-postgres:5432/lxp_ai
-LXP_DB_URL=postgresql://postgres:postgres@lxp-prisma:5432/lxp
-LXP_MONGO_URL=mongodb://root:root@lxp-mongo:27017/lxp?authSource=admin
-
-LXP_UPLOADS_DIR=/lxp/api/uploads/activities
-LXP_PUBLIC_BASE=http://localhost:3000
-DB_INGEST_MIN_WORDS=20
-DB_WATCH_RECONNECT_DELAY=5
-
-SECRET_KEY=secret-key
-DEV_BYPASS_AUTH=false
+DISABLE_AI_FEATURES=false
 ```
 
-Récupérez les clés Mistral dans Infisical EU, projet LXP, environnement `dev`,
-chemin `/runtime`. Le Compose d'ANDRIA-IA lit un fichier `.env` local : gardez
-ce fichier hors de Git et n'utilisez aucune clé de production.
+`DOCKER_IA_AUTH_SECRET` (API) est transmis au service sous le nom `SECRET_KEY` :
+il n'y a qu'une valeur à maintenir. N'utilisez aucune clé de production.
 
-Les identifiants des URL doivent correspondre à `lxp/api/.env` :
-
-- `POSTGRES_*` alimente `LXP_DB_URL` ;
-- `MONGO_ADMIN_*` alimente `LXP_MONGO_URL` ;
-- `ANDRIA_POSTGRES_*` alimente `DATABASE_URL` et `ANDRIA_AI_DB_URL`.
-
-`SECRET_KEY` et `DOCKER_IA_AUTH_SECRET` dans `lxp/api/.env` doivent contenir le
-même secret. Les noms `lxp-prisma`, `lxp-mongo` et `lxp-ai-postgres` sont des
-noms de conteneurs. Depuis ANDRIA-IA, n'utilisez pas les ports hôte `5500`,
-`5501` ou `27000`.
-
-## 3. Premier démarrage
-
-Depuis `ANDRIA-IA/` :
+## 2. Démarrer
 
 ```bash
-docker compose build
-docker compose run --rm ai-service python -m app.db_provision
-docker compose up -d
-docker compose logs -f ai-service
+npm run init           # première fois : bases, migrations, triggers
+npm run services:up    # ensuite : démarre les bases et le service IA
+npm run dev
 ```
 
-Le provisionnement crée les tables `andria_*`. Relancez-le après avoir supprimé
-le volume PostgreSQL IA.
+`services:up` télécharge l'image (`docker compose pull`), crée les tables
+`andria_*` (`python -m app.db_provision`) puis démarre le service. Sans accès à
+l'image (`docker login` nécessaire si le dépôt Docker Hub est privé), le script
+explique la cause, rappelle les variables concernées (`LXP_AI_IMAGE`,
+`LXP_AI_IMAGE_TAG`) et demande s'il faut continuer sans IA. Sans terminal
+interactif, il continue sans IA.
 
-## 4. Vérifier le service et le watcher
+L'image est publiée en `linux/amd64` et `linux/arm64` : Docker choisit la variante
+native, y compris sur Mac Apple Silicon.
+
+Pour choisir une autre version : `LXP_AI_IMAGE_TAG=<tag> npm run services:up`.
+Le premier démarrage télécharge aussi les modèles Hugging Face dans le volume
+`lxp-local_hf_cache` et peut prendre plusieurs minutes.
+
+## 3. Vérifier le service et le watcher
 
 ```bash
 curl http://localhost:8000/health
-curl http://localhost:8000/health/watcher
 ```
 
-Le premier endpoint doit renvoyer `{"status":"ok"}`. Le second doit indiquer
-`"status":"ok"` et `"thread_alive":true`.
+Il doit répondre `{"status":"ok"}`. Modifiez ensuite un cours, une leçon ou une
+activité dans le LXP : `docker compose -p lxp-local logs -f ai` doit afficher
+un événement `INGEST`. La suppression d'un cours produit un événement `PRUNE`.
 
-Modifiez ensuite un cours, une leçon ou une activité dans le LXP. Les logs
-d'ANDRIA-IA doivent afficher un événement `INGEST`. La suppression d'un cours
-produit un événement `PRUNE`.
+Le schéma SQL exposé au service conserve volontairement les noms historiques
+PascalCase (`"Course"`, `"Lesson"`, `"Activity"`), figés par les `@@map` du
+contrat Prisma 8.
 
-## Démarrages suivants
+## Arrêter ou couper l'IA
 
 ```bash
-cd lxp
-docker compose -f api/docker-compose.yml up -d
-npm run dev
-
-cd ../ANDRIA-IA
-docker compose up -d
+npm run services:down                # arrête les conteneurs, les données restent
 ```
 
-## Couper l'IA en local
-
-Pour travailler sans ANDRIA-IA, définissez cette valeur dans `lxp/api/.env`,
-puis relancez l'API :
-
-```dotenv
-DISABLE_AI_FEATURES=true
-```
+Pour travailler sans le service, mettez `DISABLE_AI_FEATURES=true` (dans
+`api/.env` ou Infisical) : il n'est plus démarré et l'API coupe les fonctions IA.
 
 ## Problèmes courants
 
-| Symptôme                                | Contrôle                                                                     |
-| --------------------------------------- | ---------------------------------------------------------------------------- |
-| `network lxp not found`                 | Démarrez les bases du LXP avant ANDRIA-IA.                                   |
-| Connexion PostgreSQL ou MongoDB refusée | Utilisez les noms de conteneurs et leurs ports internes.                     |
-| Réponse IA `401`                        | Alignez `SECRET_KEY` et `DOCKER_IA_AUTH_SECRET`.                             |
-| Tables `andria_*` absentes              | Relancez `python -m app.db_provision` avec `docker compose run`.             |
-| Watcher sans événement                  | Lancez `npm run notify-triggers --prefix api`, puis redémarrez `ai-service`. |
+| Symptôme                                 | Contrôle                                                                        |
+| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| « Service IA non démarré »               | Clés Mistral absentes ou `DISABLE_AI_FEATURES=true`.                            |
+| « Image indisponible »                   | Faites `docker login` avec un compte autorisé sur `studiostep/lxp-ai`.          |
+| « no matching manifest » | Le tag visé n'est pas publié pour votre architecture : choisissez un autre `LXP_AI_IMAGE_TAG`. |
+| Réponse IA `401`                         | Redémarrez le service après un changement de `DOCKER_IA_AUTH_SECRET`.           |
+| Watcher sans événement                   | `npm run notify-triggers --prefix api`, puis `docker compose -p lxp-local restart ai`. |
+| Anciens volumes `lxp-api_*`              | Ils ne sont plus utilisés : voir l'avertissement affiché par `npm run init`.    |
 
-La liste des variables et de leurs valeurs par défaut se trouve dans
+La liste des variables se trouve dans
 [Variables d'environnement](variables-environnement.md#andria-ia-en-développement).

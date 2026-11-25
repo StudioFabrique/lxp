@@ -3,6 +3,7 @@ import { File, Image, Music, Video } from "lucide-react";
 
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import { HierarchicalListRow } from "../../../components/UI/hierarchical-list-card/HierarchicalListRow";
+import { useRetractSidebar } from "../../../hooks/useRetractSidebar";
 import Modal from "../../../components/UI/modal/modal";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import Header from "../../../components/headers/Header";
@@ -69,6 +70,8 @@ const activityContext = (activity: MediaAssociatedActivity) => {
 function MediathequeHomePage() {
   const [searchInput, setSearchInput] = useState("");
   const [previewedMedia, setPreviewedMedia] = useState<Media | null>(null);
+  // L'aperçu occupe presque tout l'écran : la barre latérale glisse vers la gauche pendant son affichage.
+  useRetractSidebar(previewedMedia !== null);
   const [activityMedia, setActivityMedia] = useState<Media | null>(null);
   const {
     error,

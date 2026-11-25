@@ -63,7 +63,7 @@ export default async function createUser(
   user: CreateUserData,
   roleId: string,
   actorRank: number,
-  options: { studentOnly?: boolean } = {},
+  options: { studentOnly?: boolean; contactOnly?: boolean } = {},
 ) {
   const email = normalizeEmail(user.email ?? "");
 
@@ -97,6 +97,12 @@ export default async function createUser(
         statusCode: 403,
         message:
           "Vous ne pouvez créer qu'un utilisateur de rang inférieur au vôtre.",
+      };
+    }
+    if (options.contactOnly && role.rank !== 2) {
+      throw {
+        statusCode: 400,
+        message: "Seul un membre de l'équipe pédagogique peut être créé depuis un parcours.",
       };
     }
     if (options.studentOnly && role.rank !== 3) {

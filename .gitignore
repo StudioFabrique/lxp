@@ -21,6 +21,10 @@ env.*
 **/env.*
 
 *.credentials
+
+# Configuration locale d'Infisical (api/.env en est l'alternative)
+infisical.local.env
+/api/data/
 .infisical-token
 
 # Deux exceptions, aujourd'hui suivies. Sans ces négations, un `git add -A`

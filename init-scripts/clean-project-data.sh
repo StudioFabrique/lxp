@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 . ./init-scripts/ui.sh
+. ./init-scripts/infisical.sh
+. ./init-scripts/compose.sh
 
 # Seul, le script demande confirmation ; appelé par `npm run init`, la question
 # a déjà été posée et l'en-tête de l'étape est déjà affiché.
@@ -22,15 +24,15 @@ if [ -z "$ANDRIA_INIT" ]; then
   step "Nettoyage des données existantes"
 fi
 
-cd api || { fail "Dossier api introuvable"; exit 1; }
-
 info "Suppression des conteneurs et volumes Docker"
-# Supprime uniquement les conteneurs, réseaux et volumes déclarés par le
-# Compose de développement lxp-api. L'option -v évite les erreurs lorsque les
-# volumes n'existent pas encore et inclut la base pgvector `pg_ai`.
-docker compose --progress plain down --volumes --remove-orphans || { fail "Nettoyage des volumes Docker"; exit 1; }
+# Supprime uniquement les conteneurs, réseaux et volumes du Compose local
+# (projet lxp-local). L'option -v évite les erreurs lorsque les volumes
+# n'existent pas encore et inclut la base pgvector `pg_ai` et le cache du
+# service IA.
+lxp_compose --progress plain down --volumes --remove-orphans || { fail "Nettoyage des volumes Docker"; exit 1; }
 
 info "Suppression des fichiers d'activités"
+cd api || { fail "Dossier api introuvable"; exit 1; }
 rm ./uploads/activities/* 2> /dev/null
 rm ./uploads/activities/files/* 2> /dev/null
 rm ./uploads/activities/images/* 2> /dev/null

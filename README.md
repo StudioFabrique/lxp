@@ -77,7 +77,10 @@ npm run init
 1. Installe les dépendances.
 2. Copie `api/env.example` vers `api/.env`.
 3. Copie `front/env.example` vers `front/.env`.
-4. Démarre PostgreSQL, pgvector et MongoDB.
+4. Démarre PostgreSQL, pgvector et MongoDB avec les fichiers Compose de
+   déploiement (`deployment/`) et leur surcouche locale
+   `local.compose.yml`. Si les clés Mistral sont renseignées, elle télécharge
+   aussi l'image du service IA depuis Docker Hub.
 5. Applique les migrations.
 
 Pour créer le premier compte administrateur, lancez ensuite
@@ -105,11 +108,20 @@ Les dépendances manquantes ou invalides sont réinstallées automatiquement.
 |                                                                                      Restaurer un dump placé dans `api/dumps/`                                                                                       |                                                                                                              `npm run init:data`                                                                                                               |
 |                                                                                         Charger les données de démonstration                                                                                         |                                                                                                              `npm run init:demo`                                                                                                               |
 |                                                                                            **Démarrer l'API et le front**                                                                                            |                                                                                                                 `npm run dev`                                                                                                                  |
-|                                                                                      Démarrer les bases sans les réinitialiser                                                                                       |                                                                                                `docker compose -f api/docker-compose.yml up -d`                                                                                                |
+|                                                                                      Démarrer les bases sans les réinitialiser                                                                                       |                                                                                                `npm run services:up`                                                                                                                           |
 |                                                                                           Sauvegarder les données locales                                                                                            |                                                                                                                 `npm run dump`                                                                                                                 |
 |                                                                                              Lancer les tests de l'API                                                                                               |                                                                                                                   `npm test`                                                                                                                   |
 
 ## Variables d'environnement
+
+> [!NOTE]
+> **Infisical, facultatif**
+>
+> Au premier `npm run init`, le script propose de lire les variables dans
+> **Infisical** à la place de `api/.env`. La CLI tourne dans le conteneur
+> `infisical/cli` : rien à installer. Répondre non reste le chemin par défaut
+> et ne demande aucun compte. Détails dans
+> [Variables d'environnement](docs/variables-environnement.md#infisical-facultatif).
 
 Le projet utilise deux fichiers en développement :
 
@@ -142,18 +154,11 @@ La page [Variables d'environnement](docs/variables-environnement.md) indique :
 
 ## Ajouter le service IA en local
 
-Placez les deux dépôts dans le même dossier :
-
-```text
-projets/
-├── lxp/
-└── ANDRIA-IA/
-```
-
-**Initialisez d'abord le LXP**, puis suivez le guide
-[Démarrer ANDRIA-IA en développement](docs/developpement-ia.md). Il explique où
-trouver les clés Mistral, quelles variables renseigner et comment contrôler le
-service.
+Le service IA est téléchargé depuis Docker Hub (`studiostep/lxp-ai`) : aucun
+dépôt à cloner ni image à construire. Renseignez les clés Mistral, puis relancez
+`npm run services:up`. Le guide
+[Démarrer le service IA en développement](docs/developpement-ia.md) détaille les
+variables et les contrôles.
 
 > [!NOTE]
 > **Fonctionner sans le service IA**
@@ -198,7 +203,7 @@ avant le premier lancement.
 ---
 
 <p align="center">
-  <strong>ANDRIA LXP</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; Développé par StudioFabrique
+  <strong>ANDRIA LXP</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; Développé par le studio de développement de Step
 </p>
 
 &nbsp;

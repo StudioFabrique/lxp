@@ -2,17 +2,11 @@ import { useCallback, useContext, useMemo, useState } from "react";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import { sortArray } from "../../../../../utils/helpers/sort-array";
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
-import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
-import UserQuickCreate from "../../../../../../src/components/user-quick-create/user-quick-create";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import { parcoursApi } from "../../../api/parcours.api";
-import { parcoursKeys } from "../../../api/parcours.keys";
-import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
+import { Link, useParams } from "react-router";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import { AuthContext } from "../../../../../store/AuthProvider";
-import { useRoleLabels } from "../../../../role/hooks/useRoleLabels";
 import { PlusCircle } from "lucide-react";
+import { createContactUrlFromParcours } from "../../../helpers/parcours-contact-creation";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -20,22 +14,15 @@ interface NotSelectedContactsProps {
   onCloseDrawer?: (id: string) => void;
 }
 
-type Teacher = {
-  firstname: string;
-  lastname: string;
-  email: string;
-  nickname?: string;
-  address?: string;
-  city?: string;
-  postCode?: string;
-  phoneNumber?: string;
-  invitationSent: boolean;
-};
-
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
-  const { teamLabel } = useRoleLabels();
+  const { id: parcoursId } = useParams();
   const { user } = useContext(AuthContext);
-  const canCreateTeacher = (user?.roles[0]?.rank ?? 4) < 2;
+  const canCreateTeacher =
+    (user?.roles[0]?.rank ?? 4) < 2 && parcoursId !== undefined;
+  // La création passe par la page de création d'utilisateur, comme pour les groupes.
+  const createContactUrl = parcoursId
+    ? createContactUrlFromParcours(parcoursId)
+    : undefined;
   const [selectedContactIds, setSelectedContactIds] = useState<Set<number>>(
     () => new Set(),
   );
@@ -56,35 +43,6 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   );
   const allChecked =
     list.length > 0 && list.every((contact) => contact.isSelected);
-  const queryClient = useQueryClient();
-
-  const { mutate: createTeacher } = useMutation({
-    mutationFn: (teacher: Teacher) =>
-      parcoursApi.mutations.createTeacher(teacher),
-    onSuccess: (data) => {
-      if (data.success) {
-        toast.success(data.message);
-        if (data.contact?.id !== undefined) {
-          setSelectedContactIds((previousIds) => {
-            const nextIds = new Set(previousIds);
-            nextIds.add(data.contact.id);
-            return nextIds;
-          });
-        }
-        queryClient.invalidateQueries({
-          queryKey: parcoursKeys.availableContacts(),
-        });
-      }
-    },
-    onError: (error) => {
-      // L'API refuse en 409 une adresse email déjà utilisée : ce motif était
-      // remplacé par un message générique qui ne disait pas quoi corriger.
-      toast.error(
-        getApiErrorMessage(error, "Erreur lors de la création du contact"),
-      );
-    },
-  });
-
   const handleAllChecked = useCallback(() => {
     setSelectedContactIds((previousIds) => {
       const nextIds = new Set(previousIds);
@@ -183,16 +141,6 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     }
   };
 
-  const handleCloseDrawer = (id: string) => {
-    console.log("click");
-
-    document.getElementById(id)?.click();
-  };
-
-  const submitNewTeacher = (teacher: Teacher) => {
-    createTeacher(teacher);
-  };
-
   return (
     <>
       {list && list.length > 0 ? (
@@ -200,12 +148,9 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           {table}
           <div className="w-full flex flex-wrap justify-between gap-2 mt-4">
             {canCreateTeacher ? (
-              <button
-                className="btn btn-accent"
-                onClick={() => handleCloseDrawer("new-contact")}
-              >
+              <Link className="btn btn-accent" to={createContactUrl!}>
                 Créer un contact
-              </button>
+              </Link>
             ) : (
               <span />
             )}
@@ -213,43 +158,17 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
               Ajouter
             </button>
           </div>
-          {canCreateTeacher ? (
-            <RightSideDrawer
-              id="new-contact"
-              title={`Ajouter un membre « ${teamLabel} »`}
-              visible={false}
-            >
-              <UserQuickCreate
-                onCloseDrawer={handleCloseDrawer}
-                onSubmitUser={submitNewTeacher}
-              />
-            </RightSideDrawer>
-          ) : null}
         </>
       ) : (
         <div className="flex flex-col gap-y-8">
           {canCreateTeacher ? (
-            <>
-              <button
-                className="btn btn-primary flex items-center"
-                onClick={() => {
-                  handleCloseDrawer("new-contact");
-                }}
-              >
-                <PlusCircle />
-                Créer un contact
-              </button>
-              <RightSideDrawer
-                id="new-contact"
-                title={`Ajouter un membre « ${teamLabel} »`}
-                visible={false}
-              >
-                <UserQuickCreate
-                  onCloseDrawer={handleCloseDrawer}
-                  onSubmitUser={submitNewTeacher}
-                />
-              </RightSideDrawer>
-            </>
+            <Link
+              className="btn btn-primary flex items-center"
+              to={createContactUrl!}
+            >
+              <PlusCircle aria-hidden="true" />
+              Créer un contact
+            </Link>
           ) : null}
         </div>
       )}

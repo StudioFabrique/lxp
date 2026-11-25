@@ -6,13 +6,13 @@ export type ChatbotEdgeOffset = { right: number; bottom: number };
 export type ChatbotBubbleSide = "left" | "right";
 
 export const CHATBOT_AVATAR_SIZE = 64;
-export const CHATBOT_BUBBLE_WIDTH = 300;
+export const CHATBOT_BUBBLE_WIDTH = 380;
 /** Place gardée pour l'assistant virtuel, sa marge et l'écart avec sa bulle quand la bulle se réduit sur un petit écran. */
 const BUBBLE_VIEWPORT_RESERVE = 128;
 /** Classe de la largeur de la bulle : celle de `chatbotBubbleWidth`, pour que le placement et l'affichage concordent. */
-export const CHATBOT_BUBBLE_WIDTH_CLASS = "w-[min(300px,calc(100vw-8rem))]";
+export const CHATBOT_BUBBLE_WIDTH_CLASS = "w-[min(380px,calc(100vw-8rem))]";
 
-/** La bulle fait 300 px, moins sur un écran étroit où elle doit tenir à côté de l'assistant virtuel. */
+/** La bulle fait 380 px, moins sur un écran étroit où elle doit tenir à côté de l'assistant virtuel. */
 export const chatbotBubbleWidth = (viewportWidth: number): number =>
   Math.min(CHATBOT_BUBBLE_WIDTH, viewportWidth - BUBBLE_VIEWPORT_RESERVE);
 /** Marge minimale entre l'assistant virtuel et le bord de l'écran. */

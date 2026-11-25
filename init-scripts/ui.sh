@@ -50,8 +50,13 @@ fail() {
   box "$c_red" "ÉCHEC  $1"
 }
 
-# Vrai si au moins un volume Docker du Compose lxp-api existe (sinon, rien à perdre).
+# Vrai si au moins un volume Docker du Compose local existe (sinon, rien à perdre).
 has_project_volumes() {
+  [ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-local 2> /dev/null)" ]
+}
+
+# Volumes de l'ancien Compose `api/docker-compose.yml` (projet lxp-api).
+has_legacy_volumes() {
   [ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-api 2> /dev/null)" ]
 }
 

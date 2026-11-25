@@ -48,6 +48,19 @@ describe("création d'un utilisateur depuis un groupe", () => {
     expect(createContact).not.toHaveBeenCalled();
   });
 
+  it.each([1, 3, 4])("rejette le rang %i depuis un parcours avant toute écriture", async (rank) => {
+    findRole.mockResolvedValue({ rank, label: "Autre rôle" });
+    await expect(createUser(user, "role-id", 0, { contactOnly: true })).rejects.toMatchObject({ statusCode: 400 });
+    expect(createMongoUser).not.toHaveBeenCalled();
+    expect(createContact).not.toHaveBeenCalled();
+  });
+
+  it("crée un contact depuis un parcours", async () => {
+    findRole.mockResolvedValue({ rank: 2, label: "Équipe pédagogique" });
+    await expect(createUser(user, "role-id", 1, { contactOnly: true })).resolves.toMatchObject({ role: 2 });
+    expect(createContact).toHaveBeenCalledTimes(1);
+  });
+
   it("crée un apprenant et sa référence SQL", async () => {
     findRole.mockResolvedValue({ rank: 3, label: "Apprenant personnalisé" });
     await expect(createUser(user, "role-id", 1, { studentOnly: true })).resolves.toMatchObject({ role: 3 });

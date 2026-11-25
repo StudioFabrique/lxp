@@ -36,7 +36,7 @@ export const mutations = {
   create: async (
     userData: Record<string, unknown>,
     file: File | null,
-    creationContext?: "group",
+    creationContext?: "group" | "parcours",
   ): Promise<{ message?: string; userId?: string }> => {
     const formData = new FormData();
     formData.append("data", JSON.stringify({ user: userData }));

@@ -1,11 +1,11 @@
 # Observabilité en développement local : VictoriaLogs + Vector.
 #
-#   npm run observability:dev        # démarre
+#   npm run observability:dev        # vérifie la configuration puis démarre
 #   npm run observability:dev:down   # arrête (les logs indexés sont conservés)
 #
 # Vector lit `api/logs`, que l'API écrit quand elle tourne sur la machine
-# (`npm run dev`). Dans `api/.env`, définir `OBSERVABILITY_URL=http://localhost:9428`
-# et `DEMO_MODE=false` : le mode démonstration coupe volontairement les journaux.
+# (`npm run dev`). Dans `api/.env`, définir `OBSERVABILITY_ENABLED=true`,
+# `OBSERVABILITY_URL=http://localhost:9428` et `DEMO_MODE=false` : le mode démonstration coupe volontairement les journaux.
 name: lxp-observability-dev
 
 services:

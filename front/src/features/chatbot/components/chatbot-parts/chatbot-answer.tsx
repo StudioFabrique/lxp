@@ -26,7 +26,7 @@ export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, o
           <X className="size-3.5" />
         </button>
       </div>
-      <div className={cn("mt-3 max-h-60 overflow-y-auto pr-1", canExpand && "pb-14", message.type === "error" && "text-error")}>
+      <div className={cn("mt-3 max-h-60 overflow-y-auto pr-1", canExpand && "pb-10", message.type === "error" && "text-error")}>
         <div className="prose prose-sm max-w-none text-inherit [&>:first-child]:mr-12 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
           <ChatbotMarkdown>{message.message}</ChatbotMarkdown>
         </div>
@@ -48,11 +48,11 @@ export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, o
       {canExpand && (
         <button
           type="button"
-          className="btn btn-primary absolute bottom-1 right-1 z-10 h-12 gap-2 rounded-full px-5 shadow-lg"
+          className="btn btn-primary btn-sm absolute bottom-1 right-1 z-10 gap-1.5 rounded-full px-3 shadow-md"
           onClick={onExpand}
           aria-label="Agrandir la réponse dans la fenêtre de conversation"
         >
-          <Maximize2 className="size-5" />
+          <Maximize2 className="size-4" aria-hidden="true" />
           Agrandir
         </button>
       )}

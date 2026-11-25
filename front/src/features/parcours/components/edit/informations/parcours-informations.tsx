@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import { toast } from "react-hot-toast";
 import { autoSaveToastId } from "../../../../../config/auto-submit-timer";
 
@@ -18,6 +19,8 @@ import { AuthContext } from "../../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 import AssignContactsToModulesModal from "./assign-contacts-to-modules-modal";
 import { useAssignModuleContacts } from "../../../hooks/useAssignModuleContacts";
+import { useParcoursContactsQuery } from "../../../hooks/useParcoursContactsQuery";
+import { CREATED_CONTACT_PARAM } from "../../../helpers/parcours-contact-creation";
 
 type Props = {
   parcoursId: string;
@@ -82,6 +85,43 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     },
     [parcours?.contacts, parcours?.modules, updateParcoursContacts],
   );
+
+  // Retour de la création d'un contact : il rejoint l'équipe du parcours sans autre geste.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const createdContactId = searchParams.get(CREATED_CONTACT_PARAM);
+  const { data: availableContacts } = useParcoursContactsQuery();
+  const handledCreatedContactRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!createdContactId || !parcours || readOnly) return;
+    if (handledCreatedContactRef.current === createdContactId) return;
+    // La liste des contacts se recharge après la création : on attend qu'il y figure.
+    const createdContact = availableContacts?.find(
+      ({ idMdb }) => idMdb === createdContactId,
+    );
+    if (!createdContact) return;
+    handledCreatedContactRef.current = createdContactId;
+    setSearchParams(
+      (currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
+        nextParams.delete(CREATED_CONTACT_PARAM);
+        return nextParams;
+      },
+      { replace: true },
+    );
+    const alreadyInTeam = parcours.contacts.some(
+      ({ id }) => id === createdContact.id,
+    );
+    if (!alreadyInTeam) {
+      void handleUpdateContacts([...parcours.contacts, createdContact]);
+    }
+  }, [
+    availableContacts,
+    createdContactId,
+    handleUpdateContacts,
+    parcours,
+    readOnly,
+    setSearchParams,
+  ]);
 
   const handleAssignContactsToModules = async (moduleIds: number[]) => {
     const contactIds = contactsToAssign.flatMap(({ id }) =>

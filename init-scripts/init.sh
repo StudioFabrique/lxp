@@ -8,6 +8,8 @@ demo_mode=false
 dump_dir="./dumps"
 
 . ./init-scripts/ui.sh
+. ./init-scripts/infisical.sh
+. ./init-scripts/compose.sh
 # Les scripts appelés ici n'affichent pas leur propre en-tête.
 export ANDRIA_INIT=1
 
@@ -177,6 +179,63 @@ development_mailer_needs_configuration() {
   return 1
 }
 
+# Le service IA a besoin des deux clés Mistral. Les valeurs saisies ne sont
+# jamais réaffichées. Un refus écrit DISABLE_AI_FEATURES=true : la question
+# n'est plus posée au prochain `npm run init`.
+configure_development_ai() {
+  file="$1"
+  [ -t 0 ] || return 0
+
+  while true; do
+    read -r -p "Souhaitez-vous activer le service IA (clés Mistral requises) ? [y/N] : " enable_ai
+    case "$enable_ai" in
+      o|O|oui|Oui|OUI|y|Y|yes|YES)
+        for key in MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY; do
+          ai_key=""
+          while [ -z "$ai_key" ]; do
+            read -r -s -p "$key : " ai_key
+            echo
+            [ -n "$ai_key" ] || warn "Une valeur est requise pour $key"
+          done
+          write_env_value "$key" "$ai_key" "$file"
+        done
+        write_env_value "DISABLE_AI_FEATURES" "false" "$file"
+        ok "Service IA activé"
+        info "L'image Docker Hub studiostep/lxp-ai est téléchargée au démarrage des conteneurs (docker login peut être requis)"
+        return
+        ;;
+      ""|n|N|non|Non|NON|no|NO)
+        write_env_value "DISABLE_AI_FEATURES" "true" "$file"
+        ok "Service IA désactivé (DISABLE_AI_FEATURES=true dans api/.env)"
+        return
+        ;;
+      *) warn "Réponse non reconnue, répondez par y ou n" ;;
+    esac
+  done
+}
+
+# api/.env existant : la question n'est posée que si l'IA n'a été ni
+# configurée ni refusée.
+development_ai_needs_configuration() {
+  file="$1"
+  [ "$(read_env_value "DISABLE_AI_FEATURES" "$file")" != "true" ] || return 1
+  [ -z "$(read_env_value "MISTRAL_STUDENT_API_KEY" "$file")" ] \
+    || [ -z "$(read_env_value "MISTRAL_CONTENT_API_KEY" "$file")" ]
+}
+
+# Avec Infisical, rien n'est saisi ni écrit : on indique seulement ce qui a été
+# reçu pour que l'absence du service IA ne soit pas silencieuse.
+report_infisical_ai() {
+  if [ "${DISABLE_AI_FEATURES:-false}" = "true" ]; then
+    info "Service IA désactivé par Infisical (DISABLE_AI_FEATURES=true)"
+  elif [ -n "${MISTRAL_STUDENT_API_KEY:-}" ] && [ -n "${MISTRAL_CONTENT_API_KEY:-}" ]; then
+    ok "Service IA activé : clés Mistral fournies par Infisical"
+  else
+    warn "Service IA non démarré : MISTRAL_STUDENT_API_KEY et MISTRAL_CONTENT_API_KEY sont absentes d'Infisical"
+    info "Ajoutez-les dans le dossier /runtime, ou définissez DISABLE_AI_FEATURES=true pour couper l'IA"
+  fi
+}
+
 configure_development_env() {
   file="$1"
   environment=$(read_env_value "ENVIRONMENT" "$file")
@@ -192,6 +251,41 @@ configure_development_env() {
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash (optionnel)" false "$file" true
   configure_development_mailer "$file"
   configure_development_password "$file"
+  step "Service IA"
+  configure_development_ai "$file"
+}
+
+# Infisical est facultatif : sans lui, les variables viennent de api/.env.
+# La question n'est posée qu'une fois, à la première configuration.
+configure_infisical() {
+  [ ! -f "./api/.env" ] && [ ! -f "$INFISICAL_LOCAL_CONFIG" ] && [ -t 0 ] || return 0
+
+  read -r -p "Utiliser Infisical pour les variables d'environnement ? [y/N] : " use_infisical
+  case "$use_infisical" in
+    o|O|oui|Oui|OUI|y|Y|yes|YES) ;;
+    *) return 0 ;;
+  esac
+
+  infisical_load_config
+  read -r -p "Identifiant du projet Infisical : " project_id
+  [ -n "$project_id" ] || { warn "Identifiant vide, Infisical ignoré"; return 0; }
+  read -r -p "Domaine Infisical [$INFISICAL_DOMAIN] : " entered_domain
+  read -r -p "Environnement [$INFISICAL_ENVIRONMENT] : " entered_environment
+  infisical_write_config "${entered_domain:-$INFISICAL_DOMAIN}" "$project_id" \
+    "${entered_environment:-$INFISICAL_ENVIRONMENT}" "$INFISICAL_SECRET_PATHS"
+  ok "Configuration enregistrée dans $INFISICAL_LOCAL_CONFIG (ignoré par Git)"
+
+  info "Téléchargement de la CLI Infisical (conteneur $INFISICAL_IMAGE)"
+  docker pull "$INFISICAL_IMAGE" > /dev/null || { fail "Image Infisical"; exit 1; }
+  if ! infisical_export_secrets > /dev/null 2>&1; then
+    info "Identifiants de Machine Identity requis (Universal Auth, pas de compte utilisateur)"
+    infisical_login || { rm -f "$INFISICAL_LOCAL_CONFIG"; fail "Authentification Infisical"; exit 1; }
+    infisical_export_secrets > /dev/null || { rm -f "$INFISICAL_LOCAL_CONFIG"; fail "Lecture des secrets Infisical"; exit 1; }
+  fi
+  ok "Secrets Infisical accessibles"
+  info "Rappel : l'accès passe par une Machine Identity (Universal Auth), pas par un compte utilisateur."
+  info "Identifiants : $INFISICAL_CREDENTIALS_FILE, ou variables INFISICAL_UNIVERSAL_AUTH_CLIENT_ID et INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET."
+  info "Documentation : README.md (encadré « Infisical, facultatif ») et deployment/README.md (« Préparer Infisical »)"
 }
 
 # --with-data et --demo restaurent dans des bases vides : sans nettoyage, le dump
@@ -252,9 +346,14 @@ install_dependencies "API" "api" --prefix api
 install_dependencies "frontend" "front" --prefix front
 
 step "Configuration de l'environnement"
-# If .env in api does not exist, copy .env.example to .env
+configure_infisical
 api_env_created=false
-if [ ! -f "./api/.env" ]; then
+if infisical_enabled; then
+  info "Variables fournies par Infisical (environnement $(infisical_load_config; echo "$INFISICAL_ENVIRONMENT")), api/.env non utilisé"
+  load_secrets || { fail "Chargement des secrets Infisical"; exit 1; }
+  step "Service IA"
+  report_infisical_ai
+elif [ ! -f "./api/.env" ]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
     fail "la création de api/.env en développement nécessite un terminal interactif."
     exit 1
@@ -263,58 +362,38 @@ if [ ! -f "./api/.env" ]; then
   api_env_created=true
   configure_development_env "./api/.env"
 fi
-if [ "$api_env_created" = false ] \
+if [ "$api_env_created" = false ] && [ -f "./api/.env" ] \
   && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
   && development_mailer_needs_configuration "./api/.env"; then
   step "Mailer de développement"
   configure_development_mailer "./api/.env"
   configure_development_password "./api/.env"
 fi
-cp ./front/env.example ./front/.env || { fail "Copie des variables d'environnement"; exit 1; }
-
-# Chargement des variables d'environnement (sélectif pour éviter les erreurs
-# de syntaxe sur des lignes comme MAILER_SMTP ou MAILER_FROM qui ne sont pas du bash).
-if [ -f "./api/.env" ]; then
-  POSTGRES_USER=$(grep '^POSTGRES_USER=' ./api/.env | cut -d'=' -f2)
-  POSTGRES_PASSWORD=$(grep '^POSTGRES_PASSWORD=' ./api/.env | cut -d'=' -f2)
-  POSTGRES_DB=$(grep '^POSTGRES_DB=' ./api/.env | cut -d'=' -f2)
-  MONGO_ADMIN_USERNAME=$(grep '^MONGO_ADMIN_USERNAME=' ./api/.env | cut -d'=' -f2)
-  MONGO_ADMIN_PASSWORD=$(grep '^MONGO_ADMIN_PASSWORD=' ./api/.env | cut -d'=' -f2)
+if [ "$api_env_created" = false ] && ! infisical_enabled && [ -f "./api/.env" ] \
+  && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
+  && development_ai_needs_configuration "./api/.env"; then
+  step "Service IA"
+  configure_development_ai "./api/.env"
 fi
+cp ./front/env.example ./front/.env || { fail "Copie des variables d'environnement"; exit 1; }
 
 # Prisma a besoin de DATABASE_URL, mais le développeur ne conserve que les
 # identifiants dans api/.env. La valeur n'existe que dans ce processus.
-database_build_urls localhost 5500 localhost 27000
+export_host_database_env
+
+if has_legacy_volumes; then
+  warn "Les volumes de l'ancien Compose (projet lxp-api) ne sont plus utilisés."
+  info "Pour les récupérer : $(cmd "npm run dump") avec l'ancienne version, puis $(cmd "docker volume rm lxp-api_pg2 lxp-api_pg_ai lxp-api_mongo2")"
+fi
+
+step_cmd "Conteneurs Docker"
+start_local_services || { fail "Démarrage des containers"; lxp_compose logs --tail=80; exit 1; }
 
 # Naviguer vers le repertoire api pour la suite
 cd api
 
-step_cmd "Conteneurs Docker"
-docker compose --progress plain up -d || { fail "Démarrage des containers"; exit 1; }
-
 step_cmd "Contrat Prisma"
 npx prisma contract emit || { fail "Émission du contrat Prisma"; exit 1; }
-
-step_cmd "Base de données PostgreSQL"
-# Utilisation de la variable POSTGRES_USER issue du .env (avec "postgres" comme fallback)
-tries=0
-max_tries=30
-until docker exec lxp-prisma pg_isready -U "${POSTGRES_USER:-postgres}" > /dev/null 2>&1; do
-  tries=$((tries + 1))
-  if ! docker inspect -f '{{.State.Running}}' lxp-prisma 2>/dev/null | grep -q true; then
-    fail "le conteneur PostgreSQL lxp-prisma n'est pas en cours d'exécution."
-    docker compose logs --tail=80 db-pg
-    exit 1
-  fi
-  if [ "$tries" -ge "$max_tries" ]; then
-    fail "PostgreSQL n'est pas prêt après $((max_tries * 2)) secondes."
-    docker compose logs --tail=80 db-pg
-    exit 1
-  fi
-  info "PostgreSQL n est pas encore prêt"
-  sleep 2
-done
-ok "PostgreSQL prêt"
 
 step_cmd "Migrations"
 npx prisma db migrate --to current || { fail "Migrations"; exit 1; }
@@ -328,9 +407,9 @@ if [ "$restore_data" = true ]; then
     # Prisma 7 exposait Course.dates comme une liste non nullable, mais sa DDL
     # PostgreSQL autorisait encore NULL. Prisma 8 aligne le stockage sur le type.
     # La restauration normalise ces anciennes lignes dans une transaction unique.
-    docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma \
+    lxp_compose exec -T -e PGPASSWORD="$POSTGRES_PASSWORD" db-pg \
       psql --single-transaction -v ON_ERROR_STOP=1 \
-      -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" \
+      -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
       -c 'ALTER TABLE public."Course" ALTER COLUMN "dates" DROP NOT NULL' \
       -f - \
       -c 'UPDATE public."Course" SET "dates" = ARRAY[]::jsonb[] WHERE "dates" IS NULL; ALTER TABLE public."Course" ALTER COLUMN "dates" SET NOT NULL' \
@@ -342,8 +421,8 @@ if [ "$restore_data" = true ]; then
   # Restauration MongoDB
   if [[ -d "$dump_dir/dump-mongo" ]]; then
     info "Injection du dump MongoDB"
-    docker cp "$dump_dir/dump-mongo" lxp-mongo:/dump-mongo || { fail "Copie du dump Mongo"; exit 1; }
-    docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { fail "Import MongoDB"; exit 1; }
+    lxp_compose cp "$dump_dir/dump-mongo" db-mongo:/dump-mongo || { fail "Copie du dump Mongo"; exit 1; }
+    lxp_compose exec -T db-mongo mongorestore --username "$MONGO_ADMIN_USERNAME" --password "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { fail "Import MongoDB"; exit 1; }
   else
     warn "Aucun dossier $dump_dir/dump-mongo, import MongoDB ignoré"
   fi
@@ -386,7 +465,7 @@ cd ..
 show_observability_hint() {
   [ "$demo_mode" = false ] || return 0
   info "Journaux (facultatif) : $(cmd "npm run observability:dev") à la racine du projet"
-  info "Puis dans api/.env : $(cmd "OBSERVABILITY_URL=http://localhost:9428") et $(cmd "DEMO_MODE=false")"
+  info "Puis dans api/.env : $(cmd "OBSERVABILITY_ENABLED=true"), $(cmd "OBSERVABILITY_URL=http://localhost:9428") et $(cmd "DEMO_MODE=false")"
   info "Arrêt : $(cmd "npm run observability:dev:down")"
 }
 
