@@ -14,6 +14,7 @@ import ParcoursSection from "../components/edit/parcours-section";
 import ParcoursStepContent from "../components/edit/parcours-step-content";
 import ParcoursStudents from "../components/edit/students/parcours-students.component";
 import ParcoursPreview from "../components/edit/preview/parcours-preview.component";
+import PublishParcoursModal from "../components/edit/preview/PublishParcoursModal";
 import ImportSkills from "../components/edit/skills/import-skills.component";
 import SkillsList from "../components/edit/skills/skills-list.component";
 import Error404 from "../../../components/error404";
@@ -43,6 +44,7 @@ const EditParcours = () => {
   const navigate = useNavigate();
   const { validateParcours } = useValidateParcours();
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublishModalOpen, setPublishModalOpen] = useState(false);
   // Emplacement, à droite du titre, où les étapes 4 et 5 placent leur barre d'actions.
   const [titleActionsTarget, setTitleActionsTarget] =
     useState<HTMLDivElement | null>(null);
@@ -90,7 +92,8 @@ const EditParcours = () => {
           6: "Groupe d'apprenants",
           7: "Aperçu général",
         }[actualStep.id] ?? actualStep.label);
-  const handlePublishParcours = async () => {
+  // Le parcours est validé avant la confirmation : la modale ne s'ouvre que si la publication est possible.
+  const handleRequestPublish = () => {
     if (!id || isPublishing) return;
 
     // Une erreur de validation précédente est périmée dès qu'on relance la publication.
@@ -100,6 +103,11 @@ const EditParcours = () => {
       showParcoursValidationToast(validationErrors, updateStep);
       return;
     }
+    setPublishModalOpen(true);
+  };
+
+  const handlePublishParcours = async () => {
+    if (!id || isPublishing) return;
 
     setIsPublishing(true);
     try {
@@ -121,6 +129,7 @@ const EditParcours = () => {
       toast.error("Erreur lors de la publication");
     } finally {
       setIsPublishing(false);
+      setPublishModalOpen(false);
     }
   };
 
@@ -232,7 +241,7 @@ const EditParcours = () => {
                         <button
                           className="btn btn-primary max-md:btn-square"
                           data-chatbot-target="parcours-publish"
-                          onClick={handlePublishParcours}
+                          onClick={handleRequestPublish}
                           disabled={isPublishing}
                         >
                           <Send className="size-4" aria-hidden="true" />
@@ -252,6 +261,14 @@ const EditParcours = () => {
                 />
               ) : null}
             </ParcoursStepContent>
+            {isPublishModalOpen ? (
+              <PublishParcoursModal
+                isSubmitting={isPublishing}
+                hasNoVisibleCourse={!hasVisibleCourse(modules)}
+                onConfirm={() => void handlePublishParcours()}
+                onCancel={() => setPublishModalOpen(false)}
+              />
+            ) : null}
           </div>
         </FadeWrapper>
       ) : (
