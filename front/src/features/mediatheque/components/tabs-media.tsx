@@ -27,7 +27,7 @@ const extendedOptions = [
   { value: "name", label: "Nom du fichier" },
 ];
 
-function TabsMedia({ children, list, type, setType, setSort }: Props) {
+function TabsMedia({ children, list, type, setType, setSort }: Readonly<Props>) {
   // Message affiché quand aucun fichier n'est trouvé
   const empty = <ElementNotFound message="Aucun fichier trouvé" />;
 

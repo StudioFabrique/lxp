@@ -1,9 +1,8 @@
 import { Editor, useEditorState } from "@tiptap/react";
 import { useCallback } from "react";
-import { Editor as CoreEditor } from "@tiptap/core";
+import { Editor as CoreEditor, isTextSelection } from "@tiptap/core";
 import { EditorState } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
-import { isTextSelection } from "@tiptap/core";
 import HorizontalRule from "../../extensions/HorizontalRule/HorizontalRule";
 import Link from "../../extensions/Link/Link";
 
@@ -65,13 +64,9 @@ const isTableGripSelected = (node: HTMLElement) => {
   }
 
   const gripColumn =
-    container &&
-    container.querySelector &&
-    container.querySelector("a.grip-column.selected");
+    container?.querySelector?.("a.grip-column.selected");
   const gripRow =
-    container &&
-    container.querySelector &&
-    container.querySelector("a.grip-row.selected");
+    container?.querySelector?.("a.grip-row.selected");
 
   if (gripColumn || gripRow) {
     return true;

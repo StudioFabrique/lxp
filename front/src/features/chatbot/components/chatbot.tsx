@@ -13,7 +13,7 @@ type Props = {
   enableQuizSuggestion?: boolean;
 };
 
-export default function Chatbot({ enableQuizSuggestion = false }: Props) {
+export default function Chatbot({ enableQuizSuggestion = false }: Readonly<Props>) {
   const { forceHideChatbot } = useContext(ChatbotContext);
   // Sans IA, l'assistant virtuel reste là pour guider dans l'interface : ni historique, ni question, ni quiz.
   const { aiDisabled } = useDemoMode();

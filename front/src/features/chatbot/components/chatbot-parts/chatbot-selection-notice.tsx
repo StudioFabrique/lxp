@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 type Props = { textSelection: string; onDismiss: () => void };
 
 /** Passage sélectionné dans l'activité, joint à la prochaine question tant qu'il n'est pas retiré. */
-export default function ChatbotSelectionNotice({ textSelection, onDismiss }: Props) {
+export default function ChatbotSelectionNotice({ textSelection, onDismiss }: Readonly<Props>) {
   return (
     <div className="relative flex flex-col gap-1 text-sm text-base-content">
       <button type="button" className="btn btn-ghost btn-circle absolute -right-2 -top-2 size-6 min-h-0 p-0" onClick={onDismiss} aria-label="Retirer le passage sélectionné">

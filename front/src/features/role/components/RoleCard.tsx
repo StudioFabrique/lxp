@@ -46,7 +46,7 @@ export default function RoleCard({
   onDelete,
   onViewUsers,
   onOpenPermissions,
-}: RoleCardProps) {
+}: Readonly<RoleCardProps>) {
   const { getRoleLabel } = useRoleLabels();
   const RoleIcon = roleModelIcons[role.rank] ?? ShieldCheck;
   const summaries: PermissionSummary[] = [

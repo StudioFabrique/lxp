@@ -29,7 +29,7 @@ export default function CourseContentTagCombobox({
   value,
   onChange,
   disabled = false,
-}: Props) {
+}: Readonly<Props>) {
   const listboxId = useId();
   const anchorRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");

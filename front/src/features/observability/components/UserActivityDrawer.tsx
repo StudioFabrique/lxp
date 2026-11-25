@@ -22,7 +22,7 @@ type Props = {
  * Tiroir latéral des dernières actions d'une personne : l'en-tête et la synthèse
  * restent visibles, seule la liste défile.
  */
-export default function UserActivityDrawer({ user, range, onClose }: Props) {
+export default function UserActivityDrawer({ user, range, onClose }: Readonly<Props>) {
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: observabilityKeys.userActivity(user.id, range),
     queryFn: () => observabilityApi.queries.getUserActivity(user.id, range),

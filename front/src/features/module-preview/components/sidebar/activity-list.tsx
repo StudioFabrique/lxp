@@ -43,7 +43,7 @@ export default function ActivityList({
   onClickCreateActivity,
   isReorderingActivities,
   onReorderingActivitiesChange,
-}: ActivityListProps) {
+}: Readonly<ActivityListProps>) {
   const ability = useContext(AbilityContext);
   const [localIsReordering, setLocalIsReordering] = useState(false);
   const isReordering = isReorderingActivities ?? localIsReordering;
@@ -67,14 +67,14 @@ export default function ActivityList({
       <div
         className={cn(
           "flex items-center gap-1 w-full select-none px-4 transition-all mt-2",
-          activities && activities.length === 0 ? "flex-row flex-wrap justify-center" : "flex-col",
+          activities?.length === 0 ? "flex-row flex-wrap justify-center" : "flex-col",
         )}
       >
         <div
           className={cn(
             "mb-1 flex items-center justify-between pb-1 mt-2 text-xs font-semibold text-base-content/60",
             // Sans activité, le libellé et le bouton partagent la ligne et passent à la suivante si la place manque.
-            activities && activities.length === 0 ? "w-auto" : "w-full",
+            activities?.length === 0 ? "w-auto" : "w-full",
           )}
         >
           {isLoading ? (
@@ -111,10 +111,10 @@ export default function ActivityList({
           )}
         </div>
         {isLoading ? (
-          <div role="status" aria-label="Chargement des activités" className="w-full space-y-2">
+          <output aria-label="Chargement des activités" className="block w-full space-y-2">
             <span className="sr-only">Chargement des activités…</span>
             {[0, 1, 2].map((item) => <div key={item} className="skeleton h-8 w-full" aria-hidden="true" />)}
-          </div>
+          </output>
         ) : activities && activities.length > 0 ? (
           activities.map((activity, index) => (
             <ActivityItem
@@ -136,7 +136,7 @@ export default function ActivityList({
             <button
               className={cn(
                 "btn btn-primary opacity-70 btn-xs gap-1",
-                activities && activities.length === 0 ? "mt-0" : "mt-2",
+                activities?.length === 0 ? "mt-0" : "mt-2",
               )}
               disabled={newActivityButtonDisabled}
               data-chatbot-target="module-add-activity"

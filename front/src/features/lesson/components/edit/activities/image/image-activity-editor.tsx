@@ -26,7 +26,7 @@ export default function ImageActivityEditor({
   onSubmit = undefined,
   parentId,
   onSaved,
-}: Props) {
+}: Readonly<Props>) {
   const {
     watch,
     errors,

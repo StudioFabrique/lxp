@@ -7,7 +7,7 @@ type Props = {
   media: Media;
 };
 
-function ImageCard({ media }: Props) {
+function ImageCard({ media }: Readonly<Props>) {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(ACTIVITIES + "images/" + media.url),
 

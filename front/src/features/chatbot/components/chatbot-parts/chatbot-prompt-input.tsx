@@ -18,7 +18,7 @@ const historyButtonClassName =
   "btn btn-circle group z-10 size-8 min-h-0 border-base-300 bg-base-100 p-0 shadow-md transition-all duration-200 hover:scale-110 hover:border-secondary hover:bg-secondary hover:text-secondary-content hover:shadow-lg focus-visible:scale-110 focus-visible:border-secondary focus-visible:bg-secondary focus-visible:text-secondary-content";
 
 /** Question libre de l'éventail : une seule ligne, validée comme les autres formulaires avant tout appel à l'IA. */
-export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disabled = false, autoFocus = true }: Props) {
+export default function ChatbotPromptInput({ onSubmitPrompt, onOpenHistory, disabled = false, autoFocus = true }: Readonly<Props>) {
   const inputId = useId();
   const errorId = useId();
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ChatbotPromptValues>({

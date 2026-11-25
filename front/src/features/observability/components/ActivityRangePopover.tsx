@@ -36,7 +36,7 @@ const defaultValues = (value: ActivityRange): CustomRangeValues => {
  * Bouton calendrier à droite des périodes : ouvre un popover pour cibler un
  * intervalle de jours précis. Le formulaire est validé par Zod avant l'appel.
  */
-export default function ActivityRangePopover({ value, onApply }: Props) {
+export default function ActivityRangePopover({ value, onApply }: Readonly<Props>) {
   const [open, setOpen] = useState(false);
   const errorId = useId();
   const isActive = value.kind === "custom";

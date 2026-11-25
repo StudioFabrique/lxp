@@ -20,6 +20,8 @@
     "observability:dev:down": "docker compose -f deployment/observability/dev.compose.yml down",
     "clean": "./init-scripts/clean-project-data.sh",
     "dump": "./init-scripts/dump-data.sh",
+    "sonar:report": "node init-scripts/sonar-agents.mjs --report",
+    "sonar:fix": "node init-scripts/sonar-agents.mjs",
     "demo:seed": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/demo-seed.js; else ./init-scripts/with-env.sh npm run demo:seed --prefix api; fi",
     "generate-activation-key": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/generate-activation-key.js; else ./init-scripts/with-env.sh npm run generate-activation-key --prefix api; fi",
     "send-root-invitation": "node api/dist/src/scripts/send-root-invitation.js"

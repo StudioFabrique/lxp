@@ -17,7 +17,7 @@ const labelFor = <T extends string>(
   value: T | null | undefined,
 ) => options.find((option) => option.value === value)?.label ?? "Non renseigné";
 
-export default function DeclaredLearningProfile({ data }: { data: DeclaredProfile }) {
+export default function DeclaredLearningProfile({ data }: Readonly<{ data: DeclaredProfile }>) {
   return (
     <BoxWrapper>
       <section className="space-y-5" aria-labelledby="declared-profile-title">

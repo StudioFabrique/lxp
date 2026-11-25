@@ -6,7 +6,7 @@ type props = {
   onFileChange: (file: File) => void;
 };
 
-function ResourceForm({ value, onChange, onFileChange }: props) {
+function ResourceForm({ value, onChange, onFileChange }: Readonly<props>) {
   return (
     <span className="h-full flex flex-col gap-y-2">
       <h2 className="text-lg font-bold">Ressources</h2>

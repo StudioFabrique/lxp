@@ -69,7 +69,7 @@ export default function ModuleContentToolbar({
   onToggleCourseVisibility,
   onCloseContent,
   onOpenCompletionBadge,
-}: ModuleContentToolbarProps) {
+}: Readonly<ModuleContentToolbarProps>) {
   const [pendingVisibility, setPendingVisibility] = useState<boolean | null>(null);
   const mobileActions = useMobileHeaderActions();
   const isMobile = useIsMobile();

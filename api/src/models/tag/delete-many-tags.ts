@@ -6,7 +6,7 @@ export default async function deleteManyTags(
   tagsIds: string[],
   actor: TagActor,
 ) {
-  const numericTagIds = [...new Set(tagsIds.map((id) => parseInt(id, 10)))];
+  const numericTagIds = [...new Set(tagsIds.map((id) => Number.parseInt(id, 10)))];
   const tags = await prisma.orm.public.Tag.where((row) =>
     row.id.in(numericTagIds),
   )

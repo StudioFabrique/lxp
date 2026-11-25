@@ -17,7 +17,7 @@ export default function VirtualClass({
   value,
   onSave,
   disabled = false,
-}: VirtualClassProps) {
+}: Readonly<VirtualClassProps>) {
   const id = useId();
   const form = useForm({
     resolver: zodResolver(schema),

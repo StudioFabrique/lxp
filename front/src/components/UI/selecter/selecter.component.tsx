@@ -28,7 +28,7 @@ const Selecter: FC<Props> = ({
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
-    const id = parseInt(event.currentTarget.value);
+    const id = Number.parseInt(event.currentTarget.value);
     if (id > 0) {
       setListItem(id);
       onSelectItem(id);

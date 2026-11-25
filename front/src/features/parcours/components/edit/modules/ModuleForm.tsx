@@ -36,7 +36,7 @@ export default function ModuleForm({
   onSetFile,
   onSubmit,
   onCancel,
-}: ModuleFormProps) {
+}: Readonly<ModuleFormProps>) {
   const [temporaryImage, setTemporaryImage] = useState<TemporaryImage>({
     file: null,
     url: null,

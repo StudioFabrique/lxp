@@ -81,7 +81,7 @@ const ModuleContent = () => {
   const calendar = useModuleCalendar(state.module, isCalendarView);
 
   const isModuleLoaded = Boolean(
-    state.module && state.module.id && state.module.courses.length > 0,
+    state.module?.id && state.module.courses.length > 0,
   );
   const canEditModule =
     ability.can("update", "module") ||
@@ -269,7 +269,7 @@ const ModuleContent = () => {
         />
       ) : null}
 
-      {state.module && state.module?.parcoursId && state.module.id ? (
+      {state.module?.parcoursId && state.module.id ? (
         <ModuleContentLayout
           header={<ModuleContentHeader moduleData={state.module} />}
           toolbar={

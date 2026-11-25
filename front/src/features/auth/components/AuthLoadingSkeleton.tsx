@@ -9,7 +9,7 @@ export default function AuthLoadingSkeleton() {
     return <div className="flex min-h-dvh bg-base-100"><AuthIntroLoading /></div>;
   }
   return (
-    <div role="status" aria-label="Chargement de la connexion" className="grid min-h-dvh grid-cols-1 bg-base-100 py-12 lg:grid-cols-2">
+    <output aria-label="Chargement de la connexion" className="grid min-h-dvh grid-cols-1 bg-base-100 py-12 lg:grid-cols-2">
       <span className="sr-only">Chargement de la connexion…</span>
       <div className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center px-8">
         <div className="mx-auto flex h-full w-full max-w-100 flex-col items-center">
@@ -29,6 +29,6 @@ export default function AuthLoadingSkeleton() {
       <div className="hidden min-h-[calc(100vh-6rem)] grid-cols-3 grid-rows-3 gap-2 overflow-hidden lg:grid">
         {Array.from({ length: 9 }, (_, index) => <div key={index} className="skeleton rounded-xl" />)}
       </div>
-    </div>
+    </output>
   );
 }

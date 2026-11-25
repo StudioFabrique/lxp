@@ -1,4 +1,9 @@
-import { createContext, useState, type PropsWithChildren } from "react";
+import {
+  createContext,
+  useMemo,
+  useState,
+  type PropsWithChildren,
+} from "react";
 
 /** Titre qu'une page demande d'afficher dans la barre mobile à la place du nom de sa section. */
 export type TopBarTitle = { text: string; className?: string };
@@ -36,23 +41,26 @@ export function MobileHeaderActionsProvider({ children }: PropsWithChildren) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [navigationContainer, setNavigationContainer] = useState<HTMLElement | null>(null);
 
+  const contextValue = useMemo(
+    () => ({
+      container,
+      setContainer,
+      headerContainer,
+      setHeaderContainer,
+      topBarTitle,
+      setTopBarTitle,
+      navigation,
+      setNavigation,
+      isNavigationOpen,
+      setIsNavigationOpen,
+      navigationContainer,
+      setNavigationContainer,
+    }),
+    [container, setContainer, headerContainer, setHeaderContainer, topBarTitle, setTopBarTitle, navigation, setNavigation, isNavigationOpen, setIsNavigationOpen, navigationContainer, setNavigationContainer],
+  );
+
   return (
-    <MobileHeaderActionsContext
-      value={{
-        container,
-        setContainer,
-        headerContainer,
-        setHeaderContainer,
-        topBarTitle,
-        setTopBarTitle,
-        navigation,
-        setNavigation,
-        isNavigationOpen,
-        setIsNavigationOpen,
-        navigationContainer,
-        setNavigationContainer,
-      }}
-    >
+    <MobileHeaderActionsContext value={contextValue}>
       {children}
     </MobileHeaderActionsContext>
   );

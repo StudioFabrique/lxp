@@ -17,10 +17,10 @@ export const createContactUrlFromParcours = (parcoursId: number | string) => {
 
 /** Ne conserve qu'un retour interne vers l'édition d'un parcours (évite une redirection ouverte). */
 export const getSafeParcoursReturnPath = (returnTo: string | null) => {
-  if (!returnTo || !returnTo.startsWith("/")) return null;
+  if (!returnTo?.startsWith("/")) return null;
 
-  const url = new URL(returnTo, "http://lxp.local");
-  if (url.origin !== "http://lxp.local" || !PARCOURS_EDIT_PATH.test(url.pathname)) {
+  const url = new URL(returnTo, "https://lxp.local");
+  if (url.origin !== "https://lxp.local" || !PARCOURS_EDIT_PATH.test(url.pathname)) {
     return null;
   }
   return `${url.pathname}${url.search}`;
@@ -34,7 +34,7 @@ export const addCreatedContactToReturnPath = (
   returnTo: string,
   userId: string,
 ) => {
-  const url = new URL(returnTo, "http://lxp.local");
+  const url = new URL(returnTo, "https://lxp.local");
   url.searchParams.set(CREATED_CONTACT_PARAM, userId);
   return `${url.pathname}?${url.searchParams.toString()}`;
 };

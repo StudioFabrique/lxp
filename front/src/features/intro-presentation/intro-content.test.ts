@@ -110,10 +110,10 @@ describe("buildIntroCards", () => {
     });
 
     expect(cards[1].title).toBe("Réceptionniste en hôtellerie");
-    expect(cards[2].title).toBe("Promotion réceptionniste 2026 - 2027");
+    expect(cards[2].title).toBe("Promo réceptionniste 2026 - 2027");
     // Les lignes d'une carte sont les éléments du niveau suivant.
     expect(cards[1].rows.map((row) => row.title).slice(0, 2)).toEqual([
-      "Promotion réceptionniste 2026 - 2027",
+      "Promo réceptionniste 2026 - 2027",
       "Autre",
     ]);
   });

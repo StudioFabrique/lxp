@@ -8,7 +8,7 @@ async function putVirtualClass(
   userId: string,
 ) {
   const admin = await getAdmin(userId);
-  const id = parseInt(parcoursId);
+  const id = Number.parseInt(parcoursId);
 
   const response = await prisma.orm.public.Parcours.where({
     id,

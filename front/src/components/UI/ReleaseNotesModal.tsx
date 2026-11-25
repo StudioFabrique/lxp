@@ -44,11 +44,15 @@ export default function ReleaseNotesModal({ onClose }: Props) {
   const [selectedVersion, setSelectedVersion] = useState(currentRelease.version);
   const selectedRelease =
     releaseNotes.find(({ version }) => version === selectedVersion) ?? currentRelease;
-  const githubUrl = selectedRelease.branch
-    ? `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.branch}`
-    : selectedRelease.commit
-      ? `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.commit}`
-      : "https://github.com/StudioFabrique/lxp";
+  let githubUrl = "https://github.com/StudioFabrique/lxp";
+  let githubAriaLabel = "Voir le dépôt GitHub d’ANDRIA (nouvel onglet)";
+  if (selectedRelease.branch) {
+    githubUrl = `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.branch}`;
+    githubAriaLabel = `Voir la branche ${selectedRelease.branch} sur GitHub (nouvel onglet)`;
+  } else if (selectedRelease.commit) {
+    githubUrl = `https://github.com/StudioFabrique/lxp/tree/${selectedRelease.commit}`;
+    githubAriaLabel = `Voir le code associé à la version ${selectedRelease.version} sur GitHub (nouvel onglet)`;
+  }
 
   useEffect(() => {
     const previousFocus = document.activeElement as HTMLElement | null;
@@ -107,13 +111,7 @@ export default function ReleaseNotesModal({ onClose }: Props) {
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={
-              selectedRelease.branch
-                ? `Voir la branche ${selectedRelease.branch} sur GitHub (nouvel onglet)`
-                : selectedRelease.commit
-                  ? `Voir le code associé à la version ${selectedRelease.version} sur GitHub (nouvel onglet)`
-                  : "Voir le dépôt GitHub d’ANDRIA (nouvel onglet)"
-            }
+            aria-label={githubAriaLabel}
             className="group block cursor-pointer rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <BoxWrapper className="relative h-auto gap-2 overflow-hidden border-primary bg-transparent p-6 text-primary-content transition-colors group-hover:border-primary-content/40">

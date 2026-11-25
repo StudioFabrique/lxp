@@ -25,14 +25,14 @@ export default function DropoutPreferencesForm({
   onBack,
   completeOnboarding = true,
   footerContainer,
-}: {
+}: Readonly<{
   initial: DropoutPreferences;
   onSaved: () => void;
   submitLabel?: string;
   onBack?: () => void;
   completeOnboarding?: boolean;
   footerContainer?: HTMLElement | null;
-}) {
+}>) {
   const formId = useId();
   const isPresent = useIsPresent();
   const groups = useQuery({

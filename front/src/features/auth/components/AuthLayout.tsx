@@ -169,12 +169,12 @@ const AuthLayout = ({ children, setupStyle = false }: PropsWithChildren<{ setupS
               transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : 0.15 }}
             >
               {pathname === "/login" && (isLoading || isLoggedIn) && (
-                <div className="absolute inset-0 z-20 flex items-start justify-center bg-base-100/90 pt-36" role="status" aria-live="polite">
+                <output className="absolute inset-0 z-20 flex items-start justify-center bg-base-100/90 pt-36" aria-live="polite">
                   <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-base-content">
                     <LoaderCircle className="size-5 animate-spin text-primary" aria-hidden="true" />
                     <span className="font-medium">Connexion en cours…</span>
                   </div>
-                </div>
+                </output>
               )}
               <AuthHeaderActionContext value={headerActionHost}>
                 <AuthIntroContext value={updateIntroActive}>

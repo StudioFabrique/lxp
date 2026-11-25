@@ -129,7 +129,7 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
   const changeDates = async (id: number | string, start: Date, end: Date) => {
     const [courseId, index] = String(id).split(":").map(Number);
     const dates = datesByCourse.get(courseId);
-    if (!dates || !dates[index] || calendarDay(start) > calendarDay(end)) return;
+    if (!dates?.[index] || calendarDay(start) > calendarDay(end)) return;
     await saveDates(courseId, dates.map((date, i) => i === index ? {
       ...date, minDate: calendarDateISO(start), maxDate: calendarDateISO(end),
     } : date));

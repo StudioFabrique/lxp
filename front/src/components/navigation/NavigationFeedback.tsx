@@ -11,7 +11,7 @@ type Phase = "idle" | "loading" | "complete";
  * the same feedback, including lazy route downloads and route loaders. Capture
  * the source before React handles the event (also works with stopPropagation).
  */
-export default function NavigationFeedback({ router }: { router: NavigationRouter }) {
+export default function NavigationFeedback({ router }: Readonly<{ router: NavigationRouter }>) {
   const { animations } = useVisualPreferences();
   const [phase, setPhase] = useState<Phase>("idle");
   const [showMessage, setShowMessage] = useState(false);
@@ -27,12 +27,12 @@ export default function NavigationFeedback({ router }: { router: NavigationRoute
 
     const clearSource = () => {
       if (!source) return;
-      source.removeAttribute("data-navigation-pending");
-      source.removeAttribute("data-navigation-static");
+      delete source.dataset.navigationPending;
+      delete source.dataset.navigationStatic;
       if (originalBusy === null) source.removeAttribute("aria-busy");
       else source.setAttribute("aria-busy", originalBusy);
-      if (originalPosition === null) source.removeAttribute("data-navigation-position");
-      else source.setAttribute("data-navigation-position", originalPosition);
+      if (originalPosition === null) delete source.dataset.navigationPosition;
+      else source.dataset.navigationPosition = originalPosition;
       source = null;
     };
 
@@ -68,13 +68,13 @@ export default function NavigationFeedback({ router }: { router: NavigationRoute
           candidate = null;
           if (source) {
             originalBusy = source.getAttribute("aria-busy");
-            originalPosition = source.getAttribute("data-navigation-position");
+            originalPosition = source.dataset.navigationPosition ?? null;
             if (getComputedStyle(source).position === "static") {
-              source.setAttribute("data-navigation-position", "relative");
+              source.dataset.navigationPosition = "relative";
             }
             source.setAttribute("aria-busy", "true");
-            source.setAttribute("data-navigation-pending", "true");
-            if (!animations) source.setAttribute("data-navigation-static", "true");
+            source.dataset.navigationPending = "true";
+            if (!animations) source.dataset.navigationStatic = "true";
           }
         }
         if (!pending) {

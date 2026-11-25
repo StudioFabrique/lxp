@@ -43,7 +43,7 @@ export default function ModuleCard({
   lockedContactId,
   onRemoveContact,
   onRemoveSkill,
-}: ModuleCardProps) {
+}: Readonly<ModuleCardProps>) {
   const { teamLabel } = useRoleLabels();
   const missingRequirements = getMissingModuleRequirements(
     {

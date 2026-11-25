@@ -56,12 +56,14 @@ describe("InstancePictureUpload", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    const colorInput = container.querySelector<HTMLInputElement>(
-      'input[type="color"]',
+    // La couleur est affichée sur le déclencheur du sélecteur (popover fermé par défaut).
+    const colorTrigger = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Couleur de fond du logo"]',
     );
-    expect(colorInput?.value).toBe("#a855f7");
+    expect(colorTrigger?.textContent).toBe("#A855F7");
 
-    const blueButton = container.querySelector<HTMLButtonElement>(
+    await act(async () => colorTrigger?.click());
+    const blueButton = document.body.querySelector<HTMLButtonElement>(
       'button[title="Blue"]',
     );
 
@@ -100,8 +102,9 @@ describe("InstancePictureUpload", () => {
 
     expect(apiClient.delete).toHaveBeenCalledWith("/instance-logo");
     expect(
-      container.querySelector<HTMLInputElement>('input[type="color"]')?.value,
-    ).toBe("#ffffff");
+      container.querySelector('button[aria-label="Couleur de fond du logo"]')
+        ?.textContent,
+    ).toBe("#FFFFFF");
     expect(
       container.querySelector('button[aria-label="Supprimer le logo"]'),
     ).toBeNull();

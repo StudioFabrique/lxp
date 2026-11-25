@@ -1,5 +1,4 @@
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
-import Role from "../../utils/interfaces/db/role.ts";
 import { sendUpdatedUserEmail } from "../../services/mailer.ts";
 import { logger } from "../../utils/logs/logger.ts";
 import {

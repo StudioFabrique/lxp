@@ -49,7 +49,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
 
     try {
       onValidate(value);
-      onAddItem(value);
+      void onAddItem(value);
       setValue("");
       setError("");
       setIsLoading(false);
@@ -65,7 +65,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
   };
 
   const handleClickDelete = (item: Item) => {
-    onDelete(item);
+    void onDelete(item);
   };
 
   return (

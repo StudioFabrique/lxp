@@ -26,7 +26,7 @@ type Props = {
   onCancel: () => void;
 };
 
-function ResourceUpdate({ resource, onSubmit, onCancel }: Props) {
+function ResourceUpdate({ resource, onSubmit, onCancel }: Readonly<Props>) {
   const {
     register,
     handleSubmit: rhfHandleSubmit,

@@ -12,12 +12,12 @@ export function StudentAnalysis({
   editing,
   disabled,
   onToggle,
-}: {
+}: Readonly<{
   student: DropoutStudent;
   editing: boolean;
   disabled: boolean;
   onToggle: () => void;
-}) {
+}>) {
   const indicators = student.indicators;
   const passRate =
     indicators?.pass_rate == null ? null : indicators.pass_rate * 100;

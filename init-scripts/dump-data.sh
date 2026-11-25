@@ -41,7 +41,7 @@ ok "Dump MongoDB réussi"
 
 # SAUVEGARDE DES FICHIERS D'ACTIVITÉS
 step "Fichiers d'activités"
-if [ -d "./api/uploads/activities" ]; then
+if [[ -d "./api/uploads/activities" ]]; then
   rm -rf ./api/dumps/activities
   cp -R ./api/uploads/activities ./api/dumps/ || { fail "Dump activités"; exit 1; }
   ok "Dump activités réussi"

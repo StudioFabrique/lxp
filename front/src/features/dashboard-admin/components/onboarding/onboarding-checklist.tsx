@@ -28,7 +28,7 @@ export default function OnboardingChecklist({
   onCreateFormation,
   onCreateParcours,
   onSkip,
-}: Props) {
+}: Readonly<Props>) {
   const [isExpanded, setIsExpanded] = useState(false);
   const listId = useId();
   const requiredSteps = steps.filter((step) => !step.isOptional);

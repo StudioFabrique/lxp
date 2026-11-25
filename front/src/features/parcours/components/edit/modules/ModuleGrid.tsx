@@ -55,7 +55,7 @@ export default function ModuleGrid({
   onAssignSkills,
   onRemoveContact,
   onRemoveSkill,
-}: ModuleGridProps) {
+}: Readonly<ModuleGridProps>) {
   const [moduleForContacts, setModuleForContacts] = useState<ModuleData | null>(
     null,
   );
@@ -73,8 +73,7 @@ export default function ModuleGrid({
 
   if (isLoading && modules.length === 0) {
     return (
-      <section
-        role="status"
+      <output
         aria-label="Chargement des modules associés"
         className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
       >
@@ -94,7 +93,7 @@ export default function ModuleGrid({
             </div>
           </div>
         ))}
-      </section>
+      </output>
     );
   }
 

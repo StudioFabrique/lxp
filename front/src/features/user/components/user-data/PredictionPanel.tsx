@@ -13,7 +13,7 @@ import { AnalysedData } from "./AnalysedData";
  * quoi cela repose. Le modèle employé, ses métriques et le nom de ses variables
  * n'apparaissent nulle part — ils ne changent rien à l'accompagnement.
  */
-export default function PredictionPanel({ prediction }: PredictionPanelProps) {
+export default function PredictionPanel({ prediction }: Readonly<PredictionPanelProps>) {
   const [showData, setShowData] = useState(false);
 
   const level = riskLevel(prediction);

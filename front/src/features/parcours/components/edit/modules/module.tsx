@@ -39,7 +39,7 @@ type Props = {
 export default function ModuleComponent({
   setModuleFormOpened,
   titleActionsTarget = null,
-}: Props) {
+}: Readonly<Props>) {
   const { user } = useContext(AuthContext);
   const {
     currentSkills,

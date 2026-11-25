@@ -6,7 +6,7 @@ const parseColor = (color: string): [number, number, number] | null => {
   const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(value)?.[1];
   if (hex) {
     const full = hex.length === 3 ? [...hex].map((c) => c + c).join("") : hex;
-    return [0, 2, 4].map((offset) => parseInt(full.slice(offset, offset + 2), 16)) as [number, number, number];
+    return [0, 2, 4].map((offset) => Number.parseInt(full.slice(offset, offset + 2), 16)) as [number, number, number];
   }
   const rgb = /^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})/i.exec(value);
   return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : null;

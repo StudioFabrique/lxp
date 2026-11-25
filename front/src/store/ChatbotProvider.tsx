@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useLocation } from "react-router";
 
 type Activity = {
@@ -47,19 +53,22 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
     }
   }, [pathname]);
 
+  const contextValue = useMemo(
+    () => ({
+      currentActivity,
+      setCurrentActivity,
+      activityTextSelection,
+      setActivityTextSelection,
+      forceHideChatbot,
+      setForceHideChatbot,
+      aiUnavailable,
+      setAiUnavailable,
+    }),
+    [currentActivity, setCurrentActivity, activityTextSelection, setActivityTextSelection, forceHideChatbot, setForceHideChatbot, aiUnavailable, setAiUnavailable],
+  );
+
   return (
-    <ChatbotContext
-      value={{
-        currentActivity,
-        setCurrentActivity,
-        activityTextSelection,
-        setActivityTextSelection,
-        forceHideChatbot,
-        setForceHideChatbot,
-        aiUnavailable,
-        setAiUnavailable,
-      }}
-    >
+    <ChatbotContext value={contextValue}>
       {children}
     </ChatbotContext>
   );

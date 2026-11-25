@@ -12,13 +12,8 @@ type Props = {
 const SortColumnIcon: FC<Props> = ({ fieldSort, column, direction }) => {
   return (
     <>
-      {fieldSort === column ? (
-        direction ? (
-          <SortUpIcon />
-        ) : (
-          <SortDownIcon />
-        )
-      ) : null}
+      {fieldSort === column && direction && <SortUpIcon />}
+      {fieldSort === column && !direction && <SortDownIcon />}
     </>
   );
 };

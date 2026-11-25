@@ -5,7 +5,7 @@ type Props = {
 };
 
 /** Explication et solutions, dites par l’assistant virtuel d'accueil. */
-export default function ConfirmEmailErrorHelp({ message }: Props) {
+export default function ConfirmEmailErrorHelp({ message }: Readonly<Props>) {
   const { cause, solutions } = getConfirmEmailErrorHelp(message);
 
   return (

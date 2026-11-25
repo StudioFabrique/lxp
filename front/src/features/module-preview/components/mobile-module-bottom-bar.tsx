@@ -24,7 +24,7 @@ type MobileModuleBottomBarProps = {
 export default function MobileModuleBottomBar({
   onOpenNavigation,
   onNavigationSlotChange,
-}: MobileModuleBottomBarProps) {
+}: Readonly<MobileModuleBottomBarProps>) {
   const dock = useChatbotDockSnapshot();
   const reduced = isBottomBarReduced(dock);
   // Un appui hors des questions les referme dès l'enfoncement du doigt : la barre a déjà repris sa forme normale

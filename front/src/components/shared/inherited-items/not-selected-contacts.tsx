@@ -62,8 +62,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           </tr>
         </thead>
         <tbody>
-          {list &&
-            list.map((item) => (
+          {list?.map((item) => (
               <tr
                 className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
                 key={item.id}

@@ -22,7 +22,7 @@ const BadgeList: FC<Props> = ({ badgeProp, onSubmitBadge }) => {
 
   const content = (
     <div className="flex flex-col w-full gap-y-8 items-center">
-      {badge && badge.image ? <BadgeItem badge={badge} /> : null}
+      {badge?.image ? <BadgeItem badge={badge} /> : null}
       <ImportBadges onSubmit={handleSubmitBadge} />
     </div>
   );

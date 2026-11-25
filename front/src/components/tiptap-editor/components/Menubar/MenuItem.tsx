@@ -31,14 +31,14 @@ export default function MenuItem({
   action,
   isActive = null,
   disabled,
-}: {
+}: Readonly<{
   icon?: string;
   title?: string;
   action?: () => void;
   isActive?: (() => boolean) | null;
   color?: string;
   disabled?: boolean;
-}) {
+}>) {
   const IconComponent = icon ? menuIcons[icon] : undefined;
   const itemIsActive = isActive?.() ?? false;
 

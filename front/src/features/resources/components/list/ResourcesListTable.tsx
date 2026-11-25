@@ -26,9 +26,7 @@ export default function ResourcesListTable({
   direction,
   onSorting,
   onDeleteResource,
-}: // onDeleteResource,
-//loading,
-Props) {
+}: Readonly<Props>) {
   // Defensive: if resourcesList is not an array treat as empty
   const list = Array.isArray(resourcesList) ? resourcesList : [];
 

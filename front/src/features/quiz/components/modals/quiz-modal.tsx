@@ -125,7 +125,7 @@ const QuizModal = ({
         ) : (
           <>
             {isReplacing || (isStreaming && !quiz) ? (
-              <div role="status" className="flex flex-col gap-4 py-10">
+              <output className="flex flex-col gap-4 py-10">
                 <p className="text-lg font-medium text-secondary">
                   {isReplacing
                     ? "Génération d'une nouvelle question de remplacement..."
@@ -135,7 +135,7 @@ const QuizModal = ({
                 <div className="space-y-3" aria-hidden="true">
                   {[0, 1, 2].map((item) => <div key={item} className="skeleton h-12 w-full" />)}
                 </div>
-              </div>
+              </output>
             ) : (
               <>
                 {!quiz && (

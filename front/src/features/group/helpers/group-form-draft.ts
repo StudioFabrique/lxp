@@ -111,10 +111,10 @@ const isGroupPath = (pathname: string) =>
   /^\/admin\/group\/edit\/[^/]+$/.test(pathname);
 
 export const getSafeGroupReturnPath = (returnTo: string | null) => {
-  if (!returnTo || !returnTo.startsWith("/")) return null;
+  if (!returnTo?.startsWith("/")) return null;
 
-  const url = new URL(returnTo, "http://lxp.local");
-  if (url.origin !== "http://lxp.local" || !isGroupPath(url.pathname)) {
+  const url = new URL(returnTo, "https://lxp.local");
+  if (url.origin !== "https://lxp.local" || !isGroupPath(url.pathname)) {
     return null;
   }
 
@@ -128,7 +128,7 @@ export const addStudentToGroupReturnPath = (
   const safeReturnTo = getSafeGroupReturnPath(returnTo);
   if (!safeReturnTo) return null;
 
-  const url = new URL(safeReturnTo, "http://lxp.local");
+  const url = new URL(safeReturnTo, "https://lxp.local");
 
   const studentIds = new Set(
     (url.searchParams.get(DRAFT_KEYS.studentIds) ?? "")

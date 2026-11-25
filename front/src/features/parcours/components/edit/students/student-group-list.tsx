@@ -38,7 +38,7 @@ function StudentGroupList({
   fieldSort,
   direction,
   createGroupHref,
-}: Props) {
+}: Readonly<Props>) {
   // Gestion de la sélection/désélection de tous les éléments
   const handleAllChecked = useCallback(() => {
     onAllChecked((prevState) => !prevState);

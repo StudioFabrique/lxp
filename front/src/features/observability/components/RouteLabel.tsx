@@ -13,7 +13,7 @@ type Props = {
  * une barre oblique, jamais au milieu d'un mot. Le badge est centré sur le
  * chemin, comme les autres cellules de la ligne, même quand il passe sur deux lignes.
  */
-export default function RouteLabel({ method, path, targets = [] }: Props) {
+export default function RouteLabel({ method, path, targets = [] }: Readonly<Props>) {
   const segments = path.split("/");
 
   return (

@@ -7,7 +7,7 @@ import RouteLabel from "./RouteLabel";
 
 type Props = { action: UserActivity["actions"][number] };
 
-export default function UserActivityRow({ action }: Props) {
+export default function UserActivityRow({ action }: Readonly<Props>) {
   return (
     <li className="grid grid-cols-[4.5rem_minmax(0,1fr)_auto] items-start gap-3 border-b border-base-300 py-2.5 last:border-b-0">
       <time

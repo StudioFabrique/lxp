@@ -3,7 +3,7 @@ import type User from "../../../utils/interfaces/user";
 import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { cn } from "../../../utils/cn";
 
-export default function OnboardingStudentIdentity({ student }: { student: User }) {
+export default function OnboardingStudentIdentity({ student }: Readonly<{ student: User }>) {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-3">
       <span className="shrink-0"><AvatarSmall user={student} size={10} /></span>

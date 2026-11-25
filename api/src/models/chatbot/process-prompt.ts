@@ -116,8 +116,9 @@ export default async function processPrompt(input: ProcessPromptInput) {
   const text =
     payload.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
   const status = payload.status?.type ?? "ok";
-  const type =
-    status === "refusal" ? "warning" : status === "error" ? "error" : "normal";
+  let type = "normal";
+  if (status === "refusal") type = "warning";
+  else if (status === "error") type = "error";
   const data = {
     text,
     type,

@@ -20,7 +20,7 @@ export function StaffAssignment({
   course,
   initialSubmissionId,
   onChanged,
-}: Omit<Props, "staff">) {
+}: Readonly<Omit<Props, "staff">>) {
   const assignment = course.assignment!;
   const submitted = useMemo(
     () => assignment.submissions.filter((item) => item.submittedAt),

@@ -24,7 +24,7 @@ function ResourceItem({
   uploadProgressValues,
   uploadProgress,
   totalFiles,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <SubWrapper hasError={resource.hasError}>
       <div className="w-full flex justify-between items-center text-xs pr-4">

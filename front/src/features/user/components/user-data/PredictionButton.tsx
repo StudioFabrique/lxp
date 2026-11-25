@@ -23,7 +23,7 @@ export default function PredictionButton({
   disabled = false,
   hasResult,
   dailyLimitReached = false,
-}: PredictionButtonProps) {
+}: Readonly<PredictionButtonProps>) {
   return (
     <button
       type="button"

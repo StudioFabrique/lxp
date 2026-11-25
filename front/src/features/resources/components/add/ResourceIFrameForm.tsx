@@ -17,7 +17,7 @@ type Props = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
-export default function ResourceIFrameForm(props: Props) {
+export default function ResourceIFrameForm(props: Readonly<Props>) {
   return (
     <form className="flex flex-col gap-y-4" onSubmit={props.onSubmit}>
       {/* Title input field with validation */}

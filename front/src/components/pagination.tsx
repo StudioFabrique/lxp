@@ -28,7 +28,7 @@ function Pagination({
   totalPages,
   setLimit,
   setPage,
-}: Props) {
+}: Readonly<Props>) {
   // Gère le changement du nombre d'éléments par page
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setLimit(Number(event.target.value));

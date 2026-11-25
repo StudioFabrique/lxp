@@ -11,7 +11,7 @@ export default async function postFeedBack(
 
   const today = new Date();
   let feedbackDate: Date;
-  if (existingFeedback && existingFeedback.feedbackAt) {
+  if (existingFeedback?.feedbackAt) {
     feedbackDate = new Date(existingFeedback.feedbackAt);
     if (
       today.getDate() === feedbackDate.getDate() &&

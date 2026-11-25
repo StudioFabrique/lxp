@@ -19,7 +19,7 @@ type Props = {
   onRefresh: (selectLast?: boolean) => Promise<boolean>;
 };
 
-export default function ActivityContent({ parentId, activity, activityType, mode, canEdit, onClose, onEdit, onDelete, onRefresh }: Props) {
+export default function ActivityContent({ parentId, activity, activityType, mode, canEdit, onClose, onEdit, onDelete, onRefresh }: Readonly<Props>) {
   const [title, setTitle] = useState(activity?.title ?? "");
   const [content, setContent] = useState("");
   const [src, setSrc] = useState(activity?.url ?? "");
@@ -68,7 +68,7 @@ export default function ActivityContent({ parentId, activity, activityType, mode
     }
   };
 
-  if (loading) return <div role="status" aria-label="Chargement de l'activité" className="space-y-4"><span className="sr-only">Chargement de l'activité…</span><div className="skeleton h-10 w-2/3" /><div className="skeleton h-64 w-full" /></div>;
+  if (loading) return <output aria-label="Chargement de l'activité" className="block space-y-4"><span className="sr-only">Chargement de l'activité…</span><div className="skeleton h-10 w-2/3" /><div className="skeleton h-64 w-full" /></output>;
   if (loadError) return <div role="alert" className="alert alert-error">{loadError}</div>;
 
   return <LessonReaderAndEditor

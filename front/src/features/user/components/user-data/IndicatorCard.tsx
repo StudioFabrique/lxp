@@ -8,7 +8,7 @@ import { IndicatorHint } from "./IndicatorHint";
  * Carte générique : l'affichage est piloté par `unit`, si bien qu'ajouter un
  * indicateur côté API ne demande aucun composant supplémentaire ici.
  */
-export default function IndicatorCard({ indicator }: IndicatorCardProps) {
+export default function IndicatorCard({ indicator }: Readonly<IndicatorCardProps>) {
   const { available, label, unit, value } = indicator;
 
   return (

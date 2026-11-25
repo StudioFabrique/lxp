@@ -51,6 +51,9 @@ const Header = ({
 }: PropsWithChildren<HeaderProps>) => {
   const isPageTitle =
     !isSubHeader && !alternateBgColor && !successBgColor && !hasError && !disabled && !onClick;
+  let descriptionColorClass = "text-base-content";
+  if (hasError) descriptionColorClass = "text-error";
+  else if (successBgColor) descriptionColorClass = "text-success-content";
   const mobile = useMobilePageHeader(
     isPageTitle && !keepActionsInPage,
     showTitleInTopBar && typeof title === "string" ? { text: title, className: classname } : undefined,
@@ -121,11 +124,7 @@ const Header = ({
           <p
             className={cn(
               isSubHeader ? "text-[8.5pt]" : "text-xs",
-              hasError
-                ? "text-error"
-                : successBgColor
-                  ? "text-success-content"
-                  : "text-base-content",
+              descriptionColorClass,
             )}
           >
             {description}

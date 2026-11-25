@@ -1,6 +1,5 @@
 import { type Response, type NextFunction } from "express";
-import User from "../../utils/interfaces/db/user.ts";
-import type { IRole } from "../../utils/interfaces/db/role.ts";
+import { getActivationLinkUser } from "../../models/user/get-activation-link-user.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpPostCheckActivationToken(
@@ -9,9 +8,7 @@ export default async function httpPostCheckActivationToken(
   next: NextFunction,
 ) {
   try {
-    const user = await User.findById(req.auth?.userId)
-      .select("email roles")
-      .populate<{ roles: IRole[] }>("roles", "label");
+    const user = await getActivationLinkUser(req.auth?.userId);
     if (!user) {
       return next({ statusCode: 401, message: "Ce lien n'est plus valide." });
     }
@@ -21,7 +18,7 @@ export default async function httpPostCheckActivationToken(
         success: true,
         message: "Lien valide.",
         email: user.email,
-        roleLabel: user.roles[0]?.label ?? null,
+        roleLabel: user.roleLabel,
       },
     };
     next(result);

@@ -21,7 +21,7 @@ type Props = {
 const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
-  const [isEmptyingReady, setEmptyingReadyState] = useState<boolean>(false);
+  const [isEmptyingReady, setIsEmptyingReady] = useState<boolean>(false);
   const [filename, setFilename] = useState<string | null>(null);
 
   const commonConfig = useMemo(
@@ -45,10 +45,10 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   };
 
   const handleEmptyFile = useCallback(() => {
-    setEmptyingReadyState(true);
+    setIsEmptyingReady(true);
     if (isEmptyingReady) {
       setSelectedFile(null);
-      setEmptyingReadyState(false);
+      setIsEmptyingReady(false);
     }
   }, [isEmptyingReady]);
 
@@ -72,19 +72,17 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   }, [selectedFile, commonConfig, fields, onParseCsv, handleEmptyFile]);
 
   return (
-    <>
-      <FileUpload
-        compact={type === "text"}
-        fileType="csv"
-        maxSize={50 * 1024}
-        buttonLabel={filename ?? "Importer une liste d'étudiants"}
-        helperText={
-          origin === "csv" ? "Fichier CSV conforme au modèle fourni" : undefined
-        }
-        error={fileError}
-        onFileSelect={handleSelectedFile}
-      />
-    </>
+    <FileUpload
+      compact={type === "text"}
+      fileType="csv"
+      maxSize={50 * 1024}
+      buttonLabel={filename ?? "Importer une liste d'étudiants"}
+      helperText={
+        origin === "csv" ? "Fichier CSV conforme au modèle fourni" : undefined
+      }
+      error={fileError}
+      onFileSelect={handleSelectedFile}
+    />
   );
 };
 

@@ -25,10 +25,10 @@ export const VERDICT_LABELS = {
 export default function AnalysisFeedbackForm({
   prediction,
   hasExistingFeedback = false,
-}: {
+}: Readonly<{
   prediction: IndicatorsPrediction;
   hasExistingFeedback?: boolean;
-}) {
+}>) {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -159,7 +159,7 @@ export default function AnalysisFeedbackForm({
             ) : null}
             {mutation.isSuccess ? (
               <>
-                <p role="status">Retour enregistré.</p>
+                <output className="block">Retour enregistré.</output>
                 <button
                   type="button"
                   className="btn btn-ghost self-start"

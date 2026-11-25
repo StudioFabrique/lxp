@@ -30,7 +30,7 @@ export default async function putFinishReadLesson(
     return null;
   }
 
-  if (Boolean(lessonRead.finishedAt)) {
+  if (lessonRead.finishedAt) {
     return lessonRead;
   }
 

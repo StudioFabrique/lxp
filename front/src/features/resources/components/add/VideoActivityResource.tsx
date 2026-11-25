@@ -21,7 +21,7 @@ type Props = {
   onSubmit: (fd: FormData) => void;
 };
 
-export default function VideoActivityResource(props: Props) {
+export default function VideoActivityResource(props: Readonly<Props>) {
   // Hook personnalisé pour la gestion du formulaire
   const form = useForm<VideoFormValues>({
     resolver: zodResolver(videoSchema),
@@ -43,7 +43,7 @@ export default function VideoActivityResource(props: Props) {
   } = form;
 
   const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files && event.target.files[0];
+    const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       const error = videoFileError(selectedFile);
       if (error) {

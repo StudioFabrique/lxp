@@ -13,7 +13,7 @@ type Props = {
   onNeverShowAgain?: () => void;
 };
 
-export default function ChatbotTutorialContent({ message, index, total, onPrevious, onNext, onStop, onNeverShowAgain }: Props) {
+export default function ChatbotTutorialContent({ message, index, total, onPrevious, onNext, onStop, onNeverShowAgain }: Readonly<Props>) {
   const isLast = index === undefined || index + 1 >= total;
 
   return (

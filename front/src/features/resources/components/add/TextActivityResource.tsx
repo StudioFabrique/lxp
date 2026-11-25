@@ -47,7 +47,7 @@ export default function TextActivityResource({
   activity,
   onClose,
   onSubmit,
-}: Props) {
+}: Readonly<Props>) {
   const {
     createActivity,
     editActivityContent,

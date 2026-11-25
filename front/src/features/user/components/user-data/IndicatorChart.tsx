@@ -3,7 +3,7 @@ import type { Indicator } from "../../interfaces/indicators";
 import { toDisplayMinutes } from "../../helpers/format-indicator";
 import VerticalBars from "./VerticalBars";
 
-export function IndicatorChart({ indicator }: { indicator: Indicator }) {
+export function IndicatorChart({ indicator }: Readonly<{ indicator: Indicator }>) {
   const series = indicator.series ?? [];
 
   // Les durées sont converties en minutes pour le graphique : en heures, une

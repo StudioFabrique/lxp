@@ -24,7 +24,7 @@ const routeColumns: ColumnDef<StockFeatures, RouteRow>[] = [
   numberColumn("avg", "Durée moyenne", (row) => row.avgMs, "ms"),
 ];
 
-export default function RequestsDetail({ data }: { data: Data }) {
+export default function RequestsDetail({ data }: Readonly<{ data: Data }>) {
   const none = "Aucune requête sur cette période.";
 
   return (

@@ -12,7 +12,7 @@ type Props = {
 };
 
 /** The same frame grows at the center, then settles at the left of the welcome. */
-export default function AuthOnboardingBrand({ intro, className }: Props) {
+export default function AuthOnboardingBrand({ intro, className }: Readonly<Props>) {
   const reducedMotion = useReducedMotion();
   const setIntroActive = useContext(AuthIntroContext);
   const [greetingReady, setGreetingReady] = useState(false);

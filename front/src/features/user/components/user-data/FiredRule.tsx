@@ -2,7 +2,7 @@ import { formatAlertRuleDescription, formatAlertRuleName, formatMatchedCondition
 import type { FiredAlertRule } from "../../interfaces/indicators";
 import { cn } from "../../../../utils/cn";
 
-export function FiredRule({ rule }: { rule: FiredAlertRule }) {
+export function FiredRule({ rule }: Readonly<{ rule: FiredAlertRule }>) {
   const description = formatAlertRuleDescription(rule.name, rule.description);
 
   return (

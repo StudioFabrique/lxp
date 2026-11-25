@@ -13,13 +13,12 @@ type Props = {
   onClose: () => void;
 };
 
-export default function ActivityWrapper(props: Props) {
+export default function ActivityWrapper(props: Readonly<Props>) {
   return (
     <>
       {(props.mode === "read" && props.activity) ||
       (props.mode === "edit" &&
-        props.activity &&
-        props.activity.type === "resource") ? (
+        props.activity?.type === "resource") ? (
         <div className="flex items-center gap-x-4 justify-start">
           <PermissionGuard action="write" object="resource">
             <p className="whitespace-nowrap text-base-content/60">

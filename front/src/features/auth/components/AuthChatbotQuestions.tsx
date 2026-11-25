@@ -14,7 +14,7 @@ type Props = {
   onQuestionSelect: (index: number, answer: ReactNode) => void;
 };
 
-export default function AuthChatbotQuestions({ message, help, id, anchorRef, bubbleRef, onOverlapChange, selected, onQuestionSelect }: Props) {
+export default function AuthChatbotQuestions({ message, help, id, anchorRef, bubbleRef, onOverlapChange, selected, onQuestionSelect }: Readonly<Props>) {
   const questions = [
     { label: "Que dois-je faire à cette étape ?", answer: help?.action ?? message },
     { label: "Comment passer à la suite ?", answer: help?.next ?? "Renseignez les informations demandées, puis utilisez le bouton en bas de l’étape pour continuer." },

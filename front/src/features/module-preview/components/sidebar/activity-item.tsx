@@ -30,7 +30,7 @@ export default function ActivityItem({
   canEdit,
   isReordering = false,
   onSelect,
-}: ActivityItemProps) {
+}: Readonly<ActivityItemProps>) {
   const ref = useRef<HTMLButtonElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggedOver, setIsDraggedOver] = useState(false);

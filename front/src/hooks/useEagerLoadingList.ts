@@ -24,11 +24,9 @@ const useEagerLoadingList = (
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);
   const [direction, setDirection] = useState<boolean>(true);
-  const totalPages = paginationDisabled
-    ? initialList.length > 0
-      ? 1
-      : 0
-    : Math.ceil(initialList.length / limit);
+  let totalPages = 0;
+  if (!paginationDisabled) totalPages = Math.ceil(initialList.length / limit);
+  else if (initialList.length > 0) totalPages = 1;
 
   const setLimit = useCallback(
     (value: number) => {
@@ -77,7 +75,7 @@ const useEagerLoadingList = (
 
   const getFieldValues = useCallback(
     (field: string) => {
-      const values = Array<string>();
+      const values: string[] = [];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       initialList?.forEach((item: any) => {
         if (!values.includes(item[field])) {

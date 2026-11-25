@@ -1,4 +1,4 @@
-import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
+import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
@@ -47,7 +47,7 @@ async function getUsersByRole(
     )
     .all();
 
-  let groupsData = Array<any>();
+  let groupsData = [] as any[];
   for (const group of groupsSql) {
     groupsData = [
       ...groupsData,

@@ -22,7 +22,7 @@ export default function ModuleDrawer({
   sourceModules,
   currentParcoursId,
   onCopyModule,
-}: ModuleDrawerProps) {
+}: Readonly<ModuleDrawerProps>) {
   const { user } = useContext(AuthContext);
   const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
   const hasModules = sourceModules && sourceModules.length > 0;

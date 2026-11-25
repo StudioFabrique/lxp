@@ -32,7 +32,7 @@ function CreateResource({
   setUploadList,
   uploadList,
   uploadProgress,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <div className="grid grid-cols-1 gap-4">
       <span className="w-full flex flex-col gap-y-4">

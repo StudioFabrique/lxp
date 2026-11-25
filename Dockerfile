@@ -5,8 +5,9 @@ WORKDIR /app
 # Install build dependencies from each subproject lockfile.
 COPY front/package.json front/package-lock.json ./front/
 COPY api/package.json api/package-lock.json ./api/
-RUN npm ci --prefix front
-RUN npm ci --prefix api
+# Lifecycle scripts are disabled: the build only needs compiled JS/TS tooling.
+RUN npm ci --ignore-scripts --prefix front
+RUN npm ci --ignore-scripts --prefix api
 
 # Build the API first; Vite then writes the frontend into api/dist/public.
 COPY front ./front
@@ -27,7 +28,8 @@ WORKDIR /app/api
 # Keep Prisma as a runtime dependency for `npx prisma db migrate`, while
 # omitting API development dependency groups from the production install.
 COPY api/package.json api/package-lock.json ./
-RUN npm ci --omit=dev
+# Lifecycle scripts stay disabled; only bcrypt (native addon) is rebuilt explicitly.
+RUN npm ci --omit=dev --ignore-scripts && npm rebuild bcrypt
 
 FROM node:22-alpine AS runtime
 

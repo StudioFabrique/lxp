@@ -51,7 +51,7 @@ type Props = {
 export default function ParcoursCreationModal({
   initialFormationId,
   onClose,
-}: Props) {
+}: Readonly<Props>) {
   const navigate = useNavigate();
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("create");

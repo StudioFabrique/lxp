@@ -5,7 +5,7 @@ import { groupStatusByClass } from "../helpers/status-classes";
 
 type Props = { breakdown: { status: string; count: number }[] };
 
-export default function StatusBreakdown({ breakdown }: Props) {
+export default function StatusBreakdown({ breakdown }: Readonly<Props>) {
   const classes = groupStatusByClass(breakdown);
   const total = classes.reduce((sum, { count }) => sum + count, 0);
 

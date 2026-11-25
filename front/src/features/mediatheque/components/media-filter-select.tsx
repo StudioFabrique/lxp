@@ -15,7 +15,7 @@ type Props = {
  * <MediaFilterSelect onChange={(value) => console.log(value)} />
  * ```
  */
-function MediaFilterSelect({ options, onChange }: Props) {
+function MediaFilterSelect({ options, onChange }: Readonly<Props>) {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(event.currentTarget.value);
     onChange(event.currentTarget.value as "createdAt" | "size" | "used");

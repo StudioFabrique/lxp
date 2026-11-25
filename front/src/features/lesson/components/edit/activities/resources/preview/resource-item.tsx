@@ -17,7 +17,7 @@ type Props = {
   onUpdateResource: Dispatch<SetStateAction<ActivityResource | null>>;
 };
 
-function ResourceItem({ resource, onDeleteResource, onUpdateResource }: Props) {
+function ResourceItem({ resource, onDeleteResource, onUpdateResource }: Readonly<Props>) {
   const displayIcon = (url: string) => {
     const extension = url.split(".").pop();
     switch (extension) {

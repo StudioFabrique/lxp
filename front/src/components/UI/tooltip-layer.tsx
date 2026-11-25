@@ -11,6 +11,27 @@ type ActiveTooltip = {
 const MARGIN = 8;
 const GAP = 8;
 
+type Side = "top" | "bottom" | "left" | "right";
+
+function getPreferredSide(trigger: HTMLElement): Side {
+  if (trigger.classList.contains("tooltip-bottom")) return "bottom";
+  if (trigger.classList.contains("tooltip-left")) return "left";
+  if (trigger.classList.contains("tooltip-right")) return "right";
+  return "top";
+}
+
+function getTop(side: Side, rect: DOMRect, height: number): number {
+  if (side === "top") return rect.top - height - GAP;
+  if (side === "bottom") return rect.bottom + GAP;
+  return rect.top + (rect.height - height) / 2;
+}
+
+function getLeft(side: Side, rect: DOMRect, width: number): number {
+  if (side === "left") return rect.left - width - GAP;
+  if (side === "right") return rect.right + GAP;
+  return rect.left + (rect.width - width) / 2;
+}
+
 function getTrigger(target: EventTarget | null) {
   return target instanceof Element
     ? target.closest<HTMLElement>(".tooltip[data-tip]:not([data-tip=''])")
@@ -42,7 +63,7 @@ export default function TooltipLayer() {
       if (trigger?.isConnected) show(trigger);
       else if (activeTrigger.current) dismiss();
     };
-    const onPointerOut = (event: PointerEvent) => {
+    const onLeave = (event: PointerEvent | FocusEvent) => {
       const trigger = getTrigger(event.target);
       if (trigger && !(event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) {
         if (activeTrigger.current === trigger) activeTrigger.current = null;
@@ -50,13 +71,6 @@ export default function TooltipLayer() {
       }
     };
     const onFocusIn = (event: FocusEvent) => show(getTrigger(event.target));
-    const onFocusOut = (event: FocusEvent) => {
-      const trigger = getTrigger(event.target);
-      if (trigger && !(event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) {
-        if (activeTrigger.current === trigger) activeTrigger.current = null;
-        setActive((current) => current?.trigger === trigger ? null : current);
-      }
-    };
     const dismiss = () => {
       activeTrigger.current = null;
       setActive(null);
@@ -67,9 +81,9 @@ export default function TooltipLayer() {
 
     document.addEventListener("pointerover", onPointerOver);
     document.addEventListener("pointermove", onPointerMove);
-    document.addEventListener("pointerout", onPointerOut);
+    document.addEventListener("pointerout", onLeave);
     document.addEventListener("focusin", onFocusIn);
-    document.addEventListener("focusout", onFocusOut);
+    document.addEventListener("focusout", onLeave);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("click", dismiss, true);
     window.addEventListener("scroll", dismiss, true);
@@ -77,9 +91,9 @@ export default function TooltipLayer() {
     return () => {
       document.removeEventListener("pointerover", onPointerOver);
       document.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerout", onPointerOut);
+      document.removeEventListener("pointerout", onLeave);
       document.removeEventListener("focusin", onFocusIn);
-      document.removeEventListener("focusout", onFocusOut);
+      document.removeEventListener("focusout", onLeave);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("click", dismiss, true);
       window.removeEventListener("scroll", dismiss, true);
@@ -102,13 +116,7 @@ export default function TooltipLayer() {
     if (!active || !bubble.current) return;
     const rect = active.trigger.getBoundingClientRect();
     const { offsetWidth: width, offsetHeight: height } = bubble.current;
-    const preferred = active.trigger.classList.contains("tooltip-bottom")
-      ? "bottom"
-      : active.trigger.classList.contains("tooltip-left")
-        ? "left"
-        : active.trigger.classList.contains("tooltip-right")
-          ? "right"
-          : "top";
+    const preferred = getPreferredSide(active.trigger);
     const fits = {
       top: rect.top >= height + GAP + MARGIN,
       bottom: window.innerHeight - rect.bottom >= height + GAP + MARGIN,
@@ -119,18 +127,8 @@ export default function TooltipLayer() {
       (["top", "bottom", "right", "left"] as const).find((item) => fits[item]) ?? preferred;
     const clamp = (value: number, max: number) => Math.max(MARGIN, Math.min(value, max - MARGIN));
     setPosition({
-      top: clamp(
-        side === "top" ? rect.top - height - GAP :
-          side === "bottom" ? rect.bottom + GAP :
-            rect.top + (rect.height - height) / 2,
-        window.innerHeight - height,
-      ),
-      left: clamp(
-        side === "left" ? rect.left - width - GAP :
-          side === "right" ? rect.right + GAP :
-            rect.left + (rect.width - width) / 2,
-        window.innerWidth - width,
-      ),
+      top: clamp(getTop(side, rect, height), window.innerHeight - height),
+      left: clamp(getLeft(side, rect, width), window.innerWidth - width),
     });
   }, [active]);
 

@@ -8,6 +8,16 @@ import { prisma } from "../../utils/db.ts";
 import { assertCanUnassignTags, canUnassignTag } from "../tag/tag-access.ts";
 import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
+/** undefined : inchangé ; null : effacement ; sinon nouvelle date ISO. */
+function resolveDateUpdate<T>(
+  value: string | Date | null | undefined,
+  current: T,
+): T | string | null {
+  if (value === undefined) return current;
+  if (value === null) return null;
+  return new Date(value).toISOString();
+}
+
 export type PatchParcoursPayload = {
   title?: string;
   description?: string | null;
@@ -161,18 +171,11 @@ async function patchParcours(
         removedContactIds,
       );
     }
-    const startDate =
-      payload.startDate === undefined
-        ? existingParcours.startDate
-        : payload.startDate === null
-          ? null
-          : new Date(payload.startDate).toISOString();
-    const endDate =
-      payload.endDate === undefined
-        ? existingParcours.endDate
-        : payload.endDate === null
-          ? null
-          : new Date(payload.endDate).toISOString();
+    const startDate = resolveDateUpdate(
+      payload.startDate,
+      existingParcours.startDate,
+    );
+    const endDate = resolveDateUpdate(payload.endDate, existingParcours.endDate);
 
     if (startDate && endDate && startDate > endDate) {
       throw {

@@ -141,7 +141,7 @@ apiClient.interceptors.response.use(
 
     if (status === 401 && isRefresh) {
       logoutHandler?.();
-      return Promise.reject(error);
+      throw error;
     }
 
     if (status === 401 && !isLogin && !request?._retry) {
@@ -158,7 +158,7 @@ apiClient.interceptors.response.use(
         return apiClient(request);
       } catch (refreshError) {
         logoutHandler?.();
-        return Promise.reject(refreshError);
+        throw refreshError;
       }
     }
 
@@ -168,7 +168,7 @@ apiClient.interceptors.response.use(
       if (!isDemoSilentWrite(toPath(url))) {
         toast("Indisponible en mode démo", { id: "demo-read-only" });
       }
-      return Promise.reject(error);
+      throw error;
     }
 
     if (status === 403 && !isLogin && !url.includes("/auth/handshake")) {
@@ -184,7 +184,7 @@ apiClient.interceptors.response.use(
       await resyncPromise;
     }
 
-    return Promise.reject(error);
+    throw error;
   },
 );
 

@@ -17,26 +17,26 @@ type Props = {
 const DemoCaptcha = ({ progress, isSolved, error, onRetry }: Props) => {
   if (error) {
     return (
-      <div className="alert alert-warning" role="status">
+      <output className="block alert alert-warning">
         <TriangleAlert className="h-5 w-5 shrink-0" />
         <span className="text-sm">{error}</span>
         <button type="button" className="btn btn-sm" onClick={onRetry}>
           Réessayer
         </button>
-      </div>
+      </output>
     );
   }
 
   if (!isSolved)
     return (
-      <div className="flex flex-col items-center gap-2" role="status">
+      <output className="flex flex-col items-center gap-2">
         <progress
           className="progress progress-primary w-64"
           value={Math.round(progress * 100)}
           max={100}
           aria-label="Avancement de la vérification anti-robot"
         />
-      </div>
+      </output>
     );
 };
 

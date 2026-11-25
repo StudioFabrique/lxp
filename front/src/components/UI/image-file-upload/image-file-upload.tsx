@@ -3,6 +3,7 @@ import { maxSizeError } from "../../../utils/helpers/max-size-error";
 import {
   ChangeEvent,
   PropsWithChildren,
+  ReactNode,
   useEffect,
   useRef,
   useState,
@@ -82,6 +83,43 @@ const ImageFileUpload = ({
 
   const isPreviewVariant = variant !== "avatar";
   const hasPreview = Boolean(previewUrl && !previewFailed);
+  const previewHeightClass = compact ? "h-24" : "h-32";
+
+  let content: ReactNode;
+  if (isPreviewVariant && hasPreview) {
+    content = (
+      <AppImage
+        src={previewUrl}
+        alt="Image"
+        className="h-full w-full object-contain"
+        onLoad={() => onPreviewAvailabilityChange?.(true)}
+        onError={() => {
+          setPreviewFailed(true);
+          onPreviewAvailabilityChange?.(false);
+        }}
+      />
+    );
+  } else if (isPreviewVariant) {
+    content = (
+      <span className="flex items-center justify-center gap-2 px-4 text-center text-sm font-semibold text-base-content">
+        <Upload className="h-5 w-5 shrink-0" aria-hidden="true" />
+        {children ?? "Ajouter une image"}
+      </span>
+    );
+  } else if (temporaryImage.url || !children) {
+    content = (
+      <AvatarSmall
+        user={{
+          firstname: "a",
+          lastname: "a",
+          avatar: previewUrl ?? undefined,
+        }}
+        size={10}
+      />
+    );
+  } else {
+    content = children;
+  }
 
   return (
     <button
@@ -89,7 +127,7 @@ const ImageFileUpload = ({
       onClick={onClickChangeImage}
       className={
         cn(isPreviewVariant
-          ? `group relative flex ${compact ? "h-24" : "h-32"} w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-content/30 border-dashed bg-base-200 p-3 text-base-content shadow-sm transition hover:border-primary hover:shadow-md`
+          ? `group relative flex ${previewHeightClass} w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-content/30 border-dashed bg-base-200 p-3 text-base-content shadow-sm transition hover:border-primary hover:shadow-md`
           : "btn btn-ghost group relative h-fit w-fit rounded-full bg-white p-0 text-white")
       }
       style={
@@ -99,36 +137,7 @@ const ImageFileUpload = ({
       }
       aria-label={isPreviewVariant ? "Modifier l'image" : "Modifier l'avatar"}
     >
-      {isPreviewVariant ? (
-        hasPreview ? (
-          <AppImage
-            src={previewUrl}
-            alt="Image"
-            className="h-full w-full object-contain"
-            onLoad={() => onPreviewAvailabilityChange?.(true)}
-            onError={() => {
-              setPreviewFailed(true);
-              onPreviewAvailabilityChange?.(false);
-            }}
-          />
-        ) : (
-          <span className="flex items-center justify-center gap-2 px-4 text-center text-sm font-semibold text-base-content">
-            <Upload className="h-5 w-5 shrink-0" aria-hidden="true" />
-            {children ?? "Ajouter une image"}
-          </span>
-        )
-      ) : temporaryImage.url || !children ? (
-        <AvatarSmall
-          user={{
-            firstname: "a",
-            lastname: "a",
-            avatar: previewUrl ?? undefined,
-          }}
-          size={10}
-        />
-      ) : (
-        children
-      )}
+      {content}
       {(!isPreviewVariant || hasPreview) && (
         <span
           className={cn("pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100", isPreviewVariant ? "bg-black/15" : "rounded-full bg-white/20")}

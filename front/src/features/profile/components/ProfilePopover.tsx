@@ -35,7 +35,7 @@ import { useSidebarDisplay } from "../../../components/sidebar/sidebar-display";
 
 type Props = { interfaceType: string };
 
-export default function ProfilePopover({ interfaceType }: Props) {
+export default function ProfilePopover({ interfaceType }: Readonly<Props>) {
   const { user, handshake } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const {
@@ -185,11 +185,11 @@ export default function ProfilePopover({ interfaceType }: Props) {
                         {user?.email}
                       </p>
                       {(uploading || deleting) && (
-                        <p className="sr-only" role="status">
+                        <output className="sr-only">
                           {uploading
                             ? "Enregistrement de la photo…"
                             : "Suppression de la photo…"}
-                        </p>
+                        </output>
                       )}
                     </div>
                   </div>

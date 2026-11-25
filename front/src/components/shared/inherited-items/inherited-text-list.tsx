@@ -22,8 +22,7 @@ const InheritedTextList = (props: InheritedTextListProps) => {
 
   return (
     <ul className="flex flex-col gap-y-2">
-      {props.list &&
-        props.list.map((item: any) => (
+      {props.list?.map((item: any) => (
           <li key={item.id}>
             <SubBoxWrapper>
               <ItemElement

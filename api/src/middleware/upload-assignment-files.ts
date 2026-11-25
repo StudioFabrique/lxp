@@ -55,12 +55,14 @@ export function uploadAssignmentFiles() {
   return (req: Request, res: Response, next: NextFunction) => {
     upload(req, res, (error) => {
       if (!error) return next();
-      const message =
-        error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"
-          ? "Chaque fichier doit faire au maximum 50 Mo."
-          : error instanceof multer.MulterError && error.code === "LIMIT_FILE_COUNT"
-            ? "Dix fichiers maximum sont autorisés."
-            : error.message;
+      let message: string = error.message;
+      if (error instanceof multer.MulterError) {
+        if (error.code === "LIMIT_FILE_SIZE") {
+          message = "Chaque fichier doit faire au maximum 50 Mo.";
+        } else if (error.code === "LIMIT_FILE_COUNT") {
+          message = "Dix fichiers maximum sont autorisés.";
+        }
+      }
       return res.status(400).json({ message });
     });
   };

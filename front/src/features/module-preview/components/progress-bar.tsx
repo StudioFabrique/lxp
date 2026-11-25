@@ -9,7 +9,11 @@ type ProgressBarProps = {
   onSelectLesson: (lessonId: number) => void;
 };
 
-const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarProps) => {
+const ProgressBar = ({
+  courses,
+  selectedLessonId,
+  onSelectLesson,
+}: ProgressBarProps) => {
   if (!(courses.length > 0)) return null;
 
   const lessons = courses.flatMap((course) => course.lessons);
@@ -32,22 +36,31 @@ const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarP
           className="bg-secondary/20 h-[80%] w-full rounded-lg"
         >
           <div className="flex gap-x-2 h-full items-center px-1 py-[0.5px] rounded-lg">
-            {course.lessons.map((lesson) => (
-              <button
-                key={lesson.id}
-                type="button"
-                title={`Leçon « ${lesson.title} » du cours « ${course.title} »`}
-                aria-label={`Ouvrir la leçon : ${lesson.title} (${course.title})`}
-                aria-current={lesson.id === selectedLessonId ? "step" : undefined}
-                disabled={lesson.id === undefined}
-                onClick={() => {
-                  if (lesson.id !== undefined) onSelectLesson(lesson.id);
-                }}
-                className={cn("h-[70%] w-full rounded-lg cursor-pointer transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default", lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
-                    ? "bg-primary"
-                    : "bg-primary/20")}
-              />
-            ))}
+            {course.lessons.map((lesson) => {
+              const isFinished = lesson.lessonsRead?.some((read) =>
+                Boolean(read.finishedAt),
+              );
+              const isSelected = lesson.id === selectedLessonId;
+              return (
+                <button
+                  key={lesson.id}
+                  type="button"
+                  title={`Leçon « ${lesson.title} » du cours « ${course.title} »`}
+                  aria-label={`Ouvrir la leçon : ${lesson.title} (${course.title})`}
+                  aria-current={isSelected ? "step" : undefined}
+                  disabled={lesson.id === undefined}
+                  onClick={() => {
+                    if (lesson.id !== undefined) onSelectLesson(lesson.id);
+                  }}
+                  className={cn(
+                    "h-[60%] w-full rounded-lg cursor-pointer transition-all hover:opacity-70 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default",
+                    isFinished ? "bg-primary" : "bg-primary/20",
+                    isSelected &&
+                      "h-[70%] ring-2 ring-primary ring-offset-1 ring-offset-base-100",
+                  )}
+                />
+              );
+            })}
           </div>
         </div>
       ))}
@@ -56,7 +69,8 @@ const ProgressBar = ({ courses, selectedLessonId, onSelectLesson }: ProgressBarP
       </span>
       {/* Légende : chaque segment est une leçon, plein une fois terminée. */}
       <span className="shrink-0 text-xs font-semibold max-xl:hidden">
-        {formatNumber(finishedCount)}/{formatNumber(lessons.length)} leçons terminées
+        {formatNumber(finishedCount)}/{formatNumber(lessons.length)} leçons
+        terminées
       </span>
     </div>
   );

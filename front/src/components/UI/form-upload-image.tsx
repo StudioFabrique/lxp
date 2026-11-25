@@ -8,7 +8,7 @@ type Props = {
 export default function FormUploadImage({
   isDisabled = false,
   onSetFile,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <FileUpload
       fileType="image"

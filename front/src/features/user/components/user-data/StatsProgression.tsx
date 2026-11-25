@@ -13,7 +13,7 @@ type Props = {
  * d'indicateurs à transporter une image en base64 par module, pour une
  * information purement décorative.
  */
-export default function StatsProgression({ modules }: Props) {
+export default function StatsProgression({ modules }: Readonly<Props>) {
   return (
     <>
       {modules.map((module) => (

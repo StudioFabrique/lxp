@@ -3,8 +3,6 @@ import bcrypt from "bcrypt";
 import { credentialsError } from "../../utils/constantes.ts";
 
 import User from "../../utils/interfaces/db/user.ts";
-import IConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
-import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 /**
@@ -13,7 +11,7 @@ import { imageToDataUrl } from "../../utils/images/image-source.ts";
  * rester aligné sur celui des empreintes réellement stockées.
  */
 const DUMMY_PASSWORD_HASH =
-  "$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
+  "$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";  // NOSONAR empreinte factice publique, sans secret : égalise uniquement le temps de réponse
 
 async function userLogin(email: string, password: string) {
   try {
@@ -28,7 +26,7 @@ async function userLogin(email: string, password: string) {
       user?.password || DUMMY_PASSWORD_HASH,
     );
 
-    if (!user || !user.password || user.roles.length !== 1) {
+    if (!user?.password || user.roles.length !== 1) {
       throw { message: credentialsError, status: 401 };
     }
 

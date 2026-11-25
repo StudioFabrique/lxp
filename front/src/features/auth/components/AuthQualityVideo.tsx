@@ -36,7 +36,7 @@ const presentationTopics: readonly string[] = [
 ];
 
 /** Plays the actual Hyperframes feature scenes. */
-export default function AuthQualityVideo({ quality, label, colorIndex, reducedMotion, fullscreen = false, onToggleFullscreen, onEnded, hold = false }: Props) {
+export default function AuthQualityVideo({ quality, label, colorIndex, reducedMotion, fullscreen = false, onToggleFullscreen, onEnded, hold = false }: Readonly<Props>) {
   const frameRef = useRef<HTMLIFrameElement>(null);
     const colorRef = useRef<HTMLSpanElement>(null);
   const playedRef = useRef(false);
@@ -131,7 +131,7 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
           className={cn("size-full border-0 transition-opacity duration-300", (!loaded || pending) && "opacity-0")}
           onLoad={() => send("initialize")}
         />
-        {!loaded && !failed && <div className="absolute inset-0 flex items-center justify-center bg-base-100 text-base-content transition-opacity delay-500 duration-300 starting:opacity-0" role="status"><LoaderCircle className="size-6 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Chargement de la présentation</span></div>}
+        {!loaded && !failed && <output className="absolute inset-0 flex items-center justify-center bg-base-100 text-base-content transition-opacity delay-500 duration-300 starting:opacity-0"><LoaderCircle className="size-6 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Chargement de la présentation</span></output>}
         {failed && <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-base-100 p-4 text-center text-base-content"><p role="alert" className="text-sm">La présentation n’a pas pu démarrer.</p><button type="button" className="btn btn-sm btn-outline" onClick={() => { setLoaded(false); setState("ready"); setAttempt(current => current + 1); }}>Réessayer</button></div>}
       </div>
       <figcaption className="flex shrink-0 items-center justify-between gap-3 text-xs">

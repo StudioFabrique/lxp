@@ -7,7 +7,7 @@ import { formatNumber } from "../../../utils/helpers/format-number";
 
 type GroupUserCreationProgressProps = { returnTo: string; action?: ReactNode };
 
-export default function GroupUserCreationProgress({ returnTo, action }: GroupUserCreationProgressProps) {
+export default function GroupUserCreationProgress({ returnTo, action }: Readonly<GroupUserCreationProgressProps>) {
   const titleId = useId();
   const context = getGroupUserCreationContext(returnTo);
   const steps = ["Informations du groupe", "Créer l’apprenant", context.isEditing ? "Enregistrer le groupe" : "Finaliser le groupe"];

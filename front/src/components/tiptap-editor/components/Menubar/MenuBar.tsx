@@ -35,7 +35,7 @@ export default function MenuBar({
   isSticky = false,
   headerSticky = false,
   onUploadAllImagesRef,
-}: MenuBarProps) {
+}: Readonly<MenuBarProps>) {
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   const inputFileRef = useRef<HTMLInputElement>(null);

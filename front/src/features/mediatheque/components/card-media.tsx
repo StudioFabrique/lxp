@@ -9,7 +9,7 @@ type Props = {
   children: ReactElement;
 };
 
-function CardMedia({ children, media }: Props) {
+function CardMedia({ children, media }: Readonly<Props>) {
   const channel = new BroadcastChannel("clipboardChannel");
   const [copied, setCopied] = useState(false);
 

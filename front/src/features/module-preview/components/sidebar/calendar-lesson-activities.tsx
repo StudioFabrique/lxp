@@ -4,7 +4,7 @@ import { modulePreviewApi } from "../../api/module-preview.api";
 import ActivityList from "./activity-list";
 
 /** Déplier une leçon ici ne sélectionne aucun contenu dans l'explorateur. */
-export default function CalendarLessonActivities({ lesson }: { lesson: Lesson }) {
+export default function CalendarLessonActivities({ lesson }: Readonly<{ lesson: Lesson }>) {
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["calendar-lesson", lesson.id],
     queryFn: async () => modulePreviewApi.queries.getLesson(lesson.id!) as Promise<Lesson>,

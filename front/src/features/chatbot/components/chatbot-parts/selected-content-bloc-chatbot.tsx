@@ -9,7 +9,7 @@ type Props = {
 export default function SelectedContentBlocChatbot({
   textSelection,
   onDismiss,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <div className="flex flex-col items-end gap-1.5 my-2 w-[85%] ml-auto">
       <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-base-content/60">

@@ -12,7 +12,7 @@ type Props = {
   side?: "left" | "right";
 };
 
-export default function AuthChatbotBubble({ message, waiting, hidden, delay, bubbleRef, side = "left" }: Props) {
+export default function AuthChatbotBubble({ message, waiting, hidden, delay, bubbleRef, side = "left" }: Readonly<Props>) {
   const reducedMotion = useReducedMotion();
   return (
     <motion.div ref={bubbleRef} data-chatbot-bubble layout aria-hidden={hidden || undefined}

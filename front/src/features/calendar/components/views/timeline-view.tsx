@@ -19,7 +19,7 @@ type Props = {
   onShowMore?: (events: CalendarEvent[]) => void;
 };
 
-export default function TimelineView({ onSelectDay, events, view, currentDate, startHour, endHour, currentWeekDayVisible, style = { hourHeight: 60 }, onClickEventDetails, onShowMore }: Props) {
+export default function TimelineView({ onSelectDay, events, view, currentDate, startHour, endHour, currentWeekDayVisible, style = { hourHeight: 60 }, onClickEventDetails, onShowMore }: Readonly<Props>) {
   const [now, setNow] = useState(new Date());
   useEffect(() => { const timer = setInterval(() => setNow(new Date()), 60_000); return () => clearInterval(timer); }, []);
   const days = useMemo(() => {

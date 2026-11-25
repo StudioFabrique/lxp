@@ -36,11 +36,11 @@ export default function AuthFlipTiles({
   image,
   imageSrc,
   onClipPathChange,
-}: {
+}: Readonly<{
   image: HTMLImageElement;
   imageSrc?: string;
   onClipPathChange: (value: string) => void;
-}) {
+}>) {
   const reducedMotion = useReducedMotion();
   const [geometry, setGeometry] = useState<Geometry | null>(null);
   const [tiles, setTiles] = useState<Tile[]>([]);

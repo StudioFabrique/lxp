@@ -17,7 +17,7 @@ function ModuleFields({
   errors,
   children,
   titleAside,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">

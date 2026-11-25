@@ -6,10 +6,10 @@ import { preferenceOptions } from "./learning-choice-options";
 export function PreferenceCards({
   value,
   onChange,
-}: {
+}: Readonly<{
   value: LearningPreference[];
   onChange: (value: LearningPreference[]) => void;
-}) {
+}>) {
   return (
     <div
       className="grid grid-cols-1 gap-3 sm:grid-cols-2"

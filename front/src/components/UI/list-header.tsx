@@ -4,7 +4,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-function ListHeader({ children }: Props) {
+function ListHeader({ children }: Readonly<Props>) {
   return (
     <PageWrapper as="main" className="items-center">
       {children}

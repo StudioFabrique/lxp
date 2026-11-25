@@ -11,7 +11,7 @@ type Props = {
 };
 
 // Composant ListImages qui affiche une grille d'images
-function ListImages({ options, images, onSort }: Props) {
+function ListImages({ options, images, onSort }: Readonly<Props>) {
   return (
     <>
       <div className="flex gap-x-4 items-center justify-end w-4/6">

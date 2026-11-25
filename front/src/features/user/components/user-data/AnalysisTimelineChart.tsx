@@ -9,7 +9,7 @@ const OUTCOMES = [
   { key: "dropout", name: "Abandon", color: "#ef4444" },
 ] as const;
 
-export default function AnalysisTimelineChart({ analyses }: { analyses: HistoricalAnalysis[] }) {
+export default function AnalysisTimelineChart({ analyses }: Readonly<{ analyses: HistoricalAnalysis[] }>) {
   const chronological = [...analyses].sort(
     (a, b) => new Date(a.evaluatedAt).getTime() - new Date(b.evaluatedAt).getTime(),
   );

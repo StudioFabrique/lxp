@@ -35,11 +35,14 @@ export const AppErrorPage = ({ error }: { error: unknown }) => {
   }
 
   // Préparation de la chaîne de caractères technique pour l'affichage et la copie
-  const errorDetails = isRouteErrorResponse(error)
-    ? `[${error.status}] ${error.statusText}\n${JSON.stringify(error.data, null, 2)}`
-    : error instanceof Error
-      ? error.stack || error.message
-      : (JSON.stringify(error, null, 2) ?? String(error));
+  let errorDetails: string;
+  if (isRouteErrorResponse(error)) {
+    errorDetails = `[${error.status}] ${error.statusText}\n${JSON.stringify(error.data, null, 2)}`;
+  } else if (error instanceof Error) {
+    errorDetails = error.stack || error.message;
+  } else {
+    errorDetails = JSON.stringify(error, null, 2) ?? String(error);
+  }
 
   // Fonction de copie dans le presse-papiers
   const handleCopy = async () => {

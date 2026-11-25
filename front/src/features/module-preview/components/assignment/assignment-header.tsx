@@ -1,7 +1,7 @@
 import type Course from "../../../../utils/interfaces/course";
 import { formatDate } from "./course-assignment.utils";
 
-export function AssignmentHeader({ course }: { course: Course }) {
+export function AssignmentHeader({ course }: Readonly<{ course: Course }>) {
   const assignment = course.assignment!;
   return (
     <div className="flex flex-wrap justify-between gap-4">

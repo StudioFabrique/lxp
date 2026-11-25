@@ -17,7 +17,7 @@ INFISICAL_IMAGE="${INFISICAL_IMAGE:-infisical/cli:0.45.14}"
 # INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET, si elles existent, ont priorité.
 INFISICAL_CREDENTIALS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/lxp/infisical-auth"
 
-infisical_enabled() { [ -f "$INFISICAL_LOCAL_CONFIG" ]; }
+infisical_enabled() { [[ -f "$INFISICAL_LOCAL_CONFIG" ]]; }
 
 # Lit le fichier sans l'exécuter : seules les clés connues sont retenues.
 infisical_load_config() {
@@ -25,8 +25,8 @@ infisical_load_config() {
   INFISICAL_ENVIRONMENT="local"
   INFISICAL_SECRET_PATHS="/runtime /mailer"
   INFISICAL_PROJECT_ID=""
-  [ -f "$INFISICAL_LOCAL_CONFIG" ] || return 0
-  while IFS='=' read -r key value || [ -n "$key" ]; do
+  [[ -f "$INFISICAL_LOCAL_CONFIG" ]] || return 0
+  while IFS='=' read -r key value || [[ -n "$key" ]]; do
     value=${value%\"}; value=${value#\"}
     case "$key" in
       INFISICAL_DOMAIN|INFISICAL_ENVIRONMENT|INFISICAL_SECRET_PATHS|INFISICAL_PROJECT_ID)
@@ -37,12 +37,12 @@ infisical_load_config() {
 
 # Lit le fichier d'identifiants sans l'exécuter. L'environnement prime.
 infisical_load_credentials() {
-  [ -f "$INFISICAL_CREDENTIALS_FILE" ] || return 0
-  while IFS='=' read -r key value || [ -n "$key" ]; do
+  [[ -f "$INFISICAL_CREDENTIALS_FILE" ]] || return 0
+  while IFS='=' read -r key value || [[ -n "$key" ]]; do
     value=${value%\"}; value=${value#\"}
     case "$key" in
       INFISICAL_UNIVERSAL_AUTH_CLIENT_ID|INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET)
-        [ -n "${!key:-}" ] || export "$key=$value" ;;
+        [[ -n "${!key:-}" ]] || export "$key=$value" ;;
     esac
   done < "$INFISICAL_CREDENTIALS_FILE"
 }
@@ -69,17 +69,17 @@ infisical_token() {
 # mot de passe, SSO) ne sont pas prises en charge.
 infisical_login() {
   infisical_load_config
-  [ -t 0 ] || { echo "Un terminal interactif est nécessaire." >&2; return 1; }
+  [[ -t 0 ]] || { echo "Un terminal interactif est nécessaire." >&2; return 1; }
   echo "Identifiants d'une Machine Identity Infisical (Universal Auth)."
   read -r -p "Client ID : " client_id
   read -r -s -p "Client Secret : " client_secret
   echo
-  [ -n "$client_id" ] && [ -n "$client_secret" ] || { echo "Valeur vide." >&2; return 1; }
+  [[ -n "$client_id" ]] && [[ -n "$client_secret" ]] || { echo "Valeur vide." >&2; return 1; }
 
   (
     export INFISICAL_UNIVERSAL_AUTH_CLIENT_ID="$client_id"
     export INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET="$client_secret"
-    [ -n "$(infisical_token)" ]
+    [[ -n "$(infisical_token)" ]]
   ) || { echo "Identifiants refusés par Infisical." >&2; return 1; }
 
   umask 077
@@ -108,13 +108,13 @@ infisical_write_config() {
 # valeurs ne sont jamais écrites sur disque.
 infisical_export_secrets() {
   infisical_load_config
-  [ -n "$INFISICAL_PROJECT_ID" ] || { echo "INFISICAL_PROJECT_ID manquant dans $INFISICAL_LOCAL_CONFIG" >&2; return 1; }
+  [[ -n "$INFISICAL_PROJECT_ID" ]] || { echo "INFISICAL_PROJECT_ID manquant dans $INFISICAL_LOCAL_CONFIG" >&2; return 1; }
 
   infisical_load_credentials
-  if [ -z "${INFISICAL_TOKEN:-}" ]; then
-    [ -n "${INFISICAL_UNIVERSAL_AUTH_CLIENT_ID:-}" ] && [ -n "${INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET:-}" ] \
+  if [[ -z "${INFISICAL_TOKEN:-}" ]]; then
+    [[ -n "${INFISICAL_UNIVERSAL_AUTH_CLIENT_ID:-}" ]] && [[ -n "${INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET:-}" ]] \
       || { echo "Identifiants de Machine Identity absents." >&2; return 1; }
-    INFISICAL_TOKEN=$(infisical_token) && [ -n "$INFISICAL_TOKEN" ] || { INFISICAL_TOKEN=""; return 1; }
+    INFISICAL_TOKEN=$(infisical_token) && [[ -n "$INFISICAL_TOKEN" ]] || { INFISICAL_TOKEN=""; return 1; }
     token_is_local=true
   fi
   # Le jeton ne reste exporté que le temps des lectures.
@@ -123,7 +123,7 @@ infisical_export_secrets() {
   for secret_path in $INFISICAL_SECRET_PATHS; do
     infisical_export_path "$secret_path" || { status=1; break; }
   done
-  if [ "${token_is_local:-false}" = true ]; then unset INFISICAL_TOKEN token_is_local; fi
+  if [[ "${token_is_local:-false}" = true ]]; then unset INFISICAL_TOKEN token_is_local; fi
   return $status
 }
 

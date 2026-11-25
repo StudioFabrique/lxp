@@ -11,7 +11,7 @@ export default function LoadingSkeleton({
   variant = "panel",
   className,
   label = "Chargement du contenu",
-}: LoadingSkeletonProps) {
+}: Readonly<LoadingSkeletonProps>) {
   const [showLoadingMessage, setShowLoadingMessage] = useState(false);
 
   useEffect(() => {

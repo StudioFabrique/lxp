@@ -17,7 +17,7 @@ const PARCOURS_EDIT_PATH = /\/parcours\/edit\/[^/]+/;
 const PARCOURS_EDIT_CONTAINER_STYLE = { bottom: "6.5rem" };
 
 /** Toaster de l'application : en haut au centre, sauf sur l'édition d'un parcours. */
-export default function AppToaster({ router }: { router: ToasterRouter }) {
+export default function AppToaster({ router }: Readonly<{ router: ToasterRouter }>) {
   const isParcoursEdit = useSyncExternalStore(
     router.subscribe,
     () => PARCOURS_EDIT_PATH.test(router.state.location.pathname),

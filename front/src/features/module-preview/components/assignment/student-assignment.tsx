@@ -16,7 +16,7 @@ import { type Props } from "./course-assignment.types";
 import { AssignmentFileButton } from "./assignment-file-button";
 import { formatDate } from "./course-assignment.utils";
 
-export function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
+export function StudentAssignment({ course, onChanged }: Readonly<Omit<Props, "staff">>) {
   const assignment = course.assignment!;
   const submission = assignment.submissions[0];
   const submissionForm = useForm({

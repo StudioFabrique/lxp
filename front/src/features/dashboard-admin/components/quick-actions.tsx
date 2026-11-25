@@ -26,10 +26,10 @@ const links = [
 export default function QuickActions({
   onCreateFormation,
   onCreateParcours,
-}: {
+}: Readonly<{
   onCreateFormation: () => void;
   onCreateParcours: () => void;
-}) {
+}>) {
   const { user } = useContext(AuthContext);
   // Mobile : l'en-tête de page est remplacé par le tiroir d'actions de la barre, qui est déjà le menu :
   // les entrées s'y affichent directement, sans second bouton déroulant. Elles y sont déposées ici même,

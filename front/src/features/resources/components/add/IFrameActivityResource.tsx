@@ -30,7 +30,7 @@ type Props = {
  * - Form validation with Zod schema
  * - Loading state for iframe content
  */
-export default function IFrameActivityResource(props: Props) {
+export default function IFrameActivityResource(props: Readonly<Props>) {
   const {
     data,
     cleanedUrl,

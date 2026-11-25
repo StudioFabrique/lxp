@@ -19,7 +19,7 @@ export default async function updateUserPassword(
 
   const userUpdated = await User.updateOne({ _id }, { password });
 
-  if (Boolean(userUpdated)) {
+  if (userUpdated) {
     return userUpdated;
   }
 

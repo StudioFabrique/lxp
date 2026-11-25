@@ -35,10 +35,10 @@ async function putParcoursContacts(
 
       const contacts = await prisma.orm.public.Contact.all();
 
-      const contactsToCreate = Array<Contact>();
+      const contactsToCreate = [] as Contact[];
 
       for (const newContact of newContacts) {
-        const contact = contacts.find(
+        const contact = contacts.some(
           (item: Contact) => item.idMdb === newContact.idMdb,
         );
         if (!contact) {

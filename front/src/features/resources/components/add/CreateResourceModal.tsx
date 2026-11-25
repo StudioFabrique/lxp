@@ -2,7 +2,7 @@ import Modal from "../../../../components/UI/modal/modal";
 import useResource from "../../hooks/useResource";
 import ResourceForm from "./ResourceForm";
 
-export default function CreateResourceModal({ onClose }: { onClose: () => void }) {
+export default function CreateResourceModal({ onClose }: Readonly<{ onClose: () => void }>) {
   const resource = useResource({ onResourceSaved: onClose });
 
   return (

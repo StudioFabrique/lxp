@@ -17,7 +17,7 @@ type Props = {
   onSetFile: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function VideoForm(props: Props) {
+export default function VideoForm(props: Readonly<Props>) {
   const url = props.data.watch("url");
 
   return (

@@ -27,8 +27,8 @@ case "${1:-}" in
     ;;
 esac
 
-if [ "$demo_mode" = true ]; then init_mode="demonstration"
-elif [ "$restore_data" = true ]; then init_mode="avec données"
+if [[ "$demo_mode" = true ]]; then init_mode="demonstration"
+elif [[ "$restore_data" = true ]]; then init_mode="avec données"
 else init_mode="installation à partir de zéro"; fi
 box "$c_cyan$c_bold" "ANDRIA  Initialisation du projet" "Mode : $init_mode"
 show_cancel_hint
@@ -38,7 +38,7 @@ install_dependencies() {
   directory="$2"
   shift 2
 
-  if [ -d "$directory/node_modules" ] \
+  if [[ -d "$directory/node_modules" ]] \
     && npm ls --depth=0 --prefix "$directory" > /dev/null 2>&1; then
     ok "Dépendances $label à jour"
     return
@@ -67,7 +67,7 @@ write_env_value() {
   found=false
   : > "$temporary_file"
 
-  while IFS= read -r line || [ -n "$line" ]; do
+  while IFS= read -r line || [[ -n "$line" ]]; do
     case "$line" in
       "$key="*)
         printf '%s="%s"\n' "$key" "$escaped_value" >> "$temporary_file"
@@ -77,7 +77,7 @@ write_env_value() {
     esac
   done < "$file"
 
-  if [ "$found" = false ]; then
+  if [[ "$found" = false ]]; then
     printf '%s="%s"\n' "$key" "$escaped_value" >> "$temporary_file"
   fi
   mv "$temporary_file" "$file"
@@ -92,13 +92,13 @@ prompt_env_value() {
   current_value=$(read_env_value "$key" "$file")
 
   while true; do
-    if [ -n "$current_value" ]; then
+    if [[ -n "$current_value" ]]; then
       prompt="$key — $label [$current_value] : "
     else
       prompt="$key — $label : "
     fi
 
-    if [ "$secret" = true ]; then
+    if [[ "$secret" = true ]]; then
       read -r -s -p "$prompt" entered_value
       echo
     else
@@ -106,7 +106,7 @@ prompt_env_value() {
     fi
 
     value="${entered_value:-$current_value}"
-    if [ -n "$value" ] || [ "$optional" = true ]; then
+    if [[ -n "$value" ]] || [[ "$optional" = true ]]; then
       write_env_value "$key" "$value" "$file"
       return
     fi
@@ -116,7 +116,7 @@ prompt_env_value() {
 
 configure_development_mailer() {
   file="$1"
-  if [ ! -t 0 ]; then
+  if [[ ! -t 0 ]]; then
     fail "la configuration du mailer en développement nécessite un terminal interactif."
     exit 1
   fi
@@ -152,8 +152,8 @@ configure_development_mailer() {
 configure_development_password() {
   file="$1"
   configured_password=$(read_env_value "DEV_TEMPORARY_USER_PASSWORD" "$file")
-  if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "true" ] \
-    || { [ -n "$configured_password" ] && [ "$configured_password" != "false" ]; }; then
+  if [[ "$(read_env_value "MAILER_DISABLED" "$file")" != "true" ]] \
+    || { [[ -n "$configured_password" ]] && [[ "$configured_password" != "false" ]]; }; then
     return
   fi
 
@@ -167,12 +167,12 @@ configure_development_password() {
 
 development_mailer_needs_configuration() {
   file="$1"
-  if [ "$(read_env_value "MAILER_DISABLED" "$file")" != "false" ]; then
+  if [[ "$(read_env_value "MAILER_DISABLED" "$file")" != "false" ]]; then
     return 0
   fi
 
   for key in MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_DEV_RECIPIENT MAILER_SMTP_PORT MAILER_FROM; do
-    if [ -z "$(read_env_value "$key" "$file")" ]; then
+    if [[ -z "$(read_env_value "$key" "$file")" ]]; then
       return 0
     fi
   done
@@ -184,7 +184,7 @@ development_mailer_needs_configuration() {
 # n'est plus posée au prochain `npm run init`.
 configure_development_ai() {
   file="$1"
-  [ -t 0 ] || return 0
+  [[ -t 0 ]] || return 0
 
   while true; do
     read -r -p "Souhaitez-vous activer le service IA (clés Mistral requises) ? [y/N] : " enable_ai
@@ -192,10 +192,10 @@ configure_development_ai() {
       o|O|oui|Oui|OUI|y|Y|yes|YES)
         for key in MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY; do
           ai_key=""
-          while [ -z "$ai_key" ]; do
+          while [[ -z "$ai_key" ]]; do
             read -r -s -p "$key : " ai_key
             echo
-            [ -n "$ai_key" ] || warn "Une valeur est requise pour $key"
+            [[ -n "$ai_key" ]] || warn "Une valeur est requise pour $key"
           done
           write_env_value "$key" "$ai_key" "$file"
         done
@@ -218,17 +218,17 @@ configure_development_ai() {
 # configurée ni refusée.
 development_ai_needs_configuration() {
   file="$1"
-  [ "$(read_env_value "DISABLE_AI_FEATURES" "$file")" != "true" ] || return 1
-  [ -z "$(read_env_value "MISTRAL_STUDENT_API_KEY" "$file")" ] \
-    || [ -z "$(read_env_value "MISTRAL_CONTENT_API_KEY" "$file")" ]
+  [[ "$(read_env_value "DISABLE_AI_FEATURES" "$file")" != "true" ]] || return 1
+  [[ -z "$(read_env_value "MISTRAL_STUDENT_API_KEY" "$file")" ]] \
+    || [[ -z "$(read_env_value "MISTRAL_CONTENT_API_KEY" "$file")" ]]
 }
 
 # Avec Infisical, rien n'est saisi ni écrit : on indique seulement ce qui a été
 # reçu pour que l'absence du service IA ne soit pas silencieuse.
 report_infisical_ai() {
-  if [ "${DISABLE_AI_FEATURES:-false}" = "true" ]; then
+  if [[ "${DISABLE_AI_FEATURES:-false}" = "true" ]]; then
     info "Service IA désactivé par Infisical (DISABLE_AI_FEATURES=true)"
-  elif [ -n "${MISTRAL_STUDENT_API_KEY:-}" ] && [ -n "${MISTRAL_CONTENT_API_KEY:-}" ]; then
+  elif [[ -n "${MISTRAL_STUDENT_API_KEY:-}" ]] && [[ -n "${MISTRAL_CONTENT_API_KEY:-}" ]]; then
     ok "Service IA activé : clés Mistral fournies par Infisical"
   else
     warn "Service IA non démarré : MISTRAL_STUDENT_API_KEY et MISTRAL_CONTENT_API_KEY sont absentes d'Infisical"
@@ -239,10 +239,10 @@ report_infisical_ai() {
 configure_development_env() {
   file="$1"
   environment=$(read_env_value "ENVIRONMENT" "$file")
-  if [ "$environment" != "development" ]; then
+  if [[ "$environment" != "development" ]]; then
     return
   fi
-  if [ ! -t 0 ]; then
+  if [[ ! -t 0 ]]; then
     fail "la création de api/.env en développement nécessite un terminal interactif."
     exit 1
   fi
@@ -258,7 +258,7 @@ configure_development_env() {
 # Infisical est facultatif : sans lui, les variables viennent de api/.env.
 # La question n'est posée qu'une fois, à la première configuration.
 configure_infisical() {
-  [ ! -f "./api/.env" ] && [ ! -f "$INFISICAL_LOCAL_CONFIG" ] && [ -t 0 ] || return 0
+  [[ ! -f "./api/.env" ]] && [[ ! -f "$INFISICAL_LOCAL_CONFIG" ]] && [[ -t 0 ]] || return 0
 
   read -r -p "Utiliser Infisical pour les variables d'environnement ? [y/N] : " use_infisical
   case "$use_infisical" in
@@ -268,7 +268,7 @@ configure_infisical() {
 
   infisical_load_config
   read -r -p "Identifiant du projet Infisical : " project_id
-  [ -n "$project_id" ] || { warn "Identifiant vide, Infisical ignoré"; return 0; }
+  [[ -n "$project_id" ]] || { warn "Identifiant vide, Infisical ignoré"; return 0; }
   read -r -p "Domaine Infisical [$INFISICAL_DOMAIN] : " entered_domain
   read -r -p "Environnement [$INFISICAL_ENVIRONMENT] : " entered_environment
   infisical_write_config "${entered_domain:-$INFISICAL_DOMAIN}" "$project_id" \
@@ -293,8 +293,8 @@ configure_infisical() {
 # de récupérer une sauvegarde locale.
 requested_restore=$restore_data
 
-if [ "$requested_restore" = true ]; then
-  if [ -t 0 ] && has_project_volumes; then
+if [[ "$requested_restore" = true ]]; then
+  if [[ -t 0 ]] && has_project_volumes; then
     echo
     warn "La restauration remplace toutes les données existantes"
     read -r -p "Êtes-vous sûr de réinitialiser les volumes des conteneurs ? [y/N] : " confirm_reset
@@ -311,14 +311,14 @@ else
   # Sans terminal interactif, le nettoyage reste automatique comme avant.
   work_dump_dir="./api/dumps"
   has_backup=false
-  if [ -f "$work_dump_dir/dump-pgsql.sql" ] || [ -d "$work_dump_dir/dump-mongo" ]; then
+  if [[ -f "$work_dump_dir/dump-pgsql.sql" ]] || [[ -d "$work_dump_dir/dump-mongo" ]]; then
     has_backup=true
   fi
 
   # Sans volume Docker existant, il n'y a aucune donnée à perdre : pas de question.
-  if [ -t 0 ] && has_project_volumes; then
+  if [[ -t 0 ]] && has_project_volumes; then
     echo
-    if [ "$has_backup" = true ]; then
+    if [[ "$has_backup" = true ]]; then
       warn "Une sauvegarde de données a été détectée dans api/dumps"
       read -r -p "Supprimer toutes les données existantes ? [y/N] (N : récupérer les données sauvegardées) : " wipe_data
       if [[ ! "$wipe_data" =~ ^[Yy]$ ]]; then
@@ -353,8 +353,8 @@ if infisical_enabled; then
   load_secrets || { fail "Chargement des secrets Infisical"; exit 1; }
   step "Service IA"
   report_infisical_ai
-elif [ ! -f "./api/.env" ]; then
-  if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
+elif [[ ! -f "./api/.env" ]]; then
+  if grep -q '^ENVIRONMENT=development' ./api/env.example && [[ ! -t 0 ]]; then
     fail "la création de api/.env en développement nécessite un terminal interactif."
     exit 1
   fi
@@ -362,15 +362,15 @@ elif [ ! -f "./api/.env" ]; then
   api_env_created=true
   configure_development_env "./api/.env"
 fi
-if [ "$api_env_created" = false ] && [ -f "./api/.env" ] \
-  && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
+if [[ "$api_env_created" = false ]] && [[ -f "./api/.env" ]] \
+  && [[ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ]] \
   && development_mailer_needs_configuration "./api/.env"; then
   step "Mailer de développement"
   configure_development_mailer "./api/.env"
   configure_development_password "./api/.env"
 fi
-if [ "$api_env_created" = false ] && ! infisical_enabled && [ -f "./api/.env" ] \
-  && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
+if [[ "$api_env_created" = false ]] && ! infisical_enabled && [[ -f "./api/.env" ]] \
+  && [[ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ]] \
   && development_ai_needs_configuration "./api/.env"; then
   step "Service IA"
   configure_development_ai "./api/.env"
@@ -393,12 +393,12 @@ start_local_services || { fail "Démarrage des containers"; lxp_compose logs --t
 cd api
 
 step_cmd "Contrat Prisma"
-npx prisma contract emit || { fail "Émission du contrat Prisma"; exit 1; }
+npx --no-install prisma contract emit || { fail "Émission du contrat Prisma"; exit 1; }
 
 step_cmd "Migrations"
-npx prisma db migrate --to current || { fail "Migrations"; exit 1; }
+npx --no-install prisma db migrate --to current || { fail "Migrations"; exit 1; }
 
-if [ "$restore_data" = true ]; then
+if [[ "$restore_data" = true ]]; then
   step_cmd "Restauration des données"
 
   # Restauration PostgreSQL
@@ -438,7 +438,7 @@ if [ "$restore_data" = true ]; then
   fi
 fi
 
-if [ "$demo_mode" = true ]; then
+if [[ "$demo_mode" = true ]]; then
   step_cmd "Comptes de démonstration"
   npm run demo:seed || { fail "Comptes de démonstration"; exit 1; }
 fi
@@ -448,14 +448,14 @@ npm run notify-triggers || { fail "Notification des triggers"; exit 1; }
 
 close_step
 echo
-if [ "$demo_mode" = true ]; then
+if [[ "$demo_mode" = true ]]; then
   box "$c_green$c_bold" "TERMINÉ  Instance de démonstration ANDRIA prête"
-elif [ "$restore_data" = true ]; then
+elif [[ "$restore_data" = true ]]; then
   box "$c_green$c_bold" "TERMINÉ  ANDRIA configuré avec les données de démonstration"
 else
   box "$c_green$c_bold" "TERMINÉ  ANDRIA configuré"
 fi
-if [ "$demo_mode" = false ] && [ "$restore_data" = false ]; then
+if [[ "$demo_mode" = false ]] && [[ "$restore_data" = false ]]; then
   info "Rôles, permissions et clé du premier administrateur : $(cmd "npm run generate-activation-key")"
 fi
 cd ..
@@ -463,13 +463,13 @@ cd ..
 # Les journaux sont indisponibles en démonstration : le mode coupe la route
 # côté API, inutile alors de proposer de les démarrer.
 show_observability_hint() {
-  [ "$demo_mode" = false ] || return 0
+  [[ "$demo_mode" = false ]] || return 0
   info "Journaux (facultatif) : $(cmd "npm run observability:dev") à la racine du projet"
   info "Puis dans api/.env : $(cmd "OBSERVABILITY_ENABLED=true"), $(cmd "OBSERVABILITY_URL=http://localhost:9428") et $(cmd "DEMO_MODE=false")"
   info "Arrêt : $(cmd "npm run observability:dev:down")"
 }
 
-if [ ! -t 0 ]; then
+if [[ ! -t 0 ]]; then
   info "Prochaine étape : lancer $(cmd "npm run dev") à la racine du projet"
   show_observability_hint
   exit 0

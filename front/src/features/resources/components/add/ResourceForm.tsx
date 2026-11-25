@@ -45,7 +45,7 @@ export default function ResourceForm({
   onTagError,
   onSetFile,
   showSubmitButton = true,
-}: Props) {
+}: Readonly<Props>) {
   const [inputTag, setInputTag] = useState<string>("");
   const { handleSelectedFile } = useImageUpload(5000000, onSetFile);
 

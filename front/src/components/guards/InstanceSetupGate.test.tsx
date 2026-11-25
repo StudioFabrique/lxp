@@ -52,9 +52,8 @@ describe("InstanceSetupGate", () => {
 
     await renderAt(0);
     expect(container.querySelector('[role="status"]')?.getAttribute("aria-label"))
-      .toBe("Vérification de la configuration de l’instance");
+      .toBe("Chargement de l’application");
     expect(container.textContent).not.toContain("layout-admin");
-    expect(container.querySelector(".skeleton")).toBeNull();
 
     await act(async () => resolveSettings({ setupCompleted: false }));
     expect(container.textContent).toContain("configuration-instance");

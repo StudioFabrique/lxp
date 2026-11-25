@@ -14,7 +14,7 @@ type Props = {
 };
 
 /** Réponse de l'assistant virtuel dans sa bulle : défilante si elle est longue, avec de quoi l'agrandir ou la fermer. */
-export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, onDismiss }: Props) {
+export default function ChatbotAnswer({ message, routeRoot, onRetry, onExpand, onDismiss }: Readonly<Props>) {
   const isGeneralKnowledge = message.mode && message.mode !== "course_content";
 
   const canExpand = !message.preset;

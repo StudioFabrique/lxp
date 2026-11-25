@@ -13,6 +13,84 @@ export type UserProfileInput = Omit<
   hobbies?: Array<string | mongoose.Types.ObjectId | Partial<IHobby>>;
 };
 
+type LinkInput = NonNullable<UserProfileInput["links"]>[number];
+type HobbyInput = NonNullable<UserProfileInput["hobbies"]>[number];
+
+function cleanLinkUrl(url: string): string {
+  return url
+    .replaceAll("&#x2F;", "/")
+    .replaceAll("&amp;", "&")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'");
+}
+
+async function resolveLinkId(
+  link: LinkInput,
+  userId: string,
+): Promise<mongoose.Types.ObjectId | null> {
+  if (!link) return null;
+  if (typeof link === "string" || link instanceof mongoose.Types.ObjectId) {
+    return new mongoose.Types.ObjectId(link);
+  }
+  if (!link.url) return null;
+
+  const cleanedUrl = cleanLinkUrl(link.url);
+  const existing = await Link.findOne({ url: cleanedUrl, user: userId });
+  if (existing) return existing._id;
+
+  delete link._id;
+  const newLink = await Link.create({
+    ...link,
+    url: cleanedUrl,
+    user: userId,
+  });
+  return newLink._id;
+}
+
+async function resolveLinkIds(
+  links: LinkInput[],
+  userId: string,
+): Promise<mongoose.Types.ObjectId[]> {
+  const linkIds: mongoose.Types.ObjectId[] = [];
+  for (const link of links) {
+    const id = await resolveLinkId(link, userId);
+    if (id) linkIds.push(id);
+  }
+  return linkIds;
+}
+
+async function resolveHobbyId(
+  hobby: HobbyInput,
+  userId: string,
+): Promise<mongoose.Types.ObjectId | null> {
+  if (!hobby) return null;
+  if (typeof hobby === "string" || hobby instanceof mongoose.Types.ObjectId) {
+    return new mongoose.Types.ObjectId(hobby);
+  }
+  if (!hobby.title) return null;
+
+  const existing = await Hobby.findOne({ title: hobby.title, user: userId });
+  if (existing) return existing._id;
+
+  delete hobby._id;
+  const newHobby = await Hobby.create({ ...hobby, user: userId });
+  return newHobby._id;
+}
+
+async function resolveHobbyIds(
+  hobbies: HobbyInput[],
+  userId: string,
+): Promise<mongoose.Types.ObjectId[]> {
+  const hobbyIds: mongoose.Types.ObjectId[] = [];
+  for (const hobby of hobbies) {
+    const id = await resolveHobbyId(hobby, userId);
+    if (id) hobbyIds.push(id);
+  }
+  return hobbyIds;
+}
+
 export default async function updateUser(_id: string, user: UserProfileInput) {
   const existingUser = await User.findOne({ _id }).populate("roles");
 
@@ -29,67 +107,15 @@ export default async function updateUser(_id: string, user: UserProfileInput) {
     ...userDataSecure
   } = user;
 
-  // Handle Links
-  let linkIds: mongoose.Types.ObjectId[] = [];
-  if (Array.isArray(userDataSecure.links)) {
-    for (const link of userDataSecure.links) {
-      if (!link) continue;
+  const linkIds = Array.isArray(userDataSecure.links)
+    ? await resolveLinkIds(userDataSecure.links, _id)
+    : // if links is not provided at all, keep existing
+      existingUser.links || [];
 
-      if (typeof link === "string" || link instanceof mongoose.Types.ObjectId) {
-        linkIds.push(new mongoose.Types.ObjectId(link));
-      } else if (link.url) {
-        const cleanedUrl = link.url
-          .replace(/&#x2F;/g, "/")
-          .replace(/&amp;/g, "&")
-          .replace(/&lt;/g, "<")
-          .replace(/&gt;/g, ">")
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'");
-        const existing = await Link.findOne({ url: cleanedUrl, user: _id });
-        if (existing) {
-          linkIds.push(existing._id);
-        } else {
-          delete link._id;
-          const newLink = await Link.create({
-            ...link,
-            url: cleanedUrl,
-            user: _id,
-          });
-          linkIds.push(newLink._id);
-        }
-      }
-    }
-  } else {
-    // if links is not provided at all, keep existing
-    linkIds = existingUser.links || [];
-  }
-
-  // Handle Hobbies
-  let hobbyIds: mongoose.Types.ObjectId[] = [];
-  if (Array.isArray(userDataSecure.hobbies)) {
-    for (const hobby of userDataSecure.hobbies) {
-      if (!hobby) continue;
-
-      if (
-        typeof hobby === "string" ||
-        hobby instanceof mongoose.Types.ObjectId
-      ) {
-        hobbyIds.push(new mongoose.Types.ObjectId(hobby));
-      } else if (hobby.title) {
-        const existing = await Hobby.findOne({ title: hobby.title, user: _id });
-        if (existing) {
-          hobbyIds.push(existing._id);
-        } else {
-          delete hobby._id;
-          const newHobby = await Hobby.create({ ...hobby, user: _id });
-          hobbyIds.push(newHobby._id);
-        }
-      }
-    }
-  } else {
-    // if hobbies is not provided at all, keep existing
-    hobbyIds = existingUser.hobbies || [];
-  }
+  const hobbyIds = Array.isArray(userDataSecure.hobbies)
+    ? await resolveHobbyIds(userDataSecure.hobbies, _id)
+    : // if hobbies is not provided at all, keep existing
+      existingUser.hobbies || [];
 
   const userUpdatePayload: Partial<IUser> = {
     ...userDataSecure,

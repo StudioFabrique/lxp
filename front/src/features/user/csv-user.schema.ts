@@ -10,7 +10,7 @@ const csvBirthDate = z
     const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());
     const date = match
       ? new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]))
-      : new Date(NaN);
+      : new Date(Number.NaN);
     if (
       !match ||
       date.getDate() !== Number(match[1]) ||

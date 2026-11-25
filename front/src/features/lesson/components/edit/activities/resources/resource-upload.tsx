@@ -22,7 +22,7 @@ export default function ResourceUpload({
   parent = "lesson",
   title,
   onSaved,
-}: Props) {
+}: Readonly<Props>) {
   const {
     resourceName,
     setResourceName,

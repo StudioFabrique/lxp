@@ -201,15 +201,14 @@ export default function RegisterHome() {
         variant="setup"
       >
         {isChecking && !success ? (
-          <div
-            role="status"
+          <output
             aria-label="Vérification du lien"
-            className="space-y-3"
+            className="block space-y-3"
           >
             <span className="sr-only">Vérification du lien…</span>
             <div className="skeleton h-8 w-2/3" />
             <div className="skeleton h-4 w-full" />
-          </div>
+          </output>
         ) : showError ? (
           <div role="alert" className="alert alert-error alert-soft">
             <span>{error}</span>

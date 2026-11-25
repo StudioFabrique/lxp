@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 type Props = { element: HTMLElement };
 
 /** Cadre autour de l'élément que l'assistant virtuel explique. Il suit l'élément sans rendu, même quand la page défile. */
-export default function ChatbotTutorialHighlight({ element }: Props) {
+export default function ChatbotTutorialHighlight({ element }: Readonly<Props>) {
   const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

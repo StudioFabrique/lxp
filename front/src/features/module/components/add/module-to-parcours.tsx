@@ -42,7 +42,7 @@ export default function ModuleToParcours({
   isLoading,
   skills,
   isDisabled = false,
-}: Props) {
+}: Readonly<Props>) {
   const { teamLabel } = useRoleLabels();
   return (
     <div className="flex flex-col gap-y-8">

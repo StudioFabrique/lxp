@@ -3,7 +3,7 @@ import { formatModelIndicatorLabel, formatModelIndicatorValue } from "../../help
 import { type PredictionPanelProps } from "./PredictionPanel.types";
 
 /** Les données de la période sur lesquelles l'analyse s'est appuyée. */
-export function AnalysedData({ prediction }: PredictionPanelProps) {
+export function AnalysedData({ prediction }: Readonly<PredictionPanelProps>) {
   return (
     <BoxWrapper>
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">

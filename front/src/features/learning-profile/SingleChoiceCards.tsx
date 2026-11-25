@@ -13,13 +13,13 @@ export function SingleChoiceCards<T extends string>({
   value,
   onChange,
   compact = false,
-}: {
+}: Readonly<{
   name: string;
   options: SingleOption<T>[];
   value: T | null;
   onChange: (value: T) => void;
   compact?: boolean;
-}) {
+}>) {
   return (
     <div
       className={cn("grid grid-cols-1 sm:grid-cols-2", compact ? "gap-2" : "gap-3")}

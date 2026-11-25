@@ -25,9 +25,9 @@ import { formatNumber } from "../../../utils/helpers/format-number";
 
 export default function ResourceAdd({
   readOnly = false,
-}: {
+}: Readonly<{
   readOnly?: boolean;
-}) {
+}>) {
   const [showSettings, setShowSettings] = useState(false);
   const state = useResource({
     onResourceSaved: () => setShowSettings(false),
@@ -83,14 +83,14 @@ export default function ResourceAdd({
         </div>
       </Header>
       {state.isLoading ? (
-        <div role="status" aria-label="Chargement de la ressource" className="space-y-5">
+        <output aria-label="Chargement de la ressource" className="block space-y-5">
           <span className="sr-only">Chargement de la ressource…</span>
           <div className="skeleton h-44 w-full rounded-box" />
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <div className="skeleton h-72 rounded-box" />
             <div className="skeleton h-72 rounded-box lg:col-span-2" />
           </div>
-        </div>
+        </output>
       ) : state.error ? (
         <div role="alert" className="alert alert-error">
           {state.error}

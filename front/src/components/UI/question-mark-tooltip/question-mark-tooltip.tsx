@@ -23,11 +23,7 @@ const QuestionMarkTooltip = ({
 
   return (
     <div className={position} data-tip={tooltipValue}>
-      {children ? (
-        children
-      ) : (
-        <HelpCircle className="w-4 h-4 stroke-base-content/60" />
-      )}
+      {children || <HelpCircle className="w-4 h-4 stroke-base-content/60" />}
     </div>
   );
 };

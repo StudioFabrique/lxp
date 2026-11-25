@@ -77,15 +77,14 @@ const ConfirmEmail = () => {
             <Mail className="h-8 w-8" aria-hidden="true" />
           )}
           {state === "loading" && (
-            <div
-              role="status"
+            <output
               aria-label="Validation de l'adresse email"
-              className="w-full space-y-3"
+              className="block w-full space-y-3"
             >
               <span className="sr-only">Validation de l'adresse email…</span>
               <div className="skeleton mx-auto h-5 w-2/3" />
               <div className="skeleton mx-auto h-4 w-1/2" />
-            </div>
+            </output>
           )}
           {state !== "success" && (
             <p

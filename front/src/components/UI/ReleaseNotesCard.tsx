@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function ReleaseNotesCard({ className }: Props) {
+export default function ReleaseNotesCard({ className }: Readonly<Props>) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

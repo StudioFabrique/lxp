@@ -27,7 +27,7 @@ export default function InstanceLogoControls({
   onRemove,
   optional = false,
   helpText,
-}: Props) {
+}: Readonly<Props>) {
   const [hasPreview, setHasPreview] = useState(false);
   const adviceId = useId();
 

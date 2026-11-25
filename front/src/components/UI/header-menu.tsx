@@ -21,11 +21,11 @@ const HeaderMenu = ({
   groupLinkTo,
 }: HeaderMenuProps) => {
   const location = useLocation();
-  const [isModalOpen, setModalState] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <SearchModal isModalOpen={isModalOpen} setModalState={setModalState} />
+      <SearchModal isModalOpen={isModalOpen} setModalState={setIsModalOpen} />
       <div className="absolute flex justify-end w-full h-full p-5 px-10 max-md:p-2">
         {/* Mobile : les actions passent en haut à droite, pour ne pas recouvrir les titres en bas de l'image. */}
         <div className="flex flex-col gap-4 justify-between z-10 max-md:flex-col-reverse">

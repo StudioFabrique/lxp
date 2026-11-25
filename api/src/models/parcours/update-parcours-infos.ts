@@ -1,5 +1,4 @@
 import { requireDatabaseRow } from "../../utils/require-database-row.ts";
-import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function updateParcoursInfos(

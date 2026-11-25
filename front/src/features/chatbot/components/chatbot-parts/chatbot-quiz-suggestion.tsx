@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 type Props = { onTriggerQuiz: () => void; onDismiss: () => void };
 
 /** Proposition de quiz faite à l'apprenant qui reste longtemps sur une activité. */
-export default function ChatbotQuizSuggestion({ onTriggerQuiz, onDismiss }: Props) {
+export default function ChatbotQuizSuggestion({ onTriggerQuiz, onDismiss }: Readonly<Props>) {
   return (
     <div className="relative flex flex-col gap-2 text-sm text-base-content">
       <button type="button" className="btn btn-ghost btn-circle absolute -right-2 -top-2 size-6 min-h-0 p-0" onClick={onDismiss} aria-label="Ignorer la proposition de quiz">

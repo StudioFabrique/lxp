@@ -60,7 +60,7 @@ export default function RolePermissionsDrawer({
   permissionType,
   permissionLabel,
   onClose,
-}: RolePermissionsDrawerProps) {
+}: Readonly<RolePermissionsDrawerProps>) {
   const {
     permissions,
     remainingResources,

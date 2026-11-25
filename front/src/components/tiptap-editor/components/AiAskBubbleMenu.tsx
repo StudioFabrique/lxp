@@ -77,7 +77,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
       editorProps: {
         ...editor.options.editorProps,
         handleClick: (view, pos, event) => {
-          if (previousHandleClick && previousHandleClick(view, pos, event)) {
+          if (previousHandleClick?.(view, pos, event)) {
             return true;
           }
 
@@ -87,8 +87,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
           const blockNode = $pos.parent;
 
           if (
-            blockNode &&
-            blockNode.isBlock &&
+            blockNode?.isBlock &&
             blockNode.textContent.trim().length > 0 &&
             blockNode.type.name !== "video"
           ) {

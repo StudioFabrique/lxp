@@ -4,7 +4,7 @@ import { Globe2 } from "lucide-react";
 import type { Link } from "../../../user/interfaces/link";
 import apiClient from "../../../../lib/axios";
 
-export default function LinkPreview({ link }: { link: Link }) {
+export default function LinkPreview({ link }: Readonly<{ link: Link }>) {
   const [iconFailed, setIconFailed] = useState(false);
   let hostname = link.url;
   let favicon = "";

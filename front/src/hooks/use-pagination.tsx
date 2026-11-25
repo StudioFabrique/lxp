@@ -110,7 +110,7 @@ const usePagination = (
       .get(
         `${path}/${stype}/${
           sdir ? "desc" : "asc"
-        }?page=${page}&limit=${perPage}${urlComplement ? urlComplement : ""}`,
+        }?page=${page}&limit=${perPage}${urlComplement ?? ""}`,
       )
       .then((response) => {
         if (requestId === requestIdRef.current) applyData(response.data);

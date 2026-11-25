@@ -22,7 +22,7 @@ export default function VerticalBars({
   width = "450px",
   height = "300px",
   warning = 0,
-}: VerticalChartsProps) {
+}: Readonly<VerticalChartsProps>) {
   // Tronquer les noms de catégories trop longs
   const truncatedCategories = categories.map((category) =>
     category.length > 10 ? category.slice(0, 10) + "..." : category,

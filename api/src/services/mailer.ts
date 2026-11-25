@@ -11,8 +11,8 @@ import {
   instanceLogoPath,
   readInstanceSettings,
 } from "./instance-settings.ts";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { DROPOUT_SUMMARY_SUBJECT, dropoutSummaryHtml } from "../helpers/mail-template/dropout-summary.ts";
 import {
   ANDRIA_FOOTER_LOGO_DARK_CID,

@@ -11,7 +11,7 @@ type Row = DropoutSummary & { id: string };
 
 type Props = { summaries: DropoutSummary[] };
 
-export default function DropoutSummariesTable({ summaries }: Props) {
+export default function DropoutSummariesTable({ summaries }: Readonly<Props>) {
   const rows = useMemo<Row[]>(
     () => summaries.map((summary) => ({ ...summary, id: summary.groupId })),
     [summaries],

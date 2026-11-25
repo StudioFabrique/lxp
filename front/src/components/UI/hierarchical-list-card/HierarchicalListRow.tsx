@@ -61,7 +61,7 @@ export const HierarchicalListRow = ({
         setIsActionMenuOpen(true);
       }}
     >
-      {item.image ? (
+      {item.image && (
         <div className="pointer-events-none relative z-10 self-center">
           <img
             src={item.image.src}
@@ -69,11 +69,12 @@ export const HierarchicalListRow = ({
             className="size-10 rounded-lg object-cover"
           />
         </div>
-      ) : item.icon ? (
+      )}
+      {!item.image && item.icon && (
         <div className="pointer-events-none relative z-10 flex size-10 items-center justify-center self-center rounded-lg text-primary [&>svg]:size-5">
           {item.icon}
         </div>
-      ) : null}
+      )}
 
       <div className="pointer-events-none relative z-10 list-col-grow min-w-0 self-center">
         {item.description ? (
@@ -123,7 +124,7 @@ export const HierarchicalListRow = ({
         />
       ) : null}
 
-      {item.to ? (
+      {item.to && (
         <Link
           data-row-link
           className="absolute inset-0 z-0 cursor-pointer rounded-box"
@@ -131,7 +132,8 @@ export const HierarchicalListRow = ({
           state={item.state}
           aria-label={item.ariaLabel ?? `Ouvrir ${formatTitle(item.title)}`}
         />
-      ) : item.onClick ? (
+      )}
+      {!item.to && item.onClick && (
         <button
           type="button"
           data-row-link
@@ -139,7 +141,7 @@ export const HierarchicalListRow = ({
           onClick={item.onClick}
           aria-label={item.ariaLabel ?? `Ouvrir ${formatTitle(item.title)}`}
         />
-      ) : null}
+      )}
     </li>
   );
 };

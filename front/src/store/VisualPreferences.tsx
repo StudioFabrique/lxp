@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useState, type PropsWithChildren } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type PropsWithChildren,
+} from "react";
 
 type VisualPreferences = {
   glow: boolean;
@@ -41,7 +49,7 @@ export function VisualPreferencesProvider({ children }: PropsWithChildren) {
     return () => window.removeEventListener("storage", sync);
   }, []);
 
-  const setPreference = (key: keyof VisualPreferences, enabled: boolean) => {
+  const setPreference = useCallback((key: keyof VisualPreferences, enabled: boolean) => {
     setPreferences((current) => {
       const next = { ...current, [key]: enabled };
       try {
@@ -51,10 +59,15 @@ export function VisualPreferencesProvider({ children }: PropsWithChildren) {
       }
       return next;
     });
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ ...preferences, setPreference }),
+    [preferences, setPreference],
+  );
 
   return (
-    <VisualPreferencesContext value={{ ...preferences, setPreference }}>
+    <VisualPreferencesContext value={contextValue}>
       {children}
     </VisualPreferencesContext>
   );

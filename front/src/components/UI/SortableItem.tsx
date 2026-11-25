@@ -16,7 +16,7 @@ export function SortableItem({
   index,
   disabled,
   children,
-}: SortableItemProps) {
+}: Readonly<SortableItemProps>) {
   const ref = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggedOver, setIsDraggedOver] = useState(false);

@@ -10,7 +10,10 @@ const defaultInstanceSettings = {
   emailTemplate: "minimal",
 };
 
+const actualInstanceSettings = await import("../src/services/instance-settings.ts");
+
 jest.unstable_mockModule("../src/services/instance-settings.ts", () => ({
+  ...actualInstanceSettings,
   readInstanceSettings: jest.fn(async () => defaultInstanceSettings),
   writeInstanceSettings: jest.fn(),
   hasInstanceLogo: jest.fn(async () => false),

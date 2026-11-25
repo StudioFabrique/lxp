@@ -49,7 +49,9 @@ app
       },
       crossOriginEmbedderPolicy: false,
       crossOriginOpenerPolicy: true,
-      referrerPolicy: false,
+      // strict-origin-when-cross-origin : requis par les lecteurs YouTube intégrés
+      // (le défaut « no-referrer » de Helmet les fait échouer).
+      referrerPolicy: { policy: "strict-origin-when-cross-origin" },
       originAgentCluster: false,
     }),
   )

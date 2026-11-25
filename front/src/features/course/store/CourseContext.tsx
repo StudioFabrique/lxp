@@ -208,7 +208,7 @@ type CourseProviderProps = {
   children: ReactNode;
 };
 
-export function CourseProvider({ children }: CourseProviderProps) {
+export function CourseProvider({ children }: Readonly<CourseProviderProps>) {
   const [state, dispatch] = useReducer(courseReducer, INITIAL_STATE);
   const stateRef = useRef(state);
   stateRef.current = state;

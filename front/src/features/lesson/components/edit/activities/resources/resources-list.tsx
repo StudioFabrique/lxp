@@ -24,7 +24,7 @@ function ResourcesList({
   isLoading,
   onReorder,
   uploadProgress,
-}: Props) {
+}: Readonly<Props>) {
   const { handleDragEnd } = useDragAndDrop({
     items: filesList,
     onReorder,

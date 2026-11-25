@@ -2,7 +2,7 @@ import { getSafeGroupReturnPath, readGroupFormDraft } from "./group-form-draft";
 
 export function getGroupUserCreationContext(returnTo: string) {
   const safeReturnTo = getSafeGroupReturnPath(returnTo);
-  const url = new URL(safeReturnTo ?? "/", "http://lxp.local");
+  const url = new URL(safeReturnTo ?? "/", "https://lxp.local");
   const draft = readGroupFormDraft(url.searchParams);
   return {
     safeReturnTo,

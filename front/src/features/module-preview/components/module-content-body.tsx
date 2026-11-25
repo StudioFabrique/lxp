@@ -41,7 +41,7 @@ export default function ModuleContentBody({
   isStaff,
   onSelectAssignment,
   mobileNavigationSlot,
-}: ModuleContentBodyProps) {
+}: Readonly<ModuleContentBodyProps>) {
   const { scrollTopRef } = store;
 
   if (calendar) {

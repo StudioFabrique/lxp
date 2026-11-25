@@ -24,7 +24,7 @@ export default function MobileModuleNavigationPanel({
   enabled,
   onSelectAssignment,
   onNavigationSlotChange,
-}: MobileModuleNavigationPanelProps) {
+}: Readonly<MobileModuleNavigationPanelProps>) {
   const { state, dispatch, acknowledgeLessonScroll } = store;
   const { module, selectedLesson, selectedActivity, lessonIdToScroll } = state;
   const panel = useMobileNavigationPanel(

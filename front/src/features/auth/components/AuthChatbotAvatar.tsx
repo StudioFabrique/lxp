@@ -16,7 +16,7 @@ type Props = {
   buttonRef: Ref<HTMLButtonElement>;
 };
 
-export default function AuthChatbotAvatar({ gesture, compact, replaySignal, introduction, expanded, menuId, onActivate, buttonRef }: Props) {
+export default function AuthChatbotAvatar({ gesture, compact, replaySignal, introduction, expanded, menuId, onActivate, buttonRef }: Readonly<Props>) {
   const drag = useContext(AuthChatbotDragContext);
   const reducedMotion = useReducedMotion();
   const carried = drag?.dragging === true && !reducedMotion;

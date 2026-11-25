@@ -12,10 +12,10 @@ import { formatNumber } from "../../../../utils/helpers/format-number";
 export default function AnalysisHistory({
   studentId,
   onDailyAnalysisChange,
-}: {
+}: Readonly<{
   studentId: string;
   onDailyAnalysisChange?: (reached: boolean) => void;
-}) {
+}>) {
   const [selectedAnalysis, setSelectedAnalysis] =
     useState<HistoricalAnalysis | null>(null);
   const [visibleCount, setVisibleCount] = useState(5);
@@ -44,7 +44,7 @@ export default function AnalysisHistory({
           Évolution des estimations au fil des analyses.
         </p>
       </div>
-      {history.isPending ? <div role="status" aria-label="Chargement de l'historique" className="space-y-3"><span className="sr-only">Chargement de l'historique…</span><div className="skeleton h-12 w-full" /><div className="skeleton h-12 w-full" /></div> : null}
+      {history.isPending ? <output aria-label="Chargement de l'historique" className="block space-y-3"><span className="sr-only">Chargement de l'historique…</span><div className="skeleton h-12 w-full" /><div className="skeleton h-12 w-full" /></output> : null}
       {history.isError ? (
         <p role="alert">
           Impossible de charger l'historique.{" "}

@@ -16,7 +16,7 @@ export default function AppLoadingSkeleton() {
   return (
     <div role="status" aria-label="Chargement de l’application" className="relative flex h-dvh flex-col gap-2 bg-base-100 p-2 md:flex-row">
       <span className="sr-only">Chargement de l’application…</span>
-      {isSidebarUnknown ? null : isIntroFirstRun ? (
+      {!isSidebarUnknown && isIntroFirstRun && (
         <div
           aria-hidden="true"
           className="absolute left-2 top-2 z-10 flex h-16 w-[min(32rem,calc(100vw-1rem))] items-center justify-between gap-5 rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) px-3"
@@ -25,7 +25,8 @@ export default function AppLoadingSkeleton() {
           <div className="skeleton h-12 max-w-80 flex-1 rounded-lg opacity-60" />
           <div className="skeleton size-8 rounded-lg opacity-60" />
         </div>
-      ) : (
+      )}
+      {!isSidebarUnknown && !isIntroFirstRun && (
       <>
       {/* Mobile : la navigation est une barre en haut de l'écran (menu, section, logo), pas une colonne. */}
       <div

@@ -12,7 +12,7 @@ type Props = {
 };
 
 // Composant ListVideos qui affiche une liste de vidéos
-function ListVideos({ options, videos, onSort }: Props) {
+function ListVideos({ options, videos, onSort }: Readonly<Props>) {
   return (
     <>
       <div className="flex gap-x-4 items-center justify-end w-4/6">

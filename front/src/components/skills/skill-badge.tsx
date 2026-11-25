@@ -22,7 +22,7 @@ export default function SkillBadge({
   inModal = false,
   card = false,
   showProgress = true,
-}: Props) {
+}: Readonly<Props>) {
   const { user } = useContext(AuthContext);
   const isStudent = getUserArea(user) === "student";
   const [isOpen, setIsOpen] = useState(false);

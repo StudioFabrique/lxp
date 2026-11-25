@@ -58,14 +58,14 @@ const useImageUpload = (maxSize: number, onSetFile: (file: File) => void) => {
   };
 
   const handleSetFile = () => {
-    if (fileRef && fileRef.current) {
+    if (fileRef?.current) {
       fileRef.current.value = "";
       fileRef.current?.click();
     }
   };
 
   const resetFile = () => {
-    if (fileRef && fileRef.current) {
+    if (fileRef?.current) {
       fileRef.current.value = "";
       fileRef.current?.click();
       setImage(null);

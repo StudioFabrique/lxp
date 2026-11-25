@@ -31,7 +31,7 @@ export default function MessageChatbot({
   messageLoader,
   onCloseChatbot,
   onRetry,
-}: Props) {
+}: Readonly<Props>) {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
   const { user } = useContext(AuthContext);

@@ -17,7 +17,7 @@ type Props = {
   onSelectUser: (user: ActivityUser) => void;
 };
 
-export default function RecentLoginsTable({ logins, onSelectUser }: Props) {
+export default function RecentLoginsTable({ logins, onSelectUser }: Readonly<Props>) {
   const rows = useMemo(() => withIds(logins, (login) => login.time), [logins]);
   const columns = useMemo<ColumnDef<StockFeatures, Row>[]>(
     () => [

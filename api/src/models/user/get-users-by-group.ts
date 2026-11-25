@@ -1,6 +1,5 @@
 import Group from "../../utils/interfaces/db/group.ts";
 import mongoose from "mongoose";
-import { type IUser } from "../../utils/interfaces/db/user.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 async function getUsersByGroup(groupsIds: string[]) {

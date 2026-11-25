@@ -8,7 +8,7 @@ type Props = {
   loading: boolean;
 };
 
-function CourseTags(props: Props) {
+function CourseTags(props: Readonly<Props>) {
   return (
     <TagsWithDrawer
       onSubmit={props.onSubmit}

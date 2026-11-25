@@ -7,12 +7,12 @@ export function Indicator({
   value,
   detail,
   reverse = false,
-}: {
+}: Readonly<{
   label: string;
   value: number | null;
   detail: string;
   reverse?: boolean;
-}) {
+}>) {
   const percent =
     value === null || !Number.isFinite(value) ? null : clamp(value);
   const color =

@@ -35,7 +35,7 @@ export default function AuthChatbotDialogue({
   typingMs,
   scopeRef,
   stepId,
-}: Props) {
+}: Readonly<Props>) {
   const reducedMotion = useReducedMotion();
   // Mobile : pas d'assistant virtuel dans les séquences d'onboarding, il ne laisse pas assez de place aux écrans.
   const hiddenOnMobile = useMediaQuery("(max-width: 1023px)");

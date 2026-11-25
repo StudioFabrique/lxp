@@ -6,10 +6,10 @@ import { formatNumber } from "../../../../utils/helpers/format-number";
 export function MissingStudents({
   students,
   compact = false,
-}: {
+}: Readonly<{
   students: AssignmentExpectedStudent[];
   compact?: boolean;
-}) {
+}>) {
   if (students.length === 0) return null;
 
   return (

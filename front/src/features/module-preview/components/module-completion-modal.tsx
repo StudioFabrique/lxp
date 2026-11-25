@@ -26,7 +26,7 @@ export default function ModuleCompletionModal({
   parcoursId,
   badges,
   onClose,
-}: Props) {
+}: Readonly<Props>) {
   const reduceMotion = useReducedMotion();
   const { confetti, animations } = useVisualPreferences();
   const navigate = useNavigate();

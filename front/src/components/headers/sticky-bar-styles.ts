@@ -10,14 +10,16 @@ export const stickySlotClassName = "md:pointer-events-none md:sticky md:top-0 md
  * `"narrow"` la réduit à 60 % (étapes, réduites à l'essentiel).
  * Le relais entre plusieurs barres collantes est géré par `StickyBarStackProvider`.
  */
-export const stickyBarClassName = (isStuck: boolean, width: "narrow" | "full" = "narrow") =>
-  cn(
+export const stickyBarClassName = (isStuck: boolean, width: "narrow" | "full" = "narrow") => {
+  const stuckWidthClass = width === "full" ? "w-full" : "w-[60vw] max-w-full";
+  return cn(
     "pointer-events-auto mx-auto h-auto border p-3 select-none md:p-4",
     "transition-all duration-300 ease-out motion-reduce:transition-none",
     isStuck
       ? cn(
-          width === "full" ? "w-full" : "w-[60vw] max-w-full",
+          stuckWidthClass,
           "rounded-t-none rounded-b-2xl border-t-0 border-base-300 bg-base-200/90 shadow-xl backdrop-blur",
         )
       : "themed-page-header w-full rounded-lg shadow-none",
   );
+};

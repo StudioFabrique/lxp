@@ -14,12 +14,12 @@ export function DatesEditor({
   isSaving,
   onSave,
   onDelete,
-}: {
+}: Readonly<{
   dates: CourseDates[];
   isSaving: boolean;
   onSave: (dates: CourseDates[]) => Promise<boolean>;
   onDelete: () => void;
-}) {
+}>) {
   const form = useForm({
     resolver: zodResolver(courseDatesListSchema),
     defaultValues: { dates: dates.map((date) => ({ ...date })) },

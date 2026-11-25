@@ -25,7 +25,7 @@ import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type Props = { onClose?: () => void };
 
-export default function StudentProfile({ onClose }: Props) {
+export default function StudentProfile({ onClose }: Readonly<Props>) {
   const [tab, setTab] = useState<"preferences" | "niveaux">("preferences");
   const [pace, setPace] = useState<LearningPace | null>(null);
   const [preferences, setPreferences] = useState<LearningPreference[]>([]);
@@ -156,15 +156,14 @@ export default function StudentProfile({ onClose }: Props) {
         </button>
       </div>
       {query.isLoading ? (
-        <div
-          role="status"
+        <output
           aria-label="Chargement du profil"
-          className="space-y-4"
+          className="block space-y-4"
         >
           <span className="sr-only">Chargement du profil…</span>
           <div className="skeleton h-8 w-1/2" />
           <div className="skeleton h-40 w-full" />
-        </div>
+        </output>
       ) : query.isError ? (
         <p role="alert">Impossible de charger vos choix.</p>
       ) : tab === "preferences" ? (

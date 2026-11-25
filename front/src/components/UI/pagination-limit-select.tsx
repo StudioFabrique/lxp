@@ -3,7 +3,7 @@ type Props = {
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-function PaginationLimitSelect({ perPage, onChange }: Props) {
+function PaginationLimitSelect({ perPage, onChange }: Readonly<Props>) {
   return (
     <>
       <p>Nombre d'éléments par page</p>

@@ -19,7 +19,7 @@ export default function AdminSetupLayout({
   currentStep = 1,
   contentKey = String(currentStep),
   contentClassName,
-}: Props) {
+}: Readonly<Props>) {
   const reduceMotion = useReducedMotion();
   const showIntro = useAuthIntro(isWelcome);
 

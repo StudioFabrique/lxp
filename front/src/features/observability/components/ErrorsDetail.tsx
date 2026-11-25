@@ -23,7 +23,7 @@ type Props = {
   onSelectUser: (user: ActivityUser) => void;
 };
 
-function StatusBadge({ status, isServer }: { status: string | number; isServer: boolean }) {
+function StatusBadge({ status, isServer }: Readonly<{ status: string | number; isServer: boolean }>) {
   return (
     <span className={cn("badge badge-sm", isServer ? "badge-error" : "badge-warning")}>
       {status}
@@ -32,7 +32,7 @@ function StatusBadge({ status, isServer }: { status: string | number; isServer: 
   );
 }
 
-export default function ErrorsDetail({ data, onSelectUser }: Props) {
+export default function ErrorsDetail({ data, onSelectUser }: Readonly<Props>) {
   const isServer = data.kind === "server-errors";
   const none = "Aucune erreur sur cette période.";
 

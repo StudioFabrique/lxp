@@ -105,7 +105,7 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           const nextLeft = `${Math.max(12, Math.min(left, window.innerWidth - item.offsetWidth - 12))}px`;
           const nextTop = `${tops[index]}px`;
           if (bubble) {
-            const x = parseFloat(nextLeft);
+            const x = Number.parseFloat(nextLeft);
             const y = tops[index];
             overlap ||= x < bubble.right + 12 && x + item.offsetWidth > bubble.left - 12
               && y < bubble.bottom + 12 && y + item.offsetHeight > bubble.top - 12;

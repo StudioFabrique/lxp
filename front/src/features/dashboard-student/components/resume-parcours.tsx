@@ -65,7 +65,7 @@ const ResumeParcours = () => {
           ]}
         />
       </div>
-      {parcours && parcours.id && (
+      {parcours?.id && (
         <ParcoursStatistiques parcoursId={parcours.id} />
       )}
     </div>

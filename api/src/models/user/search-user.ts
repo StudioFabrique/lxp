@@ -1,6 +1,7 @@
 import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
+import { escapeRegExp } from "../../utils/unique-fields.ts";
 import { isInvitationPending } from "../../utils/services/invitation-status.ts";
 
 /**
@@ -36,8 +37,8 @@ async function searchUser(
   const dir = sdir === "asc" ? 1 : -1;
 
   // Default page and limit if invalid
-  if (isNaN(page)) page = 1;
-  if (isNaN(limit)) limit = 10;
+  if (Number.isNaN(page)) page = 1;
+  if (Number.isNaN(limit)) limit = 10;
 
   // Using absolute values for page and limit to prevent errors due to possible negative values
   page = Math.abs(page);
@@ -76,7 +77,7 @@ async function searchUser(
     };
   } else {
     // Default: case-insensitive regex search for string fields
-    field = new RegExp(value, "i");
+    field = new RegExp(escapeRegExp(String(value)), "i");
   }
 
   // Special handling for isActive field (exact match)

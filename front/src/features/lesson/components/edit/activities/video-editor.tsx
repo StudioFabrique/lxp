@@ -38,7 +38,7 @@ export default function VideoEditor({
   description,
   onCancel,
   onSubmit,
-}: VideoEditorProps) {
+}: Readonly<VideoEditorProps>) {
   const [video, setVideo] = useState<string>(propVideo);
 
   const form = useForm<VideoFormValues>({

@@ -60,7 +60,7 @@ const parseHex = (value: string): Rgb | null => {
     match[1].length === 3
       ? match[1].replace(/./g, (char) => char + char)
       : match[1];
-  return [0, 2, 4].map((index) => parseInt(hex.slice(index, index + 2), 16)) as Rgb;
+  return [0, 2, 4].map((index) => Number.parseInt(hex.slice(index, index + 2), 16)) as Rgb;
 };
 
 export const toHex = (rgb: Rgb): `#${string}` =>
@@ -383,8 +383,9 @@ const nearestPassingShade = (
   // Le noir et le blanc ferment l'échelle : à défaut de nuance, on garde la meilleure extrémité.
   return (
     best?.rgb ??
-    ([[0, 0, 0], [255, 255, 255]] as Rgb[]).reduce((a, b) =>
-      Math.min(...ratiosFor(a)) >= Math.min(...ratiosFor(b)) ? a : b,
+    ([[0, 0, 0], [255, 255, 255]] as Rgb[]).reduce(
+      (a, b) => (Math.min(...ratiosFor(a)) >= Math.min(...ratiosFor(b)) ? a : b),
+      [0, 0, 0] as Rgb,
     )
   );
 };
@@ -477,12 +478,12 @@ export const applyThemeFixes = (
   fixes: ThemeVariables,
 ): string =>
   css.replace(THEME_BLOCK, (block, body: string) => {
-    if (new RegExp(`name:\\s*"${themeName}"`).test(stripComments(body)) === false) {
+    if (new RegExp(String.raw`name:\s*"${themeName}"`).test(stripComments(body)) === false) {
       return block;
     }
     let updated = block;
     for (const [variable, value] of Object.entries(fixes)) {
-      const declaration = new RegExp(`(${variable}\\s*:\\s*)[^;]+;`);
+      const declaration = new RegExp(String.raw`(${variable}\s*:\s*)[^;]+;`);
       if (declaration.test(updated)) {
         updated = updated.replace(declaration, `$1${value};`);
         continue;

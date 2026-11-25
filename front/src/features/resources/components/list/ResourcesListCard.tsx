@@ -20,7 +20,7 @@ export default function ResourcesListCard({
   resourcesList,
   children,
   onDeleteResource,
-}: Props) {
+}: Readonly<Props>) {
   const ability = useContext(AbilityContext);
   const adminView = Boolean(onDeleteResource);
   const list = Array.isArray(resourcesList) ? resourcesList : [];

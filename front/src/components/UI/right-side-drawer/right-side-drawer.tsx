@@ -91,10 +91,8 @@ const RightSideDrawer: FC<Props> = ({
   const handleCloseDrawer = () => {
     if (onCloseDrawer) {
       onCloseDrawer(id);
-    } else {
-      if (checkboxRef.current) {
-        checkboxRef.current.checked = false;
-      }
+    } else if (checkboxRef.current) {
+      checkboxRef.current.checked = false;
     }
   };
 
@@ -127,6 +125,7 @@ const RightSideDrawer: FC<Props> = ({
               <div className="w-fit flex items-center gap-x-2">
                 {icon ?? (
                   <svg
+                    aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -146,6 +145,7 @@ const RightSideDrawer: FC<Props> = ({
             ) : (
               (icon ?? (
                 <svg
+                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -185,6 +185,7 @@ const RightSideDrawer: FC<Props> = ({
                 onClick={handleCloseDrawer}
               >
                 <svg
+                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"

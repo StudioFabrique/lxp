@@ -35,7 +35,7 @@ export default function MediaList({
   medias,
   onPreview,
   onShowActivities,
-}: MediaListProps) {
+}: Readonly<MediaListProps>) {
   return (
     <ul className="list overflow-hidden rounded-box border border-base-300 bg-base-100 py-2">
       {medias.map((media, index) => (

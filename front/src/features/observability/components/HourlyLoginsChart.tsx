@@ -10,7 +10,7 @@ type Props = { buckets: { time: string; count: number }[] };
 const hourLabels = Array.from({ length: 24 }, (_, hour) => `${hour} h`);
 const textColor = "var(--color-base-content)";
 
-export default function HourlyLoginsChart({ buckets }: Props) {
+export default function HourlyLoginsChart({ buckets }: Readonly<Props>) {
   const hours = useMemo(() => groupLoginsByLocalHour(buckets), [buckets]);
   const total = hours.reduce((sum, count) => sum + count, 0);
   const peakCount = Math.max(...hours);

@@ -22,7 +22,7 @@ export default function DrawerChatbot({
   chatbot,
   chatbotUi,
   chatbotQuiz,
-}: Props) {
+}: Readonly<Props>) {
   const { isLoading, prompt, dialog, setPrompt, onSubmit, pendingReset } =
     chatbot;
 

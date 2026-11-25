@@ -19,7 +19,7 @@ type Props = {
   gesture?: ChatbotGesture;
 };
 
-export default function AuthAnimatedLogo({ className, color, transparent = false, mode = "logo", replaySignal = 0, reverseSignal = 0, onReversed, gesture = "wave" }: Props) {
+export default function AuthAnimatedLogo({ className, color, transparent = false, mode = "logo", replaySignal = 0, reverseSignal = 0, onReversed, gesture = "wave" }: Readonly<Props>) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [initialGesture] = useState(gesture);
   const paletteRef = useRef<HTMLDivElement>(null);

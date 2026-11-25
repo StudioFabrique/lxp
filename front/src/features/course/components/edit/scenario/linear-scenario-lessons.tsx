@@ -126,7 +126,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   };
 
   useEffect(() => {
-    if (formRef && formRef.current && editionMode) {
+    if (formRef?.current && editionMode) {
       formRef.current.scrollIntoView({ behavior: "smooth" });
       formRef.current.focus();
     }

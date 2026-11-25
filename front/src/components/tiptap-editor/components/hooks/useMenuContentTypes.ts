@@ -4,10 +4,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import apiClient from "../../../../lib/axios";
 import { BASE_URL } from "../../../../config/urls";
 
+type ImageSize = "small" | "medium" | "large";
+
+const IMAGE_WIDTHS: Record<ImageSize, string> = {
+  small: "25%",
+  medium: "50%",
+  large: "100%",
+};
+
 interface QueuedImage {
   file: File;
   blobUrl: string; // This needs to match what's in the document
-  size: "small" | "medium" | "large";
+  size: ImageSize;
   tempId: string;
 }
 
@@ -16,9 +24,9 @@ export const useMenuContentTypes = (
   imageInputRef: React.RefObject<HTMLInputElement | null>,
 ) => {
   const imageQueue = useRef<QueuedImage[]>([]);
-  const [imageSize, setImageSize] = useState<"small" | "medium" | "large">("medium");
-  const pendingFileSize = useRef<"small" | "medium" | "large">("medium");
-  const prepareImageUpload = useCallback((size: "small" | "medium" | "large") => {
+  const [imageSize, setImageSize] = useState<ImageSize>("medium");
+  const pendingFileSize = useRef<ImageSize>("medium");
+  const prepareImageUpload = useCallback((size: ImageSize) => {
     setImageSize(size);
     pendingFileSize.current = size;
     imageInputRef.current?.click();
@@ -43,12 +51,7 @@ export const useMenuContentTypes = (
         attrs: {
           src: blobUrl, // Use the same blob URL
           dataTempId: tempId,
-          width:
-            pendingFileSize.current === "small"
-              ? "25%"
-              : pendingFileSize.current === "medium"
-                ? "50%"
-                : "100%",
+          width: IMAGE_WIDTHS[pendingFileSize.current],
         },
       });
     },
@@ -56,19 +59,14 @@ export const useMenuContentTypes = (
   );
 
   const handleImageUploadFromURL = useCallback(
-    (url: string, size: "small" | "medium" | "large" = "medium") => {
+    (url: string, size: ImageSize = "medium") => {
       setImageSize(size);
       // For direct URLs, no need to queue - just insert
       editor.commands.insertContent({
         type: "image",
         attrs: {
           src: url,
-          width:
-            size === "small"
-              ? "25%"
-              : size === "medium"
-                ? "50%"
-                : "100%",
+          width: IMAGE_WIDTHS[size],
         },
       });
     },
@@ -119,7 +117,7 @@ export const useMenuContentTypes = (
         if (node.type.name === "image") {
           const currentSrc = node.attrs.src;
 
-          if (currentSrc && currentSrc.startsWith("blob:")) {
+          if (currentSrc?.startsWith("blob:")) {
             const newUrl = urlMap.get(currentSrc);
             if (newUrl) {
               console.log(`Replacing ${currentSrc} with ${newUrl}`);

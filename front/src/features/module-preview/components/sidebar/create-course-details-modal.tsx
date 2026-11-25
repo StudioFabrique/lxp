@@ -178,9 +178,9 @@ export default function CreateCourseDetailsModal({
 
         <div className="flex flex-wrap items-center justify-end gap-3 border-t border-base-300 px-6 py-4">
           {submitBlockReason ? (
-            <p role="status" className="mr-auto min-w-0 text-sm text-base-content/80">
+            <output className="block mr-auto min-w-0 text-sm text-base-content/80">
               {submitBlockReason}
-            </p>
+            </output>
           ) : null}
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             Annuler

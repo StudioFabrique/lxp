@@ -7,7 +7,7 @@ import {
 
 describe("parcours-contact-creation", () => {
   it("mène à la création d'utilisateur avec retour sur les informations du parcours", () => {
-    const url = new URL(createContactUrlFromParcours(12), "http://lxp.local");
+    const url = new URL(createContactUrlFromParcours(12), "https://lxp.local");
     expect(url.pathname).toBe("/admin/user/add");
     expect(url.searchParams.get("returnTo")).toBe("/admin/parcours/edit/12?step=1");
     expect(url.searchParams.get("roleRank")).toBe("2");

@@ -22,7 +22,7 @@ export default function AssignModuleContactsModal({
   isSubmitting,
   onClose,
   onSubmit,
-}: Props) {
+}: Readonly<Props>) {
   const { teamLabel } = useRoleLabels();
   const [selectedContactIds, setSelectedContactIds] = useState<number[]>([]);
   const assignedContactIds = useMemo(

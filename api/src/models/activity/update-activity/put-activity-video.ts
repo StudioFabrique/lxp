@@ -1,7 +1,7 @@
 import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import { prisma } from "../../../utils/db.ts";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 
 export default async function putActivityVideo(

@@ -6,11 +6,11 @@ export function LevelChoiceButtons({
   name,
   value,
   onChange,
-}: {
+}: Readonly<{
   name: string;
   value: FormationLevel | null;
   onChange: (value: FormationLevel) => void;
-}) {
+}>) {
   const selectedOption = levelOptions.find((option) => option.value === value);
 
   return (

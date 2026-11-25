@@ -37,7 +37,7 @@ export default function CourseContentImport({
   parcoursTags,
   selectedContents,
   onSelectedContentsChange: setSelectedContents,
-}: Props) {
+}: Readonly<Props>) {
   const [includeCourseContents, setIncludeCourseContents] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const [contentTagId, setContentTagId] = useState(0);
@@ -187,15 +187,14 @@ export default function CourseContentImport({
                 </div>
 
                 {isLoadingLessons ? (
-                  <div
-                    role="status"
+                  <output
                     aria-label="Chargement des contenus"
-                    className="w-full space-y-2"
+                    className="block w-full space-y-2"
                   >
                     <span className="sr-only">Chargement des contenus…</span>
                     <div className="skeleton h-9 w-full" />
                     <div className="skeleton h-9 w-full" />
-                  </div>
+                  </output>
                 ) : emptyMessage ? (
                   <p className={emptyStateClassName}>{emptyMessage}</p>
                 ) : (
