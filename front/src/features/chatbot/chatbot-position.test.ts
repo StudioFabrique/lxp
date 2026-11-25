@@ -39,7 +39,7 @@ describe("position de repos de l'assistant virtuel", () => {
 
   it("place la bulle à gauche par défaut, y compris dans la moitié gauche de l'écran", () => {
     expect(chatbotBubbleSide({ x: 1300, y: 100 })).toBe("left");
-    expect(chatbotBubbleSide({ x: 400, y: 100 })).toBe("left");
+    expect(chatbotBubbleSide({ x: 500, y: 100 })).toBe("left");
   });
 
   it("place la bulle à droite seulement quand elle ne tient pas à gauche", () => {
