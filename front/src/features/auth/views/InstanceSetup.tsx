@@ -149,7 +149,8 @@ export default function InstanceSetup() {
         progressMountDelay={0.35}
         progressMountDuration={0.9}
         footer={
-          step === 1 ? (
+          <>
+          {step === 1 && (
             <OnboardingFooter className="sm:justify-end">
               <button
                 type="button"
@@ -159,7 +160,8 @@ export default function InstanceSetup() {
                 Continuer
               </button>
             </OnboardingFooter>
-          ) : step === 2 ? (
+          )}
+          {step === 2 && (
             <OnboardingFooter>
               <button
                 type="button"
@@ -177,7 +179,8 @@ export default function InstanceSetup() {
                 Continuer
               </button>
             </OnboardingFooter>
-          ) : (
+          )}
+          {step === 3 && (
             <OnboardingFooter>
               <button
                 type="button"
@@ -197,12 +200,12 @@ export default function InstanceSetup() {
                 {isSaving ? "Configuration…" : "Configurer mon espace"}
               </button>
             </OnboardingFooter>
-          )
+          )}
+          </>
         }
       >
-        {step === 1 ? (
-          <ThemeSelectionStep />
-        ) : step === 3 ? (
+        {step === 1 && <ThemeSelectionStep />}
+        {step === 3 && (
           <AuthPageWrapper
             title="Nommez les rôles de votre espace"
             titleAccessory={<UserCog className="mt-0.5 h-6 w-6 text-primary" />}
@@ -222,7 +225,8 @@ export default function InstanceSetup() {
               />
             </form>
           </AuthPageWrapper>
-        ) : (
+        )}
+        {step === 2 && (
           <AuthPageWrapper
             title="Personnalisez votre espace"
             titleAccessory={

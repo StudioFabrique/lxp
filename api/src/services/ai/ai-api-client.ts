@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { Readable } from "stream";
+import { Readable } from "node:stream";
 import { env } from "../../config/env.ts";
 
 const DEFAULT_AI_API_URL = "http://localhost:8000";

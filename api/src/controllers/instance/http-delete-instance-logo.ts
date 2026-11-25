@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { logger } from "../../utils/logs/logger.ts";
 
 const deleteFileIfItExists = async (filePath: string) => {

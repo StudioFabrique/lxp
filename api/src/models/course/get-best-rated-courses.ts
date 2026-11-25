@@ -21,7 +21,7 @@ export default async function getBestRatedCourses(userId: string) {
 
   if (!user) return null;
 
-  if (!(user.roles[0]?.rank === 2)) {
+  if (user.roles[0]?.rank !== 2) {
     throw new Error("User is not a teacher");
   }
 

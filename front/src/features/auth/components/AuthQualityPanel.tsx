@@ -112,6 +112,9 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
     };
   }, []);
 
+  const skipTurnAnimation = fullscreen && !reducedMotion;
+  const turnEnter = reducedMotion ? { opacity: 0 } : { rotateY: 90, opacity: 0 };
+  const turnExit = reducedMotion ? { opacity: 0 } : { rotateY: -90, opacity: 0 };
   return (
     <motion.div
       ref={panelRef}
@@ -152,9 +155,9 @@ export default function AuthQualityPanel({ quality, colors, colorIndex, x, y, ge
             key={activeQuality}
             className="flex h-full min-h-0 flex-col overflow-hidden rounded-[15px] bg-base-100"
             style={{ backfaceVisibility: "hidden" }}
-            initial={fullscreen && !reducedMotion ? false : reducedMotion ? { opacity: 0 } : { rotateY: 90, opacity: 0 }}
+            initial={skipTurnAnimation ? false : turnEnter}
             animate={{ rotateY: 0, opacity: 1 }}
-            exit={fullscreen && !reducedMotion ? undefined : reducedMotion ? { opacity: 0 } : { rotateY: -90, opacity: 0 }}
+            exit={skipTurnAnimation ? undefined : turnExit}
             transition={{ duration: reducedMotion ? 0 : 0.3, ease: "easeInOut" }}
             onAnimationComplete={(definition) => {
               if (turning && typeof definition === "object" && "opacity" in definition && definition.opacity === 1) finishTurn();

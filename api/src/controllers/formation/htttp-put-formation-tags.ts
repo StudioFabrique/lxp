@@ -15,7 +15,7 @@ async function httpPutFormationTags(req: Request, res: Response) {
   const { formationId, tags } = req.body;
 
   try {
-    const response = await putFormationTags(parseInt(formationId), tags);
+    await putFormationTags(parseInt(formationId), tags);
     return res
       .status(200)
       .json({ success: true, message: "Tags mis à jour avec succes" });

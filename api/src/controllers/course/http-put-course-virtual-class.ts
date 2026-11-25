@@ -8,7 +8,7 @@ async function httpPutCourseVirtualClass(req: Request, res: Response) {
   const virtualClass = req.body.virtualClass;
 
   try {
-    const resposne = await putCourseVirtualClass(+courseId, virtualClass);
+    await putCourseVirtualClass(+courseId, virtualClass);
     return res.status(201).json({
       success: true,
       message: "Le lien vers la classe virtuelle a été mis à jour",

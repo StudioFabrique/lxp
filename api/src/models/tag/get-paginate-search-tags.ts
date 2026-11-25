@@ -15,7 +15,7 @@ export default async function getPaginateSearchTags(
 
     const filterTags = (query: typeof prisma.orm.public.Tag) => {
       if (!value) return query;
-      const searchPattern = `%${value.replace(/[\\%_]/g, "\\$&")}%`;
+      const searchPattern = `%${value.replace(/[\\%_]/g, String.raw`\$&`)}%`;
       if (entity === "color") {
         return query.where((tag) => tag.color.ilike(searchPattern));
       }

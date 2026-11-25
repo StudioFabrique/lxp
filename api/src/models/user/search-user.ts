@@ -23,6 +23,16 @@ import { isInvitationPending } from "../../utils/services/invitation-status.ts";
  * - Filtering by isActive status
  * - Pagination and sorting
  */
+// Champs autorisés pour la recherche : évite d'interroger un champ sensible (ex. password).
+const SEARCHABLE_USER_ENTITIES = new Set([
+  "all",
+  "firstname",
+  "lastname",
+  "email",
+  "createdAt",
+  "isActive",
+]);
+
 async function searchUser(
   entity: string,
   value: string,
@@ -33,6 +43,13 @@ async function searchUser(
   sdir: string,
   actorRank: number,
 ) {
+  if (!SEARCHABLE_USER_ENTITIES.has(entity)) {
+    throw {
+      statusCode: 400,
+      message: "Le champ de recherche n'est pas autorisé.",
+    };
+  }
+
   // Determine sort direction: 1 for ascending, -1 for descending
   const dir = sdir === "asc" ? 1 : -1;
 

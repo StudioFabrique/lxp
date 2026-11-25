@@ -30,13 +30,15 @@ const ParcoursFilterBadges = ({
   );
   const hasMore = uniqueParcours.length > INITIAL_PARCOURS_COUNT;
   const collapsedParcours = uniqueParcours.slice(0, INITIAL_PARCOURS_COUNT);
-  const visibleParcours = showAll
-    ? uniqueParcours
-    : selectedParcours &&
-        uniqueParcours.includes(selectedParcours) &&
-        !collapsedParcours.includes(selectedParcours)
-      ? [...collapsedParcours.slice(0, -1), selectedParcours]
-      : collapsedParcours;
+  // Le parcours sélectionné reste visible même replié : il remplace le dernier badge affiché.
+  const selectedIsHidden =
+    !!selectedParcours &&
+    uniqueParcours.includes(selectedParcours) &&
+    !collapsedParcours.includes(selectedParcours);
+  let visibleParcours = collapsedParcours;
+  if (showAll) visibleParcours = uniqueParcours;
+  else if (selectedIsHidden)
+    visibleParcours = [...collapsedParcours.slice(0, -1), selectedParcours];
 
   if (uniqueParcours.length <= 1) return null;
 

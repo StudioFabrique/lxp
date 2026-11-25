@@ -52,7 +52,9 @@ export default async function activateAccount(
       return res.status(401).json({ message });
     }
 
-    const existingBlacklistedToken = await BlackListedToken.findOne({ token });
+    const existingBlacklistedToken = await BlackListedToken.findOne({
+      token: String(token),
+    });
     if (existingBlacklistedToken) {
       return res.status(400).json({ message });
     }

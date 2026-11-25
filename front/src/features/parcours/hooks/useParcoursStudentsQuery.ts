@@ -22,7 +22,7 @@ export type StudentWithGroup = Omit<User, "group"> & {
 
 export function useParcoursStudentsQuery(groupIds: string[]) {
   return useQuery({
-    queryKey: ["parcours", "students", [...groupIds].sort()],
+    queryKey: ["parcours", "students", [...groupIds].sort((a, b) => a.localeCompare(b))],
     queryFn: async () => {
       const groups = (await parcoursApi.queries.getStudentsByGroupIds(
         groupIds,

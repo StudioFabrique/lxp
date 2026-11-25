@@ -272,13 +272,12 @@ export default function CourseList({
                         disabled={pendingCourseAction?.courseId === course.id}
                         onClick={() => handleToggleCourseVisibility(course)}
                       >
-                        {pendingCourseAction?.courseId === course.id &&
-                        pendingCourseAction.type === "visibility" ? (
-                          <LoaderCircle className="size-[1.2em] animate-spin" />
-                        ) : course.visibility ? (
-                          <EyeOff className="size-[1.2em]" />
-                        ) : (
-                          <Eye className="size-[1.2em]" />
+                        {visibilityIcon(
+                          pendingCourseAction?.courseId === course.id &&
+                            pendingCourseAction.type === "visibility",
+                          course.visibility,
+                          "size-[1.2em]",
+                          "size-[1.2em] animate-spin",
                         )}
                       </button>
                     )}
@@ -331,14 +330,12 @@ export default function CourseList({
                         label: lesson.visibility
                           ? "Rendre invisible"
                           : "Rendre visible",
-                        icon:
-                          pendingLessonVisibilityId === lesson.id ? (
-                            <LoaderCircle className="size-5 animate-spin" />
-                          ) : lesson.visibility ? (
-                            <EyeOff />
-                          ) : (
-                            <Eye />
-                          ),
+                        icon: visibilityIcon(
+                          pendingLessonVisibilityId === lesson.id,
+                          lesson.visibility,
+                          undefined,
+                          "size-5 animate-spin",
+                        ),
                         onSelect: () => {
                           if (pendingLessonVisibilityId !== lesson.id) {
                             void handleToggleLessonVisibility(lesson);

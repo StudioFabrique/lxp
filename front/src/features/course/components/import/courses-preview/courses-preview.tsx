@@ -64,11 +64,15 @@ const CoursesPreview = ({
     importedCourses?.[0] ??
     null;
 
-  const headerDescription = error
-    ? error
-    : importedCourses
-      ? `${importedCourses.length > 1 ? importedCourses.length + " c" : "C"}ours prêt${importedCourses.length > 1 ? "s" : ""} à être importé${importedCourses.length > 1 ? "s" : ""}`
-      : "Sélectionner le contenu pédagogique à importer";
+  let headerDescription = "Sélectionner le contenu pédagogique à importer";
+  if (error) {
+    headerDescription = error;
+  } else if (importedCourses) {
+    const plural = importedCourses.length > 1;
+    const prefix = plural ? `${importedCourses.length} c` : "C";
+    const suffix = plural ? "s" : "";
+    headerDescription = `${prefix}ours prêt${suffix} à être importé${suffix}`;
+  }
 
   const handlePreviewCourse = (course: CourseImport) => {
     setSelectedCourseId(course.id);

@@ -59,6 +59,17 @@ export default function NavigationFeedback({ router }: Readonly<{ router: Naviga
       queueMicrotask(() => { if (candidate === captured) candidate = null; });
     };
 
+    const markSourcePending = (element: HTMLElement) => {
+      originalBusy = element.getAttribute("aria-busy");
+      originalPosition = element.dataset.navigationPosition ?? null;
+      if (getComputedStyle(element).position === "static") {
+        element.dataset.navigationPosition = "relative";
+      }
+      element.setAttribute("aria-busy", "true");
+      element.dataset.navigationPending = "true";
+      if (!animations) element.dataset.navigationStatic = "true";
+    };
+
     const update = (state: NavigationRouter["state"]) => {
       const nextPending = state.navigation.state !== "idle";
       if (nextPending) {
@@ -66,16 +77,7 @@ export default function NavigationFeedback({ router }: Readonly<{ router: Naviga
           clearSource();
           source = candidate;
           candidate = null;
-          if (source) {
-            originalBusy = source.getAttribute("aria-busy");
-            originalPosition = source.dataset.navigationPosition ?? null;
-            if (getComputedStyle(source).position === "static") {
-              source.dataset.navigationPosition = "relative";
-            }
-            source.setAttribute("aria-busy", "true");
-            source.dataset.navigationPending = "true";
-            if (!animations) source.dataset.navigationStatic = "true";
-          }
+          if (source) markSourcePending(source);
         }
         if (!pending) {
           window.clearTimeout(completionTimer);

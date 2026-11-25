@@ -1,6 +1,5 @@
 import { type Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes.ts";
-import getModuleDetail from "../../models/module/get-module-detail.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import getModuleImage from "../../models/module/get-module-image.ts";
 

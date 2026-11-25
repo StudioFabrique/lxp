@@ -7,11 +7,17 @@ type Props = {
   allowedViews?: CalendarView[];
 };
 
+const viewLabels: Partial<Record<CalendarView, string>> = {
+  day: "Jour",
+  week: "Semaine",
+  "year-timeline": "Timeline",
+};
+
 const ViewSelector = ({
   view,
   setView,
   allowedViews = ["day", "week", "month"],
-}: Props) => {
+}: Readonly<Props>) => {
   return (
     <div
       data-chatbot-target="calendar-view-selector"
@@ -26,7 +32,7 @@ const ViewSelector = ({
               ? `${theme.controlItemBg} shadow-sm`
               : `${theme.subText} hover:opacity-80`)}
         >
-          {v === "day" ? "Jour" : v === "week" ? "Semaine" : v === "year-timeline" ? "Timeline" : "Mois"}
+          {viewLabels[v] ?? "Mois"}
         </button>
       ))}
     </div>

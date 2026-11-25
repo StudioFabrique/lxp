@@ -85,7 +85,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             />
           )}
           {props.headerActions}
-          {props.closeButtonAtTop && props.onLeftClick ? (
+          {props.closeButtonAtTop && props.onLeftClick && (
             <button
               type="button"
               className="btn btn-sm btn-ghost ml-auto gap-2"
@@ -95,15 +95,17 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
               <X className="size-4" />
               {props.leftLabel ?? "Fermer"}
             </button>
-          ) : props.onMinimizeClick ? (
-            <button
-              type="button"
-              className="btn btn-sm btn-ghost ml-auto"
-              onClick={props.onMinimizeClick}
-            >
-              <Minimize2 />
-            </button>
-          ) : null}
+          )}
+          {!(props.closeButtonAtTop && props.onLeftClick) &&
+            props.onMinimizeClick && (
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost ml-auto"
+                onClick={props.onMinimizeClick}
+              >
+                <Minimize2 />
+              </button>
+            )}
         </div>
         {props.children}
         {((props.onLeftClick && !props.closeButtonAtTop) ||

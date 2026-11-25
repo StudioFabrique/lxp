@@ -26,6 +26,7 @@ load_api_env_file() {
     key=${line%%=*}
     case "$key" in
       ''|*[!A-Za-z0-9_]*|'#'*) continue ;;
+      *) ;;
     esac
     [[ -n "${!key+x}" ]] && continue
     value=${line#*=}

@@ -77,16 +77,14 @@ export default async function getAuthBackgrounds(theme: BackgroundTheme) {
   const current = cache[theme];
   if (current && current.expiresAt > Date.now()) return current.photos;
 
-  if (!pendingRequests[theme]) {
-    pendingRequests[theme] = fetchBackgrounds(theme)
-      .then((photos) => {
-        if (photos.length === 0) throw new Error("Unsplash API returned no photos");
-        cache[theme] = { expiresAt: Date.now() + CACHE_TTL_MS, photos };
-        return photos;
-      })
-      .finally(() => {
-        pendingRequests[theme] = null;
-      });
-  }
+  pendingRequests[theme] ??= fetchBackgrounds(theme)
+    .then((photos) => {
+      if (photos.length === 0) throw new Error("Unsplash API returned no photos");
+      cache[theme] = { expiresAt: Date.now() + CACHE_TTL_MS, photos };
+      return photos;
+    })
+    .finally(() => {
+      pendingRequests[theme] = null;
+    });
   return pendingRequests[theme];
 }

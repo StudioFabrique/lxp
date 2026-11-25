@@ -224,8 +224,6 @@ const AdminSignInForm = ({
               <LoaderCircle className="size-4 animate-spin" />
               Création...
             </>
-          ) : mode === "additional" ? (
-            "Créer le compte root"
           ) : (
             "Créer le compte root"
           )}

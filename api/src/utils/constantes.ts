@@ -11,7 +11,7 @@ export const creationSuccessfull = "Ressource créée avec succès";
 
 // regex
 export const regexMail =
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\d-]+\.)+[a-zA-Z]{2,}))$/;
 /**
  * Contrôle de forme appliqué à la saisie de connexion.
  *
@@ -20,7 +20,7 @@ export const regexMail =
  * pouvoir se connecter.
  */
 export const regexPassword =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#\$%\^&\*])(?=.{8,})/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-!@#$%^&*])(?=.{8,})/;
 
 /**
  * Politique appliquée à la *définition* d'un mot de passe.
@@ -30,8 +30,8 @@ export const regexPassword =
  * réellement vérifiée en acceptait huit.
  */
 export const regexNewPassword =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#\$%\^&\*])(?=.{12,})/;
-export const regexNumber = /^[0-9]*$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-!@#$%^&*])(?=.{12,})/;
+export const regexNumber = /^\d*$/;
 
 // Version stricte (doit contenir au moins 1 caractère)
 export const regexGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]+$/u;
@@ -41,9 +41,9 @@ export const regexOptionalGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]*$/u;
 
 export const regexStringManyMongoId = /^[a-f\d]{24}(,[a-f\d]{24})*$/;
 
-export const regexStringManyNumberId = /^[0-9]{1,}(,[0-9]{1,})*$/;
+export const regexStringManyNumberId = /^\d+(,\d+)*$/;
 
-export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
+export const regexUrl = /^https?:\/\/[\w-]+(\.[\w-]+)+[/#?]?.*$/;
 export const regexDate = /^\d{4}-\d{2}-\d{2}$/;
 export const regexVideoUrl =
   /^(https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+(\?[^?]*)?$)|(video-[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}\d{17}traffic\.mp4)$/i;

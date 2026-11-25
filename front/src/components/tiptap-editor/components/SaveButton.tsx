@@ -19,6 +19,40 @@ type SaveButtonProps = {
   floating?: boolean;
 };
 
+/**
+ * Observe la sentinelle dans le conteneur de défilement et retourne le nettoyage.
+ * `onFirstIntersection` s'exécute deux images après la première mesure.
+ */
+function observeSentinel(
+  sentinel: HTMLElement,
+  onIntersectionChange: (isIntersecting: boolean) => void,
+  onFirstIntersection: () => void,
+): () => void {
+  let hasReceivedIntersection = false;
+  let animationFrame: number | undefined;
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      onIntersectionChange(entry.isIntersecting);
+      if (hasReceivedIntersection) return;
+      hasReceivedIntersection = true;
+      animationFrame = requestAnimationFrame(() => {
+        // Laisse Motion appliquer la position initiale instantanée avant de
+        // réactiver les transitions pour les changements dus au scroll.
+        animationFrame = requestAnimationFrame(() => {
+          animationFrame = undefined;
+          onFirstIntersection();
+        });
+      });
+    },
+    { root: sentinel.closest("#main-scroll-container"), threshold: 0.1 },
+  );
+  observer.observe(sentinel);
+  return () => {
+    observer.disconnect();
+    if (animationFrame !== undefined) cancelAnimationFrame(animationFrame);
+  };
+}
+
 const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   // Mobile : la barre du bas du module (et l'assistant virtuel, au même niveau) occupe le bas de l'écran ;
   // le bouton flottant se colle au-dessus au lieu de passer dessous.
@@ -37,8 +71,6 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   const [naturalWidth, setNaturalWidth] = useState<number>();
   const [canAnimate, setCanAnimate] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const hasReceivedIntersectionRef = useRef(false);
-  const animationFrameRef = useRef<number>(undefined);
   const isFloating = floating && !isAtNaturalPosition;
   const animatedWidth = isFloating ? FLOATING_SIZE : naturalWidth;
   const transition = canAnimate
@@ -58,38 +90,11 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   useEffect(() => {
     if (!floating || !sentinelRef.current) return;
 
-    const scrollRoot = sentinelRef.current.closest("#main-scroll-container");
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsAtNaturalPosition(entry.isIntersecting);
-
-        if (!hasReceivedIntersectionRef.current) {
-          hasReceivedIntersectionRef.current = true;
-          animationFrameRef.current = requestAnimationFrame(() => {
-            // Laisse Motion appliquer la position initiale instantanée avant de
-            // réactiver les transitions pour les changements dus au scroll.
-            animationFrameRef.current = requestAnimationFrame(() => {
-              animationFrameRef.current = undefined;
-              setCanAnimate(true);
-            });
-          });
-        }
-      },
-      {
-        root: scrollRoot,
-        threshold: 0.1,
-      },
+    return observeSentinel(
+      sentinelRef.current,
+      setIsAtNaturalPosition,
+      () => setCanAnimate(true),
     );
-
-    observer.observe(sentinelRef.current);
-    return () => {
-      observer.disconnect();
-      if (animationFrameRef.current !== undefined) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      animationFrameRef.current = undefined;
-      hasReceivedIntersectionRef.current = false;
-    };
   }, [floating]);
 
   const icon = pending ? (

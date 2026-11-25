@@ -9,8 +9,7 @@ export default async function httpPostImportCourseStructure(
   res: Response,
 ) {
   const userId = req.auth?.userId;
-  const { title, description, lessons, parcoursId, moduleId, courseSlug } =
-    req.body;
+  const { title, description, lessons, moduleId, courseSlug } = req.body;
 
   try {
     const adminId = await getAdminId(userId);

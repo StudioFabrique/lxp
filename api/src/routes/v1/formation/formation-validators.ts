@@ -1,12 +1,10 @@
 import { body, param } from "express-validator";
 
-import { checkValidatorResult } from "../../../middleware/validators.ts";
 import {
   numberValidateGeneric,
   stringValidateGeneric,
   stringValidateOptional,
 } from "../../../helpers/custom-validators.ts";
-import { regexNumber } from "../../../utils/constantes.ts";
 
 export const fomrationIdValidator = [
   param("formationId")

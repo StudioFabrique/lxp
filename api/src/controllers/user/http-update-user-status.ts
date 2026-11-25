@@ -14,7 +14,6 @@
  */
 
 import { type Response, type NextFunction } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import updateUserStatus from "../../models/user/update-user-status.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { validationResult } from "express-validator";

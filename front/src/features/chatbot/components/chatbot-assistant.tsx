@@ -270,17 +270,23 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
   const showBubble = !hidden && (waiting || bubbleContent !== null);
   useBubbleInViewport(bubbleSlotRef, showBubble);
 
+  const renderQuestionNode = (question: (typeof questions)[number]) => {
+    if (question.kind === "input") {
+      return <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable} />;
+    }
+    if (question.kind === "more") {
+      return <ChatbotMoreQuestions label={question.label} onMore={() => select(question)} onReset={guidePage > 0 ? () => setGuideView({ pathname, page: 0 }) : undefined} />;
+    }
+    return <ChatbotRadialButton label={question.label} onClick={() => select(question)} />;
+  };
+
   const items = questions.map((question) => ({
     key: chatbotQuestionKey(question),
     // La question libre reste à hauteur de l'assistant virtuel, du même côté que sa bulle de réponse.
     pinned: question.kind === "input",
     // Le bouton d'historique dépasse au-dessus du champ.
     overhang: question.kind === "input" ? 24 : 0,
-    node: question.kind === "input"
-      ? <ChatbotPromptInput onSubmitPrompt={(prompt) => void ask(prompt)} onOpenHistory={() => openConversation()} disabled={chatbot.aiUnavailable} autoFocus={!selectionPending && !chatbot.aiUnavailable} />
-      : question.kind === "more"
-        ? <ChatbotMoreQuestions label={question.label} onMore={() => select(question)} onReset={guidePage > 0 ? () => setGuideView({ pathname, page: 0 }) : undefined} />
-        : <ChatbotRadialButton label={question.label} onClick={() => select(question)} />,
+    node: renderQuestionNode(question),
   }));
 
   return (

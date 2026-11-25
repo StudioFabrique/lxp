@@ -177,7 +177,8 @@ function readExclusions() {
 }
 
 async function ask(rl, question, fallback) {
-  const answer = (await rl.question(`${question}${fallback ? ` [${fallback}]` : ""} : `)).trim();
+  const fallbackHint = fallback ? ` [${fallback}]` : "";
+  const answer = (await rl.question(`${question}${fallbackHint} : `)).trim();
   return answer || fallback || "";
 }
 
@@ -186,7 +187,8 @@ async function sonarGet(host, apiPath, params) {
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, String(value));
   const headers = {};
   if (process.env.SONAR_TOKEN) {
-    headers.Authorization = `Basic ${Buffer.from(`${process.env.SONAR_TOKEN}:`).toString("base64")}`;
+    const credentials = Buffer.from(process.env.SONAR_TOKEN + ":").toString("base64");
+    headers.Authorization = `Basic ${credentials}`;
   }
   const response = await fetch(url, { headers, signal: AbortSignal.timeout(30_000) });
   if (!response.ok) {
@@ -403,7 +405,8 @@ async function main() {
     const engine = ENGINES[opts.engine];
     if (opts.model === undefined && rl) opts.model = await ask(rl, `Modèle (${engine.modelHint}, vide = défaut)`, "");
     if (opts.effort === undefined && rl) {
-      opts.effort = await ask(rl, `Effort${engine.efforts ? ` (${engine.efforts.join("|")})` : ""}, vide = défaut`, "");
+      const effortChoices = engine.efforts ? ` (${engine.efforts.join("|")})` : "";
+      opts.effort = await ask(rl, `Effort${effortChoices}, vide = défaut`, "");
     }
     if (opts.effort && engine.efforts && !engine.efforts.includes(opts.effort)) {
       throw new Error(`Effort « ${opts.effort} » invalide pour ${opts.engine} : ${engine.efforts.join(", ")}.`);
@@ -448,19 +451,20 @@ async function main() {
     });
 
     let verifyFailures = 0;
-    const verified = [];
     if (opts.verify) {
       console.log("\nVérifications locales…");
       for (const check of VERIFICATIONS) {
         const result = await run({ cmd: check.cmd, args: check.args, stdin: "" }, path.join(runDir, `verify-${check.name.replaceAll(" ", "-")}.log`), path.join(ROOT, check.cwd));
         if (result.code !== 0) verifyFailures++;
-        verified.push({ name: check.name, ok: result.code === 0 });
         console.log(`  ${result.code === 0 ? "✓" : "✗"} ${check.name}`);
       }
     }
 
     console.log("\nBilan");
-    for (const r of results) console.log(`  ${r.code === 0 ? "ok " : "ÉCHEC"} ${r.id} (log : ${path.relative(ROOT, path.join(runDir, `${r.id}.log`))})`);
+    for (const r of results) {
+      const relativeLog = path.relative(ROOT, path.join(runDir, `${r.id}.log`));
+      console.log(`  ${r.code === 0 ? "ok " : "ÉCHEC"} ${r.id} (log : ${relativeLog})`);
+    }
     console.log("\nRien n'est commité. Relisez `git diff`, puis relancez un scan Sonar pour mesurer l'effet.");
     process.exitCode = results.some((r) => r.code !== 0) || verifyFailures > 0 ? 1 : 0;
   } finally {
@@ -468,7 +472,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(`Erreur : ${error.message}`);
+try {
+  await main();
+} catch (error) {
+  console.error(`Erreur : ${error instanceof Error ? error.message : String(error)}`);
   process.exit(1);
-});
+}

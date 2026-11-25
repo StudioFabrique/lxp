@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 . ./deployment/database-urls.sh
 
+readonly API_ENV_FILE="./api/.env"
+readonly MAILER_DISABLED_KEY="MAILER_DISABLED"
 restore_data=false
 demo_mode=false
 # Dossier des données à restaurer. Le jeu de démonstration vit à part et est
@@ -127,11 +129,11 @@ configure_development_mailer() {
       o|O|oui|Oui|OUI|y|Y|yes|YES)
         # Conserver le mailer désactivé tant que sa configuration est incomplète.
         # Ainsi, une interruption relancera l'assistant au prochain `npm run init`.
-        write_env_value "MAILER_DISABLED" "true" "$file"
+        write_env_value "$MAILER_DISABLED_KEY" "true" "$file"
         break
         ;;
       ""|n|N|non|Non|NON|no|NO)
-        write_env_value "MAILER_DISABLED" "true" "$file"
+        write_env_value "$MAILER_DISABLED_KEY" "true" "$file"
         ok "Mailer désactivé : les comptes sont activés sans vérification par email."
         ok "Configuration enregistrée dans api/.env"
         return
@@ -145,14 +147,14 @@ configure_development_mailer() {
   prompt_env_value "MAILER_DEV_RECIPIENT" "Destinataire des emails en développement" false "$file"
   prompt_env_value "MAILER_SMTP_PORT" "Port SMTP" false "$file"
   prompt_env_value "MAILER_FROM" "Expéditeur (nom et adresse)" false "$file"
-  write_env_value "MAILER_DISABLED" "false" "$file"
+  write_env_value "$MAILER_DISABLED_KEY" "false" "$file"
   ok "Configuration enregistrée dans api/.env"
 }
 
 configure_development_password() {
   file="$1"
   configured_password=$(read_env_value "DEV_TEMPORARY_USER_PASSWORD" "$file")
-  if [[ "$(read_env_value "MAILER_DISABLED" "$file")" != "true" ]] \
+  if [[ "$(read_env_value "$MAILER_DISABLED_KEY" "$file")" != "true" ]] \
     || { [[ -n "$configured_password" ]] && [[ "$configured_password" != "false" ]]; }; then
     return
   fi
@@ -167,7 +169,7 @@ configure_development_password() {
 
 development_mailer_needs_configuration() {
   file="$1"
-  if [[ "$(read_env_value "MAILER_DISABLED" "$file")" != "false" ]]; then
+  if [[ "$(read_env_value "$MAILER_DISABLED_KEY" "$file")" != "false" ]]; then
     return 0
   fi
 
@@ -258,7 +260,7 @@ configure_development_env() {
 # Infisical est facultatif : sans lui, les variables viennent de api/.env.
 # La question n'est posée qu'une fois, à la première configuration.
 configure_infisical() {
-  [[ ! -f "./api/.env" ]] && [[ ! -f "$INFISICAL_LOCAL_CONFIG" ]] && [[ -t 0 ]] || return 0
+  [[ ! -f "$API_ENV_FILE" ]] && [[ ! -f "$INFISICAL_LOCAL_CONFIG" ]] && [[ -t 0 ]] || return 0
 
   read -r -p "Utiliser Infisical pour les variables d'environnement ? [y/N] : " use_infisical
   case "$use_infisical" in
@@ -353,27 +355,27 @@ if infisical_enabled; then
   load_secrets || { fail "Chargement des secrets Infisical"; exit 1; }
   step "Service IA"
   report_infisical_ai
-elif [[ ! -f "./api/.env" ]]; then
+elif [[ ! -f "$API_ENV_FILE" ]]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [[ ! -t 0 ]]; then
     fail "la création de api/.env en développement nécessite un terminal interactif."
     exit 1
   fi
-  cp ./api/env.example ./api/.env || { fail "Copie des variables d'environnement"; exit 1; }
+  cp ./api/env.example "$API_ENV_FILE" || { fail "Copie des variables d'environnement"; exit 1; }
   api_env_created=true
-  configure_development_env "./api/.env"
+  configure_development_env "$API_ENV_FILE"
 fi
-if [[ "$api_env_created" = false ]] && [[ -f "./api/.env" ]] \
-  && [[ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ]] \
-  && development_mailer_needs_configuration "./api/.env"; then
+if [[ "$api_env_created" = false ]] && [[ -f "$API_ENV_FILE" ]] \
+  && [[ "$(read_env_value "ENVIRONMENT" "$API_ENV_FILE")" = "development" ]] \
+  && development_mailer_needs_configuration "$API_ENV_FILE"; then
   step "Mailer de développement"
-  configure_development_mailer "./api/.env"
-  configure_development_password "./api/.env"
+  configure_development_mailer "$API_ENV_FILE"
+  configure_development_password "$API_ENV_FILE"
 fi
-if [[ "$api_env_created" = false ]] && ! infisical_enabled && [[ -f "./api/.env" ]] \
-  && [[ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ]] \
-  && development_ai_needs_configuration "./api/.env"; then
+if [[ "$api_env_created" = false ]] && ! infisical_enabled && [[ -f "$API_ENV_FILE" ]] \
+  && [[ "$(read_env_value "ENVIRONMENT" "$API_ENV_FILE")" = "development" ]] \
+  && development_ai_needs_configuration "$API_ENV_FILE"; then
   step "Service IA"
-  configure_development_ai "./api/.env"
+  configure_development_ai "$API_ENV_FILE"
 fi
 cp ./front/env.example ./front/.env || { fail "Copie des variables d'environnement"; exit 1; }
 

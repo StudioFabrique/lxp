@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 
 import deleteLesson from "../../models/lesson/delete-lesson.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
@@ -21,7 +21,7 @@ export default async function httpDeleteLesson(
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode !== 500 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

@@ -7,7 +7,7 @@ async function httpPublishParcours(req: Request, res: Response) {
   const { parcoursId } = req.params;
   const { isPublished } = req.body;
   try {
-    const response = await putPublishParcours(+parcoursId, isPublished);
+    await putPublishParcours(+parcoursId, isPublished);
     scheduleAvailabilityReconciliation();
     return res
       .status(201)

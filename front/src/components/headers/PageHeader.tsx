@@ -9,7 +9,6 @@ import StickyPageHeader from "./StickyPageHeader";
 
 interface Props {
   title: string;
-  alternateBgColor?: boolean;
   successBgColor?: boolean;
   disabled?: boolean;
   description?: string;

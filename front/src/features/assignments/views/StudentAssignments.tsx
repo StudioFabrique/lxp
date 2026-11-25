@@ -5,7 +5,7 @@ import {
   ClipboardCheck,
   Clock3,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactElement } from "react";
 import Header from "../../../components/headers/Header";
 import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
@@ -32,6 +32,19 @@ const statusClassName = {
   Évalué: "badge-success",
   "Non remis": "badge-error",
 } as const;
+
+const statusIcon: Record<keyof typeof statusClassName, ReactElement> = {
+  "À remettre": <CalendarClock />,
+  Remis: <ClipboardCheck />,
+  Évalué: <CheckCircle2 />,
+  "Non remis": <Clock3 />,
+};
+
+function getEmptyMessage(search: string, period: AssignmentPeriod): string {
+  if (search) return "Aucune évaluation ne correspond à votre recherche.";
+  if (period === "upcoming") return "Aucune évaluation à venir.";
+  return "Aucune évaluation rendue ou passée.";
+}
 
 export default function StudentAssignments() {
   const [period, setPeriod] = useState<AssignmentPeriod>("upcoming");
@@ -95,9 +108,10 @@ export default function StudentAssignments() {
         />
       ) : null}
 
-      {query.isPending ? (
+      {query.isPending && (
         <Loader variant="rows" label="Chargement des évaluations" />
-      ) : query.isError ? (
+      )}
+      {!query.isPending && query.isError && (
         <div className="alert alert-error" role="alert">
           Impossible de charger les remises et évaluations.
           <button
@@ -108,7 +122,8 @@ export default function StudentAssignments() {
             Réessayer
           </button>
         </div>
-      ) : (
+      )}
+      {!query.isPending && !query.isError && (
         <HierarchicalListCard
           fullWidth
           showMore={false}
@@ -116,13 +131,7 @@ export default function StudentAssignments() {
           label={`${formatNumber(assignments.length)} évaluation${assignments.length > 1 ? "s" : ""}`}
           title={period === "upcoming" ? "À venir" : "Rendus et passés"}
 
-          emptyMessage={
-            search
-              ? "Aucune évaluation ne correspond à votre recherche."
-              : period === "upcoming"
-                ? "Aucune évaluation à venir."
-                : "Aucune évaluation rendue ou passée."
-          }
+          emptyMessage={getEmptyMessage(search, period)}
           items={assignments.map((assignment) => {
             const status = assignmentStatus(assignment, now);
             const deadline = `Échéance : ${dateFormatter.format(new Date(assignment.dueAt))}`;
@@ -149,16 +158,7 @@ export default function StudentAssignments() {
                   )}
                 </div>
               ),
-              icon:
-                status === "Évalué" ? (
-                  <CheckCircle2 />
-                ) : status === "À remettre" ? (
-                  <CalendarClock />
-                ) : status === "Non remis" ? (
-                  <Clock3 />
-                ) : (
-                  <ClipboardCheck />
-                ),
+              icon: statusIcon[status],
               to: `/student/parcours/module/${assignment.course.module.id}`,
               state: {
                 courseId: assignment.course.id,

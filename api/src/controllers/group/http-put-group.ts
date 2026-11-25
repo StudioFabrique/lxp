@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import type { IGroup } from "../../utils/interfaces/db/group.ts";
 import { creationSuccessfull, serverIssue } from "../../utils/constantes.ts";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
-import fs from "fs";
+import fs from "node:fs";
 import putGroup from "../../models/group/put-group.ts";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
 import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
@@ -28,7 +28,7 @@ export default async function httpPutGroup(
   let image: any;
 
   try {
-    if (!!uploadedFile) {
+    if (uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
 

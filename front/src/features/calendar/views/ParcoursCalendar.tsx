@@ -27,6 +27,23 @@ import {
 import { formatDate } from "../components/calendar-utils";
 import { type ParcoursOption } from "./CalendarHome.types";
 
+function getSelectionTimeLabel(event: CalendarEvent): string {
+  if (event.category === "assignment") {
+    return event.isSubmitted
+      ? "Devoir remis"
+      : `À rendre avant ${event.deadlineTime ?? event.start}`;
+  }
+  return event.allDay
+    ? "Sans horaire"
+    : `${event.start} – ${event.end}, chaque jour`;
+}
+
+function getSelectionLinkLabel(event: CalendarEvent): string {
+  if (event.category === "assignment") return "Accéder au devoir";
+  if (event.subtitle === "Module" && !event.date) return "Accéder au module";
+  return "Accéder au cours";
+}
+
 export function ParcoursCalendar({
   parcours,
   scopeKey,
@@ -142,7 +159,7 @@ export function ParcoursCalendar({
   };
   return (
     <div className="mt-4 space-y-3">
-      {query.isPending ? (
+      {query.isPending && (
         <output
           aria-label="Chargement du calendrier"
           className="block space-y-3"
@@ -151,14 +168,16 @@ export function ParcoursCalendar({
           <div className="skeleton h-10 w-56" />
           <div className="skeleton h-[50vh] w-full rounded-box" />
         </output>
-      ) : query.isError ? (
+      )}
+      {!query.isPending && query.isError && (
         <p role="alert">
           Impossible de charger le calendrier.
           <button className="btn btn-sm" onClick={() => void query.refetch()}>
             Réessayer
           </button>
         </p>
-      ) : (
+      )}
+      {!query.isPending && !query.isError && (
         <>
           <Calendar
             onSelectDay={(value) => {
@@ -287,13 +306,7 @@ export function ParcoursCalendar({
             </p>
             {selection?.event.date && (
               <p className="mt-1 text-sm">
-                {selection.event.category === "assignment"
-                  ? selection.event.isSubmitted
-                    ? "Devoir remis"
-                    : `À rendre avant ${selection.event.deadlineTime ?? selection.event.start}`
-                  : selection.event.allDay
-                    ? "Sans horaire"
-                    : `${selection.event.start} – ${selection.event.end}, chaque jour`}
+                {getSelectionTimeLabel(selection.event)}
               </p>
             )}
             {selection?.event.to && (
@@ -302,12 +315,7 @@ export function ParcoursCalendar({
                 state={selection.event.navigationState}
                 className="btn btn-primary btn-sm mt-4 w-full"
               >
-                {selection.event.category === "assignment"
-                  ? "Accéder au devoir"
-                  : selection.event.subtitle === "Module" &&
-                      !selection.event.date
-                    ? "Accéder au module"
-                    : "Accéder au cours"}
+                {getSelectionLinkLabel(selection.event)}
                 <ArrowRight className="size-4" />
               </Link>
             )}

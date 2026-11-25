@@ -9,7 +9,6 @@ interface InheritedTextListProps {
   property?: string | string[];
   additionalProperty?: string; // propriété additionnelle facultative rajouté
   onRemoveItem?: (item: any) => void;
-  onDelete?: (id: number) => void;
   lockedItemIds?: number[];
   isDisabled?: boolean;
   renderAction?: (item: any) => ReactNode;

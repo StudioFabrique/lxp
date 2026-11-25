@@ -63,9 +63,10 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         const roomLeft = center.x - radius - 104 - 12 >= 0;
         // Sans côté imposé, l'éventail va à droite et passe à gauche près du bord droit de l'écran.
         // Avec la bulle à gauche, les questions préfèrent la droite, et inversement ; faute de place, elles se replient du côté libre.
-        const fanTowardsLeft = pinnedSide === undefined
-          ? !roomRight
-          : pinnedSide === "right" ? roomLeft || !roomRight : !roomRight && roomLeft;
+        let fanTowardsLeft: boolean;
+        if (pinnedSide === undefined) fanTowardsLeft = !roomRight;
+        else if (pinnedSide === "right") fanTowardsLeft = roomLeft || !roomRight;
+        else fanTowardsLeft = !roomRight && roomLeft;
         const elements = keys.split("\u0000").map(key => itemsRef.current.get(key) ?? null);
         const halfHeight = Math.max(...elements.map(item => (item?.offsetHeight ?? 0) / 2));
         const extent = radius * Math.sin(Math.max(...fan.map(Math.abs)) * Math.PI / 180) + halfHeight;
@@ -130,7 +131,8 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         <motion.li key={item.key} ref={element => { if (element) itemsRef.current.set(item.key, element); else itemsRef.current.delete(item.key); }}
           className={cn(
             "pointer-events-auto",
-            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
+            stacked && cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]"),
+            !stacked && cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
           )}
           initial={reducedMotion ? false : { opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9, transition: { duration: reducedMotion ? 0 : .12, delay: 0 } }}
           transition={{ duration: reducedMotion ? 0 : .3, delay: reducedMotion ? 0 : index * .12, ease: [.22, 1, .36, 1] }}>

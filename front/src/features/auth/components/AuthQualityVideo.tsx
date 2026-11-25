@@ -119,6 +119,21 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
   const playing = state === "playing";
   // Position of this feature in the tour of all presentations, when it is one of them.
   const step = Number.isInteger(quality) && quality >= 0 && quality < presentationTopics.length ? quality + 1 : null;
+  const finishedCaption =
+    !reducedMotion && onEnded ? "La suite arrive…" : "Présentation terminée";
+  const caption = finished ? finishedCaption : (presentationTopics[quality] ?? label);
+  let playAction: "replay" | "pause" | "play" = "play";
+  let playLabel = "Lire";
+  let PlayIcon = Play;
+  if (canReplay) {
+    playAction = "replay";
+    playLabel = "Rejouer";
+    PlayIcon = RotateCcw;
+  } else if (playing) {
+    playAction = "pause";
+    playLabel = "Pause";
+    PlayIcon = Pause;
+  }
   return (
     <figure className={cn("auth-quality-video relative flex h-full min-h-0 flex-col gap-3", fullscreen && "bg-base-100 text-base-content")}>
       <span ref={colorRef} aria-hidden="true" className="pointer-events-none absolute invisible" style={{ color: authTileColors[colorIndex % authTileColors.length], outlineColor: authTileContentColors[colorIndex % authTileContentColors.length], backgroundColor: "var(--color-base-100)", borderColor: "var(--color-base-content)" }} />
@@ -141,12 +156,12 @@ export default function AuthQualityVideo({ quality, label, colorIndex, reducedMo
             <span aria-hidden="true" className="badge badge-sm shrink-0 border-0 font-semibold tabular-nums" style={{ backgroundColor: authTileContentColors[colorIndex % authTileContentColors.length], color: authTileColors[colorIndex % authTileColors.length] }}>{step}/{presentationTopics.length}</span>
             <span className="sr-only">{`Étape ${step} sur ${presentationTopics.length} : `}</span>
           </>}
-          <span className="truncate">{finished ? (!reducedMotion && onEnded ? "La suite arrive…" : "Présentation terminée") : presentationTopics[quality] ?? label}</span>
+          <span className="truncate">{caption}</span>
         </span>
         <div className="flex items-center gap-1">
-          {!failed && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded} onClick={() => send(canReplay ? "replay" : playing ? "pause" : "play")}>
-            {canReplay ? <RotateCcw className="size-4" aria-hidden="true" /> : playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
-            {canReplay ? "Rejouer" : playing ? "Pause" : "Lire"}
+          {!failed && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded} onClick={() => send(playAction)}>
+            <PlayIcon className="size-4" aria-hidden="true" />
+            {playLabel}
           </button>}
           {onToggleFullscreen && !fullscreen && <button type="button" className="btn btn-ghost btn-sm gap-2 text-inherit" disabled={!loaded || failed} aria-label="Plein écran" onClick={onToggleFullscreen}>
             <Maximize className="size-4" aria-hidden="true" />

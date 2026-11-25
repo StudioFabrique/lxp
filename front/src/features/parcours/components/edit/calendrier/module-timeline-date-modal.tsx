@@ -166,7 +166,7 @@ const ModuleTimelineDateModal = ({
             {/* --- CARD ACTIONS --- */}
             <div className="card-actions justify-end mt-4">
               <form method="dialog">
-                <button className="btn btn-ghost hover:bg-base-200" disabled={isSaving}>
+                <button type="submit" className="btn btn-ghost hover:bg-base-200" disabled={isSaving}>
                   Annuler
                 </button>
               </form>
@@ -185,7 +185,7 @@ const ModuleTimelineDateModal = ({
 
       {/* Backdrop to close */}
       <form method="dialog" className="modal-backdrop">
-        <button disabled={isSaving}>close</button>
+        <button type="submit" disabled={isSaving}>close</button>
       </form>
     </dialog>
   );

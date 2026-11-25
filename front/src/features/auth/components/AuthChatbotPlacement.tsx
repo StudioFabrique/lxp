@@ -277,34 +277,37 @@ export default function AuthChatbotPlacement({
       // A panel marked `data-onboarding-panel-fixed` is the only place the dialogue may take: when it is
       // crowded, the dialogue stays centred in it rather than jumping to the page gutter, over other content.
       const stayInPanel = scopeElement.hasAttribute("data-onboarding-panel-fixed");
-      const point = desktop
-        ? (chooseChatbotPlacement(
-            viewport,
-            size,
-            [...obstacles, ...contentObstacles(scopeElement, host)],
-            random,
-            visibleScope,
-            undefined,
-            previousPosition?.getPosition(),
-          ) ??
-          (stayInPanel
-            ? {
-                left: visibleScope.left + (visibleScope.width - size.width) / 2,
-                top: visibleScope.top + (visibleScope.height - size.height) / 2,
-              }
-            : null) ??
-          // Colonne plus étroite que la bulle (connexion) : centrer dans le vide de la colonne entière.
-          (column
-            ? chooseChatbotPlacement(
-                viewport,
-                size,
-                [...obstacles, ...contentObstacles(scopeElement, host)],
-                random,
-                { ...visibleScope, left: column.left, width: column.width },
-                undefined,
-                previousPosition?.getPosition(),
-              )
-            : null) ??
+      const placeOnDesktop = () => {
+        const inScope = chooseChatbotPlacement(
+          viewport,
+          size,
+          [...obstacles, ...contentObstacles(scopeElement, host)],
+          random,
+          visibleScope,
+          undefined,
+          previousPosition?.getPosition(),
+        );
+        if (inScope) return inScope;
+        if (stayInPanel) {
+          return {
+            left: visibleScope.left + (visibleScope.width - size.width) / 2,
+            top: visibleScope.top + (visibleScope.height - size.height) / 2,
+          };
+        }
+        // Colonne plus étroite que la bulle (connexion) : centrer dans le vide de la colonne entière.
+        const inColumn = column
+          ? chooseChatbotPlacement(
+              viewport,
+              size,
+              [...obstacles, ...contentObstacles(scopeElement, host)],
+              random,
+              { ...visibleScope, left: column.left, width: column.width },
+              undefined,
+              previousPosition?.getPosition(),
+            )
+          : null;
+        return (
+          inColumn ??
           chooseChatbotPlacement(
             viewport,
             size,
@@ -321,7 +324,11 @@ export default function AuthChatbotPlacement({
             },
             undefined,
             previousPosition?.getPosition(),
-          ))
+          )
+        );
+      };
+      const point = desktop
+        ? placeOnDesktop()
         : chooseChatbotPlacement(
             viewport,
             size,

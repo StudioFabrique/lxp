@@ -78,7 +78,7 @@ const SearchDropdown: FC<Props> = ({
               <li
                 className="text-xs py-1 cursor-pointer"
                 key={item[property]}
-                onClick={() => handleSelectItem(item[getId ? getId : property])}
+                onClick={() => handleSelectItem(item[getId ?? property])}
               >
                 <p className="font-bold">
                   {propertiesToRender?.map(

@@ -20,7 +20,7 @@ function publicAddress(address: string) {
 }
 
 function decodeEntities(value: string) {
-  return value.replace(/&(#x[0-9a-f]+|#[0-9]+|amp|lt|gt|quot|apos|nbsp);/gi, (_, entity: string) => {
+  return value.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi, (_, entity: string) => {
     const lower = entity.toLowerCase();
     if (lower.startsWith("#")) {
       const point = lower.startsWith("#x") ? Number.parseInt(lower.slice(2), 16) : Number.parseInt(lower.slice(1), 10);
@@ -31,7 +31,7 @@ function decodeEntities(value: string) {
 }
 
 function tagAttribute(tag: string, attribute: string) {
-  return tag.match(new RegExp(`\\b${attribute}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, "i"))?.slice(1).find(Boolean);
+  return new RegExp(String.raw`\b${attribute}\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))`, "i").exec(tag)?.slice(1).find(Boolean);
 }
 
 export function parseLinkPreview(html: string, page: URL) {

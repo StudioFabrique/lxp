@@ -106,7 +106,7 @@ export default function StaffOnboarding() {
           intro={showIntro}
           className={cn(!showIntro && (isWelcome ? "mb-12 mt-[clamp(5rem,15vh,10rem)]" : "mb-10"))}
         />
-        {showIntro ? null : isWelcome ? (
+        {!showIntro && isWelcome && (
           <motion.section
             className="flex w-full flex-1 flex-col text-center"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
@@ -136,7 +136,8 @@ export default function StaffOnboarding() {
               <ReleaseNotesCard className="mx-auto mt-3 h-28 w-full max-w-xs flex-none" />
             )}
           </motion.section>
-        ) : (
+        )}
+        {!showIntro && !isWelcome && (
           <motion.div
             className="flex min-h-0 flex-1 flex-col"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}

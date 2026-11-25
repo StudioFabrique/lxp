@@ -23,7 +23,7 @@ async function httpPutCourseDates(req: Request, res: Response) {
       .json({ success: true, message: "Plage de dates ajoutée avec succès" });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode !== 500 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

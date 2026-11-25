@@ -57,6 +57,13 @@ export default function TeacherAssignments() {
     [query.data, search, selectedParcours, evaluationFilter],
   );
 
+  let emptyTitle = "Aucun devoir non évalué";
+  if (search || selectedParcours) {
+    emptyTitle = "Aucune évaluation ne correspond à vos filtres";
+  } else if (evaluationFilter === "graded") {
+    emptyTitle = "Aucun devoir évalué";
+  }
+
   return (
     <PageWrapper as="main">
       <Header
@@ -102,9 +109,10 @@ export default function TeacherAssignments() {
         </button>
       </div>
 
-      {query.isPending ? (
+      {query.isPending && (
         <Loader variant="cards" label="Chargement des devoirs" />
-      ) : query.isError ? (
+      )}
+      {!query.isPending && query.isError && (
         <div className="alert alert-error" role="alert">
           Impossible de charger les évaluations.
           <button
@@ -115,17 +123,11 @@ export default function TeacherAssignments() {
             Réessayer
           </button>
         </div>
-      ) : assignments.length === 0 ? (
-        <EmptyStatePlaceholder
-          title={
-            search || selectedParcours
-              ? "Aucune évaluation ne correspond à vos filtres"
-              : evaluationFilter === "graded"
-                ? "Aucun devoir évalué"
-                : "Aucun devoir non évalué"
-          }
-        />
-      ) : (
+      )}
+      {!query.isPending && !query.isError && assignments.length === 0 && (
+        <EmptyStatePlaceholder title={emptyTitle} />
+      )}
+      {!query.isPending && !query.isError && assignments.length > 0 && (
         <section
           className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2 2xl:grid-cols-3"
           aria-label={`${formatNumber(assignments.length)} devoir${assignments.length > 1 ? "s" : ""} ${evaluationFilter === "graded" ? "évalués" : "non évalués"}`}

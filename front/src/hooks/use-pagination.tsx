@@ -24,7 +24,7 @@ const usePagination = (
   const [sdir, setSdir] = useState(false);
   const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
-  const [perPage, setPerPageState] = useState(() =>
+  const [perPage, setPerPage] = useState(() =>
     getStoredItemsPerPage(paginationStorageLocation, initialState.perPage),
   );
   const [totalPages, setTotalPages] = useState<number | null>(
@@ -44,10 +44,10 @@ const usePagination = (
     setPage(value);
   }, []);
 
-  const setPerPage = useCallback(
+  const updatePerPage = useCallback(
     (value: number) => {
       storeItemsPerPage(paginationStorageLocation, value);
-      setPerPageState(value);
+      setPerPage(value);
     },
     [paginationStorageLocation],
   );
@@ -211,7 +211,7 @@ const usePagination = (
     setAllChecked,
     setDataList,
     setPage,
-    setPerPage,
+    setPerPage: updatePerPage,
     setPath,
     setStype,
     sdir,

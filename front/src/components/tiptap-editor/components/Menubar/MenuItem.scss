@@ -11,7 +11,10 @@
   justify-content: center;
   background-color: transparent;
   color: oklch(var(--bc) / 0.55);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: background-color, color, transform, box-shadow, filter,
+    opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 

@@ -47,6 +47,10 @@ export default function TeacherGroupFields({
   const options =
     parcours.data?.flatMap((formation) => formation.parcours) ?? [];
   const count = Object.keys(selected).length;
+  const pluralSuffix = count > 1 ? "s" : "";
+  const selectedLabel = count
+    ? `${count} sélectionné${pluralSuffix}`
+    : "Aucun apprenant sélectionné";
   const visibleStudents = students.data?.list ?? [];
   const allVisibleSelected =
     visibleStudents.length > 0 &&
@@ -61,6 +65,52 @@ export default function TeacherGroupFields({
       }
       return next;
     });
+  };
+
+  const renderStudents = () => {
+    if (students.isPending) {
+      return <p className="text-sm">Chargement des apprenants…</p>;
+    }
+    if (students.isError) {
+      return (
+        <p role="alert" className="text-sm">
+          Impossible de charger les apprenants.
+        </p>
+      );
+    }
+    if (students.data?.list.length) {
+      return (
+        <div className="space-y-1">
+          {students.data.list.map((student) => (
+            <label
+              key={student._id}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 bg-base-100 p-3 hover:border-primary/40"
+            >
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary checkbox-sm"
+                checked={student._id in selected}
+                onChange={(event) =>
+                  setSelected((current) => {
+                    const next = { ...current };
+                    if (event.target.checked)
+                      next[student._id] = student.isActive;
+                    else delete next[student._id];
+                    return next;
+                  })
+                }
+              />
+              <OnboardingStudentIdentity student={student} />
+            </label>
+          ))}
+        </div>
+      );
+    }
+    return (
+      <p className="text-sm text-base-content/60">
+        Aucun apprenant trouvé. Vous pourrez en ajouter plus tard.
+      </p>
+    );
   };
 
   return (
@@ -95,9 +145,7 @@ export default function TeacherGroupFields({
         <div>
           <h3 className="text-sm font-semibold">Apprenants</h3>
           <p className="text-sm text-base-content/60">
-            {count
-              ? `${count} sélectionné${count > 1 ? "s" : ""}`
-              : "Aucun apprenant sélectionné"}
+            {selectedLabel}
           </p>
         </div>
         <button
@@ -136,42 +184,7 @@ export default function TeacherGroupFields({
               {allVisibleSelected ? "Tout désélectionner" : "Tout sélectionner"}
             </button>
           )}
-          {students.isPending ? (
-            <p className="text-sm">Chargement des apprenants…</p>
-          ) : students.isError ? (
-            <p role="alert" className="text-sm">
-              Impossible de charger les apprenants.
-            </p>
-          ) : students.data?.list.length ? (
-            <div className="space-y-1">
-              {students.data.list.map((student) => (
-                <label
-                  key={student._id}
-                  className="flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 bg-base-100 p-3 hover:border-primary/40"
-                >
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-primary checkbox-sm"
-                    checked={student._id in selected}
-                    onChange={(event) =>
-                      setSelected((current) => {
-                        const next = { ...current };
-                        if (event.target.checked)
-                          next[student._id] = student.isActive;
-                        else delete next[student._id];
-                        return next;
-                      })
-                    }
-                  />
-                  <OnboardingStudentIdentity student={student} />
-                </label>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-base-content/60">
-              Aucun apprenant trouvé. Vous pourrez en ajouter plus tard.
-            </p>
-          )}
+          {renderStudents()}
           <button
             type="button"
             className="btn btn-primary mt-auto"

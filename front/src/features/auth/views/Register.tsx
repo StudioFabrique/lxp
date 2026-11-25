@@ -5,7 +5,7 @@ import { passwordCreationSchema } from "../auth.schema";
  *   nouvellement créé.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -110,26 +110,53 @@ export default function RegisterHome() {
   // Une fois le compte activé, le lien est consommé : une revérification tardive ne doit plus afficher d'erreur.
   const showError = error.length > 0 && !success;
 
+  const isCheckingLink = isChecking && !success;
+  let contentKey = "password";
+  if (isCheckingLink) contentKey = "checking";
+  else if (showError) contentKey = "error";
+  else if (success) contentKey = "success";
+
+  let description: ReactNode;
+  if (success) {
+    description =
+      "Félicitations, votre compte est activé ! Vous pouvez maintenant vous connecter.";
+  } else if (email) {
+    description = (
+      <>
+        <p>
+          Activez votre compte pour l'adresse mail{" "}
+          <strong className="break-all">{email}</strong>
+          {roleLabel && (
+            <>
+              {" "}en tant que{" "}
+              <span
+                className="badge badge-primary badge-soft badge-sm align-middle font-semibold"
+                aria-label={`Rôle : ${roleLabel}`}
+              >
+                {roleLabel}
+              </span>
+            </>
+          )}
+        </p>
+        <p className="mt-2">
+          Renseignez un mot de passe sécurisé.
+        </p>
+      </>
+    );
+  }
+
   return (
     <OnboardingProgressPanel
-      contentKey={
-        isChecking && !success
-          ? "checking"
-          : showError
-            ? "error"
-            : success
-              ? "success"
-              : "password"
-      }
+      contentKey={contentKey}
       currentStep={success ? 2 : 1}
       stepCount={2}
       progressLabel="Progression de l’activation du compte"
       animateProgressOnMount
       className="min-h-[500px] flex-none lg:min-h-0 lg:flex-1"
       footer={
-        !(isChecking && !success) && (
+        !isCheckingLink && (
           <div className="mt-5 flex flex-col gap-3 border-t border-base-300 pt-4">
-            {success ? (
+            {success && (
               <Link
                 className="btn btn-primary w-full rounded-lg text-base normal-case text-base-100"
                 to="/login"
@@ -137,7 +164,8 @@ export default function RegisterHome() {
               >
                 Retour à la page de connexion
               </Link>
-            ) : showError ? (
+            )}
+            {showError && (
               <>
                 {expiredEmail !== null && (
                   <Link
@@ -152,7 +180,8 @@ export default function RegisterHome() {
                   Retour
                 </Link>
               </>
-            ) : (
+            )}
+            {!success && !showError && (
               <button
                 type="submit"
                 form="account-activation-form"
@@ -172,35 +201,10 @@ export default function RegisterHome() {
     >
       <AuthPageWrapper
         title={success ? "Compte activé" : "Activation du compte"}
-        description={
-          success ? (
-            "Félicitations, votre compte est activé ! Vous pouvez maintenant vous connecter."
-          ) : email ? (
-            <>
-              <p>
-                Activez votre compte pour l'adresse mail{" "}
-                <strong className="break-all">{email}</strong>
-                {roleLabel && (
-                  <>
-                    {" "}en tant que{" "}
-                    <span
-                      className="badge badge-primary badge-soft badge-sm align-middle font-semibold"
-                      aria-label={`Rôle : ${roleLabel}`}
-                    >
-                      {roleLabel}
-                    </span>
-                  </>
-                )}
-              </p>
-              <p className="mt-2">
-                Renseignez un mot de passe sécurisé.
-              </p>
-            </>
-          ) : undefined
-        }
+        description={description}
         variant="setup"
       >
-        {isChecking && !success ? (
+        {isCheckingLink && (
           <output
             aria-label="Vérification du lien"
             className="block space-y-3"
@@ -209,11 +213,13 @@ export default function RegisterHome() {
             <div className="skeleton h-8 w-2/3" />
             <div className="skeleton h-4 w-full" />
           </output>
-        ) : showError ? (
+        )}
+        {!isCheckingLink && showError && (
           <div role="alert" className="alert alert-error alert-soft">
             <span>{error}</span>
           </div>
-        ) : success ? (
+        )}
+        {success && (
           <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
             <AuthChatbotConfetti />
             <MailCheck className="h-8 w-8" aria-hidden="true" />
@@ -221,7 +227,8 @@ export default function RegisterHome() {
               Votre compte a été activé avec succès.
             </p>
           </div>
-        ) : (
+        )}
+        {!isCheckingLink && !showError && !success && (
           <section>
             <form
               id="account-activation-form"

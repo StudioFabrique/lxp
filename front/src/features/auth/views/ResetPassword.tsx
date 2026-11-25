@@ -58,6 +58,13 @@ const ResetPasswordHome = () => {
     );
   }
 
+  let submitLabel = "Envoyer le lien";
+  if (retryAfterSeconds > 0) {
+    submitLabel = `Nouvel envoi disponible dans ${retryAfterSeconds} s`;
+  } else if (isActivation) {
+    submitLabel = "Renvoyer le lien d'activation";
+  }
+
   return (
     <AuthPageWrapper
       title={
@@ -92,12 +99,8 @@ const ResetPasswordHome = () => {
               <LoaderCircle className="size-4 animate-spin" />
               Envoi en cours...
             </>
-          ) : retryAfterSeconds > 0 ? (
-            `Nouvel envoi disponible dans ${retryAfterSeconds} s`
-          ) : isActivation ? (
-            "Renvoyer le lien d'activation"
           ) : (
-            "Envoyer le lien"
+            submitLabel
           )}
         </button>
 

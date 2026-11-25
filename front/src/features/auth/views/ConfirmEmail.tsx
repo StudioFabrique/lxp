@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router";
 import { Mail, MailCheck } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
@@ -50,6 +50,12 @@ const ConfirmEmail = () => {
     };
   }, [token]);
 
+  let description: ReactNode;
+  if (state === "success") description = successMessage;
+  else if (state === "error") {
+    description = <ConfirmEmailErrorHelp message={message} />;
+  }
+
   return (
     <AdminSetupLayout
       currentStep={state === "success" ? 2 : 1}
@@ -58,13 +64,7 @@ const ConfirmEmail = () => {
       <AuthPageWrapper
         title="Validation de l'adresse email"
         variant="setup"
-        description={
-          state === "success" ? (
-            successMessage
-          ) : state === "error" ? (
-            <ConfirmEmailErrorHelp message={message} />
-          ) : undefined
-        }
+        description={description}
       >
         {state === "success" && <AuthChatbotConfetti />}
         <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-5 text-center">

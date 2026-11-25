@@ -34,9 +34,10 @@ export function ReadCalendarBrowser({
     parcours.find((item) => item.id === parcoursId) ?? parcours[0];
   return (
     <>
-      {parcoursQuery.isPending ? (
+      {parcoursQuery.isPending && (
         <LoadingSkeleton variant="rows" label="Chargement des parcours" />
-      ) : parcoursQuery.isError ? (
+      )}
+      {!parcoursQuery.isPending && parcoursQuery.isError && (
         <p role="alert">
           Impossible de charger les parcours.{" "}
           <button
@@ -46,7 +47,8 @@ export function ReadCalendarBrowser({
             Réessayer
           </button>
         </p>
-      ) : (
+      )}
+      {!parcoursQuery.isPending && !parcoursQuery.isError && (
         <>
           {parcours.length > 1 && (
             <ParcoursFilterBadges

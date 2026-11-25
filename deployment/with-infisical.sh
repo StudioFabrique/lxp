@@ -59,6 +59,7 @@ case "$INFISICAL_ENVIRONMENT" in
             */*) die "INFISICAL_PATH_PREFIX doit placer l'instance au premier niveau, par exemple /client-a." ;;
             . | ..) die "INFISICAL_PATH_PREFIX contient un nom d'instance interdit." ;;
             *[!A-Za-z0-9._-]*) die "INFISICAL_PATH_PREFIX ne peut contenir que des lettres, chiffres, points, tirets et underscores." ;;
+            *) ;;
         esac
         ci_path="${infisical_path_prefix}/ci"
         runtime_path="${infisical_path_prefix}/runtime"
@@ -175,4 +176,5 @@ case "$secret_paths" in
             --path="$backup_path" \
             -- "$0" "$@"
         ;;
+    *) die "INFISICAL_SECRET_PATHS n'est pas pris en charge." ;;
 esac

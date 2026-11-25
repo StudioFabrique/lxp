@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import express from "express";
 import api from "./routes/v1/v1.router.ts";
 import cors from "cors";

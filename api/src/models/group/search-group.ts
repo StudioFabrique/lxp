@@ -6,6 +6,14 @@ import type CustomRequest from "../../utils/interfaces/express/custom-request.ts
 import { escapeRegExp } from "../../utils/unique-fields.ts";
 import { getGroupVisibilityFilter } from "../../utils/services/permissions/accessible-groups.ts";
 
+// Champs autorisés pour la recherche : évite d'interroger un champ arbitraire.
+const SEARCHABLE_GROUP_ENTITIES = new Set([
+  "name",
+  "desc",
+  "createdAt",
+  "isActive",
+]);
+
 async function searchGroup(
   entity: string,
   value: string,
@@ -16,6 +24,10 @@ async function searchGroup(
   sdir: string,
   auth: NonNullable<CustomRequest["auth"]>,
 ) {
+  if (!SEARCHABLE_GROUP_ENTITIES.has(entity)) {
+    return false;
+  }
+
   const dir = sdir === "asc" ? 1 : -1;
 
   const fetchedRole = await Role.findOne({ role: role });

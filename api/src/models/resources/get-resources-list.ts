@@ -17,7 +17,7 @@ export default async function getResourcesList(
   searchTerm?: string,
 ) {
   const searchPattern = searchTerm
-    ? `%${searchTerm.replace(/[\\%_]/g, "\\$&")}%`
+    ? `%${searchTerm.replace(/[\\%_]/g, String.raw`\$&`)}%`
     : null;
   const query = searchPattern
     ? prisma.orm.public.Resource.where((resource) =>

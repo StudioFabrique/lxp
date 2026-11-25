@@ -32,11 +32,20 @@ const ImageHeader = (props: ImageHeaderProps) => {
     borderRadius: "0.75rem",
   };
 
+  const subTitleContent =
+    typeof props.subTitle === "string" ? formatTitle(props.subTitle) : props.subTitle;
+  const titleContent =
+    typeof props.title === "string" ? formatTitle(props.title) : props.title;
+  let publicationLabel: string | null = null;
+  if (!props.hidePublished) {
+    publicationLabel = props.isPublished ? "-(Publié)" : "-(Brouillon)";
+  }
+
   return (
     <div className={cn("overflow-hidden", props.compactOnMobile ? "h-40 md:h-80" : "h-80")} style={classImage}>
       <div className="w-full h-full flex flex-col justify-end items-start relative select-none">
         <div className="rounded-xl absolute top-0 left-0 w-full h-full bg-neutral/50 z-0" />
-        {props.children ? props.children[1] : null}
+        {props.children?.[1]}
         <div
           className={cn(
             "absolute bottom-2 right-2 left-2 z-5 flex min-w-0 items-end justify-between gap-x-2 px-4 py-5 font-bold",
@@ -52,7 +61,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
               props.bottomAction && "w-full flex-none",
             )}
           >
-            {props.children ? props.children[0] : null}
+            {props.children?.[0]}
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               {props.subTitle ? (
                 <div className="flex min-w-0 items-center gap-2">
@@ -62,11 +71,11 @@ const ImageHeader = (props: ImageHeaderProps) => {
                       className="min-w-0 max-w-full truncate first-letter:uppercase text-white hover:underline"
                       to={props.subTitleLinkTo}
                     >
-                      {typeof props.subTitle === "string" ? formatTitle(props.subTitle) : props.subTitle}
+                      {subTitleContent}
                     </Link>
                   ) : (
                     <h3 className="min-w-0 max-w-full truncate first-letter:uppercase text-white">
-                      {typeof props.subTitle === "string" ? formatTitle(props.subTitle) : props.subTitle}
+                      {subTitleContent}
                     </h3>
                   )}
                 </div>
@@ -77,9 +86,8 @@ const ImageHeader = (props: ImageHeaderProps) => {
                   <CornerDownRight className="shrink-0 stroke-white" />
                   <span className="shrink-0">{props.titleIcon}</span>
                   <h1 className={cn("min-w-0 max-w-full flex-1 truncate text-xl text-white first-letter:uppercase", props.compactOnMobile && "max-md:text-base")}>
-                    {typeof props.title === "string" ? formatTitle(props.title) : props.title}
-                    {!props.hidePublished &&
-                      (props.isPublished ? "-(Publié)" : "-(Brouillon)")}
+                    {titleContent}
+                    {publicationLabel}
                   </h1>
                 </div>
               ) : null}

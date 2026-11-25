@@ -9,7 +9,6 @@ import { SidebarRetractionContext } from "../../store/SidebarRetractionContext";
 
 type Props = {
   sidebar: ReactNode;
-  loader: ReactNode;
 };
 
 const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {

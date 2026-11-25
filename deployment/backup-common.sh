@@ -129,10 +129,11 @@ backup_cleanup_target_docker() {
 }
 
 backup_target_sh() {
+    local remote_command="$1"
     if [[ "${BACKUP_REMOTE:-false}" == true ]]; then
-        ssh -p "$BACKUP_SSH_PORT" "$BACKUP_SSH_TARGET" "$1"
+        ssh -p "$BACKUP_SSH_PORT" "$BACKUP_SSH_TARGET" "$remote_command"
     else
-        sh -c "$1"
+        sh -c "$remote_command"
     fi
 }
 

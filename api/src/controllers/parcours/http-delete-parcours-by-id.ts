@@ -3,8 +3,6 @@ import { type Response, type NextFunction } from "express";
 import { noAccess, serverIssue } from "../../utils/constantes.ts";
 import deleteParcoursById from "../../models/parcours/delete-parcours-by-id.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
-import { logger } from "../../utils/logs/logger.ts";
-import { stat } from "fs";
 
 async function httpDeleteParcoursById(
   req: CustomRequest,

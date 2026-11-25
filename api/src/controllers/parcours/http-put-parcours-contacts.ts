@@ -1,7 +1,6 @@
-import { type Request, type Response } from "express";
-import { validationResult } from "express-validator";
+import { type Response } from "express";
 
-import { badQuery, noAccess, serverIssue } from "../../utils/constantes.ts";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
 import putParcoursContacts from "../../models/parcours/put-parcours-contacts.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 

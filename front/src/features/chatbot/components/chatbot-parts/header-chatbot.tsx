@@ -17,6 +17,12 @@ type Props = {
   onNewChat: () => void;
 };
 
+const sizeIcons: Record<Props["size"], typeof Expand> = {
+  full: Minimize2,
+  small: Maximize2,
+  large: Expand,
+};
+
 export default function HeaderChatbot({
   size,
   showFullScreenButton,
@@ -25,6 +31,7 @@ export default function HeaderChatbot({
   onChangeSize,
   onNewChat,
 }: Readonly<Props>) {
+  const SizeIcon = sizeIcons[size];
   return (
     <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
@@ -58,13 +65,7 @@ export default function HeaderChatbot({
             onClick={() => onChangeSize()}
             aria-label="Changer la taille"
           >
-            {size === "full" ? (
-              <Minimize2 className="w-5 h-5" />
-            ) : size === "small" ? (
-              <Maximize2 className="w-5 h-5" />
-            ) : (
-              <Expand className="w-5 h-5" />
-            )}
+            <SizeIcon className="w-5 h-5" />
           </button>
         )}
 

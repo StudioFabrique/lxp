@@ -13,7 +13,7 @@ async function httpPutCourseLesson(req: CustomRequest, res: Response) {
     return res.status(201).json(response);
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode !== 500 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

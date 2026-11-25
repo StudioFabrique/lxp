@@ -107,13 +107,14 @@ export default function AuthChatbotDialogue({
     memory?.setGesture(gesture);
   }, [gesture, memory]);
   if (hiddenOnMobile) return null;
+  const enterFromRight = !reducedMotion && !continued && introduction;
   return (
     <AuthChatbotPlacement floating={!introduction} scopeRef={scopeRef} stepId={stepId}>
     <div>
     <motion.div
       data-chatbot-position="right"
       className="mx-auto mt-3 flex max-w-full items-center justify-end gap-3 text-sm"
-      initial={reducedMotion || continued ? false : introduction ? { opacity: 0, x: "100vw" } : false}
+      initial={enterFromRight ? { opacity: 0, x: "100vw" } : false}
       animate={{ opacity: 1, x: 0, y: 0 }}
       transition={{ duration: reducedMotion ? 0 : chatbotMoveDurationMs / 1000, delay: reducedMotion ? 0 : delay, ease: chatbotMoveEase }}
     >
@@ -125,7 +126,7 @@ export default function AuthChatbotDialogue({
           hidden={questionsOpen && bubbleObstructed} delay={replaySignal > 0 ? 0 : delay + (introduction ? .7 : .3)} />
       </div>
       <motion.div className="shrink-0"
-        initial={reducedMotion || continued ? false : introduction ? { rotate: 720 } : false}
+        initial={enterFromRight ? { rotate: 720 } : false}
         animate={{ rotate: 0 }}
         transition={{ duration: reducedMotion ? 0 : chatbotMoveDurationMs / 1000, delay: reducedMotion ? 0 : delay, ease: chatbotMoveEase }}>
       <AuthChatbotAvatar buttonRef={avatarRef} gesture={gesture} compact={compact} replaySignal={replaySignal} introduction={introduction} expanded={questionsOpen} menuId={menuId}

@@ -69,7 +69,7 @@ async function postModule(
       row.parcours.some((relatedParcours) =>
         relatedParcours.formationId.eq(parcours.formationId),
       ),
-      row.title.ilike(moduleToAdd.title.trim().replace(/[\\%_]/g, "\\$&")),
+      row.title.ilike(moduleToAdd.title.trim().replace(/[\\%_]/g, String.raw`\$&`)),
     ),
   )
     .select("id")

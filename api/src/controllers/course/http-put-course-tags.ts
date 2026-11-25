@@ -17,7 +17,7 @@ async function httpPutCourseTags(req: Request, res: Response) {
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode === 404 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

@@ -3,7 +3,7 @@ import type { IGroup } from "../../utils/interfaces/db/group.ts";
 import createGroup from "../../models/group/create-group.ts";
 import { creationSuccessfull, serverIssue } from "../../utils/constantes.ts";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
-import fs from "fs";
+import fs from "node:fs";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
@@ -24,7 +24,7 @@ export default async function httpCreateGroup(req: CustomRequest, res: Response)
   let image: any;
 
   try {
-    if (!!uploadedFile) {
+    if (uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
     await createGroup(group, users, image, req.auth!.userId, parcoursId);

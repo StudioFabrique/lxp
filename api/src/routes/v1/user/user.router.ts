@@ -1,6 +1,6 @@
 import express from "express";
 import { body, param, query } from "express-validator";
-import path from "path";
+import path from "node:path";
 
 import multer from "multer";
 import { headerImageMaxSize } from "../../../config/images-sizes.ts";

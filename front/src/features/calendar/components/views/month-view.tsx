@@ -22,6 +22,11 @@ type Props = {
   ) => void;
 };
 
+function getEventLead(event: CalendarEvent): string {
+  if (event.category === "assignment") return event.deadlineTime ?? event.start;
+  return event.allDay ? "Sans horaire - " : event.start;
+}
+
 const MonthView = ({
   events,
   onSelectDay,
@@ -111,11 +116,7 @@ const MonthView = ({
                       title={formatTitle(event.title)}
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
-                        {event.category === "assignment"
-                          ? (event.deadlineTime ?? event.start)
-                          : event.allDay
-                            ? "Sans horaire - "
-                            : event.start}
+                        {getEventLead(event)}
                       </span>
                       {formatTitle(event.title)}
                     </button>

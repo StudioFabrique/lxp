@@ -37,7 +37,7 @@ export function DndWrapper<T>({
       canMonitor: ({ source }) => source.data.contextId === contextId,
       onDrop: ({ source, location }) => {
         const target = location.current.dropTargets[0];
-        if (!target || target.data.contextId !== contextId) return;
+        if (target?.data.contextId !== contextId) return;
 
         const sourceIndex = source.data.index;
         const destinationIndex = target.data.index;
