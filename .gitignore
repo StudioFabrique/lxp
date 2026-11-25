@@ -61,3 +61,6 @@ fixtures-test.ts
 /brag-output/**/.thumbnails/
 /brag-output/**/.waveform-cache/
 /brag-output/**/__pycache__/
+
+# Prompts et journaux de la CLI sonar:fix
+.sonar-agents/
