@@ -192,9 +192,16 @@ En local :
 npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 ```
 
+Sans Infisical, la commande active aussi `DEMO_MODE=true` dans `api/.env` et
+demande les adresses des deux comptes de démonstration si elles manquent. Avec
+Infisical, renseignez `DEMO_MODE=true`, `DEMO_ADMIN_EMAIL` et
+`DEMO_STUDENT_EMAIL` dans le dossier `runtime` avant de lancer la commande.
+Dans les deux cas, le Compose local ne démarre que les bases LXP ; la base et le
+service IA restent arrêtés.
+
 `init-scripts/init.sh` ne vaut que là : il installe les dépendances, copie les
-`env.example` et pilote les conteneurs du Compose local (projet `lxp-local`,
-services `db-pg` et `db-mongo`). Sur un serveur, c'est le **pipeline** qui restaure le jeu de
+`env.example` et pilote les conteneurs du Compose local (projet `lxp-local`).
+Sur un serveur, c'est le **pipeline** qui restaure le jeu de
 démonstration, à chaque déploiement, dès que l'environnement porte
 `DEMO_MODE=true` :
 

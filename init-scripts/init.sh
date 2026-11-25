@@ -186,6 +186,10 @@ development_mailer_needs_configuration() {
 # n'est plus posée au prochain `npm run init`.
 configure_development_ai() {
   file="$1"
+  if [[ "$(read_env_value "DEMO_MODE" "$file")" = "true" ]]; then
+    info "Service IA non configuré en mode démonstration"
+    return 0
+  fi
   [[ -t 0 ]] || return 0
 
   while true; do
@@ -220,15 +224,49 @@ configure_development_ai() {
 # configurée ni refusée.
 development_ai_needs_configuration() {
   file="$1"
+  [[ "$(read_env_value "DEMO_MODE" "$file")" != "true" ]] || return 1
   [[ "$(read_env_value "DISABLE_AI_FEATURES" "$file")" != "true" ]] || return 1
   [[ -z "$(read_env_value "MISTRAL_STUDENT_API_KEY" "$file")" ]] \
     || [[ -z "$(read_env_value "MISTRAL_CONTENT_API_KEY" "$file")" ]]
 }
 
+configure_demo_environment() {
+  [[ "$demo_mode" = true ]] || return 0
+
+  if infisical_enabled; then
+    if [[ "${DEMO_MODE:-false}" != "true" ]]; then
+      fail "Pour initialiser une démo avec Infisical, définissez DEMO_MODE=true dans le dossier runtime."
+      return 1
+    fi
+    for key in DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL; do
+      if [[ -z "${!key:-}" ]]; then
+        fail "$key doit être renseignée dans Infisical pour initialiser la démo."
+        return 1
+      fi
+    done
+    return 0
+  fi
+
+  write_env_value "DEMO_MODE" "true" "$API_ENV_FILE"
+  export DEMO_MODE=true
+
+  for key in DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL; do
+    if [[ -z "$(read_env_value "$key" "$API_ENV_FILE")" ]]; then
+      if [[ ! -t 0 ]]; then
+        fail "$key doit être renseignée dans api/.env pour initialiser la démo sans terminal interactif."
+        return 1
+      fi
+      prompt_env_value "$key" "Adresse du compte de démonstration" false "$API_ENV_FILE"
+    fi
+  done
+}
+
 # Avec Infisical, rien n'est saisi ni écrit : on indique seulement ce qui a été
 # reçu pour que l'absence du service IA ne soit pas silencieuse.
 report_infisical_ai() {
-  if [[ "${DISABLE_AI_FEATURES:-false}" = "true" ]]; then
+  if [[ "${DEMO_MODE:-false}" = "true" ]]; then
+    info "Service IA désactivé en mode démonstration"
+  elif [[ "${DISABLE_AI_FEATURES:-false}" = "true" ]]; then
     info "Service IA désactivé par Infisical (DISABLE_AI_FEATURES=true)"
   elif [[ -n "${MISTRAL_STUDENT_API_KEY:-}" ]] && [[ -n "${MISTRAL_CONTENT_API_KEY:-}" ]]; then
     ok "Service IA activé : clés Mistral fournies par Infisical"
@@ -353,8 +391,6 @@ api_env_created=false
 if infisical_enabled; then
   info "Variables fournies par Infisical (environnement $(infisical_load_config; echo "$INFISICAL_ENVIRONMENT")), api/.env non utilisé"
   load_secrets || { fail "Chargement des secrets Infisical"; exit 1; }
-  step "Service IA"
-  report_infisical_ai
 elif [[ ! -f "$API_ENV_FILE" ]]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [[ ! -t 0 ]]; then
     fail "la création de api/.env en développement nécessite un terminal interactif."
@@ -362,6 +398,13 @@ elif [[ ! -f "$API_ENV_FILE" ]]; then
   fi
   cp ./api/env.example "$API_ENV_FILE" || { fail "Copie des variables d'environnement"; exit 1; }
   api_env_created=true
+fi
+configure_demo_environment || exit 1
+if infisical_enabled; then
+  step "Service IA"
+  report_infisical_ai
+fi
+if [[ "$api_env_created" = true ]]; then
   configure_development_env "$API_ENV_FILE"
 fi
 if [[ "$api_env_created" = false ]] && [[ -f "$API_ENV_FILE" ]] \
