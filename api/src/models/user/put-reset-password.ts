@@ -44,7 +44,7 @@ export async function putResetPasswordByEmail(email: string) {
 
   // Endpoint public : on ne révèle pas si le compte existe ou non pour éviter
   // l'énumération des utilisateurs. La réponse reste identique dans tous les cas.
-  if (!existingUser || !existingUser.isActive) return;
+  if (!existingUser?.isActive) return;
 
   return putResetPassword(existingUser._id.toString());
 }

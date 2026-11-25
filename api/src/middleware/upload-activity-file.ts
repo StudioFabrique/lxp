@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
-import path from "path";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 
 export const uploadActivityFiles = () => {
@@ -26,7 +26,7 @@ export const uploadActivityFiles = () => {
 
       if (allowedMimeTypes.includes(file.mimetype)) {
         const uniqueID: string = randomUUID();
-        const fileName: string = uniqueID + new Date().getTime();
+        const fileName: string = uniqueID + Date.now();
         const ext = file.originalname.split(".").pop();
 
         cb(null, file.fieldname + "-" + fileName + "." + ext);

@@ -24,7 +24,13 @@ export async function getUnsplashPresentationImage(title: string) {
     const imageUrl = payload.results?.[0]?.urls?.regular;
     if (!imageUrl) return null;
 
-    const imageResponse = await fetch(imageUrl);
+    // L'URL provient d'une réponse externe : seule l'origine d'images Unsplash
+    // est autorisée, et les redirections ne sont pas suivies.
+    const parsedImageUrl = new URL(imageUrl);
+    if (parsedImageUrl.protocol !== "https:" || parsedImageUrl.hostname !== "images.unsplash.com") {
+      return null;
+    }
+    const imageResponse = await fetch(parsedImageUrl, { redirect: "error" });
     if (!imageResponse.ok) return null;
     return Buffer.from(await imageResponse.arrayBuffer());
   } catch {

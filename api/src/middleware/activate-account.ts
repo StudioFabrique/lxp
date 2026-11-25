@@ -1,5 +1,4 @@
 import { type Response, type NextFunction } from "express";
-import { badQuery } from "../utils/constantes.ts";
 import jwt from "jsonwebtoken";
 import User from "../utils/interfaces/db/user.ts";
 

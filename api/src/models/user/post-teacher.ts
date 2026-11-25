@@ -2,6 +2,7 @@ import { prisma } from "../../utils/db.ts";
 import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
+import { randomInt } from "node:crypto";
 import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
 import { sendActivationInvitation } from "./create-user.ts";
 import { mailerDisabled } from "../../config/mailer-disabled.ts";
@@ -44,8 +45,16 @@ async function postTeacher(teacher: IUser) {
     };
   }
 
+  // Champs autorisés listés explicitement : le corps de la requête ne doit pas
+  // pouvoir fixer d'autres propriétés (rôles, mot de passe, statut...).
   const newTeacher = await User.create({
-    ...teacher,
+    firstname: teacher.firstname,
+    lastname: teacher.lastname,
+    nickname: teacher.nickname,
+    address: teacher.address,
+    postCode: teacher.postCode,
+    city: teacher.city,
+    phoneNumber: teacher.phoneNumber,
     email,
     password,
     isActive: mailerDisabled,
@@ -112,7 +121,7 @@ function generateRandomString() {
   let randomString = "";
 
   for (let i = 0; i < 15; i++) {
-    const randomIndex = Math.floor(Math.random() * approvedCharacters.length);
+    const randomIndex = randomInt(approvedCharacters.length);
     randomString += approvedCharacters.charAt(randomIndex);
   }
 

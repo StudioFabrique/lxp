@@ -23,11 +23,15 @@ export function checkGroupAccess(source: GroupIdSource) {
       const rawValue = source.key
         ? (container as Record<string, unknown>)[source.key]
         : container;
-      const groupIds = Array.isArray(rawValue)
-        ? rawValue.map(String).filter(Boolean)
-        : source.commaSeparated
-          ? String(rawValue ?? "").split(",").filter(Boolean)
-          : [String(rawValue ?? "")].filter(Boolean);
+      let groupIds: string[];
+      if (Array.isArray(rawValue)) {
+        groupIds = rawValue.map(String).filter(Boolean);
+      } else {
+        const text = rawValue == null ? "" : String(rawValue as string);
+        groupIds = source.commaSeparated
+          ? text.split(",").filter(Boolean)
+          : [text].filter(Boolean);
+      }
 
       if (source.allowEmpty && groupIds.length === 0) return next();
 

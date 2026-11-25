@@ -80,7 +80,8 @@ describe("Activation SMTP du compte root", () => {
 
     expect(sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
-        html: expect.stringContaining('src="cid:andria-footer-dark"'),
+        // Sans mode sombre demandé, le mail est clair : il utilise le logo clair.
+        html: expect.stringContaining('src="cid:andria-footer-light"'),
         attachments: expect.arrayContaining([
           expect.objectContaining({ cid: "andria-footer-light" }),
           expect.objectContaining({ cid: "andria-footer-dark" }),

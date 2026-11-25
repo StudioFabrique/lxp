@@ -1,7 +1,7 @@
 import { type Response, type NextFunction } from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs"; // Import File System module
+import path from "node:path";
+import fs from "node:fs"; // Import File System module
 import sharp from "sharp";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import { logger } from "../utils/logs/logger.ts";

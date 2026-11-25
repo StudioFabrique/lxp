@@ -1,8 +1,8 @@
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 
 export default async function postActivityText(
@@ -38,7 +38,7 @@ export default async function postActivityText(
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
   const uniqueID: string = randomUUID();
-  const fileName: string = uniqueID + new Date().getTime() + ".html";
+  const fileName: string = uniqueID + Date.now() + ".html";
 
   try {
     const file = fs.writeFileSync(

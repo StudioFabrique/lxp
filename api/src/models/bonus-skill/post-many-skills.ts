@@ -13,10 +13,10 @@ async function postManySkills(parcoursId: number, newSkills: Array<any>) {
       parcoursId,
     }).all();
 
-    const skills = Array<any>();
+    const skills = [] as any[];
 
     for (const skill of newSkills) {
-      const tmp = existingSkills.find(
+      const tmp = existingSkills.some(
         (item: any) => item.description === skill.description,
       );
       if (!tmp) {

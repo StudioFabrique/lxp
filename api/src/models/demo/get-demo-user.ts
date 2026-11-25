@@ -27,7 +27,7 @@ export default async function getDemoUser(profile: DemoProfile) {
 
   const user = await User.findOne({ email: email.toLowerCase() }).select("_id isActive");
 
-  if (!user || !user.isActive) {
+  if (!user?.isActive) {
     throw new DemoAccountError(
       "Le compte de démonstration est introuvable ou désactivé",
     );

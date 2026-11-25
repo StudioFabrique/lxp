@@ -7,7 +7,7 @@ export default async function getModuleImage(moduleId: number) {
 
   return {
     image:
-      module && module.image
+      module?.image
         ? Buffer.from(module.image as any).toString("base64")
         : null,
   };

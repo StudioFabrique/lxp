@@ -110,6 +110,7 @@ describe("Mode démonstration — verrou lecture seule", () => {
       // Seules les exceptions déclarées échappent au verrou.
       expect(horsPerimetre.map((r) => `${r.method} ${r.path}`).sort()).toEqual([
         "POST /v1/demo/session",
+        "POST /v1/quiz/preliminary/stream",
         "POST /v1/user/group",
       ]);
     });

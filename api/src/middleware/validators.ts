@@ -1,6 +1,5 @@
 import { type NextFunction, type Response } from "express";
 import {
-  type ValidationChain,
   body,
   param,
   query,

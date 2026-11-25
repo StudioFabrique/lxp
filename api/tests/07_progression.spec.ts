@@ -23,6 +23,7 @@ describe("Progression servie par l'API", () => {
   let courseId: number;
   let lessonIds: number[] = [];
   let enrollment: Enrollment;
+  let studentId: number;
 
   // Le contrôleur enveloppe la charge utile dans `data`, comme le lit le front.
   const fetchModule = async () => {
@@ -32,6 +33,18 @@ describe("Progression servie par l'API", () => {
       .expect(200);
 
     return response.body.data;
+  };
+
+  // Terminer une leçon exige que ses activités soient lues (409 sinon).
+  const markActivitiesRead = async (lessonId: number) => {
+    const activities = await prisma.orm.public.Activity.where({ lessonId }).select("id").all();
+    for (const activity of activities) {
+      await prisma.orm.public.ActivityRead.create({
+        activityId: activity.id,
+        studentId,
+        finishedAt: new Date().toISOString(),
+      });
+    }
   };
 
   beforeAll(async () => {
@@ -50,6 +63,10 @@ describe("Progression servie par l'API", () => {
       update: {},
       conflictOn: { idMdb: userIdMdb },
     });
+
+    studentId = (
+      await prisma.orm.public.Student.where({ idMdb: userIdMdb }).select("id").first()
+    )!.id;
 
     const [module, admin, tag] = await Promise.all([
       prisma.orm.public.Module.select("id", "parcoursId").first(),
@@ -141,6 +158,7 @@ describe("Progression servie par l'API", () => {
       .set("Cookie", cookie)
       .expect(201);
 
+    await markActivitiesRead(lessonIds[0]);
     await request(app)
       .put(`/v1/content-read/lesson/${lessonIds[0]}/finish`)
       .set("Cookie", cookie)
@@ -158,6 +176,7 @@ describe("Progression servie par l'API", () => {
         .post(`/v1/content-read/lesson/${lessonId}/begin`)
         .set("Cookie", cookie)
         .expect(201);
+      await markActivitiesRead(lessonId);
       await request(app)
         .put(`/v1/content-read/lesson/${lessonId}/finish`)
         .set("Cookie", cookie)

@@ -17,8 +17,8 @@ export default async function postManyTags(
           candidate.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase(),
       ) === index,
   );
-  // La migration normalise les noms en minuscules avant l'insertion.
-  const tagNames = uniqueTags.map((tag) => tag.name.toLowerCase());
+  // Depuis la migration keep_display_label_case, les noms sont stockés tels que saisis.
+  const tagNames = uniqueTags.map((tag) => tag.name);
 
   const existingTags = await prisma.orm.public.Tag.where((row) =>
     row.name.in(tagNames),

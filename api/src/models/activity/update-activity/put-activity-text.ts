@@ -1,6 +1,6 @@
 import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 import { randomUUID } from "node:crypto";
 
 import { prisma } from "../../../utils/db.ts";
@@ -50,7 +50,7 @@ export default async function putActivityText(
   }
 
   const uniqueID: string = randomUUID();
-  const fileName: string = uniqueID + new Date().getTime() + ".html";
+  const fileName: string = uniqueID + Date.now() + ".html";
 
   try {
     const file = fs.writeFileSync(

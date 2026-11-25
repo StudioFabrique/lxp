@@ -23,7 +23,7 @@ function decodeEntities(value: string) {
   return value.replace(/&(#x[0-9a-f]+|#[0-9]+|amp|lt|gt|quot|apos|nbsp);/gi, (_, entity: string) => {
     const lower = entity.toLowerCase();
     if (lower.startsWith("#")) {
-      const point = lower.startsWith("#x") ? parseInt(lower.slice(2), 16) : parseInt(lower.slice(1), 10);
+      const point = lower.startsWith("#x") ? Number.parseInt(lower.slice(2), 16) : Number.parseInt(lower.slice(1), 10);
       return point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : "";
     }
     return ({ amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " } as Record<string, string>)[lower] ?? "";

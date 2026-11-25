@@ -100,12 +100,10 @@ export default async function getCorrectAnswerRateEvolution(
   const secondHalf = average(rates.slice(midpoint));
   const delta = Math.round(secondHalf - firstHalf);
 
-  const trend =
-    Math.abs(delta) < STABLE_THRESHOLD_POINTS
-      ? "stable"
-      : delta > 0
-        ? "progression"
-        : "regression";
+  let trend: "stable" | "progression" | "regression" = "stable";
+  if (Math.abs(delta) >= STABLE_THRESHOLD_POINTS) {
+    trend = delta > 0 ? "progression" : "regression";
+  }
 
   return {
     key: CORRECT_ANSWER_RATE_EVOLUTION_KEY,

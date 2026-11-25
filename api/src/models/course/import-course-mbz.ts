@@ -39,8 +39,13 @@ export default async function importCourseMbz(
   }
 
   const data = (await ingestResponse.json()) as { course_slug: string };
+  // Le slug vient d'un service externe : il est contrôlé avant d'être placé
+  // dans le chemin de l'URL d'export.
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,200}$/.test(data.course_slug ?? "")) {
+    throw new Error("Le service IA a retourné un identifiant de cours invalide.");
+  }
   await assertAiHealthy(baseUrl);
-  const zipResponse = await fetch(`${baseUrl}/export/${data.course_slug}.zip`, {
+  const zipResponse = await fetch(`${baseUrl}/export/${encodeURIComponent(data.course_slug)}.zip`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!zipResponse.ok) {

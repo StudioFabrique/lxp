@@ -5,7 +5,7 @@ async function putParcoursObjectives(
   parcoursId: string,
   objectives: Array<any>,
 ) {
-  const id = parseInt(parcoursId);
+  const id = Number.parseInt(parcoursId);
 
   try {
     const existingParcours = await prisma.orm.public.Parcours.where({

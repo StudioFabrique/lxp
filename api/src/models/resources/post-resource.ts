@@ -1,4 +1,3 @@
-import { mongo } from "mongoose";
 import { prisma, type NestedConnect } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getSoftColor } from "../../helpers/getSoftColors.ts";

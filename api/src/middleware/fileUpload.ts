@@ -1,8 +1,7 @@
 import { type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
-import path from "path";
-import * as fs from "fs";
-import { serverIssue } from "../utils/constantes.ts";
+import path from "node:path";
+import * as fs from "node:fs";
 
 /**
  * Extrait et convertit l'image du fichier uploadé en base64

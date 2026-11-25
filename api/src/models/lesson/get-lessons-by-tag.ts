@@ -106,7 +106,7 @@ export default async function getLessonsByTag(
 
   for (const lesson of lessons) {
     if (
-      !result.find(
+      !result.some(
         (item: Result) =>
           item.title === lesson.title &&
           item.activitiesCount === lesson.activities.length,

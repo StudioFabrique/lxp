@@ -46,11 +46,20 @@ export default async function createGroup(
     _id: { $in: usersId },
   });
 
-  if (!!image) {
+  if (image) {
     group.image = image;
   }
 
-  const createdGroup = await Group.create(group);
+  // Seuls les champs modifiables par l'appelant sont retenus : rôles,
+  // créateur et membres sont fixés plus haut côté serveur.
+  const createdGroup = await Group.create({
+    name: group.name,
+    desc: group.desc,
+    roles: group.roles,
+    createdBy: group.createdBy,
+    users: group.users,
+    ...(image ? { image } : {}),
+  });
 
   if (!createdGroup) {
     return null;

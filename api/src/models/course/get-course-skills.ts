@@ -1,4 +1,3 @@
-import { prisma } from "../../utils/db.ts";
 
 async function getCourseSkills(courseId: number) {
   /*const skills = await prisma.course.findFirst({

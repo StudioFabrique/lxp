@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import fs from "fs";
-import User from "../../utils/interfaces/db/user.ts";
+import { getUserEmail } from "../../models/user/get-user-email.ts";
 import { sendInstanceTemplateTestEmail } from "../../services/mailer.ts";
 import {
   hasInstanceLogo,
@@ -141,11 +141,11 @@ export async function httpPostInstanceTemplateTestEmail(
   req: CustomRequest,
   res: Response,
 ) {
-  const user = await User.findById(req.auth?.userId).select("email").lean();
-  if (!user?.email) {
+  const email = await getUserEmail(req.auth?.userId);
+  if (!email) {
     return res.status(404).json({ message: "L’adresse e-mail du compte est introuvable." });
   }
 
-  await sendInstanceTemplateTestEmail(user.email);
-  res.json({ message: `L’e-mail de test a été envoyé à ${user.email}.` });
+  await sendInstanceTemplateTestEmail(email);
+  res.json({ message: `L’e-mail de test a été envoyé à ${email}.` });
 }

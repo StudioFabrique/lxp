@@ -84,20 +84,8 @@ async function postModule(
   const defaultImage = image
     ? null
     : await getUnsplashPresentationImage(moduleToAdd.title);
-  const imageBytes = image
-    ? Uint8Array.from(
-        typeof image === "string" ? Buffer.from(image, "base64") : image,
-      )
-    : defaultImage
-      ? Uint8Array.from(defaultImage)
-      : null;
-  const thumbBytes = thumb
-    ? Uint8Array.from(
-        typeof thumb === "string" ? Buffer.from(thumb, "base64") : thumb,
-      )
-    : defaultImage
-      ? Uint8Array.from(defaultImage)
-      : null;
+  const imageBytes = toImageBytes(image, defaultImage);
+  const thumbBytes = toImageBytes(thumb, defaultImage);
 
   const created = await prisma.orm.public.Module.include(
     "contacts",
@@ -137,6 +125,18 @@ async function postModule(
     contacts,
     skills: created.bonusSkills.map(({ bonusSkill }) => bonusSkill),
   };
+}
+
+function toImageBytes(
+  value: string | Uint8Array | Buffer | null | undefined,
+  defaultImage: Uint8Array | Buffer | null,
+): Uint8Array | null {
+  if (value) {
+    return Uint8Array.from(
+      typeof value === "string" ? Buffer.from(value, "base64") : value,
+    );
+  }
+  return defaultImage ? Uint8Array.from(defaultImage) : null;
 }
 
 export default postModule;

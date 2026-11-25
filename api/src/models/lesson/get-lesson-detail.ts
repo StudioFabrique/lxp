@@ -49,7 +49,7 @@ export default async function getLessonDetail(
     throw error;
   }
 
-  if (existingLesson.course && existingLesson.course.image) {
+  if (existingLesson.course?.image) {
     if (existingLesson.course.image instanceof Buffer) {
       const base64Image = existingLesson.course.image.toString("base64");
       existingLesson = {

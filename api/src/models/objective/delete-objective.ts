@@ -2,7 +2,7 @@ import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function deleteObjective(objectiveId: string) {
-  const id = parseInt(objectiveId);
+  const id = Number.parseInt(objectiveId);
 
   const exisitingObjective = await prisma.orm.public.Objective.where({
     id,

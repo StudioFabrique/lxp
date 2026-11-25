@@ -32,14 +32,14 @@ export default async function postQuizAttempt(
 
   if (!student) return null;
 
-  const quiz =
-    origin === "preliminary"
-      ? scope.moduleId
-        ? await quizRepository.findPreliminaryQuiz(scope.moduleId)
-        : null
-      : scope.courseId
-        ? await quizRepository.findEndingQuiz(scope.courseId, student.id)
-        : null;
+  let quiz = null;
+  if (origin === "preliminary") {
+    if (scope.moduleId) {
+      quiz = await quizRepository.findPreliminaryQuiz(scope.moduleId);
+    }
+  } else if (scope.courseId) {
+    quiz = await quizRepository.findEndingQuiz(scope.courseId, student.id);
+  }
 
   if (!quiz) return null;
 

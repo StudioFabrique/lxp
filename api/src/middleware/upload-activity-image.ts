@@ -1,7 +1,7 @@
 import { type Response, type NextFunction } from "express";
 
 import multer from "multer";
-import path from "path";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 
@@ -17,11 +17,15 @@ export const uploadActivityImage = () => {
       if (file.mimetype.startsWith("image")) {
         const uniqueID: string = randomUUID();
         const fileName: string = uniqueID;
-        const ext = file.mimetype.split("/")[1];
+        // Le type MIME vient du client : seule une extension alphanumérique
+        // est conservée pour empêcher toute sortie du répertoire d'envoi.
+        const ext = (file.mimetype.split("/")[1] ?? "").replace(/[^a-z0-9]/gi, "");
+        const fieldName = file.fieldname.replace(/[^a-z0-9_-]/gi, "");
 
-        cb(null, file.fieldname + "-" + fileName + "." + ext);
-      } else {
+        cb(null, fieldName + "-" + fileName + "." + ext);
+        return;
       }
+      cb(new Error("Le fichier doit être une image."), "");
     },
   });
 

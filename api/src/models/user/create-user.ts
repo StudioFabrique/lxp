@@ -2,7 +2,7 @@ import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import { hash } from "bcrypt";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { mailerDisabled } from "../../config/mailer-disabled.ts";

@@ -3,6 +3,7 @@ import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { escapeRegExp } from "../../utils/unique-fields.ts";
 import { getGroupVisibilityFilter } from "../../utils/services/permissions/accessible-groups.ts";
 
 async function searchGroup(
@@ -37,7 +38,7 @@ async function searchGroup(
       $lt: endDate,
     };
   } else {
-    field = new RegExp(value, "i");
+    field = new RegExp(escapeRegExp(String(value)), "i");
   }
 
   if (entity === "isActive") {

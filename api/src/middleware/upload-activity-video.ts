@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
-import path from "path";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { displaySize } from "../helpers/size-unit-converter.ts";
 
@@ -15,9 +15,8 @@ export const uploadActivityVideo = () => {
     filename: function (req, file, cb) {
       if (file.mimetype.startsWith("video")) {
         const uniqueID: string = randomUUID();
-        const fileName: string = uniqueID + new Date().getTime();
+        const fileName: string = uniqueID + Date.now();
         cb(null, fileName + path.extname(file.originalname));
-      } else {
       }
     },
   });

@@ -120,7 +120,7 @@ export default async function getUserData(userId: string) {
     let totalLessonsCount = 0;
 
     // Process parcours data if found
-    if (response && response.parcours && response.parcours.length > 0) {
+    if (response?.parcours && response.parcours.length > 0) {
       // Extract parcours object from the response
       parcours = response.parcours.map((item: any) => item.parcours)[0];
 
@@ -151,7 +151,7 @@ export default async function getUserData(userId: string) {
     }
 
     // Convert parcours image from Buffer to base64 string if it exists
-    if (parcours && parcours.image) {
+    if (parcours?.image) {
       try {
         // Convert Buffer/Uint8Array to base64 string for frontend consumption
         const imageBuffer = Buffer.from(parcours.image);

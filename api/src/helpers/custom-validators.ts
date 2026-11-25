@@ -78,7 +78,7 @@ export const virtualClassValidator = [
 
 export const isBoolean = (value: any) => {
   if (typeof value !== "boolean") {
-    throw new Error("La valeur doit être un booléen");
+    throw new TypeError("La valeur doit être un booléen");
   }
   return true;
 };
