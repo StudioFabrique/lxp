@@ -13,15 +13,15 @@ load_secrets || { fail "Chargement des secrets Infisical"; exit 1; }
 load_api_env_file
 
 errors=0
-if [ "${OBSERVABILITY_ENABLED:-}" != "true" ]; then
+if [[ "${OBSERVABILITY_ENABLED:-}" != "true" ]]; then
   warn "OBSERVABILITY_ENABLED doit valoir true (valeur actuelle : ${OBSERVABILITY_ENABLED:-absente})"
   errors=$((errors + 1))
 fi
-if [ -z "${OBSERVABILITY_URL:-}" ]; then
+if [[ -z "${OBSERVABILITY_URL:-}" ]]; then
   warn "OBSERVABILITY_URL est absente (exemple : http://localhost:9428)"
   errors=$((errors + 1))
 fi
-if [ "$errors" -gt 0 ]; then
+if [[ "$errors" -gt 0 ]]; then
   fail "Configuration des journaux incomplète"
   info "À définir dans api/.env (ou Infisical si le mode est actif), puis relancer $(cmd "npm run observability:dev")"
   exit 1

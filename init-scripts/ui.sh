@@ -10,7 +10,7 @@ box() {
   color="$1"; shift
   inner=58
   for line in "$@"; do
-    [ $(( ${#line} + 2 )) -gt "$inner" ] && inner=$(( ${#line} + 2 ))
+    [[ $(( ${#line} + 2 )) -gt "$inner" ]] && inner=$(( ${#line} + 2 ))
   done
   border=$(printf '%*s' "$inner" '' | sed 's/ /─/g')
   printf '%s┌%s┐%s\n' "$color" "$border" "$c_reset"
@@ -23,7 +23,7 @@ box() {
 # Une étape qui n'a rien affiché est fermée par un tiret, pour ne pas paraître vide.
 step_has_output=true
 close_step() {
-  if [ "$step_count" -gt 0 ] && [ "$step_has_output" = false ]; then
+  if [[ "$step_count" -gt 0 ]] && [[ "$step_has_output" = false ]]; then
     printf '  %s-----%s\n' "$c_dim" "$c_reset"
   fi
   step_has_output=true
@@ -52,17 +52,17 @@ fail() {
 
 # Vrai si au moins un volume Docker du Compose local existe (sinon, rien à perdre).
 has_project_volumes() {
-  [ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-local 2> /dev/null)" ]
+  [[ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-local 2> /dev/null)" ]]
 }
 
 # Volumes de l'ancien Compose `api/docker-compose.yml` (projet lxp-api).
 has_legacy_volumes() {
-  [ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-api 2> /dev/null)" ]
+  [[ -n "$(docker volume ls -q --filter label=com.docker.compose.project=lxp-api 2> /dev/null)" ]]
 }
 
 # Rappel discret, affiché une fois sous l'en-tête. Volontairement pas épinglé en bas avec une
 # zone de défilement : les commandes lancées ensuite (docker, concurrently) réécrivent l'écran.
 show_cancel_hint() {
-  [ -t 1 ] || return 0
+  [[ -t 1 ]] || return 0
   printf '  %s ctrl+C %s%s pour annuler à tout moment%s\n' $'\033[47;30m' "$c_reset" "$c_dim" "$c_reset"
 }

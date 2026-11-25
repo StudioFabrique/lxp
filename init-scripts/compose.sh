@@ -21,13 +21,13 @@ LXP_LOCAL_MONGO_PORT=27000
 # Exporte les identifiants lus dans api/.env pour ceux que l'environnement
 # (Infisical compris) ne fournit pas. L'environnement existant garde la priorité.
 load_api_env_file() {
-  [ -f "$LXP_ROOT/api/.env" ] || return 0
-  while IFS= read -r line || [ -n "$line" ]; do
+  [[ -f "$LXP_ROOT/api/.env" ]] || return 0
+  while IFS= read -r line || [[ -n "$line" ]]; do
     key=${line%%=*}
     case "$key" in
       ''|*[!A-Za-z0-9_]*|'#'*) continue ;;
     esac
-    [ -n "${!key+x}" ] && continue
+    [[ -n "${!key+x}" ]] && continue
     value=${line#*=}
     value=${value#\"}; value=${value%\"}
     export "$key=$value"
@@ -48,9 +48,9 @@ apply_local_defaults() {
 # Sous-shell : doit être évalué avant les valeurs neutres de prepare_compose_env.
 ai_requested() (
   load_api_env_file
-  [ "${DISABLE_AI_FEATURES:-false}" != "true" ] \
-    && [ -n "${MISTRAL_STUDENT_API_KEY:-}" ] \
-    && [ -n "${MISTRAL_CONTENT_API_KEY:-}" ]
+  [[ "${DISABLE_AI_FEATURES:-false}" != "true" ]] \
+    && [[ -n "${MISTRAL_STUDENT_API_KEY:-}" ]] \
+    && [[ -n "${MISTRAL_CONTENT_API_KEY:-}" ]]
 )
 
 # Prépare l'environnement du processus courant pour `docker compose`.
@@ -136,7 +136,7 @@ confirm_continue_without_ai() {
   echo "    Pour travailler sans IA :"
   echo "      DISABLE_AI_FEATURES=true dans api/.env ou Infisical"
   echo
-  if [ ! -t 0 ]; then
+  if [[ ! -t 0 ]]; then
     warn "Terminal non interactif, poursuite sans service IA"
     return 0
   fi
@@ -169,7 +169,7 @@ start_local_services() {
   fi
   pull_log=$(mktemp)
   lxp_compose --progress plain pull ai 2>&1 | tee "$pull_log"
-  if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+  if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
     if grep -qi "no matching manifest" "$pull_log"; then
       pull_failure=architecture
     elif grep -qiE "denied|unauthorized" "$pull_log"; then

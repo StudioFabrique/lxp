@@ -39,7 +39,7 @@ export function parseCommits(log) {
 }
 
 export function readerFriendlySubject(subject) {
-  return subject.replace(/^(?:feat|fix|style|perf)(?:\([^)]*\))?!?:\s*/i, "");
+  return subject.replace(/^(?:feat|fix|style|perf)(?:\([^)]*\))?!?:/i, "").trimStart();
 }
 
 const icons = new Set([
@@ -64,11 +64,13 @@ export function iconForChange(title, description = "") {
   return "layout";
 }
 
+const danglingWords = new Set(["et", "de", "du", "des", "la", "le", "les", "pour", "en"]);
+
 export function validateContent(content) {
   const cleanText = (value) => {
     if (typeof value !== "string") return null;
     const clean = value
-      .replace(/^(?:feat|fix|style|perf|chore)(?:\([^)]*\))?!?:\s*/i, "")
+      .replace(/^(?:feat|fix|style|perf|chore)(?:\([^)]*\))?!?:/i, "")
       .replace(/<[^>]*>/g, "")
       .replace(/[<>]/g, "")
       .replace(/\s+/g, " ")
@@ -88,7 +90,7 @@ export function validateContent(content) {
     : [];
   const textIsComplete = (value, max) =>
     value && value.length <= max && !/(?:…|\.\.\.)/.test(value) &&
-    !/\s+(?:et|de|du|des|la|le|les|pour|en)$/i.test(value);
+    !danglingWords.has(value.split(" ").at(-1).toLowerCase());
   if (
     !textIsComplete(summary, 120) ||
     changes.length < 1 || changes.length > 4 ||
@@ -192,7 +194,7 @@ export async function generateContent(commits) {
       return validateContent(JSON.parse(output));
     } catch (error) {
       if (attempt === 1) {
-        console.error("Proposition refusée :", output);
+        console.error("Proposition refusée :", JSON.stringify(output));
         throw error;
       }
       messages.push(
