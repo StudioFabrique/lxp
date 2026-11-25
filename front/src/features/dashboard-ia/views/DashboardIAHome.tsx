@@ -51,6 +51,11 @@ const DashboardIAHome = () => {
     queryFn: dashboardIAApi.queries.getGroupsStats,
   });
 
+  const { data: topConsumers, isPending: areTopConsumersPending, isError: areTopConsumersError } = useQuery({
+    queryKey: ["dashboard-ia-top-consumers"],
+    queryFn: () => dashboardIAApi.queries.getTopUsers({ sortProperty: "totalTokens", sortDirection: "desc", page: 1, limit: 20 }),
+  });
+
   useEffect(() => {
     if (totalsError) toast.error(String(totalsError));
   }, [totalsError]);
@@ -58,7 +63,9 @@ const DashboardIAHome = () => {
   const groupsTotalTokens =
     groupsStats?.reduce((acc, g) => acc + g.totalTokens, 0) ?? 0;
 
-  const top5Users = dataList.filter((u) => u.role === "student").slice(0, 5);
+  // Classement indépendant du tableau paginé : toujours les plus gros consommateurs.
+  // La lecture porte sur plus de 5 lignes car les membres de l'équipe sont écartés.
+  const top5Users = (topConsumers?.list ?? []).filter((u) => u.role === "student").slice(0, 5);
 
   return (
     <PageWrapper as="main">
@@ -115,9 +122,9 @@ const DashboardIAHome = () => {
         </BoxWrapper>
         <BoxWrapper>
           <h2 className="text-lg font-bold">Top consommateurs de tokens (5 premiers)</h2>
-          {areTopUsersLoading && top5Users.length === 0 ? (
+          {areTopConsumersPending ? (
             <LoadingSkeleton variant="rows" label="Chargement des utilisateurs" />
-          ) : areTopUsersError ? (
+          ) : areTopConsumersError ? (
             <p role="alert">Impossible de charger les utilisateurs.</p>
           ) : top5Users.length > 0 ? (
             <TopFiveUsers topUsers={top5Users} userLabel={labels[3]} />
