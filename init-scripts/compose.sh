@@ -99,6 +99,59 @@ export_host_database_env() {
   database_build_urls localhost "$LXP_LOCAL_POSTGRES_PORT" localhost "$LXP_LOCAL_MONGO_PORT"
 }
 
+# Image IA non téléchargée : explique la cause (accès, architecture ou autre) et
+# demande s'il faut poursuivre sans le service IA. Sans terminal interactif, on
+# poursuit sans IA. Retourne 1 si l'utilisateur préfère s'arrêter pour corriger.
+confirm_continue_without_ai() {
+  echo
+  case "${1:-other}" in
+    access)
+      warn "Accès refusé à l'image IA $LXP_AI_IMAGE:$LXP_AI_IMAGE_TAG"
+      echo
+      echo "    Les identifiants Docker Hub sont probablement incorrects ou absents."
+      echo
+      echo "    Pour corriger :"
+      echo "      1. Connectez-vous avec un compte autorisé : docker login"
+      echo "      2. Vérifiez l'image visée :"
+      echo "           LXP_AI_IMAGE      = $LXP_AI_IMAGE"
+      echo "           LXP_AI_IMAGE_TAG  = $LXP_AI_IMAGE_TAG"
+      ;;
+    architecture)
+      warn "L'image IA $LXP_AI_IMAGE:$LXP_AI_IMAGE_TAG n'existe pas pour l'architecture de cette machine"
+      echo
+      echo "    Vos identifiants Docker Hub fonctionnent, mais le tag visé n'a pas de variante adaptée."
+      echo
+      echo "    Pour corriger :"
+      echo "      1. Choisissez un tag publié pour votre architecture : LXP_AI_IMAGE_TAG"
+      echo "           (actuellement $LXP_AI_IMAGE_TAG)"
+      echo "      2. Ou demandez à l'équipe de publier une image multi-architecture"
+      ;;
+    *)
+      warn "Téléchargement de l'image IA $LXP_AI_IMAGE:$LXP_AI_IMAGE_TAG en échec"
+      echo
+      echo "    Consultez le message Docker ci-dessus (réseau, Docker non démarré, etc.)."
+      ;;
+  esac
+  echo
+  echo "    Pour travailler sans IA :"
+  echo "      DISABLE_AI_FEATURES=true dans api/.env ou Infisical"
+  echo
+  if [ ! -t 0 ]; then
+    warn "Terminal non interactif, poursuite sans service IA"
+    return 0
+  fi
+  local answer
+  read -r -p "  Continuer sans le service IA ? [y/N] : " answer
+  case "$answer" in
+    o|O|oui|Oui|OUI|y|Y|yes|YES)
+      warn "Service IA ignoré"
+      return 0 ;;
+    *)
+      info "Corrigez l'accès puis relancez la commande"
+      return 1 ;;
+  esac
+}
+
 # Démarre les bases, puis le service IA si l'image et les clés sont disponibles.
 # Retourne 0 même sans IA : elle reste facultative en développement.
 start_local_services() {
@@ -114,10 +167,21 @@ start_local_services() {
     info "Service IA non démarré (DISABLE_AI_FEATURES=true ou clés Mistral absentes)"
     return 0
   fi
-  if ! lxp_compose --progress plain pull ai; then
-    warn "Image $LXP_AI_IMAGE:$LXP_AI_IMAGE_TAG indisponible (docker login requis ?), service IA ignoré"
+  pull_log=$(mktemp)
+  lxp_compose --progress plain pull ai 2>&1 | tee "$pull_log"
+  if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+    if grep -qi "no matching manifest" "$pull_log"; then
+      pull_failure=architecture
+    elif grep -qiE "denied|unauthorized" "$pull_log"; then
+      pull_failure=access
+    else
+      pull_failure=other
+    fi
+    rm -f "$pull_log"
+    confirm_continue_without_ai "$pull_failure" || exit 1
     return 0
   fi
+  rm -f "$pull_log"
   lxp_compose --progress plain run --rm ai python -m app.db_provision \
     || { warn "Provisionnement de la base IA en échec, service IA ignoré"; return 0; }
   lxp_compose --progress plain up -d ai || warn "Démarrage du service IA en échec"

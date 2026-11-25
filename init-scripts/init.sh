@@ -179,6 +179,63 @@ development_mailer_needs_configuration() {
   return 1
 }
 
+# Le service IA a besoin des deux clés Mistral. Les valeurs saisies ne sont
+# jamais réaffichées. Un refus écrit DISABLE_AI_FEATURES=true : la question
+# n'est plus posée au prochain `npm run init`.
+configure_development_ai() {
+  file="$1"
+  [ -t 0 ] || return 0
+
+  while true; do
+    read -r -p "Souhaitez-vous activer le service IA (clés Mistral requises) ? [y/N] : " enable_ai
+    case "$enable_ai" in
+      o|O|oui|Oui|OUI|y|Y|yes|YES)
+        for key in MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY; do
+          ai_key=""
+          while [ -z "$ai_key" ]; do
+            read -r -s -p "$key : " ai_key
+            echo
+            [ -n "$ai_key" ] || warn "Une valeur est requise pour $key"
+          done
+          write_env_value "$key" "$ai_key" "$file"
+        done
+        write_env_value "DISABLE_AI_FEATURES" "false" "$file"
+        ok "Service IA activé"
+        info "L'image Docker Hub studiostep/lxp-ai est téléchargée au démarrage des conteneurs (docker login peut être requis)"
+        return
+        ;;
+      ""|n|N|non|Non|NON|no|NO)
+        write_env_value "DISABLE_AI_FEATURES" "true" "$file"
+        ok "Service IA désactivé (DISABLE_AI_FEATURES=true dans api/.env)"
+        return
+        ;;
+      *) warn "Réponse non reconnue, répondez par y ou n" ;;
+    esac
+  done
+}
+
+# api/.env existant : la question n'est posée que si l'IA n'a été ni
+# configurée ni refusée.
+development_ai_needs_configuration() {
+  file="$1"
+  [ "$(read_env_value "DISABLE_AI_FEATURES" "$file")" != "true" ] || return 1
+  [ -z "$(read_env_value "MISTRAL_STUDENT_API_KEY" "$file")" ] \
+    || [ -z "$(read_env_value "MISTRAL_CONTENT_API_KEY" "$file")" ]
+}
+
+# Avec Infisical, rien n'est saisi ni écrit : on indique seulement ce qui a été
+# reçu pour que l'absence du service IA ne soit pas silencieuse.
+report_infisical_ai() {
+  if [ "${DISABLE_AI_FEATURES:-false}" = "true" ]; then
+    info "Service IA désactivé par Infisical (DISABLE_AI_FEATURES=true)"
+  elif [ -n "${MISTRAL_STUDENT_API_KEY:-}" ] && [ -n "${MISTRAL_CONTENT_API_KEY:-}" ]; then
+    ok "Service IA activé : clés Mistral fournies par Infisical"
+  else
+    warn "Service IA non démarré : MISTRAL_STUDENT_API_KEY et MISTRAL_CONTENT_API_KEY sont absentes d'Infisical"
+    info "Ajoutez-les dans le dossier /runtime, ou définissez DISABLE_AI_FEATURES=true pour couper l'IA"
+  fi
+}
+
 configure_development_env() {
   file="$1"
   environment=$(read_env_value "ENVIRONMENT" "$file")
@@ -194,6 +251,8 @@ configure_development_env() {
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash (optionnel)" false "$file" true
   configure_development_mailer "$file"
   configure_development_password "$file"
+  step "Service IA"
+  configure_development_ai "$file"
 }
 
 # Infisical est facultatif : sans lui, les variables viennent de api/.env.
@@ -201,7 +260,7 @@ configure_development_env() {
 configure_infisical() {
   [ ! -f "./api/.env" ] && [ ! -f "$INFISICAL_LOCAL_CONFIG" ] && [ -t 0 ] || return 0
 
-  read -r -p "Utiliser Infisical pour les variables d'environnement (équipe Studio STEP) ? [y/N] : " use_infisical
+  read -r -p "Utiliser Infisical pour les variables d'environnement ? [y/N] : " use_infisical
   case "$use_infisical" in
     o|O|oui|Oui|OUI|y|Y|yes|YES) ;;
     *) return 0 ;;
@@ -212,9 +271,8 @@ configure_infisical() {
   [ -n "$project_id" ] || { warn "Identifiant vide, Infisical ignoré"; return 0; }
   read -r -p "Domaine Infisical [$INFISICAL_DOMAIN] : " entered_domain
   read -r -p "Environnement [$INFISICAL_ENVIRONMENT] : " entered_environment
-  read -r -p "Dossiers des secrets, séparés par un espace [$INFISICAL_SECRET_PATHS] : " entered_path
   infisical_write_config "${entered_domain:-$INFISICAL_DOMAIN}" "$project_id" \
-    "${entered_environment:-$INFISICAL_ENVIRONMENT}" "${entered_path:-$INFISICAL_SECRET_PATHS}"
+    "${entered_environment:-$INFISICAL_ENVIRONMENT}" "$INFISICAL_SECRET_PATHS"
   ok "Configuration enregistrée dans $INFISICAL_LOCAL_CONFIG (ignoré par Git)"
 
   info "Téléchargement de la CLI Infisical (conteneur $INFISICAL_IMAGE)"
@@ -225,6 +283,9 @@ configure_infisical() {
     infisical_export_secrets > /dev/null || { rm -f "$INFISICAL_LOCAL_CONFIG"; fail "Lecture des secrets Infisical"; exit 1; }
   fi
   ok "Secrets Infisical accessibles"
+  info "Rappel : l'accès passe par une Machine Identity (Universal Auth), pas par un compte utilisateur."
+  info "Identifiants : $INFISICAL_CREDENTIALS_FILE, ou variables INFISICAL_UNIVERSAL_AUTH_CLIENT_ID et INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET."
+  info "Documentation : README.md (encadré « Infisical, facultatif ») et deployment/README.md (« Préparer Infisical »)"
 }
 
 # --with-data et --demo restaurent dans des bases vides : sans nettoyage, le dump
@@ -290,6 +351,8 @@ api_env_created=false
 if infisical_enabled; then
   info "Variables fournies par Infisical (environnement $(infisical_load_config; echo "$INFISICAL_ENVIRONMENT")), api/.env non utilisé"
   load_secrets || { fail "Chargement des secrets Infisical"; exit 1; }
+  step "Service IA"
+  report_infisical_ai
 elif [ ! -f "./api/.env" ]; then
   if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
     fail "la création de api/.env en développement nécessite un terminal interactif."
@@ -305,6 +368,12 @@ if [ "$api_env_created" = false ] && [ -f "./api/.env" ] \
   step "Mailer de développement"
   configure_development_mailer "./api/.env"
   configure_development_password "./api/.env"
+fi
+if [ "$api_env_created" = false ] && ! infisical_enabled && [ -f "./api/.env" ] \
+  && [ "$(read_env_value "ENVIRONMENT" "./api/.env")" = "development" ] \
+  && development_ai_needs_configuration "./api/.env"; then
+  step "Service IA"
+  configure_development_ai "./api/.env"
 fi
 cp ./front/env.example ./front/.env || { fail "Copie des variables d'environnement"; exit 1; }
 

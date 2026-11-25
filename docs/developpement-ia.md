@@ -30,8 +30,11 @@ Le service démarre seulement si les deux clés existent et que
 `DISABLE_AI_FEATURES` n'est pas `true`.
 
 - **Avec Infisical** : les clés sont dans le dossier `/runtime` de
-  l'environnement configuré. Rien à faire.
-- **Sans Infisical** : ajoutez-les dans `api/.env`.
+  l'environnement configuré. `npm run init` indique si elles sont reçues, sans
+  rien demander ni écrire.
+- **Sans Infisical** : `npm run init` demande d'abord si vous activez le service
+  IA, puis les deux clés. Un refus écrit `DISABLE_AI_FEATURES=true` dans
+  `api/.env`. Vous pouvez aussi les ajouter à la main :
 
 ```dotenv
 MISTRAL_STUDENT_API_KEY=<cle-dev>
@@ -53,7 +56,12 @@ npm run dev
 `services:up` télécharge l'image (`docker compose pull`), crée les tables
 `andria_*` (`python -m app.db_provision`) puis démarre le service. Sans accès à
 l'image (`docker login` nécessaire si le dépôt Docker Hub est privé), le script
-l'indique et continue sans IA.
+explique la cause, rappelle les variables concernées (`LXP_AI_IMAGE`,
+`LXP_AI_IMAGE_TAG`) et demande s'il faut continuer sans IA. Sans terminal
+interactif, il continue sans IA.
+
+L'image est publiée en `linux/amd64` et `linux/arm64` : Docker choisit la variante
+native, y compris sur Mac Apple Silicon.
 
 Pour choisir une autre version : `LXP_AI_IMAGE_TAG=<tag> npm run services:up`.
 Le premier démarrage télécharge aussi les modèles Hugging Face dans le volume
@@ -88,6 +96,7 @@ Pour travailler sans le service, mettez `DISABLE_AI_FEATURES=true` (dans
 | ---------------------------------------- | ------------------------------------------------------------------------------- |
 | « Service IA non démarré »               | Clés Mistral absentes ou `DISABLE_AI_FEATURES=true`.                            |
 | « Image indisponible »                   | Faites `docker login` avec un compte autorisé sur `studiostep/lxp-ai`.          |
+| « no matching manifest » | Le tag visé n'est pas publié pour votre architecture : choisissez un autre `LXP_AI_IMAGE_TAG`. |
 | Réponse IA `401`                         | Redémarrez le service après un changement de `DOCKER_IA_AUTH_SECRET`.           |
 | Watcher sans événement                   | `npm run notify-triggers --prefix api`, puis `docker compose -p lxp-local restart ai`. |
 | Anciens volumes `lxp-api_*`              | Ils ne sont plus utilisés : voir l'avertissement affiché par `npm run init`.    |
