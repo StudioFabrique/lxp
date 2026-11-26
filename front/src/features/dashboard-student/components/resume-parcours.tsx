@@ -45,6 +45,8 @@ const ResumeParcours = () => {
               <Link
                 to={`/${currentRoute[0]}/parcours/view/${parcours.id}`}
                 className="btn btn-primary ml-auto h-auto min-h-12 max-w-full py-2 text-white"
+                // Repère de l'assistant virtuel, qui y mène l'apprenant à sa première visite.
+                data-chatbot-target="first-parcours"
               >
                 <PlayCircleIcon className="shrink-0" />
                 <span className="min-w-0 whitespace-normal">Accéder au parcours</span>

@@ -2,8 +2,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { SkipForward } from "lucide-react";
 
 import { AuthContext } from "../../store/AuthProvider";
-import { useIntroPresentation } from "./useIntroPresentation";
-import { prefersReducedMotion } from "./intro-motion";
 import IntroRoleDetection from "./IntroRoleDetection";
 import IntroStudentSpace from "./IntroStudentSpace";
 import IntroTeamSpace from "./IntroTeamSpace";
@@ -14,19 +12,15 @@ type Props = {
   onDone: () => void;
 };
 
-type Step = "detection" | "leaving" | "space";
-
-/** Durée de la sortie de la barre latérale (voir `AppWrapper`). */
-const SIDEBAR_EXIT_MS = 700;
+type Step = "detection" | "space";
 
 /**
- * Enchaînement qui suit la présentation (terminée ou ignorée) : détection du
- * rôle, puis construction de l'interface de l'espace correspondant.
+ * Enchaînement qui ouvre la première connexion, avant la présentation : détection
+ * du rôle, puis construction de l'interface de l'espace correspondant.
  */
 const IntroRoleReveal = ({ onDone }: Props) => {
   const { user } = useContext(AuthContext);
   const [step, setStep] = useState<Step>("detection");
-  const { setSidebarExit } = useIntroPresentation();
   const rootRef = useRef<HTMLElement>(null);
   const introRoles = useIntroRoles();
   const role = findIntroRole(user?.roles, introRoles);
@@ -41,20 +35,6 @@ const IntroRoleReveal = ({ onDone }: Props) => {
     rootRef.current?.focus({ preventScroll: true });
   }, []);
 
-  // La barre latérale est repoussée hors de l'écran avant que la séquence ne démarre.
-  useEffect(() => {
-    if (step !== "leaving") return;
-    setSidebarExit("leaving");
-    const timer = setTimeout(
-      () => {
-        setSidebarExit("gone");
-        setStep("space");
-      },
-      prefersReducedMotion() ? 0 : SIDEBAR_EXIT_MS,
-    );
-    return () => clearTimeout(timer);
-  }, [step, setSidebarExit]);
-
   if (!role) return null;
 
   return (
@@ -68,7 +48,7 @@ const IntroRoleReveal = ({ onDone }: Props) => {
         <IntroRoleDetection
           role={role}
           roles={introRoles}
-          onDone={() => setStep("leaving")}
+          onDone={() => setStep("space")}
         />
       ) : null}
       {/* Monté dès la détection : le dashboard du rôle se charge pendant l'animation. */}

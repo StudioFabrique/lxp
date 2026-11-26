@@ -39,6 +39,36 @@ export const FIRST_FORMATION_TUTORIAL: ChatbotTutorial = {
   ],
 };
 
+/** Premier bouton de l'espace apprenant : « Accéder au parcours » du tableau de bord. */
+export const FIRST_PARCOURS_SELECTOR = '[data-chatbot-target="first-parcours"]';
+
+/** Guide de la première visite d'un apprenant : il mène au parcours, première étape de son apprentissage. */
+export const FIRST_PARCOURS_TUTORIAL: ChatbotTutorial = {
+  id: "first-parcours",
+  label: "Accéder à mon parcours",
+  steps: [
+    {
+      selector: FIRST_PARCOURS_SELECTOR,
+      message: "Bienvenue dans votre espace ! Commencez ici : ouvrez votre parcours pour découvrir ses modules.",
+    },
+  ],
+};
+
+/** Bouton « Démarrer » de l'aperçu du parcours, à l'écran suivant. */
+export const START_PARCOURS_SELECTOR = '[data-chatbot-target="start-parcours"]';
+
+/** Suite du guide apprenant : sur l'aperçu du parcours, l'assistant virtuel désigne « Démarrer ». */
+export const START_PARCOURS_TUTORIAL: ChatbotTutorial = {
+  id: "start-parcours",
+  label: "Démarrer mon parcours",
+  steps: [
+    {
+      selector: START_PARCOURS_SELECTOR,
+      message: "Voici votre parcours. Cliquez sur « Démarrer » pour commencer votre premier module.",
+    },
+  ],
+};
+
 /** Le fichier est une donnée de contenu : il est contrôlé au chargement pour qu'une faute de frappe échoue en test et non chez l'utilisateur. */
 export const chatbotGuide: ChatbotGuide = chatbotGuideSchema.parse(guideData);
 

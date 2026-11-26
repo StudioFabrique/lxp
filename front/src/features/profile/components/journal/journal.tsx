@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { History } from "lucide-react";
 import { profileApi } from "../../api/profile.api";
-import Loader from "../../../../components/loaders/Loader";
+import ProgressSectionSkeleton from "../progress-section-skeleton";
 import Parcours from "../../../../utils/interfaces/parcours";
 import JournalTree from "./journal-tree";
 import { formatNumber } from "../../../../utils/helpers/format-number";
 
-const Journal = ({ parcoursId }: { parcoursId?: number }) => {
-  const [isLoading, setIsLoading] = useState(true);
+type JournalProps = {
+  parcoursId?: number;
+  /** Vrai tant que les parcours se chargent : sans eux, l'historique ne peut pas être filtré. */
+  isParcoursLoading?: boolean;
+};
+
+const Journal = ({ parcoursId, isParcoursLoading = false }: Readonly<JournalProps>) => {
+  const [isAccomplishmentsLoading, setIsLoading] = useState(true);
+  const isLoading = isAccomplishmentsLoading || isParcoursLoading;
 
   const [parcours, setParcours] = useState<Parcours[]>([]);
 
@@ -64,7 +71,7 @@ const Journal = ({ parcoursId }: { parcoursId?: number }) => {
       </div>
 
       {isLoading ? (
-        <Loader variant="rows" label="Chargement de l'historique" />
+        <ProgressSectionSkeleton variant="journal" label="Chargement de l'historique" />
       ) : visibleParcours.length > 0 ? (
         <JournalTree parcoursList={visibleParcours} />
       ) : (

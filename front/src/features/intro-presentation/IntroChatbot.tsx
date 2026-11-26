@@ -1,4 +1,5 @@
-import type { RefObject } from "react";
+import { useState, type RefObject } from "react";
+import { useReducedMotion } from "motion/react";
 import { ArrowDown } from "lucide-react";
 
 import AuthChatbotDialogue from "../auth/components/AuthChatbotDialogue";
@@ -8,6 +9,7 @@ import {
   OVERVIEW_DIALOGUE,
   typingDuration,
 } from "./intro-dialogue";
+import { INTRO_ARRIVAL_DELAY_S, INTRO_CHATBOT_SETTLE_MS } from "./intro-chatbot-arrival";
 import { INTRO_PYRAMID_LEVELS } from "./intro-levels";
 import IntroDialogueNav from "./IntroDialogueNav";
 import { useIntroGuide, type IntroGuide } from "./useIntroGuide";
@@ -31,6 +33,9 @@ type Props = {
  * courant, puis chacun de ses composants, en se plaçant à côté d'eux.
  */
 const IntroChatbot = ({ scopeRef, step, detailMessage, guide, onContinue }: Props) => {
+  // Le premier message attend que l'assistant virtuel ait fini de rejoindre sa place depuis le bas de l'écran.
+  const reducedMotion = useReducedMotion();
+  const [firstDelay] = useState(reducedMotion ? 0 : INTRO_ARRIVAL_DELAY_S);
   const overview = useIntroGuide(OVERVIEW_DIALOGUE.length, "overview");
   const level = INTRO_PYRAMID_LEVELS[step - 1];
   const sequence = level ? guide : overview;
@@ -55,6 +60,8 @@ const IntroChatbot = ({ scopeRef, step, detailMessage, guide, onContinue }: Prop
     <AuthChatbotDialogue
       introduction={false}
       compact
+      delay={firstDelay}
+      placementDelayMs={reducedMotion ? 0 : INTRO_CHATBOT_SETTLE_MS}
       message={message}
       help={INTRO_HELP}
       typingMs={level ? LEVEL_TYPING_MS : typingDuration(text)}

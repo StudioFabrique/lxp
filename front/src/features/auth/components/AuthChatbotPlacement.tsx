@@ -118,6 +118,8 @@ type Props = {
   floating?: boolean;
   scopeRef?: RefObject<HTMLDivElement | null>;
   stepId?: string;
+  /** Attente avant de placer l'assistant virtuel, à la place de l'attente par défaut (le temps que la page qui l'accueille ait fini son ouverture). */
+  placementDelayMs?: number;
 };
 
 export default function AuthChatbotPlacement({
@@ -125,6 +127,7 @@ export default function AuthChatbotPlacement({
   floating = true,
   scopeRef,
   stepId,
+  placementDelayMs,
 }: Readonly<Props>) {
   const desktop = useSyncExternalStore(
     subscribeViewport,
@@ -225,7 +228,8 @@ export default function AuthChatbotPlacement({
         top: intro.top + intro.height / 2 - (own.top - hostRect.top + own.height / 2),
       });
       previousPosition.setIntroAvatar(null);
-      if (own.width > 0) {
+      // Un écart de quelques pixels ne vaut pas un zoom : l'avatar reprend sa taille sans rétrécir ni grossir.
+      if (own.width > 0 && Math.abs(intro.width / own.width - 1) > 0.03) {
         handoffScale.current = intro.width / own.width;
         avatar.style.transform = `scale(${handoffScale.current})`;
       }
@@ -429,7 +433,7 @@ export default function AuthChatbotPlacement({
     // Measure the settled column, rather than positions mid-way through its intro.
     const timer = window.setTimeout(
       place,
-      previousPosition?.getPosition() ? 350 : 700,
+      placementDelayMs ?? (previousPosition?.getPosition() ? 350 : 700),
     );
     window.addEventListener("resize", place);
     return () => {
@@ -444,6 +448,7 @@ export default function AuthChatbotPlacement({
     usePortal,
     scopeRef,
     stepId,
+    placementDelayMs,
     x,
     y,
   ]);

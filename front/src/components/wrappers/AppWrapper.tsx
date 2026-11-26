@@ -1,5 +1,6 @@
 import { PropsWithChildren, ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { useFormPageAutoFocus } from "../../hooks/useFormPageAutoFocus";
+import { useIsMobile } from "../../hooks/useMediaQuery";
 import { useIntroPresentation } from "../../features/intro-presentation/useIntroPresentation";
 import { useVisualPreferences } from "../../store/VisualPreferences";
 import { cn } from "../../utils/cn";
@@ -13,6 +14,7 @@ type Props = {
 
 const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
   const { sidebarPhase } = useIntroPresentation();
+  const isMobile = useIsMobile();
   const { animations } = useVisualPreferences();
   const mainRef = useRef<HTMLElement>(null);
   useFormPageAutoFocus(mainRef);
@@ -34,8 +36,8 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
       <div className="flex flex-col md:flex-row gap-2 h-full overflow-hidden">
         {/* Sidebar */}
         {/* Sous `md`, la barre latérale devient une barre de navigation en haut de l'écran. */}
-        {/* Pendant la présentation, la barre est une bande horizontale en haut à gauche, posée sur le contenu ;
-            en sortie, elle recule légèrement puis part d'un coup vers la gauche, comme poussée. */}
+        {/* Pendant la présentation sur mobile, la barre est une bande horizontale en haut à gauche, posée sur le contenu ;
+            pendant la découverte du rôle, elle est masquée. */}
         <aside
           // Barre reculée : hors du focus clavier et de la lecture d'écran tant que l'aperçu est ouvert.
           inert={isRetracted}
@@ -47,9 +49,8 @@ const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
             "z-40",
             // Apparition en fondu à la connexion, au rechargement et au retour de la séquence (la barre masquée se réaffiche).
             animations && "animate-[app-fade-in_0.8s_ease-out]",
-            sidebarPhase === "normal" ? "md:h-full" : "absolute left-2 top-2",
-            sidebarPhase === "leaving" &&
-              "-translate-x-[130%] transition-transform duration-700 ease-[cubic-bezier(0.6,-0.28,0.735,0.045)] motion-reduce:transition-none",
+            // Sur mobile, la barre réduite de la présentation se pose sur le contenu ; sur bureau, la barre complète reste dans la page.
+            isMobile && sidebarPhase !== "normal" ? "absolute left-2 top-2" : "md:h-full",
             sidebarPhase === "gone" && "hidden",
           )}
         >

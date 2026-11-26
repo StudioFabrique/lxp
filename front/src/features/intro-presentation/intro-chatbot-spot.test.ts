@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 import { getChatbotSpot } from "./intro-chatbot-spot";
 
 describe("getChatbotSpot", () => {
-  it("place le bouton à 24 px du coin bas droit de la fenêtre", () => {
+  it("centre le bouton à 24 px du coin bas droit de la fenêtre, avec un disque de 52 px", () => {
     expect(getChatbotSpot({ left: 0, top: 0 }, { width: 1000, height: 800 })).toEqual({
       centerX: 944,
       centerY: 744,
-      size: 64,
+      size: 52,
     });
   });
 

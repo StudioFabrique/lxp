@@ -1,13 +1,10 @@
 import { createContext } from "react";
 
-/** Étape de la sortie de la barre latérale, qui précède la séquence de l'espace. */
-export type SidebarExit = "none" | "leaving" | "gone";
-
 /**
- * État de la barre latérale de l'application : normale, en squelette pendant
- * l'exploration, puis repoussée hors de l'écran avant la séquence de l'espace.
+ * État de la barre latérale de l'application : normale, réduite en barre pendant
+ * la présentation sur mobile, ou masquée pendant la découverte du rôle.
  */
-export type SidebarPhase = "normal" | "skeleton" | "leaving" | "gone";
+export type SidebarPhase = "normal" | "skeleton" | "gone";
 
 export type IntroPresentationContextValue = {
   /** Vrai quand la présentation remplace le contenu de la page. */
@@ -18,7 +15,6 @@ export type IntroPresentationContextValue = {
   /** Vrai un court instant après la découverte du rôle : l'interface réelle se substitue à la séquence. */
   hasJustRevealed: boolean;
   sidebarPhase: SidebarPhase;
-  setSidebarExit: (exit: SidebarExit) => void;
   /** Vrai quand l’assistant virtuel de l'application doit laisser la place à celui de la présentation. */
   isChatbotHidden: boolean;
   setChatbotHidden: (hidden: boolean) => void;
@@ -36,7 +32,6 @@ export const IntroPresentationContext =
     isRoleRevealOpen: false,
     hasJustRevealed: false,
     sidebarPhase: "normal",
-    setSidebarExit: () => {},
     isChatbotHidden: false,
     setChatbotHidden: () => {},
     open: () => {},

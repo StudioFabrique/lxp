@@ -38,6 +38,22 @@ type CourseListProps = {
   onRefreshCourses: () => void | Promise<void>;
 };
 
+function visibilityIcon(
+  isPending: boolean,
+  isVisible: boolean | null,
+  iconClassName: string | undefined,
+  spinnerClassName: string,
+) {
+  if (isPending) {
+    return <LoaderCircle className={spinnerClassName} />;
+  }
+  return isVisible ? (
+    <EyeOff className={iconClassName} />
+  ) : (
+    <Eye className={iconClassName} />
+  );
+}
+
 export default function CourseList({
   coursesList,
   onRefreshCourses,

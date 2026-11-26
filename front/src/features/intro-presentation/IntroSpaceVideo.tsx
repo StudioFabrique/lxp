@@ -3,6 +3,7 @@ import { LoaderCircle } from "lucide-react";
 
 import { authPresentationStateSchema } from "../auth/components/auth-presentation.schema";
 import { cn } from "../../utils/cn";
+import { rememberVideoChatbotRect, videoChatbotRect } from "./intro-chatbot-arrival";
 import { getChatbotSpot } from "./intro-chatbot-spot";
 import { prefersReducedMotion } from "./intro-motion";
 import type { IntroSpaceContent } from "./intro-space-content";
@@ -10,6 +11,17 @@ import type { IntroSpaceContent } from "./intro-space-content";
 type Props = {
   content: IntroSpaceContent;
   onEnded: () => void;
+};
+
+/** Feuille injectée dans l'animation : la barre latérale 3D se regarde, son survol ne doit rien déclencher ; le reste (« Précédent », « Suivant ») reste cliquable. */
+const MUTE_SIDEBAR_CSS = ".sidebar-layout, .sidebar-layout * { pointer-events: none !important; }";
+
+const muteSidebar = (frame: HTMLIFrameElement | null): void => {
+  const doc = frame?.contentDocument;
+  if (!doc?.head) return;
+  const style = doc.createElement("style");
+  style.textContent = MUTE_SIDEBAR_CSS;
+  doc.head.appendChild(style);
 };
 
 /** Index de la séquence « Tableaux de bord par rôle » dans `manifest.json`. */
@@ -41,13 +53,15 @@ const IntroSpaceVideo = ({ content, onEnded }: Props) => {
       if (action === "initialize") {
         // Le film se termine sur le bouton de l’assistant virtuel à la place qu'il aura dans l'application.
         const frame = frameRef.current?.getBoundingClientRect();
+        const viewport = { width: window.innerWidth, height: window.innerHeight };
+        if (frame) rememberVideoChatbotRect(videoChatbotRect(frame, viewport));
         frameRef.current?.contentWindow?.postMessage(
           {
             channel: "andria-auth-presentation",
             action: "content",
             content,
             chatbot: frame
-              ? getChatbotSpot(frame, { width: window.innerWidth, height: window.innerHeight })
+              ? getChatbotSpot(frame, viewport)
               : undefined,
           },
           window.location.origin,
@@ -147,7 +161,10 @@ const IntroSpaceVideo = ({ content, onEnded }: Props) => {
           "size-full border-0 transition-opacity duration-300",
           !isLoaded && "opacity-0",
         )}
-        onLoad={() => send("initialize")}
+        onLoad={() => {
+          muteSidebar(frameRef.current);
+          send("initialize");
+        }}
       />
       {!isLoaded && !hasFailed ? (
         <output

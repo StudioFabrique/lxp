@@ -15,7 +15,8 @@ const Sidebar = () => {
 
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
-  const isSkeleton = sidebarPhase !== "normal";
+  // La barre réduite de la présentation n'existe que sur mobile ; sur bureau, la barre complète reste affichée.
+  const isSkeleton = isMobile && sidebarPhase !== "normal";
 
   if (isSkeleton) {
     return <SidebarIntroBar />;

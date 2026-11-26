@@ -17,20 +17,39 @@ import ChatbotTutorialHighlight from "./chatbot-parts/chatbot-tutorial-highlight
 import useChatbot, { AI_UNAVAILABLE_MESSAGE, type ChatbotValues } from "../hooks/use-chatbot";
 import useBubbleInViewport from "../hooks/use-bubble-in-viewport";
 import useChatbotDock from "../hooks/use-chatbot-dock";
-import useChatbotFirstFormation from "../hooks/use-chatbot-first-formation";
+import useChatbotFirstFormation, { type ChatbotGuidedButton } from "../hooks/use-chatbot-first-formation";
 import useChatbotQuiz from "../hooks/use-chatbot-quiz";
 import useChatbotTutorial from "../hooks/use-chatbot-tutorial";
 import useChatbotUi from "../hooks/use-chatbot-ui";
 import { buildChatbotQuestions, chatbotQuestionKey, guidePageCount, pickSelectionPrompts, type ChatbotQuestion } from "../chatbot-questions";
 import { CHATBOT_BUBBLE_WIDTH_CLASS, chooseTutorialPlacement } from "../chatbot-position";
 import { onChatbotQuestionsCloseRequest, publishChatbotDock, useChatbotDockSnapshot } from "../chatbot-dock-store";
-import { FIRST_FORMATION_TUTORIAL } from "../chatbot-tutorials";
+import {
+  FIRST_FORMATION_TUTORIAL,
+  FIRST_PARCOURS_SELECTOR,
+  FIRST_PARCOURS_TUTORIAL,
+  START_PARCOURS_SELECTOR,
+  START_PARCOURS_TUTORIAL,
+  type ChatbotTutorial,
+} from "../chatbot-tutorials";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import { useIntroPresentation } from "../../intro-presentation/useIntroPresentation";
 import { canSuggestActivityQuiz } from "../../../components/tiptap-editor/utils/activity-read-time-helper";
 import { prebuiltPrompt } from "../../../config/ai/ai-texts.json";
 import { cn } from "../../../utils/cn";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+
+/** Guides de la première visite d'un apprenant : le parcours du tableau de bord, puis « Démarrer » à l'écran suivant. */
+const FIRST_PARCOURS_BUTTON: ChatbotGuidedButton = {
+  selector: FIRST_PARCOURS_SELECTOR,
+  storageKey: "andria-chatbot-first-parcours-hidden",
+  hideOnClick: true,
+};
+const START_PARCOURS_BUTTON: ChatbotGuidedButton = {
+  selector: START_PARCOURS_SELECTOR,
+  storageKey: "andria-chatbot-start-parcours-hidden",
+  hideOnClick: true,
+};
 
 type Props = {
   /** Faux quand les fonctionnalités IA sont désactivées : il ne reste que les tutoriels de l'interface. */
@@ -110,12 +129,35 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
   // Tant que le bouton « Créer ma première formation » est affiché, l'assistant va seul vers lui, le met en
   // évidence et lui donne le focus : c'est là que démarre la création de contenu.
   const { startTutorial, stopTutorial: stopTutorialById } = tutorial;
-  const firstFormation = useChatbotFirstFormation(isIntroOpen || hidden, useCallback((button: HTMLElement) => {
+  const guideButton = useCallback((guide: ChatbotTutorial) => (button: HTMLElement) => {
     setQuestionsOpen(false);
     setAnswer(null);
-    startTutorial(FIRST_FORMATION_TUTORIAL);
+    startTutorial(guide);
     button.focus({ preventScroll: true });
-  }, [startTutorial]), useCallback(() => stopTutorialById(FIRST_FORMATION_TUTORIAL.id), [stopTutorialById]));
+  }, [startTutorial]);
+  const firstFormation = useChatbotFirstFormation(
+    isIntroOpen || hidden,
+    useMemo(() => guideButton(FIRST_FORMATION_TUTORIAL), [guideButton]),
+    useCallback(() => stopTutorialById(FIRST_FORMATION_TUTORIAL.id), [stopTutorialById]),
+  );
+  // Apprenant : à sa première visite l'assistant le mène à son parcours, puis à « Démarrer » sur l'écran suivant.
+  const firstParcours = useChatbotFirstFormation(
+    isIntroOpen || hidden,
+    useMemo(() => guideButton(FIRST_PARCOURS_TUTORIAL), [guideButton]),
+    useCallback(() => stopTutorialById(FIRST_PARCOURS_TUTORIAL.id), [stopTutorialById]),
+    FIRST_PARCOURS_BUTTON,
+  );
+  const startParcours = useChatbotFirstFormation(
+    isIntroOpen || hidden,
+    useMemo(() => guideButton(START_PARCOURS_TUTORIAL), [guideButton]),
+    useCallback(() => stopTutorialById(START_PARCOURS_TUTORIAL.id), [stopTutorialById]),
+    START_PARCOURS_BUTTON,
+  );
+  const neverShowAgain: Record<string, () => void> = {
+    [FIRST_FORMATION_TUTORIAL.id]: firstFormation.hideForever,
+    [FIRST_PARCOURS_TUTORIAL.id]: firstParcours.hideForever,
+    [START_PARCOURS_TUTORIAL.id]: startParcours.hideForever,
+  };
 
   const animateAvatar = useCallback(() => {
     setGesture((current) => chooseChatbotGesture(current, Math.random()));
@@ -254,8 +296,8 @@ export default function ChatbotAssistant({ aiEnabled, enableQuizSuggestion, hidd
         onPrevious={tutorial.previous}
         onNext={tutorial.next}
         onStop={tutorial.stop}
-        onNeverShowAgain={tutorial.active.tutorial.id === FIRST_FORMATION_TUTORIAL.id
-          ? () => { firstFormation.hideForever(); tutorial.stop(); }
+        onNeverShowAgain={tutorial.active.tutorial.id in neverShowAgain
+          ? () => { neverShowAgain[tutorial.active?.tutorial.id ?? ""]?.(); tutorial.stop(); }
           : undefined}
       />
     );

@@ -16,10 +16,11 @@ export default function AppLoadingSkeleton() {
   return (
     <div role="status" aria-label="Chargement de l’application" className="relative flex h-dvh flex-col gap-2 bg-base-100 p-2 md:flex-row">
       <span className="sr-only">Chargement de l’application…</span>
+      {/* Mobile seulement : sur bureau, la découverte du rôle qui ouvre la première connexion masque la barre latérale. */}
       {!isSidebarUnknown && isIntroFirstRun && (
         <div
           aria-hidden="true"
-          className="absolute left-2 top-2 z-10 flex h-16 w-[min(32rem,calc(100vw-1rem))] items-center justify-between gap-5 rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) px-3"
+          className="absolute left-2 top-2 z-10 flex h-16 w-[min(32rem,calc(100vw-1rem))] items-center md:hidden justify-between gap-5 rounded-xl border border-(--sidebar-border) bg-(--sidebar-bg) px-3"
         >
           <div className="skeleton h-[31px] w-24 rounded opacity-60" />
           <div className="skeleton h-12 max-w-80 flex-1 rounded-lg opacity-60" />

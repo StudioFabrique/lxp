@@ -2,11 +2,11 @@ import { useContext, useEffect, useState, type PropsWithChildren } from "react";
 import { useLocation } from "react-router";
 import toast from "react-hot-toast";
 
+import { useIsMobile } from "../../hooks/useMediaQuery";
 import { AuthContext } from "../../store/AuthProvider";
 import { useDemoMode } from "../../store/DemoContext";
 import {
   IntroPresentationContext,
-  type SidebarExit,
   type SidebarPhase,
 } from "./IntroPresentationContext";
 import { setIntroFirstRunHint } from "./intro-first-run-hint";
@@ -30,14 +30,15 @@ type Props = {
 };
 
 /**
- * Décide quand la présentation s'ouvre (sur le dashboard après l'onboarding, ou
+ * Décide quand la séquence s'ouvre (sur le dashboard après l'onboarding, ou
  * à la demande depuis la barre latérale) ; `IntroPresentationGate` l'affiche.
  *
- * Le choix (ignorée ou terminée) est enregistré sur le compte et la fenêtre ne
- * se ferme qu'après confirmation du serveur. Une présentation rouverte après
- * coup ne modifie rien. Une fois le choix enregistré, la découverte du rôle
- * (détection puis espace correspondant) suit. En démonstration le compte est
- * partagé : elle ne s'ouvre jamais seule et rien n'est enregistré.
+ * La première fois, la découverte du rôle (détection puis espace correspondant)
+ * vient en premier, puis la présentation de la méthodologie. Le choix (ignorée ou
+ * terminée) est enregistré sur le compte à la fin de la présentation et la fenêtre
+ * ne se ferme qu'après confirmation du serveur. Une présentation rouverte après
+ * coup ne modifie rien et ne rejoue pas la découverte du rôle. En démonstration
+ * le compte est partagé : rien ne s'ouvre seul et rien n'est enregistré.
  */
 export const IntroPresentationProvider = ({
   isEligible = true,
@@ -54,7 +55,9 @@ export const IntroPresentationProvider = ({
     if (reopenedAt !== null && reopenedAt !== pathname) setReopenedAt(null);
   }, [reopenedAt, pathname]);
   const [isSaving, setIsSaving] = useState(false);
-  const [isRoleRevealOpen, setIsRoleRevealOpen] = useState(false);
+  // Vrai une fois la découverte du rôle terminée : la présentation prend alors le relais.
+  const [isRoleRevealDone, setIsRoleRevealDone] = useState(false);
+  const isMobile = useIsMobile();
   const [isChatbotHidden, setChatbotHidden] = useState(false);
   // Le temps que l'interface réelle remplace la séquence : l’assistant virtuel est déjà en place, sans entrée animée.
   const [hasJustRevealed, setHasJustRevealed] = useState(false);
@@ -63,14 +66,15 @@ export const IntroPresentationProvider = ({
     const timer = setTimeout(() => setHasJustRevealed(false), HANDOFF_MS);
     return () => clearTimeout(timer);
   }, [hasJustRevealed]);
-  const [sidebarExit, setSidebarExit] = useState<SidebarExit>("none");
 
   // Sans état enregistré, l'ancien compte est traité comme jamais présenté.
   const status = user?.onboarding?.status ?? "pending";
-  const isOpen =
+  const isAutoOpen =
     Boolean(user) &&
-    (isReopened ||
-      shouldAutoOpenIntro({ status, pathname, isEligible, demoMode }));
+    shouldAutoOpenIntro({ status, pathname, isEligible, demoMode });
+  // Première exploration : la découverte du rôle précède la présentation.
+  const isRoleRevealOpen = isAutoOpen && !isReopened && !isRoleRevealDone;
+  const isOpen = Boolean(user) && !isRoleRevealOpen && (isReopened || isAutoOpen);
 
   // La barre latérale se réduit pendant la première exploration, jusqu'à sa sortie ;
   // une présentation rejouée après coup la laisse normale.
@@ -91,13 +95,14 @@ export const IntroPresentationProvider = ({
   useEffect(() => {
     if (user) setIntroFirstRunHint(isFirstRunPending);
   }, [user, isFirstRunPending]);
-  // La démonstration partage son compte : sa barre reste complète.
-  const sidebarPhase: SidebarPhase =
-    !demoMode && (isFirstRun || isOpeningSoon || isRoleRevealOpen)
-      ? sidebarExit === "none"
-        ? "skeleton"
-        : sidebarExit
-      : "normal";
+  // La démonstration partage son compte : sa barre reste complète. Sur bureau, la barre complète
+  // reste aussi affichée pendant la présentation ; seule la barre réduite du mobile est conservée.
+  // Pendant la découverte du rôle, elle est masquée.
+  let sidebarPhase: SidebarPhase = "normal";
+  if (!demoMode) {
+    if (isRoleRevealOpen) sidebarPhase = "gone";
+    else if (isMobile && (isFirstRun || isOpeningSoon)) sidebarPhase = "skeleton";
+  }
 
   const close = async (choice: "skipped" | "completed") => {
     if (isSaving) return;
@@ -107,14 +112,11 @@ export const IntroPresentationProvider = ({
     }
 
     setIsSaving(true);
-    // Armé avant l'écriture : la découverte du rôle prend le relais sans à-coup dès que le
-    // serveur confirme. Seul le premier passage enregistré en bénéficie.
-    setIsRoleRevealOpen(true);
     try {
       await updateOnboarding(choice);
       setReopenedAt(null);
+      setHasJustRevealed(true);
     } catch {
-      setIsRoleRevealOpen(false);
       toast.error("Impossible d'enregistrer votre choix. Réessayez.");
     } finally {
       setIsSaving(false);
@@ -127,7 +129,6 @@ export const IntroPresentationProvider = ({
     isRoleRevealOpen,
     hasJustRevealed,
     sidebarPhase,
-    setSidebarExit,
     // Pendant la découverte du rôle, la séquence joue son propre assistant virtuel.
     isChatbotHidden: isRoleRevealOpen || (isOpen && isChatbotHidden),
     setChatbotHidden,
@@ -135,9 +136,7 @@ export const IntroPresentationProvider = ({
     skip: () => void close("skipped"),
     complete: () => void close("completed"),
     closeRoleReveal: () => {
-      setHasJustRevealed(true);
-      setIsRoleRevealOpen(false);
-      setSidebarExit("none");
+      setIsRoleRevealDone(true);
     },
   };
 

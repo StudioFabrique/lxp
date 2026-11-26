@@ -1,11 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import Loader from "../../../../components/loaders/Loader";
+import ProgressSectionSkeleton from "../progress-section-skeleton";
 import { profileApi } from "../../api/profile.api";
 import { profileKeys } from "../../api/profile.keys";
 import Skills from "./skills";
 import type Parcours from "../../../../utils/interfaces/parcours";
 
-const Awards = ({ parcours }: { parcours?: Parcours }) => {
+type AwardsProps = {
+  parcours?: Parcours;
+  /** Vrai tant que les parcours se chargent : sans eux, les badges ne peuvent pas être filtrés. */
+  isParcoursLoading?: boolean;
+};
+
+const Awards = ({ parcours, isParcoursLoading = false }: Readonly<AwardsProps>) => {
   const {
     data: skills = [],
     isLoading,
@@ -15,7 +21,14 @@ const Awards = ({ parcours }: { parcours?: Parcours }) => {
     queryFn: profileApi.queries.getSkills,
   });
 
-  if (isLoading) return <Loader variant="cards" label="Chargement des badges" />;
+  if (isLoading || isParcoursLoading) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h3 className="text-xl font-bold">Mes badges de compétences</h3>
+        <ProgressSectionSkeleton variant="badges" label="Chargement des badges" />
+      </div>
+    );
+  }
 
   const moduleIds = new Set(parcours?.modules?.map((module) => module.id) ?? []);
   const parcoursSkills = skills.flatMap((skill) => {
