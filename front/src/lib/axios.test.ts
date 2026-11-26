@@ -81,3 +81,36 @@ describe("client HTTP en mode démonstration", () => {
     expect(vi.mocked(toast)).not.toHaveBeenCalled();
   });
 });
+
+describe("client HTTP face à un lien d'activation invalide", () => {
+  const rejectWith401 = (url: string) => {
+    const calls: string[] = [];
+    const adapter = (config: { url?: string }) => {
+      calls.push(String(config.url));
+      return Promise.reject(
+        Object.assign(new Error("401"), {
+          config,
+          response: {
+            status: 401,
+            data: { message: "Ce lien n'est plus valide." },
+          },
+        }),
+      );
+    };
+    return {
+      calls,
+      run: () =>
+        apiClient
+          .request({ method: "post", url, adapter })
+          .then(() => null, (error: { response: { data: { message: string } } }) => error),
+    };
+  };
+
+  it("conserve le message du lien sans tenter de renouveler la session", async () => {
+    const { calls, run } = rejectWith401("/user/check-invitation");
+    const error = await run();
+
+    expect(error?.response.data.message).toBe("Ce lien n'est plus valide.");
+    expect(calls).toEqual(["/user/check-invitation"]);
+  });
+});
