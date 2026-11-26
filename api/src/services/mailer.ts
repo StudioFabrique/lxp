@@ -261,6 +261,36 @@ export async function sendUpdatedUserEmail(email: string) {
   }
 }
 
+/**
+ * Confirme à l'ancien titulaire que son compte a été supprimé.
+ * @param email - Adresse email du compte supprimé
+ */
+export async function sendDeletedUserEmail(email: string) {
+  if (mailerDisabled) return;
+  if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
+
+  if (env.ENVIRONMENT === "development" && !env.MAILER_DEV_RECIPIENT) {
+    logger.error(
+      "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
+    );
+    return;
+  }
+
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: "Suppression de votre compte",
+    html: getTemplate("deleted-user", "", email, await mailContext()),
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
+}
+
 export async function sendInstanceTemplateTestEmail(email: string) {
   if (mailerDisabled) return;
   if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };

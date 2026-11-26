@@ -1,4 +1,5 @@
 import { activation } from "./mail-template/activation.ts";
+import { deletedUser } from "./mail-template/deleted-user.ts";
 import { emailChange } from "./mail-template/email-change.ts";
 import { reset } from "./mail-template/reset.ts";
 import { rootAccount } from "./mail-template/root-account.ts";
@@ -27,6 +28,8 @@ export const getTemplate = (
       return rootAccount(token, email, context, false);
     case "updated-user":
       return updatedUser(token, email, context);
+    case "deleted-user":
+      return deletedUser(token, email, context);
     default:
       return undefined;
   }
