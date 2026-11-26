@@ -9,6 +9,7 @@ restore_script="$repository_root/deployment/restore.sh"
 list_script="$repository_root/deployment/list-backups.sh"
 infisical_wrapper="$repository_root/deployment/with-infisical.sh"
 database_script="$repository_root/deployment/database-urls.sh"
+system_path="/usr/bin:/bin"
 temporary_dir="$(mktemp -d "${TMPDIR:-/tmp}/lxp-backup-tests.XXXXXX")"
 trap 'rm -rf -- "$temporary_dir"' EXIT
 
@@ -124,7 +125,7 @@ chmod +x "$temporary_dir/infisical-bin/infisical"
 
 default_paths_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -150,7 +151,7 @@ grep -Fq 'npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"' \
 
 dev_paths_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -163,7 +164,7 @@ dev_paths_output="$(
 
 prod_paths_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -182,7 +183,7 @@ fi
 
 prod_default_paths_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -200,7 +201,7 @@ fi
 
 prod_demo_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -227,7 +228,7 @@ fi
 
 preprod_default_paths_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -242,7 +243,7 @@ preprod_default_paths_output="$(
 
 prod_build_paths_output="$(
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -256,7 +257,7 @@ prod_build_paths_output="$(
 
 expect_failure "un prefixe Infisical imbrique a ete accepte en prod" \
     env -i \
-        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/infisical-bin:$system_path" \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
@@ -265,7 +266,7 @@ expect_failure "un prefixe Infisical imbrique a ete accepte en prod" \
         "$infisical_wrapper" true
 
 encoded_urls_output="$(
-    env -i PATH="/usr/bin:/bin" bash -c "
+    env -i PATH="$system_path" bash -c "
         source '$database_script'
         POSTGRES_USER='lxp+user'
         POSTGRES_PASSWORD='p@ss:/?#%'
@@ -289,22 +290,22 @@ encoded_urls_output="$(
     || fail "LXP_DB_URL n'utilise pas le compte de lecture configure"
 
 disabled_output="$(
-    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+    env -i PATH="$system_path" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         "$backup_script"
 )"
 [[ "$disabled_output" == *"Sauvegarde desactivee"* ]] \
     || fail "la sauvegarde n'est pas desactivee par defaut"
 
 expect_failure "une valeur BACKUP_S3_ENABLED invalide a ete acceptee" \
-    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+    env -i PATH="$system_path" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         BACKUP_S3_ENABLED=invalid "$backup_script"
 
 expect_failure "l'ancienne variable BACKUP_ENABLED a ete acceptee silencieusement" \
-    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+    env -i PATH="$system_path" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         BACKUP_ENABLED=true BACKUP_S3_ENABLED=true "$backup_script"
 
 expect_failure "le job planifie a accepte une sauvegarde desactivee" \
-    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+    env -i PATH="$system_path" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         BACKUP_REQUIRE_ENABLED=true "$backup_script"
 
 expect_failure "un nom de stack dangereux a ete accepte" \
@@ -315,7 +316,7 @@ expect_failure "un chemin relatif a ete accepte" \
 
 expect_failure "une restauration destructive a accepte le snapshot latest" \
     env -i \
-        PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+        PATH="$system_path" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         LXP_DEPLOYMENT_NAME=lxp-test DEPLOY_PATH="$temporary_dir/data" \
         RESTORE_SNAPSHOT=latest "$restore_script" restore
 
@@ -347,7 +348,7 @@ chmod +x "$temporary_dir/bin/docker"
 
 list_output="$(
     env -i \
-        PATH="$temporary_dir/bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/bin:$system_path" \
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         MOCK_DOCKER_LOG="$temporary_dir/docker-list.log" \
         LXP_DEPLOYMENT_NAME=lxp-test \
@@ -373,7 +374,7 @@ list_output="$(
 
 fresh_output="$(
     env -i \
-        PATH="$temporary_dir/bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/bin:$system_path" \
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
@@ -386,7 +387,7 @@ fresh_output="$(
 
 expect_failure "des volumes orphelins ont ete confondus avec une cible neuve" \
     env -i \
-        PATH="$temporary_dir/bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/bin:$system_path" \
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         MOCK_POSTGRES_VOLUME_EXISTS=0 \
         LXP_DEPLOYMENT_NAME=lxp-test \
@@ -397,7 +398,7 @@ expect_failure "des volumes orphelins ont ete confondus avec une cible neuve" \
 
 expect_failure "une cible partiellement initialisee a ete acceptee" \
     env -i \
-        PATH="$temporary_dir/bin:/usr/bin:/bin" \
+        PATH="$temporary_dir/bin:$system_path" \
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         MOCK_POSTGRES_EXISTS=0 MOCK_MONGO_EXISTS=1 \
         LXP_DEPLOYMENT_NAME=lxp-test \

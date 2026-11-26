@@ -169,6 +169,7 @@ export default function CreateLessonModal({
             Annuler
           </button>
           <button
+            type="submit"
             className="btn btn-primary"
             disabled={!title.trim() || !selectedTagId || isSaving}
           >

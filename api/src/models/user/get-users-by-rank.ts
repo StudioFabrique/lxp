@@ -35,7 +35,7 @@ async function getUsersByRank(
   if (searchValue?.trim()) {
     const escapedSearchValue = searchValue
       .trim()
-      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      .replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
     const searchPattern = new RegExp(escapedSearchValue, "i");
     filters.$or = [
       { firstname: searchPattern },

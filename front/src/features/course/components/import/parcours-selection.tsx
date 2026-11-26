@@ -101,15 +101,19 @@ const ParcoursSelection = ({
             Choisir une formation
           </h3>
 
-          {isFormationsLoading ? (
+          {isFormationsLoading && (
             <output aria-label="Chargement des formations" className="block space-y-3">
               <span className="sr-only">Chargement des formations…</span>
               <div className="skeleton h-10 w-full" />
               <div className="skeleton h-10 w-full" />
             </output>
-          ) : formationsError ? (
+          )}
+          {!isFormationsLoading && formationsError && (
             <div className="alert alert-error text-sm">{formationsError}</div>
-          ) : formationsList.length === 0 ? (
+          )}
+          {!isFormationsLoading &&
+            !formationsError &&
+            formationsList.length === 0 && (
             <div className="flex px-5 text-sm text-base-content">
               <span>Aucune formation existante</span>
               {!isTeacher && (
@@ -123,7 +127,10 @@ const ParcoursSelection = ({
                 </Link>
               )}
             </div>
-          ) : (
+          )}
+          {!isFormationsLoading &&
+            !formationsError &&
+            formationsList.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {formationsList.map((formation) => {
                 const isSelected = selectedFormation?.id === formation.id;

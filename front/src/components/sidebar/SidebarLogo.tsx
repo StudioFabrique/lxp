@@ -17,9 +17,9 @@ export default function SidebarLogo() {
       aria-label="logo ANDRIA"
       style={{ color: "var(--sidebar-content)" }}
     >
-      {paths.map((path, index) => (
+      {paths.map((path) => (
         <path
-          key={index}
+          key={path.d}
           d={path.d}
           fill={path.fill === "white" ? "var(--sidebar-bg)" : "currentColor"}
           fillRule={path.evenodd ? "evenodd" : undefined}

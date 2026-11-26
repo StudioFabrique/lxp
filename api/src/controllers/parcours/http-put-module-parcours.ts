@@ -1,10 +1,7 @@
-import { type Request, type Response } from "express";
-import fs from "fs";
+import { type Response } from "express";
+import fs from "node:fs";
 import putModuleParcours from "../../models/parcours/putModuleParcours.ts";
-import {
-  deleteTempUploadedFile,
-  getBase64ImageFromReq,
-} from "../../middleware/fileUpload.ts";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import sharp from "sharp";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 

@@ -22,7 +22,7 @@ export function getExpandedTileBounds(geometry: Geometry) {
     .filter((x) => x >= visibleStart && x + width <= visibleEnd);
   return {
     left: alignedStarts.length
-      ? alignedStarts.reduce((closest, x) => Math.abs(x - centered) < Math.abs(closest - centered) ? x : closest)
+      ? alignedStarts.reduce((closest, x) => Math.abs(x - centered) < Math.abs(closest - centered) ? x : closest, alignedStarts[0])
       : centered,
     top: Math.min(180, Math.max(0, geometry.height - height)),
     width,

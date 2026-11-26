@@ -8,14 +8,14 @@ async function httpPutCourseBonusSkills(req: Request, res: Response) {
 
 
   try {
-    const response = await putCourseBonusSkills(+courseId, bonusSkillsIds);
+    await putCourseBonusSkills(+courseId, bonusSkillsIds);
     return res.status(201).json({
       success: true,
       message: "Les compétences du cours ont été mises à jour",
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode !== 500 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

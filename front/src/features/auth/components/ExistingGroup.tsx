@@ -15,6 +15,52 @@ export function ExistingGroup({ group }: Readonly<{ group: StudentGroupSummary }
     enabled: expanded,
   });
 
+  let studentsLabel = "Aucun apprenant";
+  if (group.nbStudents > 0) {
+    studentsLabel = `${group.nbStudents} apprenant${group.nbStudents > 1 ? "s" : ""}`;
+  }
+
+  const renderDetails = () => {
+    if (details.isPending) {
+      return (
+        <output className="block text-sm">Chargement des apprenants…</output>
+      );
+    }
+    if (details.isError) {
+      return (
+        <div role="alert" className="text-sm">
+          <p>Impossible de charger les apprenants de ce groupe.</p>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm mt-2"
+            onClick={() => void details.refetch()}
+          >
+            Réessayer
+          </button>
+        </div>
+      );
+    }
+    if (details.data.users?.length) {
+      return (
+        <ul className="space-y-3" aria-label={`Apprenants de ${group.name}`}>
+          {details.data.users.map((student) => (
+            <li
+              key={student._id}
+              className="rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm"
+            >
+              <OnboardingStudentIdentity student={student} />
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    return (
+      <p className="text-sm text-base-content/65">
+        Aucun apprenant dans ce groupe.
+      </p>
+    );
+  };
+
   return (
     <li className="overflow-hidden rounded-lg border border-base-300 bg-base-100">
       <button
@@ -29,9 +75,7 @@ export function ExistingGroup({ group }: Readonly<{ group: StudentGroupSummary }
             {formatTitle(group.name)}
           </span>
           <span className="mt-0.5 block text-sm text-base-content/65">
-            {group.nbStudents === 0
-              ? "Aucun apprenant"
-              : `${group.nbStudents} apprenant${group.nbStudents > 1 ? "s" : ""}`}
+            {studentsLabel}
           </span>
           <span className="mt-2 block text-xs font-semibold text-primary">
             Voir les apprenants
@@ -52,40 +96,7 @@ export function ExistingGroup({ group }: Readonly<{ group: StudentGroupSummary }
             onCloseDrawer={() => setExpanded(false)}
             panelClassName="min-w-0 w-full max-w-lg"
           >
-            {details.isPending ? (
-              <output className="block text-sm">
-                Chargement des apprenants…
-              </output>
-            ) : details.isError ? (
-              <div role="alert" className="text-sm">
-                <p>Impossible de charger les apprenants de ce groupe.</p>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm mt-2"
-                  onClick={() => void details.refetch()}
-                >
-                  Réessayer
-                </button>
-              </div>
-            ) : details.data.users?.length ? (
-              <ul
-                className="space-y-3"
-                aria-label={`Apprenants de ${group.name}`}
-              >
-                {details.data.users.map((student) => (
-                  <li
-                    key={student._id}
-                    className="rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm"
-                  >
-                    <OnboardingStudentIdentity student={student} />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-base-content/65">
-                Aucun apprenant dans ce groupe.
-              </p>
-            )}
+            {renderDetails()}
           </RightSideDrawer>,
           document.body,
         )}

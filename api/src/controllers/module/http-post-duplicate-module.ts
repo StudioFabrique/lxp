@@ -1,8 +1,6 @@
 import { type Response, type NextFunction } from "express";
 
-import { validationResult } from "express-validator";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
-import { stat } from "fs";
 import { serverIssue } from "../../utils/constantes.ts";
 import postDuplicateModule from "../../models/module/post-duplicate-module.ts";
 
@@ -13,7 +11,7 @@ export default async function httpPostDuplicateModule(
 ) {
   try {
     const { moduleId } = req.params;
-    const { contacts, duration, parcoursId, skills } = req.body;
+    const { contacts, parcoursId, skills } = req.body;
 
     const response = await postDuplicateModule(
       parseInt(moduleId, 10),

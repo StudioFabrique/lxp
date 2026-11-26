@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import { Readable } from "stream";
+import { Readable } from "node:stream";
 import importCourseMbz from "../../models/course/import-course-mbz.ts";
 import { logger } from "../../utils/logs/logger.ts";
 

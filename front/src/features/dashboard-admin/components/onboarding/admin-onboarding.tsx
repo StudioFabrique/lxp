@@ -45,7 +45,7 @@ export default function AdminOnboarding({
   }).filter((step) => !(step.isOptional && skipped.includes(step.id)));
 
   return (
-    <div className="px-2 pt-2">
+    <div>
       <OnboardingChecklist
         steps={steps}
         onSkip={skip}

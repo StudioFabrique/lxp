@@ -9,7 +9,7 @@ async function httpGetAllUsers(
 ) {
   const result = validationResult(req);
 
-  const { role, stype, sdir } = req.params;
+  const { stype, sdir } = req.params;
   const { page, limit } = req.query;
 
   if (!result.isEmpty()) {

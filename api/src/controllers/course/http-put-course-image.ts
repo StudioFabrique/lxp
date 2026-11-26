@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { regexNumber, serverIssue } from "../../utils/constantes.ts";
-import fs from "fs";
+import fs from "node:fs";
 import putCourseImage from "../../models/course/put-course-image.ts";
 
 async function httpPutCourseImage(req: Request, res: Response) {
@@ -25,18 +25,14 @@ async function httpPutCourseImage(req: Request, res: Response) {
     }
     if (uploadedFile !== undefined) {
       try {
-        {
-          const data = await fs.promises.readFile(uploadedFile.path);
-          const base64String = data.toString("base64");
-          const response = await putCourseImage(+courseId, base64String);
-          if (response) {
-            await fs.promises.unlink(uploadedFile.path);
-            return res
-              .status(201)
-              .json({ message: "Image du cours mise à jour" });
-          }
+        const data = await fs.promises.readFile(uploadedFile.path);
+        const base64String = data.toString("base64");
+        const response = await putCourseImage(+courseId, base64String);
+        if (response) {
+          await fs.promises.unlink(uploadedFile.path);
+          return res.status(201).json({ message: "Image du cours mise à jour" });
         }
-      } catch (error: any) {
+      } catch {
         return res
           .status(500)
           .json({ error: "Erreur lors de la lecture du fichier." });

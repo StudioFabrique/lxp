@@ -77,6 +77,19 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
     }
   }, [error]);
 
+  const renderLessons = () => {
+    if (tag && isPending) {
+      return <LoadingSkeleton variant="rows" label="Chargement des contenus" />;
+    }
+    if (tag && error) {
+      return <p role="alert">Impossible de charger les contenus.</p>;
+    }
+    if (lessonsList.length > 0) {
+      return <LessonsTable list={lessonsList} onAddItems={handleAddLessons} />;
+    }
+    return tag ? <p>Aucun contenu trouvé</p> : null;
+  };
+
   return (
     <RightSideDrawer
       id="add-lessons"
@@ -106,18 +119,7 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
           </>
         ) : null}
         <div className="divider" />
-        {tag && isPending ? (
-          <LoadingSkeleton variant="rows" label="Chargement des contenus" />
-        ) : tag && error ? (
-          <p role="alert">Impossible de charger les contenus.</p>
-        ) : lessonsList.length > 0 ? (
-          <LessonsTable
-            list={lessonsList}
-            onAddItems={handleAddLessons}
-          />
-        ) : tag ? (
-          <p>Aucun contenu trouvé</p>
-        ) : null}
+        {renderLessons()}
       </div>
     </RightSideDrawer>
   );

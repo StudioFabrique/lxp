@@ -75,14 +75,14 @@ export default function AgendaView({ events, view, currentDate, onClickEventDeta
                       }
                     >
                       <span className="flex w-12 shrink-0 flex-col justify-center text-xs font-semibold tabular-nums">
-                        {event.allDay ? (
-                          <span>Journée</span>
-                        ) : event.category === "assignment" ? (
+                        {event.allDay && <span>Journée</span>}
+                        {!event.allDay && event.category === "assignment" && (
                           <>
                             <span className="text-[10px] font-normal opacity-80">À rendre</span>
                             <span>{event.deadlineTime}</span>
                           </>
-                        ) : (
+                        )}
+                        {!event.allDay && event.category !== "assignment" && (
                           <>
                             <span>{event.start}</span>
                             <span className="font-normal opacity-70">{event.end}</span>

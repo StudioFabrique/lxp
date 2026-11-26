@@ -3,7 +3,7 @@ import httpGetFormation from "../../../controllers/formation/http-get-formation.
 import httpPutFormationTags from "../../../controllers/formation/htttp-put-formation-tags.ts";
 import { body, param } from "express-validator";
 import multer from "multer";
-import path from "path";
+import path from "node:path";
 import httpPostModule from "../../../controllers/formation/http-post-module.ts";
 import checkPermissions from "../../../middleware/check-permissions.ts";
 import jsonParser from "../../../middleware/json-parser.ts";

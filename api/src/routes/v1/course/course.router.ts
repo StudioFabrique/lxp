@@ -25,7 +25,7 @@ import {
 import httpGetCourses from "../../../controllers/course/http-get-courses.ts";
 import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations.ts";
 import multer from "multer";
-import path from "path";
+import path from "node:path";
 import httpPutCourseImage from "../../../controllers/course/http-put-course-image.ts";
 import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations.ts";
 import httpPutCourseTags from "../../../controllers/course/http-put-course-tags.ts";

@@ -26,6 +26,7 @@ load_api_env_file() {
     key=${line%%=*}
     case "$key" in
       ''|*[!A-Za-z0-9_]*|'#'*) continue ;;
+      *) ;;
     esac
     [[ -n "${!key+x}" ]] && continue
     value=${line#*=}
@@ -44,11 +45,12 @@ apply_local_defaults() {
     ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
 }
 
-# Vrai si le service IA doit tourner : fonctions IA actives et clés Mistral.
+# Vrai si le service IA doit tourner : hors démo, fonctions actives et clés Mistral.
 # Sous-shell : doit être évalué avant les valeurs neutres de prepare_compose_env.
 ai_requested() (
   load_api_env_file
-  [[ "${DISABLE_AI_FEATURES:-false}" != "true" ]] \
+  [[ "${DEMO_MODE:-false}" != "true" ]] \
+    && [[ "${DISABLE_AI_FEATURES:-false}" != "true" ]] \
     && [[ -n "${MISTRAL_STUDENT_API_KEY:-}" ]] \
     && [[ -n "${MISTRAL_CONTENT_API_KEY:-}" ]]
 )
@@ -152,21 +154,31 @@ confirm_continue_without_ai() {
   esac
 }
 
-# Démarre les bases, puis le service IA si l'image et les clés sont disponibles.
+# Démarre les bases LXP, puis la base et le service IA si l'image et les clés
+# sont disponibles. Une démo ne démarre jamais la couche IA.
 # Retourne 0 même sans IA : elle reste facultative en développement.
 start_local_services() {
-  lxp_compose --progress plain up -d --wait db-pg db-mongo db-ai || return 1
+  load_api_env_file
+  lxp_compose --progress plain up -d --wait db-pg db-mongo || return 1
 
   # Un mot de passe modifié dans Infisical ou api/.env ne change pas celui d'un
   # volume existant : on l'aligne plutôt que d'exiger un `npm run clean`.
   compose() { lxp_compose "$@"; }
   . "$LXP_ROOT/deployment/database-passwords.sh"
-  align_database_passwords ai || { warn "Alignement des mots de passe des bases en échec"; return 1; }
+  align_database_passwords || { warn "Alignement des mots de passe des bases en échec"; return 1; }
 
   if ! ai_requested; then
-    info "Service IA non démarré (DISABLE_AI_FEATURES=true ou clés Mistral absentes)"
+    # `up` ne supprime pas les services omis : les arrêter garantit qu'un
+    # ancien conteneur IA ne reste pas actif après le passage en mode démo.
+    lxp_compose --progress plain stop ai db-ai dropout-worker >/dev/null 2>&1 || true
+    info "Service IA non démarré (mode démonstration, désactivation ou clés Mistral absentes)"
     return 0
   fi
+
+  lxp_compose --progress plain up -d --wait db-ai || return 1
+  align_postgres_password db-ai \
+    || { warn "Alignement du mot de passe de la base IA en échec"; return 1; }
+
   pull_log=$(mktemp)
   lxp_compose --progress plain pull ai 2>&1 | tee "$pull_log"
   if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then

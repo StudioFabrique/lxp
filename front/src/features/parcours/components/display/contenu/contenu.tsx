@@ -13,7 +13,10 @@ import { AbilityContext } from "../../../../../rbac/AbilityProvider";
 import { BookOpen, Edit, Plus } from "lucide-react";
 import { cn } from "../../../../../utils/cn";
 import { sortModulesByStartDate } from "../../../helpers/sort-modules-by-start-date";
-import { getModulesLabel, getUserArea } from "../../../../../utils/helpers/user-role";
+import {
+  getModulesLabel,
+  getUserArea,
+} from "../../../../../utils/helpers/user-role";
 import { formatNumber } from "../../../../../utils/helpers/format-number";
 
 type ContenuProps = {
@@ -40,14 +43,18 @@ const Contenu = ({ modules }: ContenuProps) => {
     parcoursId ? Number(parcoursId) : undefined,
   );
 
-  const [selectedModuleState, setSelectedModule] = useState<Module | null>(null);
+  const [selectedModuleState, setSelectedModule] = useState<Module | null>(
+    null,
+  );
   const requestedModule = sortedModules.find(
     (module) => module.id === selectedModuleState?.id,
   );
   const selectedModule =
     requestedModule && (!isStudent || requestedModule.courses?.length)
       ? requestedModule
-      : displayedModules.find((module) => !isStudent || module.courses?.length) ?? null;
+      : (displayedModules.find(
+          (module) => !isStudent || module.courses?.length,
+        ) ?? null);
 
   const canEditParcoursContent =
     parcours?.canManage !== false &&
@@ -110,7 +117,7 @@ const Contenu = ({ modules }: ContenuProps) => {
               <PermissionGuard action="update" object="parcours">
                 <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=4&create=true`}
-                  className={cn("btn h-20", {
+                  className={cn("btn h-20 w-full", {
                     "btn-dash": sortedModules.length === 0,
                   })}
                 >

@@ -31,6 +31,7 @@ infisical_load_config() {
     case "$key" in
       INFISICAL_DOMAIN|INFISICAL_ENVIRONMENT|INFISICAL_SECRET_PATHS|INFISICAL_PROJECT_ID)
         printf -v "$key" '%s' "$value" ;;
+      *) ;;
     esac
   done < "$INFISICAL_LOCAL_CONFIG"
 }
@@ -43,6 +44,7 @@ infisical_load_credentials() {
     case "$key" in
       INFISICAL_UNIVERSAL_AUTH_CLIENT_ID|INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET)
         [[ -n "${!key:-}" ]] || export "$key=$value" ;;
+      *) ;;
     esac
   done < "$INFISICAL_CREDENTIALS_FILE"
 }
@@ -129,11 +131,12 @@ infisical_export_secrets() {
 
 # JSON plutôt que dotenv : le guillemetage est refait ici.
 infisical_export_path() {
+  local secrets_path="$1"
   secrets_json=$(infisical_cli secrets-manager secrets export \
     --domain "$INFISICAL_DOMAIN" \
     --projectId "$INFISICAL_PROJECT_ID" \
     --env "$INFISICAL_ENVIRONMENT" \
-    --path "$1" \
+    --path "$secrets_path" \
     --format json --silent) || return 1
 
   exports=$(printf '%s' "$secrets_json" | node -e '

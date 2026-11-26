@@ -59,7 +59,7 @@ const EventDetailsModal = ({
             {/* --- CARD ACTIONS --- */}
             <div className="card-actions justify-end mt-4">
               <form method="dialog">
-                <button className="btn btn-ghost hover:bg-base-200">
+                <button type="submit" className="btn btn-ghost hover:bg-base-200">
                   Annuler
                 </button>
               </form>
@@ -71,7 +71,7 @@ const EventDetailsModal = ({
 
       {/* Backdrop to close */}
       <form method="dialog" className="modal-backdrop">
-        <button>close</button>
+        <button type="submit">close</button>
       </form>
     </dialog>
   );

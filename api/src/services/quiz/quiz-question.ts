@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import type { Models } from "../../prisma/contract.d.ts";
 
 export interface AiQuizQuestion {

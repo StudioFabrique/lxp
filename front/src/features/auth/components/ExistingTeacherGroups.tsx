@@ -10,33 +10,40 @@ export default function ExistingTeacherGroups({
 }: Readonly<{
   groups: UseQueryResult<StudentGroupSummary[], Error>;
 }>) {
-  const content = groups.isPending ? (
-    <output className="block text-sm">
-      Chargement de vos groupes…
-    </output>
-  ) : groups.isError ? (
-    <div role="alert" className="text-sm">
-      <p>Impossible de charger vos groupes.</p>
-      <button
-        type="button"
-        className="btn btn-ghost btn-sm mt-2"
-        onClick={() => void groups.refetch()}
-      >
-        Réessayer
-      </button>
-    </div>
-  ) : groups.data.length ? (
-    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      {groups.data.map((group) => (
-        <ExistingGroup key={group._id} group={group} />
-      ))}
-    </ul>
-  ) : (
-    <p className="text-sm text-base-content/65">
-      Vous n’avez pas encore de groupe. Créez votre premier groupe afin que vos
-      apprenants puissent débuter leur parcours.
-    </p>
-  );
+  const renderContent = () => {
+    if (groups.isPending) {
+      return <output className="block text-sm">Chargement de vos groupes…</output>;
+    }
+    if (groups.isError) {
+      return (
+        <div role="alert" className="text-sm">
+          <p>Impossible de charger vos groupes.</p>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm mt-2"
+            onClick={() => void groups.refetch()}
+          >
+            Réessayer
+          </button>
+        </div>
+      );
+    }
+    if (groups.data.length) {
+      return (
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {groups.data.map((group) => (
+            <ExistingGroup key={group._id} group={group} />
+          ))}
+        </ul>
+      );
+    }
+    return (
+      <p className="text-sm text-base-content/65">
+        Vous n’avez pas encore de groupe. Créez votre premier groupe afin que vos
+        apprenants puissent débuter leur parcours.
+      </p>
+    );
+  };
 
   return (
     <BoxWrapper className="h-auto">
@@ -50,7 +57,7 @@ export default function ExistingTeacherGroups({
         </div>
         <CreateTeacherGroup />
       </div>
-      {content}
+      {renderContent()}
     </BoxWrapper>
   );
 }

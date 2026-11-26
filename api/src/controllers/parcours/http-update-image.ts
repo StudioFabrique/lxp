@@ -1,9 +1,8 @@
 import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import fs from "fs";
+import fs from "node:fs";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import updateImage from "../../models/parcours/update-image.ts";
-import { logger } from "../../utils/logs/logger.ts";
 import sharp from "sharp";
 
 async function httpUpdateImage(req: Request, res: Response) {
@@ -18,24 +17,17 @@ async function httpUpdateImage(req: Request, res: Response) {
 
     if (uploadedFile !== undefined) {
       try {
-        {
-          const data = await fs.promises.readFile(uploadedFile.path);
-          const base64String = data.toString("base64");
+        const data = await fs.promises.readFile(uploadedFile.path);
+        const base64String = data.toString("base64");
 
-          const resizedPic = sharp(uploadedFile.path).resize(400, 400);
-          const thumb = resizedPic.toBuffer();
-          const thumb64 = (await thumb).toString("base64");
+        const resizedPic = sharp(uploadedFile.path).resize(400, 400);
+        const thumb = resizedPic.toBuffer();
+        const thumb64 = (await thumb).toString("base64");
 
-          const response = await updateImage(
-            +parcoursId,
-            base64String,
-            thumb64
-          );
-          if (response) {
-
-            await fs.promises.unlink(uploadedFile.path);
-            return res.status(200).json({ message: "Mise à jour réussie" });
-          }
+        const response = await updateImage(+parcoursId, base64String, thumb64);
+        if (response) {
+          await fs.promises.unlink(uploadedFile.path);
+          return res.status(200).json({ message: "Mise à jour réussie" });
         }
       } catch (error: any) {
         return res.status(500).json({ error: error.message });

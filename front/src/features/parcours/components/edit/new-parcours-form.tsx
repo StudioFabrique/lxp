@@ -119,6 +119,7 @@ const NewParcoursForm: FC<Props> = ({
           </div>
           <div className="w-full flex justify-end">
             <button
+              type="submit"
               className="btn btn-primary"
               disabled={!form.formState.isValid}
             >

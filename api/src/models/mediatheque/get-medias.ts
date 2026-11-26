@@ -59,7 +59,7 @@ export default async function getMedias(params: GetMediasParams) {
     sort = "createdAt"; // Tri par défaut
   }
   const searchPattern = search
-    ? `%${search.replace(/[\\%_]/g, "\\$&")}%`
+    ? `%${search.replace(/[\\%_]/g, String.raw`\$&`)}%`
     : null;
 
   // Retourne le nombre total de médias de type "image"

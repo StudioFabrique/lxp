@@ -16,6 +16,26 @@ type Props = {
   showProgress?: boolean;
 };
 
+/** Échap ferme la modale ; Tab boucle sur ses éléments focalisables. */
+function trapDialogKeys(
+  event: KeyboardEvent,
+  elements: HTMLElement[],
+  close: () => void,
+) {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    close();
+  }
+  if (event.key !== "Tab") return;
+  const first = elements[0];
+  const last = elements[elements.length - 1];
+  const edge = event.shiftKey ? first : last;
+  if (document.activeElement === edge) {
+    event.preventDefault();
+    (event.shiftKey ? last : first)?.focus();
+  }
+}
+
 export default function SkillBadge({
   skill,
   size = "medium",
@@ -44,24 +64,8 @@ export default function SkillBadge({
         ) ?? [],
       );
     focusable()[0]?.focus();
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setIsOpen(false);
-      }
-      if (event.key === "Tab") {
-        const elements = focusable();
-        const first = elements[0];
-        const last = elements[elements.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last?.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first?.focus();
-        }
-      }
-    };
+    const onKeyDown = (event: KeyboardEvent) =>
+      trapDialogKeys(event, focusable(), () => setIsOpen(false));
     document.addEventListener("keydown", onKeyDown);
     const button = trigger.current;
     return () => {

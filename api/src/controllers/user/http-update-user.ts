@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import fs from "fs";
+import fs from "node:fs";
 import { badQuery } from "../../utils/constantes.ts";
 import type { IGraduation } from "../../utils/interfaces/db/graduation.ts";
 import type { IHobby } from "../../utils/interfaces/db/hobby.ts";
@@ -8,7 +8,6 @@ import editUser from "../../models/user/edit-user.ts";
 import editManyGraduations from "../../models/graduation/edit-many-graduations.ts";
 import editManyLinks from "../../models/links/edit-many-links.ts";
 import editManyHobbies from "../../models/user/hobby/edit-many-hobbies.ts";
-import { validationResult } from "express-validator";
 
 /**
  * HTTP handler for updating user information including their profile, graduations, links, and hobbies

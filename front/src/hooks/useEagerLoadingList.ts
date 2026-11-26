@@ -18,7 +18,7 @@ const useEagerLoadingList = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [list, setList] = useState<Array<any> | null>(initialList);
   const [page, setPage] = useState(1);
-  const [limit, setLimitState] = useState(() =>
+  const [limit, setLimit] = useState(() =>
     getStoredItemsPerPage(paginationStorageLocation, defaultLimit ?? 25),
   );
   const [allChecked, setAllChecked] = useState(false);
@@ -28,10 +28,10 @@ const useEagerLoadingList = (
   if (!paginationDisabled) totalPages = Math.ceil(initialList.length / limit);
   else if (initialList.length > 0) totalPages = 1;
 
-  const setLimit = useCallback(
+  const updateLimit = useCallback(
     (value: number) => {
       storeItemsPerPage(paginationStorageLocation, value);
-      setLimitState(value);
+      setLimit(value);
     },
     [paginationStorageLocation],
   );
@@ -147,7 +147,7 @@ const useEagerLoadingList = (
     totalPages,
     setAllChecked,
     setPage,
-    setLimit,
+    setLimit: updateLimit,
     handleRowCheck,
     getSelecteditems,
     getFilteredList,

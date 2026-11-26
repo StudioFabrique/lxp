@@ -29,7 +29,7 @@ export default function LastModules({ modules, isLoading }: Props) {
   return isLoading ? (
     <LoadingSkeleton variant="rows" label="Chargement des modules" />
   ) : modules?.length ? (
-    <div className="p-2">
+    <div>
       <h3 className="text-xl font-bold text-primary select-none">
         {getModulesLabel(user, "Derniers modules créés")}
       </h3>

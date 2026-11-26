@@ -34,7 +34,7 @@ const ImageHeaderMutable: FC<Props> = ({
   isPublished = false,
   children,
 }) => {
-  const [bgImage, setBgImage] = useState<any | null>(null);
+  const [bgImage, setBgImage] = useState<any>(null);
   const [file, setFile] = useState<File | null>(null);
   const isInitialRender = useRef(true);
 

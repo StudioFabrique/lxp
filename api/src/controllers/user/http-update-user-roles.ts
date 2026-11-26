@@ -1,5 +1,5 @@
 import { type Response, type NextFunction } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 import updateUserRoles from "../../models/user/update-user-roles.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";

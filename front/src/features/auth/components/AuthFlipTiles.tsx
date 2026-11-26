@@ -482,6 +482,14 @@ export default function AuthFlipTiles({
             const hiddenSource = selected?.color === color;
             const active =
               hiddenSource || activeTiles.some((tile) => tile.color === color);
+            const isRevealed =
+              reducedMotion ||
+              (revealedColors.includes(color) &&
+                (color === hovered || color === focused));
+            const isReturning =
+              !isRevealed &&
+              revealedColors.includes(color) &&
+              heldTiles.some((tile) => tile.color === color);
             return (
               <button
                 key={`${x}-${y}`}
@@ -523,7 +531,12 @@ export default function AuthFlipTiles({
               >
                 {active && !hiddenSource && (
                   <div
-                    className={cn("auth-flip-tile relative size-full", selected ? "[animation-play-state:paused]" : "", reducedMotion || (revealedColors.includes(color) && (color === hovered || color === focused)) ? "auth-tile-revealed" : revealedColors.includes(color) && heldTiles.some((tile) => tile.color === color) ? "auth-tile-returning" : "")}
+                    className={cn(
+                      "auth-flip-tile relative size-full",
+                      selected && "[animation-play-state:paused]",
+                      isRevealed && "auth-tile-revealed",
+                      isReturning && "auth-tile-returning",
+                    )}
                     aria-hidden="true"
                   >
                     <div className="auth-flip-face absolute inset-0 overflow-hidden rounded-[15px]">

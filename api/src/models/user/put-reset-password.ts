@@ -40,7 +40,7 @@ export default async function putResetPassword(userId: string) {
 }
 
 export async function putResetPasswordByEmail(email: string) {
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email: String(email) });
 
   // Endpoint public : on ne révèle pas si le compte existe ou non pour éviter
   // l'énumération des utilisateurs. La réponse reste identique dans tous les cas.

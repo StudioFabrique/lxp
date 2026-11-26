@@ -8,7 +8,7 @@ export default async function postFormation(
   level: string,
   tags: number[],
 ) {
-  const titlePattern = title.replace(/[\\%_]/g, "\\$&");
+  const titlePattern = title.replace(/[\\%_]/g, String.raw`\$&`);
   const existingFormation = await prisma.orm.public.Formation.where((row) =>
     row.title.ilike(titlePattern),
   ).first();

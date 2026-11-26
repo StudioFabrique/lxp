@@ -1,7 +1,7 @@
 import { type Response, type NextFunction } from "express";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import postActivityResource from "../../models/activity/post-activity/post-resource.ts";
-import fs from "fs";
+import fs from "node:fs";
 
 /**
  * Contrôleur pour gérer l'upload de ressources (fichiers) liées à une activité

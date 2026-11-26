@@ -1,6 +1,6 @@
 import { type Response } from "express";
 import postModule from "../../models/formation/post-module.ts";
-import fs from "fs";
+import fs from "node:fs";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import sharp from "sharp";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";

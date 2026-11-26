@@ -13,7 +13,7 @@ export default async function resolveSourceTarget(source: CourseSource) {
         ...(Number.isInteger(numericActivityId)
           ? [row.id.eq(numericActivityId)]
           : []),
-        row.title.ilike(source.activity.replace(/[\\%_]/g, "\\$&")),
+        row.title.ilike(source.activity.replace(/[\\%_]/g, String.raw`\$&`)),
       ),
     ),
   )

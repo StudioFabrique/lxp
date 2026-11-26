@@ -178,7 +178,7 @@ export function StudentAssignment({ course, onChanged }: Readonly<Omit<Props, "s
           </div>
         )}
 
-        {(submission?.files.length || files.length > 0) && (
+        {((submission?.files.length ?? 0) > 0 || files.length > 0) && (
           <div className="mt-4 flex flex-wrap gap-2">
             {submission?.files.map((file) => (
               <AssignmentFileButton

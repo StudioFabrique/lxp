@@ -14,7 +14,7 @@ async function httpPutCourseNewObjective(req: Request, res: Response) {
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode !== 500 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

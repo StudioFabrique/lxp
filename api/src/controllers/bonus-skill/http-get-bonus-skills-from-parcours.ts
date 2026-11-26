@@ -1,6 +1,4 @@
 import { type Request, type Response } from "express";
-import { validationResult } from "express-validator";
-import { badQuery } from "../../utils/constantes.ts";
 import getBonusSkillsFromParcours from "../../models/bonus-skill/get-bonus-skills-from-parcours.ts";
 
 async function httpGetBonusSkillsFromParcours(req: Request, res: Response) {

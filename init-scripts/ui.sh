@@ -32,22 +32,24 @@ close_step() {
 read() { step_has_output=true; builtin read "$@"; }
 
 step() {
+  local title="$1"
   close_step
   step_count=$((step_count + 1))
   step_has_output=false
   echo
-  box "$c_cyan" "$(printf 'ÉTAPE %02d  %s' "$step_count" "$1")"
+  box "$c_cyan" "$(printf 'ÉTAPE %02d  %s' "$step_count" "$title")"
 }
 # Étape dont les commandes écrivent elles-mêmes à l'écran : jamais considérée comme vide.
-step_cmd() { step "$1"; step_has_output=true; }
+step_cmd() { local title="$1"; step "$title"; step_has_output=true; }
 info() { step_has_output=true; printf '  %s•%s %s\n' "$c_cyan" "$c_reset" "$1"; }
 # cmd <commande> : commande mise en évidence sur fond blanc, comme le rappel ctrl+C.
 cmd() { printf '%s %s %s' $'\033[47;30m' "$1" "$c_reset"; }
 ok()   { step_has_output=true; printf '  %sOK%s %s\n' "$c_green$c_bold" "$c_reset" "$1"; }
 warn() { step_has_output=true; printf '  %s!!%s %s\n' "$c_yellow$c_bold" "$c_reset" "$1"; }
 fail() {
+  local message="$1"
   echo
-  box "$c_red" "ÉCHEC  $1"
+  box "$c_red" "ÉCHEC  $message"
 }
 
 # Vrai si au moins un volume Docker du Compose local existe (sinon, rien à perdre).

@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import { type Response } from "express";
 import updateUser from "../../../models/user/update-user.ts";
 import type { UserProfileInput } from "../../../models/user/update-user.ts";
@@ -20,13 +20,11 @@ export default async function httpUpdateUserProfile(
 
   const { user }: { user: UserProfileInput } = req.body.data;
 
-  if (!!avatarFile) {
+  if (avatarFile) {
     try {
-      {
-        const string64 = await fs.promises.readFile(avatarFile.path);
-        await updateUserAvatar(id, string64);
-        await deleteTempUploadedFile(req);
-      }
+      const string64 = await fs.promises.readFile(avatarFile.path);
+      await updateUserAvatar(id, string64);
+      await deleteTempUploadedFile(req);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }

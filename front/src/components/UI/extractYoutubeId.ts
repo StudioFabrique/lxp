@@ -18,7 +18,9 @@ export function normalizeVideoUrl(raw: unknown): {
   provider: "youtube" | "unknown";
   id: string | null;
 } {
-  const str = raw == null ? "" : String(raw);
+  // Seuls un texte ou un nombre peuvent contenir un identifiant ; tout autre type n'en porte pas.
+  const str =
+    typeof raw === "string" || typeof raw === "number" ? String(raw) : "";
   const ytId = extractYouTubeId(str);
   if (ytId) return { provider: "youtube", id: ytId };
   return { provider: "unknown", id: null };

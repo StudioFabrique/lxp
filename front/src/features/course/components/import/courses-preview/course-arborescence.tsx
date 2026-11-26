@@ -189,9 +189,12 @@ const CourseArborescence = ({
                     return (
                       <div
                         key={aIdx}
-                        className={cn("flex items-center w-full border-l-4 transition-all", isSelected
-                                ? `${activity.hasError ? "border-error bg-error/10" : "border-primary bg-primary/10"}`
-                                : `border-transparent hover:bg-base-200`)}
+                        className={cn(
+                          "flex items-center w-full border-l-4 transition-all",
+                          isSelected && activity.hasError && "border-error bg-error/10",
+                          isSelected && !activity.hasError && "border-primary bg-primary/10",
+                          !isSelected && "border-transparent hover:bg-base-200",
+                        )}
                       >
                         {isEditing ? (
                           <div className="px-4 py-1 flex items-center gap-2 w-full">

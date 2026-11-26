@@ -63,9 +63,12 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         const roomLeft = center.x - radius - 104 - 12 >= 0;
         // Sans côté imposé, l'éventail va à droite et passe à gauche près du bord droit de l'écran.
         // Avec la bulle à gauche, les questions préfèrent la droite, et inversement ; faute de place, elles se replient du côté libre.
-        const fanTowardsLeft = pinnedSide === undefined
-          ? !roomRight
-          : pinnedSide === "right" ? roomLeft || !roomRight : !roomRight && roomLeft;
+        let fanTowardsLeft: boolean;
+        if (pinnedSide === undefined) fanTowardsLeft = !roomRight;
+        // En colonne, les questions restent du côté du champ de saisie, tant qu'il y a la place.
+        else if (aligned && (pinnedSide === "left" ? roomLeft : roomRight)) fanTowardsLeft = pinnedSide === "left";
+        else if (pinnedSide === "right") fanTowardsLeft = roomLeft || !roomRight;
+        else fanTowardsLeft = !roomRight && roomLeft;
         const elements = keys.split("\u0000").map(key => itemsRef.current.get(key) ?? null);
         const halfHeight = Math.max(...elements.map(item => (item?.offsetHeight ?? 0) / 2));
         const extent = radius * Math.sin(Math.max(...fan.map(Math.abs)) * Math.PI / 180) + halfHeight;
@@ -79,10 +82,25 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           return { top: center.y + Math.sin(angles[index] * Math.PI / 180) * radius + verticalShift - height / 2, height };
         });
         const tops: number[] = [];
+        // En colonne, les entrées prévues sous l'entrée épinglée passent dans une seconde colonne, à droite de celles du haut.
+        const secondColumn = new Set<number>();
         // Entrée épinglée et éventail de part et d'autre de l'assistant : ils ne se gênent pas, l'éventail peut rester serré.
         const separateSides = pinnedIndex >= 0 && pinnedSide !== undefined && (pinnedSide === "left") !== fanTowardsLeft;
         if (pinnedIndex >= 0 && elements[pinnedIndex] && !separateSides) {
           arrangeRadialSlots(slots, pinnedIndex, 12, window.innerHeight - 12, 8, pinnedOverhang).forEach((top, index) => { tops[index] = top; });
+          if (aligned) {
+            const below = slots.map((_, index) => index).filter(index => index !== pinnedIndex && tops[index] > tops[pinnedIndex]).sort((a, b) => tops[a] - tops[b]);
+            const hasAbove = slots.some((_, index) => index !== pinnedIndex && tops[index] < tops[pinnedIndex]);
+            // Deux colonnes seulement si elles tiennent côte à côte entre l'assistant et le bord de l'écran.
+            const columnWidth = elements[below[0]]?.offsetWidth ?? 0;
+            const roomForTwo = (fanTowardsLeft ? center.x : window.innerWidth - center.x) - rect.width / 2 - 12 - 12 >= 2 * columnWidth + 8;
+            if (below.length && hasAbove && roomForTwo) {
+              // Empilées vers le haut depuis le bord de l'entrée épinglée, hors de la hauteur de l'assistant virtuel.
+              const limit = tops[pinnedIndex] - pinnedOverhang - 8;
+              const stack = spreadRadialSlots(below.map(index => ({ top: limit, height: slots[index].height })), 12, limit);
+              below.forEach((index, rank) => { tops[index] = stack[rank]; secondColumn.add(index); });
+            }
+          }
         } else {
           // Les entrées se séparent de haut en bas, quel que soit leur ordre dans la liste.
           if (separateSides) tops[pinnedIndex] = Math.max(12, Math.min(slots[pinnedIndex].top, window.innerHeight - 12 - slots[pinnedIndex].height));
@@ -99,8 +117,10 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           const onCircle = Math.sqrt(Math.max(radius * radius - offsetY * offsetY, 0));
           const clear = Math.abs(offsetY) < avatarHalf + item.offsetHeight / 2 + 8 ? avatarHalf + item.offsetWidth / 2 + 12 : 0;
           // En colonne, toutes les entrées s'alignent à la même distance de l'assistant, au ras de son bord.
-          const reach = aligned && index !== pinnedIndex ? avatarHalf + item.offsetWidth / 2 + 12 : Math.max(onCircle, clear);
           const towardsLeft = index === pinnedIndex && pinnedSide !== undefined ? pinnedSide === "left" : fanTowardsLeft;
+          let reach = aligned && index !== pinnedIndex ? avatarHalf + item.offsetWidth / 2 + 12 : Math.max(onCircle, clear);
+          // Seconde colonne : à droite de la première, donc plus près de l'assistant à gauche de l'écran, plus loin sinon.
+          if (secondColumn.has(index)) reach += (towardsLeft ? -1 : 1) * (item.offsetWidth + 8);
           const left = center.x + (towardsLeft ? -reach : reach) - item.offsetWidth / 2;
           const nextLeft = `${Math.max(12, Math.min(left, window.innerWidth - item.offsetWidth - 12))}px`;
           const nextTop = `${tops[index]}px`;
@@ -130,7 +150,8 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
         <motion.li key={item.key} ref={element => { if (element) itemsRef.current.set(item.key, element); else itemsRef.current.delete(item.key); }}
           className={cn(
             "pointer-events-auto",
-            stacked ? cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]") : cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
+            stacked && cn("w-full shrink-0", item.pinned && "order-last mt-4", item.pinned && pinnedInset && "ml-auto w-[calc(100%-3.5rem)]"),
+            !stacked && cn("fixed max-w-[calc(100vw-1.5rem)]", item.pinned ? "w-72" : "w-52"),
           )}
           initial={reducedMotion ? false : { opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .9, transition: { duration: reducedMotion ? 0 : .12, delay: 0 } }}
           transition={{ duration: reducedMotion ? 0 : .3, delay: reducedMotion ? 0 : index * .12, ease: [.22, 1, .36, 1] }}>

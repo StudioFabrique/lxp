@@ -1,3 +1,7 @@
+// Noms des variables lues par deployment/with-infisical.sh.
+def infisicalClientIdVariable = 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID'
+def infisicalClientSecretVariable = 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+
 pipeline {
     agent any
 
@@ -58,8 +62,8 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: params.INFISICAL_CREDENTIAL_ID,
-                        usernameVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID',
-                        passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+                        usernameVariable: infisicalClientIdVariable,
+                        passwordVariable: infisicalClientSecretVariable
                     )
                 ]) {
                     sh 'INFISICAL_SECRET_PATHS="/ci /runtime /backup" BACKUP_REASON=pre-deploy BACKUP_ALLOW_UNINITIALIZED=true ./deployment/with-infisical.sh ./deployment/backup.sh'
@@ -72,8 +76,8 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: params.INFISICAL_CREDENTIAL_ID,
-                        usernameVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID',
-                        passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+                        usernameVariable: infisicalClientIdVariable,
+                        passwordVariable: infisicalClientSecretVariable
                     )
                 ]) {
                     sh './deployment/with-infisical.sh ./deployment/deploy.sh'
@@ -86,8 +90,8 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: params.INFISICAL_CREDENTIAL_ID,
-                        usernameVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID',
-                        passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+                        usernameVariable: infisicalClientIdVariable,
+                        passwordVariable: infisicalClientSecretVariable
                     )
                 ]) {
                     sh 'INFISICAL_SECRET_PATHS="/ci /runtime /backup" BACKUP_REASON=post-deploy ./deployment/with-infisical.sh ./deployment/backup.sh'

@@ -29,8 +29,9 @@ die() {
 # Accumule les variables manquantes plutôt que d'échouer sur la première : un
 # déploiement mal configuré se corrige en une passe.
 require() {
+    required_names="$1"
     missing=''
-    for name in $1; do
+    for name in $required_names; do
         eval "value=\${$name-}"
         [ -n "${value}" ] || missing="$missing $name"
     done
@@ -338,10 +339,11 @@ compose() {
 }
 
 target_sh() {
+    remote_command="$1"
     if [ "$REMOTE" = "true" ]; then
-        ssh -p "$deploy_ssh_port" "$deploy_ssh_target" "$1"
+        ssh -p "$deploy_ssh_port" "$deploy_ssh_target" "$remote_command"
     else
-        sh -c "$1"
+        sh -c "$remote_command"
     fi
 }
 
@@ -384,6 +386,7 @@ esac
 
 case "/$DEPLOY_PATH/" in
     */../* | */./*) die "DEPLOY_PATH ne doit contenir ni . ni ..." ;;
+    *) ;;
 esac
 
 echo "Préparation des répertoires persistants..."
@@ -546,11 +549,9 @@ if [ "$OBSERVABILITY_ENABLED" = "true" ]; then
     compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" victorialogs vector
 fi
 
-if [ "$DEMO_ENABLED" = "false" ]; then
-    if [ -n "${ROOT_ACCOUNT_EMAIL:-}" ]; then
-        echo "Envoi de l'invitation de création d'un compte root..."
-        compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"
-    fi
+if [ "$DEMO_ENABLED" = "false" ] && [ -n "${ROOT_ACCOUNT_EMAIL:-}" ]; then
+    echo "Envoi de l'invitation de création d'un compte root..."
+    compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"
 fi
 
 echo "État des services..."

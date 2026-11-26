@@ -18,6 +18,7 @@ export function MediaPreview({ media }: Readonly<{ media: Media }>) {
   if (media.type === "video") {
     return (
       <video className="h-full w-full object-contain" src={url} controls>
+        <track kind="captions" />
         Votre navigateur ne permet pas de lire cette vidéo.
       </video>
     );
@@ -27,6 +28,7 @@ export function MediaPreview({ media }: Readonly<{ media: Media }>) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <audio className="w-full max-w-2xl" src={url} controls>
+          <track kind="captions" />
           Votre navigateur ne permet pas de lire ce fichier audio.
         </audio>
       </div>

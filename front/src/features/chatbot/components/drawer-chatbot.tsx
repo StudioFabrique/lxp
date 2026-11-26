@@ -18,6 +18,15 @@ type Props = {
   chatbotQuiz: ReturnType<typeof useChatbotQuiz>;
 };
 
+const drawerSizes: Record<
+  "small" | "large" | "full",
+  { width: string | number; height: string | number }
+> = {
+  full: { width: "100%", height: "100vh" },
+  large: { width: 750, height: 700 },
+  small: { width: 410, height: 500 },
+};
+
 export default function DrawerChatbot({
   chatbot,
   chatbotUi,
@@ -52,18 +61,8 @@ export default function DrawerChatbot({
         opacity: 1,
         y: 0,
         scale: 1,
-        width:
-          chatbotUi.size === "full"
-            ? "100%"
-            : chatbotUi.size === "large"
-              ? 750
-              : 410,
-        height:
-          chatbotUi.size === "full"
-            ? "100vh"
-            : chatbotUi.size === "large"
-              ? 700
-              : 500,
+        width: drawerSizes[chatbotUi.size].width,
+        height: drawerSizes[chatbotUi.size].height,
       }}
       exit={{ opacity: 0, y: 20, scale: 0.95, width: 410, height: 500 }}
       transition={{ duration: 0.4, ease: "easeOut" }}

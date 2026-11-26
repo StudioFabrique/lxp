@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 
 import { serverIssue } from "../../utils/constantes.ts";
 import getLessonDetail from "../../models/lesson/get-lesson-detail.ts";

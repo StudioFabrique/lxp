@@ -1,5 +1,5 @@
-import { Readable, Transform, Writable } from "stream";
-import { pipeline } from "stream/promises";
+import { Readable, Transform, Writable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import { type AiQuizQuestion, isAiQuizQuestion } from "./quiz-question.ts";
 
 export interface QuizStreamDoneEvent {

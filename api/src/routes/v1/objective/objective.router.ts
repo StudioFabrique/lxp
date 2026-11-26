@@ -1,6 +1,5 @@
 import express from "express";
-import checkToken from "../../../middleware/check-token.ts";
-import { body, param } from "express-validator";
+import { param } from "express-validator";
 
 import httpDeleteObjective from "../../../controllers/objective/http-delete-objective.ts";
 import httpPutObjective from "../../../controllers/objective/http-put-objective.ts";

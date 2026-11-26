@@ -23,6 +23,20 @@ type CursorGlowCardProps = {
   disableHoverScale?: boolean;
 };
 
+const glowColorClasses: Record<
+  NonNullable<CursorGlowCardProps["glowColor"]>,
+  string
+> = {
+  primary: "bg-primary/40",
+  secondary: "bg-secondary/40",
+  accent: "bg-accent/70",
+  neutral: "bg-neutral/40",
+  info: "bg-info/70",
+  success: "bg-success/40",
+  warning: "bg-warning/40",
+  error: "bg-error/40",
+};
+
 /** Durée de transition du halo : nulle sans animations, plus courte au survol. */
 const hoverDuration = (
   animations: boolean,
@@ -54,11 +68,15 @@ const CursorGlowCard = ({
   const springX = useSpring(mouseX, { stiffness: autoGlow ? 35 : 500, damping: autoGlow ? 18 : 50 });
   const springY = useSpring(mouseY, { stiffness: autoGlow ? 35 : 500, damping: autoGlow ? 18 : 50 });
 
+  // Sans animations, le halo automatique reste centré sur la carte.
   useEffect(() => {
     if (autoGlow && glowEnabled && !animations && cardRef.current) {
       mouseX.set(cardRef.current.clientWidth / 2);
       mouseY.set(cardRef.current.clientHeight / 2);
     }
+  }, [autoGlow, animations, glowEnabled, mouseX, mouseY]);
+
+  useEffect(() => {
     if (!autoEnabled) return;
     let frame = 0;
     const start = performance.now();
@@ -73,12 +91,14 @@ const CursorGlowCard = ({
     };
     frame = requestAnimationFrame(move);
     return () => cancelAnimationFrame(frame);
-  }, [autoEnabled, autoGlow, animations, glowEnabled, mouseX, mouseY]);
+  }, [autoEnabled, mouseX, mouseY]);
 
   const scaleDuration = hoverDuration(animations, isHovered, 0.25);
   const opacityDuration = hoverDuration(animations, isHovered, 0.2);
 
   const glowBaseOpacity = glowColor === "accent" ? 0.8 : 0.7;
+  const glowVisible = glowEnabled && (autoGlow || isHovered);
+  const followsPointer = glowEnabled && !autoGlow;
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -94,9 +114,9 @@ const CursorGlowCard = ({
   return (
     <div
       ref={cardRef}
-      onMouseEnter={autoGlow || !glowEnabled ? undefined : handleMouseEnter}
-      onMouseLeave={autoGlow || !glowEnabled ? undefined : () => setIsHovered(false)}
-      onMouseMove={autoGlow || !glowEnabled ? undefined : handleMouseMove}
+      onMouseEnter={followsPointer ? handleMouseEnter : undefined}
+      onMouseLeave={followsPointer ? () => setIsHovered(false) : undefined}
+      onMouseMove={followsPointer ? handleMouseMove : undefined}
       className={cn(
         "group relative rounded-xl",
         animations && !disableHoverScale && "transition-transform duration-200 hover:scale-101",
@@ -108,14 +128,7 @@ const CursorGlowCard = ({
         <motion.span
           className={cn(
             "absolute h-14 w-36 rounded-full blur-xl",
-            glowColor === "primary" && "bg-primary/40",
-            glowColor === "secondary" && "bg-secondary/40",
-            glowColor === "accent" && "bg-accent/70",
-            glowColor === "neutral" && "bg-neutral/40",
-            glowColor === "info" && "bg-info/70",
-            glowColor === "success" && "bg-success/40",
-            glowColor === "warning" && "bg-warning/40",
-            glowColor === "error" && "bg-error/40",
+            glowColorClasses[glowColor],
           )}
           initial={{ scale: 0, opacity: 0 }}
           style={{
@@ -125,8 +138,8 @@ const CursorGlowCard = ({
             translateY: "-50%",
           }}
           animate={{
-            scale: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? glowSize : 0,
-            opacity: (autoGlow && glowEnabled) || (glowEnabled && isHovered) ? glowBaseOpacity * glowIntensity : 0,
+            scale: glowVisible ? glowSize : 0,
+            opacity: glowVisible ? glowBaseOpacity * glowIntensity : 0,
           }}
           transition={{
             scale: {

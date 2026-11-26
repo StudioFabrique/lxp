@@ -50,7 +50,8 @@ const defaultBackgroundColor = "#ffffff";
 const validBackgroundColor = /^#[0-9a-f]{6}$/i;
 
 export default function InstanceGeneralSettings() {
-  const { chooseTheme } = useContext(ThemeContext);
+  const { chooseTheme, availableLightThemes, availableDarkThemes } =
+    useContext(ThemeContext);
   const queryClient = useQueryClient();
   const [initialSettings, setInitialSettings] = useState(emptySettings);
 
@@ -267,6 +268,20 @@ export default function InstanceGeneralSettings() {
     setThemeDrawerMode(null);
   };
 
+  // Un thème ajouté mais non enregistré n'est pas encore disponible dans le
+  // ThemeProvider : on l'applique en aperçu temporaire sans le mémoriser.
+  const applyTheme = (theme: string, mode: "light" | "dark") => {
+    const savedThemes =
+      mode === "light" ? availableLightThemes : availableDarkThemes;
+    if (savedThemes.includes(theme)) {
+      chooseTheme(theme, mode);
+      return;
+    }
+    themeBeforePreview.current ??=
+      document.documentElement.getAttribute("data-theme");
+    document.documentElement.setAttribute("data-theme", theme);
+  };
+
   const previewTheme = (theme: string) => {
     document.documentElement.setAttribute("data-theme", theme);
     setPreviewedTheme(theme);
@@ -450,28 +465,28 @@ export default function InstanceGeneralSettings() {
                           <button
                             type="button"
                             aria-label={`Appliquer le thème ${themeLabels[theme] ?? theme}`}
-                            onClick={() => chooseTheme(theme, mode)}
+                            onClick={() => applyTheme(theme, mode)}
                             className="absolute inset-0 cursor-pointer rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                           />
                           <span className="pointer-events-none flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
                             <span className="h-full w-1/2 bg-primary" />
                             <span className="h-full w-1/2 bg-secondary" />
                           </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="pointer-events-none block truncate text-sm font-semibold text-base-content">
+                          <span className="pointer-events-none min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold text-base-content">
                               {themeLabels[theme] ?? theme}
                             </span>
-                            <button
-                              type="button"
-                              aria-label={`Retirer le thème ${themeLabels[theme] ?? theme}`}
-                              onClick={() =>
-                                toggleAvailableTheme(theme, themeList)
-                              }
-                              className="btn btn-ghost btn-xs relative z-10 px-1 normal-case opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100"
-                            >
-                              Retirer
-                            </button>
                           </span>
+                          <button
+                            type="button"
+                            aria-label={`Retirer le thème ${themeLabels[theme] ?? theme}`}
+                            onClick={() =>
+                              toggleAvailableTheme(theme, themeList)
+                            }
+                            className="btn btn-ghost btn-xs btn-circle relative z-10 shrink-0 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100"
+                          >
+                            <X className="size-4" aria-hidden="true" />
+                          </button>
                         </div>
                       ))}
 

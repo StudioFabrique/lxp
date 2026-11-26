@@ -1,5 +1,5 @@
 import { type Response, type NextFunction } from "express";
-import fs from "fs";
+import fs from "node:fs";
 import sharp from "sharp";
 
 import putModule from "../../models/module/putModule.ts";

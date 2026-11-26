@@ -1,5 +1,5 @@
 import { type Response } from "express";
-import { badQuery, serverIssue } from "../../../utils/constantes.ts";
+import { serverIssue } from "../../../utils/constantes.ts";
 import getLastFeedbacks from "../../../models/user/feedback/get-last-feedbacks.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 import { validationResult } from "express-validator";

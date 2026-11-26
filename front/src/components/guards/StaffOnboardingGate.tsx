@@ -17,7 +17,7 @@ export default function StaffOnboardingGate() {
   if (!demoMode && ((rank === 1 && admin.isError) || (rank === 2 && teacher.isError)))
     return <div className="flex min-h-screen flex-col items-center justify-center gap-4" role="alert">
       <p>Impossible de vérifier votre accueil.</p>
-      <button type="button" className="btn btn-primary" onClick={() => void (rank === 1 ? admin.refetch() : teacher.refetch())}>Réessayer</button>
+      <button type="button" className="btn btn-primary" onClick={() => { (rank === 1 ? admin : teacher).refetch(); }}>Réessayer</button>
     </div>;
   if (!demoMode && ((rank === 1 && admin.data?.required) || (rank === 2 && teacher.data?.onboardingRequired)))
     return <Navigate to="/staff/onboarding" replace />;

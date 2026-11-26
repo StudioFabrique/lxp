@@ -30,9 +30,8 @@ export default function AdminSetupLayout({
           intro={showIntro}
           className={cn(!showIntro && (isWelcome ? "mb-12 mt-[clamp(5rem,15vh,10rem)]" : "mb-10"))}
         />
-        {showIntro ? null : isWelcome ? (
-          children
-        ) : (
+        {!showIntro && isWelcome && children}
+        {!showIntro && !isWelcome && (
           <motion.div
             className="flex min-h-0 flex-1 flex-col"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}

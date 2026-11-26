@@ -1,5 +1,4 @@
 import { type Request, type Response } from "express";
-import { serverIssue } from "../../utils/constantes.ts";
 import putCourseInformations from "../../models/course/put-course-informations.ts";
 
 async function httpPutCourseInformations(req: Request, res: Response) {
@@ -15,7 +14,7 @@ async function httpPutCourseInformations(req: Request, res: Response) {
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
-      message: error.statusCode === 404 ? error.message : error.message,
+      message: error.message,
     });
   }
 }

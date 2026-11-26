@@ -1,5 +1,5 @@
 import { type Response } from "express";
-import fs from "fs";
+import fs from "node:fs";
 import createManyGraduations from "../../models/graduation/create-many-graduations.ts";
 import createManyLinks from "../../models/links/create-many-links.ts";
 import createUser from "../../models/user/create-user.ts";

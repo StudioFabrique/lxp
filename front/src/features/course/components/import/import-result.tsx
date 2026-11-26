@@ -9,6 +9,7 @@ import {
   RotateCcw,
   XCircle,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import type {
   CourseImport,
   ImportProgressItem,
@@ -59,6 +60,21 @@ const ImportResult = ({
     }
   };
 
+  let headerTitle = "Traitement de l'importation...";
+  let headerDescription = `Les cours sélectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`;
+  let headerIcon: ReactNode = null;
+  if (criticalError) {
+    headerTitle = "Importation interrompue";
+    headerDescription = criticalError;
+    headerIcon = <XCircle className="h-6 w-6 text-error" />;
+  } else if (isComplete) {
+    headerTitle = "Importation terminée";
+    headerDescription = "Tous les contenus ont été traités avec succès.";
+    headerIcon = <Check className="h-6 w-6 text-success" />;
+  } else if (isImporting) {
+    headerIcon = <LoaderCircle className="h-6 w-6 animate-spin text-primary" />;
+  }
+
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
       <Header
@@ -84,31 +100,13 @@ const ImportResult = ({
       />
       <div data-course-import-tour="result-status">
         <Header
-          title={
-            criticalError
-              ? "Importation interrompue"
-              : isComplete
-                ? "Importation terminée"
-                : "Traitement de l'importation..."
-          }
-          description={
-            criticalError
-              ? criticalError
-              : isComplete
-                ? "Tous les contenus ont été traités avec succès."
-                : `Les cours sélectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`
-          }
+          title={headerTitle}
+          description={headerDescription}
           isSubHeader
           hasError={Boolean(criticalError)}
           successBgColor={isComplete}
         >
-          {criticalError ? (
-            <XCircle className="h-6 w-6 text-error" />
-          ) : isComplete ? (
-            <Check className="h-6 w-6 text-success" />
-          ) : isImporting ? (
-            <LoaderCircle className="h-6 w-6 animate-spin text-primary" />
-          ) : null}
+          {headerIcon}
         </Header>
       </div>
 

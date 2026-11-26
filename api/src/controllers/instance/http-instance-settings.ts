@@ -1,6 +1,6 @@
 import type { Response } from "express";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
-import fs from "fs";
+import fs from "node:fs";
 import { getUserEmail } from "../../models/user/get-user-email.ts";
 import { sendInstanceTemplateTestEmail } from "../../services/mailer.ts";
 import {
@@ -76,7 +76,7 @@ export async function httpPutInstanceSettings(
   if (trimmedWebsite) {
     try {
       const parsedWebsite = new URL(trimmedWebsite);
-      if (!['http:', 'https:'].includes(parsedWebsite.protocol)) throw new Error();
+      if (!['http:', 'https:'].includes(parsedWebsite.protocol)) throw new Error("Protocole non autorisé");
     } catch {
       return res.status(400).json({
         message: "Saisissez une adresse de site complète commençant par http:// ou https://.",

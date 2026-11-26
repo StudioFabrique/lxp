@@ -28,7 +28,7 @@ const ConfettiWrapper = ({ children }: PropsWithChildren) => {
       studentMdbIdToFelicitate: string;
       nameFrom: string;
     }) {
-      if (user && studentMdbIdToFelicitate === user._id) {
+      if (studentMdbIdToFelicitate === user?._id) {
         toast(`Vous avez été félicité par ${toTitleCase(nameFrom)} !`, {
           icon: <PartyPopperIcon />,
         });

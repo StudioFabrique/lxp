@@ -1,5 +1,5 @@
-import http from "http";
-import https from "https";
+import http from "node:http";
+import https from "node:https";
 import { Server } from "socket.io";
 import mongoConnect from "./utils/services/db/mongo-connect.ts";
 import syncAnalyticsIndexes from "./utils/services/db/sync-analytics-indexes.ts";
@@ -70,7 +70,7 @@ async function mongoInit() {
         `  ${ansi("2", technologies)}`,
         `  ${border}`,
         "",
-        `  ${ansi("1;32", `http://localhost:${PORT}/`)}`,
+        `  ${ansi("1;32", "http://localhost:" + PORT + "/")}`,
         `  ${ansi("2", "Cmd/Ctrl + clic sur le lien pour vérifier que l'API répond")}`,
         "",
       ].join("\n"),

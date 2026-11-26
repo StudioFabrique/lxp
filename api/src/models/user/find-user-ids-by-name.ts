@@ -1,6 +1,6 @@
 import User from "../../utils/interfaces/db/user.ts";
 
-const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 /**
  * Identifiants des comptes dont le prénom ou le nom commence par le texte
