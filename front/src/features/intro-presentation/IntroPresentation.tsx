@@ -6,6 +6,8 @@ import {
   type ChatbotMemory,
   type ChatbotMemoryAccess,
 } from "../auth/components/AuthChatbotTransitionContext";
+import { introChatbotHandoffRect } from "./intro-chatbot-arrival";
+import IntroChatbotHandoff from "./IntroChatbotHandoff";
 import { useIntroCards } from "./useIntroCards";
 import IntroMobileScene from "./IntroMobileScene";
 import IntroOverviewScene from "./IntroOverviewScene";
@@ -37,7 +39,9 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
   const rootRef = useRef<HTMLElement>(null);
   const [isSkipConfirmOpen, setIsSkipConfirmOpen] = useState(false);
   // Position et geste de l’assistant virtuel, conservés d'une étape à l'autre pour qu'il se déplace au lieu de réapparaître.
-  const memory = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: null });
+  // L'assistant virtuel reprend la place où la séquence 3D l'a laissé (bas à droite), puis glisse jusqu'à la sienne.
+  const [handoffRect] = useState(() => introChatbotHandoffRect({ width: window.innerWidth, height: window.innerHeight }));
+  const memory = useRef<ChatbotMemory>({ position: null, gesture: null, introAvatar: handoffRect });
   const chatbotMemory = useMemo<ChatbotMemoryAccess>(
     () => ({
       getPosition: () => memory.current.position,
@@ -91,6 +95,8 @@ const IntroPresentation = ({ isSaving, onSkip, onComplete }: Props) => {
           />
         </output>
       )}
+
+      <IntroChatbotHandoff rect={handoffRect} />
 
       <button
         type="button"

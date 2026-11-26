@@ -6,7 +6,6 @@ import { useState } from "react";
 import StudentProfile from "./StudentProfile";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import Loader from "../../../components/loaders/Loader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { parcoursApi } from "../../parcours/api/parcours.api";
 import {
@@ -16,6 +15,7 @@ import {
 import type Parcours from "../../../utils/interfaces/parcours";
 import Journal from "../components/journal/journal";
 import Awards from "../components/awards/awards";
+import ProgressSectionSkeleton from "../components/progress-section-skeleton";
 import { cn } from "../../../utils/cn";
 
 async function loadParcoursProgress(): Promise<Parcours[]> {
@@ -93,7 +93,7 @@ export default function MyProgress() {
           Progression des modules
         </h2>
         {isLoading ? (
-          <Loader variant="rows" label="Chargement de la progression" />
+          <ProgressSectionSkeleton variant="modules" label="Chargement de la progression" />
         ) : isError ? (
           <p role="alert" className="alert alert-error">
             Impossible de charger les progressions.
@@ -154,12 +154,12 @@ export default function MyProgress() {
       </section>
       <PermissionGuard object="parcours" action="read">
         <section aria-label="Journal">
-          <Journal parcoursId={selectedParcours?.id} />
+          <Journal parcoursId={selectedParcours?.id} isParcoursLoading={isLoading} />
         </section>
       </PermissionGuard>
       <PermissionGuard object="bonusSkill" action="read">
         <section aria-label="Badges et compétences">
-          <Awards parcours={selectedParcours} />
+          <Awards parcours={selectedParcours} isParcoursLoading={isLoading} />
         </section>
       </PermissionGuard>
     </PageWrapper>

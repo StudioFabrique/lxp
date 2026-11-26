@@ -109,10 +109,8 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           order.forEach((index, rank) => { tops[index] = spread[rank]; });
         }
         const avatarHalf = rect.width / 2;
-        let overlap = false;
-        elements.forEach((item, index) => {
-          if (!item) return;
-          // L'abscisse suit le cercle d'après la hauteur finale ; face à l'assistant virtuel, elle l'écarte de quoi ne pas le recouvrir.
+        // Position horizontale avant recadrage : face à l'assistant virtuel, elle l'écarte de quoi ne pas le recouvrir.
+        const leftOf = (item: HTMLLIElement, index: number): number => {
           const offsetY = tops[index] + item.offsetHeight / 2 - center.y;
           const onCircle = Math.sqrt(Math.max(radius * radius - offsetY * offsetY, 0));
           const clear = Math.abs(offsetY) < avatarHalf + item.offsetHeight / 2 + 8 ? avatarHalf + item.offsetWidth / 2 + 12 : 0;
@@ -121,7 +119,21 @@ export default function AuthChatbotRadialMenu({ id, label = "Questions d’aide"
           let reach = aligned && index !== pinnedIndex ? avatarHalf + item.offsetWidth / 2 + 12 : Math.max(onCircle, clear);
           // Seconde colonne : à droite de la première, donc plus près de l'assistant à gauche de l'écran, plus loin sinon.
           if (secondColumn.has(index)) reach += (towardsLeft ? -1 : 1) * (item.offsetWidth + 8);
-          const left = center.x + (towardsLeft ? -reach : reach) - item.offsetWidth / 2;
+          return center.x + (towardsLeft ? -reach : reach) - item.offsetWidth / 2;
+        };
+        // La seconde colonne peut dépasser du bord de l'écran : tout le groupe de questions est alors translaté de ce dépassement,
+        // pour que les colonnes gardent leur écart au lieu de se recouvrir.
+        let groupShift = 0;
+        elements.forEach((item, index) => {
+          if (!item || !secondColumn.has(index)) return;
+          const left = leftOf(item, index);
+          const overflow = left < 12 ? left - 12 : Math.min(window.innerWidth - item.offsetWidth - 12 - left, 0) * -1;
+          if (Math.abs(overflow) > Math.abs(groupShift)) groupShift = overflow;
+        });
+        let overlap = false;
+        elements.forEach((item, index) => {
+          if (!item) return;
+          const left = leftOf(item, index) - (index === pinnedIndex ? 0 : groupShift);
           const nextLeft = `${Math.max(12, Math.min(left, window.innerWidth - item.offsetWidth - 12))}px`;
           const nextTop = `${tops[index]}px`;
           if (bubble) {

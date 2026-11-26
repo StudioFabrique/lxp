@@ -11,6 +11,8 @@ type HeaderMenuProps = {
   isStudent?: boolean;
   hasStarted?: boolean;
   groupLinkTo?: string;
+  /** Repère de l'assistant virtuel sur le bouton « Démarrer » (`data-chatbot-target`). */
+  startChatbotTarget?: string;
 };
 
 const HeaderMenu = ({
@@ -19,6 +21,7 @@ const HeaderMenu = ({
   isStudent,
   hasStarted,
   groupLinkTo,
+  startChatbotTarget,
 }: HeaderMenuProps) => {
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +49,7 @@ const HeaderMenu = ({
             <button
               onClick={onClickResume}
               type="button"
+              data-chatbot-target={startChatbotTarget}
               className="btn btn-primary text-base-100 gap-2 self-end"
             >
               <span className="w-5 h-5">

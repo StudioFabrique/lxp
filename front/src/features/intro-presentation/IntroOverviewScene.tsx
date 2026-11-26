@@ -19,12 +19,25 @@ import {
 import { ScrollTrigger, gsap, prefersReducedMotion } from "./intro-motion";
 import type { IntroFormationOption } from "./intro-example-formations";
 import IntroFormationSelector from "./IntroFormationSelector";
-import { FINAL_STACK_ROTATION_X, FINAL_STACK_ROTATION, getIntroStackScale } from "./intro-stack-layout";
+import {
+  FINAL_STACK_ROTATION_X,
+  FINAL_STACK_ROTATION,
+  getIntroStackScale,
+} from "./intro-stack-layout";
 import IntroChatbot from "./IntroChatbot";
 import IntroActivityPreviewModal from "./IntroActivityPreviewModal";
-import IntroChildrenStack, { type IntroChildrenStackHandle } from "./IntroChildrenStack";
-import { getIntroInitialShift, isWideScreen, useIntroInitialShift } from "./useIntroInitialShift";
-import { introActivityKind, type IntroActivityKind } from "./intro-activity-samples";
+import IntroChildrenStack, {
+  type IntroChildrenStackHandle,
+} from "./IntroChildrenStack";
+import {
+  getIntroInitialShift,
+  isWideScreen,
+  useIntroInitialShift,
+} from "./useIntroInitialShift";
+import {
+  introActivityKind,
+  type IntroActivityKind,
+} from "./intro-activity-samples";
 import IntroLevelDetail from "./IntroLevelDetail";
 import IntroLevelRail from "./IntroLevelRail";
 import IntroLevelStack from "./IntroLevelStack";
@@ -32,7 +45,6 @@ import IntroSceneHeading from "./IntroSceneHeading";
 import { INTRO_THEME_PLATE_COLORS } from "./intro-plate-style";
 import { useInstanceBranding } from "../../hooks/useInstanceBranding";
 import { useIntroGuide } from "./useIntroGuide";
-import { useIntroPresentation } from "./useIntroPresentation";
 
 type Props = {
   /** Une carte par niveau : l'élément retenu, ce qu'il contient et ses composants. */
@@ -96,7 +108,15 @@ const STACK_VISUAL_WIDTH = 840;
  * ses composants. Les boutons et le clavier déplacent la même zone, il n'y a
  * donc qu'une source de vérité.
  */
-const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFormationId, onSelectFormation, isSaving, onComplete }: Props) => {
+const IntroOverviewScene = ({
+  cards,
+  onSelectChild,
+  formationOptions,
+  selectedFormationId,
+  onSelectFormation,
+  isSaving,
+  onComplete,
+}: Props) => {
   const maxStep = Math.max(1, cards.length - 1);
   const maxStepRef = useRef(maxStep);
   useLayoutEffect(() => {
@@ -106,11 +126,11 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
   const { logoUrl, backgroundColor } = useInstanceBranding();
   // Le fond coloré n'entoure plus que le logo : les plaques reposent sur la page et gardent les couleurs du thème.
   const plateColors = INTRO_THEME_PLATE_COLORS;
-  // Avec la barre réduite de la première présentation, le titre prend la ligne libre à sa droite.
-  const { sidebarPhase } = useIntroPresentation();
-  const isCompactSidebar = sidebarPhase !== "normal";
   // Aperçu d'un type d'activité ouvert depuis les cartes du dernier niveau.
-  const [activityPreview, setActivityPreview] = useState<{ kind: IntroActivityKind; title: string } | null>(null);
+  const [activityPreview, setActivityPreview] = useState<{
+    kind: IntroActivityKind;
+    title: string;
+  } | null>(null);
   const initialShift = useIntroInitialShift();
   const scrollRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
@@ -178,22 +198,28 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
     const detail = detailRef.current;
     const stage = stageRef.current;
     if (!isDetailShown || !column || !detail || !stage || !settledCard) {
-      const title = settledStep === 0
-        ? stage?.querySelector<HTMLElement>(".intro-organisation-fade b")
-        : null;
+      const title =
+        settledStep === 0
+          ? stage?.querySelector<HTMLElement>(".intro-organisation-fade b")
+          : null;
       const firstItem = stage?.querySelector<HTMLElement>(".intro-rail-item");
-      if (column && title && firstItem && !isCompactSidebar) {
-        // Présentation rejouée : la barre latérale reste complète et l'espace vide
+      if (column && title && firstItem) {
+        // La barre latérale reste complète et l'espace vide
         // est au-dessus de l'arborescence, à gauche du titre de la scène.
         const columnRect = column.getBoundingClientRect();
         const itemRect = firstItem.getBoundingClientRect();
         const left = itemRect.left - columnRect.left - 40;
-        const top = stage ? stage.getBoundingClientRect().top - columnRect.top : 0;
+        const top = stage
+          ? stage.getBoundingClientRect().top - columnRect.top
+          : 0;
         setPanelStyle({
           left,
           top,
           width: PANEL_WIDTH - 40,
-          height: Math.min(PANEL_HEIGHT, itemRect.top - columnRect.top - top - 8),
+          height: Math.min(
+            PANEL_HEIGHT,
+            itemRect.top - columnRect.top - top - 8,
+          ),
           right: "auto",
           margin: 0,
         });
@@ -204,14 +230,19 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         const titleRect = title.getBoundingClientRect();
         const width = Math.min(PANEL_WIDTH, columnRect.width);
         const top = Math.max(
-          (stage?.getBoundingClientRect().top ?? columnRect.top) - columnRect.top + HEADING_ROW_HEIGHT,
+          (stage?.getBoundingClientRect().top ?? columnRect.top) -
+            columnRect.top +
+            HEADING_ROW_HEIGHT,
           0,
         );
         setPanelStyle({
           left: columnRect.width - width,
           top,
           width,
-          height: Math.min(PANEL_HEIGHT, titleRect.top - columnRect.top - top - 8),
+          height: Math.min(
+            PANEL_HEIGHT,
+            titleRect.top - columnRect.top - top - 8,
+          ),
           right: "auto",
           margin: 0,
         });
@@ -222,7 +253,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
     }
     const columnRect = column.getBoundingClientRect();
     const detailRect = detail.getBoundingClientRect();
-    const targetId = activeDetail >= 0 ? settledCard.details[activeDetail]?.id : undefined;
+    const targetId =
+      activeDetail >= 0 ? settledCard.details[activeDetail]?.id : undefined;
     const target =
       (targetId
         ? detail.querySelector<HTMLElement>(`[data-intro-detail="${targetId}"]`)
@@ -230,31 +262,61 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
     const targetRect = (target ?? detail).getBoundingClientRect();
     const width = Math.min(PANEL_WIDTH, columnRect.width);
     const left = Math.min(
-      Math.max(targetRect.left + targetRect.width / 2 - columnRect.left - width / 2, 0),
+      Math.max(
+        targetRect.left + targetRect.width / 2 - columnRect.left - width / 2,
+        0,
+      ),
       columnRect.width - width,
     );
     const below = detailRect.bottom - columnRect.top + 12;
     if (below + PANEL_HEIGHT <= columnRect.height) {
-      setPanelStyle({ left, top: below, width, height: PANEL_HEIGHT, right: "auto", margin: 0 });
+      setPanelStyle({
+        left,
+        top: below,
+        width,
+        height: PANEL_HEIGHT,
+        right: "auto",
+        margin: 0,
+      });
       return;
     }
     // Sous un détail haut, il ne reste pas de place en bas : l'assistant prend l'espace libre à gauche du
     // détail, sous le choix de la formation, et se glisse entre les plaques et les boutons de la pyramide.
     // Le détail est mesuré comme le fait la pyramide, car son rectangle bouge pendant son apparition.
-    const freeWidth = columnRect.width - Math.min(columnRect.width * DETAIL_SHARE, DETAIL_MAX_WIDTH) - DETAIL_GAP;
+    const freeWidth =
+      columnRect.width -
+      Math.min(columnRect.width * DETAIL_SHARE, DETAIL_MAX_WIDTH) -
+      DETAIL_GAP;
     if (isWideScreen() && freeWidth >= MIN_FREE_PANEL_WIDTH) {
-      const selectorBottom = formationSelectorRef.current?.getBoundingClientRect().bottom ?? columnRect.top;
+      const selectorBottom =
+        formationSelectorRef.current?.getBoundingClientRect().bottom ??
+        columnRect.top;
       // De préférence sous la pyramide ; sans assez de hauteur, dans toute la zone libre, entre ses plaques.
-      const plates = Array.from(stage?.querySelectorAll<HTMLElement>(".intro-plate, .intro-child-plate, .intro-child-layer") ?? []);
-      const stackBottom = Math.max(selectorBottom, ...plates.map((plate) => plate.getBoundingClientRect().bottom));
+      const plates = Array.from(
+        stage?.querySelectorAll<HTMLElement>(
+          ".intro-plate, .intro-child-plate, .intro-child-layer",
+        ) ?? [],
+      );
+      const stackBottom = Math.max(
+        selectorBottom,
+        ...plates.map((plate) => plate.getBoundingClientRect().bottom),
+      );
       const belowStack = Math.max(stackBottom - columnRect.top + 8, 0);
-      const freeTop = columnRect.height + PANEL_BOTTOM_SLACK - belowStack >= MIN_PANEL_BELOW_STACK
-        ? belowStack
-        : Math.max(selectorBottom - columnRect.top + 8, 0);
-      const freePanelWidth = Math.max(Math.min(freeWidth, PANEL_WIDTH), MIN_PANEL_BOX_WIDTH);
+      const freeTop =
+        columnRect.height + PANEL_BOTTOM_SLACK - belowStack >=
+        MIN_PANEL_BELOW_STACK
+          ? belowStack
+          : Math.max(selectorBottom - columnRect.top + 8, 0);
+      const freePanelWidth = Math.max(
+        Math.min(freeWidth, PANEL_WIDTH),
+        MIN_PANEL_BOX_WIDTH,
+      );
       setPanelStyle({
         // Zone plus large que la place libre : elle déborde à gauche, là où il n'y a que le vide de la zone.
-        left: freeWidth >= freePanelWidth ? (freeWidth - freePanelWidth) / 2 : freeWidth - freePanelWidth,
+        left:
+          freeWidth >= freePanelWidth
+            ? (freeWidth - freePanelWidth) / 2
+            : freeWidth - freePanelWidth,
         top: freeTop,
         width: freePanelWidth,
         height: columnRect.height + PANEL_BOTTOM_SLACK - freeTop,
@@ -271,7 +333,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       right: "auto",
       margin: 0,
     });
-  }, [isDetailShown, settledCard, settledStep, activeDetail, isChatbotReady, isCompactSidebar]);
+  }, [isDetailShown, settledCard, settledStep, activeDetail, isChatbotReady]);
 
   // Le détail se déploie depuis la plaque : il s'étire vers la droite, puis ses
   // parties apparaissent l'une après l'autre. Rien ne bouge dans la pyramide.
@@ -424,15 +486,19 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         // La plaque de la formation reste : c'est elle qui reçoit l'écrasement, et
         // la dernière image doit être une plaque à plat, pas une pile de plaques.
         const base = stage.querySelector(".intro-plate");
-        const crushed = gsap
-          .utils.toArray<HTMLElement>(
+        const crushed = gsap.utils
+          .toArray<HTMLElement>(
             ".intro-child-layer, .intro-child-plate, .intro-layer-plate, .intro-plate",
             stage,
           )
           .filter((plate) => plate !== base);
         const stagger = { each: 0.08, from: "end" } as const;
         const closing = gsap.timeline({ onComplete: done });
-        closing.to(crushed, { z: 0, duration: 0.7, ease: "power3.in", stagger }, 0);
+        closing.to(
+          crushed,
+          { z: 0, duration: 0.7, ease: "power3.in", stagger },
+          0,
+        );
         // Chaque plaque se fond dans la formation en la touchant.
         closing.to(
           crushed,
@@ -441,7 +507,11 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         );
         // Tout le reste de la scène (arborescence, détail, plaque, commandes) s'estompe
         // d'un même fondu, lancé juste avant la fin de l'écrasement pour l'enchaîner.
-        closing.to(scroller, { opacity: 0, duration: 0.5, ease: "power1.inOut" }, ">-0.35");
+        closing.to(
+          scroller,
+          { opacity: 0, duration: 0.5, ease: "power1.inOut" },
+          ">-0.35",
+        );
       };
 
       ScrollTrigger.create({
@@ -450,7 +520,8 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         start: "top top",
         end: "bottom bottom",
         snap: {
-          snapTo: (value: number) => Math.round(value * maxStepRef.current) / maxStepRef.current,
+          snapTo: (value: number) =>
+            Math.round(value * maxStepRef.current) / maxStepRef.current,
           // Le palier le plus proche, quelle que soit la vitesse du geste.
           directional: false,
           inertia: false,
@@ -458,7 +529,7 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
           ease: "power1.inOut",
         },
         onUpdate: (self) => {
-          const progress = self.progress * maxStepRef.current / LAST_STEP;
+          const progress = (self.progress * maxStepRef.current) / LAST_STEP;
           setActiveStep(Math.round(progress * LAST_STEP));
           if (reduced) {
             timeline.progress(progress);
@@ -494,17 +565,29 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       // Échelle réelle de la scène, calculée comme `IntroLevelStack` à partir de la zone disponible : au
       // montage, la scène n'a pas encore pris cette échelle et sa taille affichée n'est pas fiable.
       const area = container?.parentElement?.getBoundingClientRect();
-      const unit = area && area.width > 0 && area.height > 0 ? getIntroStackScale(area.width, area.height) : 1;
+      const unit =
+        area && area.width > 0 && area.height > 0
+          ? getIntroStackScale(area.width, area.height)
+          : 1;
       // Dès que la scène est sur deux colonnes, le détail occupe la droite : la pile se range à gauche et
       // se réduit pour tenir dans la place restante, même dans une fenêtre moyenne. Calculé au démarrage.
       const sideBySide = isWideScreen() && unit > 0;
-      const detailWidth = Math.min(columnWidth * DETAIL_SHARE, DETAIL_MAX_WIDTH);
+      const detailWidth = Math.min(
+        columnWidth * DETAIL_SHARE,
+        DETAIL_MAX_WIDTH,
+      );
       const shift = sideBySide ? (detailWidth + DETAIL_GAP) / 2 / unit : 0;
       const freeWidth = columnWidth - detailWidth - DETAIL_GAP;
       const stackScale = sideBySide
         ? Math.min(
-            Math.max(STACK_SCALE_WITH_DETAIL, MIN_STACK_VISUAL_PX / (unit * STACK_VISUAL_WIDTH)),
-            Math.max(MIN_STACK_SCALE_WITH_DETAIL, freeWidth / (unit * STACK_VISUAL_WIDTH)),
+            Math.max(
+              STACK_SCALE_WITH_DETAIL,
+              MIN_STACK_VISUAL_PX / (unit * STACK_VISUAL_WIDTH),
+            ),
+            Math.max(
+              MIN_STACK_SCALE_WITH_DETAIL,
+              freeWidth / (unit * STACK_VISUAL_WIDTH),
+            ),
           )
         : 1;
       timeline.to(
@@ -520,13 +603,21 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
       );
       timeline.to(
         stack,
-        { rotationX: FINAL_STACK_ROTATION_X, rotation: FINAL_STACK_ROTATION, duration: LAST_STEP - 1 },
+        {
+          rotationX: FINAL_STACK_ROTATION_X,
+          rotation: FINAL_STACK_ROTATION,
+          duration: LAST_STEP - 1,
+        },
         1,
       );
       // Dès le premier niveau, les plaques des niveaux suivants s'affaissent sur la
       // formation, qui reste visible et sert de première couche à la pile des
       // éléments du niveau, rangée au même endroit sur le côté.
-      timeline.to(plates.slice(1), { autoAlpha: 0, z: 0, duration: 0.8, ease: "power2.in" }, 0.2);
+      timeline.to(
+        plates.slice(1),
+        { autoAlpha: 0, z: 0, duration: 0.8, ease: "power2.in" },
+        0.2,
+      );
     }, stage);
 
     return () => {
@@ -594,16 +685,9 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
         <div
           ref={stageRef}
           className={cn(
-            "sticky top-0 flex h-[100cqh] flex-col px-4 pb-28 sm:px-8",
-            isCompactSidebar ? "pt-20" : "pt-10",
+            "sticky top-0 flex h-[100cqh] flex-col px-4 pb-28 pt-10 sm:px-8",
           )}
         >
-          {isCompactSidebar ? (
-            // Alignée sur la barre réduite, centrée dans l'espace libre à sa droite.
-            <div className="pointer-events-none absolute right-14 top-0 left-[calc(var(--intro-bar-width,30rem)+1.5rem)] flex h-[3.75rem] items-center justify-center">
-              <IntroSceneHeading className="text-center" />
-            </div>
-          ) : null}
           <p className="sr-only" aria-live="polite">
             {level
               ? `${level.label} : ${level.explanation}`
@@ -623,13 +707,9 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               className="relative flex min-w-0 flex-col items-center self-stretch"
             >
               {/* Les explications des niveaux sont dites par l’assistant virtuel. */}
-              {isCompactSidebar ? (
-                <div className="min-h-24 w-full shrink-0" />
-              ) : (
-                <div className="grid min-h-32 w-full shrink-0 place-items-center">
-                  <IntroSceneHeading className="text-center" />
-                </div>
-              )}
+              <div className="grid min-h-24 w-full shrink-0 place-items-center lg:min-h-32">
+                <IntroSceneHeading className="text-center" />
+              </div>
               {/* Zone réservée à l’assistant virtuel : le calcul de placement de l'onboarding
                   ignore la pyramide 3D et le restreint à l'espace de ce panneau,
                   vide entre le titre et la pyramide. */}
@@ -639,25 +719,35 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                 aria-hidden="true"
                 style={panelStyle}
                 className={cn(
-                  "pointer-events-none absolute inset-x-0 mx-auto h-52 w-full max-w-xl",
-                  isCompactSidebar ? "top-2" : "top-20",
+                  "pointer-events-none absolute inset-x-0 mx-auto top-20 h-52 w-full max-w-xl",
                 )}
               >
                 <div ref={chatbotAnchorRef} />
               </div>
               {/* Toujours en place, masqué au palier 0 : la zone de la pyramide a ainsi dès le départ la
                   hauteur qu'elle gardera, et les mesures du démarrage restent justes. */}
-              <div ref={formationSelectorRef} className={cn("relative z-20 min-h-20 w-full shrink-0 pt-2 lg:w-[52%] lg:self-start", activeStep < 1 && "invisible")}>
-                {formationOptions && selectedFormationId && onSelectFormation ? (
+              <div
+                ref={formationSelectorRef}
+                className={cn(
+                  "relative z-20 min-h-20 w-full shrink-0 pt-2 lg:w-[52%] lg:self-start",
+                  activeStep < 1 && "invisible",
+                )}
+              >
+                {formationOptions &&
+                selectedFormationId &&
+                onSelectFormation ? (
                   <IntroFormationSelector
                     options={formationOptions}
                     selectedId={selectedFormationId}
-                    onSelect={(id) => { onSelectFormation(id); goToStep(1); }}
+                    onSelect={(id) => {
+                      onSelectFormation(id);
+                      goToStep(1);
+                    }}
                   />
                 ) : null}
               </div>
-              {/* Sous `lg`, la zone est courte et basse (titre et sélecteur au-dessus) : la scène, agrandie, est remontée pour ne pas passer sous l'indication de défilement. */}
-              <div className="flex min-h-0 w-full flex-1 items-center justify-center max-lg:-translate-y-24">
+              {/* Sous `lg`, la zone est courte et basse (titre et sélecteur au-dessus) : la scène est un peu remontée pour ne pas passer sous l'indication de défilement, sans recouvrir le titre que son logo et son libellé surplombent. */}
+              <div className="flex min-h-0 w-full flex-1 items-center justify-center max-lg:-translate-y-12">
                 <IntroLevelStack
                   offsetX={-initialShift}
                   activeIndex={levelIndex}
@@ -676,7 +766,9 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                     // que la pyramide soit au repos : elle se redresse déjà sous elles.
                     levelIndex={activeStep >= 1 ? settledStep : 0}
                     highlightedRow={hoveredRow}
-                    onHighlightRow={(row) => setHover({ step: settledStep, row })}
+                    onHighlightRow={(row) =>
+                      setHover({ step: settledStep, row })
+                    }
                     onSelectLevel={goToStep}
                     onSelectActivity={(title) => {
                       const kind = introActivityKind(title);
@@ -691,17 +783,16 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               </div>
               {isDetailShown && settledCard ? (
                 <>
-                  <div className={cn("intro-detail-wrap mt-4 w-full lg:absolute lg:right-0 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]",
-                      // Sous le titre de la colonne ; l’assistant virtuel se place dessous.
-                      isCompactSidebar ? "lg:top-0" : "lg:top-32",
-                    )}>
+                  <div className="intro-detail-wrap mt-4 w-full lg:absolute lg:right-0 lg:top-32 lg:z-10 lg:mt-0 lg:w-[min(46%,32rem)]">
                     <IntroLevelDetail
                       ref={detailRef}
                       card={settledCard}
                       index={settledStep}
                       activeDetail={activeDetail}
                       highlightedRow={hoveredRow}
-                      onHighlightRow={(row) => setHover({ step: settledStep, row })}
+                      onHighlightRow={(row) =>
+                        setHover({ step: settledStep, row })
+                      }
                       // Même effet qu'un clic sur la carte correspondante de la pyramide.
                       onSelectRow={(row) => {
                         if (settledStep < INTRO_LEVELS.length - 1) {
@@ -709,7 +800,9 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
                           return;
                         }
                         const title = settledCard.rows[row]?.title;
-                        const kind = title ? introActivityKind(title) : undefined;
+                        const kind = title
+                          ? introActivityKind(title)
+                          : undefined;
                         if (title && kind) setActivityPreview({ kind, title });
                       }}
                     />
@@ -723,16 +816,24 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
               restent visibles et centrés sur elle, quelle que soit la hauteur de la fenêtre. */}
           <div className="pointer-events-none absolute inset-x-4 bottom-5 z-30 grid gap-6 sm:inset-x-8 lg:grid-cols-[minmax(16rem,22rem)_1fr]">
             <div className="col-start-1 flex lg:-translate-x-24 flex-col items-center gap-3 lg:col-start-2">
-              <p className={cn(
-                "intro-scroll-hint flex max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80",
-                activeStep >= maxStep && "invisible",
-              )}>
+              <p
+                className={cn(
+                  "intro-scroll-hint flex max-w-full items-center justify-center gap-2 text-center text-sm text-base-content/80",
+                  activeStep >= maxStep && "invisible",
+                )}
+              >
                 <ChevronsDown className="size-4 shrink-0" aria-hidden="true" />
-                Faire défiler vers le bas pour naviguer entre les différents niveaux
+                Faire défiler vers le bas pour naviguer entre les différents
+                niveaux
               </p>
               {/* Numérotation du palier. */}
-              <p className="text-sm tabular-nums" aria-label={`Palier ${activeStep} sur ${maxStep}`}>
-                <span className="text-xl font-bold text-primary">{pad(activeStep)}</span>
+              <p
+                className="text-sm tabular-nums"
+                aria-label={`Palier ${activeStep} sur ${maxStep}`}
+              >
+                <span className="text-xl font-bold text-primary">
+                  {pad(activeStep)}
+                </span>
                 <span className="text-base-content/60"> / {pad(maxStep)}</span>
               </p>
             </div>
@@ -744,15 +845,18 @@ const IntroOverviewScene = ({ cards, onSelectChild, formationOptions, selectedFo
             onClose={() => setActivityPreview(null)}
           />
 
-          {isChatbotReady ? (
-            <IntroChatbot
-              scopeRef={chatbotAnchorRef}
-              step={settledStep}
-              detailMessage={detailMessage}
-              guide={guide}
-              onContinue={() => (settledStep >= maxStep ? handleComplete() : goToStep(settledStep + 1))}
-            />
-          ) : null}
+          {/* Monté dès l'ouverture : il reprend sa place de la séquence 3D, puis glisse vers la sienne une fois l'ouverture animée terminée. */}
+          <IntroChatbot
+            scopeRef={chatbotAnchorRef}
+            step={settledStep}
+            detailMessage={detailMessage}
+            guide={guide}
+            onContinue={() =>
+              settledStep >= maxStep
+                ? handleComplete()
+                : goToStep(settledStep + 1)
+            }
+          />
 
           {/* En bas à droite, au dernier niveau seulement : « Continuer la découverte » termine la présentation.
               Pour avancer ou reculer, l’assistant virtuel propose « Précédent », « Suivant » et « Continuer »,

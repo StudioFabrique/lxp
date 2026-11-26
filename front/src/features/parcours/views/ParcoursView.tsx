@@ -241,6 +241,8 @@ const ParcoursView = () => {
                     hideResumeCourseButton={!(modules?.length > 0)}
                     isStudent={isStudent}
                     hasStarted={hasStarted}
+                    // L'assistant virtuel désigne « Démarrer » à l'apprenant qui n'a encore rien commencé.
+                    startChatbotTarget={isStudent && !hasStarted ? "start-parcours" : undefined}
                   />
                 </PermissionGuard>,
               ]}

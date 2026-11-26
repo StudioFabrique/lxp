@@ -36,6 +36,8 @@ const IntroLevelRail = ({ activeIndex, selectableUpTo, onSelect }: Props) => (
                 isActive
                   ? "bg-base-100 shadow-lg ring-1 ring-base-300"
                   : "enabled:hover:bg-base-200",
+                // Libellé masqué sur une ligne : sans marge à droite, les sept niveaux tiennent sans passer à la ligne.
+                !isActive && "max-lg:pr-1.5",
               )}
             >
               <span

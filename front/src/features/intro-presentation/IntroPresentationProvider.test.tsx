@@ -104,6 +104,9 @@ const click = async (label: string) => {
   await act(async () => button?.click());
 };
 
+/** La découverte du rôle précède la présentation à la première connexion. */
+const finishReveal = () => click("reveal-done");
+
 const isOpen = () => container.querySelector('[data-testid="presentation"]') !== null;
 const isRevealShown = () => container.querySelector('[data-testid="role-reveal"]') !== null;
 const isPageShown = () => container.querySelector('[data-testid="page"]') !== null;
@@ -122,28 +125,39 @@ afterEach(() => {
 });
 
 describe("IntroPresentationProvider", () => {
-  it("s'ouvre seule sur le dashboard, à la place de la page", () => {
+  it("commence par la découverte du rôle sur le dashboard, à la place de la page", () => {
     render();
+    expect(isRevealShown()).toBe(true);
+    expect(isOpen()).toBe(false);
+    expect(isPageShown()).toBe(false);
+  });
+
+  it("enchaîne la présentation une fois la découverte du rôle terminée", async () => {
+    render();
+    await finishReveal();
+
+    expect(isRevealShown()).toBe(false);
     expect(isOpen()).toBe(true);
     expect(isPageShown()).toBe(false);
   });
 
   it("reste fermée hors du dashboard, déjà vue, non éligible ou en démonstration", () => {
     render({ path: "/admin/parcours" });
-    expect(isOpen()).toBe(false);
+    expect(isOpen() || isRevealShown()).toBe(false);
     expect(isPageShown()).toBe(true);
     render({ status: "skipped" });
-    expect(isOpen()).toBe(false);
+    expect(isOpen() || isRevealShown()).toBe(false);
     render({ status: "completed" });
-    expect(isOpen()).toBe(false);
+    expect(isOpen() || isRevealShown()).toBe(false);
     render({ eligible: false });
-    expect(isOpen()).toBe(false);
+    expect(isOpen() || isRevealShown()).toBe(false);
     render({ demo: true });
-    expect(isOpen()).toBe(false);
+    expect(isOpen() || isRevealShown()).toBe(false);
   });
 
   it("enregistre « ignorée » auprès du serveur", async () => {
     render();
+    await finishReveal();
     await click("skip");
 
     expect(updateOnboarding).toHaveBeenCalledWith("skipped");
@@ -151,6 +165,7 @@ describe("IntroPresentationProvider", () => {
 
   it("enregistre « terminée » quand la présentation est terminée", async () => {
     render();
+    await finishReveal();
     await click("complete");
 
     expect(updateOnboarding).toHaveBeenCalledWith("completed");
@@ -159,6 +174,7 @@ describe("IntroPresentationProvider", () => {
   it("reste ouverte et prévient si l'enregistrement échoue", async () => {
     updateOnboarding.mockRejectedValue(new Error("réseau"));
     render();
+    await finishReveal();
     await click("skip");
 
     expect(isOpen()).toBe(true);
@@ -187,27 +203,16 @@ describe("IntroPresentationProvider", () => {
     expect(isOpen()).toBe(false);
   });
 
-  it("enchaîne la découverte du rôle une fois le choix enregistré", async () => {
+  it("n'enchaîne aucune découverte du rôle après l'enregistrement ni après une réouverture", async () => {
     render();
+    await finishReveal();
     await click("skip");
     // Le serveur a confirmé : le compte n'est plus en attente.
     await render({ status: "skipped" });
 
     expect(isOpen()).toBe(false);
-    expect(isRevealShown()).toBe(true);
-    expect(isPageShown()).toBe(false);
-
-    await click("reveal-done");
-
     expect(isRevealShown()).toBe(false);
     expect(isPageShown()).toBe(true);
-  });
-
-  it("ne lance pas la découverte du rôle si l'enregistrement échoue, ni après une réouverture", async () => {
-    updateOnboarding.mockRejectedValue(new Error("réseau"));
-    render();
-    await click("skip");
-    expect(isRevealShown()).toBe(false);
 
     render({ status: "completed" });
     await click("reopen");

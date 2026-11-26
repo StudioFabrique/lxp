@@ -15,6 +15,7 @@ type Props = {
   help?: ChatbotHelp;
   introduction?: boolean;
   delay?: number;
+  placementDelayMs?: number;
   compact?: boolean;
   typingMs?: number;
   scopeRef?: RefObject<HTMLDivElement | null>;
@@ -31,6 +32,7 @@ export default function AuthChatbotDialogue({
   help,
   introduction = true,
   delay = 0,
+  placementDelayMs,
   compact = false,
   typingMs,
   scopeRef,
@@ -77,6 +79,8 @@ export default function AuthChatbotDialogue({
   }, [stepId, typingStep]);
   // Les points restent affichés typingMs après l'apparition de l’assistant virtuel, pas depuis le montage :
   // il est caché jusqu'à son placement.
+  // `delay` retarde le premier message : l'assistant virtuel a d'abord rejoint sa place.
+  const pendingDelay = useRef(delay);
   useEffect(() => {
     if (!typingStep || stepId === undefined) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -84,7 +88,9 @@ export default function AuthChatbotDialogue({
       const host = bubbleRef.current?.closest<HTMLElement>('[data-chatbot-placement="page"]');
       if (!host || getComputedStyle(host).visibility !== "visible") return;
       window.clearInterval(poll);
-      timer = setTimeout(() => setWaiting(false), typingMs);
+      const extra = pendingDelay.current * 1000;
+      pendingDelay.current = 0;
+      timer = setTimeout(() => setWaiting(false), typingMs + extra);
     }, 100);
     return () => {
       window.clearInterval(poll);
@@ -109,7 +115,7 @@ export default function AuthChatbotDialogue({
   if (hiddenOnMobile) return null;
   const enterFromRight = !reducedMotion && !continued && introduction;
   return (
-    <AuthChatbotPlacement floating={!introduction} scopeRef={scopeRef} stepId={stepId}>
+    <AuthChatbotPlacement floating={!introduction} scopeRef={scopeRef} stepId={stepId} placementDelayMs={placementDelayMs}>
     <div>
     <motion.div
       data-chatbot-position="right"

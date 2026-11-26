@@ -8,8 +8,8 @@ import { useIntroPresentation } from "./useIntroPresentation";
 
 /**
  * Affiche la présentation à la place de la page courante, dans la zone de
- * contenu du layout : la barre latérale reste visible et utilisable. Une fois
- * le choix enregistré, la découverte du rôle prend le relais.
+ * contenu du layout : la barre latérale reste visible et utilisable. À la première
+ * connexion, la découverte du rôle passe avant la présentation.
  */
 const IntroPresentationGate = ({ children }: PropsWithChildren) => {
   const {
@@ -23,14 +23,14 @@ const IntroPresentationGate = ({ children }: PropsWithChildren) => {
   } = useIntroPresentation();
   const { animations } = useVisualPreferences();
 
-  return isOpen ? (
+  return isRoleRevealOpen ? (
+    <IntroRoleReveal onDone={closeRoleReveal} />
+  ) : isOpen ? (
     <IntroPresentation
       isSaving={isSaving}
       onSkip={skip}
       onComplete={complete}
     />
-  ) : isRoleRevealOpen ? (
-    <IntroRoleReveal onDone={closeRoleReveal} />
   ) : (
     // À la sortie de la séquence la page se monte à neuf : elle apparaît en fondu, comme à la connexion.
     <div

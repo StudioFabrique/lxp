@@ -33,7 +33,8 @@ const IntroMobilePyramid = ({ activeIndex, visibleLevelCount, onSelect }: Props)
           "--intro-plate-text": INTRO_THEME_PLATE_COLORS.text,
         } as CSSProperties
       }
-      className="intro-plate-scope relative mx-auto h-[58cqw] max-h-80 w-full [perspective:900px]"
+      // Marge basse : en perspective, la plus grande plaque dépasse du bas de la zone et ne doit pas recouvrir la carte qui suit.
+      className="intro-plate-scope relative mx-auto mb-[12cqw] h-[58cqw] max-h-80 w-full [perspective:900px]"
     >
       <div
         className="absolute left-1/2 top-1/2 size-0 [transform-style:preserve-3d]"
