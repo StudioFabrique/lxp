@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import Link, { type ILink } from "../../utils/interfaces/db/link.ts";
 import Hobby, { type IHobby } from "../../utils/interfaces/db/hobby.ts";
+import { changedUserFields } from "./changed-user-fields.ts";
 
 export type UserProfileInput = Omit<
   Partial<IUser>,
@@ -130,5 +131,13 @@ export default async function updateUser(_id: string, user: UserProfileInput) {
     .populate("hobbies")
     .populate("roles");
 
-  return userUpdated ?? null;
+  if (!userUpdated) return null;
+
+  return {
+    user: userUpdated,
+    /** Informations réellement modifiées, pour la notification au titulaire. */
+    changes: changedUserFields(existingUser, userUpdated),
+    email: existingUser.email,
+    invitationSent: existingUser.invitationSent,
+  };
 }

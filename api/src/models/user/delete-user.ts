@@ -2,6 +2,8 @@ import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import removeUserFromGroups from "./remove-user-from-groups.ts";
+import { sendDeletedUserEmail } from "../../services/mailer.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /**
  * Supprime un utilisateur et les données PostgreSQL qui représentent son rôle.
@@ -20,7 +22,7 @@ export default async function deleteUser(userId: string, connectedId: string) {
     };
   }
 
-  const userToDelete = await User.findById(userId).select({ _id: 1 }).lean();
+  const userToDelete = await User.findById(userId).select({ _id: 1, email: 1, invitationSent: 1 }).lean();
 
   if (!userToDelete) {
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
@@ -161,5 +163,18 @@ export default async function deleteUser(userId: string, connectedId: string) {
         message: "L'utilisateur n'existe plus.",
       };
     }
+  });
+
+  // Un compte qui n'a jamais reçu d'email d'invitation n'a pas encore été
+  // porté à la connaissance de son titulaire : rien à lui confirmer.
+  if (!userToDelete.invitationSent) return;
+
+  // Confirmation détachée de la réponse : la suppression est déjà validée et
+  // un échec SMTP ne doit ni l'annuler ni la faire passer pour un échec.
+  void sendDeletedUserEmail(userToDelete.email).catch((error: unknown) => {
+    logger.error(
+      `Confirmation de suppression non envoyée à ${userToDelete.email}`,
+      error instanceof Error ? error : new Error(String(error)),
+    );
   });
 }

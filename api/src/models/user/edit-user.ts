@@ -1,12 +1,12 @@
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
-import { sendUpdatedUserEmail } from "../../services/mailer.ts";
-import { logger } from "../../utils/logs/logger.ts";
 import {
   exactInsensitive,
   isDuplicateKeyError,
   normalizeEmail,
 } from "../../utils/unique-fields.ts";
 import { requestEmailChange } from "./change-email.ts";
+import { changedUserFields } from "./changed-user-fields.ts";
+import { notifyUserUpdated } from "./notify-user-updated.ts";
 
 export default async function editUser(userId: string, user: IUser) {
   // Vérifier si l'utilisateur existe
@@ -72,14 +72,23 @@ export default async function editUser(userId: string, user: IUser) {
 
   const emailChangeRequested = await requestEmailChange(userId, email);
 
-  // Notification de courtoisie, détachée de la réponse : l'objet de l'appel est
-  // la mise à jour du profil, pas la remise du message. L'attendre faisait
-  // dépendre le temps de réponse du serveur SMTP.
-  void sendUpdatedUserEmail(userToUpdate.email).catch((error: unknown) => {
-    logger.error(
-      `Notification de mise à jour non envoyée à ${userToUpdate.email}`,
-      error instanceof Error ? error : new Error(String(error)),
-    );
+  // Le formulaire d'administration ne modifie jamais son propre compte
+  // (`preventSelfUserEdit`) : l'auteur est toujours un administrateur.
+  notifyUserUpdated({
+    email: userToUpdate.email,
+    invitationSent: userToUpdate.invitationSent,
+    modifiedBy: "admin",
+    changes: [
+      ...(updatedUser ? changedUserFields(userToUpdate, updatedUser) : []),
+      ...(emailChangeRequested
+        ? [
+            {
+              label: "Adresse e-mail (en attente de validation)",
+              value: email,
+            },
+          ]
+        : []),
+    ],
   });
 
   // Retourner l'utilisateur mis à jour et le rang du rôle

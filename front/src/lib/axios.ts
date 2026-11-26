@@ -130,6 +130,13 @@ apiClient.interceptors.request.use((request) => {
   );
 });
 
+/**
+ * Routes publiques authentifiées par le jeton du lien reçu par email, sans
+ * session. Un 401 y signifie « lien invalide » : le traiter comme une session
+ * expirée remplaçait son message par celui, inadapté, du renouvellement.
+ */
+const LINK_TOKEN_ROUTES = /\/user\/(check-invitation|activate)\/?$/;
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -137,14 +144,15 @@ apiClient.interceptors.response.use(
     const status = error.response?.status;
     const url = String(request?.url || "");
     const isRefresh = url.includes("/auth/refresh");
-    const isLogin = url.includes("/auth/login");
+    const skipSessionRecovery =
+      url.includes("/auth/login") || LINK_TOKEN_ROUTES.test(toPath(url));
 
     if (status === 401 && isRefresh) {
       logoutHandler?.();
       throw error;
     }
 
-    if (status === 401 && !isLogin && !request?._retry) {
+    if (status === 401 && !skipSessionRecovery && !request?._retry) {
       request._retry = true;
       refreshPromise ??= axios
         .get(`${BASE_API_URL}/auth/refresh`, { withCredentials: true })
@@ -171,7 +179,7 @@ apiClient.interceptors.response.use(
       throw error;
     }
 
-    if (status === 403 && !isLogin && !url.includes("/auth/handshake")) {
+    if (status === 403 && !skipSessionRecovery && !url.includes("/auth/handshake")) {
       resyncPromise ??= axios
         .get(`${BASE_API_URL}/auth/handshake`, { withCredentials: true })
         .then((response) => {

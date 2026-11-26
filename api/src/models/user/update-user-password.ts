@@ -1,12 +1,13 @@
 import { compare, genSalt, hash } from "bcrypt";
 import User from "../../utils/interfaces/db/user.ts";
+import { notifyPasswordChanged } from "./notify-user-updated.ts";
 
 export default async function updateUserPassword(
   _id: string,
   oldPass: string,
   newPass: string
 ) {
-  const currentUserPassData = await User.findById(_id).select("password");
+  const currentUserPassData = await User.findById(_id).select("password email");
 
   if (
     !currentUserPassData?.password ||
@@ -20,6 +21,7 @@ export default async function updateUserPassword(
   const userUpdated = await User.updateOne({ _id }, { password });
 
   if (userUpdated) {
+    notifyPasswordChanged(currentUserPassData.email);
     return userUpdated;
   }
 
