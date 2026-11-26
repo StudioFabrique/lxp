@@ -13,6 +13,8 @@ import {
 } from "./instance-settings.ts";
 import fs from "node:fs";
 import path from "node:path";
+import { updatedUser, type UpdatedUserChange } from "../helpers/mail-template/updated-user.ts";
+import { passwordChanged } from "../helpers/mail-template/password-changed.ts";
 import { DROPOUT_SUMMARY_SUBJECT, dropoutSummaryHtml } from "../helpers/mail-template/dropout-summary.ts";
 import {
   ANDRIA_FOOTER_LOGO_DARK_CID,
@@ -218,47 +220,71 @@ export async function sendPasswordEmail(
 }
 
 /**
- * Envoie un email de confirmation après la mise à jour du compte utilisateur
+ * Informe le titulaire d'une modification de son compte.
  * @param email - Adresse email du destinataire
+ * @param changes - Informations modifiées
+ * @param modifiedBy - Rôle de l'auteur : jamais son identité
  */
-export async function sendUpdatedUserEmail(email: string) {
+export async function sendUpdatedUserEmail(
+  email: string,
+  changes: UpdatedUserChange[],
+  modifiedBy: "admin" | "self",
+) {
   if (mailerDisabled) return;
-  try {
-    // Vérification du format de l'email
-    if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
+  if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
-    // Cette redirection ne concerne que le développement. En production, le
-    // message part toujours vers son véritable destinataire.
-    if (env.ENVIRONMENT === "development" && !env.MAILER_DEV_RECIPIENT) {
-      logger.error(
-        "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
-      );
-      return;
-    }
-
-    // En développement, rediriger vers une adresse email de test
-    const destination =
-      env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
-
-    // Récupération du template pour la mise à jour du compte
-    const message = getTemplate("updated-user", "", email, await mailContext());
-
-    // Envoi de l'email
-    const result = await transporter.sendMail({
-      from: env.MAILER_FROM,
-      to: destination,
-      subject: "Modification du compte",
-      html: message,
-      attachments: [
-        ...(await instanceLogoAttachment()),
-        ...andriaFooterLogoAttachment(),
-      ],
-    });
-
-    return result;
-  } catch (error) {
-    throw error;
+  // Cette redirection ne concerne que le développement. En production, le
+  // message part toujours vers son véritable destinataire.
+  if (env.ENVIRONMENT === "development" && !env.MAILER_DEV_RECIPIENT) {
+    logger.error(
+      "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
+    );
+    return;
   }
+
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: "Modification du compte",
+    html: updatedUser(changes, modifiedBy, await mailContext()),
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
+}
+
+/**
+ * Confirme à son titulaire que le mot de passe de son compte a été modifié.
+ * @param email - Adresse email du compte
+ */
+export async function sendPasswordChangedEmail(email: string) {
+  if (mailerDisabled) return;
+  if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
+
+  if (env.ENVIRONMENT === "development" && !env.MAILER_DEV_RECIPIENT) {
+    logger.error(
+      "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
+    );
+    return;
+  }
+
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: "Modification de votre mot de passe",
+    html: passwordChanged(new Date(), await mailContext()),
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
 }
 
 /**

@@ -3,6 +3,11 @@ import { and } from "@prisma/orm-postgres/orm-client";
 import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
+import {
+  readInstanceSettings,
+  type RoleLabelRank,
+} from "../../services/instance-settings.ts";
+import { notifyUserUpdated } from "./notify-user-updated.ts";
 
 /** Remplace le rôle unique, après validation de l'ensemble du lot. */
 async function updateUserRoles(
@@ -220,11 +225,30 @@ async function updateUserRoles(
       }
     }
   });
-  return User.updateMany(
+  const result = await User.updateMany(
     { _id: { $in: usersToUpdate } },
     { $set: { roles: [role._id] } },
     { runValidators: true },
   );
+
+  // Seuls les comptes dont le rôle change réellement sont prévenus : un lot
+  // peut aussi réenregistrer le rôle existant d'une partie des utilisateurs.
+  // Les rôles sont déjà enregistrés : un échec de lecture du libellé
+  // personnalisé ne doit pas faire échouer la requête.
+  const settings = await readInstanceSettings().catch(() => null);
+  const roleLabel =
+    settings?.roleLabels[String(role.rank) as RoleLabelRank] ?? role.label;
+  for (const user of users) {
+    if (user.roles[0]._id.equals(role._id)) continue;
+    notifyUserUpdated({
+      email: user.email,
+      invitationSent: user.invitationSent,
+      modifiedBy: "admin",
+      changes: [{ label: "Rôle", value: roleLabel }],
+    });
+  }
+
+  return result;
 }
 
 export default updateUserRoles;

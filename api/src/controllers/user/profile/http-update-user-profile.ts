@@ -6,6 +6,7 @@ import updateUserAvatar from "../../../models/user/update-user-avatar.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 import { deleteTempUploadedFile } from "../../../middleware/fileUpload.ts";
 import { requestEmailChange } from "../../../models/user/change-email.ts";
+import { notifyUserUpdated } from "../../../models/user/notify-user-updated.ts";
 
 export default async function httpUpdateUserProfile(
   req: CustomRequest,
@@ -39,11 +40,33 @@ export default async function httpUpdateUserProfile(
 
     const emailChangeRequested = await requestEmailChange(id, user.email);
 
+    // La photo est enregistrée avant la mise à jour du profil : elle échappe à
+    // la comparaison avant/après et se signale à part.
+    notifyUserUpdated({
+      email: response.email,
+      invitationSent: response.invitationSent,
+      modifiedBy: "self",
+      changes: [
+        ...response.changes,
+        ...(avatarFile
+          ? [{ label: "Photo de profil", value: null }]
+          : []),
+        ...(emailChangeRequested
+          ? [
+              {
+                label: "Adresse e-mail (en attente de validation)",
+                value: String(user.email),
+              },
+            ]
+          : []),
+      ],
+    });
+
     return res.status(201).json({
       message: emailChangeRequested
         ? "Profil mis à jour. Un email de validation a été envoyé à la nouvelle adresse."
         : "Utilisateur mis à jour avec succès.",
-      data: response,
+      data: response.user,
       emailChangeRequested,
     });
   } catch (error: any) {

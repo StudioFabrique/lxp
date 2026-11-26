@@ -8,6 +8,7 @@ import { hash } from "bcrypt";
 import User from "../../utils/interfaces/db/user.ts";
 import mongoose from "mongoose";
 import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
+import { notifyPasswordChanged } from "./notify-user-updated.ts";
 import type { PasswordTokenPurpose } from "../../helpers/activation-token.ts";
 
 export default async function putPassword(
@@ -46,6 +47,9 @@ export default async function putPassword(
     );
 
     await BlackListedToken.create({ token });
+
+    // L'activation définit un premier mot de passe : rien à signaler.
+    if (purpose === "password-reset") notifyPasswordChanged(existingUser.email);
 
     return updatedResult;
   } catch (error: any) {
