@@ -82,7 +82,7 @@ export default function LastParcours({
   };
 
   return (
-    <div className="p-2">
+    <div>
       {hasHeader && (
         <div className="flex flex-wrap justify-between items-center gap-4">
           {parcours.length > 0 && (

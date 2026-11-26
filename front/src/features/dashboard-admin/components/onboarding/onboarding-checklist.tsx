@@ -158,14 +158,11 @@ export default function OnboardingChecklist({
                   )}
                   {step.isDone && <span className="sr-only"> (terminée)</span>}
                 </p>
-                <p className="flex items-start gap-1.5 text-sm text-base-content/80">
+                <p className="text-sm text-base-content/80">
                   {step.isLocked && step.lockedReason ? (
                     <>
-                      <Lock className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-                      <span>
-                        <span className="sr-only">Verrouillée. </span>
-                        {step.lockedReason}
-                      </span>
+                      <span className="sr-only">Verrouillée. </span>
+                      {step.lockedReason}
                     </>
                   ) : (
                     step.description
@@ -186,6 +183,7 @@ export default function OnboardingChecklist({
                     const control = action.to ? (
                       step.isLocked ? (
                         <button type="button" className={className} disabled>
+                          <Lock className="size-3.5" aria-hidden="true" />
                           {action.label}
                         </button>
                       ) : (
@@ -205,6 +203,7 @@ export default function OnboardingChecklist({
                         data-chatbot-target={isFirstOfCurrentStep ? "onboarding-current-step" : undefined}
                         onClick={action.onClick}
                       >
+                        {step.isLocked && <Lock className="size-3.5" aria-hidden="true" />}
                         {action.label}
                       </button>
                     );
